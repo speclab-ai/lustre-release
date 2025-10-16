@@ -4,7 +4,7 @@ PROG=$(basename $0)
 [ "$1" = "-d" ] && shift && DELETE="git rm" || DELETE="echo Unused"
 [ "$1" = "-v" ] && shift && VERBOSE="echo Checking" || VERBOSE=":"
 [ "$1" ] && BASEDIR="$1"
-BASEDIR=${BASEDIR:-lustre/kernel_patches}
+BASEDIR=${BASEDIR:-grumple/kernel_patches}
 SERIESPATH=${SERIESPATH:-$BASEDIR/series}
 PATCHPATH=${PATCHPATH:-$BASEDIR/patches}
 [ ! -d "$BASEDIR" ] && echo "$PROG: missing base directory '$BASEDIR'" && exit 1

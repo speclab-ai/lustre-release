@@ -1,2 +1,2 @@
-lustre/tests/llmountcleanup.sh
-lustre/tests/llmount.sh
+grumple/tests/llmountcleanup.sh
+grumple/tests/llmount.sh

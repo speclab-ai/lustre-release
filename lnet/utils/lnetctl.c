@@ -384,7 +384,7 @@ static int jt_setup_mrrouting(int argc, char **argv)
 	int rc;
 	struct cYAML *err_rc = NULL;
 
-	rc = lustre_lnet_setup_mrrouting(&err_rc);
+	rc = grumple_lnet_setup_mrrouting(&err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -399,7 +399,7 @@ static int jt_setup_sysctl(int argc, char **argv)
 	int rc;
 	struct cYAML *err_rc = NULL;
 
-	rc = lustre_lnet_setup_sysctl(&err_rc);
+	rc = grumple_lnet_setup_sysctl(&err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -497,7 +497,7 @@ static int jt_set_response_tracking(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_response_tracking(value, -1, &err_rc);
+	rc = grumple_lnet_config_response_tracking(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -511,7 +511,7 @@ static int jt_calc_service_id(int argc, char **argv)
 	int rc;
 	__u64 service_id;
 
-	rc = lustre_lnet_calc_service_id(&service_id);
+	rc = grumple_lnet_calc_service_id(&service_id);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		return rc;
 
@@ -544,7 +544,7 @@ static int jt_set_recovery_limit(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_recovery_limit(value, -1, &err_rc);
+	rc = grumple_lnet_config_recovery_limit(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -572,7 +572,7 @@ static int jt_set_max_intf(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_max_intf(value, -1, &err_rc);
+	rc = grumple_lnet_config_max_intf(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -600,7 +600,7 @@ static int jt_set_numa(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_numa_range(value, -1, &err_rc);
+	rc = grumple_lnet_config_numa_range(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -628,7 +628,7 @@ static int jt_set_recov_intrv(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_recov_intrv(value, -1, &err_rc);
+	rc = grumple_lnet_config_recov_intrv(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -656,7 +656,7 @@ static int jt_set_rtr_sensitivity(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_rtr_sensitivity(value, -1, &err_rc);
+	rc = grumple_lnet_config_rtr_sensitivity(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -684,7 +684,7 @@ static int jt_set_hsensitivity(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_hsensitivity(value, -1, &err_rc);
+	rc = grumple_lnet_config_hsensitivity(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -702,7 +702,7 @@ static int jt_reset_stats(int argc, char **argv)
 	if (rc)
 		return rc;
 
-	rc = lustre_lnet_reset_stats(-1, &err_rc);
+	rc = grumple_lnet_reset_stats(-1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -730,7 +730,7 @@ static int jt_set_transaction_to(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_transaction_to(value, -1, &err_rc);
+	rc = grumple_lnet_config_transaction_to(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -758,7 +758,7 @@ static int jt_set_retry_count(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_retry_count(value, -1, &err_rc);
+	rc = grumple_lnet_config_retry_count(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -786,7 +786,7 @@ static int jt_set_discovery(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_discovery(value, -1, &err_rc);
+	rc = grumple_lnet_config_discovery(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -815,7 +815,7 @@ static int jt_set_drop_asym_route(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_drop_asym_route(value, -1, &err_rc);
+	rc = grumple_lnet_config_drop_asym_route(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -843,7 +843,7 @@ static int jt_set_tiny(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_buffers(value, -1, -1, -1, &err_rc);
+	rc = grumple_lnet_config_buffers(value, -1, -1, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -871,7 +871,7 @@ static int jt_set_small(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_buffers(-1, value, -1, -1, &err_rc);
+	rc = grumple_lnet_config_buffers(-1, value, -1, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -899,7 +899,7 @@ static int jt_set_large(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_buffers(-1, -1, value, -1, &err_rc);
+	rc = grumple_lnet_config_buffers(-1, -1, value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -929,7 +929,7 @@ static int jt_set_routing(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_routing(value, -1, &err_rc);
+	rc = grumple_lnet_config_routing(value, -1, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -959,7 +959,7 @@ static int jt_set_max_recovery_ping_interval(int argc, char **argv)
 		return -1;
 	}
 
-	rc = lustre_lnet_config_max_recovery_ping_interval(value, -1, &err_rc);
+	rc = grumple_lnet_config_max_recovery_ping_interval(value, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -1365,7 +1365,7 @@ static int jt_config_lnet(int argc, char **argv)
 		return rc;
 	}
 
-	rc = lustre_lnet_config_ni_system(LNET_CONFIGURE, load_mod_params,
+	rc = grumple_lnet_config_ni_system(LNET_CONFIGURE, load_mod_params,
 					  -1, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
@@ -1398,7 +1398,7 @@ static int jt_unconfig_lnet(int argc, char **argv)
 		return rc;
 	}
 
-	rc = lustre_lnet_config_ni_system(LNET_UNCONFIGURE, 0, -1, &err_rc);
+	rc = grumple_lnet_config_ni_system(LNET_UNCONFIGURE, 0, -1, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -1585,9 +1585,9 @@ static int yaml_lnet_route(char *nw, char *gw, int hops, int prio,
 		NL_INIT_LIST_HEAD(&head.children);
 		nl_init_list_head(&head.list);
 		if (gw) {
-			rc = lustre_lnet_parse_nid_range(&head, gw, &msg);
+			rc = grumple_lnet_parse_nid_range(&head, gw, &msg);
 			if (rc < 0) {
-				lustre_lnet_free_list(&head);
+				grumple_lnet_free_list(&head);
 				yaml_emitter_delete(&output);
 				errno = rc;
 				rc = 0;
@@ -1745,7 +1745,7 @@ static int jt_add_route(int argc, char **argv)
 		return rc;
 	}
 old_api:
-	rc = lustre_lnet_config_route(network, gateway, hop, prio, -1, &err_rc);
+	rc = grumple_lnet_config_route(network, gateway, hop, prio, -1, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -2450,7 +2450,7 @@ static int jt_add_ni(int argc, char **argv)
 	char *net_id = NULL;
 
 	memset(&tunables, 0, sizeof(tunables));
-	lustre_lnet_init_nw_descr(&nw_descr);
+	grumple_lnet_init_nw_descr(&nw_descr);
 
 	rc = check_cmd(net_cmds, "net", "add", 0, argc, argv);
 	if (rc)
@@ -2484,7 +2484,7 @@ static int jt_add_ni(int argc, char **argv)
 			}
 			break;
 		case 'i':
-			rc = lustre_lnet_parse_interfaces(optarg, &nw_descr);
+			rc = grumple_lnet_parse_interfaces(optarg, &nw_descr);
 			if (rc != 0) {
 				cYAML_build_error(-1, -1, "ni", "add",
 						"bad interface list",
@@ -2509,7 +2509,7 @@ static int jt_add_ni(int argc, char **argv)
 			net_id = optarg;
 			break;
 		case 'N':
-			rc = lustre_lnet_parse_interfaces(optarg, &nw_descr);
+			rc = grumple_lnet_parse_interfaces(optarg, &nw_descr);
 			if (rc != 0) {
 				cYAML_build_error(-1, -1, "ni", "add",
 						"bad NID list",
@@ -2627,11 +2627,11 @@ static int jt_add_ni(int argc, char **argv)
 		if (global_cpts != NULL)
 			cfs_expr_list_free(global_cpts);
 		if (rc == 0 && !skip_mr_route_setup)
-			rc = lustre_lnet_setup_mrrouting(&err_rc);
+			rc = grumple_lnet_setup_mrrouting(&err_rc);
 		return rc;
 	}
 old_api:
-	rc = lustre_lnet_config_ni(&nw_descr,
+	rc = grumple_lnet_config_ni(&nw_descr,
 				   (cpt_rc == 0) ? global_cpts: NULL,
 				   ip2net, (found) ? &tunables : NULL,
 				   cpp, &err_rc);
@@ -2647,7 +2647,7 @@ failed:
 
 	if (rc == LUSTRE_CFG_RC_NO_ERR && !skip_mr_route_setup) {
 		err_rc = NULL;
-		rc = lustre_lnet_setup_mrrouting(&err_rc);
+		rc = grumple_lnet_setup_mrrouting(&err_rc);
 
 		if (rc != LUSTRE_CFG_RC_NO_ERR)
 			cYAML_print_tree2file(stderr, err_rc);
@@ -2698,7 +2698,7 @@ static int jt_del_route(int argc, char **argv)
 		return rc;
 	}
 old_api:
-	rc = lustre_lnet_del_route(network, gateway, -1, &err_rc);
+	rc = grumple_lnet_del_route(network, gateway, -1, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -2726,7 +2726,7 @@ static int jt_del_ni(int argc, char **argv)
 	if (rc)
 		return rc;
 
-	lustre_lnet_init_nw_descr(&nw_descr);
+	grumple_lnet_init_nw_descr(&nw_descr);
 
 	while ((opt = getopt_long(argc, argv, short_options,
 				   long_options, NULL)) != -1) {
@@ -2736,7 +2736,7 @@ static int jt_del_ni(int argc, char **argv)
 			net_id = optarg;
 			break;
 		case 'N':
-			rc = lustre_lnet_parse_interfaces(optarg, &nw_descr);
+			rc = grumple_lnet_parse_interfaces(optarg, &nw_descr);
 			if (rc != 0) {
 				cYAML_build_error(-1, -1, "ni", "del",
 						  "bad NID list",
@@ -2746,7 +2746,7 @@ static int jt_del_ni(int argc, char **argv)
 			nid_request = true;
 			break;
 		case 'i':
-			rc = lustre_lnet_parse_interfaces(optarg, &nw_descr);
+			rc = grumple_lnet_parse_interfaces(optarg, &nw_descr);
 			if (rc != 0) {
 				cYAML_build_error(-1, -1, "ni", "add",
 						"bad interface list",
@@ -2776,7 +2776,7 @@ static int jt_del_ni(int argc, char **argv)
 			return rc;
 	}
 
-	rc = lustre_lnet_del_ni(&nw_descr, -1, &err_rc);
+	rc = grumple_lnet_del_ni(&nw_descr, -1, &err_rc);
 out:
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -2850,7 +2850,7 @@ static int jt_show_route(int argc, char **argv)
 		return rc;
 	}
 old_api:
-	rc = lustre_lnet_show_route(network, gateway, hop, prio,
+	rc = grumple_lnet_show_route(network, gateway, hop, prio,
 				    detail ? 1 : 0, -1,
 				    &show_rc, &err_rc, false);
 
@@ -2879,7 +2879,7 @@ static int yaml_lnet_config_ni_value(int healthv, bool all, char *nidstr,
 		return -EINVAL;
 
 	if (lnd_timeout > -1)
-		return lustre_lnet_config_lnd_timeout(lnd_timeout, net,
+		return grumple_lnet_config_lnd_timeout(lnd_timeout, net,
 						      -1, err_rc);
 
 	if (cpp == -1 && healthv == -1)
@@ -2892,10 +2892,10 @@ static int yaml_lnet_config_ni_value(int healthv, bool all, char *nidstr,
 		net_id++;
 	}
 
-	lustre_lnet_init_nw_descr(&nw_descr);
+	grumple_lnet_init_nw_descr(&nw_descr);
 	nw_descr.nw_id = libcfs_str2net(net_id);
 
-	rc = lustre_lnet_parse_interfaces(nidstr ? nidstr : "<?>", &nw_descr);
+	rc = grumple_lnet_parse_interfaces(nidstr ? nidstr : "<?>", &nw_descr);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		return -EINVAL;
 
@@ -2918,10 +2918,10 @@ static int yaml_lnet_config_ni_value(int healthv, bool all, char *nidstr,
 	}
 old_api:
 	if (cpp > -1)
-		rc = lustre_lnet_config_ni_conns_per_peer(cpp, all, nidstr,
+		rc = grumple_lnet_config_ni_conns_per_peer(cpp, all, nidstr,
 							  -1, err_rc);
 	if (healthv > -1)
-		rc = lustre_lnet_config_ni_healthv(healthv, all, nidstr,
+		rc = grumple_lnet_config_ni_healthv(healthv, all, nidstr,
 						   -1, err_rc);
 	return rc;
 }
@@ -3233,10 +3233,10 @@ static int yaml_lnet_peer(char *prim_nid, char *nidstr, bool disable_mr,
 
 			NL_INIT_LIST_HEAD(&head.children);
 			nl_init_list_head(&head.list);
-			rc = lustre_lnet_parse_nid_range(&head, nidstr, &msg);
+			rc = grumple_lnet_parse_nid_range(&head, nidstr, &msg);
 			if (rc < 0) {
 				fprintf(stdout, "can't parse nidrange: \"%s\"\n", nidstr);
-				lustre_lnet_free_list(&head);
+				grumple_lnet_free_list(&head);
 				yaml_emitter_delete(&output);
 				errno = rc;
 				rc = 0;
@@ -3244,7 +3244,7 @@ static int yaml_lnet_peer(char *prim_nid, char *nidstr, bool disable_mr,
 			}
 
 			if (nl_list_empty(&head.children)) {
-				lustre_lnet_free_list(&head);
+				grumple_lnet_free_list(&head);
 				yaml_emitter_delete(&output);
 				msg = "Unable to parse nidlist: did not expand to any nids";
 				errno = -ENOENT;
@@ -3257,7 +3257,7 @@ static int yaml_lnet_peer(char *prim_nid, char *nidstr, bool disable_mr,
 				char *nid = entry->nidstr;
 
 				if (count++ > LNET_MAX_NIDS_PER_PEER) {
-					lustre_lnet_free_list(&head);
+					grumple_lnet_free_list(&head);
 					yaml_emitter_delete(&output);
 					msg = "Unable to parse nidlist: specifies more NIDs than allowed";
 					errno = -E2BIG;
@@ -3295,7 +3295,7 @@ static int yaml_lnet_peer(char *prim_nid, char *nidstr, bool disable_mr,
 				if (rc == 0)
 					goto emitter_error;
 			}
-			lustre_lnet_free_list(&head);
+			grumple_lnet_free_list(&head);
 		}
 handle_health:
 		if (health_value >= 0) {
@@ -3435,10 +3435,10 @@ static int yaml_lnet_config_peer_ni_healthv(int healthv, bool all,
 	}
 old_api:
 	if (state == -1)
-		rc = lustre_lnet_config_peer_ni_healthv(healthv, all, lpni_nid,
+		rc = grumple_lnet_config_peer_ni_healthv(healthv, all, lpni_nid,
 							seq_no, err_rc);
 	else
-		rc = lustre_lnet_set_peer_state(state, lpni_nid, -1, err_rc);
+		rc = grumple_lnet_set_peer_state(state, lpni_nid, -1, err_rc);
 
 	return rc;
 }
@@ -3714,10 +3714,10 @@ static int jt_show_recovery(int argc, char **argv)
 old_api:
 	switch (type) {
 	case LNET_HEALTH_TYPE_LOCAL_NI:
-		rc = lustre_lnet_show_local_ni_recovq(-1, &show_rc, &err_rc);
+		rc = grumple_lnet_show_local_ni_recovq(-1, &show_rc, &err_rc);
 		break;
 	case LNET_HEALTH_TYPE_PEER_NI:
-		rc = lustre_lnet_show_peer_ni_recovq(-1, &show_rc, &err_rc);
+		rc = grumple_lnet_show_peer_ni_recovq(-1, &show_rc, &err_rc);
 		break;
 	default:
 		rc = LUSTRE_CFG_RC_BAD_PARAM;
@@ -3743,9 +3743,9 @@ static int jt_debug_nidlist(int argc, char **argv)
 		fprintf(stderr, "Missing nidlist argument\n");
 		return -EINVAL;
 	} else if (argc == 2) {
-		rc = lustre_lnet_debug_nidlist(argv[1], NULL);
+		rc = grumple_lnet_debug_nidlist(argv[1], NULL);
 	} else if (argc == 3) {
-		rc = lustre_lnet_debug_nidlist(argv[1], argv[2]);
+		rc = grumple_lnet_debug_nidlist(argv[1], argv[2]);
 	} else {
 		fprintf(stderr, "Too many arguments\n");
 		return -EINVAL;
@@ -3780,7 +3780,7 @@ static int jt_show_peer_debug_info(int argc, char **argv)
 		}
 	}
 
-	rc = lustre_lnet_show_peer_debug_info(peer_nid, -1, &err_rc);
+	rc = grumple_lnet_show_peer_debug_info(peer_nid, -1, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -3833,7 +3833,7 @@ static int jt_show_net(int argc, char **argv)
 			return rc;
 	}
 
-	rc = lustre_lnet_show_net(network, (int) detail, -1, &show_rc, &err_rc,
+	rc = grumple_lnet_show_net(network, (int) detail, -1, &show_rc, &err_rc,
 				  false);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
@@ -3856,7 +3856,7 @@ static int jt_show_routing(int argc, char **argv)
 	if (rc)
 		return rc;
 
-	rc = lustre_lnet_show_routing(-1, &show_rc, &err_rc, false);
+	rc = grumple_lnet_show_routing(-1, &show_rc, &err_rc, false);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -3878,7 +3878,7 @@ static int jt_show_stats(int argc, char **argv)
 	if (rc)
 		return rc;
 
-	rc = lustre_lnet_show_stats(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_stats(-1, &show_rc, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -3924,7 +3924,7 @@ static int jt_show_udsp(int argc, char **argv)
 		}
 	}
 
-	rc = lustre_lnet_show_udsp(idx, -1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_udsp(idx, -1, &show_rc, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
@@ -3946,79 +3946,79 @@ static int jt_show_global(int argc, char **argv)
 	if (rc)
 		return rc;
 
-	rc = lustre_lnet_show_numa_range(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_numa_range(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_max_intf(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_max_intf(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_discovery(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_discovery(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_drop_asym_route(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_drop_asym_route(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_retry_count(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_retry_count(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_transaction_to(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_transaction_to(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_hsensitivity(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_hsensitivity(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_recov_intrv(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_recov_intrv(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_rtr_sensitivity(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_rtr_sensitivity(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_lnd_timeout(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_lnd_timeout(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_response_tracking(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_response_tracking(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_recovery_limit(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_recovery_limit(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
 	}
 
-	rc = lustre_lnet_show_max_recovery_ping_interval(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_max_recovery_ping_interval(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(stderr, err_rc);
 		goto out;
@@ -4187,10 +4187,10 @@ static int yaml_import_global_settings(char *key, unsigned long value,
 		if (cmd == 'a' || cmd == 'd') {
 			if (cmd == 'd')
 				value = 0;
-			rc = lustre_lnet_config_numa_range(value, -1,
+			rc = grumple_lnet_config_numa_range(value, -1,
 							   &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_numa_range(-1, &show_rc,
+			rc = grumple_lnet_show_numa_range(-1, &show_rc,
 							 &err_rc);
 		}
 	} else if (strcmp("max_interfaces", key) == 0 ||
@@ -4198,99 +4198,99 @@ static int yaml_import_global_settings(char *key, unsigned long value,
 		if (cmd == 'a' || cmd == 'd') {
 			if (cmd == 'd')
 				value = LNET_INTERFACES_MAX_DEFAULT;
-			rc = lustre_lnet_config_max_intf(value, -1,
+			rc = grumple_lnet_config_max_intf(value, -1,
 							 &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_max_intf(-1, &show_rc,
+			rc = grumple_lnet_show_max_intf(-1, &show_rc,
 						       &err_rc);
 		}
 	} else if (strcmp("discovery", key) == 0) {
 		if (cmd == 'a' || cmd == 'd') {
 			if (cmd == 'd')
 				value = 1;
-			rc = lustre_lnet_config_discovery(value, -1,
+			rc = grumple_lnet_config_discovery(value, -1,
 							  &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_discovery(-1, &show_rc,
+			rc = grumple_lnet_show_discovery(-1, &show_rc,
 							&err_rc);
 		}
 	} else if (strcmp("drop_asym_route", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_drop_asym_route(value,
+			rc = grumple_lnet_config_drop_asym_route(value,
 								-1,
 								&err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_drop_asym_route(-1, &show_rc,
+			rc = grumple_lnet_show_drop_asym_route(-1, &show_rc,
 							      &err_rc);
 		}
 	} else if (strcmp("retry_count", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_retry_count(value, -1,
+			rc = grumple_lnet_config_retry_count(value, -1,
 							    &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_retry_count(-1, &show_rc,
+			rc = grumple_lnet_show_retry_count(-1, &show_rc,
 							  &err_rc);
 		}
 	} else if (strcmp("transaction_timeout", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_transaction_to(value, -1,
+			rc = grumple_lnet_config_transaction_to(value, -1,
 							       &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_transaction_to(-1, &show_rc,
+			rc = grumple_lnet_show_transaction_to(-1, &show_rc,
 							     &err_rc);
 		}
 	} else if (strcmp("health_sensitivity", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_hsensitivity(value, -1,
+			rc = grumple_lnet_config_hsensitivity(value, -1,
 							     &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_hsensitivity(-1, &show_rc,
+			rc = grumple_lnet_show_hsensitivity(-1, &show_rc,
 							   &err_rc);
 		}
 	} else if (strcmp("recovery_interval", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_recov_intrv(value, -1,
+			rc = grumple_lnet_config_recov_intrv(value, -1,
 							    &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_recov_intrv(-1, &show_rc,
+			rc = grumple_lnet_show_recov_intrv(-1, &show_rc,
 							  &err_rc);
 		}
 	} else if (strcmp("router_sensitivity", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_rtr_sensitivity(value, -1,
+			rc = grumple_lnet_config_rtr_sensitivity(value, -1,
 								&err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_rtr_sensitivity(-1, &show_rc,
+			rc = grumple_lnet_show_rtr_sensitivity(-1, &show_rc,
 							      &err_rc);
 		}
 	} else if (strcmp("lnd_timeout", key) == 0) {
 		if (cmd == 'a') {
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_lnd_timeout(-1, &show_rc,
+			rc = grumple_lnet_show_lnd_timeout(-1, &show_rc,
 							  &err_rc);
 		}
 	} else if (strcmp("response_tracking", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_response_tracking(value, -1,
+			rc = grumple_lnet_config_response_tracking(value, -1,
 								  &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_response_tracking(-1, &show_rc,
+			rc = grumple_lnet_show_response_tracking(-1, &show_rc,
 								&err_rc);
 		}
 	} else if (strcmp("recovery_limit", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_recovery_limit(value, -1,
+			rc = grumple_lnet_config_recovery_limit(value, -1,
 							       &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_recovery_limit(-1, &show_rc,
+			rc = grumple_lnet_show_recovery_limit(-1, &show_rc,
 							     &err_rc);
 		}
 	} else if (strcmp("max_recovery_ping_interval", key) == 0) {
 		if (cmd == 'a') {
-			rc = lustre_lnet_config_max_recovery_ping_interval(value, -1,
+			rc = grumple_lnet_config_max_recovery_ping_interval(value, -1,
 									   &err_rc);
 		} else if (cmd == 's') {
-			rc = lustre_lnet_show_max_recovery_ping_interval(-1, &show_rc,
+			rc = grumple_lnet_show_max_recovery_ping_interval(-1, &show_rc,
 									 &err_rc);
 		}
 	}
@@ -4438,17 +4438,17 @@ static int handle_udsp_sequences(yaml_parser_t *setup, char cmd, int flags,
 		if (event.type == YAML_MAPPING_END_EVENT && idx != -1) {
 			switch (flags) {
 			case 0: 
-				rc = lustre_lnet_del_udsp(idx, seq_no,
+				rc = grumple_lnet_del_udsp(idx, seq_no,
 							  &err_rc);
 				break;
 			case NLM_F_DUMP:
-				rc = lustre_lnet_show_udsp(idx, seq_no,
+				rc = grumple_lnet_show_udsp(idx, seq_no,
 							   &show_rc, &err_rc);
 				break;
 			case NLM_F_CREATE:
 			default:
 				action.udsp_priority = prio;
-				rc = lustre_lnet_add_udsp(src, dst, rte,
+				rc = grumple_lnet_add_udsp(src, dst, rte,
 							  prio ? "priority" : "",
 							  &action, idx,
 							  seq_no, &err_rc);
@@ -4574,9 +4574,9 @@ out_free_key:
 }
 
 static void
-free_ip2nets_lists(struct lustre_lnet_ip2nets *ip2nets)
+free_ip2nets_lists(struct grumple_lnet_ip2nets *ip2nets)
 {
-	struct lustre_lnet_ip_range_descr *ip_range_descr = NULL,
+	struct grumple_lnet_ip_range_descr *ip_range_descr = NULL,
 					  *tmp = NULL;
 	struct lnet_dlc_intf_descr *intf_descr, *intf_tmp;
 
@@ -4815,7 +4815,7 @@ out_free_key:
 }
 
 static void
-init_ip2nets_tunables(struct lustre_lnet_ip2nets *ip2nets,
+init_ip2nets_tunables(struct grumple_lnet_ip2nets *ip2nets,
 		      struct lnet_ioctl_config_lnd_tunables *tunables)
 {
 	INIT_LIST_HEAD(&ip2nets->ip2nets_ip_ranges);
@@ -4848,7 +4848,7 @@ init_lnd_tunables(__u32 net_type,
 static int
 add_intf_helper(struct list_head *list, char *intf)
 {
-	return lustre_lnet_add_intf_descr(list, intf, strlen(intf));
+	return grumple_lnet_add_intf_descr(list, intf, strlen(intf));
 }
 
 static int
@@ -4983,7 +4983,7 @@ yaml_parser_error:
 static int
 handle_ip2nets_sequence(yaml_parser_t *setup, int flags)
 {
-	struct lustre_lnet_ip2nets ip2nets;
+	struct grumple_lnet_ip2nets ip2nets;
 	struct lnet_dlc_network_descr *nw_descr = &ip2nets.ip2nets_net;
 	struct lnet_ioctl_config_lnd_tunables tunables;
 	struct cfs_expr_list *global_cpts = NULL;
@@ -5016,7 +5016,7 @@ handle_ip2nets_sequence(yaml_parser_t *setup, int flags)
 			__u32 nnids = 0;
 			char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 
-			rc = lustre_lnet_resolve_ip2nets_rule(&ip2nets, &nids,
+			rc = grumple_lnet_resolve_ip2nets_rule(&ip2nets, &nids,
 							      &nnids, err_str,
 							      sizeof(err_str));
 			if (nids)
@@ -5107,7 +5107,7 @@ handle_ip2nets_sequence(yaml_parser_t *setup, int flags)
 			yaml_event_delete(&event);
 
 			rc = parse_yaml_list(setup, &ip2nets.ip2nets_ip_ranges,
-					     lustre_lnet_add_ip_range);
+					     grumple_lnet_add_ip_range);
 			if (rc < 0) {
 				snprintf(errmsg, LNET_MAX_STR_LEN,
 					 "Failed to parse ip-range list rc = %d",
@@ -5472,23 +5472,23 @@ old_api:
 
 	switch (cmd) {
 	case 'a':
-		rc = lustre_yaml_config(yaml_blk, st.st_size, &err_rc);
-		return_rc = lustre_yaml_exec(yaml_blk, st.st_size, &show_rc,
+		rc = grumple_yaml_config(yaml_blk, st.st_size, &err_rc);
+		return_rc = grumple_yaml_exec(yaml_blk, st.st_size, &show_rc,
 					     &err_rc);
 		cYAML_print_tree(show_rc);
 		cYAML_free_tree(show_rc);
 		break;
 	case 'd':
-		rc = lustre_yaml_del(yaml_blk, st.st_size, &err_rc);
+		rc = grumple_yaml_del(yaml_blk, st.st_size, &err_rc);
 		break;
 	case 's':
-		rc = lustre_yaml_show(yaml_blk, st.st_size, &show_rc,
+		rc = grumple_yaml_show(yaml_blk, st.st_size, &show_rc,
 				      &err_rc);
 		cYAML_print_tree(show_rc);
 		cYAML_free_tree(show_rc);
 		break;
 	case 'e':
-		rc = lustre_yaml_exec(yaml_blk, st.st_size, &show_rc,
+		rc = grumple_yaml_exec(yaml_blk, st.st_size, &show_rc,
 				      &err_rc);
 		cYAML_print_tree(show_rc);
 		cYAML_free_tree(show_rc);
@@ -5566,7 +5566,7 @@ static int jt_export(int argc, char **argv)
 			goto old_route;
 	}
 
-	rc = lustre_lnet_show_routing(-1, &show_rc, &err_rc, backup);
+	rc = grumple_lnet_show_routing(-1, &show_rc, &err_rc, backup);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
@@ -5583,14 +5583,14 @@ static int jt_export(int argc, char **argv)
 	goto show_others;
 
 old_api:
-	rc = lustre_lnet_show_net(NULL, 2, -1, &show_rc, &err_rc, backup);
+	rc = grumple_lnet_show_net(NULL, 2, -1, &show_rc, &err_rc, backup);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 old_route:
-	rc = lustre_lnet_show_route(NULL, NULL, -1, -1, 1, -1, &show_rc,
+	rc = grumple_lnet_show_route(NULL, NULL, -1, -1, 1, -1, &show_rc,
 				    &err_rc, backup);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
@@ -5598,106 +5598,106 @@ old_route:
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_routing(-1, &show_rc, &err_rc, backup);
+	rc = grumple_lnet_show_routing(-1, &show_rc, &err_rc, backup);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 old_peer:
-	rc = lustre_lnet_show_peer(NULL, 2, -1, &show_rc, &err_rc, backup);
+	rc = grumple_lnet_show_peer(NULL, 2, -1, &show_rc, &err_rc, backup);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 show_others:
-	rc = lustre_lnet_show_numa_range(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_numa_range(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_max_intf(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_max_intf(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_discovery(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_discovery(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_drop_asym_route(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_drop_asym_route(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_retry_count(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_retry_count(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_transaction_to(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_transaction_to(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_hsensitivity(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_hsensitivity(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_recov_intrv(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_recov_intrv(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_rtr_sensitivity(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_rtr_sensitivity(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_lnd_timeout(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_lnd_timeout(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_response_tracking(-1, &show_rc, &err_rc);
-	if (rc != LUSTRE_CFG_RC_NO_ERR) {
-		cYAML_print_tree2file(f, err_rc);
-		cYAML_free_tree(err_rc);
-		err_rc = NULL;
-	}
-
-	rc = lustre_lnet_show_recovery_limit(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_response_tracking(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_max_recovery_ping_interval(-1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_recovery_limit(-1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
 		err_rc = NULL;
 	}
 
-	rc = lustre_lnet_show_udsp(-1, -1, &show_rc, &err_rc);
+	rc = grumple_lnet_show_max_recovery_ping_interval(-1, &show_rc, &err_rc);
+	if (rc != LUSTRE_CFG_RC_NO_ERR) {
+		cYAML_print_tree2file(f, err_rc);
+		cYAML_free_tree(err_rc);
+		err_rc = NULL;
+	}
+
+	rc = grumple_lnet_show_udsp(-1, -1, &show_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		cYAML_print_tree2file(f, err_rc);
 		cYAML_free_tree(err_rc);
@@ -5790,7 +5790,7 @@ static int jt_peer_nid_common(int argc, char **argv, int cmd)
 		return rc;
 	}
 old_api:
-	rc = lustre_lnet_modify_peer(prim_nid, nidstr, is_mr, cmd,
+	rc = grumple_lnet_modify_peer(prim_nid, nidstr, is_mr, cmd,
 				     force_lock, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		goto out;
@@ -5865,7 +5865,7 @@ static int jt_show_peer(int argc, char **argv)
 		return rc;
 	}
 old_api:
-	rc = lustre_lnet_show_peer(nid, (int) detail, -1, &show_rc, &err_rc,
+	rc = grumple_lnet_show_peer(nid, (int) detail, -1, &show_rc, &err_rc,
 				   false);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
@@ -5897,7 +5897,7 @@ static int jt_list_peer(int argc, char **argv)
 	}
 
 old_api:
-	rc = lustre_lnet_list_peer(-1, &list_rc, &err_rc);
+	rc = grumple_lnet_list_peer(-1, &list_rc, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 	else if (list_rc)
@@ -6138,9 +6138,9 @@ static int yaml_lnet_ping(char *group, int timeout, struct lnet_nid *src_nid,
 	NL_INIT_LIST_HEAD(&head.children);
 	nl_init_list_head(&head.list);
 	for (i = start; i < end; i++) {
-		rc = lustre_lnet_parse_nid_range(&head, nids[i], &msg);
+		rc = grumple_lnet_parse_nid_range(&head, nids[i], &msg);
 		if (rc < 0) {
-			lustre_lnet_free_list(&head);
+			grumple_lnet_free_list(&head);
 			yaml_emitter_delete(&output);
 			errno = rc;
 			rc = 0;
@@ -6254,7 +6254,7 @@ static int jt_ping(int argc, char **argv)
 	for (; optind < argc; optind++) {
 		int rc2;
 
-		rc2 = lustre_lnet_ping_nid(argv[optind], src_nidstr, timeout,
+		rc2 = grumple_lnet_ping_nid(argv[optind], src_nidstr, timeout,
 					   -1, &show_rc, &err_rc);
 		if (rc2 != 0 && (rc > 0 || rc == -EOPNOTSUPP))
 			rc = rc2;
@@ -6317,7 +6317,7 @@ static int jt_discover(int argc, char **argv)
 	}
 
 	for (; optind < argc; optind++)
-		rc = lustre_lnet_discover_nid(argv[optind], force, -1, &show_rc,
+		rc = grumple_lnet_discover_nid(argv[optind], force, -1, &show_rc,
 					      &err_rc);
 
 	if (show_rc)
@@ -6394,7 +6394,7 @@ static int jt_add_udsp(int argc, char **argv)
 		return 0;
 	}
 
-	rc = lustre_lnet_add_udsp(src, dst, rte, action_type, &udsp_action,
+	rc = grumple_lnet_add_udsp(src, dst, rte, action_type, &udsp_action,
 				  idx, -1, &err_rc);
 
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
@@ -6452,7 +6452,7 @@ static int jt_del_udsp(int argc, char **argv)
 		return -EINVAL;
 	}
 
-	rc = lustre_lnet_del_udsp(idx, -1, &err_rc);
+	rc = grumple_lnet_del_udsp(idx, -1, &err_rc);
 	if (rc != LUSTRE_CFG_RC_NO_ERR)
 		cYAML_print_tree2file(stderr, err_rc);
 
@@ -6887,7 +6887,7 @@ int main(int argc, char **argv)
 	int rc = 0;
 	struct cYAML *err_rc = NULL;
 
-	rc = lustre_lnet_config_lib_init();
+	rc = grumple_lnet_config_lib_init();
 	if (rc < 0) {
 		cYAML_build_error(-1, -1, "lnetctl", "startup",
 				  "cannot register LNet device", &err_rc);

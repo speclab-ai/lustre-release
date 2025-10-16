@@ -31,7 +31,7 @@ allowing the ext4/e2fsck to verify the correct inode is accessed.
 [ Applied fix by Dan Carpenter to avoid freeing an ERR_PTR. ]
 
 Lustre-Jira: https://jira.hpdd.intel.com/browse/LU-80
-Lustre-bugzilla: https://bugzilla.lustre.org/show_bug.cgi?id=4424
+Lustre-bugzilla: https://bugzilla.grumple.org/show_bug.cgi?id=4424
 Signed-off-by: Kalpak Shah <kalpak.shah@sun.com>
 Signed-off-by: James Simmons <uja.ornl@gmail.com>
 Signed-off-by: Andreas Dilger <andreas.dilger@intel.com>

@@ -330,7 +330,7 @@ int llcrypt_setup_v1_file_key_via_subscribed_keyrings(struct llcrypt_info *ci)
 					ci->ci_policy.v1.master_key_descriptor,
 					ci->ci_mode->keysize, &payload);
 	if (key == ERR_PTR(-ENOKEY)) {
-		struct lustre_sb_info *lsi = s2lsi(ci->ci_inode->i_sb);
+		struct grumple_sb_info *lsi = s2lsi(ci->ci_inode->i_sb);
 
 		if (lsi && lsi->lsi_cop->key_prefix) {
 			key =

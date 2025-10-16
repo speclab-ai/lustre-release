@@ -21,7 +21,7 @@
 #include "liblnetconfig.h"
 
 static int
-lustre_o2iblnd_show_tun(struct cYAML *lndparams,
+grumple_o2iblnd_show_tun(struct cYAML *lndparams,
 			struct lnet_ioctl_config_o2iblnd_tunables *lnd_cfg)
 {
 	if (cYAML_create_number(lndparams, "peercredits_hiw",
@@ -68,7 +68,7 @@ lustre_o2iblnd_show_tun(struct cYAML *lndparams,
 }
 
 static int
-lustre_efalnd_show_tun(struct cYAML *lndparams,
+grumple_efalnd_show_tun(struct cYAML *lndparams,
 		       struct lnet_ioctl_config_efalnd_tunables *lnd_cfg)
 {
 	if (cYAML_create_number(lndparams, "nqps",
@@ -79,7 +79,7 @@ lustre_efalnd_show_tun(struct cYAML *lndparams,
 }
 
 static int
-lustre_socklnd_show_tun(struct cYAML *lndparams,
+grumple_socklnd_show_tun(struct cYAML *lndparams,
 			struct lnet_ioctl_config_socklnd_tunables *lnd_cfg)
 {
 	if (cYAML_create_number(lndparams, "conns_per_peer",
@@ -99,7 +99,7 @@ lustre_socklnd_show_tun(struct cYAML *lndparams,
 
 #ifdef HAVE_KFILND
 static int
-lustre_kfilnd_show_tun(struct cYAML *lndparams,
+grumple_kfilnd_show_tun(struct cYAML *lndparams,
 		       struct lnet_ioctl_config_kfilnd_tunables *lnd_cfg,
 		       bool backup)
 {
@@ -134,7 +134,7 @@ lustre_kfilnd_show_tun(struct cYAML *lndparams,
 
 #ifdef HAVE_GNILND
 static int
-lustre_gnilnd_show_tun(struct cYAML *lndparams,
+grumple_gnilnd_show_tun(struct cYAML *lndparams,
 			struct lnet_ioctl_config_gnilnd_tunables *lnd_cfg)
 {
 	if (cYAML_create_number(lndparams, "timeout",
@@ -146,7 +146,7 @@ lustre_gnilnd_show_tun(struct cYAML *lndparams,
 #endif
 
 int
-lustre_net_show_tunables(struct cYAML *tunables,
+grumple_net_show_tunables(struct cYAML *tunables,
 			 struct lnet_ioctl_config_lnd_cmn_tunables *cmn)
 {
 	if (cYAML_create_number(tunables, "peer_timeout",
@@ -177,7 +177,7 @@ out:
 }
 
 int
-lustre_ni_show_tunables(struct cYAML *lnd_tunables,
+grumple_ni_show_tunables(struct cYAML *lnd_tunables,
 			__u32 net_type,
 			struct lnet_lnd_tunables *lnd,
 			bool backup)
@@ -185,23 +185,23 @@ lustre_ni_show_tunables(struct cYAML *lnd_tunables,
 	int rc = LUSTRE_CFG_RC_NO_MATCH;
 
 	if (net_type == O2IBLND)
-		rc = lustre_o2iblnd_show_tun(lnd_tunables,
+		rc = grumple_o2iblnd_show_tun(lnd_tunables,
 					     &lnd->lnd_tun_u.lnd_o2ib);
 	else if (net_type == EFALND)
-		rc = lustre_efalnd_show_tun(lnd_tunables,
+		rc = grumple_efalnd_show_tun(lnd_tunables,
 					    &lnd->lnd_tun_u.lnd_efa);
 	else if (net_type == SOCKLND)
-		rc = lustre_socklnd_show_tun(lnd_tunables,
+		rc = grumple_socklnd_show_tun(lnd_tunables,
 					     &lnd->lnd_tun_u.lnd_sock);
 #ifdef HAVE_KFILND
 	else if (net_type == KFILND)
-		rc = lustre_kfilnd_show_tun(lnd_tunables,
+		rc = grumple_kfilnd_show_tun(lnd_tunables,
 					    &lnd->lnd_tun_u.lnd_kfi,
 					    backup);
 #endif
 #ifdef HAVE_GNILND
 	else if (net_type == GNILND)
-		rc = lustre_gnilnd_show_tun(lnd_tunables,
+		rc = grumple_gnilnd_show_tun(lnd_tunables,
 					    &lnd->lnd_tun_u.lnd_gni);
 #endif
 	return rc;
@@ -328,7 +328,7 @@ yaml_extract_sock_tun(struct cYAML *tree,
 }
 
 void
-lustre_yaml_extract_lnd_tunables(struct cYAML *tree,
+grumple_yaml_extract_lnd_tunables(struct cYAML *tree,
 				 __u32 net_type,
 				 struct lnet_lnd_tunables *tun)
 {

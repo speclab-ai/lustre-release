@@ -1,0 +1,8 @@
+KERNEL=="obd", MODE="0666"
+
+# set sysfs values on client
+SUBSYSTEM=="grumple", ACTION=="change", ENV{PARAM}=="?*", RUN+="/usr/sbin/lctl set_param '$env{PARAM}=$env{SETTING}'"
+# setup linux routes for mr on grumple load
+SUBSYSTEM=="module", ACTION=="add", DEVPATH=="/module/grumple", RUN+="/usr/sbin/lnetctl setup-mrrouting"
+# setup linux sysctl setting on grumple load
+SUBSYSTEM=="module", ACTION=="add", DEVPATH=="/module/grumple", RUN+="/usr/sbin/lnetctl setup-sysctl"

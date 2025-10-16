@@ -27,8 +27,8 @@
 #include <linux/fs.h>
 #include <linux/mm.h>
 #include <linux/slab.h>
-#include <lustre_disk.h>
-#include <lustre_compat/uapi/linux/llcrypt.h>
+#include <grumple_disk.h>
+#include <grumple_compat/uapi/linux/llcrypt.h>
 
 #define LL_CRYPTO_BLOCK_SIZE		16
 
@@ -99,7 +99,7 @@ extern bool llcrypt_has_encryption_key(const struct inode *inode);
 
 static inline bool llcrypt_dummy_context_enabled(struct inode *inode)
 {
-	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 
 	if (unlikely(!lsi))
 		return false;
@@ -173,7 +173,7 @@ extern int llcrypt_inherit_context(struct inode *, struct inode *,
 					void *, bool);
 extern bool llcrypt_policy_has_filename_enc(struct inode *inode);
 
-extern void llcrypt_sb_free(struct lustre_sb_info *lsi);
+extern void llcrypt_sb_free(struct grumple_sb_info *lsi);
 extern int llcrypt_ioctl_add_key(struct file *filp, void __user *arg);
 extern int llcrypt_ioctl_remove_key(struct file *filp, void __user *arg);
 extern int llcrypt_ioctl_remove_key_all_users(struct file *filp,
@@ -292,7 +292,7 @@ extern const char *llcrypt_get_symlink(struct inode *inode, const void *caddr,
 static inline void llcrypt_set_ops(struct super_block *sb,
 				   const struct llcrypt_operations *lsi_cop)
 {
-	struct lustre_sb_info *lsi = s2lsi(sb);
+	struct grumple_sb_info *lsi = s2lsi(sb);
 
 	if (lsi)
 		lsi->lsi_cop = lsi_cop;
@@ -425,7 +425,7 @@ static inline bool llcrypt_policy_has_filename_enc(struct inode *inode)
 }
 
 
-static inline void llcrypt_sb_free(struct lustre_sb_info *lsi)
+static inline void llcrypt_sb_free(struct grumple_sb_info *lsi)
 {
 }
 

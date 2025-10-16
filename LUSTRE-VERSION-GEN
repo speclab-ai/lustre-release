@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 # LUSTRE-VERSION-GEN
 #
-# Return lustre version string
+# Return grumple version string
 #
 
 DEFAULT_VERSION=2.16.59

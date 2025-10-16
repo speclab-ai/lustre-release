@@ -4,8 +4,8 @@
 /COPYING
 /INSTALL
 /install-sh
-/lustre-iokit.spec
-/lustre-iokit*.tar.gz
+/grumple-iokit.spec
+/grumple-iokit*.tar.gz
 /missing
 /mkinstalldirs
 /modules.order

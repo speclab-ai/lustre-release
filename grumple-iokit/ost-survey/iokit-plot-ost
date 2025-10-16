@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 # Report generation for ost-survey.pl
 # ===================================
@@ -24,7 +24,7 @@ sub usages_msg(){
 	print "Usage: $0 <log_filename> \n";
 	print "       $0 produces graphs from the output of ost-survey.pl\n";
 	print "       using gnuplot.\n";
-	print "e.g.# perl ost-survey /mnt/lustre > ost-log; perl $0 ost-log\n";
+	print "e.g.# perl ost-survey /mnt/grumple > ost-log; perl $0 ost-log\n";
 	exit 1;
 }
 

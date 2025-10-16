@@ -2,5 +2,5 @@ ifneq (@LDISKFS_SUBDIR@,)
 obj-m += @LDISKFS_SUBDIR@/
 endif
 obj-m += libcfs/ lnet/
-obj-m += lustre/
+obj-m += grumple/
 @INCLUDE_RULES@

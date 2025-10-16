@@ -18,16 +18,16 @@
 #include <cyaml.h>
 
 int
-lustre_net_show_tunables(struct cYAML *tunables,
+grumple_net_show_tunables(struct cYAML *tunables,
 			 struct lnet_ioctl_config_lnd_cmn_tunables *cmn);
 
 int
-lustre_ni_show_tunables(struct cYAML *lnd_tunables,
+grumple_ni_show_tunables(struct cYAML *lnd_tunables,
 			__u32 net_type,
 			struct lnet_lnd_tunables *lnd, bool backup);
 
 void
-lustre_yaml_extract_lnd_tunables(struct cYAML *tree,
+grumple_yaml_extract_lnd_tunables(struct cYAML *tree,
 				 __u32 net_type,
 				 struct lnet_lnd_tunables *tun);
 

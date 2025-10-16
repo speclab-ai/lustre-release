@@ -474,7 +474,7 @@ int llcrypt_get_encryption_info(struct inode *inode)
 	union llcrypt_context ctx;
 	struct llcrypt_mode *mode;
 	struct key *master_key = NULL;
-	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 	int res;
 
 	if (llcrypt_has_encryption_key(inode))

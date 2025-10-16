@@ -48,10 +48,10 @@ AS_IF([test $target_cpu = powerpc64], [
 	CFLAGS="$CFLAGS -m64"
 	CC="$CC -m64"
 ])
-CPPFLAGS="-I$PWD/libcfs/include -I$PWD/lnet/utils/ -I$PWD/lustre/include $CPPFLAGS"
+CPPFLAGS="-I$PWD/libcfs/include -I$PWD/lnet/utils/ -I$PWD/grumple/include $CPPFLAGS"
 CCASFLAGS="-Wall -fPIC -D_GNU_SOURCE"
 AC_SUBST(CCASFLAGS)
-EXTRA_KCFLAGS="$EXTRA_KCFLAGS -g -I$PWD/libcfs/include -I$PWD/libcfs/include/libcfs -I$PWD/lnet/include/uapi -I$PWD/lnet/include -I$PWD/lustre/include/uapi -I$PWD/lustre/include -I$PWD/include"
+EXTRA_KCFLAGS="$EXTRA_KCFLAGS -g -I$PWD/libcfs/include -I$PWD/libcfs/include/libcfs -I$PWD/lnet/include/uapi -I$PWD/lnet/include -I$PWD/grumple/include/uapi -I$PWD/grumple/include -I$PWD/include"
 AC_SUBST(EXTRA_KCFLAGS)
 ]) 
 AC_DEFUN([LTC_CC_NO_FORMAT_TRUNCATION], [

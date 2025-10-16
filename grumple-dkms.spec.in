@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
-# lustre-dkms.spec.in
+# grumple-dkms.spec.in
 #
 # spec file template for RHEL dkms package builds
 #
@@ -21,42 +21,42 @@
 %global __os_install_post %(echo '%{__os_install_post}' | sed -e 's!/usr/lib[^[:space:]]*/brp-python-bytecompile[[:space:]].*$!!g')
 
 # Set the package name prefix
-%if %{undefined lustre_name}
-	%global lustre_name @PACKAGE@
+%if %{undefined grumple_name}
+	%global grumple_name @PACKAGE@
 %endif
 
 # Set the package name prefix
 %if %{with servers}
     %if %{with zfs}
 	%if %{with ldiskfs}
-	    %define module %{lustre_name}-all
+	    %define module %{grumple_name}-all
 	%else
-	    %define module %{lustre_name}-zfs
+	    %define module %{grumple_name}-zfs
 	%endif
     %else
 	%if %{without ldiskfs}
-	    %define module %{lustre_name}-BADSTATE
+	    %define module %{grumple_name}-BADSTATE
 	%else
-	    %define module %{lustre_name}-ldiskfs
+	    %define module %{grumple_name}-ldiskfs
 	%endif
     %endif
-    %define lustre_kmp_name %{lustre_name}
+    %define grumple_kmp_name %{grumple_name}
 %else
-    %define module %{lustre_name}-client
-    %define lustre_kmp_name %{lustre_name}-client
+    %define module %{grumple_name}-client
+    %define grumple_kmp_name %{grumple_name}-client
 %endif
 
 %if "%{_vendor}" == "redhat" || "%{_vendor}" == "fedora"
-	%global kmod_name kmod-%{lustre_kmp_name}
+	%global kmod_name kmod-%{grumple_kmp_name}
 	%define mkconf_options %{nil}
 #for Suse / Ubuntu
 %else
-	%global kmod_name %{lustre_kmp_name}-kmp
+	%global kmod_name %{grumple_kmp_name}-kmp
 	%define mkconf_options -k updates
 %endif
 
 %define buildid 1
-%define mkconf  lustre/scripts/dkms.mkconf
+%define mkconf  grumple/scripts/dkms.mkconf
 
 # There should be a better (non-arch dependent) way to require ext4
 # sources
@@ -69,7 +69,7 @@ Release:        %{buildid}%{?dist}
 Summary:        Kernel module(s) (dkms)
 
 License:        GPL-2.0-only
-URL:            http://lustre.opensfs.org/
+URL:            http://grumple.opensfs.org/
 Source0:        @PACKAGE@-%{version}.tar.gz
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildArch:      noarch
@@ -88,27 +88,27 @@ Requires:	libnl3-devel
 # If client package is installed when installing server, remove it since
 # the server package also includes the client.  This can be removed if/when
 # the packages are split into independent client/server/common packages.
-Obsoletes:	%{lustre_name}-client < %{version}
+Obsoletes:	%{grumple_name}-client < %{version}
 %if %{with zfs}
 Requires:       zfs-dkms >= 0.6.5
-Conflicts:	%{lustre_name}-ldiskfs-dkms
-Conflicts:	%{lustre_name}-client-dkms
-# lustre-zfs-dkms replicates the functionality old lustre-dkms package
-Provides:	%{lustre_name}-dkms
-Obsoletes:	%{lustre_name}-dkms
+Conflicts:	%{grumple_name}-ldiskfs-dkms
+Conflicts:	%{grumple_name}-client-dkms
+# grumple-zfs-dkms replicates the functionality old grumple-dkms package
+Provides:	%{grumple_name}-dkms
+Obsoletes:	%{grumple_name}-dkms
 %endif
 %if %{with ldiskfs}
 Requires:	patch
 Requires:	ldiskfsprogs-devel >= 1.47.1
 Requires:	%{ext4_source_rpm}
-Conflicts:	%{lustre_name}-zfs-dkms
-Conflicts:	%{lustre_name}-client-dkms
-%if "%{module}" != "%{lustre_name}-all"
-Conflicts:	%{lustre_name}-dkms
+Conflicts:	%{grumple_name}-zfs-dkms
+Conflicts:	%{grumple_name}-client-dkms
+%if "%{module}" != "%{grumple_name}-all"
+Conflicts:	%{grumple_name}-dkms
 %endif
 %endif
-%if "%{module}" != "%{lustre_name}-all"
-Conflicts:	%{lustre_name}-all-dkms
+%if "%{module}" != "%{grumple_name}-all"
+Conflicts:	%{grumple_name}-all-dkms
 %endif
 %endif
 Requires:	gcc, make
@@ -120,21 +120,21 @@ Suggests:	bash-completion
 Requires:	perl
 %endif
 Provides:	%{kmod_name} = %{version}
-Provides:	%{lustre_name}-modules = %{version}
+Provides:	%{grumple_name}-modules = %{version}
 %if %{with servers}
 %if %{with zfs}
-Provides:	%{lustre_name}-osd-zfs = %{version}
-Provides:	kmod-%{lustre_name}-osd-zfs = %{version}
-Provides:	%{lustre_name}-osd-zfs-mount = %{version}
+Provides:	%{grumple_name}-osd-zfs = %{version}
+Provides:	kmod-%{grumple_name}-osd-zfs = %{version}
+Provides:	%{grumple_name}-osd-zfs-mount = %{version}
 %endif
 %if %{with ldiskfs}
-Provides:	%{lustre_name}-osd-ldiskfs = %{version}
-Provides:	kmod-%{lustre_name}-osd-ldiskfs = %{version}
-Provides:	%{lustre_name}-osd-ldiskfs-mount = %{version}
+Provides:	%{grumple_name}-osd-ldiskfs = %{version}
+Provides:	kmod-%{grumple_name}-osd-ldiskfs = %{version}
+Provides:	%{grumple_name}-osd-ldiskfs-mount = %{version}
 %endif
-Provides:	%{lustre_name}-osd
+Provides:	%{grumple_name}-osd
 %else
-Provides:	%{lustre_name}-client
+Provides:	%{grumple_name}-client
 %endif
 
 %description
@@ -156,7 +156,7 @@ if [ "$RPM_BUILD_ROOT" != "/" ]; then
     rm -rf $RPM_BUILD_ROOT
 fi
 mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
-cp lustre/conf/dkms-lustre $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
+cp grumple/conf/dkms-grumple $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig
 mkdir -p $RPM_BUILD_ROOT/usr/src/
 cp -rfp ${RPM_BUILD_DIR}/@PACKAGE@-%{version} $RPM_BUILD_ROOT/usr/src/
 mv $RPM_BUILD_ROOT/usr/src/@PACKAGE@-%{version} $RPM_BUILD_ROOT/usr/src/%{module}-%{version}
@@ -169,7 +169,7 @@ fi
 %files
 %defattr(-,root,root)
 /usr/src/%{module}-%{version}
-%config(noreplace) %{_sysconfdir}/sysconfig/dkms-lustre
+%config(noreplace) %{_sysconfdir}/sysconfig/dkms-grumple
 
 %post
 for POSTINST in /usr/lib/dkms/common.postinst; do

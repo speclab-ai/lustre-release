@@ -448,7 +448,7 @@ lnet_str2udsp_action(char *type)
 	return EN_LNET_UDSP_ACTION_NONE;
 }
 
-int lustre_lnet_add_udsp(char *src, char *dst, char *rte,
+int grumple_lnet_add_udsp(char *src, char *dst, char *rte,
 			 char *type, union lnet_udsp_action *action,
 			 int idx, int seq_no, struct cYAML **err_rc)
 {
@@ -594,7 +594,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_del_udsp(unsigned int idx, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_del_udsp(unsigned int idx, int seq_no, struct cYAML **err_rc)
 {
 	int rc;
 	char err_str[LNET_MAX_STR_LEN];
@@ -614,7 +614,7 @@ int lustre_lnet_del_udsp(unsigned int idx, int seq_no, struct cYAML **err_rc)
 	return rc;
 }
 
-static int lustre_lnet_nid_descr2str(struct lnet_ud_nid_descr *d,
+static int grumple_lnet_nid_descr2str(struct lnet_ud_nid_descr *d,
 				     char *str, size_t size)
 {
 	int left = size;
@@ -678,7 +678,7 @@ static int yaml_add_udsp_action(struct cYAML *y, struct lnet_udsp *udsp)
 	return 0;
 }
 
-int lustre_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 			  struct cYAML **err_rc)
 {
 	struct lnet_ioctl_udsp *data = NULL;
@@ -766,7 +766,7 @@ int lustre_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 			goto out;
 
 		memset(tmp, 0, LNET_MAX_STR_LEN);
-		rc = lustre_lnet_nid_descr2str(&udsp->udsp_src, tmp,
+		rc = grumple_lnet_nid_descr2str(&udsp->udsp_src, tmp,
 					       LNET_MAX_STR_LEN);
 
 		if (rc)
@@ -775,7 +775,7 @@ int lustre_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 		if (cYAML_create_string(item, "src", tmp) == NULL)
 			goto out;
 		memset(tmp, 0, LNET_MAX_STR_LEN);
-		rc = lustre_lnet_nid_descr2str(&udsp->udsp_dst, tmp,
+		rc = grumple_lnet_nid_descr2str(&udsp->udsp_dst, tmp,
 					       LNET_MAX_STR_LEN);
 
 		if (rc)
@@ -785,7 +785,7 @@ int lustre_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 			goto out;
 
 		memset(tmp, 0, LNET_MAX_STR_LEN);
-		rc = lustre_lnet_nid_descr2str(&udsp->udsp_rte, tmp,
+		rc = grumple_lnet_nid_descr2str(&udsp->udsp_rte, tmp,
 					       LNET_MAX_STR_LEN);
 
 		if (rc)

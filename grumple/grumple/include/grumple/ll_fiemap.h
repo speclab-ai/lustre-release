@@ -1,0 +1,28 @@
+
+
+/*
+ * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Use is subject to license terms.
+ *
+ * Copyright (c) 2014, 2015, Intel Corporation.
+ */
+
+/*
+ * This file is part of Lustre, http:
+ *
+ * FIEMAP data structures and flags. This header file will be used until
+ * fiemap.h is available in the upstream kernel.
+ *
+ * Author: Kalpak Shah <kalpak.shah@sun.com>
+ * Author: Andreas Dilger <adilger@sun.com>
+ */
+
+/*
+ * NOTE: This file is DEPRECATED! Please include linux/grumple/grumple_fiemap.h
+ * directly instead of this file. This file will be removed from a
+ * future version of grumple!
+ */
+
+#include <linux/grumple/grumple_fiemap.h>
+
+#warning "Including ll_fiemap.h is deprecated. Include linux/grumple/grumple_fiemap.h directly."

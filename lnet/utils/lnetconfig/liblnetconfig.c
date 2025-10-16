@@ -120,20 +120,20 @@ void free_intf_descr(struct lnet_dlc_intf_descr *intf_descr)
 }
 
 /*
- * lustre_lnet_add_ip_range
+ * grumple_lnet_add_ip_range
  * Formatting:
  *	given a string of the format:
  *	<expr.expr.expr.expr> parse each expr into
- *	a lustre_lnet_ip_range_descr structure and insert on the list.
+ *	a grumple_lnet_ip_range_descr structure and insert on the list.
  *
  *	This function is called from
  *		YAML on each ip-range.
  *		As a result of lnetctl command
  *		When building a NID or P2P selection rules
  */
-int lustre_lnet_add_ip_range(struct list_head *list, char *str_ip_range)
+int grumple_lnet_add_ip_range(struct list_head *list, char *str_ip_range)
 {
-	struct lustre_lnet_ip_range_descr *ip_range;
+	struct grumple_lnet_ip_range_descr *ip_range;
 	int rc;
 
 	ip_range = calloc(1, sizeof(*ip_range));
@@ -153,7 +153,7 @@ int lustre_lnet_add_ip_range(struct list_head *list, char *str_ip_range)
 	return LUSTRE_CFG_RC_NO_ERR;
 }
 
-int lustre_lnet_add_intf_descr(struct list_head *list, char *intf,
+int grumple_lnet_add_intf_descr(struct list_head *list, char *intf,
 				      int len)
 {
 	char *open_sq_bracket = NULL, *close_sq_bracket = NULL,
@@ -211,7 +211,7 @@ int lustre_lnet_add_intf_descr(struct list_head *list, char *intf,
 	return LUSTRE_CFG_RC_NO_ERR;
 }
 
-void lustre_lnet_init_nw_descr(struct lnet_dlc_network_descr *nw_descr)
+void grumple_lnet_init_nw_descr(struct lnet_dlc_network_descr *nw_descr)
 {
 	if (nw_descr != NULL) {
 		nw_descr->nw_id = 0;
@@ -220,7 +220,7 @@ void lustre_lnet_init_nw_descr(struct lnet_dlc_network_descr *nw_descr)
 	}
 }
 
-int lustre_lnet_debug_nidlist(char *nidstr, char *match_nid)
+int grumple_lnet_debug_nidlist(char *nidstr, char *match_nid)
 {
 	struct list_head nidlist;
 	int rc;
@@ -272,7 +272,7 @@ failed:
 	return LUSTRE_CFG_RC_BAD_PARAM;
 }
 
-int lustre_lnet_parse_nidstr(char *nidstr, lnet_nid_t *lnet_nidlist,
+int grumple_lnet_parse_nidstr(char *nidstr, lnet_nid_t *lnet_nidlist,
 			     int max_nids, char *err_str)
 {
 	int num_nids = 0;
@@ -325,7 +325,7 @@ int lustre_lnet_parse_nidstr(char *nidstr, lnet_nid_t *lnet_nidlist,
  * format expected:
  *	<intf>[<expr>], <intf>[<expr>],..
  */
-int lustre_lnet_parse_interfaces(char *intf_str,
+int grumple_lnet_parse_interfaces(char *intf_str,
 				 struct lnet_dlc_network_descr *nw_descr)
 {
 	char *open_square;
@@ -373,7 +373,7 @@ int lustre_lnet_parse_interfaces(char *intf_str,
 		net = strchr(cur, '@');
 		if (net)
 			nw_descr->nw_id = libcfs_str2net(net + 1);
-		rc = lustre_lnet_add_intf_descr(&nw_descr->nw_intflist, cur, len);
+		rc = grumple_lnet_add_intf_descr(&nw_descr->nw_intflist, cur, len);
 		if (rc != LUSTRE_CFG_RC_NO_ERR)
 			goto failed;
 
@@ -447,17 +447,17 @@ emitter_error:
 	return rc;
 }
 
-int lustre_lnet_config_lib_init(void)
+int grumple_lnet_config_lib_init(void)
 {
 	return register_ioc_dev(LNET_DEV_ID, LNET_DEV_PATH);
 }
 
-void lustre_lnet_config_lib_uninit(void)
+void grumple_lnet_config_lib_uninit(void)
 {
 	unregister_ioc_dev(LNET_DEV_ID);
 }
 
-int lustre_lnet_config_ni_system(bool up, bool load_ni_from_mod,
+int grumple_lnet_config_ni_system(bool up, bool load_ni_from_mod,
 				 int seq_no, struct cYAML **err_rc)
 {
 	struct libcfs_ioctl_data data;
@@ -1061,7 +1061,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_ping_nid(char *ping_nids, char *src_nidstr, int timeout,
+int grumple_lnet_ping_nid(char *ping_nids, char *src_nidstr, int timeout,
 			 int seq_no, struct cYAML **show_rc,
 			 struct cYAML **err_rc)
 {
@@ -1072,7 +1072,7 @@ int lustre_lnet_ping_nid(char *ping_nids, char *src_nidstr, int timeout,
 	return rc;
 }
 
-int lustre_lnet_discover_nid(char *ping_nids, int force, int seq_no,
+int grumple_lnet_discover_nid(char *ping_nids, int force, int seq_no,
 			 struct cYAML **show_rc, struct cYAML **err_rc)
 {
 	int rc;
@@ -1082,7 +1082,7 @@ int lustre_lnet_discover_nid(char *ping_nids, int force, int seq_no,
 	return rc;
 }
 
-static int lustre_lnet_handle_peer_nidlist(lnet_nid_t *nidlist, int num_nids,
+static int grumple_lnet_handle_peer_nidlist(lnet_nid_t *nidlist, int num_nids,
 					   bool is_mr, int option, __u32 cmd,
 					   char *cmd_type, char *err_str)
 {
@@ -1139,7 +1139,7 @@ static int lustre_lnet_handle_peer_nidlist(lnet_nid_t *nidlist, int num_nids,
 }
 
 static int
-lustre_lnet_mod_peer_nidlist(lnet_nid_t pnid, lnet_nid_t *lnet_nidlist,
+grumple_lnet_mod_peer_nidlist(lnet_nid_t pnid, lnet_nid_t *lnet_nidlist,
 			     int cmd, int num_nids, bool is_mr, int option,
 			     int seq_no, struct cYAML **err_rc)
 {
@@ -1161,7 +1161,7 @@ lustre_lnet_mod_peer_nidlist(lnet_nid_t pnid, lnet_nid_t *lnet_nidlist,
 	memcpy(&lnet_nidlist2[1], lnet_nidlist, sizeof(*lnet_nidlist) *
 						(num_nids - 1));
 
-	rc = lustre_lnet_handle_peer_nidlist(lnet_nidlist2,
+	rc = grumple_lnet_handle_peer_nidlist(lnet_nidlist2,
 					     num_nids, is_mr, option,
 					     ioc_cmd, cmd_str, err_str);
 out:
@@ -1190,7 +1190,7 @@ replace_sep(char *str, char sep, char newsep)
 	}
 }
 
-int lustre_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
+int grumple_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
 			    int option, int seq_no, struct cYAML **err_rc)
 {
 	int num_nids, rc;
@@ -1219,7 +1219,7 @@ int lustre_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
 		 * the nids list the primary nid
 		 */
 		replace_sep(nids, ',', ' ');
-		rc = lustre_lnet_parse_nidstr(nids, lnet_nidlist,
+		rc = grumple_lnet_parse_nidstr(nids, lnet_nidlist,
 					LNET_MAX_NIDS_PER_PEER, err_str);
 		if (rc < 0)
 			goto out;
@@ -1227,7 +1227,7 @@ int lustre_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
 		num_nids = rc;
 	}
 
-	rc = lustre_lnet_mod_peer_nidlist(pnid, lnet_nidlist,
+	rc = grumple_lnet_mod_peer_nidlist(pnid, lnet_nidlist,
 					  cmd, num_nids, is_mr,
 					  option, -1, err_rc);
 
@@ -1240,7 +1240,7 @@ out:
 	return rc;
 }
 
-static int lustre_lnet_route_common(char *nw, char *nidstr, int hops, int prio,
+static int grumple_lnet_route_common(char *nw, char *nidstr, int hops, int prio,
 				    int seq_no, struct cYAML **err_rc,
 				    int cmd)
 {
@@ -1268,7 +1268,7 @@ static int lustre_lnet_route_common(char *nw, char *nidstr, int hops, int prio,
 	}
 
 	replace_sep(nidstr, ',', ' ');
-	rc = lustre_lnet_parse_nidstr(nidstr, lnet_nidlist,
+	rc = grumple_lnet_parse_nidstr(nidstr, lnet_nidlist,
 				      LNET_MAX_NIDS_PER_PEER, err_str);
 	if (rc < 0)
 		goto out;
@@ -1320,7 +1320,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_config_route(char *nw, char *nidstr, int hops, int prio,
+int grumple_lnet_config_route(char *nw, char *nidstr, int hops, int prio,
 			     int seq_no, struct cYAML **err_rc)
 {
 	int rc;
@@ -1346,7 +1346,7 @@ int lustre_lnet_config_route(char *nw, char *nidstr, int hops, int prio,
 		goto out;
 	}
 
-	rc = lustre_lnet_route_common(nw, nidstr, hops, prio, seq_no, err_rc,
+	rc = grumple_lnet_route_common(nw, nidstr, hops, prio, seq_no, err_rc,
 				      LNETCTL_ADD_CMD);
 	return rc;
 out:
@@ -1355,14 +1355,14 @@ out:
 	return rc;
 }
 
-int lustre_lnet_del_route(char *nw, char *nidstr, int seq_no,
+int grumple_lnet_del_route(char *nw, char *nidstr, int seq_no,
 			  struct cYAML **err_rc)
 {
-	return lustre_lnet_route_common(nw, nidstr, 0, 0, seq_no, err_rc,
+	return grumple_lnet_route_common(nw, nidstr, 0, 0, seq_no, err_rc,
 					LNETCTL_DEL_CMD);
 }
 
-int lustre_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
+int grumple_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 			   int seq_no, struct cYAML **show_rc,
 			   struct cYAML **err_rc, bool backup)
 {
@@ -1570,7 +1570,7 @@ static int socket_intf_query(int request, char *intf,
 	return rc;
 }
 
-static int lustre_lnet_queryip(struct lnet_dlc_intf_descr *intf, __u32 *ip)
+static int grumple_lnet_queryip(struct lnet_dlc_intf_descr *intf, __u32 *ip)
 {
 	struct ifreq ifr;
 	int rc;
@@ -1594,7 +1594,7 @@ static int lustre_lnet_queryip(struct lnet_dlc_intf_descr *intf, __u32 *ip)
 	return LUSTRE_CFG_RC_NO_ERR;
 }
 
-static int lustre_lnet_kfi_intf2nid(struct lnet_dlc_intf_descr *intf,
+static int grumple_lnet_kfi_intf2nid(struct lnet_dlc_intf_descr *intf,
 				    __u32 *nid_addr)
 {
 	unsigned int nic_index;
@@ -1633,7 +1633,7 @@ static int lustre_lnet_kfi_intf2nid(struct lnet_dlc_intf_descr *intf,
  * that interface, create its nid and add it to an array of NIDs.
  * Stop if any of the interfaces is down
  */
-static int lustre_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
+static int grumple_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 				 lnet_nid_t **nids, __u32 *nnids,
 				 char *err_str, size_t str_len)
 {
@@ -1649,7 +1649,7 @@ static int lustre_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 
 	if (nw == NULL || nids == NULL) {
 		snprintf(err_str, str_len,
-			 "\"unexpected parameters to lustre_lnet_intf2nids()\"");
+			 "\"unexpected parameters to grumple_lnet_intf2nids()\"");
 		return LUSTRE_CFG_RC_BAD_PARAM;
 	}
 
@@ -1686,7 +1686,7 @@ static int lustre_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 		goto out;
 	} else if (LNET_NETTYP(nw->nw_id) == KFILND) {
 		list_for_each_entry(intf, &nw->nw_intflist, intf_on_network) {
-			rc = lustre_lnet_kfi_intf2nid(intf, &nic_addr);
+			rc = grumple_lnet_kfi_intf2nid(intf, &nic_addr);
 			if (rc != LUSTRE_CFG_RC_NO_ERR) {
 				snprintf(err_str, str_len,
 					"\"couldn't query kfi intf %s\"",
@@ -1720,7 +1720,7 @@ static int lustre_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 			i++;
 		} else {
 			
-			rc = lustre_lnet_queryip(intf, &ip);
+			rc = grumple_lnet_queryip(intf, &ip);
 			if (rc != LUSTRE_CFG_RC_NO_ERR) {
 				snprintf(err_str, str_len,
 					 "\"couldn't query intf %s\"",
@@ -1767,7 +1767,7 @@ failed:
  *
  *	The result is that all the interfaces have to match.
  */
-static int lustre_lnet_match_ip_to_intf(struct ifaddrs *ifa,
+static int grumple_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 					struct list_head *intf_list,
 					struct list_head *ip_ranges)
 {
@@ -1775,7 +1775,7 @@ static int lustre_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 	__u32 ip;
 	struct lnet_dlc_intf_descr *intf_descr, *tmp;
 	struct ifaddrs *ifaddr = ifa;
-	struct lustre_lnet_ip_range_descr *ip_range;
+	struct grumple_lnet_ip_range_descr *ip_range;
 	int family;
 
 	/*
@@ -1793,7 +1793,7 @@ static int lustre_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 			family = ifaddr->ifa_addr->sa_family;
 			if (family == AF_INET &&
 			    strcmp(ifaddr->ifa_name, "lo") != 0) {
-				rc = lustre_lnet_add_intf_descr
+				rc = grumple_lnet_add_intf_descr
 					(intf_list, ifaddr->ifa_name,
 					strlen(ifaddr->ifa_name));
 
@@ -1834,7 +1834,7 @@ static int lustre_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 					if (!rc)
 						continue;
 
-					rc = lustre_lnet_add_intf_descr
+					rc = grumple_lnet_add_intf_descr
 					  (intf_list, ifaddr->ifa_name,
 					   strlen(ifaddr->ifa_name));
 
@@ -1901,7 +1901,7 @@ static int lustre_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 	return LUSTRE_CFG_RC_MATCH;
 }
 
-int lustre_lnet_resolve_ip2nets_rule(struct lustre_lnet_ip2nets *ip2nets,
+int grumple_lnet_resolve_ip2nets_rule(struct grumple_lnet_ip2nets *ip2nets,
 					    lnet_nid_t **nids, __u32 *nnids,
 					    char *err_str, size_t str_len)
 {
@@ -1915,7 +1915,7 @@ int lustre_lnet_resolve_ip2nets_rule(struct lustre_lnet_ip2nets *ip2nets,
 		return -errno;
 	}
 
-	rc = lustre_lnet_match_ip_to_intf(ifa,
+	rc = grumple_lnet_match_ip_to_intf(ifa,
 					  &ip2nets->ip2nets_net.nw_intflist,
 					  &ip2nets->ip2nets_ip_ranges);
 	if (rc != LUSTRE_CFG_RC_MATCH) {
@@ -1925,7 +1925,7 @@ int lustre_lnet_resolve_ip2nets_rule(struct lustre_lnet_ip2nets *ip2nets,
 		return rc;
 	}
 
-	rc = lustre_lnet_intf2nids(&ip2nets->ip2nets_net, nids, nnids,
+	rc = grumple_lnet_intf2nids(&ip2nets->ip2nets_net, nids, nnids,
 				   err_str, str_len);
 	if (rc != LUSTRE_CFG_RC_NO_ERR) {
 		*nids = NULL;
@@ -1937,7 +1937,7 @@ int lustre_lnet_resolve_ip2nets_rule(struct lustre_lnet_ip2nets *ip2nets,
 	return rc;
 }
 
-void lustre_lnet_free_list(struct nid_node *head)
+void grumple_lnet_free_list(struct nid_node *head)
 {
 	struct nid_node *entry, *tmp;
 
@@ -2151,7 +2151,7 @@ static int unroll_nid_range_scan(struct nid_node *list, const char *nid,
 	return 0;
 }
 
-int lustre_lnet_parse_nid_range(struct nid_node *head, char *nidstr,
+int grumple_lnet_parse_nid_range(struct nid_node *head, char *nidstr,
 				const char **errmsg)
 {
 	int rc = 0;
@@ -2234,7 +2234,7 @@ err:
 }
 
 static int
-lustre_lnet_ioctl_config_ni(struct list_head *intf_list,
+grumple_lnet_ioctl_config_ni(struct list_head *intf_list,
 			    struct lnet_ioctl_config_lnd_tunables *tunables,
 			    struct cfs_expr_list *global_cpts,
 			    lnet_nid_t *nids, char *err_str)
@@ -2315,7 +2315,7 @@ lustre_lnet_ioctl_config_ni(struct list_head *intf_list,
 }
 
 int
-lustre_lnet_config_ip2nets(struct lustre_lnet_ip2nets *ip2nets,
+grumple_lnet_config_ip2nets(struct grumple_lnet_ip2nets *ip2nets,
 			   struct lnet_ioctl_config_lnd_tunables *tunables,
 			   struct cfs_expr_list *global_cpts,
 			   int seq_no, struct cYAML **err_rc)
@@ -2338,7 +2338,7 @@ lustre_lnet_config_ip2nets(struct lustre_lnet_ip2nets *ip2nets,
 	 * The memory is allocated in that function then freed here when
 	 * it's no longer needed.
 	 */
-	rc = lustre_lnet_resolve_ip2nets_rule(ip2nets, &nids, &nnids, err_str,
+	rc = grumple_lnet_resolve_ip2nets_rule(ip2nets, &nids, &nnids, err_str,
 					      sizeof(err_str));
 	if (rc != LUSTRE_CFG_RC_NO_ERR && rc != LUSTRE_CFG_RC_MATCH)
 		goto out;
@@ -2349,7 +2349,7 @@ lustre_lnet_config_ip2nets(struct lustre_lnet_ip2nets *ip2nets,
 		goto free_nids_out;
 	}
 
-	rc = lustre_lnet_ioctl_config_ni(&ip2nets->ip2nets_net.nw_intflist,
+	rc = grumple_lnet_ioctl_config_ni(&ip2nets->ip2nets_net.nw_intflist,
 					 tunables, global_cpts, nids,
 					 err_str);
 
@@ -2361,7 +2361,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
+int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 			  struct cfs_expr_list *global_cpts,
 			  char *ip2net,
 			  struct lnet_ioctl_config_lnd_tunables *tunables,
@@ -2480,14 +2480,14 @@ int lustre_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 		goto out;
 	}
 
-	rc = lustre_lnet_intf2nids(nw_descr, &nids, &nnids,
+	rc = grumple_lnet_intf2nids(nw_descr, &nids, &nnids,
 				   err_str, sizeof(err_str));
 	if (rc != 0) {
 		rc = LUSTRE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
-	rc = lustre_lnet_ioctl_config_ni(&nw_descr->nw_intflist,
+	rc = grumple_lnet_ioctl_config_ni(&nw_descr->nw_intflist,
 					 tunables, global_cpts, nids,
 					 err_str);
 
@@ -2512,7 +2512,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_del_ni(struct lnet_dlc_network_descr *nw_descr,
+int grumple_lnet_del_ni(struct lnet_dlc_network_descr *nw_descr,
 		       int seq_no, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_config_ni data;
@@ -2545,7 +2545,7 @@ int lustre_lnet_del_ni(struct lnet_dlc_network_descr *nw_descr,
 		goto out;
 	}
 
-	rc = lustre_lnet_intf2nids(nw_descr, &nids, &nnids,
+	rc = grumple_lnet_intf2nids(nw_descr, &nids, &nnids,
 				   err_str, sizeof(err_str));
 	if (rc != 0) {
 		rc = LUSTRE_CFG_RC_BAD_PARAM;
@@ -2618,7 +2618,7 @@ out:
 }
 
 static int
-lustre_lnet_config_healthv(int value, bool all, lnet_nid_t nid,
+grumple_lnet_config_healthv(int value, bool all, lnet_nid_t nid,
 			   enum lnet_health_type type, char *name,
 			   int seq_no, struct cYAML **err_rc)
 {
@@ -2646,7 +2646,7 @@ lustre_lnet_config_healthv(int value, bool all, lnet_nid_t nid,
 }
 
 static int
-lustre_lnet_config_peer(int state, lnet_nid_t nid, char *name,
+grumple_lnet_config_peer(int state, lnet_nid_t nid, char *name,
 			int seq_no, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_peer_cfg data;
@@ -2672,7 +2672,7 @@ lustre_lnet_config_peer(int state, lnet_nid_t nid, char *name,
 }
 
 static int
-lustre_lnet_config_conns_per_peer(int value, bool all, lnet_nid_t nid,
+grumple_lnet_config_conns_per_peer(int value, bool all, lnet_nid_t nid,
 				  char *name, int seq_no,
 				  struct cYAML **err_rc)
 {
@@ -2706,7 +2706,7 @@ lustre_lnet_config_conns_per_peer(int value, bool all, lnet_nid_t nid,
 	return rc;
 }
 
-int lustre_lnet_config_ni_healthv(int value, bool all, char *ni_nid, int seq_no,
+int grumple_lnet_config_ni_healthv(int value, bool all, char *ni_nid, int seq_no,
 				  struct cYAML **err_rc)
 {
 	lnet_nid_t nid;
@@ -2714,12 +2714,12 @@ int lustre_lnet_config_ni_healthv(int value, bool all, char *ni_nid, int seq_no,
 		nid = libcfs_str2nid(ni_nid);
 	else
 		nid = LNET_NID_ANY;
-	return lustre_lnet_config_healthv(value, all, nid,
+	return grumple_lnet_config_healthv(value, all, nid,
 					  LNET_HEALTH_TYPE_LOCAL_NI,
 					  "ni healthv", seq_no, err_rc);
 }
 
-int lustre_lnet_config_peer_ni_healthv(int value, bool all, char *lpni_nid,
+int grumple_lnet_config_peer_ni_healthv(int value, bool all, char *lpni_nid,
 				       int seq_no, struct cYAML **err_rc)
 {
 	lnet_nid_t nid;
@@ -2727,12 +2727,12 @@ int lustre_lnet_config_peer_ni_healthv(int value, bool all, char *lpni_nid,
 		nid = libcfs_str2nid(lpni_nid);
 	else
 		nid = LNET_NID_ANY;
-	return lustre_lnet_config_healthv(value, all, nid,
+	return grumple_lnet_config_healthv(value, all, nid,
 					  LNET_HEALTH_TYPE_PEER_NI,
 					  "peer_ni healthv", seq_no, err_rc);
 }
 
-int lustre_lnet_set_peer_state(int state, char *lpni_nid, int seq_no,
+int grumple_lnet_set_peer_state(int state, char *lpni_nid, int seq_no,
 			       struct cYAML **err_rc)
 {
 	lnet_nid_t nid;
@@ -2741,11 +2741,11 @@ int lustre_lnet_set_peer_state(int state, char *lpni_nid, int seq_no,
 		nid = libcfs_str2nid(lpni_nid);
 	else
 		nid = LNET_NID_ANY;
-	return lustre_lnet_config_peer(state, nid, "peer state", seq_no,
+	return grumple_lnet_config_peer(state, nid, "peer state", seq_no,
 				       err_rc);
 }
 
-int lustre_lnet_config_ni_conns_per_peer(int value, bool all, char *ni_nid,
+int grumple_lnet_config_ni_conns_per_peer(int value, bool all, char *ni_nid,
 					 int seq_no, struct cYAML **err_rc)
 {
 	lnet_nid_t nid;
@@ -2754,7 +2754,7 @@ int lustre_lnet_config_ni_conns_per_peer(int value, bool all, char *ni_nid,
 		nid = libcfs_str2nid(ni_nid);
 	else
 		nid = LNET_NID_ANY;
-	return lustre_lnet_config_conns_per_peer(value, all, nid,
+	return grumple_lnet_config_conns_per_peer(value, all, nid,
 						 "ni conns_per_peer",
 						 seq_no, err_rc);
 }
@@ -2908,7 +2908,7 @@ create_remote_udsp_info(struct lnet_ioctl_construct_udsp_info *udsp_info,
 	return LUSTRE_CFG_RC_NO_ERR;
 }
 
-int lustre_lnet_show_net(char *nw, int detail, int seq_no,
+int grumple_lnet_show_net(char *nw, int detail, int seq_no,
 			 struct cYAML **show_rc, struct cYAML **err_rc,
 			 bool backup)
 {
@@ -3189,7 +3189,7 @@ continue_without_msg_stats:
 			if (!tunables)
 				goto out;
 
-			rc = lustre_net_show_tunables(tunables, &lnd->lt_cmn);
+			rc = grumple_net_show_tunables(tunables, &lnd->lt_cmn);
 			if (rc != LUSTRE_CFG_RC_NO_ERR)
 				goto out;
 
@@ -3200,7 +3200,7 @@ continue_without_msg_stats:
 					goto out;
 			}
 
-			rc = lustre_ni_show_tunables(tunables,
+			rc = grumple_ni_show_tunables(tunables,
 						     LNET_NETTYP(rc_net),
 						     &lnd->lt_tun, backup);
 			if (rc != LUSTRE_CFG_RC_NO_ERR &&
@@ -3277,7 +3277,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_config_routing(int enable, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_routing(int enable, int seq_no, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_config_data data;
 	int rc = LUSTRE_CFG_RC_NO_ERR;
@@ -3328,7 +3328,7 @@ static int ioctl_set_value(__u32 val, int ioc, char *name,
 	return rc;
 }
 
-int lustre_lnet_config_recov_intrv(int intrv, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_recov_intrv(int intrv, int seq_no, struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
@@ -3348,7 +3348,7 @@ int lustre_lnet_config_recov_intrv(int intrv, int seq_no, struct cYAML **err_rc)
 	return rc;
 }
 
-int lustre_lnet_config_rtr_sensitivity(int sen, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_rtr_sensitivity(int sen, int seq_no, struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
@@ -3368,7 +3368,7 @@ int lustre_lnet_config_rtr_sensitivity(int sen, int seq_no, struct cYAML **err_r
 	return rc;
 }
 
-int lustre_lnet_config_hsensitivity(int sen, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_hsensitivity(int sen, int seq_no, struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
@@ -3388,7 +3388,7 @@ int lustre_lnet_config_hsensitivity(int sen, int seq_no, struct cYAML **err_rc)
 	return rc;
 }
 
-int lustre_lnet_config_lnd_timeout(int timeout, __u32 net, int seq_no,
+int grumple_lnet_config_lnd_timeout(int timeout, __u32 net, int seq_no,
 				   struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
@@ -3432,7 +3432,7 @@ int lustre_lnet_config_lnd_timeout(int timeout, __u32 net, int seq_no,
 	return rc;
 }
 
-int lustre_lnet_config_transaction_to(int timeout, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_transaction_to(int timeout, int seq_no, struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
@@ -3452,7 +3452,7 @@ int lustre_lnet_config_transaction_to(int timeout, int seq_no, struct cYAML **er
 	return rc;
 }
 
-int lustre_lnet_config_retry_count(int count, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_retry_count(int count, int seq_no, struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
@@ -3472,7 +3472,7 @@ int lustre_lnet_config_retry_count(int count, int seq_no, struct cYAML **err_rc)
 	return rc;
 }
 
-int lustre_lnet_config_response_tracking(int val, int seq_no,
+int grumple_lnet_config_response_tracking(int val, int seq_no,
 					 struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
@@ -3502,7 +3502,7 @@ int lustre_lnet_config_response_tracking(int val, int seq_no,
 	return rc;
 }
 
-int lustre_lnet_config_recovery_limit(int val, int seq_no,
+int grumple_lnet_config_recovery_limit(int val, int seq_no,
 				      struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
@@ -3532,7 +3532,7 @@ int lustre_lnet_config_recovery_limit(int val, int seq_no,
 	return rc;
 }
 
-int lustre_lnet_config_max_intf(int max, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_max_intf(int max, int seq_no, struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
@@ -3552,7 +3552,7 @@ int lustre_lnet_config_max_intf(int max, int seq_no, struct cYAML **err_rc)
 	return rc;
 }
 
-int lustre_lnet_config_discovery(int enable, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_discovery(int enable, int seq_no, struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
@@ -3573,7 +3573,7 @@ int lustre_lnet_config_discovery(int enable, int seq_no, struct cYAML **err_rc)
 
 }
 
-int lustre_lnet_config_drop_asym_route(int drop, int seq_no,
+int grumple_lnet_config_drop_asym_route(int drop, int seq_no,
 				       struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
@@ -3596,13 +3596,13 @@ int lustre_lnet_config_drop_asym_route(int drop, int seq_no,
 
 }
 
-int lustre_lnet_config_numa_range(int range, int seq_no, struct cYAML **err_rc)
+int grumple_lnet_config_numa_range(int range, int seq_no, struct cYAML **err_rc)
 {
 	return ioctl_set_value(range, IOC_LIBCFS_SET_NUMA_RANGE,
 			       "numa_range", seq_no, err_rc);
 }
 
-int lustre_lnet_config_buffers(int tiny, int small, int large, int seq_no,
+int grumple_lnet_config_buffers(int tiny, int small, int large, int seq_no,
 			       struct cYAML **err_rc)
 {
 	struct lnet_ioctl_config_data data;
@@ -3638,7 +3638,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_config_max_recovery_ping_interval(int interval, int seq_no,
+int grumple_lnet_config_max_recovery_ping_interval(int interval, int seq_no,
 						  struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_NO_ERR;
@@ -3670,7 +3670,7 @@ int lustre_lnet_config_max_recovery_ping_interval(int interval, int seq_no,
 }
 
 
-int lustre_lnet_show_routing(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_routing(int seq_no, struct cYAML **show_rc,
 			     struct cYAML **err_rc, bool backup)
 {
 	struct lnet_ioctl_config_data *data;
@@ -3844,7 +3844,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_show_peer(char *knid, int detail, int seq_no,
+int grumple_lnet_show_peer(char *knid, int detail, int seq_no,
 			  struct cYAML **show_rc, struct cYAML **err_rc,
 			  bool backup)
 {
@@ -4197,7 +4197,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_list_peer(int seq_no,
+int grumple_lnet_list_peer(int seq_no,
 			  struct cYAML **show_rc, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_peer_cfg peer_info;
@@ -4390,7 +4390,7 @@ static int ioctl_show_global_values(int ioc, int seq_no, char *name,
 				       data.sv_value, show_rc, err_rc, l_errno);
 }
 
-int lustre_lnet_show_recov_intrv(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_recov_intrv(int seq_no, struct cYAML **show_rc,
 				 struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4413,7 +4413,7 @@ int lustre_lnet_show_recov_intrv(int seq_no, struct cYAML **show_rc,
 				       err_rc, l_errno);
 }
 
-int lustre_lnet_show_hsensitivity(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_hsensitivity(int seq_no, struct cYAML **show_rc,
 				  struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4436,7 +4436,7 @@ int lustre_lnet_show_hsensitivity(int seq_no, struct cYAML **show_rc,
 				       err_rc, l_errno);
 }
 
-int lustre_lnet_show_rtr_sensitivity(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_rtr_sensitivity(int seq_no, struct cYAML **show_rc,
 				     struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4459,7 +4459,7 @@ int lustre_lnet_show_rtr_sensitivity(int seq_no, struct cYAML **show_rc,
 				       err_rc, l_errno);
 }
 
-int lustre_lnet_show_lnd_timeout(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_lnd_timeout(int seq_no, struct cYAML **show_rc,
 				 struct cYAML **err_rc)
 {
 	char val[LNET_MAX_STR_LEN];
@@ -4510,7 +4510,7 @@ failed:
 				       err_rc, l_errno);
 }
 
-int lustre_lnet_show_transaction_to(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_transaction_to(int seq_no, struct cYAML **show_rc,
 				    struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4533,7 +4533,7 @@ int lustre_lnet_show_transaction_to(int seq_no, struct cYAML **show_rc,
 				       err_rc, l_errno);
 }
 
-int lustre_lnet_show_retry_count(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_retry_count(int seq_no, struct cYAML **show_rc,
 				 struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4556,7 +4556,7 @@ int lustre_lnet_show_retry_count(int seq_no, struct cYAML **show_rc,
 				       err_rc, l_errno);
 }
 
-int lustre_lnet_calc_service_id(__u64 *service_id)
+int grumple_lnet_calc_service_id(__u64 *service_id)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
@@ -4578,7 +4578,7 @@ int lustre_lnet_calc_service_id(__u64 *service_id)
 	return LUSTRE_CFG_RC_NO_ERR;
 }
 
-int lustre_lnet_setup_mrrouting(struct cYAML **err_rc)
+int grumple_lnet_setup_mrrouting(struct cYAML **err_rc)
 {
 	char *buf;
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM, i;
@@ -4714,7 +4714,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_setup_sysctl(struct cYAML **err_rc)
+int grumple_lnet_setup_sysctl(struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
@@ -4815,7 +4815,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_show_peer_debug_info(char *peer_nid, int seq_no,
+int grumple_lnet_show_peer_debug_info(char *peer_nid, int seq_no,
 				     struct cYAML **err_rc)
 {
 	struct libcfs_ioctl_data data;
@@ -4852,21 +4852,21 @@ out:
 	return rc;
 }
 
-int lustre_lnet_show_local_ni_recovq(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_local_ni_recovq(int seq_no, struct cYAML **show_rc,
 				     struct cYAML **err_rc)
 {
 	return show_recovery_queue(LNET_HEALTH_TYPE_LOCAL_NI, "local NI recovery",
 				   seq_no, show_rc, err_rc);
 }
 
-int lustre_lnet_show_peer_ni_recovq(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_peer_ni_recovq(int seq_no, struct cYAML **show_rc,
 				    struct cYAML **err_rc)
 {
 	return show_recovery_queue(LNET_HEALTH_TYPE_PEER_NI, "peer NI recovery",
 				   seq_no, show_rc, err_rc);
 }
 
-int lustre_lnet_show_response_tracking(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_response_tracking(int seq_no, struct cYAML **show_rc,
 				       struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4889,7 +4889,7 @@ int lustre_lnet_show_response_tracking(int seq_no, struct cYAML **show_rc,
 				       show_rc, err_rc, l_errno);
 }
 
-int lustre_lnet_show_recovery_limit(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_recovery_limit(int seq_no, struct cYAML **show_rc,
 				    struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4914,7 +4914,7 @@ int lustre_lnet_show_recovery_limit(int seq_no, struct cYAML **show_rc,
 				       show_rc, err_rc, l_errno);
 }
 
-int lustre_lnet_show_max_recovery_ping_interval(int seq_no,
+int grumple_lnet_show_max_recovery_ping_interval(int seq_no,
 						struct cYAML **show_rc,
 						struct cYAML **err_rc)
 {
@@ -4942,7 +4942,7 @@ int lustre_lnet_show_max_recovery_ping_interval(int seq_no,
 }
 
 
-int lustre_lnet_show_max_intf(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_max_intf(int seq_no, struct cYAML **show_rc,
 			      struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4965,7 +4965,7 @@ int lustre_lnet_show_max_intf(int seq_no, struct cYAML **show_rc,
 				       err_rc, l_errno);
 }
 
-int lustre_lnet_show_discovery(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_discovery(int seq_no, struct cYAML **show_rc,
 			       struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -4993,7 +4993,7 @@ int lustre_lnet_show_discovery(int seq_no, struct cYAML **show_rc,
 				       err_rc, l_errno);
 }
 
-int lustre_lnet_show_drop_asym_route(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_drop_asym_route(int seq_no, struct cYAML **show_rc,
 				     struct cYAML **err_rc)
 {
 	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -5016,14 +5016,14 @@ int lustre_lnet_show_drop_asym_route(int seq_no, struct cYAML **show_rc,
 				       show_rc, err_rc, l_errno);
 }
 
-int lustre_lnet_show_numa_range(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_numa_range(int seq_no, struct cYAML **show_rc,
 				struct cYAML **err_rc)
 {
 	return ioctl_show_global_values(IOC_LIBCFS_GET_NUMA_RANGE, seq_no,
 					"numa_range", show_rc, err_rc);
 }
 
-int lustre_lnet_show_stats(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_stats(int seq_no, struct cYAML **show_rc,
 			   struct cYAML **err_rc)
 {
 	struct lnet_ioctl_lnet_stats data;
@@ -5180,7 +5180,7 @@ out:
 	return rc;
 }
 
-int lustre_lnet_reset_stats(int seq_no, struct cYAML **err_rc)
+int grumple_lnet_reset_stats(int seq_no, struct cYAML **err_rc)
 {
 	struct libcfs_ioctl_data data;
 	int rc = LUSTRE_CFG_RC_NO_ERR;
@@ -5221,7 +5221,7 @@ static int handle_yaml_config_route(struct cYAML *tree, struct cYAML **show_rc,
 	prio = cYAML_get_object_item(tree, "priority");
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_config_route((net) ? net->cy_valuestring : NULL,
+	return grumple_lnet_config_route((net) ? net->cy_valuestring : NULL,
 					(gw) ? gw->cy_valuestring : NULL,
 					(hop) ? hop->cy_valueint : -1,
 					(prio) ? prio->cy_valueint : -1,
@@ -5255,7 +5255,7 @@ static int yaml_copy_intf_info(struct cYAML *intf_tree,
 		if (strlen(child->cy_valuestring) >= LNET_MAX_STR_LEN)
 			goto failed;
 
-		rc = lustre_lnet_add_intf_descr(&nw_descr->nw_intflist,
+		rc = grumple_lnet_add_intf_descr(&nw_descr->nw_intflist,
 						child->cy_valuestring,
 						strlen(child->cy_valuestring));
 		if (rc != LUSTRE_CFG_RC_NO_ERR)
@@ -5321,7 +5321,7 @@ yaml_extract_tunables(struct cYAML *tree,
 	if (!rc)
 		return rc;
 
-	lustre_yaml_extract_lnd_tunables(tree, net_type,
+	grumple_yaml_extract_lnd_tunables(tree, net_type,
 					 &tunables->lt_tun);
 
 	return rc;
@@ -5424,7 +5424,7 @@ static int handle_yaml_config_ni(struct cYAML *tree, struct cYAML **show_rc,
 	yaml_extract_cpt(tree, &global_cpts);
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	rc = lustre_lnet_config_ni(&nw_descr, global_cpts,
+	rc = grumple_lnet_config_ni(&nw_descr, global_cpts,
 				   (ip2net) ? ip2net->cy_valuestring : NULL,
 				   (found) ? &tunables : NULL,
 				   (seq_no) ? seq_no->cy_valueint : -1,
@@ -5461,8 +5461,8 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 {
 	struct cYAML *net, *ip_range, *item = NULL, *intf = NULL,
 		     *seq_no = NULL;
-	struct lustre_lnet_ip2nets ip2nets;
-	struct lustre_lnet_ip_range_descr *ip_range_descr = NULL,
+	struct grumple_lnet_ip2nets ip2nets;
+	struct grumple_lnet_ip_range_descr *ip_range_descr = NULL,
 					  *tmp = NULL;
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	struct cfs_expr_list *global_cpts = NULL;
@@ -5508,7 +5508,7 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 				continue;
 			}
 
-			rc = lustre_lnet_add_ip_range(&ip2nets.ip2nets_ip_ranges,
+			rc = grumple_lnet_add_ip_range(&ip2nets.ip2nets_ip_ranges,
 						      item->cy_valuestring);
 
 			if (rc != LUSTRE_CFG_RC_NO_ERR)
@@ -5522,7 +5522,7 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 				      LNET_NETTYP(ip2nets.ip2nets_net.nw_id));
 	yaml_extract_cpt(tree, &global_cpts);
 
-	rc = lustre_lnet_config_ip2nets(&ip2nets,
+	rc = grumple_lnet_config_ip2nets(&ip2nets,
 			(found) ? &tunables : NULL,
 			global_cpts,
 			(seq_no) ? seq_no->cy_valueint : -1,
@@ -5597,7 +5597,7 @@ static int handle_yaml_del_ni(struct cYAML *tree, struct cYAML **show_rc,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	rc = lustre_lnet_del_ni((net) ? &nw_descr : NULL,
+	rc = grumple_lnet_del_ni((net) ? &nw_descr : NULL,
 				(seq_no) ? seq_no->cy_valueint : -1,
 				err_rc);
 
@@ -5738,7 +5738,7 @@ static int handle_yaml_peer_common(struct cYAML *tree, struct cYAML **show_rc,
 
 	num_nids = 0;
 	if (nidstr) {
-		num_nids = lustre_lnet_parse_nidstr(nidstr, lnet_nidlist,
+		num_nids = grumple_lnet_parse_nidstr(nidstr, lnet_nidlist,
 						    LNET_MAX_NIDS_PER_PEER,
 						    err_str);
 		if (num_nids < 0) {
@@ -5763,7 +5763,7 @@ static int handle_yaml_peer_common(struct cYAML *tree, struct cYAML **show_rc,
 		}
 	}
 
-	rc = lustre_lnet_mod_peer_nidlist(pnid, lnet_nidlist, cmd,
+	rc = grumple_lnet_mod_peer_nidlist(pnid, lnet_nidlist, cmd,
 					  num_nids, mr_value, force,
 					  seqn, err_rc);
 
@@ -5803,7 +5803,7 @@ static int handle_yaml_config_buffers(struct cYAML *tree,
 	large = cYAML_get_object_item(tree, "large");
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	rc = lustre_lnet_config_buffers((tiny) ? tiny->cy_valueint : -1,
+	rc = grumple_lnet_config_buffers((tiny) ? tiny->cy_valueint : -1,
 					(small) ? small->cy_valueint : -1,
 					(large) ? large->cy_valueint : -1,
 					(seq_no) ? seq_no->cy_valueint : -1,
@@ -5823,7 +5823,7 @@ static int handle_yaml_config_routing(struct cYAML *tree,
 	enable = cYAML_get_object_item(tree, "enable");
 
 	if (enable) {
-		rc = lustre_lnet_config_routing(enable->cy_valueint,
+		rc = grumple_lnet_config_routing(enable->cy_valueint,
 						(seq_no) ?
 						    seq_no->cy_valueint : -1,
 						err_rc);
@@ -5843,7 +5843,7 @@ static int handle_yaml_del_route(struct cYAML *tree, struct cYAML **show_rc,
 	gw = cYAML_get_object_item(tree, "gateway");
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_del_route((net) ? net->cy_valuestring : NULL,
+	return grumple_lnet_del_route((net) ? net->cy_valuestring : NULL,
 				     (gw) ? gw->cy_valuestring : NULL,
 				     (seq_no) ? seq_no->cy_valueint : -1,
 				     err_rc);
@@ -5856,7 +5856,7 @@ static int handle_yaml_del_routing(struct cYAML *tree, struct cYAML **show_rc,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_config_routing(0, (seq_no) ?
+	return grumple_lnet_config_routing(0, (seq_no) ?
 						seq_no->cy_valueint : -1,
 					err_rc);
 }
@@ -5878,7 +5878,7 @@ static int handle_yaml_show_route(struct cYAML *tree, struct cYAML **show_rc,
 	detail = cYAML_get_object_item(tree, "detail");
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_show_route((net) ? net->cy_valuestring : NULL,
+	return grumple_lnet_show_route((net) ? net->cy_valuestring : NULL,
 				      (gw) ? gw->cy_valuestring : NULL,
 				      (hop) ? hop->cy_valueint : -1,
 				      (prio) ? prio->cy_valueint : -1,
@@ -5896,7 +5896,7 @@ static int handle_yaml_show_net(struct cYAML *tree, struct cYAML **show_rc,
 	detail = cYAML_get_object_item(tree, "detail");
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_show_net((net) ? net->cy_valuestring : NULL,
+	return grumple_lnet_show_net((net) ? net->cy_valuestring : NULL,
 				    (detail) ? detail->cy_valueint : 0,
 				    (seq_no) ? seq_no->cy_valueint : -1,
 				    show_rc, err_rc, false);
@@ -5909,7 +5909,7 @@ static int handle_yaml_show_routing(struct cYAML *tree, struct cYAML **show_rc,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_show_routing((seq_no) ? seq_no->cy_valueint : -1,
+	return grumple_lnet_show_routing((seq_no) ? seq_no->cy_valueint : -1,
 					show_rc, err_rc, false);
 }
 
@@ -5922,7 +5922,7 @@ static int handle_yaml_show_peers(struct cYAML *tree, struct cYAML **show_rc,
 	detail = cYAML_get_object_item(tree, "detail");
 	nid = cYAML_get_object_item(tree, "nid");
 
-	return lustre_lnet_show_peer((nid) ? nid->cy_valuestring : NULL,
+	return grumple_lnet_show_peer((nid) ? nid->cy_valuestring : NULL,
 				     (detail) ? detail->cy_valueint : 0,
 				     (seq_no) ? seq_no->cy_valueint : -1,
 				     show_rc, err_rc, false);
@@ -5935,7 +5935,7 @@ static int handle_yaml_show_stats(struct cYAML *tree, struct cYAML **show_rc,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_show_stats((seq_no) ? seq_no->cy_valueint : -1,
+	return grumple_lnet_show_stats((seq_no) ? seq_no->cy_valueint : -1,
 				      show_rc, err_rc);
 }
 
@@ -5947,7 +5947,7 @@ static int handle_yaml_config_numa(struct cYAML *tree, struct cYAML **show_rc,
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 	range = cYAML_get_object_item(tree, "range");
 
-	return lustre_lnet_config_numa_range(range ? range->cy_valueint : -1,
+	return grumple_lnet_config_numa_range(range ? range->cy_valueint : -1,
 					     seq_no ? seq_no->cy_valueint : -1,
 					     err_rc);
 }
@@ -5959,7 +5959,7 @@ static int handle_yaml_del_numa(struct cYAML *tree, struct cYAML **show_rc,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_config_numa_range(0, seq_no ? seq_no->cy_valueint : -1,
+	return grumple_lnet_config_numa_range(0, seq_no ? seq_no->cy_valueint : -1,
 					     err_rc);
 }
 
@@ -5970,7 +5970,7 @@ static int handle_yaml_show_numa(struct cYAML *tree, struct cYAML **show_rc,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
-	return lustre_lnet_show_numa_range(seq_no ? seq_no->cy_valueint : -1,
+	return grumple_lnet_show_numa_range(seq_no ? seq_no->cy_valueint : -1,
 					   show_rc, err_rc);
 }
 
@@ -5982,7 +5982,7 @@ static int handle_yaml_del_udsp(struct cYAML *tree, struct cYAML **show_rc,
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 	idx = cYAML_get_object_item(tree, "idx");
 
-	return lustre_lnet_del_udsp(idx ? idx->cy_valueint : -1,
+	return grumple_lnet_del_udsp(idx ? idx->cy_valueint : -1,
 				    seq_no ? seq_no->cy_valueint : -1,
 				    err_rc);
 }
@@ -6002,7 +6002,7 @@ static int handle_yaml_config_udsp(struct cYAML *tree, struct cYAML **show_rc,
 
 	action.udsp_priority = prio ? prio->cy_valueint : -1;
 
-	return lustre_lnet_add_udsp(src ? src->cy_valuestring : NULL,
+	return grumple_lnet_add_udsp(src ? src->cy_valuestring : NULL,
 				    dst ? dst->cy_valuestring : NULL,
 				    rte ? rte->cy_valuestring : NULL,
 				    prio ? "priority" : "",
@@ -6021,7 +6021,7 @@ static int handle_yaml_show_udsp(struct cYAML *tree, struct cYAML **show_rc,
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 	idx = cYAML_get_object_item(tree, "idx");
 
-	return lustre_lnet_show_udsp(idx ? idx->cy_valueint : -1,
+	return grumple_lnet_show_udsp(idx ? idx->cy_valueint : -1,
 				     seq_no ? seq_no->cy_valueint : -1,
 				     show_rc, err_rc);
 }
@@ -6040,77 +6040,77 @@ static int handle_yaml_config_global_settings(struct cYAML *tree,
 	if (!max_intf) 
 		max_intf = cYAML_get_object_item(tree, "max_intf");
 	if (max_intf)
-		rc = lustre_lnet_config_max_intf(max_intf->cy_valueint,
+		rc = grumple_lnet_config_max_intf(max_intf->cy_valueint,
 						 seq_no ? seq_no->cy_valueint
 							: -1,
 						 err_rc);
 
 	numa = cYAML_get_object_item(tree, "numa_range");
 	if (numa)
-		rc = lustre_lnet_config_numa_range(numa->cy_valueint,
+		rc = grumple_lnet_config_numa_range(numa->cy_valueint,
 						   seq_no ? seq_no->cy_valueint
 							: -1,
 						   err_rc);
 
 	discovery = cYAML_get_object_item(tree, "discovery");
 	if (discovery)
-		rc = lustre_lnet_config_discovery(discovery->cy_valueint,
+		rc = grumple_lnet_config_discovery(discovery->cy_valueint,
 						  seq_no ? seq_no->cy_valueint
 							: -1,
 						  err_rc);
 
 	drop_asym_route = cYAML_get_object_item(tree, "drop_asym_route");
 	if (drop_asym_route)
-		rc = lustre_lnet_config_drop_asym_route(
+		rc = grumple_lnet_config_drop_asym_route(
 			drop_asym_route->cy_valueint,
 			seq_no ? seq_no->cy_valueint : -1,
 			err_rc);
 
 	retry = cYAML_get_object_item(tree, "retry_count");
 	if (retry)
-		rc = lustre_lnet_config_retry_count(retry->cy_valueint,
+		rc = grumple_lnet_config_retry_count(retry->cy_valueint,
 						    seq_no ? seq_no->cy_valueint
 							: -1,
 						    err_rc);
 
 	tto = cYAML_get_object_item(tree, "transaction_timeout");
 	if (tto)
-		rc = lustre_lnet_config_transaction_to(tto->cy_valueint,
+		rc = grumple_lnet_config_transaction_to(tto->cy_valueint,
 						       seq_no ? seq_no->cy_valueint
 								: -1,
 						       err_rc);
 
 	sen = cYAML_get_object_item(tree, "health_sensitivity");
 	if (sen)
-		rc = lustre_lnet_config_hsensitivity(sen->cy_valueint,
+		rc = grumple_lnet_config_hsensitivity(sen->cy_valueint,
 						     seq_no ? seq_no->cy_valueint
 							: -1,
 						     err_rc);
 
 	recov = cYAML_get_object_item(tree, "recovery_interval");
 	if (recov)
-		rc = lustre_lnet_config_recov_intrv(recov->cy_valueint,
+		rc = grumple_lnet_config_recov_intrv(recov->cy_valueint,
 						    seq_no ? seq_no->cy_valueint
 							: -1,
 						    err_rc);
 
 	rsen = cYAML_get_object_item(tree, "router_sensitivity");
 	if (rsen)
-		rc = lustre_lnet_config_rtr_sensitivity(rsen->cy_valueint,
+		rc = grumple_lnet_config_rtr_sensitivity(rsen->cy_valueint,
 						     seq_no ? seq_no->cy_valueint
 							: -1,
 						     err_rc);
 
 	rsp_tracking = cYAML_get_object_item(tree, "response_tracking");
 	if (rsp_tracking)
-		rc = lustre_lnet_config_response_tracking(rsp_tracking->cy_valueint,
+		rc = grumple_lnet_config_response_tracking(rsp_tracking->cy_valueint,
 						     seq_no ? seq_no->cy_valueint
 							: -1,
 						     err_rc);
 
 	recov_limit = cYAML_get_object_item(tree, "recovery_limit");
 	if (recov_limit)
-		rc = lustre_lnet_config_recovery_limit(recov_limit->cy_valueint,
+		rc = grumple_lnet_config_recovery_limit(recov_limit->cy_valueint,
 						       seq_no ? seq_no->cy_valueint
 							: -1,
 						       err_rc);
@@ -6130,14 +6130,14 @@ static int handle_yaml_del_global_settings(struct cYAML *tree,
 	if (!max_intf) 
 		max_intf = cYAML_get_object_item(tree, "max_intf");
 	if (max_intf)
-		rc = lustre_lnet_config_max_intf(LNET_INTERFACES_MAX_DEFAULT,
+		rc = grumple_lnet_config_max_intf(LNET_INTERFACES_MAX_DEFAULT,
 						 seq_no ? seq_no->cy_valueint
 							: -1,
 						 err_rc);
 
 	numa = cYAML_get_object_item(tree, "numa_range");
 	if (numa)
-		rc = lustre_lnet_config_numa_range(0,
+		rc = grumple_lnet_config_numa_range(0,
 						   seq_no ? seq_no->cy_valueint
 							: -1,
 						   err_rc);
@@ -6145,7 +6145,7 @@ static int handle_yaml_del_global_settings(struct cYAML *tree,
 	
 	discovery = cYAML_get_object_item(tree, "discovery");
 	if (discovery)
-		rc = lustre_lnet_config_discovery(1,
+		rc = grumple_lnet_config_discovery(1,
 						  seq_no ? seq_no->cy_valueint
 							: -1,
 						  err_rc);
@@ -6153,7 +6153,7 @@ static int handle_yaml_del_global_settings(struct cYAML *tree,
 	
 	drop_asym_route = cYAML_get_object_item(tree, "drop_asym_route");
 	if (drop_asym_route)
-		rc = lustre_lnet_config_drop_asym_route(
+		rc = grumple_lnet_config_drop_asym_route(
 			0, seq_no ? seq_no->cy_valueint : -1, err_rc);
 
 	return rc;
@@ -6173,68 +6173,68 @@ static int handle_yaml_show_global_settings(struct cYAML *tree,
 	if (!max_intf) 
 		max_intf = cYAML_get_object_item(tree, "max_intf");
 	if (max_intf)
-		rc = lustre_lnet_show_max_intf(seq_no ? seq_no->cy_valueint
+		rc = grumple_lnet_show_max_intf(seq_no ? seq_no->cy_valueint
 							: -1,
 						show_rc, err_rc);
 
 	numa = cYAML_get_object_item(tree, "numa_range");
 	if (numa)
-		rc = lustre_lnet_show_numa_range(seq_no ? seq_no->cy_valueint
+		rc = grumple_lnet_show_numa_range(seq_no ? seq_no->cy_valueint
 							: -1,
 						 show_rc, err_rc);
 
 	discovery = cYAML_get_object_item(tree, "discovery");
 	if (discovery)
-		rc = lustre_lnet_show_discovery(seq_no ? seq_no->cy_valueint
+		rc = grumple_lnet_show_discovery(seq_no ? seq_no->cy_valueint
 							: -1,
 						show_rc, err_rc);
 
 	drop_asym_route = cYAML_get_object_item(tree, "drop_asym_route");
 	if (drop_asym_route)
-		rc = lustre_lnet_show_drop_asym_route(
+		rc = grumple_lnet_show_drop_asym_route(
 			seq_no ? seq_no->cy_valueint : -1,
 			show_rc, err_rc);
 
 	retry = cYAML_get_object_item(tree, "retry_count");
 	if (retry)
-		rc = lustre_lnet_show_retry_count(seq_no ? seq_no->cy_valueint
+		rc = grumple_lnet_show_retry_count(seq_no ? seq_no->cy_valueint
 							: -1,
 						  show_rc, err_rc);
 
 	tto = cYAML_get_object_item(tree, "transaction_timeout");
 	if (tto)
-		rc = lustre_lnet_show_transaction_to(seq_no ? seq_no->cy_valueint
+		rc = grumple_lnet_show_transaction_to(seq_no ? seq_no->cy_valueint
 							: -1,
 						     show_rc, err_rc);
 
 	sen = cYAML_get_object_item(tree, "health_sensitivity");
 	if (sen)
-		rc = lustre_lnet_show_hsensitivity(seq_no ? seq_no->cy_valueint
+		rc = grumple_lnet_show_hsensitivity(seq_no ? seq_no->cy_valueint
 							: -1,
 						     show_rc, err_rc);
 
 	recov = cYAML_get_object_item(tree, "recovery_interval");
 	if (recov)
-		rc = lustre_lnet_show_recov_intrv(seq_no ? seq_no->cy_valueint
+		rc = grumple_lnet_show_recov_intrv(seq_no ? seq_no->cy_valueint
 							: -1,
 						  show_rc, err_rc);
 
 	rsen = cYAML_get_object_item(tree, "router_sensitivity");
 	if (rsen)
-		rc = lustre_lnet_show_hsensitivity(seq_no ? seq_no->cy_valueint
+		rc = grumple_lnet_show_hsensitivity(seq_no ? seq_no->cy_valueint
 							: -1,
 						     show_rc, err_rc);
 
 	rsp_tracking = cYAML_get_object_item(tree, "response_tracking");
 	if (rsp_tracking)
-		rc = lustre_lnet_show_response_tracking(seq_no ?
+		rc = grumple_lnet_show_response_tracking(seq_no ?
 							seq_no->cy_valueint :
 							-1,
 							show_rc, err_rc);
 
 	recov_limit = cYAML_get_object_item(tree, "recovery_limit");
 	if (recov_limit)
-		rc = lustre_lnet_show_recovery_limit(seq_no ?
+		rc = grumple_lnet_show_recovery_limit(seq_no ?
 						     seq_no->cy_valueint :
 						     -1,
 						     show_rc, err_rc);
@@ -6252,7 +6252,7 @@ static int handle_yaml_ping(struct cYAML *tree, struct cYAML **show_rc,
 	timeout = cYAML_get_object_item(tree, "timeout");
 	src_nid = cYAML_get_object_item(tree, "source_nid");
 
-	return lustre_lnet_ping_nid((nid) ? nid->cy_valuestring : NULL,
+	return grumple_lnet_ping_nid((nid) ? nid->cy_valuestring : NULL,
 				    (src_nid) ? src_nid->cy_valuestring : NULL,
 				    (timeout) ? timeout->cy_valueint : 1000,
 				    (seq_no) ? seq_no->cy_valueint : -1,
@@ -6268,7 +6268,7 @@ static int handle_yaml_discover(struct cYAML *tree, struct cYAML **show_rc,
 	nid = cYAML_get_object_item(tree, "primary nid");
 	force = cYAML_get_object_item(tree, "force");
 
-	return lustre_lnet_discover_nid((nid) ? nid->cy_valuestring : NULL,
+	return grumple_lnet_discover_nid((nid) ? nid->cy_valuestring : NULL,
 					(force) ? force->cy_valueint : 0,
 					(seq_no) ? seq_no->cy_valueint : -1,
 					show_rc, err_rc);
@@ -6359,7 +6359,7 @@ static cmd_handler_t lookup_fn(char *key,
 	return NULL;
 }
 
-static int lustre_yaml_cb_helper(char *f, int len,
+static int grumple_yaml_cb_helper(char *f, int len,
 				 struct lookup_cmd_hdlr_tbl *table,
 				 struct cYAML **show_rc, struct cYAML **err_rc)
 {
@@ -6406,29 +6406,29 @@ out:
 	return return_rc;
 }
 
-int lustre_yaml_config(char *f, int len, struct cYAML **err_rc)
+int grumple_yaml_config(char *f, int len, struct cYAML **err_rc)
 {
-	return lustre_yaml_cb_helper(f, len, lookup_config_tbl,
+	return grumple_yaml_cb_helper(f, len, lookup_config_tbl,
 				     NULL, err_rc);
 }
 
-int lustre_yaml_del(char *f, int len, struct cYAML **err_rc)
+int grumple_yaml_del(char *f, int len, struct cYAML **err_rc)
 {
-	return lustre_yaml_cb_helper(f, len, lookup_del_tbl,
+	return grumple_yaml_cb_helper(f, len, lookup_del_tbl,
 				     NULL, err_rc);
 }
 
-int lustre_yaml_show(char *f, int len, struct cYAML **show_rc,
+int grumple_yaml_show(char *f, int len, struct cYAML **show_rc,
 		     struct cYAML **err_rc)
 {
-	return lustre_yaml_cb_helper(f, len, lookup_show_tbl,
+	return grumple_yaml_cb_helper(f, len, lookup_show_tbl,
 				     show_rc, err_rc);
 }
 
-int lustre_yaml_exec(char *f, int len, struct cYAML **show_rc,
+int grumple_yaml_exec(char *f, int len, struct cYAML **show_rc,
 		     struct cYAML **err_rc)
 {
-	return lustre_yaml_cb_helper(f, len, lookup_exec_tbl,
+	return grumple_yaml_cb_helper(f, len, lookup_exec_tbl,
 				     show_rc, err_rc);
 }
 

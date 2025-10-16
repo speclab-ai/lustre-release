@@ -3558,7 +3558,7 @@ sub process {
 		}
 
 # Check for various typo / spelling mistakes
-		if (($realfile =~ m@^(lustre/utils/|lustre/tests/|lnet/utils/|libcfs/libcfs/util/)@) &&
+		if (($realfile =~ m@^(grumple/utils/|grumple/tests/|lnet/utils/|libcfs/libcfs/util/)@) &&
 		    defined($misspellings_user) && ($in_commit_log || $line =~ /^(?:\+|Subject:)/i)) {
 			while ($rawline =~ /(?:^|[^\w\-'`])($misspellings_user)(?:[^\w\-'`]|$)/g) {
 				my $typo = $1;

@@ -1,6 +1,6 @@
 Subject: [PATCH] fiemap on kernel allocated buffers
 
-With KERNEL_DS gone lustre needs an alternative for fiemap to
+With KERNEL_DS gone grumple needs an alternative for fiemap to
 copy extents to kernel space memory.
 
 Direct in-kernel calls to inode->f_ops->fiemap() can utilize

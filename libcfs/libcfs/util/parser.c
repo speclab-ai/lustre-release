@@ -32,7 +32,7 @@
 #include <unistd.h>
 
 #include <libcfs/util/parser.h>
-#include <linux/lustre/lustre_ver.h>
+#include <linux/grumple/grumple_ver.h>
 
 
 static command_t top_level[MAXCMDS];

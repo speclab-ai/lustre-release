@@ -8,7 +8,7 @@
 #ifdef HAVE_SCHED_HEADERS
 #include <linux/sched/signal.h>
 #endif
-#include <lustre_compat/linux/wait_bit.h>
+#include <grumple_compat/linux/wait_bit.h>
 
 #ifndef HAVE_WAIT_VAR_EVENT
 

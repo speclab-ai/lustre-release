@@ -115,7 +115,7 @@ Signed-off-by: Andreas Dilger <andreas.dilger@sun.com>
 +
 +/*
 + * d_type has 4 unused bits, so it can hold four types data. these different
-+ * type of data (e.g. lustre data, high 32 bits of 64-bit inode number) can be
++ * type of data (e.g. grumple data, high 32 bits of 64-bit inode number) can be
 + * stored, in flag order, after file-name in ext4 dirent.
 +*/
 +/*
@@ -159,7 +159,7 @@ Signed-off-by: Andreas Dilger <andreas.dilger@sun.com>
 +/* ldiskfs */
 +#define EXT4_DIR_REC_LEN(name_len)	EXT4_DIR_REC_LEN_((name_len))
 +#define EXT4_DIR_ENTRY_LEN(de)		EXT4_DIR_ENTRY_LEN_((de))
-+/* lustre osd_handler compat */
++/* grumple osd_handler compat */
 +#define __EXT4_DIR_REC_LEN(name_len)	EXT4_DIR_REC_LEN_((name_len))
 +
  #define EXT4_MAX_REC_LEN		((1<<16)-1)

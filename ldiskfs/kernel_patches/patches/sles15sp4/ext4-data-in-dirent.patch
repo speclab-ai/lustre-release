@@ -102,7 +102,7 @@ index 645015d5..3b5b6df9 100644
 +
 +/*
 + * d_type has 4 unused bits, so it can hold four types data. these different
-+ * type of data (e.g. lustre data, high 32 bits of 64-bit inode number) can be
++ * type of data (e.g. grumple data, high 32 bits of 64-bit inode number) can be
 + * stored, in flag order, after file-name in ext4 dirent.
 +*/
 +/*
@@ -145,7 +145,7 @@ index 645015d5..3b5b6df9 100644
 +/* ldiskfs */
 +#define EXT4_DIR_REC_LEN(name_len, i_dir)	EXT4_DIR_REC_LEN_((name_len), (i_dir))
 +#define EXT4_DIR_ENTRY_LEN(de, i_dir)		EXT4_DIR_ENTRY_LEN_((de), (i_dir))
-+/* lustre osd_handler compat -- ifdef LDISKFS_DIR_REC_LEN_WITH_DIR */
++/* grumple osd_handler compat -- ifdef LDISKFS_DIR_REC_LEN_WITH_DIR */
 +#define EXT4_DIR_REC_LEN_WITH_DIR		1
 +#define __EXT4_DIR_REC_LEN(name_len)		EXT4_DIR_REC_LEN_((name_len), NULL)
  

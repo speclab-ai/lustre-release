@@ -29,7 +29,7 @@
 #define LNET_VERSION		"0.7.0"
 
 /** Portal reserved for LNet's own use.
- * \see lustre/include/lustre/lustre_idl.h for Lustre portal assignments.
+ * \see grumple/include/grumple/grumple_idl.h for Lustre portal assignments.
  */
 #define LNET_RESERVED_PORTAL	  0
 

@@ -15,9 +15,9 @@ class Change(object):
         self.number = 0
         self.change_id = ''
         self.reviewed_on = ''
-        self.lustre_commit = ''
-        self.lustre_change = ''
-        self.lustre_change_number = 0
+        self.grumple_commit = ''
+        self.grumple_change = ''
+        self.grumple_change_number = 0
         self.cray_bug_id = ''
         self.hpe_bug_id = ''
         self._parent = self
@@ -62,9 +62,9 @@ def _change_from_record(rec):
     if obj:
         change.number = int(obj.group(1))
 
-    obj = re.match(r'[A-Za-z]+://[\w\.]+/(\d+)$', change.lustre_change)
+    obj = re.match(r'[A-Za-z]+://[\w\.]+/(\d+)$', change.grumple_change)
     if obj:
-        change.lustre_change_number = int(obj.group(1))
+        change.grumple_change_number = int(obj.group(1))
 
     return change
 
@@ -156,13 +156,13 @@ class Branch(object):
         #
         # TODO Return oldest member of equivalence class.
         port = (self.by_commit.get(change.commit) or
-                self.by_commit.get(change.lustre_commit) or
-                self.by_commit.get(change.lustre_change) or # Handle misuse.
+                self.by_commit.get(change.grumple_commit) or
+                self.by_commit.get(change.grumple_change) or # Handle misuse.
                 _head(self.by_change_id.get(change.change_id)) or
-                _head(self.by_change_id.get(change.lustre_commit)) or # ...
-                _head(self.by_change_id.get(change.lustre_change)) or
+                _head(self.by_change_id.get(change.grumple_commit)) or # ...
+                _head(self.by_change_id.get(change.grumple_change)) or
                 _head(self.by_number.get(change.number)) or # Do we need this?
-                _head(self.by_number.get(change.lustre_change_number)) or
+                _head(self.by_number.get(change.grumple_change_number)) or
                 _head(self.by_subject.get(change.subject))) # Do we want this?
         if port:
             return port._find()
@@ -178,12 +178,12 @@ def branch_comm(b1, b2):
     printed = set() # commits
 
     def change_is_printed(c):
-        return (c.commit in printed) or (c.lustre_commit in printed)
+        return (c.commit in printed) or (c.grumple_commit in printed)
 
     def change_set_printed(c):
         printed.add(c.commit)
-        if c.lustre_commit:
-            printed.add(c.lustre_commit)
+        if c.grumple_commit:
+            printed.add(c.grumple_commit)
 
     # Suppress initial common commits.
     while i1 < n1 and i2 < n2:
@@ -312,7 +312,7 @@ This assumes that both branches are in the repository that contains
 the current directory. To compare branches from different upstream
 repositories (for example 'origin/master' and 'other/b_post_cmd3') do:
 
-  $ cd fs/lustre-release
+  $ cd fs/grumple-release
   $ git fetch origin
   $ git remote add other ...
   $ git fetch other

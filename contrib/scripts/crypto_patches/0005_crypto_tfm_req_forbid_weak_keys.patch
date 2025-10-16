@@ -5,7 +5,7 @@ CRYPTO_TFM_REQ_FORBID_WEAK_KEYS.
 +++ b/libcfs/libcfs/crypto/llcrypt_private.h
 @@ -15,6 +15,10 @@
  #include <crypto/hash.h>
- #include <lustre_disk.h>
+ #include <grumple_disk.h>
  
 +#ifndef CRYPTO_TFM_REQ_FORBID_WEAK_KEYS
 +#define CRYPTO_TFM_REQ_FORBID_WEAK_KEYS CRYPTO_TFM_REQ_WEAK_KEY

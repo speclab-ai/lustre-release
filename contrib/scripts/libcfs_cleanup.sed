@@ -5,7 +5,7 @@
 # https://jira.whamcloud.com/browse/LU-1346
 
 # Run this script like:
-#	find libcfs lnet lustre -name "*.[ch]" | grep -v gnilnd |
+#	find libcfs lnet grumple -name "*.[ch]" | grep -v gnilnd |
 #		xargs sed -i "" -f contrib/scripts/libcfs_cleanup.sed
 
 

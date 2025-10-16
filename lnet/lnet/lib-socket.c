@@ -23,8 +23,8 @@
 #include <net/sock.h>
 #include <linux/inetdevice.h>
 
-#include <lustre_compat/linux/linux-misc.h>
-#include <lustre_compat/net/linux-net.h>
+#include <grumple_compat/linux/linux-misc.h>
+#include <grumple_compat/net/linux-net.h>
 #include <linux/libcfs/libcfs.h>
 #include <lnet/lib-lnet.h>
 #include <lnet/lnet_compat.h>
@@ -429,7 +429,7 @@ lnet_sock_connect(int interface, int local_port,
 		return sock;
 
 	/* Avoid temporary address, they are bad for long-lived
-	 * connections such as lustre mounts.
+	 * connections such as grumple mounts.
 	 * RFC4941, section 3.6 suggests that:
 	 *    Individual applications, which have specific
 	 *    knowledge about the normal duration of connections,

@@ -15,7 +15,7 @@
 #define _LIBCFS_FAIL_H
 
 #include <linux/types.h>
-#include <lustre_compat/linux/linux-misc.h>
+#include <grumple_compat/linux/linux-misc.h>
 #include <linux/libcfs/libcfs.h>
 #include <linux/libcfs/libcfs_debug.h>
 #include <linux/libcfs/libcfs_private.h>

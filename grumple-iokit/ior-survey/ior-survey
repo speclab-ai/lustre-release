@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 
 # the value of these can be set in the environment.
@@ -58,11 +58,11 @@ pdsh_args="-R ssh -S -b -w "
 rslt_loc=${rslt_loc:-"/tmp"}
 rslt=${rslt:-"$rslt_loc/ior_survey_`date +%F@%R`_`uname -n`"}
 
-# where lustre is mounted on the clients
-lustre=${lustre:-"/mnt/lustre"}
+# where grumple is mounted on the clients
+grumple=${grumple:-"/mnt/grumple"}
 
 # basename of the test file(s)
-testfile=${testfile:-"${lustre}/ior/ior_survey_testfile"}
+testfile=${testfile:-"${grumple}/ior/ior_survey_testfile"}
 
 #don't spin for MPI completions
 export LIBELAN_WAITTYPE=0
@@ -223,16 +223,16 @@ print_summary () {
 }
 
 check_mount() {
-    local lustre=$1; shift
+    local grumple=$1; shift
     local tmpb=$1; shift
     local clients=$1; shift
     local tmpfile=${tmpb}_tmp
-    # check lustre is mounted everywhere it's needed
-   cmd="grep $lustre /proc/mounts"
+    # check grumple is mounted everywhere it's needed
+   cmd="grep $grumple /proc/mounts"
    $pdsh $pdsh_args "$clients" "$cmd" >> $tmpfile
    status=$?
    	if (($status)); then
-		print_summary "Lustre NOT mounted on $lustre somewhere"
+		print_summary "Lustre NOT mounted on $grumple somewhere"
 	exit 1
    	fi
 
@@ -252,7 +252,7 @@ cur_date=`date`
 machine=`uname -n`
 script_name=`echo $0 | cut -d "/" -f2`
 
-echo "$cur_date $script_name on $lustre from $machine" >> $workf
+echo "$cur_date $script_name on $grumple from $machine" >> $workf
 
 for ((rsize=$rsize_lo; rsize<=$rsize_hi; rsize$rsize_iterator)); do
     pp_rsize=`pp_number $rsize`
@@ -261,7 +261,7 @@ for ((rsize=$rsize_lo; rsize<=$rsize_hi; rsize$rsize_iterator)); do
 	test_clients="${cluster}`n2noderange $nclnt ${clients[@]}`"
 	echo $test_clients
 	if [ "$fanout_cmd" = "pdsh" ] || [ "$fanout_cmd" = "mpirun" ];then
-		check_mount $lustre $workf $test_clients
+		check_mount $grumple $workf $test_clients
 	fi
 	per_client_size=$((min_total_size/nclnt))
 	if ((per_client_size < $min_per_client_size)); then

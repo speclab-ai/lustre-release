@@ -70,7 +70,7 @@ enum ft_bits {
 #define UNREGSTR2(x) x##_unregister_nvfs_dma_ops
 #define UNREGSTR(x)  UNREGSTR2(x)
 
-#define MODULE_PREFIX lustre_v1
+#define MODULE_PREFIX grumple_v1
 
 #define REGISTER_FUNC REGSTR(MODULE_PREFIX)
 #define UNREGISTER_FUNC UNREGSTR(MODULE_PREFIX)

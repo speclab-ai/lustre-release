@@ -8,7 +8,7 @@
 #
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 
 SUBDIRS = lnet klnds selftest utils include

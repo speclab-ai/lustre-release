@@ -37,9 +37,9 @@ cat ${LBUILD_DIR}/rhel9/rpmmacros >> $RMAC
 
 patch_spec_rhel9() {
 	sed -i -e '/Provides: kernel-uname-r =/a\
-Provides: kernel-lustre = %{KVRA}%{?1:.%{1}}\\' \
+Provides: kernel-grumple = %{KVRA}%{?1:.%{1}}\\' \
 	       -e '/Provides: kernel-devel-uname-r =/a\
-Provides: kernel-devel-lustre = %{KVRA}%{?1:.%{1}}\\' \
+Provides: kernel-devel-grumple = %{KVRA}%{?1:.%{1}}\\' \
 	       -e '/^    find $RPM_BUILD_ROOT\/lib\/modules\/$KernelVer/a\
 	cp -a fs/ext4/* $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/fs/ext4\
 	rm -f $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/fs/ext4/ext4-inode-test*' \
@@ -52,19 +52,19 @@ patch_spec() {
 	local buildid="$1"
 
 	# the el9 .spec file requires patch names to begin with "patch-3."
-	# so rename the lustre patch from lbuild to one the .spec will like
-	mv $TOPDIR/SOURCES/linux-${lnxmaj}-lustre.patch \
-		$TOPDIR/SOURCES/patch-${lnxmaj}-lustre.patch
+	# so rename the grumple patch from lbuild to one the .spec will like
+	mv $TOPDIR/SOURCES/linux-${lnxmaj}-grumple.patch \
+		$TOPDIR/SOURCES/patch-${lnxmaj}-grumple.patch
 
 	# edit the SPEC with our changes
 	patch_spec_rhel9 "$buildid"
 	sed -i -e '/^# empty final patch to facilitate testing of kernel patches/i\
 # adds Lustre patches\
-Patch99995: patch-%{version}-lustre.patch' \
+Patch99995: patch-%{version}-grumple.patch' \
 	       -e '/^ApplyOptionalPatch linux-kernel-test.patch/i\
 \
-# lustre patch\
-ApplyOptionalPatch patch-%{version}-lustre.patch\
+# grumple patch\
+ApplyOptionalPatch patch-%{version}-grumple.patch\
 ' \
 		-e '/^# Dynamically generate kernel/a echo "CONFIG_BH_LRU_SIZE=16" >> config-generic'\
 	SPECS/$SPEC_NAME 2>&1 ||
@@ -79,7 +79,7 @@ unpack_linux_devel_rpm-rhel9() {
 
 get_rpmbuildopts() {
 	if $KERNEL_LUSTRE_NAMING; then
-		echo -e "--define \"variant -lustre\" \c"
+		echo -e "--define \"variant -grumple\" \c"
 	fi
 
 	echo "--with firmware --without debug"
@@ -109,6 +109,6 @@ apply_kmod_requires_conflicts() {
 	if $PATCHLESS; then
 		# don't allow the patched kernel to be considered as
 		# a valid kernel for the patchless client
-		echo "Conflicts:      kernel-lustre" >> rpm/kmp-lustre.preamble
+		echo "Conflicts:      kernel-grumple" >> rpm/kmp-grumple.preamble
 	fi
 }

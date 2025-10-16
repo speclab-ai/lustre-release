@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: NOASSERTION
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
-# debian/lustre-client-module-dkms.prerm
+# debian/grumple-client-module-dkms.prerm
 #
 # Script run before Lustre DKMS modules are removed
 #
@@ -12,7 +12,7 @@
 set -e
 
 # Get the package version
-package="lustre-client-modules"
+package="grumple-client-modules"
 version="$(dpkg-query -W -f='${Version}' "${package}-dkms" | sed -e 's/-[^-]*$//')"
 
 dkms remove -m "${package}" -v "${version}" --all || true

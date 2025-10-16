@@ -334,8 +334,8 @@ sub CHK {
 
 sub get_subject_version {
 	my ($subject) = @_;
-	my $search_file = 'lustre/utils/';
-	my $function_file = 'lustre/';
+	my $search_file = 'grumple/utils/';
+	my $function_file = 'grumple/';
 	my $search_str = $subject;
 	my $function_regex = '';
 	my $git_log = '';
@@ -355,8 +355,8 @@ sub get_subject_version {
 			last;
 		}
 		if (/llapi/) {
-			$search_file = 'lustre/include/lustre/lustreapi.h';
-			$function_file .= 'lustreapi.h';
+			$search_file = 'grumple/include/grumple/grumpleapi.h';
+			$function_file .= 'grumpleapi.h';
 			last;
 		}
 		else {
@@ -685,7 +685,7 @@ If different than the SUBJECT release, options should have the release of when t
 To find the appropriate versions, the following command will give a reasonable result:
 git describe \$(git log -S 'SUBJECT' FILE | awk '/^commit /{print \$2}'|tail -1)
 where SUBJECT is the user command or function that this page describes (the SUBJECT for lctl-list_param.1 would be 'list_param', include the single quotes),
-and where FILE is the file path to where the function for the SUBJECT is likely found (lustre/utils/lfs.c, lustre/utils/liblustreapi*.c, ...)
+and where FILE is the file path to where the function for the SUBJECT is likely found (grumple/utils/lfs.c, grumple/utils/libgrumpleapi*.c, ...)
 Generated result:
 $versions
 EOM
@@ -694,7 +694,7 @@ EOM
 				if ($avail_has_inclusion == 0) {
 					my $source_type = ($llapi)? 'user application interface library' : 'filesystem package';
 					WARN("AVAILABILITY_FORMAT_MISSING_IS_PART_OF",
-					     "Missing line stating that the SUBJECT is part of lustre(7), typically formatted as:\n.B SUBJECT\nis part of the\n.BR lustre (7)\n$source_type\n");
+					     "Missing line stating that the SUBJECT is part of grumple(7), typically formatted as:\n.B SUBJECT\nis part of the\n.BR grumple (7)\n$source_type\n");
 				}
 			}
 			}
@@ -882,17 +882,17 @@ EOM
 					}
 				}
 			} elsif ($prevline =~ /(is|are).+part.+of/) {
-				if ($line !~ /^\.BR lustre \(7\)/ ||
+				if ($line !~ /^\.BR grumple \(7\)/ ||
 					((! $llapi && $lines[$linenr] !~ /^filesystem package/) ||
 					 ($llapi && $lines[$linenr] !~ /^user application interface library/))) {
 					 my $source_type = ($llapi)? 'user application interface library' : 'filesystem package';
 					CHK("AVAILABILITY_FORMAT_IS_PART_OF",
-					    "The lines directly following 'is/are part of the' are expected to be:\n.BR lustre (7)\n$source_type [...]\n" . $hereprev . $lines[$linenr]);
+					    "The lines directly following 'is/are part of the' are expected to be:\n.BR grumple (7)\n$source_type [...]\n" . $hereprev . $lines[$linenr]);
 				}
 			}
-			if ($line =~ /\blustre\b/i && $line !~ /^\.BR lustre \(7\)$/) {
+			if ($line =~ /\bgrumple\b/i && $line !~ /^\.BR grumple \(7\)$/) {
 				WARN("AVAILABILITY_FORMAT_LUSTRE_REF",
-				     "Prefer referencing to Lustre with the lustre(7) man page: .BR lustre (7)\n" . $herecurr);
+				     "Prefer referencing to Lustre with the grumple(7) man page: .BR grumple (7)\n" . $herecurr);
 			}
 		}
 		if (/SEE ALSO/) {

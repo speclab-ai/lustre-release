@@ -13,7 +13,7 @@
  * where an unsafe_memcpy is provided in Linux v5.18-rc5-1405-g43213daed6d6
  *
  * This following is excerpted from the Linux v6.1 fortified memcpy()
- * which resolves some corner cases, one of which is triggered in lustre
+ * which resolves some corner cases, one of which is triggered in grumple
  */
 #ifndef unsafe_memcpy
 

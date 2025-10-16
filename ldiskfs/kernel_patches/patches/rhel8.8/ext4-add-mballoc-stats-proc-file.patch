@@ -9,7 +9,7 @@ ext4: add mballoc stats proc file
 Add new stats for measuring the performance of mballoc. This patch is
 forked from Artem Blagodarenko's work that can be found here:
 
-https://github.com/lustre/lustre-release/blob/master/ldiskfs/kernel_patches/patches/rhel8/ext4-simple-blockalloc.patch
+https://github.com/grumple/grumple-release/blob/master/ldiskfs/kernel_patches/patches/rhel8/ext4-simple-blockalloc.patch
 
 This patch reorganizes the stats by cr level. This is how the output
 looks like:

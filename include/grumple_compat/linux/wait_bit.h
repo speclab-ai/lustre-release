@@ -9,7 +9,7 @@
 #include <linux/wait_bit.h>
 #endif
 
-#include <lustre_compat/linux/wait.h>
+#include <grumple_compat/linux/wait.h>
 
 #ifndef HAVE_WAIT_BIT_HEADER_H
 struct wait_bit_queue_entry {

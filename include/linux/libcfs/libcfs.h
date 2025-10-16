@@ -22,12 +22,12 @@
 #include <linux/sched/signal.h>
 #endif
 
-#include <lustre_compat/linux/linux-misc.h>
-#include <lustre_compat/linux/linux-mem.h>
-#include <lustre_compat/linux/timer.h>
-#include <lustre_compat/linux/wait_bit.h>
-#include <lustre_compat/linux/wait.h>
-#include <lustre_compat/linux/fortify-string.h>
+#include <grumple_compat/linux/linux-misc.h>
+#include <grumple_compat/linux/linux-mem.h>
+#include <grumple_compat/linux/timer.h>
+#include <grumple_compat/linux/wait_bit.h>
+#include <grumple_compat/linux/wait.h>
+#include <grumple_compat/linux/fortify-string.h>
 
 #include <uapi/linux/lnet/libcfs_ioctl.h>
 #include <linux/libcfs/libcfs_debug.h>

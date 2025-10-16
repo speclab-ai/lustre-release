@@ -15,12 +15,12 @@
 #ifndef _LLCRYPT_PRIVATE_H
 #define _LLCRYPT_PRIVATE_H
 
-#include <lustre_compat/linux/llcrypt.h>
+#include <grumple_compat/linux/llcrypt.h>
 #include <linux/libcfs/libcfs_debug.h>
 #include <linux/libcfs/libcfs_private.h>
 #include <crypto/hash.h>
-#include <lustre_disk.h>
-#include <uapi/linux/lustre/lgss.h>
+#include <grumple_disk.h>
+#include <uapi/linux/grumple/lgss.h>
 
 #ifndef CRYPTO_TFM_REQ_FORBID_WEAK_KEYS
 #define CRYPTO_TFM_REQ_FORBID_WEAK_KEYS CRYPTO_TFM_REQ_WEAK_KEY

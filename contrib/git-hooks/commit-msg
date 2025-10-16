@@ -164,7 +164,7 @@ function do_emails() {
 
 # All "change" lines specify a Gerrit URL
 #
-function do_lustre_change() {
+function do_grumple_change() {
 	local url="${LINE#*change: }"
 
 	ck_is_ascii
@@ -175,7 +175,7 @@ function do_lustre_change() {
 # All "commit" lines specify a commit hash, but the commit may be in
 # another repo, so the hash can't be directly verified
 #
-function do_lustre_commit() {
+function do_grumple_commit() {
 	local val=${LINE#*commit: }
 
 	ck_is_ascii
@@ -318,9 +318,9 @@ while IFS= read -u3 LINE; do
 	$CHANGEID* )		do_changeid ;;
 	$COVERITY* )		do_coverity ;;
 	$FIXES* )		do_fixes ;;
-	$LINUX_COMMIT* )	do_lustre_commit ;;
-	$LUSTRE_CHANGE* )	do_lustre_change ;;
-	$LUSTRE_COMMIT* )	do_lustre_commit ;;
+	$LINUX_COMMIT* )	do_grumple_commit ;;
+	$LUSTRE_CHANGE* )	do_grumple_change ;;
+	$LUSTRE_COMMIT* )	do_grumple_commit ;;
 	$SIGNOFF* )		do_signoff ;;
 	$TEST_PARAMS* )		do_testparams ;;
 	$TEST_PARAMS2* )	do_testparams ;;

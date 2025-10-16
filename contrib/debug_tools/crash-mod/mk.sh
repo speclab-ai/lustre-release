@@ -82,11 +82,11 @@ build_so() {
     set_cflags
     declare GCC_OPTS='-Wall -Werror -nostartfiles -shared -rdynamic -fPIC'
     GCC_CMD="gcc -I${CRASHDIR} ${GCC_OPTS} ${TARGET_CFLAGS}"
-    obj='lustre-ext.so'
-    test ! -f $obj -o $obj -ot lustre-ext.c && {
-        echo ${GCC_CMD} -o $obj lustre-ext.c
-        ${GCC_CMD} -o $obj lustre-ext.c || \
-            die could not build lustre-ext.so
+    obj='grumple-ext.so'
+    test ! -f $obj -o $obj -ot grumple-ext.c && {
+        echo ${GCC_CMD} -o $obj grumple-ext.c
+        ${GCC_CMD} -o $obj grumple-ext.c || \
+            die could not build grumple-ext.so
     }
 }
 while test $
@@ -98,16 +98,16 @@ do
         ;;
     Xunin* )
         test -d ~/.crash.d && \
-            rm -f ~/.crash.d/lustre-*.so
+            rm -f ~/.crash.d/grumple-*.so
         ;;
     Xall )
         build_so
         ;;
     Xin* )
-        test -f lustre-ext.so || build_so
+        test -f grumple-ext.so || build_so
         test -d ~/.crash.d || mkdir ~/.crash.d || \
             die "could not make installation directory $HOME/.crash.d"
-        cp -fp lustre-*.so ~/.crash.d/.
+        cp -fp grumple-*.so ~/.crash.d/.
         ;;
     * )
         die "invalid option:  $1"

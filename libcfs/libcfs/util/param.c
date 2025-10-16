@@ -37,9 +37,9 @@
  * to one or more files that exist those results are stored in the \param
  * paths glob_t structure that is passed by the caller.
  *
- * Lustre tunables traditionally were in /proc/{sys,fs}/{lnet,lustre}
+ * Lustre tunables traditionally were in /proc/{sys,fs}/{lnet,grumple}
  * but in upstream kernels starting with Linux 4.2 these parameters
- * have been moved to /sys/fs/lustre and /sys/kernel/debug/{lnet,lustre}
+ * have been moved to /sys/fs/grumple and /sys/kernel/debug/{lnet,grumple}
  * so the user tools need to check both locations.
  *
  * \retval	 0 for success, with results stored in \param paths.
@@ -48,8 +48,8 @@
 int
 cfs_get_param_paths(glob_t *paths, const char *pattern, ...)
 {
-	char topdir[PATH_MAX] = "{/sys/{fs,kernel/debug}/{lnet,lustre},"
-				"/proc/{fs,sys}/{lnet,lustre}}";
+	char topdir[PATH_MAX] = "{/sys/{fs,kernel/debug}/{lnet,grumple},"
+				"/proc/{fs,sys}/{lnet,grumple}}";
 	static bool test_mounted = false;
 	char path[PATH_MAX];
 	char buf[PATH_MAX];

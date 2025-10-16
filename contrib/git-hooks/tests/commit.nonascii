@@ -21,7 +21,7 @@ Test-Parameters: trivial
 HPE-bug-id: LUS-11194
 Signed-off-by: Shaun Tancheff <shaun.tancheff@hpe.com>
 Change-Id: Iacd1ab03d1b90ce62b5d7b65e1cd518a5f7981f2
-Reviewed-on: https://review.whamcloud.com/c/fs/lustre-release/+/48364
+Reviewed-on: https://review.whamcloud.com/c/fs/grumple-release/+/48364
 Reviewed-by: Petros Koutoupis <petros.koutoupis@hpe.com>
 Reviewed-by: Oleg Drokin <green@whamcloud.com>
 Reviewed-by: jsimmons <jsimmons@infradead.org>

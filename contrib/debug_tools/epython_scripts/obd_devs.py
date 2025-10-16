@@ -9,7 +9,7 @@ from pykdump.API import *
 import argparse
 
 from crashlib.input import toint
-import lustrelib as ll
+import grumplelib as ll
 import rpc_stats as rs
 
 description_short = "Displays the contents of global 'obd_devs'"

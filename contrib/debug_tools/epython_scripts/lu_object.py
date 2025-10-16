@@ -10,7 +10,7 @@ from struct import *
 import argparse
 import os
 
-import lustrelib as ll
+import grumplelib as ll
 from crashlib.input import toint
 
 description_short = "Prints contents of an lu_object"

@@ -36,7 +36,7 @@ TARGET_ARCHS_ALL="$(uname -m)"
 
 # need lnxmaj from the target file
 TARGET=$(autodetect_target "$DISTRO")
-TARGET_FILE="$TOPDIR/lustre/kernel_patches/targets/$TARGET.target"
+TARGET_FILE="$TOPDIR/grumple/kernel_patches/targets/$TARGET.target"
 . "$TARGET_FILE"
 
 if ! kernelrpm=$(find_linux_rpms "-$DEVEL_KERNEL_TYPE" "$KERNELRPMSDIR"); then

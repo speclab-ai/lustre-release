@@ -1,6 +1,6 @@
 Linux 5.3 (commit 22d94f493bfb) introduces s_master_keys to struct super_block.
 As we need encryption support for older kernels, replace this with
-new lsi_master_keys field in struct lustre_sb_info.
+new lsi_master_keys field in struct grumple_sb_info.
 
 --- a/libcfs/libcfs/crypto/keyring.c
 +++ b/libcfs/libcfs/crypto/keyring.c
@@ -32,7 +32,7 @@ new lsi_master_keys field in struct lustre_sb_info.
  {
  	char description[LLCRYPT_FS_KEYRING_DESCRIPTION_SIZE];
  	struct key *keyring;
-+	struct lustre_sb_info *lsi = s2lsi(sb);
++	struct grumple_sb_info *lsi = s2lsi(sb);
  
 -	if (sb->s_master_keys)
 +	if (!lsi)
@@ -55,7 +55,7 @@ new lsi_master_keys field in struct lustre_sb_info.
  {
 -	key_put(sb->s_master_keys);
 -	sb->s_master_keys = NULL;
-+	struct lustre_sb_info *lsi = s2lsi(sb);
++	struct grumple_sb_info *lsi = s2lsi(sb);
 +
 +	if (lsi != NULL) {
 +		key_put(lsi->lsi_master_keys);
@@ -73,7 +73,7 @@ new lsi_master_keys field in struct lustre_sb_info.
  {
  	struct key *keyring;
  	char description[LLCRYPT_MK_DESCRIPTION_SIZE];
-+	struct lustre_sb_info *lsi = s2lsi(sb);
++	struct grumple_sb_info *lsi = s2lsi(sb);
 +
 +	if (!lsi)
 +		return ERR_PTR(-EINVAL);
@@ -88,7 +88,7 @@ new lsi_master_keys field in struct lustre_sb_info.
  {
  	static DEFINE_MUTEX(llcrypt_add_key_mutex);
  	struct key *key;
-+	struct lustre_sb_info *lsi = s2lsi(sb);
++	struct grumple_sb_info *lsi = s2lsi(sb);
  	int err;
  
 +	if (!lsi)
@@ -142,7 +142,7 @@ new lsi_master_keys field in struct lustre_sb_info.
  
  #include <libcfs/crypto/llcrypt.h>
  #include <crypto/hash.h>
-+#include <lustre_disk.h>
++#include <grumple_disk.h>
  
  #define CONST_STRLEN(str)	(sizeof(str) - 1)
  

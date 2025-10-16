@@ -1,6 +1,6 @@
 Subject: [PATCH] ext4: cache on-disk inode version in ext4_inode_info
 
-For use in lustre ldiskfs transaction handling
+For use in grumple ldiskfs transaction handling
 ---
  fs/ext4/ext4.h   | 2 ++
  fs/ext4/ialloc.c | 1 +

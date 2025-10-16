@@ -80,11 +80,11 @@ TAGS
 /undef.h
 /INSTALL
 /libtool
-/lustre.spec
-/lustre-dkms.spec
-/lustre*.tar.gz
-/lustre*.rpm
-/kmod-lustre*.rpm
+/grumple.spec
+/grumple-dkms.spec
+/grumple*.tar.gz
+/grumple*.rpm
+/kmod-grumple*.rpm
 /kmp-*.files
 /kmp-*.preamble
 /mkinstalldirs

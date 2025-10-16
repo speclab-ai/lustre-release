@@ -1,16 +1,16 @@
 %defattr(-,root,root)
 %dir %{modules_fs_path}
-%dir %{modules_fs_path}/%{lustre_name}
+%dir %{modules_fs_path}/%{grumple_name}
 %if 0%{?enable_multi_lnds} > 0
-%dir %{modules_fs_path}/%{lustre_name}/fs
-%dir %{modules_fs_path}/%{lustre_name}/net
-%{modules_fs_path}/%{lustre_name}/fs/*
-%{modules_fs_path}/%{lustre_name}/net/libcfs.ko
-%{modules_fs_path}/%{lustre_name}/net/lnet.ko
-%{modules_fs_path}/%{lustre_name}/net/lnet_selftest.ko
+%dir %{modules_fs_path}/%{grumple_name}/fs
+%dir %{modules_fs_path}/%{grumple_name}/net
+%{modules_fs_path}/%{grumple_name}/fs/*
+%{modules_fs_path}/%{grumple_name}/net/libcfs.ko
+%{modules_fs_path}/%{grumple_name}/net/lnet.ko
+%{modules_fs_path}/%{grumple_name}/net/lnet_selftest.ko
 %else
-%{modules_fs_path}/%{lustre_name}/*
+%{modules_fs_path}/%{grumple_name}/*
 %endif
 %doc COPYING
-%doc ChangeLog-lustre
+%doc ChangeLog-grumple
 %doc ChangeLog-lnet

@@ -5597,7 +5597,7 @@ LNetDist(struct lnet_nid *dstnid, struct lnet_nid *srcnid, __u32 *orderp)
 	struct lnet_ni *matched_dstnet = NULL;
 
 	/* if !local_nid_dist_zero, I don't return a distance of 0 ever
-	 * (when lustre sees a distance of 0, it substitutes 0@lo), so I
+	 * (when grumple sees a distance of 0, it substitutes 0@lo), so I
 	 * keep order 0 free for 0@lo and order 1 free for a local NID
 	 * match
 	 * WARNING: dstnid and srcnid might point to same place.

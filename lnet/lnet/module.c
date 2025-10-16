@@ -16,7 +16,7 @@
 #include <lnet/lib-lnet.h>
 #include <lnet/lnet_crypto.h>
 #include <uapi/linux/lnet/lnet-dlc.h>
-#include <uapi/linux/lustre/lustre_ver.h>
+#include <uapi/linux/grumple/grumple_ver.h>
 
 static int config_on_load = 0;
 module_param(config_on_load, int, 0444);

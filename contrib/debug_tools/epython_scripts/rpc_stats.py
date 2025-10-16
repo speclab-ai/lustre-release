@@ -8,7 +8,7 @@ Utility to display rpc stats for a client_obd
 from pykdump.API import *
 import argparse
 
-import lustrelib as ll
+import grumplelib as ll
 from crashlib.input import toint
 
 description_short = 'Dumps the rpc stats for a given client_obd'

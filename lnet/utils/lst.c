@@ -3905,7 +3905,7 @@ int main(int argc, char **argv)
 	if (rc < 0)
 		goto errorout;
 
-	rc = lustre_lnet_config_lib_init();
+	rc = grumple_lnet_config_lib_init();
 	if (rc < 0)
 		goto errorout;
 

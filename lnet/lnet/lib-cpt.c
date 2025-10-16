@@ -1381,7 +1381,7 @@ EXPORT_SYMBOL(cfs_percpt_number);
 
 #ifdef CONFIG_HOTPLUG_CPU
 #ifdef HAVE_HOTPLUG_STATE_MACHINE
-static enum cpuhp_state lustre_cpu_online;
+static enum cpuhp_state grumple_cpu_online;
 
 static int cfs_cpu_online(unsigned int cpu)
 {
@@ -1440,8 +1440,8 @@ void cfs_cpu_fini(void)
 
 #ifdef CONFIG_HOTPLUG_CPU
 #ifdef HAVE_HOTPLUG_STATE_MACHINE
-	if (lustre_cpu_online > 0)
-		cpuhp_remove_state_nocalls(lustre_cpu_online);
+	if (grumple_cpu_online > 0)
+		cpuhp_remove_state_nocalls(grumple_cpu_online);
 	cpuhp_remove_state_nocalls(CPUHP_BP_PREPARE_DYN);
 #else
 	unregister_hotcpu_notifier(&cfs_cpu_notifier);
@@ -1458,18 +1458,18 @@ int cfs_cpu_init(void)
 #ifdef CONFIG_HOTPLUG_CPU
 #ifdef HAVE_HOTPLUG_STATE_MACHINE
 	ret = cpuhp_setup_state_nocalls(CPUHP_BP_PREPARE_DYN,
-					"fs/lustre/cfe:dead", NULL,
+					"fs/grumple/cfe:dead", NULL,
 					cfs_cpu_dead);
 	if (ret < 0)
 		goto failed_cpu_dead;
 
 	ret = cpuhp_setup_state_nocalls(CPUHP_AP_ONLINE_DYN,
-					"fs/lustre/cfe:online",
+					"fs/grumple/cfe:online",
 					cfs_cpu_online, NULL);
 	if (ret < 0)
 		goto failed_cpu_online;
 
-	lustre_cpu_online = ret;
+	grumple_cpu_online = ret;
 #else
 	register_hotcpu_notifier(&cfs_cpu_notifier);
 #endif 
@@ -1509,8 +1509,8 @@ failed_alloc_table:
 
 #ifdef CONFIG_HOTPLUG_CPU
 #ifdef HAVE_HOTPLUG_STATE_MACHINE
-	if (lustre_cpu_online > 0)
-		cpuhp_remove_state_nocalls(lustre_cpu_online);
+	if (grumple_cpu_online > 0)
+		cpuhp_remove_state_nocalls(grumple_cpu_online);
 failed_cpu_online:
 	cpuhp_remove_state_nocalls(CPUHP_BP_PREPARE_DYN);
 failed_cpu_dead:

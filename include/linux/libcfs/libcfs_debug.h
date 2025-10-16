@@ -196,7 +196,7 @@ void libcfs_debug_msg(struct libcfs_debug_msg_data *msgdata,
 int cfs_trace_copyout_string(char __user *usr_buffer, int usr_buffer_nob,
 			     const char *knl_buffer, char *append);
 
-#define LIBCFS_DEBUG_FILE_PATH_DEFAULT "/tmp/lustre-log"
+#define LIBCFS_DEBUG_FILE_PATH_DEFAULT "/tmp/grumple-log"
 
 #if defined(CDEBUG_ENTRY_EXIT)
 

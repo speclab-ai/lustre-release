@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 # contrib/git-hooks/prepare-commit-msg
 #
 # A Git hook script to prepare the commit log message.  Install into
-# lustre/.git/hooks/prepare-commit-msg to enable for Lustre commits.
+# grumple/.git/hooks/prepare-commit-msg to enable for Lustre commits.
 #
 # Called by git-commit with the name of the file that has the
 # commit message, followed by the description of the commit
@@ -76,9 +76,9 @@ if [[ -x "$SHELLCHECK" && "$SHELLCHECK_RUN" == "yes" ]]; then
 	echo "#" >> "$1"
 	# Get file that needs to be shellchecked. We only consider *.sh files
 	# Example Start --
-	#       modified:   lustre/tests/sanity.sh
+	#       modified:   grumple/tests/sanity.sh
 	#       modified:   contrib/git-hooks/prepare-commit-msg
-	#            new:   lustre/utils/liblustreapi_error.c
+	#            new:   grumple/utils/libgrumpleapi_error.c
 	# Example End   --
 	mod_files=($(awk '/modified:.*\.sh|new:.*\.sh/ { print $3 }' $1))
 	for cur_file in ${mod_files[@]}; do

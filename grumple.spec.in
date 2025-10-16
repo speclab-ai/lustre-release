@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
-# lustre.spec.in
+# grumple.spec.in
 #
 # spec file template for RHEL package builds
 #
@@ -12,10 +12,10 @@
 %bcond_without servers
 %bcond_without ldiskfs
 %bcond_with zfs
-%bcond_without lustre_tests
-%bcond_without lustre_utils
-%bcond_without lustre_iokit
-%bcond_without lustre_modules
+%bcond_without grumple_tests
+%bcond_without grumple_utils
+%bcond_without grumple_iokit
+%bcond_without grumple_modules
 %bcond_with gss
 %bcond_with gss_keyring
 %bcond_without manpages
@@ -60,9 +60,9 @@
 %{exit 1}
 %endif
 
-# lustre_tests depends on lustre_utils
-%if %{without lustre_utils}
-%undefine with_lustre_tests
+# grumple_tests depends on grumple_utils
+%if %{without grumple_utils}
+%undefine with_grumple_tests
 %endif
 
 %{!?version: %global version @VERSION@}
@@ -129,15 +129,15 @@
 %endif
 
 # Set the package name prefix
-%if %{undefined lustre_name}
+%if %{undefined grumple_name}
     %if %{with servers}
-	%global lustre_name lustre
+	%global grumple_name grumple
     %else
-	%global lustre_name lustre-client
+	%global grumple_name grumple-client
     %endif
 %endif
 
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 %if %{undefined kmoddir}
     %if %{defined kernel_module_package_moddir}
 	%global kmoddir %{kernel_module_package_moddir}
@@ -170,12 +170,12 @@
 		%global requires_kmod_version %{version}_%(echo %{krequires} | sed -r 'y/-/_/; s/^(2\.6\.[0-9]+)_/\\1.0_/;')
 	%endif
 %endif
-%global requires_kmod_name %{kmod_prefix}%{lustre_name}%{kmod_postfix}
-%global requires_kmod_osd_zfs_name %{kmod_prefix}%{lustre_name}-osd-zfs%{kmod_postfix}
-%if %{with lustre_tests}
-	%global requires_kmod_tests_name %{kmod_prefix}%{lustre_name}-tests%{kmod_postfix}
+%global requires_kmod_name %{kmod_prefix}%{grumple_name}%{kmod_postfix}
+%global requires_kmod_osd_zfs_name %{kmod_prefix}%{grumple_name}-osd-zfs%{kmod_postfix}
+%if %{with grumple_tests}
+	%global requires_kmod_tests_name %{kmod_prefix}%{grumple_name}-tests%{kmod_postfix}
 %endif
-%global kmod_devel_pkg %{kmod_prefix}%{lustre_name}%{kmod_postfix}-devel
+%global kmod_devel_pkg %{kmod_prefix}%{grumple_name}%{kmod_postfix}-devel
 %global requires_release_major_minor %(echo %version | cut -d. -f1).%(echo %version | cut -d. -f2)
 %endif
 
@@ -214,7 +214,7 @@
 %{!?mpi_name: %global mpi_name openmpi}
 
 Summary: Lustre File System
-Name: %{lustre_name}
+Name: %{grumple_name}
 Version: %{version}
 Release: 1%{?dist}
 License: GPL-2.0-only AND LGPL-2.1-or-later
@@ -222,15 +222,15 @@ License: GPL-2.0-only AND LGPL-2.1-or-later
 # SUSE needs Group for the kernel_module_package macro
 Group: System/Kernel
 %endif
-Source: lustre-%{version}.tar.gz
-Source1: kmp-lustre.preamble
-Source2: kmp-lustre.files
-Source3: kmp-lustre-osd-ldiskfs.preamble
-Source4: kmp-lustre-osd-ldiskfs.files
-Source5: kmp-lustre-osd-zfs.preamble
-Source6: kmp-lustre-osd-zfs.files
-Source7: kmp-lustre-tests.preamble
-Source8: kmp-lustre-tests.files
+Source: grumple-%{version}.tar.gz
+Source1: kmp-grumple.preamble
+Source2: kmp-grumple.files
+Source3: kmp-grumple-osd-ldiskfs.preamble
+Source4: kmp-grumple-osd-ldiskfs.files
+Source5: kmp-grumple-osd-zfs.preamble
+Source6: kmp-grumple-osd-zfs.files
+Source7: kmp-grumple-tests.preamble
+Source8: kmp-grumple-tests.files
 Source9: find-provides
 Source10: find-provides.ksyms
 Source11: kmp-lnet-socklnd.preamble
@@ -243,18 +243,18 @@ Source17: kmp-lnet-kfilnd.preamble
 Source18: kmp-lnet-kfilnd.files
 Source19: kmp-lnet-in-kernel-o2iblnd.preamble
 Source20: kmp-lnet-in-kernel-o2iblnd.files
-Source21: kmp-lustre-osd-wbcfs.preamble
-Source22: kmp-lustre-osd-wbcfs.files
+Source21: kmp-grumple-osd-wbcfs.preamble
+Source22: kmp-grumple-osd-wbcfs.files
 URL: https://wiki.whamcloud.com/
-BuildRoot: %{_tmppath}/lustre-%{version}-root
+BuildRoot: %{_tmppath}/grumple-%{version}-root
 BuildRequires: libtool pkgconfig(yaml-0.1) pkgconfig(zlib) pkgconfig(libnl-3.0) flex bison
-Obsoletes: lustre-client < %{version}
-Provides: lustre-client = %{version}-%{release}
+Obsoletes: grumple-client < %{version}
+Provides: grumple-client = %{version}-%{release}
 # Lustre modules
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 #
 %if 0%{?suse_version} >= 1500 || 0%{?rhel} >= 8 || 0%{?fedora} >= 34
-Requires: (%{lustre_name}-dkms or %{requires_kmod_name} >= %{requires_release_major_minor})
+Requires: (%{grumple_name}-dkms or %{requires_kmod_name} >= %{requires_release_major_minor})
 %else
 Requires: %{requires_kmod_name} >= %{requires_release_major_minor}
 %endif
@@ -297,7 +297,7 @@ BuildRequires: kernel-abi-whitelists
 #
 # Options: lutf, gss, servers, systemd
 #
-%if %{with lustre_tests_lutf}
+%if %{with grumple_tests_lutf}
 Requires: python3 >= 3.6.0
 BuildRequires: python3-devel >= 3.6.0, swig
 %endif
@@ -309,8 +309,8 @@ BuildRequires: krb5-devel openssl-devel
 %if %{with servers}
 Requires: %{name}-osd
 Requires: %{name}-osd-mount
-Obsoletes: lustre-server < %{version}
-Provides: lustre-server = %{version}-%{release}
+Obsoletes: grumple-server < %{version}
+Provides: grumple-server = %{version}-%{release}
 %endif
 #
 %if %{with systemd}
@@ -349,7 +349,7 @@ BuildRequires: openEuler-rpm-config
 %description
 Userspace tools and files for the Lustre file system.
 
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 %if 0%{?rhel} == 7
 # until we have achieved full kABI compatibility we need to
 # restrict the kernel range that can be used to the kernel
@@ -374,21 +374,21 @@ echo $TMPFILE
 
 %if %{with ldiskfs}
 %kernel_module_package -n %{name}-osd-ldiskfs -p %SOURCE3 -f %SOURCE4 %{_flavor}
-%if %{with lustre_utils}
+%if %{with grumple_utils}
 %package osd-ldiskfs-mount
 Summary: Lustre mount's ldiskfs-specific helper library
 BuildRequires: e2fsprogs-devel >= 1.44.3 pkgconfig(mount)
 Requires: ldiskfsprogs > 1.45.6
-Provides: lustre-osd-mount = %{version}
+Provides: grumple-osd-mount = %{version}
 Provides: %{name}-osd-mount = %{version}
 Obsoletes: %{name}-osd-mount < %{version}
-Obsoletes: lustre-osd-mount < %{version}
+Obsoletes: grumple-osd-mount < %{version}
 
 %description osd-ldiskfs-mount
 Provide a shared library (dso) that can be loaded into various
-lustre tools (mount/mkfs) to provide support for ldisfs
+grumple tools (mount/mkfs) to provide support for ldisfs
 
-# with lustre_utils
+# with grumple_utils
 %endif
 # with ldiskfs
 %endif
@@ -396,12 +396,12 @@ lustre tools (mount/mkfs) to provide support for ldisfs
 %if %{with zfs}
 %global confzfsdobjpath %(echo '%configure_args' | grep -q -- --with-zfs-obj= ; echo $?)
 %kernel_module_package -n %{name}-osd-zfs -p %SOURCE5 -f %SOURCE6 %{_flavor}
-%if %{with lustre_utils}
+%if %{with grumple_utils}
 %package osd-zfs-mount
 Summary: Lustre mount's zfs-specific helper library
 BuildRequires: pkgconfig(mount)
 Provides: %{name}-osd-mount = %{version}
-Obsoletes: lustre-osd-mount < %{version}
+Obsoletes: grumple-osd-mount < %{version}
 %if 0%{confzfsdobjpath} != 0
 %if 0%{?suse_version} >= 1500 || 0%{?rhel} >= 8 || 0%{?fedora} >= 34
 BuildRequires: (libzfs-devel or libzfs4-devel or libzfs5-devel or libzfs6-devel)
@@ -420,9 +420,9 @@ Requires: %{name}-osd-zfs = %{version}
 
 %description osd-zfs-mount
 Provide a shared library (dso) that can be loaded into various
-lustre tools (mount/mkfs) to provide support for ZFS.
+grumple tools (mount/mkfs) to provide support for ZFS.
 
-# with lustre_utils
+# with grumple_utils
 %endif
 # with zfs
 %endif
@@ -431,26 +431,26 @@ lustre tools (mount/mkfs) to provide support for ZFS.
 %else
 %if %{with servers}
 %kernel_module_package -n %{name}-osd-wbcfs -p %SOURCE21 -f %SOURCE22 %{_flavor}
-%if %{with lustre_utils}
+%if %{with grumple_utils}
 %package osd-wbcfs-mount
 Summary: Lustre mount's wbcfs-specific helper library
 BuildRequires: pkgconfig(mount)
 Provides: %{name}-osd-mount = %{version}
-Obsoletes: lustre-osd-mount < %{version}
+Obsoletes: grumple-osd-mount < %{version}
 Provides: %{name}-osd-mount = %{version}
 Provides: %{name}-osd-wbcfs-mount = %{version}
 Requires: %{name}-osd-wbcfs = %{version}
 
 %description osd-wbcfs-mount
 Provide a shared library (dso) that can be loaded into various
-lustre tools (mount/mkfs) to provide support for in-memory OSD
+grumple tools (mount/mkfs) to provide support for in-memory OSD
 with writeback support.
 
-# with lustre_utils
+# with grumple_utils
 %endif
 # with servers
 %endif
-# with lustre_modules
+# with grumple_modules
 %endif
 # suse
 %endif
@@ -468,11 +468,11 @@ environment for both Pacemaker and rgmanager.
 
 %package devel
 Summary: Lustre include headers
-Provides: lustre-devel = %{version}
-Requires: %{lustre_name} = %{version}
-%if %{with lustre_modules}
+Provides: grumple-devel = %{version}
+Requires: %{grumple_name} = %{version}
+%if %{with grumple_modules}
 %if 0%{?suse_version} >= 1500 || 0%{?rhel} >= 8 || 0%{?fedora} >= 34
-Requires: (%{lustre_name}-dkms or %{requires_kmod_name} >= %{requires_release_major_minor})
+Requires: (%{grumple_name}-dkms or %{requires_kmod_name} >= %{requires_release_major_minor})
 %else
 Requires: %{requires_kmod_name} >= %{requires_release_major_minor}
 %endif
@@ -482,30 +482,30 @@ Requires: %{requires_kmod_name} >= %{requires_release_major_minor}
 This package contains the header files needed for building additional
 applications against the Lustre / LNet utilities libraries.
 
-:> lustre-devel.files
+:> grumple-devel.files
 
-%if %{with lustre_tests}
+%if %{with grumple_tests}
 %package tests
 Summary: Lustre testing framework
 Provides: %{name}-tests = %{version}
-%if %{with lustre_iokit}
-Requires: %{name} = %{version}, %{lustre_name}-iokit
+%if %{with grumple_iokit}
+Requires: %{name} = %{version}, %{grumple_name}-iokit
 %else
 Requires: %{name} = %{version}
 %endif
-Requires: lustre-devel = %{version}
+Requires: grumple-devel = %{version}
 %if 0%{?rhel} >= 8 || 0%{?suse_version} >= 1500 || 0%{?openEuler}
 Requires: python3 >= 3.6.0, python3-PyYAML
 %endif
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 %if 0%{?suse_version} >= 1500 || 0%{?rhel} >= 8 || 0%{?fedora} >= 34
-Requires: (%{lustre_name}-dkms or %{requires_kmod_name} >= %{requires_release_major_minor})
+Requires: (%{grumple_name}-dkms or %{requires_kmod_name} >= %{requires_release_major_minor})
 %else
 Requires: %{requires_kmod_name} >= %{requires_release_major_minor}
 %endif
 Requires: %{requires_kmod_tests_name} >= %{requires_release_major_minor}
 %endif
-%if %{with lustre_tests_lutf}
+%if %{with grumple_tests_lutf}
 Requires: python3 >= 3.6.0
 %endif
 Requires: attr, rsync, lsof, /usr/bin/getconf
@@ -540,7 +540,7 @@ BuildRequires: openmpi2-devel
 This package contains a set of test binaries and scripts that are intended
 to be used by the Lustre testing framework.
 
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 %kernel_module_package -n %{name}-tests -p %SOURCE7 -f %SOURCE8 %{_flavor}
 %endif
 %endif
@@ -550,8 +550,8 @@ to be used by the Lustre testing framework.
 %kernel_module_package -n %{name}-lnet-socklnd -p %SOURCE11 -f %SOURCE12 %{_flavor}
 %if %{with o2ib}
 ## in-kernel: re-write post/preun generated by kmodtool [ls -s and rm -f]
-%define inkernmod %{modules_fs_path}/%{lustre_name}/net/in-kernel-ko2iblnd.ko
-%define inkernsym %{modules_fs_path}/%{lustre_name}/net/ko2iblnd.ko
+%define inkernmod %{modules_fs_path}/%{grumple_name}/net/in-kernel-ko2iblnd.ko
+%define inkernsym %{modules_fs_path}/%{grumple_name}/net/ko2iblnd.ko
 %if 0%{?rhel} >= 8 || 0%{?fedora} >= 34
 %define inkernpost %%posttrans -n %{kmod_prefix}%{name}-lnet-in-kernel-o2iblnd%{kmod_postfix}%{kmod_flavor}
 %define inkernaction ln -sf %{inkernmod} %{inkernsym}
@@ -574,7 +574,7 @@ echo $TMPFILE
 ## mofed: add a posttrans rule on el8 and later
 %if %{with mofed}
 %if 0%{?rhel} >= 8 || 0%{?fedora} >= 34
-%define exkernmod %{modules_fs_path}/%{lustre_name}/net/ko2iblnd.ko
+%define exkernmod %{modules_fs_path}/%{grumple_name}/net/ko2iblnd.ko
 %define exkernpost %%posttrans -n %{kmod_prefix}%{name}-lnet-o2iblnd%{kmod_postfix}%{kmod_flavor}
 %define exkernaction if test -L %{exkernmod}; then rm -f %{exkernmod}; fi
 %else
@@ -601,7 +601,7 @@ echo $TMPEXT
 # end multiple_lnds
 %endif
 
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 %package -n %kmod_devel_pkg
 Summary: Includes and Module.symvers for kernel packages depending on Lustre/LNet
 
@@ -612,15 +612,15 @@ This package includes:
   kernel headers
 %endif
 
-%if %{with lustre_iokit}
-%package -n %{lustre_name}-iokit
+%if %{with grumple_iokit}
+%package -n %{grumple_name}-iokit
 Summary: Collection of benchmark tools for a cluster with the Lustre file system
 Requires: sg3_utils
 %if 0%{?rhel} > 7 || 0%{?fedora} > 33 || 0%{?rhel} < 1
 Recommends: perl
 %endif
 
-%description -n %{lustre_name}-iokit
+%description -n %{grumple_name}-iokit
 This package includes five tools:
 sgpdd-survey:
 A test of the 'bare metal' performance, bypassing as much of the kernel as we can. Uses the sgp_dd utility.
@@ -657,17 +657,17 @@ This survey tests LNet performance between a group of clients and servers.
 %debug_package
 %endif
 %prep
-%setup -qn lustre-%{version}
-ln lustre/ChangeLog ChangeLog-lustre
+%setup -qn grumple-%{version}
+ln grumple/ChangeLog ChangeLog-grumple
 ln lnet/ChangeLog ChangeLog-lnet
 
 %build
 # Set an explicit path to our Linux tree, if we can.
-cd $RPM_BUILD_DIR/lustre-%{version}
+cd $RPM_BUILD_DIR/grumple-%{version}
 
 # Store the CFLAGS and LDFLAGS that would normally be used in the UTILS_CFLAGS
 # and UTILS_LDFLAGS environment variables so that we use can them when compiling
-# the user-space code in lustre/utils and lnet/utils. As of RHEL 8.0, the
+# the user-space code in grumple/utils and lnet/utils. As of RHEL 8.0, the
 # __global_* variants are deprecated in favour of build_cflags, etc. If neither
 # style is available (e.g. on SLES), then these just end up as empty strings.
 export UTILS_CFLAGS="%{?build_cflags:%{build_cflags}}%{!?build_cflags:%{?__global_cflags:%{__global_cflags}}}"
@@ -764,12 +764,12 @@ WITH_O2IB=""
 %endif
 
 %eval_configure $CONFIGURE_ARGS \
-	%{?with_lustre_tests:--enable-tests}%{!?with_lustre_tests:--disable-tests} \
-	%{?with_lustre_utils:--enable-utils}%{!?with_lustre_utils:--disable-utils} \
-	%{?with_lustre_modules:--enable-modules}%{!?with_lustre_modules:--disable-modules} \
+	%{?with_grumple_tests:--enable-tests}%{!?with_grumple_tests:--disable-tests} \
+	%{?with_grumple_utils:--enable-utils}%{!?with_grumple_utils:--disable-utils} \
+	%{?with_grumple_modules:--enable-modules}%{!?with_grumple_modules:--disable-modules} \
 	%{!?with_shared:--disable-shared} \
 	%{!?with_static:--disable-static} \
-	%{!?with_lustre_iokit:--disable-iokit} \
+	%{!?with_grumple_iokit:--disable-iokit} \
 	%{!?with_ldiskfs:--disable-ldiskfs} \
 	%{!?with_servers:--disable-server} \
 	%{!?with_zfs:--without-zfs} \
@@ -820,7 +820,7 @@ make %{?_smp_mflags} -s %{?make_args}
 
 make install DESTDIR=$RPM_BUILD_ROOT
 
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 # RHEL's kernel_module_path macro expects that all the modules
 # in a kmod package will be in modules_fs_path/<sub packagename>
 # but Lustre installs all of the modules in a single pass into
@@ -830,16 +830,16 @@ make install DESTDIR=$RPM_BUILD_ROOT
 # kernel_module_path macro.
 basemodpath=$RPM_BUILD_ROOT%{modules_fs_path}/%{name}
 %{__install} -D -m 0644 ${PWD}/Module.symvers %{buildroot}/Module.symvers
-%if %{with lustre_modules}
-%{__install} -D -m 0644 ${PWD}/Module.symvers %{buildroot}/%{_usrsrc}/lustre-%{version}/%{_arch}/%{_flavor}/Module.symvers
-%{__install} -D -m 0644 ${PWD}/config.h %{buildroot}/%{_usrsrc}/lustre-%{version}/%{_arch}/%{_flavor}/config.h
+%if %{with grumple_modules}
+%{__install} -D -m 0644 ${PWD}/Module.symvers %{buildroot}/%{_usrsrc}/grumple-%{version}/%{_arch}/%{_flavor}/Module.symvers
+%{__install} -D -m 0644 ${PWD}/config.h %{buildroot}/%{_usrsrc}/grumple-%{version}/%{_arch}/%{_flavor}/config.h
 for fname in $(find lnet/include -type f -name \*.h); do
 	target=$(echo ${fname} | sed 's:^lnet/include/::g')
-	%{__install} -D -m 0644 ${fname} %{buildroot}/%{_usrsrc}/lustre-%{version}/${target}
+	%{__install} -D -m 0644 ${fname} %{buildroot}/%{_usrsrc}/grumple-%{version}/${target}
 done
 for fname in $(find libcfs/include/libcfs -type f -name \*.h); do
 	target=$(echo ${fname} | sed -e 's:^libcfs/include/::g')
-	%{__install} -D -m 0644 ${fname} %{buildroot}/%{_usrsrc}/lustre-%{version}/${target}
+	%{__install} -D -m 0644 ${fname} %{buildroot}/%{_usrsrc}/grumple-%{version}/${target}
 done
 %endif
 %if %{with ldiskfs}
@@ -858,7 +858,7 @@ mkdir -p $basemodpath-osd-wbcfs/fs
 mv $basemodpath/fs/osd_wbcfs.ko $basemodpath-osd-wbcfs/fs/osd_wbcfs.ko
 %endif
 %endif
-%if %{with lustre_tests}
+%if %{with grumple_tests}
 mkdir -p $basemodpath-tests/fs
 mv $basemodpath/fs/obd_test.ko $basemodpath-tests/fs/obd_test.ko
 mv $basemodpath/fs/obd_mod_rpcs_test.ko $basemodpath-tests/fs/obd_mod_rpcs_test.ko
@@ -879,45 +879,45 @@ if [ -d $RPM_BUILD_ROOT%{_libdir}/mpich ] ; then
 fi
 %endif
 
-:> lustre.files
+:> grumple.files
 
-%if %{with servers} && %{with lustre_utils}
+%if %{with servers} && %{with grumple_utils}
 # The .ha_v2 extension identifies the heartbeat resource agent as using
 # legacy syntax. Install a compatibility symlink to avoid conflicts when
 # newer-style agents are added.
 ln -s Lustre.ha_v2 $RPM_BUILD_ROOT%{_sysconfdir}/ha.d/resource.d/Lustre
-echo '%dir %{_sysconfdir}/ha.d' >>lustre.files
-echo '%dir %{_sysconfdir}/ha.d/resource.d' >>lustre.files
-echo '%{_sysconfdir}/ha.d/resource.d/Lustre.ha_v2' >>lustre.files
-echo '%{_sysconfdir}/ha.d/resource.d/Lustre' >>lustre.files
+echo '%dir %{_sysconfdir}/ha.d' >>grumple.files
+echo '%dir %{_sysconfdir}/ha.d/resource.d' >>grumple.files
+echo '%{_sysconfdir}/ha.d/resource.d/Lustre.ha_v2' >>grumple.files
+echo '%{_sysconfdir}/ha.d/resource.d/Lustre' >>grumple.files
 %endif
 
 # systemd is on redhat, fedora, and suse
 %if %{with systemd}
-echo '%{_unitdir}/lnet.service' >>lustre.files
-echo '%{_unitdir}/lsvcgss.service' >>lustre.files
+echo '%{_unitdir}/lnet.service' >>grumple.files
+echo '%{_unitdir}/lsvcgss.service' >>grumple.files
 %endif
 
 # vendor is redhat
 %if "%{_vendor}" == "redhat" || 0%{?openEuler}
 # The following scripts are Red Hat specific
 %if %{with servers}
-echo '%{_sysconfdir}/init.d/lustre' >>lustre.files
-echo '%{_sysconfdir}/sysconfig/lustre' >>lustre.files
+echo '%{_sysconfdir}/init.d/grumple' >>grumple.files
+echo '%{_sysconfdir}/sysconfig/grumple' >>grumple.files
 %if %{with gss_keyring}
-echo '%{_sysconfdir}/init.d/lsvcgss' >>lustre.files
-echo '%config(noreplace) %{_sysconfdir}/sysconfig/lsvcgss' >>lustre.files
+echo '%{_sysconfdir}/init.d/lsvcgss' >>grumple.files
+echo '%config(noreplace) %{_sysconfdir}/sysconfig/lsvcgss' >>grumple.files
 %endif
 %endif
 
 %if %{without systemd}
-echo '%{_sysconfdir}/init.d/lnet' >>lustre.files
+echo '%{_sysconfdir}/init.d/lnet' >>grumple.files
 %endif
 %endif
 # End: vendor is redhat
 
 %if %{with gss_keyring}
-echo '%config(noreplace) %{_sysconfdir}/request-key.d/lgssc.conf' >>lustre.files
+echo '%config(noreplace) %{_sysconfdir}/request-key.d/lgssc.conf' >>grumple.files
 %endif
 
 # fc18 needs 'x' permission for library files
@@ -925,34 +925,34 @@ find $RPM_BUILD_ROOT -name \*.so -type f -exec chmod +x {} \;
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/liblnetconfig.la
 %if %{with static}
-echo '%attr(-, root, root) %{_libdir}/liblnetconfig.a' >>lustre.files
+echo '%attr(-, root, root) %{_libdir}/liblnetconfig.a' >>grumple.files
 %endif
 %if %{with shared}
-echo '%attr(-, root, root) %{_libdir}/liblnetconfig.so' >>lustre-devel.files
-echo '%attr(-, root, root) %{_libdir}/liblnetconfig.so.*' >>lustre.files
+echo '%attr(-, root, root) %{_libdir}/liblnetconfig.so' >>grumple-devel.files
+echo '%attr(-, root, root) %{_libdir}/liblnetconfig.so.*' >>grumple.files
 %endif
 
 %if %{with ldiskfs}
-echo '%{_libdir}/libiam.a' >>lustre.files
+echo '%{_libdir}/libiam.a' >>grumple.files
 %endif
 
-%if %{with lustre_utils}
-mkdir -p $RPM_BUILD_ROOT/%{_datadir}/lustre
-if [ -d $RPM_BUILD_ROOT%{_libdir}/lustre ] ; then
+%if %{with grumple_utils}
+mkdir -p $RPM_BUILD_ROOT/%{_datadir}/grumple
+if [ -d $RPM_BUILD_ROOT%{_libdir}/grumple ] ; then
 	find $RPM_BUILD_ROOT%{_libdir}/@PACKAGE@ -name \*.la -type f -exec rm -f {} \;
 fi
 %endif
 
-echo '%{_prefix}/lib/firewalld/services/*.xml' >>lustre.files
-%if %{with lustre_modules}
+echo '%{_prefix}/lib/firewalld/services/*.xml' >>grumple.files
+%if %{with grumple_modules}
 # mark modules executable for find-debuginfo.sh
 find $RPM_BUILD_ROOT/lib/modules -name \*.ko -type f -exec chmod u+x {} \;
 %endif
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/liblustreapi.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/libgrumpleapi.la
 
-%if %{with lustre_tests}
-:> lustre-tests.files
+%if %{with grumple_tests}
+:> grumple-tests.files
 %if %{with mpi}
 %if "%{mpi_name}" == "mpich"
 %{?_mpich_load}
@@ -962,66 +962,66 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/liblustreapi.la
 %endif
 # mpi
 %endif
-echo '%dir %{_libdir}/lustre' >>lustre-tests.files
-echo '%dir %{_libdir}/lustre/tests' >>lustre-tests.files
-echo '%{_libdir}/lustre/tests/*' >>lustre-tests.files
-echo '%{_bindir}/mcreate' >>lustre-tests.files
-echo '%{_bindir}/statx' >>lustre-tests.files
-echo '%{_sbindir}/wirecheck' >>lustre-tests.files
-echo '%{_sbindir}/wiretest' >>lustre-tests.files
+echo '%dir %{_libdir}/grumple' >>grumple-tests.files
+echo '%dir %{_libdir}/grumple/tests' >>grumple-tests.files
+echo '%{_libdir}/grumple/tests/*' >>grumple-tests.files
+echo '%{_bindir}/mcreate' >>grumple-tests.files
+echo '%{_bindir}/statx' >>grumple-tests.files
+echo '%{_sbindir}/wirecheck' >>grumple-tests.files
+echo '%{_sbindir}/wiretest' >>grumple-tests.files
 if [ -n "$MPI_BIN" ]; then
-	echo "$MPI_BIN/*" >>lustre-tests.files
+	echo "$MPI_BIN/*" >>grumple-tests.files
 fi
-%if %{with lustre_tests_lutf}
-echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
+%if %{with grumple_tests_lutf}
+echo '%{_libdir}/grumple/tests/lutf/*' >>grumple-tests.files
 %endif
 %endif
 
-%if %{with lustre_tests_lutf}
-echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
+%if %{with grumple_tests_lutf}
+echo '%{_libdir}/grumple/tests/lutf/*' >>grumple-tests.files
 %endif
 
-%files devel -f lustre-devel.files
+%files devel -f grumple-devel.files
 %defattr(-,root,root)
-%{_libdir}/pkgconfig/lustre.pc
+%{_libdir}/pkgconfig/grumple.pc
 %if %{with static}
-%{_libdir}/liblustreapi.a
+%{_libdir}/libgrumpleapi.a
 %endif
 %if %{with shared}
-%{_libdir}/liblustreapi.so
+%{_libdir}/libgrumpleapi.so
 %endif
-%{_includedir}/lustre
-%if %{with lustre_modules}
+%{_includedir}/grumple
+%if %{with grumple_modules}
 %{_includedir}/linux/lnet
-%{_includedir}/linux/lustre
+%{_includedir}/linux/grumple
 %else
 %exclude %{_includedir}/linux/lnet
-%exclude %{_includedir}/linux/lustre
+%exclude %{_includedir}/linux/grumple
 %endif
 
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 %files -n %kmod_devel_pkg
 %{_libdir}/pkgconfig/lnet.pc
-%{_usrsrc}/lustre-%{version}
+%{_usrsrc}/grumple-%{version}
 %endif
 
-%files -f lustre.files
+%files -f grumple.files
 %defattr(-,root,root)
-%exclude %{_sysconfdir}/sysconfig/dkms-lustre
+%exclude %{_sysconfdir}/sysconfig/dkms-grumple
 %{_sbindir}/*
-%if %{with lustre_tests}
+%if %{with grumple_tests}
 %exclude %{_sbindir}/wirecheck
 %exclude %{_sbindir}/wiretest
 %endif
 %if %{with zfs}
 %exclude %{_sbindir}/zfsobj2fid
 %endif
-%if %{with lustre_utils}
+%if %{with grumple_utils}
 %if %{with servers}
-%dir %{_libexecdir}/lustre
-%{_libexecdir}/lustre/lc_common
-%{_libexecdir}/lustre/haconfig
-%{_bindir}/lustre_req_history
+%dir %{_libexecdir}/grumple
+%{_libexecdir}/grumple/lc_common
+%{_libexecdir}/grumple/haconfig
+%{_bindir}/grumple_req_history
 %{_bindir}/remove_changelog
 %{_bindir}/remove_updatelog
 %{_bindir}/lsvcgss_sysd
@@ -1031,13 +1031,13 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 %{_bindir}/lljobstat
 %{_bindir}/llstat
 %{_bindir}/plot-llstat
-%{_datadir}/lustre
+%{_datadir}/grumple
 
 %{_bindir}/lfs
 %{_bindir}/lfs_migrate
-/sbin/mount.lustre
+/sbin/mount.grumple
 %if %{with servers}
-%ghost /sbin/mount.lustre_tgt
+%ghost /sbin/mount.grumple_tgt
 %endif
 @BASH_COMPLETION_DIR@
 %endif
@@ -1047,11 +1047,11 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 %endif
 
 %if %{with shared}
-%{_libdir}/liblustreapi.so.*
+%{_libdir}/libgrumpleapi.so.*
 %endif
-%{_udevrulesdir}/99-lustre.rules
+%{_udevrulesdir}/99-grumple.rules
 %if %{with servers}
-%{_udevrulesdir}/99-lustre-server.rules
+%{_udevrulesdir}/99-grumple-server.rules
 %endif
 %if %{with zfs}
 %config(noreplace) %{_sysconfdir}/ldev.conf
@@ -1060,15 +1060,15 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 %config(noreplace) %{_sysconfdir}/lnet.conf
 %config(noreplace) %{_sysconfdir}/modprobe.d/ko2iblnd.conf
 %config(noreplace) %{_sysconfdir}/projid
-%if %{with lustre_utils}
+%if %{with grumple_utils}
 %config(noreplace) %{_sysconfdir}/lnet_routes.conf
-%config(noreplace) %{_sysconfdir}/lustre/mount.client.params
+%config(noreplace) %{_sysconfdir}/grumple/mount.client.params
 %endif
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 %exclude /Module.symvers
 %if %{with shared}
 %if %{with ldiskfs}
-%if %{with lustre_utils}
+%if %{with grumple_utils}
 %files osd-ldiskfs-mount
 %defattr(-,root,root)
 %dir %{_libdir}/@PACKAGE@
@@ -1079,7 +1079,7 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 
 %if %{with shared}
 %if %{with zfs}
-%if %{with lustre_utils}
+%if %{with grumple_utils}
 %files osd-zfs-mount
 %defattr(-,root,root)
 %dir %{_libdir}/@PACKAGE@
@@ -1093,7 +1093,7 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 %if 0%{?suse_version:1}
 %else
 %if %{with servers}
-%if %{with lustre_utils}
+%if %{with grumple_utils}
 %files osd-wbcfs-mount
 %defattr(-,root,root)
 %dir %{_libdir}/@PACKAGE@
@@ -1103,7 +1103,7 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 %endif
 %endif
 
-# with lustre_modules
+# with grumple_modules
 %endif
 
 %if %{with servers}
@@ -1111,16 +1111,16 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 %defattr(0755,root,root)
 %dir %{_prefix}/lib/ocf
 %dir %{_prefix}/lib/ocf/resource.d
-%{_prefix}/lib/ocf/resource.d/lustre/
+%{_prefix}/lib/ocf/resource.d/grumple/
 %endif
 
-%if %{with lustre_tests}
-%files tests -f lustre-tests.files
+%if %{with grumple_tests}
+%files tests -f grumple-tests.files
 %defattr(-,root,root)
 %endif
 
-%if %{with lustre_iokit}
-%files -n %{lustre_name}-iokit
+%if %{with grumple_iokit}
+%files -n %{grumple_name}-iokit
 %defattr(-, root, root)
 %{_bindir}/iokit-config
 %{_bindir}/iokit-gather-stats
@@ -1138,13 +1138,13 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 %{_bindir}/sgpdd-survey
 %{_bindir}/lst-survey
 %{_bindir}/lst.sh
-%doc lustre-iokit/ior-survey/README.ior-survey
-%doc lustre-iokit/mds-survey/README.mds-survey
-%doc lustre-iokit/obdfilter-survey/README.obdfilter-survey
-%doc lustre-iokit/ost-survey/README.ost-survey
-%doc lustre-iokit/sgpdd-survey/README.sgpdd-survey
-%doc lustre-iokit/stats-collect/README.iokit-lstats
-%doc lustre-iokit/lst-survey/README.lst-survey
+%doc grumple-iokit/ior-survey/README.ior-survey
+%doc grumple-iokit/mds-survey/README.mds-survey
+%doc grumple-iokit/obdfilter-survey/README.obdfilter-survey
+%doc grumple-iokit/ost-survey/README.ost-survey
+%doc grumple-iokit/sgpdd-survey/README.sgpdd-survey
+%doc grumple-iokit/stats-collect/README.iokit-lstats
+%doc grumple-iokit/lst-survey/README.lst-survey
 %endif
 
 %post
@@ -1165,12 +1165,12 @@ echo '%{_libdir}/lustre/tests/lutf/*' >>lustre-tests.files
 %systemd_postun_with_restart lsvcgss.service
 %endif
 
-%if %{with lustre_modules}
+%if %{with grumple_modules}
 %post -n %kmod_devel_pkg
-alternatives --install %{_usrsrc}/lustre lustre %{_usrsrc}/lustre-%{version} 50
+alternatives --install %{_usrsrc}/grumple grumple %{_usrsrc}/grumple-%{version} 50
 
 %preun -n %kmod_devel_pkg
-alternatives --remove lustre %{_usrsrc}/lustre-%{version}
+alternatives --remove grumple %{_usrsrc}/grumple-%{version}
 %endif
 
 %clean

@@ -258,7 +258,7 @@ static int nl_socket_set_ext_ack(struct nl_sock *sk, int state)
  *
  * Return		0 on success or a negative error code.
  */
-static int lustre_netlink_register(struct nl_sock *sk, bool async_events)
+static int grumple_netlink_register(struct nl_sock *sk, bool async_events)
 {
 	int rc;
 
@@ -1220,7 +1220,7 @@ yaml_parser_set_input_netlink(yaml_parser_t *reply, struct nl_sock *nl,
 		return false;
 	}
 
-	rc = lustre_netlink_register(nl, stream);
+	rc = grumple_netlink_register(nl, stream);
 	if (rc < 0) {
 		yaml_parser_set_reader_error(reply,
 					     "netlink setup failed", 0,
@@ -1669,7 +1669,7 @@ static void yaml_quotation_handling(char *buf)
  *
  * Return	0 on success or a negative error code.
  */
-static int lustre_netlink_add_group(struct yaml_netlink_output *out,
+static int grumple_netlink_add_group(struct yaml_netlink_output *out,
 				    const char *group)
 {
 	int group_id;
@@ -1722,7 +1722,7 @@ already_have_line:
 				continue;
 			*tmp = '\0';
 
-			rc = lustre_netlink_add_group(out, line);
+			rc = grumple_netlink_add_group(out, line);
 			if (rc < 0) {
 				yaml_emitter_set_writer_error(out->emitter,
 							      "Netlink group does not exist");

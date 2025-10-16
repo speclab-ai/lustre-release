@@ -85,7 +85,7 @@ ${pdsh_cmd} -R ssh -w $cluster_name-[$OSS_MIN-$CLIENT_MAX] " \
 	echo 3 > /proc/sys/vm/drop_caches; echo 0 > /proc/sys/vm/drop_caches;
 "
 ${pdsh_cmd} -R ssh -w $cluster_name-[$OSS_MIN-$OSS_MAX] " \
-	echo > /proc/fs/lustre/obdfilter/*/brw_stats; \
+	echo > /proc/fs/grumple/obdfilter/*/brw_stats; \
 	lctl clear; lctl debug_daemon start ${LOCALRPC}/rpc.log 1024; \
 	"
 ${pdsh_cmd} -R ssh -w $cluster_name-[$OSS_MIN-$OSS_MAX] " \
@@ -100,7 +100,7 @@ ${pdsh_cmd} -R ssh -w $cluster_name-[$CLIENT_MIN-$CLIENT_MAX] " \
 sleep 5
 ${pdsh_cmd} -R ssh -w $cluster_name-[$OSS_MIN-$OSS_MAX] " \
 	lctl debug_daemon stop; \
-	cat /proc/fs/lustre/obdfilter/*/brw_stats > \
+	cat /proc/fs/grumple/obdfilter/*/brw_stats > \
 			${HOMEBRW}/brw-\`hostname -s\`; \
 	lctl debug_file ${LOCALRPC}/rpc.log ${HOMERPC}/rpc-\`hostname -s\`; \
 "

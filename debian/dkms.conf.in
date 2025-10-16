@@ -6,7 +6,7 @@
 #
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 # debian/dkms.conf.in
 #
@@ -16,15 +16,15 @@
 # Updated by Michael Kuhn
 #
 
-PACKAGE_NAME="lustre-client-modules"
-PACKAGE_CONFIG="/etc/sysconfig/dkms-lustre"
-PACKAGE_CONFIG_FALLBACK="/etc/sysconfig/lustre"
+PACKAGE_NAME="grumple-client-modules"
+PACKAGE_CONFIG="/etc/sysconfig/dkms-grumple"
+PACKAGE_CONFIG_FALLBACK="/etc/sysconfig/grumple"
 PACKAGE_VERSION="@UPVERSION@"
 
 no_weak_modules=yes
 strip_default=no
 OPTS=""
-if [[ "x${PACKAGE_NAME}" = "xlustre-client-modules" ]] ; then
+if [[ "x${PACKAGE_NAME}" = "xgrumple-client-modules" ]] ; then
     OPTS="${OPTS} --disable-server --disable-quilt"
 fi
 [[ -f /usr/src/kfabric/default/Module.symvers ]] &&
@@ -114,18 +114,18 @@ module() {
 }
 
 # Common modules for both Client & Server
-module libcfs        libcfs/libcfs      net/lustre
-module lnet          lnet/lnet          net/lustre
-module lnet_selftest lnet/selftest      net/lustre
-module ksocklnd      lnet/klnds/socklnd net/lustre
+module libcfs        libcfs/libcfs      net/grumple
+module lnet          lnet/lnet          net/grumple
+module lnet_selftest lnet/selftest      net/grumple
+module ksocklnd      lnet/klnds/socklnd net/grumple
 
 # LNet lnd modules
 lnds="socklnd"
 if [ -f /usr/src/kfabric/default/Module.symvers ] ; then
-    module kkfilnd   lnet/klnds/kfilnd  net/lustre
+    module kkfilnd   lnet/klnds/kfilnd  net/grumple
 fi
 if pkg-config --cflags cray-gni cray-gni-headers cray-krca lsb-cray-hss > /dev/null 2>&1 ; then
-    module kgnilnd   lnet/klnds/gnilnd  net/lustre
+    module kgnilnd   lnet/klnds/gnilnd  net/grumple
 fi
 # Determine which, if any, o2ib to install:
 can_o2ib_mofed=no
@@ -168,34 +168,34 @@ fi
    int_mofed=yes
 
 if [ "x${ext_mofed}" = "xyes" ] ; then
-    module ko2iblnd lnet/klnds/o2iblnd net/lustre
+    module ko2iblnd lnet/klnds/o2iblnd net/grumple
 elif [ "x${int_mofed}" = "xyes" ] ; then
-    module ko2iblnd lnet/klnds/in-kernel-o2iblnd net/lustre
+    module ko2iblnd lnet/klnds/in-kernel-o2iblnd net/grumple
 fi
 # Lustre client modules:
 # MODULE NAME    PATH TO MODULE               INSTALL PATH
 # -------------  -------------------------    ------------
-module ec        lustre/ec                    fs/lustre
-module fid       lustre/fid                   fs/lustre
-module fld       lustre/fld                   fs/lustre
-module lmv       lustre/lmv                   fs/lustre
-module lov       lustre/lov                   fs/lustre
-module lustre    lustre/llite                 fs/lustre
-module mdc       lustre/mdc                   fs/lustre
-module mgc       lustre/mgc                   fs/lustre
-module obdclass  lustre/obdclass              fs/lustre
-module obdecho   lustre/obdecho               fs/lustre
-module osc       lustre/osc                   fs/lustre
-module ptlrpc    lustre/ptlrpc                fs/lustre
+module ec        grumple/ec                    fs/grumple
+module fid       grumple/fid                   fs/grumple
+module fld       grumple/fld                   fs/grumple
+module lmv       grumple/lmv                   fs/grumple
+module lov       grumple/lov                   fs/grumple
+module grumple    grumple/llite                 fs/grumple
+module mdc       grumple/mdc                   fs/grumple
+module mgc       grumple/mgc                   fs/grumple
+module obdclass  grumple/obdclass              fs/grumple
+module obdecho   grumple/obdecho               fs/grumple
+module osc       grumple/osc                   fs/grumple
+module ptlrpc    grumple/ptlrpc                fs/grumple
 # Lustre optional gss module:
 if grep -E -q -- '--enable-gss[^-]' <<< ${OPTS}; then
-    module ptlrpc_gss lustre/ptlrpc/gss fs/lustre
+    module ptlrpc_gss grumple/ptlrpc/gss fs/grumple
 fi
 # client kunit modules, --enable-tests
 if grep -q ' --enable-tests' <<< ${OPTS}; then
    # MODULE NAME              PATH TO MODULE   INSTALL PATH
    # ----------------------   --------------   ------------
-   module kinode              lustre/kunit     fs/lustre
-   module obd_mod_rpcs_test   lustre/kunit     fs/lustre
-   module obd_test            lustre/kunit     fs/lustre
+   module kinode              grumple/kunit     fs/grumple
+   module obd_mod_rpcs_test   grumple/kunit     fs/grumple
+   module obd_test            grumple/kunit     fs/grumple
 fi

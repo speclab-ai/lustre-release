@@ -1,4 +1,4 @@
-Replace (struct super_block *)->s_cop with (struct lustre_sb_info *)->lsi_cop.
+Replace (struct super_block *)->s_cop with (struct grumple_sb_info *)->lsi_cop.
 This is needed so that we can use llcrypt on kernels that do not have
 (struct super_block *)->s_cop.
 
@@ -8,7 +8,7 @@ This is needed so that we can use llcrypt on kernels that do not have
  #include <linux/fs.h>
  #include <linux/mm.h>
  #include <linux/slab.h>
-+#include <lustre_disk.h>
++#include <grumple_disk.h>
  #include <uapi/linux/llcrypt.h>
  
  #define LL_CRYPTO_BLOCK_SIZE		16
@@ -18,7 +18,7 @@ This is needed so that we can use llcrypt on kernels that do not have
  {
 -	return inode->i_sb->s_cop->dummy_context &&
 -		inode->i_sb->s_cop->dummy_context(inode);
-+	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
++	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 +
 +	if (unlikely(!lsi))
 +		return false;
@@ -36,7 +36,7 @@ This is needed so that we can use llcrypt on kernels that do not have
 +				   const struct llcrypt_operations *lsi_cop)
  {
 -	sb->s_cop = s_cop;
-+	struct lustre_sb_info *lsi = s2lsi(sb);
++	struct grumple_sb_info *lsi = s2lsi(sb);
 +
 +	if (lsi)
 +		lsi->lsi_cop = lsi_cop;
@@ -58,7 +58,7 @@ This is needed so that we can use llcrypt on kernels that do not have
  		return ret;
  
  	if (llcrypt_has_encryption_key(dir)) {
-+		struct lustre_sb_info *lsi = s2lsi(dir->i_sb);
++		struct grumple_sb_info *lsi = s2lsi(dir->i_sb);
 +
  		if (!llcrypt_fname_encrypted_size(dir, iname->len,
 -						  dir->i_sb->s_cop->max_namelen,
@@ -74,7 +74,7 @@ This is needed so that we can use llcrypt on kernels that do not have
  	union llcrypt_context ctx;
  	struct llcrypt_mode *mode;
  	struct key *master_key = NULL;
-+	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
++	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
  	int res;
  
  	if (llcrypt_has_encryption_key(inode))
@@ -104,7 +104,7 @@ This is needed so that we can use llcrypt on kernels that do not have
 -						ci->ci_policy.v1.master_key_descriptor,
 -						ci->ci_mode->keysize, &payload);
 +	if (key == ERR_PTR(-ENOKEY)) {
-+		struct lustre_sb_info *lsi = s2lsi(ci->ci_inode->i_sb);
++		struct grumple_sb_info *lsi = s2lsi(ci->ci_inode->i_sb);
 +
 +		if (lsi && lsi->lsi_cop->key_prefix) {
 +			key =
@@ -122,7 +122,7 @@ This is needed so that we can use llcrypt on kernels that do not have
  {
  	const struct llcrypt_info *ci;
  	union llcrypt_context ctx;
-+	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
++	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
  	int ret;
  
  	ci = READ_ONCE(inode->i_crypt_info);
@@ -142,7 +142,7 @@ This is needed so that we can use llcrypt on kernels that do not have
  {
  	union llcrypt_context ctx;
  	int ctxsize;
-+	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
++	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
  	int err;
  
  	if (!llcrypt_supported_policy(policy, inode))
@@ -162,7 +162,7 @@ This is needed so that we can use llcrypt on kernels that do not have
  
  	ret = llcrypt_get_policy(inode, &existing_policy);
  	if (ret == -ENODATA) {
-+		struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
++		struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 +
  		if (!S_ISDIR(inode->i_mode))
  			ret = -ENOTDIR;
@@ -177,7 +177,7 @@ This is needed so that we can use llcrypt on kernels that do not have
  	union llcrypt_context ctx;
  	int ctxsize;
  	struct llcrypt_info *ci;
-+	struct lustre_sb_info *lsi = s2lsi(parent->i_sb);
++	struct grumple_sb_info *lsi = s2lsi(parent->i_sb);
  	int res;
  
  	res = llcrypt_get_encryption_info(parent);

@@ -62,7 +62,7 @@ AC_ARG_ENABLE([iokit],
 	[], [enable_iokit="yes"])
 AC_MSG_RESULT([$enable_iokit])
 AS_IF([test "x$enable_iokit" = xyes],
-	[LUSTREIOKIT_SUBDIR="lustre-iokit"],
+	[LUSTREIOKIT_SUBDIR="grumple-iokit"],
 	[LUSTREIOKIT_SUBDIR=""])
 AC_SUBST(LUSTREIOKIT_SUBDIR)
 AM_CONDITIONAL([BUILD_LUSTREIOKIT], [test "x$enable_iokit" = xyes])
@@ -129,7 +129,7 @@ AC_DEFUN([LB_KABI_CHECKS], [
 			LC_SRC_STRUCT_LSM_CONTEXT_EARLY
 			LC_SRC_GRAB_CACHE_PAGE_WRITE_BEGIN_WITH_FLAGS
 			LB2_LINUX_TEST_COMPILE_ALL([early],
-				[for available lustre kapi interfaces])
+				[for available grumple kapi interfaces])
 			LIBCFS_LOCKDEP_IS_HELD
 			LIBCFS_HAVE_WAIT_BIT_HEADER
 			LIBCFS_LINUX_BLK_INTEGRITY_HEADER
@@ -150,8 +150,8 @@ AC_DEFUN([LB_KABI_CHECKS], [
 			LC_PROG_LINUX_SRC
 			AS_IF([test "x$enable_zfs" = xyes],
 				[LZ_KABI_ZFS_TESTS])
-			LB2_LINUX_TEST_COMPILE_ALL([lustre],
-				[for available lustre kapi interfaces])
+			LB2_LINUX_TEST_COMPILE_ALL([grumple],
+				[for available grumple kapi interfaces])
 			LB_PROG_LINUX_RESULTS
 			LIBCFS_PROG_LINUX_RESULTS
 			LN_PROG_LINUX_RESULTS
@@ -163,7 +163,7 @@ AC_DEFUN([LB_KABI_CHECKS], [
 		], [*], [
 			AC_MSG_ERROR([Modules are not supported on $target_os])
 	])
-	CPPFLAGS="-I$PWD/lnet/include/uapi -I$PWD/lustre/include/uapi $CPPFLAGS"
+	CPPFLAGS="-I$PWD/lnet/include/uapi -I$PWD/grumple/include/uapi $CPPFLAGS"
 ])
 ]) 
 AC_DEFUN([LB_CONFIG_UTILS], [
@@ -282,15 +282,15 @@ AC_DEFUN([LB_CONFIG_FILES], [
 		ldiskfs/Makefile
 		ldiskfs/autoMakefile
 		lnet/utils/lnet.pc
-		lustre/utils/lustre.pc
-		lustre-iokit/Makefile
-		lustre-iokit/obdfilter-survey/Makefile
-		lustre-iokit/ost-survey/Makefile
-		lustre-iokit/sgpdd-survey/Makefile
-		lustre-iokit/mds-survey/Makefile
-		lustre-iokit/ior-survey/Makefile
-		lustre-iokit/stats-collect/Makefile
-		lustre-iokit/lst-survey/Makefile
+		grumple/utils/grumple.pc
+		grumple-iokit/Makefile
+		grumple-iokit/obdfilter-survey/Makefile
+		grumple-iokit/ost-survey/Makefile
+		grumple-iokit/sgpdd-survey/Makefile
+		grumple-iokit/mds-survey/Makefile
+		grumple-iokit/ior-survey/Makefile
+		grumple-iokit/stats-collect/Makefile
+		grumple-iokit/lst-survey/Makefile
 		Documentation/Makefile
 		Documentation/man1/Makefile
 		Documentation/man3/Makefile
@@ -370,16 +370,16 @@ if test -n "$LINUX" ; then
 	fi
 fi
 if test x$enable_modules != xyes ; then
-	RPMBINARGS="$RPMBINARGS --without lustre_modules"
+	RPMBINARGS="$RPMBINARGS --without grumple_modules"
 fi
 if test x$enable_tests != xyes ; then
-	RPMBINARGS="$RPMBINARGS --without lustre_tests"
+	RPMBINARGS="$RPMBINARGS --without grumple_tests"
 fi
 if test x$enable_lutf != xyes ; then
-	RPMBINARGS="$RPMBINARGS --without lustre_tests_lutf"
+	RPMBINARGS="$RPMBINARGS --without grumple_tests_lutf"
 fi
 if test x$enable_utils != xyes ; then
-	RPMBINARGS="$RPMBINARGS --without lustre_utils"
+	RPMBINARGS="$RPMBINARGS --without grumple_utils"
 fi
 if test x$enable_server != xyes ; then
 	RPMBINARGS="$RPMBINARGS --without servers"
@@ -433,7 +433,7 @@ else
 	RPMBINARGS="$RPMBINARGS --without gni"
 fi
 if test x$enable_iokit != xyes ; then
-	RPMBINARGS="$RPMBINARGS --without lustre_iokit"
+	RPMBINARGS="$RPMBINARGS --without grumple_iokit"
 fi
 if test x$enable_manpages != xyes ; then
 	RPMBINARGS="$RPMBINARGS --without manpages"

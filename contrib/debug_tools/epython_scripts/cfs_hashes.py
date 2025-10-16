@@ -8,7 +8,7 @@ Copyright (c) 2019 Cray Inc. All Rights Reserved.
 from pykdump.API import *
 import argparse
 
-import lustrelib as ll
+import grumplelib as ll
 
 description_short = 'Displays summary of cfs_hash tables'
 

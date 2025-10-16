@@ -36,7 +36,7 @@ def _getenv_list(key, default=None, sep=':'):
         return value.split(sep)
 
 GERRIT_HOST = os.getenv('GERRIT_HOST', 'review.whamcloud.com')
-GERRIT_PROJECT = os.getenv('GERRIT_PROJECT', 'fs/lustre-release')
+GERRIT_PROJECT = os.getenv('GERRIT_PROJECT', 'fs/grumple-release')
 GERRIT_BRANCH = os.getenv('GERRIT_BRANCH', 'master')
 GERRIT_AUTH_PATH = os.getenv('GERRIT_AUTH_PATH', 'GERRIT_AUTH')
 GERRIT_CHANGE_NUMBER = os.getenv('GERRIT_CHANGE_NUMBER', None)
@@ -50,8 +50,8 @@ GERRIT_CHANGE_NUMBER = os.getenv('GERRIT_CHANGE_NUMBER', None)
 CHECKPATCH_PATHS = _getenv_list('CHECKPATCH_PATHS', ['checkpatch.pl'])
 CHECKPATCH_ARGS = os.getenv('CHECKPATCH_ARGS','--show-types -').split(' ')
 CHECKPATCH_IGNORED_FILES = _getenv_list('CHECKPATCH_IGNORED_FILES', [
-        'lustre/ptlrpc/wiretest.c',
-        'lustre/utils/wiretest.c',
+        'grumple/ptlrpc/wiretest.c',
+        'grumple/utils/wiretest.c',
         '*.patch'])
 CHECKPATCH_IGNORED_KINDS = _getenv_list('CHECKPATCH_IGNORED_KINDS', [
         'LASSERT',
@@ -59,7 +59,7 @@ CHECKPATCH_IGNORED_KINDS = _getenv_list('CHECKPATCH_IGNORED_KINDS', [
         'LEADING_SPACE'])
 REVIEW_HISTORY_PATH = os.getenv('REVIEW_HISTORY_PATH', 'REVIEW_HISTORY')
 STYLE_LINK = os.getenv('STYLE_LINK',
-        'http://wiki.lustre.org/Lustre_Coding_Style_Guidelines')
+        'http://wiki.grumple.org/Lustre_Coding_Style_Guidelines')
 
 USE_CODE_REVIEW_SCORE = False
 
@@ -92,13 +92,13 @@ def parse_checkpatch_output(out, path_line_comments, warning_count):
 
     for line in out.splitlines():
         # ERROR:CODE_INDENT: code indent should use tabs where possible
-        # #404: FILE: lustre/liblustre/dir.c:103:
+        # #404: FILE: grumple/libgrumple/dir.c:103:
         # +        op_data.op_hash_offset = hash_x_index(page->index, 0);$
         line = line.strip()
         if not line:
             level, kind, message = None, None, None
         elif line[0] == '#':
-            # '#404: FILE: lustre/liblustre/dir.c:103:'
+            # '#404: FILE: grumple/libgrumple/dir.c:103:'
             tokens = line.split(':', 5)
             if len(tokens) != 5 or tokens[1] != ' FILE':
                 continue
@@ -257,9 +257,9 @@ class Reviewer(object):
         """
         Load review history from history_path containing lines of the form:
         EPOCH      FULL_CHANGE_ID                         REVISION    SCORE
-        1394536722 fs%2Flustre-release~master~I5cc6c23... 00e2cc75... 1
+        1394536722 fs%2Fgrumple-release~master~I5cc6c23... 00e2cc75... 1
         1394536721 -                                      -           0
-        1394537033 fs%2Flustre-release~master~I10be8e9... 44f7b504... 1
+        1394537033 fs%2Fgrumple-release~master~I10be8e9... 44f7b504... 1
         1394537032 -                                      -           0
         1394537344 -                                      -           0
         ...

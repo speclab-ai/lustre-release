@@ -1,5 +1,5 @@
 [gerrit]
 host=review.whamcloud.com
 port=29418
-project=fs/lustre-release.git
+project=fs/grumple-release.git
 defaultbranch=master

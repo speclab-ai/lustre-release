@@ -1,17 +1,17 @@
 MODULES = libcfs
 libcfs_dir := $(dir $(lastword $(MAKEFILE_LIST)))
 libcfs-compat-objs :=
-COMPAT_SCHED := @top_srcdir@/lustre_compat/kernel/sched/
-include $(libcfs_dir)/../../lustre_compat/kernel/sched/Makefile
+COMPAT_SCHED := @top_srcdir@/grumple_compat/kernel/sched/
+include $(libcfs_dir)/../../grumple_compat/kernel/sched/Makefile
 libcfs-compat-objs += $(patsubst %,$(COMPAT_SCHED)%,$(sched_objs))
-COMPAT_MM := @top_srcdir@/lustre_compat/mm/
-include $(libcfs_dir)/../../lustre_compat/mm/Makefile
+COMPAT_MM := @top_srcdir@/grumple_compat/mm/
+include $(libcfs_dir)/../../grumple_compat/mm/Makefile
 libcfs-compat-objs += $(patsubst %,$(COMPAT_MM)%,$(mm_objs))
-COMPAT_LIB := @top_srcdir@/lustre_compat/lib/
-include $(libcfs_dir)/../../lustre_compat/lib/Makefile
+COMPAT_LIB := @top_srcdir@/grumple_compat/lib/
+include $(libcfs_dir)/../../grumple_compat/lib/Makefile
 libcfs-compat-objs += $(patsubst %,$(COMPAT_LIB)%,$(lib_objs))
-COMPAT_MODULE := @top_srcdir@/lustre_compat/
-include $(libcfs_dir)/../../lustre_compat/Makefile
+COMPAT_MODULE := @top_srcdir@/grumple_compat/
+include $(libcfs_dir)/../../grumple_compat/Makefile
 libcfs-compat-objs += $(patsubst %,$(COMPAT_MODULE)%,$(module_objs))
 libcfs-linux-objs := linux-prim.o
 EXTRA_DIST = $(libcfs-compat-objs:.o=.c)

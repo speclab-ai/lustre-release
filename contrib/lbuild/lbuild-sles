@@ -13,7 +13,7 @@ prepare_and_build_srpm() {
     pushd $TOPDIR >/dev/null
 
     # generate our buildid
-    local buildid="lustre${EXTRA_VERSION##*_lustre}"
+    local buildid="grumple${EXTRA_VERSION##*_grumple}"
 
 	# do release specific spec editing
 	edit_specs
@@ -56,10 +56,10 @@ prepare_and_build_srpm() {
 }
 
 devel_kernel_name() {
-    local lustre=${1:-false}
+    local grumple=${1:-false}
 
-    if $lustre; then
-        echo "kernel-lustre-$DEVEL_KERNEL_TYPE"
+    if $grumple; then
+        echo "kernel-grumple-$DEVEL_KERNEL_TYPE"
     else
         echo "kernel-$DEVEL_KERNEL_TYPE"
     fi
@@ -72,11 +72,11 @@ rpm_BUILD_kernel_dirname() {
     local lnxmin="$3"
     local arch="$4"
 
-    local lustre=""
+    local grumple=""
     if $KERNEL_LUSTRE_NAMING; then
-        $lustre="-lustre"
+        $grumple="-grumple"
     fi
-    echo kernel${lustre}-${rpmsmptype}-${lnxmaj}${lnxmin}/linux-${lnxmaj}
+    echo kernel${grumple}-${rpmsmptype}-${lnxmaj}${lnxmin}/linux-${lnxmaj}
 }
 
 resolve_arch() {

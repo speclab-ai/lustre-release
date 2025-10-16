@@ -27,7 +27,7 @@
 #endif
 
 #include <linux/libcfs/libcfs.h>
-#include <lustre_compat/linux/linux-misc.h>
+#include <grumple_compat/linux/linux-misc.h>
 #include "tracefile.h"
 
 static char debug_file_name[1024];
@@ -439,7 +439,7 @@ int libcfs_debug_str2mask(int *mask, const char *str, int is_subsys)
 	return rc;
 }
 
-char lnet_debug_log_upcall[1024] = "/usr/lib/lustre/lnet_debug_log_upcall";
+char lnet_debug_log_upcall[1024] = "/usr/lib/grumple/lnet_debug_log_upcall";
 
 /* Upcall function once a Lustre log has been dumped.
  *

@@ -129,7 +129,7 @@ inode->i_crypt_info field.
 --- a/libcfs/libcfs/crypto/policy.c
 +++ b/libcfs/libcfs/crypto/policy.c
 @@ -212,7 +212,7 @@ static int llcrypt_get_policy(struct ino
- 	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+ 	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
  	int ret;
  
 -	ci = READ_ONCE(inode->i_crypt_info);

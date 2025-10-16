@@ -9,7 +9,7 @@ from pykdump.API import *
 import argparse
 import os
 
-import lustrelib as ll
+import grumplelib as ll
 from crashlib.input import toint
 
 description_short = "Displays the specified Lustre hash table "

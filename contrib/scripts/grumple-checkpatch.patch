@@ -162,7 +162,7 @@ index 9eed3683ad..139061fdbd 100755
 -		if (defined($misspellings) &&
 -		    ($in_commit_log || $line =~ /^(?:\+|Subject:)/i)) {
 -			while ($rawline =~ /(?:^|[^\w\-'`])($misspellings)(?:[^\w\-'`]|$)/gi) {
-+		if (($realfile =~ m@^(lustre/utils/|lustre/tests/|lnet/utils/|libcfs/libcfs/util/)@) &&
++		if (($realfile =~ m@^(grumple/utils/|grumple/tests/|lnet/utils/|libcfs/libcfs/util/)@) &&
 +		    defined($misspellings_user) && ($in_commit_log || $line =~ /^(?:\+|Subject:)/i)) {
 +			while ($rawline =~ /(?:^|[^\w\-'`])($misspellings_user)(?:[^\w\-'`]|$)/g) {
 +				my $typo = $1;

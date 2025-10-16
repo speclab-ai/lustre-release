@@ -45,7 +45,7 @@
 #include <lnet/lib-lnet.h>
 #include <lnet/socklnd.h>
 
-#include <lustre_compat/net/linux-net.h>
+#include <grumple_compat/net/linux-net.h>
 
 #ifndef NETIF_F_CSUM_MASK
 # define NETIF_F_CSUM_MASK NETIF_F_ALL_CSUM

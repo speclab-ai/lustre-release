@@ -17,7 +17,7 @@
 #include <linux/random.h>
 #include <linux/string.h>
 #include <linux/mount.h>
-#include <lustre_compat.h>
+#include <grumple_compat.h>
 #include "llcrypt_private.h"
 
 /**
@@ -214,7 +214,7 @@ static int llcrypt_get_policy(struct inode *inode, union llcrypt_policy *policy)
 {
 	const struct llcrypt_info *ci;
 	union llcrypt_context ctx;
-	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 	int ret;
 
 	ci = (struct llcrypt_info *)READ_ONCE(llcrypt_info_nocast(inode));
@@ -242,7 +242,7 @@ static int set_encryption_policy(struct inode *inode,
 {
 	union llcrypt_context ctx;
 	int ctxsize;
-	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 	int err;
 
 	if (!llcrypt_supported_policy(policy, inode))
@@ -307,7 +307,7 @@ int llcrypt_ioctl_set_policy(struct file *filp, const void __user *arg)
 	union llcrypt_policy policy;
 	union llcrypt_policy existing_policy;
 	struct inode *inode = file_inode(filp);
-	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 	u8 version;
 	int size;
 	int ret;
@@ -366,7 +366,7 @@ int llcrypt_ioctl_set_policy(struct file *filp, const void __user *arg)
 
 	ret = llcrypt_get_policy(inode, &existing_policy);
 	if (ret == -ENODATA) {
-		struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+		struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 
 		if (!S_ISDIR(inode->i_mode))
 			ret = -ENOTDIR;
@@ -569,7 +569,7 @@ int llcrypt_inherit_context(struct inode *parent, struct inode *child,
 	union llcrypt_context ctx;
 	int ctxsize;
 	struct llcrypt_info *ci;
-	struct lustre_sb_info *lsi = s2lsi(parent->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(parent->i_sb);
 	int res;
 
 	res = llcrypt_get_encryption_info(parent);

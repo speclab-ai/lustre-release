@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 
 ######################################################################
@@ -14,10 +14,10 @@
 # case 1 (stripe_count=0 default):
 #  $ thrhi=8 dir_count=4 sh mds-survey
 #  one can also run test with user defined targets as follows,
-#  $ thrhi=8 dir_count=4 file_count=50000 targets="lustre-MDT0000" sh mds-survey
+#  $ thrhi=8 dir_count=4 file_count=50000 targets="grumple-MDT0000" sh mds-survey
 # case 2 (stripe_count > 0, must have ost mounted):
 #  $ thrhi=8 dir_count=4 file_count=50000 stripe_count=2
-#  targets="lustre-MDT0000" sh mds-survey
+#  targets="grumple-MDT0000" sh mds-survey
 # [ NOTE: It is advised to have automated login (passwordless entry) on server ]
 
 # include library
@@ -197,15 +197,15 @@ for name in $tests_str; do
 done
 
 # hide a little trick to unset this from the command line
-if [ "$lustre_root" == " " ]; then
-	unset lustre_root
+if [ "$grumple_root" == " " ]; then
+	unset grumple_root
 fi
 
 # find where 'lctl' binary is installed on this system
 if [[ -x "$LCTL" ]]; then	# full pathname specified
 	: # echo "LCTL=$LCTL"
-elif [[ -n "$lustre_root" && -x "$lustre_root/utils/lctl" ]]; then
-	LCTL=${lustre_root}/utils/lctl
+elif [[ -n "$grumple_root" && -x "$grumple_root/utils/lctl" ]]; then
+	LCTL=${grumple_root}/utils/lctl
 elif [[ -n "$LUSTRE" && -x "$LUSTRE/utils/lctl" ]]; then
 	LCTL=$LUSTRE/utils/lctl
 else				# hope that it is in the PATH

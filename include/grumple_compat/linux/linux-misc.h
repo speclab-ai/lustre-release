@@ -31,7 +31,7 @@ static inline unsigned long cfs_time_seconds(time64_t seconds)
 
 
 void *cfs_kallsyms_lookup_name(const char *name);
-int lustre_symbols_init(void);
+int grumple_symbols_init(void);
 
 /*
  * Since 4.20 commit 00e23707442a75b404392cef1405ab4fd498de6b

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 
 ######################################################################
@@ -19,7 +19,7 @@
 # one can specify only case=disk or case=network through
 # command line.
 
-# Prerequisite: For "disk" case you need to have lustre setup
+# Prerequisite: For "disk" case you need to have grumple setup
 #             with one or more ost's. For "network" case  you need to have all
 #             modules (those llmount.sh loades) loaded in kernel. And the
 #             'lctl dl' output must be blank.
@@ -28,7 +28,7 @@
 # case 1 (local disk):
 #   $ nobjhi=2 thrhi=2 size=1024 case=disk sh obdfilter-survey
 #   one can also run test with user defined targets as follows,
-#   $ nobjhi=2 thrhi=2 size=1024 targets="lustre-OST0000 lustre-OST0001 ..." sh obdfilter-survey
+#   $ nobjhi=2 thrhi=2 size=1024 targets="grumple-OST0000 grumple-OST0001 ..." sh obdfilter-survey
 # case 2 (network):
 #   $ nobjhi=2 thrhi=2 size=1024 targets="<name/ip_of_server>" case=network sh obdfilter-survey
 #   where, targets is name or ip address of system, which you want to
@@ -313,16 +313,16 @@ echo -n > $rsltf
 echo -n > $workf
 
 # hide a little trick to unset this from the command line
-if [ "$lustre_root" == " " ]; then
-	unset lustre_root
+if [ "$grumple_root" == " " ]; then
+	unset grumple_root
 fi
 
 # find where 'lctl' binary is installed on this system
 if [[ -x "$LCTL" ]]; then	# full pathname specified
 	: # echo "LCTL=$LCTL"
-elif [[ -n "$lustre_root" && -x "$lustre_root/utils/lctl" ]]; then
-	# echo "lustre_root=$lustre_root"
-	LCTL=${lustre_root}/utils/lctl
+elif [[ -n "$grumple_root" && -x "$grumple_root/utils/lctl" ]]; then
+	# echo "grumple_root=$grumple_root"
+	LCTL=${grumple_root}/utils/lctl
 elif [[ -n "$LUSTRE" && -x "$LUSTRE/utils/lctl" ]]; then
 	# echo "LUSTRE=$LUSTRE"
 	LCTL=$LUSTRE/utils/lctl
@@ -330,7 +330,7 @@ else				# hope that it is in the PATH
 	# echo "PATH=$PATH"
 	LCTL=${LCTL:-lctl}
 fi
-echo "using LCTL='$LCTL' lustre_root='$lustre_root' LUSTRE='$LUSTRE'"
+echo "using LCTL='$LCTL' grumple_root='$grumple_root' LUSTRE='$LUSTRE'"
 [[ -n "$(which $LCTL)" ]] || { echo "error: lctl not found"; exit 99; }
 
 # split out hostnames from client/ost names

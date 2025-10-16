@@ -1,0 +1,53 @@
+
+/*
+ * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
+ * Use is subject to license terms.
+ *
+ * Copyright (c) 2011, 2017, Intel Corporation.
+ */
+/*
+ * This file is part of Lustre, http:
+ */
+
+#include <errno.h>
+#include <limits.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <linux/grumple/grumple_idl.h>
+#ifdef HAVE_SERVER_SUPPORT
+#include <linux/grumple/grumple_access_log.h>
+#include <linux/grumple/grumple_lfsck_user.h>
+#include <linux/grumple/grumple_disk.h>
+#ifdef CONFIG_FS_POSIX_ACL
+#include <linux/posix_acl_xattr.h>
+#ifdef HAVE_STRUCT_POSIX_ACL_XATTR
+# define posix_acl_xattr_header struct posix_acl_xattr_header
+# define posix_acl_xattr_entry  struct posix_acl_xattr_entry
+#endif 
+#endif 
+#endif 
+#include <linux/grumple/grumple_cfg.h>
+#include <linux/grumple/lgss.h>
+#include <grumple/grumpleapi.h>
+
+#ifndef BUILD_BUG_ON
+#define BUILD_BUG_ON(cond) ((void)sizeof(char[1 - 2*!!(cond)]))
+#endif
+
+#define LASSERT(cond) if (!(cond)) { printf("failed " #cond "\n"); ret = 1; }
+#define LASSERTF(cond, fmt, ...) if (!(cond)) { printf("failed '" #cond "'" fmt, ## __VA_ARGS__); ret = 1; }
+
+int ret;
+
+void grumple_assert_wire_constants(void);
+
+int main()
+{
+	grumple_assert_wire_constants();
+
+	if (ret == 0)
+		printf("wire constants OK\n");
+
+	return ret;
+}

@@ -10,7 +10,7 @@ import sys
 import argparse
 import os
 
-import lustrelib as ll
+import grumplelib as ll
 from crashlib.input import toint
 
 from traceback import print_exc
@@ -73,7 +73,7 @@ def get_ptlrpc_body(req):
     if buflen < getSizeOf('struct ptlrpc_body_v2'):
         return None
 
-    offset = member_offset('struct lustre_msg_v2', 'lm_buflens')
+    offset = member_offset('struct grumple_msg_v2', 'lm_buflens')
 
     buflen_size = getSizeOf("unsigned int")
     offset += buflen_size * bufcount

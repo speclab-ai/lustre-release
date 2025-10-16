@@ -3,9 +3,9 @@ Author:     Shaun Tancheff <shaun.tancheff@hpe.com>
 AuthorDate: Thu Dec 10 10:31:51 2020 -0600
 LU-13239 ldiskfs: pass inode timestamps at initial creation
 
-A previous patch https://github.com/Cray/lustre/commit/6d4fb6694
+A previous patch https://github.com/Cray/grumple/commit/6d4fb6694
 "LUS-4880 osd-ldiskfs: pass uid/gid/xtime directly to ldiskfs"
-was intended to be ported to upstream lustre but was lost.
+was intended to be ported to upstream grumple but was lost.
 
 The patch https://review.whamcloud.com/34685/
 "LU-12151 osd-ldiskfs: pass owner down rather than transfer it"

@@ -6,8 +6,8 @@
 # then use it to build Lustre:
 # $ podman run -it
 #   --mount type=bind,source=<path-to-kernel>,target=/tmp/kernel \
-#   --mount type=bind,source=<path-to-lustre>,target=/tmp/lustre \
-#   centos8-build /bin/bash -c "cd /tmp/lustre; sh autogen.sh; \
+#   --mount type=bind,source=<path-to-grumple>,target=/tmp/grumple \
+#   centos8-build /bin/bash -c "cd /tmp/grumple; sh autogen.sh; \
 #   ./configure --with-linux=<path-to-kernel> \
 #      --with-linux-obj=<path-to-kernel> --disable-gss \
 #      --disable-shared --disable-crypto; make"

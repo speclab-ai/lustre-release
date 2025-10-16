@@ -34,7 +34,7 @@
 
 #include <linux/libcfs/libcfs.h>
 #include <lnet/lib-lnet.h>
-#include <uapi/linux/lustre/lustre_ver.h>
+#include <uapi/linux/grumple/grumple_ver.h>
 #include "tracefile.h"
 
 int cpu_npartitions;

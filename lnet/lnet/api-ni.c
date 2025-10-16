@@ -11,7 +11,7 @@
 #define DEBUG_SUBSYSTEM S_LNET
 
 #include <linux/ctype.h>
-#include <lustre_compat/linux/generic-radix-tree.h>
+#include <grumple_compat/linux/generic-radix-tree.h>
 #include <linux/log2.h>
 #include <linux/ktime.h>
 #include <linux/moduleparam.h>
@@ -22,7 +22,7 @@
 #include <net/genetlink.h>
 
 #include <linux/libcfs/libcfs.h>
-#include <lustre_compat/net/linux-net.h>
+#include <grumple_compat/net/linux-net.h>
 #include <lnet/udsp.h>
 #include <lnet/lib-lnet.h>
 

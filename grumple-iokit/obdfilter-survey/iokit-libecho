@@ -9,7 +9,7 @@
 #
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 # Author: Jitendra Pawar <jitendra@clusterfs.com>
 #
@@ -93,12 +93,12 @@ load_obdecho () {
     if obdecho_loaded $host; then
         return 0
     fi
-    if [ -z "$lustre_root" ]; then
+    if [ -z "$grumple_root" ]; then
         remote_shell $host $modprobe obdecho
-    elif [ -f ${lustre_root}/obdecho/obdecho.ko ]; then
-        remote_shell $host $insmod ${lustre_root}/obdecho/obdecho.ko
+    elif [ -f ${grumple_root}/obdecho/obdecho.ko ]; then
+        remote_shell $host $insmod ${grumple_root}/obdecho/obdecho.ko
     else
-        remote_shell $host $insmod ${lustre_root}/obdecho/obdecho.o
+        remote_shell $host $insmod ${grumple_root}/obdecho/obdecho.o
     fi
     if obdecho_loaded $host; then
         do_unload_echo[$index]=1
@@ -228,7 +228,7 @@ trap 'cleanup 0 $clean_srv_OSS' EXIT SIGHUP SIGINT SIGTERM
 #
 # parameter: 1. hostname
 #            2. client name, ex:- ns8:ECHO_ns8
-#            3. name of ost instances, ex:- lustre-OST0001
+#            3. name of ost instances, ex:- grumple-OST0001
 get_ec_devno () {
 	exec 8>&1 1>&2
 	local host=$1

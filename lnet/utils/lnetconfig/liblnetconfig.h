@@ -93,20 +93,20 @@ struct lnet_dlc_intf_descr {
 };
 
 /*
- * lustre_lnet_ip2nets
+ * grumple_lnet_ip2nets
  *	Describes an ip2nets rule. This can be on a list of rules.
  */
-struct lustre_lnet_ip2nets {
+struct grumple_lnet_ip2nets {
 	struct lnet_dlc_network_descr ip2nets_net;
 	struct list_head ip2nets_ip_ranges;
 };
 
 /*
- * lustre_lnet_ip_range_descr
+ * grumple_lnet_ip_range_descr
  *	Describes an IP range.
  *	Each octect is an expression
  */
-struct lustre_lnet_ip_range_descr {
+struct grumple_lnet_ip_range_descr {
 	struct list_head ipr_entry;
 	struct list_head ipr_expr;
 };
@@ -166,20 +166,20 @@ union lnet_udsp_action {
 struct cYAML;
 
 /*
- * lustre_lnet_config_lib_init()
+ * grumple_lnet_config_lib_init()
  *   Initialize the Library to enable communication with the LNET kernel
  *   module.  Returns the device ID or -EINVAL if there is an error
  */
-int lustre_lnet_config_lib_init();
+int grumple_lnet_config_lib_init();
 
 /*
- * lustre_lnet_config_lib_uninit
+ * grumple_lnet_config_lib_uninit
  *	Uninitialize the DLC Library
  */
-void lustre_lnet_config_lib_uninit();
+void grumple_lnet_config_lib_uninit();
 
 /*
- * lustre_lnet_config_ni_system
+ * grumple_lnet_config_ni_system
  *   Initialize/Uninitialize the lnet NI system.
  *
  *   up - whehter to init or uninit the system
@@ -188,11 +188,11 @@ void lustre_lnet_config_lib_uninit();
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *            caller
  */
-int lustre_lnet_config_ni_system(bool up, bool load_ni_from_mod,
+int grumple_lnet_config_ni_system(bool up, bool load_ni_from_mod,
 				 int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_route
+ * grumple_lnet_config_route
  *   Send down an IOCTL to the kernel to configure the route
  *
  *   nw - network
@@ -202,11 +202,11 @@ int lustre_lnet_config_ni_system(bool up, bool load_ni_from_mod,
  *   seq_no - sequence number of the request
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_lnet_config_route(char *nw, char *gw, int hops, int prio,
+int grumple_lnet_config_route(char *nw, char *gw, int hops, int prio,
 			     int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_del_route
+ * grumple_lnet_del_route
  *   Send down an IOCTL to the kernel to delete a route
  *
  *   nw - network
@@ -214,11 +214,11 @@ int lustre_lnet_config_route(char *nw, char *gw, int hops, int prio,
  *   seq_no - sequence number of the request
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_lnet_del_route(char *nw, char *gw, int seq_no,
+int grumple_lnet_del_route(char *nw, char *gw, int seq_no,
 			  struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_route
+ * grumple_lnet_show_route
  *   Send down an IOCTL to the kernel to show routes
  *   This function will get one route at a time and filter according to
  *   provided parameters. If no routes are available then it will dump all
@@ -236,13 +236,13 @@ int lustre_lnet_del_route(char *nw, char *gw, int seq_no,
  *   backup - true to output only what's necessary for reconfiguring
  *	      a node.
  */
-int lustre_lnet_show_route(char *nw, char *gw,
+int grumple_lnet_show_route(char *nw, char *gw,
 			   int hops, int prio, int detail,
 			   int seq_no, struct cYAML **show_rc,
 			   struct cYAML **err_rc, bool backup);
 
 /*
- * lustre_lnet_config_ni
+ * grumple_lnet_config_ni
  *   Send down an IOCTL to configure a network interface. It implicitly
  *   creates a network if one doesn't exist..
  *
@@ -255,14 +255,14 @@ int lustre_lnet_show_route(char *nw, char *gw,
  *   lnd_tunables - lnet specific tunable parameters
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
+int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 			  struct cfs_expr_list *global_cpts,
 			  char *ip2net,
 			  struct lnet_ioctl_config_lnd_tunables *tunables,
 			  int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_del_ni
+ * grumple_lnet_del_ni
  *   Send down an IOCTL to delete a network interface. It implicitly
  *   deletes a network if it becomes empty of nis
  *
@@ -270,11 +270,11 @@ int lustre_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
  *   seq_no - sequence number of the request
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_lnet_del_ni(struct lnet_dlc_network_descr *nw,
+int grumple_lnet_del_ni(struct lnet_dlc_network_descr *nw,
 		       int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_net
+ * grumple_lnet_show_net
  *   Send down an IOCTL to show networks.
  *   This function will use the nw paramter to filter the output.  If it's
  *   not provided then all networks are listed.
@@ -287,23 +287,23 @@ int lustre_lnet_del_ni(struct lnet_dlc_network_descr *nw,
  *   backup - true to output only what's necessary for reconfiguring
  *	      a node.
  */
-int lustre_lnet_show_net(char *nw, int detail, int seq_no,
+int grumple_lnet_show_net(char *nw, int detail, int seq_no,
 			 struct cYAML **show_rc, struct cYAML **err_rc,
 			 bool backup);
 
 /*
- * lustre_lnet_config_routing
+ * grumple_lnet_config_routing
  *   Send down an IOCTL to enable or diable routing
  *
  *   enable - 1 to enable routing, 0 to disable routing
  *   seq_no - sequence number of the request
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_lnet_config_routing(int enable, int seq_no,
+int grumple_lnet_config_routing(int enable, int seq_no,
 			       struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_numa_range
+ * grumple_lnet_config_numa_range
  *   Set the NUMA range which impacts the NIs to be selected
  *   during sending. If the NUMA range is large the NUMA
  *   distance between the message memory and the NI becomes
@@ -316,11 +316,11 @@ int lustre_lnet_config_routing(int enable, int seq_no,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_numa_range(int range, int seq_no,
+int grumple_lnet_config_numa_range(int range, int seq_no,
 				  struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_num_range
+ * grumple_lnet_show_num_range
  *   Get the currently set NUMA range
  *
  *   seq_no - sequence number of the request
@@ -328,11 +328,11 @@ int lustre_lnet_config_numa_range(int range, int seq_no,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_numa_range(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_numa_range(int seq_no, struct cYAML **show_rc,
 				struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_ni_healthv
+ * grumple_lnet_config_ni_healthv
  *   set the health value of the NI. -1 resets the value to maximum.
  *
  *   value: health value to set.
@@ -343,11 +343,11 @@ int lustre_lnet_show_numa_range(int seq_no, struct cYAML **show_rc,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_ni_healthv(int value, bool all, char *ni_nid,
+int grumple_lnet_config_ni_healthv(int value, bool all, char *ni_nid,
 				  int seq_no, struct cYAML **err_rc);
 
 
-/* lustre_lnet_config_ni_conns_per_peer
+/* grumple_lnet_config_ni_conns_per_peer
  *   set the conns_per_peer value of the NI. Valid range is specific to
  *   network type.
  *
@@ -359,11 +359,11 @@ int lustre_lnet_config_ni_healthv(int value, bool all, char *ni_nid,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_ni_conns_per_peer(int value, bool all, char *ni_nid,
+int grumple_lnet_config_ni_conns_per_peer(int value, bool all, char *ni_nid,
 					 int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_peer_ni_healthv
+ * grumple_lnet_config_peer_ni_healthv
  *   set the health value of the peer NI. -1 resets the value to maximum.
  *
  *   value: health value to set.
@@ -374,11 +374,11 @@ int lustre_lnet_config_ni_conns_per_peer(int value, bool all, char *ni_nid,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_peer_ni_healthv(int value, bool all, char *pni_nid,
+int grumple_lnet_config_peer_ni_healthv(int value, bool all, char *pni_nid,
 				       int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_recov_intrv
+ * grumple_lnet_config_recov_intrv
  *   set the recovery interval in seconds. That's the interval to ping an
  *   unhealthy interface.
  *
@@ -387,10 +387,10 @@ int lustre_lnet_config_peer_ni_healthv(int value, bool all, char *pni_nid,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_recov_intrv(int intrv, int seq_no, struct cYAML **err_rc);
+int grumple_lnet_config_recov_intrv(int intrv, int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_recov_intrv
+ * grumple_lnet_show_recov_intrv
  *    show the recovery interval set in the system
  *
  *   seq_no - sequence number of the request
@@ -398,11 +398,11 @@ int lustre_lnet_config_recov_intrv(int intrv, int seq_no, struct cYAML **err_rc)
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_recov_intrv(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_recov_intrv(int seq_no, struct cYAML **show_rc,
 				 struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_rtr_sensitivity
+ * grumple_lnet_config_rtr_sensitivity
  *   sets the router sensitivity percentage. If the percentage health
  *   of a router interface drops below that it's considered failed
  *
@@ -411,10 +411,10 @@ int lustre_lnet_show_recov_intrv(int seq_no, struct cYAML **show_rc,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_rtr_sensitivity(int sen, int seq_no, struct cYAML **err_rc);
+int grumple_lnet_config_rtr_sensitivity(int sen, int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_hsensitivity
+ * grumple_lnet_config_hsensitivity
  *   sets the health sensitivity; the value by which to decrement the
  *   health value of a local or peer NI. If 0 then health is turned off
  *
@@ -423,10 +423,10 @@ int lustre_lnet_config_rtr_sensitivity(int sen, int seq_no, struct cYAML **err_r
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_hsensitivity(int sen, int seq_no, struct cYAML **err_rc);
+int grumple_lnet_config_hsensitivity(int sen, int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_hsensitivity
+ * grumple_lnet_show_hsensitivity
  *    show the health sensitivity in the system
  *
  *   seq_no - sequence number of the request
@@ -434,11 +434,11 @@ int lustre_lnet_config_hsensitivity(int sen, int seq_no, struct cYAML **err_rc);
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_hsensitivity(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_hsensitivity(int seq_no, struct cYAML **show_rc,
 				  struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_rtr_sensitivity
+ * grumple_lnet_show_rtr_sensitivity
  *    show the router sensitivity percentage in the system
  *
  *   seq_no - sequence number of the request
@@ -446,10 +446,10 @@ int lustre_lnet_show_hsensitivity(int seq_no, struct cYAML **show_rc,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_rtr_sensitivity(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_rtr_sensitivity(int seq_no, struct cYAML **show_rc,
 				     struct cYAML **err_rc);
 
-/* lustre_lnet_config_lnd_timeout
+/* grumple_lnet_config_lnd_timeout
  *   sets the LND timeout which defines how long the LND should take to complete
  *   a network transaction, by writing the timeout value to the sysfs file
  *   (usually under /sys/module/<lnd>/parameters/).
@@ -460,11 +460,11 @@ int lustre_lnet_show_rtr_sensitivity(int seq_no, struct cYAML **show_rc,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_lnd_timeout(int timeout, __u32 net_type, int seq_no,
+int grumple_lnet_config_lnd_timeout(int timeout, __u32 net_type, int seq_no,
 				   struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_transaction_to
+ * grumple_lnet_config_transaction_to
  *   sets the timeout after which a message expires or a timeout event is
  *   propagated for an expired response.
  *
@@ -473,10 +473,10 @@ int lustre_lnet_config_lnd_timeout(int timeout, __u32 net_type, int seq_no,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_transaction_to(int timeout, int seq_no, struct cYAML **err_rc);
+int grumple_lnet_config_transaction_to(int timeout, int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_transaction_to
+ * grumple_lnet_show_transaction_to
  *    show the transaction timeout in the system
  *
  *   seq_no - sequence number of the request
@@ -484,11 +484,11 @@ int lustre_lnet_config_transaction_to(int timeout, int seq_no, struct cYAML **er
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_transaction_to(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_transaction_to(int seq_no, struct cYAML **show_rc,
 				    struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_retry_count
+ * grumple_lnet_config_retry_count
  *   sets the maximum number of retries to resend a message
  *
  *   count - maximum value to configure
@@ -496,10 +496,10 @@ int lustre_lnet_show_transaction_to(int seq_no, struct cYAML **show_rc,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_retry_count(int count, int seq_no, struct cYAML **err_rc);
+int grumple_lnet_config_retry_count(int count, int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_retry_count
+ * grumple_lnet_show_retry_count
  *    show current maximum number of retries in the system
  *
  *   seq_no - sequence number of the request
@@ -507,31 +507,31 @@ int lustre_lnet_config_retry_count(int count, int seq_no, struct cYAML **err_rc)
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_retry_count(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_retry_count(int seq_no, struct cYAML **show_rc,
 				 struct cYAML **err_rc);
 
-int lustre_lnet_show_lnd_timeout(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_lnd_timeout(int seq_no, struct cYAML **show_rc,
 				 struct cYAML **err_rc);
 
-int lustre_lnet_show_local_ni_recovq(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_local_ni_recovq(int seq_no, struct cYAML **show_rc,
 				     struct cYAML **err_rc);
 
-int lustre_lnet_show_peer_ni_recovq(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_peer_ni_recovq(int seq_no, struct cYAML **show_rc,
 				    struct cYAML **err_rc);
-int lustre_lnet_config_response_tracking(int count, int seq_no,
+int grumple_lnet_config_response_tracking(int count, int seq_no,
 					 struct cYAML **err_rc);
-int lustre_lnet_show_response_tracking(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_response_tracking(int seq_no, struct cYAML **show_rc,
 				       struct cYAML **err_rc);
-int lustre_lnet_config_recovery_limit(int val, int seq_no,
+int grumple_lnet_config_recovery_limit(int val, int seq_no,
 				      struct cYAML **err_rc);
-int lustre_lnet_show_recovery_limit(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_recovery_limit(int seq_no, struct cYAML **show_rc,
 				    struct cYAML **err_rc);
-int lustre_lnet_show_max_recovery_ping_interval(int seq_no,
+int grumple_lnet_show_max_recovery_ping_interval(int seq_no,
 						struct cYAML **show_rc,
 						struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_max_intf
+ * grumple_lnet_config_max_intf
  *   Sets the maximum number of interfaces per node. this tunable is
  *   primarily useful for sanity checks prior to allocating memory.
  *
@@ -540,10 +540,10 @@ int lustre_lnet_show_max_recovery_ping_interval(int seq_no,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_max_intf(int max, int seq_no, struct cYAML **err_rc);
+int grumple_lnet_config_max_intf(int max, int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_max_intf
+ * grumple_lnet_show_max_intf
  *    show current maximum interface setting
  *
  *   seq_no - sequence number of the request
@@ -551,35 +551,35 @@ int lustre_lnet_config_max_intf(int max, int seq_no, struct cYAML **err_rc);
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_max_intf(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_max_intf(int seq_no, struct cYAML **show_rc,
 			      struct cYAML **err_rc);
 
 /*
- * lustre_lnet_calc_service_id
- *    Calculate the lustre service id to be used for qos
+ * grumple_lnet_calc_service_id
+ *    Calculate the grumple service id to be used for qos
  */
-int lustre_lnet_calc_service_id(__u64 *service_id);
+int grumple_lnet_calc_service_id(__u64 *service_id);
 
 /*
- * lustre_lnet_setup_mrrouting
+ * grumple_lnet_setup_mrrouting
  *    configure linux routing tables for tcp interfaces
  *
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_setup_mrrouting(struct cYAML **err_rc);
+int grumple_lnet_setup_mrrouting(struct cYAML **err_rc);
 
 /*
- * lustre_lnet_setup_sysctl
+ * grumple_lnet_setup_sysctl
  *    enable  linux sysctl settings configured in /etc/lnet-sysctl.conf
  *
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_setup_sysctl(struct cYAML **err_rc);
+int grumple_lnet_setup_sysctl(struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_discovery
+ * grumple_lnet_config_discovery
  *   Enable or disable peer discovery. Peer discovery is enabled by default.
  *
  *   enable - non-0 enables, 0 disables
@@ -587,10 +587,10 @@ int lustre_lnet_setup_sysctl(struct cYAML **err_rc);
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_discovery(int enable, int seq_no, struct cYAML **err_rc);
+int grumple_lnet_config_discovery(int enable, int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_discovery
+ * grumple_lnet_show_discovery
  *    show current peer discovery setting
  *
  *   seq_no - sequence number of the request
@@ -598,11 +598,11 @@ int lustre_lnet_config_discovery(int enable, int seq_no, struct cYAML **err_rc);
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_discovery(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_discovery(int seq_no, struct cYAML **show_rc,
 			       struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_drop_asym_route
+ * grumple_lnet_config_drop_asym_route
  *   Drop or accept asymmetrical route messages. Accept by default.
  *
  *   drop - non-0 drops, 0 accepts
@@ -610,11 +610,11 @@ int lustre_lnet_show_discovery(int seq_no, struct cYAML **show_rc,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_config_drop_asym_route(int drop, int seq_no,
+int grumple_lnet_config_drop_asym_route(int drop, int seq_no,
 				       struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_drop_asym_route
+ * grumple_lnet_show_drop_asym_route
  *    show current drop asym route setting
  *
  *   seq_no - sequence number of the request
@@ -622,11 +622,11 @@ int lustre_lnet_config_drop_asym_route(int drop, int seq_no,
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *   caller
  */
-int lustre_lnet_show_drop_asym_route(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_drop_asym_route(int seq_no, struct cYAML **show_rc,
 				     struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_buffers
+ * grumple_lnet_config_buffers
  *   Send down an IOCTL to configure routing buffer sizes.  A value of 0 means
  *   default that particular buffer to default size. A value of -1 means
  *   leave the value of the buffer un changed.
@@ -637,22 +637,22 @@ int lustre_lnet_show_drop_asym_route(int seq_no, struct cYAML **show_rc,
  *   seq_no - sequence number of the request
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_lnet_config_buffers(int tiny, int small, int large,
+int grumple_lnet_config_buffers(int tiny, int small, int large,
 			       int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_config_max_recovery_ping_interval
+ * grumple_lnet_config_max_recovery_ping_interval
  *   Set the maximum recovery ping interval.
  *
  *   interval - interval value in seconds
  *   seq_no - sequence number of the request
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_lnet_config_max_recovery_ping_interval(int interval, int seq_no,
+int grumple_lnet_config_max_recovery_ping_interval(int interval, int seq_no,
 						  struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_routing
+ * grumple_lnet_show_routing
  *   Send down an IOCTL to dump buffers and routing status
  *   This function is used to dump buffers for all CPU partitions.
  *
@@ -662,11 +662,11 @@ int lustre_lnet_config_max_recovery_ping_interval(int interval, int seq_no,
  *   backup - true to output only what's necessary for reconfiguring
  *	      a node.
  */
-int lustre_lnet_show_routing(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_routing(int seq_no, struct cYAML **show_rc,
 			     struct cYAML **err_rc, bool backup);
 
 /*
- * lustre_lnet_show_stats
+ * grumple_lnet_show_stats
  *   Shows internal LNET statistics.  This is useful to display the
  *   current LNET activity, such as number of messages route, etc
  *
@@ -674,19 +674,19 @@ int lustre_lnet_show_routing(int seq_no, struct cYAML **show_rc,
  *     show_rc - YAML structure of the resultant show
  *     err_rc - YAML strucutre of the resultant return code.
  */
-int lustre_lnet_show_stats(int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_stats(int seq_no, struct cYAML **show_rc,
 			   struct cYAML **err_rc);
 
 /*
- * lustre_lnet_reset_stats
+ * grumple_lnet_reset_stats
  *   Resets internal LNET statistics.
  *
  *     err_rc - YAML strucutre of the resultant return code.
  */
-int lustre_lnet_reset_stats(int seq_no, struct cYAML **err_rc);
+int grumple_lnet_reset_stats(int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_modify_peer
+ * grumple_lnet_modify_peer
  *  Handle a peer config or delete operation.
  *
  *  Config Operation:
@@ -713,11 +713,11 @@ int lustre_lnet_reset_stats(int seq_no, struct cYAML **err_rc);
  *	seq_no - sequence number of the command
  *	err_rc - YAML structure of the resultant return code
  */
-int lustre_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
+int grumple_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
 			    int force, int seq_no, struct cYAML **err_rc);
 
 /*
- * lustre_lnet_show_peer
+ * grumple_lnet_show_peer
  *   Show the peer identified by nid, knid. If knid is NULL all
  *   peers in the system are shown.
  *
@@ -730,12 +730,12 @@ int lustre_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
  *		a node.
  *
  */
-int lustre_lnet_show_peer(char *knid, int detail, int seq_no,
+int grumple_lnet_show_peer(char *knid, int detail, int seq_no,
 			  struct cYAML **show_rc, struct cYAML **err_rc,
 			  bool backup);
 
 /*
- * lustre_lnet_list_peer
+ * grumple_lnet_list_peer
  *   List the known peers.
  *
  *     seq_no - sequence number of the command
@@ -743,10 +743,10 @@ int lustre_lnet_show_peer(char *knid, int detail, int seq_no,
  *     err_rc - YAML strucutre of the resultant return code.
  *
  */
-int lustre_lnet_list_peer(int seq_no,
+int grumple_lnet_list_peer(int seq_no,
 			  struct cYAML **show_rc, struct cYAML **err_rc);
 
-/* lustre_lnet_ping_nid
+/* grumple_lnet_ping_nid
  *   Ping the nid list, pnids.
  *
  *    pnids - NID list to ping.
@@ -757,10 +757,10 @@ int lustre_lnet_list_peer(int seq_no,
  *    err_rc - YAML strucutre of the resultant return code.
  *
  */
-int lustre_lnet_ping_nid(char *pnid, char *src_nidstr, int timeout, int seq_no,
+int grumple_lnet_ping_nid(char *pnid, char *src_nidstr, int timeout, int seq_no,
 			struct cYAML **show_rc, struct cYAML **err_rc);
 
-/* lustre_lnet_discover_nid
+/* grumple_lnet_discover_nid
  *   Discover the nid list, pnids.
  *
  *    pnids - NID list to discover.
@@ -770,31 +770,31 @@ int lustre_lnet_ping_nid(char *pnid, char *src_nidstr, int timeout, int seq_no,
  *    err_rc - YAML strucutre of the resultant return code.
  *
  */
-int lustre_lnet_discover_nid(char *pnid, int force, int seq_no,
+int grumple_lnet_discover_nid(char *pnid, int force, int seq_no,
 			     struct cYAML **show_rc, struct cYAML **err_rc);
 
 /*
- * lustre_yaml_config
+ * grumple_yaml_config
  *   Parses the provided YAML file and then calls the specific APIs
  *   to configure the entities identified in the file
  *
  *   f - YAML file
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_yaml_config(char *f, int len, struct cYAML **err_rc);
+int grumple_yaml_config(char *f, int len, struct cYAML **err_rc);
 
 /*
- * lustre_yaml_del
+ * grumple_yaml_del
  *   Parses the provided YAML file and then calls the specific APIs
  *   to delete the entities identified in the file
  *
  *   f - YAML file
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_yaml_del(char *f, int len, struct cYAML **err_rc);
+int grumple_yaml_del(char *f, int len, struct cYAML **err_rc);
 
 /*
- * lustre_yaml_show
+ * grumple_yaml_show
  *   Parses the provided YAML file and then calls the specific APIs
  *   to show the entities identified in the file
  *
@@ -802,11 +802,11 @@ int lustre_yaml_del(char *f, int len, struct cYAML **err_rc);
  *   show_rc - [OUT] The show output in YAML.  Must be freed by caller.
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_yaml_show(char *f, int len, struct cYAML **show_rc,
+int grumple_yaml_show(char *f, int len, struct cYAML **show_rc,
 		     struct cYAML **err_rc);
 
 /*
- * lustre_yaml_exec
+ * grumple_yaml_exec
  *   Parses the provided YAML file and then calls the specific APIs
  *   to execute the entities identified in the file
  *
@@ -814,7 +814,7 @@ int lustre_yaml_show(char *f, int len, struct cYAML **show_rc,
  *   show_rc - [OUT] The show output in YAML.  Must be freed by caller.
  *   err_rc - [OUT] struct cYAML tree describing the error. Freed by caller
  */
-int lustre_yaml_exec(char *f, int len, struct cYAML **show_rc,
+int grumple_yaml_exec(char *f, int len, struct cYAML **show_rc,
 		     struct cYAML **err_rc);
 
 struct nid_node {
@@ -823,9 +823,9 @@ struct nid_node {
 	struct nl_list_head list;
 };
 
-int lustre_lnet_parse_nid_range(struct nid_node *head, char *nidstr,
+int grumple_lnet_parse_nid_range(struct nid_node *head, char *nidstr,
 				const char **errmsg);
-void lustre_lnet_free_list(struct nid_node *head);
+void grumple_lnet_free_list(struct nid_node *head);
 
 /**
  * yaml_lnet_configure
@@ -969,24 +969,24 @@ int yaml_netlink_setup_emitter(yaml_emitter_t *output, struct nl_sock *sk,
 int yaml_netlink_complete_emitter(yaml_emitter_t *output);
 
 /*
- * lustre_lnet_init_nw_descr
+ * grumple_lnet_init_nw_descr
  *	initialize the network descriptor structure for use
  */
-void lustre_lnet_init_nw_descr(struct lnet_dlc_network_descr *nw_descr);
+void grumple_lnet_init_nw_descr(struct lnet_dlc_network_descr *nw_descr);
 
 /*
- * lustre_lnet_parse_interfaces
+ * grumple_lnet_parse_interfaces
  *	prase an interface string and populate descriptor structures
  *		intf_str - interface string of the format
  *			<intf>[<expr>], <intf>[<expr>],..
  *		nw_descr - network descriptor to populate
  *		init - True to initialize nw_descr
  */
-int lustre_lnet_parse_interfaces(char *intf_str,
+int grumple_lnet_parse_interfaces(char *intf_str,
 				 struct lnet_dlc_network_descr *nw_descr);
 
 /*
- * lustre_lnet_parse_nidstr
+ * grumple_lnet_parse_nidstr
  *     This is a small wrapper around cfs_parse_nidlist.
  *         nidstr - A string parseable by cfs_parse_nidlist
  *         lnet_nidlist - An array of lnet_nid_t to hold the nids specified
@@ -1013,11 +1013,11 @@ int lustre_lnet_parse_interfaces(char *intf_str,
  *           - cfs_expand_nidlist can return ENOMEM. We return out of mem in
  *             this case.
  */
-int lustre_lnet_parse_nidstr(char *nidstr, lnet_nid_t *lnet_nidlist,
+int grumple_lnet_parse_nidstr(char *nidstr, lnet_nid_t *lnet_nidlist,
 			     int max_nids, char *err_str);
 
-int lustre_lnet_debug_nidlist(char *nidstr, char *match_nid);
-/* lustre_lnet_add_udsp
+int grumple_lnet_debug_nidlist(char *nidstr, char *match_nid);
+/* grumple_lnet_add_udsp
  *	Add a selection policy.
  *	src - source NID descriptor
  *	dst - destination NID descriptor
@@ -1029,20 +1029,20 @@ int lustre_lnet_debug_nidlist(char *nidstr, char *match_nid);
  *	err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *               caller
  */
-int lustre_lnet_add_udsp(char *src, char *dst, char *rte, char *type,
+int grumple_lnet_add_udsp(char *src, char *dst, char *rte, char *type,
 			 union lnet_udsp_action *action, int idx,
 			 int seq_no, struct cYAML **err_rc);
 
-/* lustre_lnet_del_udsp
+/* grumple_lnet_del_udsp
  *	Delete a net selection policy.
  *	idx - the index to delete
  *	seq_no - sequence number of the request
  *	err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *	caller
  */
-int lustre_lnet_del_udsp(unsigned int idx, int seq_no, struct cYAML **err_rc);
+int grumple_lnet_del_udsp(unsigned int idx, int seq_no, struct cYAML **err_rc);
 
-/* lustre_lnet_show_udsp
+/* grumple_lnet_show_udsp
  *	show selection policy.
  *	idx - the index to show. -1 to show all policies
  *	seq_no - sequence number of the request
@@ -1050,27 +1050,27 @@ int lustre_lnet_del_udsp(unsigned int idx, int seq_no, struct cYAML **err_rc);
  *	err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *	caller
  */
-int lustre_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
+int grumple_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 			  struct cYAML **err_rc);
 
-/* lustre_lnet_show_peer_debug_info
+/* grumple_lnet_show_peer_debug_info
  *	dump peer debug info
  *	peer_nid - nid of the peer to show
  *	seq_no - sequence number of the request
  *	err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *	caller
  */
-int lustre_lnet_show_peer_debug_info(char *peer_nid, int seq_no,
+int grumple_lnet_show_peer_debug_info(char *peer_nid, int seq_no,
 				     struct cYAML **err_rc);
 
-/* lustre_lnet_set_peer_state
+/* grumple_lnet_set_peer_state
  *	set peer state
  *	lpni_nid - primary nid of the peer
  *	seq_no - sequence number of the request
  *	err_rc - [OUT] struct cYAML tree describing the error. Freed by
  *	caller
  */
-int lustre_lnet_set_peer_state(int state, char *lpni_nid, int seq_no,
+int grumple_lnet_set_peer_state(int state, char *lpni_nid, int seq_no,
 			       struct cYAML **err_rc);
 
 int
@@ -1087,16 +1087,16 @@ lnet_yaml_str_mapping(yaml_event_t *event, yaml_emitter_t *emitter,
 		      const char *key, const char *val);
 
 int
-lustre_lnet_add_intf_descr(struct list_head *list, char *intf, int len);
+grumple_lnet_add_intf_descr(struct list_head *list, char *intf, int len);
 int
-lustre_lnet_add_ip_range(struct list_head *list, char *str_ip_range);
+grumple_lnet_add_ip_range(struct list_head *list, char *str_ip_range);
 int
-lustre_lnet_config_ip2nets(struct lustre_lnet_ip2nets *ip2nets,
+grumple_lnet_config_ip2nets(struct grumple_lnet_ip2nets *ip2nets,
 			   struct lnet_ioctl_config_lnd_tunables *tunables,
 			   struct cfs_expr_list *global_cpts,
 			   int seq_no, struct cYAML **err_rc);
 void free_intf_descr(struct lnet_dlc_intf_descr *intf_descr);
-int lustre_lnet_resolve_ip2nets_rule(struct lustre_lnet_ip2nets *ip2nets,
+int grumple_lnet_resolve_ip2nets_rule(struct grumple_lnet_ip2nets *ip2nets,
 				     lnet_nid_t **nids, __u32 *nnids,
 				     char *err_str, size_t str_len);
 #endif 

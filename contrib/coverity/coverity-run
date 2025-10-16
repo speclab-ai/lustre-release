@@ -2,12 +2,12 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 # contrib/coverity/coverity-run
 #
 # Script for running Coverity builds (and setup VMs)
-# to upload to https://scan.coverity.com/projects/lustre
+# to upload to https://scan.coverity.com/projects/grumple
 #
 # Author: Timothy Day <timday@amazon.com>
 #
@@ -116,11 +116,11 @@ EOF
 	# Build Lustre
 	ssh "$COV_SSH" "$COV_HOST" <<EOF
 # Grab repo
-rm -rf ~/lustre-release
-git clone git://git.whamcloud.com/fs/lustre-release.git
+rm -rf ~/grumple-release
+git clone git://git.whamcloud.com/fs/grumple-release.git
 
 # Build
-cd ~/lustre-release
+cd ~/grumple-release
 git checkout origin/master-next
 ./autogen.sh
 ./configure
@@ -152,10 +152,10 @@ cd ~
 tar xf *.tar.gz
 
 # Clean and run
-cd ~/lustre-release
+cd ~/grumple-release
 make clean
 "\$(find ~ -name cov-build)" --dir cov-int make
-tar czvf "lustre-coverity-\$(date +"%m-%d-%Y").tgz" cov-int
+tar czvf "grumple-coverity-\$(date +"%m-%d-%Y").tgz" cov-int
 
 # Report
 echo "KERNEL MODULES BUILT:"
@@ -165,7 +165,7 @@ cat LUSTRE-VERSION-FILE
 EOF
 
 	# Grab scan results
-	scp "$COV_SSH" "$COV_HOST":~/lustre-release/*.tgz .
+	scp "$COV_SSH" "$COV_HOST":~/grumple-release/*.tgz .
 }
 
 #

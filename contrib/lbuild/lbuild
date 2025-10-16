@@ -69,7 +69,7 @@ XEN=false
 LINUXOBJ=
 DISTRO=
 KERNELTREE=
-# default to not adding -lustre- into the kernel RPM package names
+# default to not adding -grumple- into the kernel RPM package names
 KERNEL_LUSTRE_NAMING=false
 ENABLE_KERNEL_DEBUG=false
 # default not use kabi check.
@@ -93,7 +93,7 @@ UP_ARCHS=
 # not in the target file any more
 CONFIG=
 
-# build the lustre-tests rpm?
+# build the grumple-tests rpm?
 LUSTRE_TESTS=true
 
 DATE=$(date)
@@ -116,18 +116,18 @@ readlink() {
 
 usage() {
     cat <<EOF
-Usage: ${0##*/} [OPTION]... [-- <lustre configure options>]
+Usage: ${0##*/} [OPTION]... [-- <grumple configure options>]
 
   --external-patches=EXTERNAL_PATCHES
-    Directory similar to lustre/lustre/kernel_patches/ that lbuild should
-    look for seres and config files in before looking in the lustre
+    Directory similar to grumple/grumple/kernel_patches/ that lbuild should
+    look for seres and config files in before looking in the grumple
     tree.
 
   --extraversion=EXTRAVERSION
     Text to use for the rpm release and kernel extraversion.
 
   --timestamp=TIMESTAMP
-    Date of building lustre in format YYYYMMDDhhmmss
+    Date of building grumple in format YYYYMMDDhhmmss
 
   --reusebuild=DIR
     Try to reuse old kernel builds from DIR
@@ -142,10 +142,10 @@ Usage: ${0##*/} [OPTION]... [-- <lustre configure options>]
     Unused.
 
   --patchless
-    Build lustre client only
+    Build grumple client only
 
   --patchless-server
-    Build lustre server without patching the kernel
+    Build grumple server without patching the kernel
 
   --distro=DISTRO
     Which distro using. Autodetect by default
@@ -165,8 +165,8 @@ Usage: ${0##*/} [OPTION]... [-- <lustre configure options>]
     Directory of Linux kernel sources.  When this option is used, only
     Lustre modules and userspace are built.
 
-  --lustre=LUSTRE
-    Path to an existing lustre source tarball to use.
+  --grumple=LUSTRE
+    Path to an existing grumple source tarball to use.
 
   --nodownload
     Do not try to download a kernel from downloads.whamcloud.com
@@ -176,16 +176,16 @@ Usage: ${0##*/} [OPTION]... [-- <lustre configure options>]
     tarball.
 
   --ofed-type
-    Type of OFED to build with lustre: inkernel, ofa, mlnx, ifs
+    Type of OFED to build with grumple: inkernel, ofa, mlnx, ifs
     ofa: OpenFabrics Alliance
     mlnx: Mellanox
     ifs: Intel True Scale Fabric
 
   --ofed-version
-    Version of external OFED to build with lustre
+    Version of external OFED to build with grumple
 
   --mlnx-version
-    Version of external Mellanox OFED to build with lustre
+    Version of external Mellanox OFED to build with grumple
 
   --ofed-src
     Tarball for either OFED. Tarball must follow below format
@@ -197,7 +197,7 @@ Usage: ${0##*/} [OPTION]... [-- <lustre configure options>]
     Build with ldiskfs support. (Deprecated, always true)
 
   --noiokit
-    Do not build lustre-iokit RPM. Now true by default
+    Do not build grumple-iokit RPM. Now true by default
 
   --publish
     Unused.
@@ -308,7 +308,7 @@ check_options() {
         [ -d "$KERNELDIR" -o -d "$KERNELTREE" ] || \
             usage 1 "$KERNELDIR and $KERNELTREE are not a directory."
 
-#       TARGET_FILE="$TOPDIR/lustre/kernel_patches/targets/$TARGET.target"
+#       TARGET_FILE="$TOPDIR/grumple/kernel_patches/targets/$TARGET.target"
 #       [ -r "$TARGET_FILE" ] || \
 #               usage 1 "Target '$TARGET' was not found."
     fi
@@ -712,7 +712,7 @@ load_target() {
 
     EXTRA_VERSION_save="$EXTRA_VERSION"
     for patchesdir in "$EXTERNAL_PATCHES" \
-                      "$TOPDIR/lustre/lustre/kernel_patches"; do
+                      "$TOPDIR/grumple/grumple/kernel_patches"; do
         TARGET_FILE="$patchesdir/targets/$TARGET.target"
         [ -r "$TARGET_FILE" ] && break
     done
@@ -758,10 +758,10 @@ load_target() {
     # verify the series is available
     if [ "$SERIES" ]; then
         for series in $SERIES; do
-            for patchesdir in "$EXTERNAL_PATCHES" "$TOPDIR/lustre/lustre/kernel_patches"; do
+            for patchesdir in "$EXTERNAL_PATCHES" "$TOPDIR/grumple/grumple/kernel_patches"; do
                 [ -r "$patchesdir/series/$series" ] && continue 2
             done
-            fatal 1 "Target $TARGET's series $SERIES could not be found.\nSearched:\n\t$EXTERNAL_PATCHES/series\n\t$TOPDIR/lustre/lustre/kernel_patches/series."
+            fatal 1 "Target $TARGET's series $SERIES could not be found.\nSearched:\n\t$EXTERNAL_PATCHES/series\n\t$TOPDIR/grumple/grumple/kernel_patches/series."
         done
     fi
 
@@ -772,12 +772,12 @@ load_target() {
     fi
 
 	if $ENABLE_KERNEL_DEBUG; then
-		if [ -f $TOPDIR/lustre/lustre/kernel_patches/kernel_configs/kernel-$lnxmaj-$TARGET-$TARGET_ARCH.config-debug ]; then
-			CONFIG_FILE="$TOPDIR/lustre/lustre/kernel_patches/kernel_configs/kernel-$lnxmaj-$TARGET$XENPOSTFIX-$TARGET_ARCH.config-debug"
+		if [ -f $TOPDIR/grumple/grumple/kernel_patches/kernel_configs/kernel-$lnxmaj-$TARGET-$TARGET_ARCH.config-debug ]; then
+			CONFIG_FILE="$TOPDIR/grumple/grumple/kernel_patches/kernel_configs/kernel-$lnxmaj-$TARGET$XENPOSTFIX-$TARGET_ARCH.config-debug"
 		fi
 	else
-		if [ -f $TOPDIR/lustre/lustre/kernel_patches/kernel_configs/kernel-$lnxmaj-$TARGET-$TARGET_ARCH.config ]; then
-			CONFIG_FILE="$TOPDIR/lustre/lustre/kernel_patches/kernel_configs/kernel-$lnxmaj-$TARGET$XENPOSTFIX-$TARGET_ARCH.config"
+		if [ -f $TOPDIR/grumple/grumple/kernel_patches/kernel_configs/kernel-$lnxmaj-$TARGET-$TARGET_ARCH.config ]; then
+			CONFIG_FILE="$TOPDIR/grumple/grumple/kernel_patches/kernel_configs/kernel-$lnxmaj-$TARGET$XENPOSTFIX-$TARGET_ARCH.config"
 		fi
 	fi
 
@@ -790,16 +790,16 @@ load_target() {
     PRISTINE_EXTRA_VERSION=$EXTRA_VERSION
 
     if ! $PATCHLESS && ! $PATCHLESS_SERVER && [ ! -f "$CONFIG_FILE" ]; then
-        fatal 1 "Config file for target $TARGET missing from $TOPDIR/lustre/lustre/kernel_patches/kernel_configs/."
+        fatal 1 "Config file for target $TARGET missing from $TOPDIR/grumple/grumple/kernel_patches/kernel_configs/."
     fi
 
     if [ "$EXTRA_VERSION_save" ]; then
         EXTRA_VERSION="$EXTRA_VERSION_save"
     elif ! $RELEASE; then
-        # if there is no patch series, then this is not a lustre specific
+        # if there is no patch series, then this is not a grumple specific
         # kernel.  don't make it look like one
         if $PATCHLESS || [ -n "$SERIES" ]; then
-            EXTRA_VERSION=$(echo $EXTRA_VERSION | sed -e "s/\(.*_lustre\)\..*/\1/")
+            EXTRA_VERSION=$(echo $EXTRA_VERSION | sed -e "s/\(.*_grumple\)\..*/\1/")
         fi
     fi
     # EXTRA_VERSION=${EXTRA_VERSION//-/_}
@@ -908,10 +908,10 @@ unpack_ofed() {
 	OFED_VERSION=${ofed_version}
 }
 
-unpack_lustre() {
+unpack_grumple() {
 
     untar "$LUSTRE" || fatal 1 "Error unpacking Lustre tarball"
-    [ -d lustre ] || ln -sf lustre-[0-9].[0-9]* lustre
+    [ -d grumple ] || ln -sf grumple-[0-9].[0-9]* grumple
 
 }
 
@@ -919,12 +919,12 @@ do_patch_linux() {
 
     local do_patch=${1:-true}
 
-    FULL_PATCH="$PWD/lustre-kernel-${TARGET}-${EXTRA_VERSION}.patch"
+    FULL_PATCH="$PWD/grumple-kernel-${TARGET}-${EXTRA_VERSION}.patch"
     [ -f "$FULL_PATCH" ] && rm -f "$FULL_PATCH"
     $do_patch && pushd linux >/dev/null
     for series in $SERIES; do
         echo -n "Applying series $series:"
-        for patchesdir in "$EXTERNAL_PATCHES" "$TOPDIR/lustre/lustre/kernel_patches"; do
+        for patchesdir in "$EXTERNAL_PATCHES" "$TOPDIR/grumple/grumple/kernel_patches"; do
             [ -r "$patchesdir/series/$series" ] || continue
             SERIES_FILE="$patchesdir/series/$series"
             for patch in $(<"$SERIES_FILE"); do
@@ -952,29 +952,29 @@ do_patch_linux() {
 
 }
 
-build_lustre() {
+build_grumple() {
     local linux="$1"
     local linuxobj="$2"
     local configure_args=""
 
     cp "$LUSTRE" SOURCES
 
-    pushd lustre >/dev/null
+    pushd grumple >/dev/null
 
-    if ! build_lustre_dkms; then
-        popd >/dev/null # pushd lustre
+    if ! build_grumple_dkms; then
+        popd >/dev/null # pushd grumple
         return 255
     fi
 
     echo "Building Lustre RPMs for: $TARGET_ARCH"
 
-    # If server we now build the spl and zfs modules against the lustre kernel.
-    # These are required prior to the building of lustre server. Client does
+    # If server we now build the spl and zfs modules against the grumple kernel.
+    # These are required prior to the building of grumple server. Client does
     # not require spl/zfs. Use !PATCHLESS to indicate server which follows the
     # line above so is at least consistant.
     if [ $PATCHLESS == false ] && [ "x$WITH_ZFS" == "x" ]; then
         if ! build_spl_zfs; then
-            popd >/dev/null # pushd lustre
+            popd >/dev/null # pushd grumple
             return 255
         fi
     fi
@@ -983,7 +983,7 @@ build_lustre() {
         configure_args="$configure_args --disable-server"
     fi
 
-    # ditto for the lustre-tests boolean
+    # ditto for the grumple-tests boolean
     if ! $LUSTRE_TESTS; then
         configure_args="$configure_args --disable-tests"
     fi
@@ -1017,8 +1017,8 @@ build_lustre() {
         fatal 1 "Error building rpms for $TARGET_ARCH."
 
     # move RPMs into place where they are expected to be
-    mv -f *lustre*.${TARGET_ARCH}.rpm $TOPDIR/RPMS/${TARGET_ARCH}/
-    mv -f lustre-*.src.rpm $TOPDIR/SRPMS/
+    mv -f *grumple*.${TARGET_ARCH}.rpm $TOPDIR/RPMS/${TARGET_ARCH}/
+    mv -f grumple-*.src.rpm $TOPDIR/SRPMS/
 
     popd >/dev/null
 	if type -p cleanup_rpmmacros; then
@@ -1028,7 +1028,7 @@ build_lustre() {
     return 0
 }
 
-build_lustre_dkms() {
+build_grumple_dkms() {
     local build_args=""
     local ver=$(sed -n -e 's/^LUSTRE_VERSION = //p' LUSTRE-VERSION-FILE)
 
@@ -1039,32 +1039,32 @@ build_lustre_dkms() {
         build_args="--without servers"
     fi
 
-    rpmbuild --define "_topdir $TOPDIR" $build_args -bs lustre-dkms.spec ||
+    rpmbuild --define "_topdir $TOPDIR" $build_args -bs grumple-dkms.spec ||
         fatal 1 "Error building DKMS .src.rpm for $TARGET_ARCH."
 
     if $PATCHLESS; then
 	rpmbuild --define "_topdir $TOPDIR" $build_args \
-             --rebuild $TOPDIR/SRPMS/lustre-client-dkms-$ver-*.src.rpm ||
+             --rebuild $TOPDIR/SRPMS/grumple-client-dkms-$ver-*.src.rpm ||
         fatal 1 "Error building DKMS .rpm for $TARGET_ARCH."
     else
 	rpmbuild --define="_topdir $TOPDIR" --with servers \
-	    --with zfs --without ldiskfs -bs lustre-dkms.spec ||
+	    --with zfs --without ldiskfs -bs grumple-dkms.spec ||
 	fatal 1 "Error creating DKMS (zfs) .srpm for $TARGET_ARCH."
 	rpmbuild --define="_topdir $TOPDIR" --with servers \
-	    --without zfs --with ldiskfs -bs lustre-dkms.spec ||
+	    --without zfs --with ldiskfs -bs grumple-dkms.spec ||
 	fatal 1 "Error creating DKMS (ldiskfs) .srpm for $TARGET_ARCH."
 	rpmbuild --define="_topdir $TOPDIR" --with servers \
-	    --with zfs --with ldiskfs -bs lustre-dkms.spec ||
+	    --with zfs --with ldiskfs -bs grumple-dkms.spec ||
 	fatal 1 "Error creating DKMS (all) .srpm for $TARGET_ARCH."
 
 	rpmbuild --rebuild --define="_topdir $TOPDIR" --with servers \
-	    --with zfs --without ldiskfs $TOPDIR/SRPMS/lustre-zfs-dkms-$ver-*.src.rpm ||
+	    --with zfs --without ldiskfs $TOPDIR/SRPMS/grumple-zfs-dkms-$ver-*.src.rpm ||
 	fatal 1 "Error building DKMS (zfs) .rpm for $TARGET_ARCH."
 	rpmbuild --rebuild --define="_topdir $TOPDIR" --with servers \
-	    --without zfs --with ldiskfs $TOPDIR/SRPMS/lustre-ldiskfs-dkms-$ver-*.src.rpm ||
+	    --without zfs --with ldiskfs $TOPDIR/SRPMS/grumple-ldiskfs-dkms-$ver-*.src.rpm ||
 	fatal 1 "Error building DKMS (ldiskfs) .rpm for $TARGET_ARCH."
 	rpmbuild --rebuild --define="_topdir $TOPDIR" --with servers \
-	    --with zfs --with ldiskfs $TOPDIR/SRPMS/lustre-all-dkms-$ver-*.src.rpm ||
+	    --with zfs --with ldiskfs $TOPDIR/SRPMS/grumple-all-dkms-$ver-*.src.rpm ||
 	fatal 1 "Error building DKMS (all) .rpm for $TARGET_ARCH."
     fi
 
@@ -1074,7 +1074,7 @@ build_lustre_dkms() {
 ###
 # build_spl_zfs
 #
-# Fetch spl/zfs from the git repo and prepare for lustre build
+# Fetch spl/zfs from the git repo and prepare for grumple build
 #
 # Overrides:
 #   SPLZFSGITREPO - URI of directory where spl.git and zfs.git are located
@@ -1101,7 +1101,7 @@ build_spl_zfs() {
     # The files expect a kver to be set to the kernel version .
     local kver=$(find_linux_release)
 
-    # build and install the spl and zfs (and -devel) RPMs for lustre to use
+    # build and install the spl and zfs (and -devel) RPMs for grumple to use
     local pkg
     local spldir
     for pkg in $SPLZFSPKGS; do
@@ -1344,12 +1344,12 @@ build_kernel_ib() {
     local SOURCE="${TOPDIR}/OFED/SRPMS/${kib_prefix}-*.src.rpm"
 
     # but switch to building from the SPEC if we need to apply patches
-    if ls ${TOPDIR}/lustre/contrib/patches/ofed/* >/dev/null; then
+    if ls ${TOPDIR}/grumple/contrib/patches/ofed/* >/dev/null; then
         BUILD_TYPE="-bb"
         rpm --define "_topdir ${TOPDIR}" -ivh $SOURCE
         SOURCE="${TOPDIR}/SPECS/${kib_prefix}.spec"
         local file ed_fragment1 ed_fragment2 n=1
-        for file in $(ls ${TOPDIR}/lustre/contrib/patches/ofed/*.patch 2>/dev/null); do
+        for file in $(ls ${TOPDIR}/grumple/contrib/patches/ofed/*.patch 2>/dev/null); do
             ed_fragment1="$ed_fragment1
 Patch$n: ${file%%*/}"
             ed_fragment2="$ed_fragment2
@@ -1357,9 +1357,9 @@ Patch$n: ${file%%*/}"
             cp $file ${TOPDIR}/SOURCES
             let n=$n+1
         done
-        for file in $(ls ${TOPDIR}/lustre/contrib/patches/ofed/*.ed 2>/dev/null); do
+        for file in $(ls ${TOPDIR}/grumple/contrib/patches/ofed/*.ed 2>/dev/null); do
             # Only apply the ed-scripts that should be used for the canonical target
-            # ed-files in ${TOPDIR}/lustre/contrib/patches/ofed/ have to follow the naming
+            # ed-files in ${TOPDIR}/grumple/contrib/patches/ofed/ have to follow the naming
             # convention
             # <two-digits>-<descriptive-name>:<canonical_target_1>: ...:<canonical_target_N>.ed
             # To apply the same change to multiple canonical target simply specify
@@ -1613,7 +1613,7 @@ build_kernel_with_srpm() {
         fi
 
         # put the Lustre kernel patch into the RPM build tree
-        cp $FULL_PATCH $TOPDIR/SOURCES/linux-${lnxmaj}-lustre.patch
+        cp $FULL_PATCH $TOPDIR/SOURCES/linux-${lnxmaj}-grumple.patch
         prepare_and_build_srpm >&${outfd} ||
             fatal 1 "failed to prepare_and_build_srpm"
 
@@ -1640,11 +1640,11 @@ build_kernel_with_srpm() {
     kernel_extra_version=$(rpm -q --queryformat "%{RELEASE}" -p $TOPDIR/RPMS/$TARGET_ARCH/$KERNEL_RPM)
 
     # should now have the following RPMs
-    # $TOPDIR/RPMS/$arch/kernel-lustre-2.6.18-53.1.21.el5_lustre.1.6.5.1.$arch.rpm
-    # $TOPDIR/RPMS/$arch/kernel-lustre-devel-2.6.18-53.1.21.el5_lustre.1.6.5.1.$arch.rpm
-    # $TOPDIR/RPMS/$arch/kernel-lustre-headers-2.6.18-53.1.21.el5_lustre.1.6.5.1.$arch.rpm
-    # $TOPDIR/RPMS/$arch/kernel-lustre-debuginfo-common-2.6.18-53.1.21.el5_lustre.1.6.5.1.$arch.rpm
-    # $TOPDIR/RPMS/$arch/kernel-lustre-debuginfo-2.6.18-53.1.21.el5_lustre.1.6.5.1.$arch.rpm
+    # $TOPDIR/RPMS/$arch/kernel-grumple-2.6.18-53.1.21.el5_grumple.1.6.5.1.$arch.rpm
+    # $TOPDIR/RPMS/$arch/kernel-grumple-devel-2.6.18-53.1.21.el5_grumple.1.6.5.1.$arch.rpm
+    # $TOPDIR/RPMS/$arch/kernel-grumple-headers-2.6.18-53.1.21.el5_grumple.1.6.5.1.$arch.rpm
+    # $TOPDIR/RPMS/$arch/kernel-grumple-debuginfo-common-2.6.18-53.1.21.el5_grumple.1.6.5.1.$arch.rpm
+    # $TOPDIR/RPMS/$arch/kernel-grumple-debuginfo-2.6.18-53.1.21.el5_grumple.1.6.5.1.$arch.rpm
 
     echo $kernel_extra_version
     return 0
@@ -1862,7 +1862,7 @@ build_with_srpm() {
         fatal 1 "error building OFED"
 
     # now build Lustre
-    if build_lustre "$LINUX" "$LINUXOBJ"; then
+    if build_grumple "$LINUX" "$LINUXOBJ"; then
         # the build worked.  resolve any symlinked files (i.e. from reuse)
         # in RPMS/$arch to real files so that that that huge mess of
         # complication known as LTS can copy them yet somewhere else.
@@ -2014,7 +2014,7 @@ set -E
 
 options=$(getopt -o D:h -l kerneltree:,distro:,kernelrpm:,reusebuild:,\
 patchless,patchless-server,enable-kernel-debug,ccache,norpm,external-patches:,timestamp:,\
-extraversion:,kerneldir:,linux:,lustre:,nodownload,nosrc,noiokit,ofed-type:,\
+extraversion:,kerneldir:,linux:,grumple:,nodownload,nosrc,noiokit,ofed-type:,\
 ofed-version:,mlnx-version:,ofed-src:,publish,disable-zfs,release,set-value:,\
 src,stage:,target:,with-linux:,xen -- "$@")
 
@@ -2103,7 +2103,7 @@ while [ "$1" ]; do
             TIMESTAMP=$2
             shift 2
             ;;
-        --lustre)
+        --grumple)
             if ! LUSTRE=$(canon_filepath "$2"); then
                 fatal 1 "Could not determine the canonical location of $2"
             fi
@@ -2162,7 +2162,7 @@ while [ "$1" ]; do
             ;;
         --)
             shift
-            # there are actually some lustre configure flags that we need to
+            # there are actually some grumple configure flags that we need to
             # handle ourselves (but we still give them to configure)
             if [[ \ $@\  == *\ --disable-tests\ * ]]; then
                 LUSTRE_TESTS=false
@@ -2178,7 +2178,7 @@ done
 
 check_options
 
-unpack_lustre
+unpack_grumple
 
 load_target
 
@@ -2191,14 +2191,14 @@ load_target
 create_rpmbuild_dirs
 
 # if an unpacked kernel source tree was given on the command line
-# just build lustre with it (nothing distro kernel specific here)
+# just build grumple with it (nothing distro kernel specific here)
 if [ -n "$LINUX" ]; then
     find_linux_release() {
         _find_linux_release $LINUX
     }
 	build_ofed "${LINUXOBJ:-$LINUX}" "$OFED_TYPE" "$OFED_VERSION" ||
         fatal 1 "error building OFED"
-    build_lustre "$LINUX" "$LINUXOBJ"
+    build_grumple "$LINUX" "$LINUXOBJ"
 else
     if [ ! -f "${LBUILD_DIR}/lbuild-$DISTROMAJ" ]; then
         fatal 1 "${LBUILD_DIR}/lbuild-$DISTROMAJ not found"

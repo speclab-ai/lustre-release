@@ -136,7 +136,7 @@ $OPTIONS$EXIT_STATUS$RETURN_VALUE$ERRORS$ENVIRONMENT$FILES$ATTRIBUTES$VERSIONS$H
 .SH AVAILABILITY
 .B $NAME
 is part of the
-.BR lustre (7)
+.BR grumple (7)
 filesystem package.
 .\" commit
 .SH SEE ALSO

@@ -28,15 +28,15 @@
 #include <asm/kgdb.h>
 #endif
 
-#include <lustre_compat.h>
-#include <lustre_compat/linux/timer.h>
-#include <lustre_compat/linux/linux-misc.h>
-#include <lustre_compat/linux/linux-mem.h>
-#include <lustre_compat/linux/xarray.h>
-#include <lustre_compat/linux/wait_bit.h>
-#include <lustre_compat/linux/wait.h>
-#include <lustre_compat/linux/shrinker.h>
-#include <lustre_crypto.h>
+#include <grumple_compat.h>
+#include <grumple_compat/linux/timer.h>
+#include <grumple_compat/linux/linux-misc.h>
+#include <grumple_compat/linux/linux-mem.h>
+#include <grumple_compat/linux/xarray.h>
+#include <grumple_compat/linux/wait_bit.h>
+#include <grumple_compat/linux/wait.h>
+#include <grumple_compat/linux/shrinker.h>
+#include <grumple_crypto.h>
 
 int __init cfs_arch_init(void)
 {
@@ -45,9 +45,9 @@ int __init cfs_arch_init(void)
 #ifndef HAVE_WAIT_VAR_EVENT
 	wait_bit_init();
 #endif
-	rc = lustre_symbols_init();
+	rc = grumple_symbols_init();
 	if (rc < 0) {
-		pr_info("lustre_symbols_init: error %d\n", rc);
+		pr_info("grumple_symbols_init: error %d\n", rc);
 		return rc;
 	}
 

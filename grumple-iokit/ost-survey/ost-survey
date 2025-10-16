@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-2.0
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 # This script is to be run on a client machine and will test all the
 # OSTs to determine which is the fastest and slowest
@@ -21,7 +21,7 @@ $pname = $0;			 # to hold program name
 $OSTS = 0;                       # Number of OSTS we will loop over
 $BSIZE = 1024 * 1024;            # Size of i/o block
 $MBSIZE = 1024 * 1024;           # One MB
-$MNT = "/mnt/lustre";            # Location of Lustre file system
+$MNT = "/mnt/grumple";            # Location of Lustre file system
 $CACHESZ = 0;                    # max_cached_mb parameter
 $FSIZE = 30;			 # Number of i/o blocks
 
@@ -31,7 +31,7 @@ sub usage () {
 	print "[OPTIONS]\n";
 	print "  -s: size of test file in MB (default $FSIZE MB)\n";
 	print "  -h: To display this help\n";
-	print "example : $pname /mnt/lustre\n";
+	print "example : $pname /mnt/grumple\n";
 	exit 1;
 }
 

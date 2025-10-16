@@ -51,17 +51,17 @@ struct cfs_trace_page {
 
 static const char fmt_page_list_head[] =
     "$%*d = (struct list_head *) %lx";
-static const char lustre2_pfx[] = "cfs_";
-static const char *name_prefix = lustre2_pfx;
+static const char grumple2_pfx[] = "cfs_";
+static const char *name_prefix = grumple2_pfx;
 
-void cmd_lustre(void);
-char *help_lustre[];
+void cmd_grumple(void);
+char *help_grumple[];
 int global_daemon_pages;
 
 unsigned int pg_private_off;
 
 static struct command_table_entry command_table[] = {
-	{ "lustre", cmd_lustre, help_lustre, 0 },
+	{ "grumple", cmd_grumple, help_grumple, 0 },
 	{ NULL }
 };
 
@@ -83,7 +83,7 @@ void _fini(void)
  * address range to the passed file descriptor.
  */
 static int
-lustre_write_page_frame(int fd, ulong tp_addr, ulong kvaddr, int used)
+grumple_write_page_frame(int fd, ulong tp_addr, ulong kvaddr, int used)
 {
 	char buf[PAGESIZE()];
 	physaddr_t kpaddr;
@@ -127,7 +127,7 @@ lustre_write_page_frame(int fd, ulong tp_addr, ulong kvaddr, int used)
 	return count;
 }
 
-static int lustre_walk_trace_pages(int cpu, int fd, ulong lh_addr)
+static int grumple_walk_trace_pages(int cpu, int fd, ulong lh_addr)
 {
 	static const char *name = "cfs_trace_page";
 	struct list_data ld;
@@ -182,7 +182,7 @@ static int lustre_walk_trace_pages(int cpu, int fd, ulong lh_addr)
 			continue;
 		}
 
-		rc = lustre_write_page_frame(fd, ld.list_ptr[i],
+		rc = grumple_write_page_frame(fd, ld.list_ptr[i],
 					     (ulong) buf.page, buf.used);
 		if (rc >= 0)
 			ret += 1;
@@ -193,7 +193,7 @@ static int lustre_walk_trace_pages(int cpu, int fd, ulong lh_addr)
 }
 
 
-static int lustre_walk_cpus(int type, int cpu, int fd, int mode)
+static int grumple_walk_cpus(int type, int cpu, int fd, int mode)
 {
 	static const char cmd_head_fmt[] =
 	    "p &((*%strace_data[%i])[%i].tcd.tcd_%s)";
@@ -277,13 +277,13 @@ static int lustre_walk_cpus(int type, int cpu, int fd, int mode)
 	}
 	close_tmpfile();
 
-	count1 = lustre_walk_trace_pages(cpu, fd, lh_addr);
+	count1 = grumple_walk_trace_pages(cpu, fd, lh_addr);
 	if (count1 != count)
 		printf("Unexpected write size %d != %d\n", count1, count);
 	return count1;
 }
 
-static int lustre_walk_daemon_pages(int fd)
+static int grumple_walk_daemon_pages(int fd)
 {
 	struct list_data ld;
 	int count, rc, i = 0, ret = 0;
@@ -317,7 +317,7 @@ static int lustre_walk_daemon_pages(int fd)
 			continue;
 		}
 
-		rc = lustre_write_page_frame(fd, ld.list_ptr[i],
+		rc = grumple_write_page_frame(fd, ld.list_ptr[i],
 					     ld.list_ptr[i], pg_private);
 		if (rc >= 0)
 			ret += 1;
@@ -327,7 +327,7 @@ static int lustre_walk_daemon_pages(int fd)
 	return ret;
 }
 
-void cmd_lustre_log(char *name)
+void cmd_grumple_log(char *name)
 {
 	int i, rc, count, total = 0, fd;
 	int type;
@@ -344,16 +344,16 @@ void cmd_lustre_log(char *name)
 		for (i = 0; i < kt->cpus; i++) {
 			count = 0;
 
-			rc = lustre_walk_cpus(type, i, fd, LUSTRE_PAGES);
+			rc = grumple_walk_cpus(type, i, fd, LUSTRE_PAGES);
 			if (rc >= 0)
 				count += rc;
 
-			rc = lustre_walk_cpus(type, i, fd,
+			rc = grumple_walk_cpus(type, i, fd,
 					      LUSTRE_DAEMON_PAGES);
 			if (rc >= 0)
 				count += rc;
 
-			rc = lustre_walk_cpus(type, i, fd,
+			rc = grumple_walk_cpus(type, i, fd,
 					      LUSTRE_STOCK_PAGES);
 			if (rc >= 0)
 				count += rc;
@@ -366,7 +366,7 @@ void cmd_lustre_log(char *name)
 	}
 
 	if (global_daemon_pages)
-		lustre_walk_daemon_pages(fd);
+		grumple_walk_daemon_pages(fd);
 
 	if (fsync(fd) == -1)
 		error(WARNING,
@@ -382,7 +382,7 @@ void cmd_lustre_log(char *name)
 }
 
 
-void cmd_lustre(void)
+void cmd_grumple(void)
 {
 	int c;
 
@@ -392,7 +392,7 @@ void cmd_lustre(void)
 			if (strlen(optarg) == 0)
 				argerrs++;
 			else
-				cmd_lustre_log(optarg);
+				cmd_grumple_log(optarg);
 
 			break;
 		default:
@@ -407,15 +407,15 @@ void cmd_lustre(void)
 	fprintf(fp, "\n");
 }
 
-char *help_lustre[] = {
-	"lustre",		
-	"lustre specific debug commands",	
+char *help_grumple[] = {
+	"grumple",		
+	"grumple specific debug commands",	
 	"[-l <file>]",		
-	"  This command displays lustre specific data.\n",
-	"       -l  Extract lustre kernel debug data to <file>",
+	"  This command displays grumple specific data.\n",
+	"       -l  Extract grumple kernel debug data to <file>",
 	"           (use 'lctl df <file>' for ascii text)",
 	"\nEXAMPLE",
-	"    crash> lustre -l /tmp/lustre.log",
+	"    crash> grumple -l /tmp/grumple.log",
 	NULL
 };
 
@@ -427,5 +427,5 @@ char *help_lustre[] = {
  * c-basic-offset: 8
  * End:
  *
- * end of lustre-ext.c
+ * end of grumple-ext.c
  */

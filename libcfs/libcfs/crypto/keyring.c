@@ -205,7 +205,7 @@ static int allocate_filesystem_keyring(struct super_block *sb)
 {
 	char description[LLCRYPT_FS_KEYRING_DESCRIPTION_SIZE];
 	struct key *keyring;
-	struct lustre_sb_info *lsi = s2lsi(sb);
+	struct grumple_sb_info *lsi = s2lsi(sb);
 
 	if (!lsi)
 		return -EINVAL;
@@ -226,7 +226,7 @@ static int allocate_filesystem_keyring(struct super_block *sb)
 	return 0;
 }
 
-void llcrypt_sb_free(struct lustre_sb_info *lsi)
+void llcrypt_sb_free(struct grumple_sb_info *lsi)
 {
 	if (lsi != NULL) {
 		key_put(lsi->lsi_master_keys);
@@ -244,7 +244,7 @@ struct key *llcrypt_find_master_key(struct super_block *sb,
 {
 	struct key *keyring;
 	char description[LLCRYPT_MK_DESCRIPTION_SIZE];
-	struct lustre_sb_info *lsi = s2lsi(sb);
+	struct grumple_sb_info *lsi = s2lsi(sb);
 
 	if (!lsi)
 		return ERR_PTR(-EINVAL);
@@ -447,7 +447,7 @@ static int add_master_key(struct super_block *sb,
 {
 	static DEFINE_MUTEX(llcrypt_add_key_mutex);
 	struct key *key;
-	struct lustre_sb_info *lsi = s2lsi(sb);
+	struct grumple_sb_info *lsi = s2lsi(sb);
 	int err;
 
 	if (!lsi)

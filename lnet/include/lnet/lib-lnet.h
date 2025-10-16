@@ -20,8 +20,8 @@
 #define CFS_FAIL_DELAY_MSG_FORWARD	0xe002
 #define CFS_FAIL_TEST_PING_MD		0xe003
 
-#include <lustre_compat/linux/generic-radix-tree.h>
-#include <lustre_compat/linux/hash.h>
+#include <grumple_compat/linux/generic-radix-tree.h>
+#include <grumple_compat/linux/hash.h>
 #include <linux/netdevice.h>
 #include <linux/libcfs/libcfs_debug.h>
 #include <linux/libcfs/libcfs_private.h>

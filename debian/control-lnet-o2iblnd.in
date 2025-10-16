@@ -1,12 +1,12 @@
-Package: lustre-lnet-module-o2iblnd-_KVERS_
-Source: lustre
+Package: grumple-lnet-module-o2iblnd-_KVERS_
+Source: grumple
 Version: _VERS_
 Architecture: _ARCH_
-Maintainer: Lustre Developers <lustre-devel@lists.lustre.org>
-Recommends: linux-image, lustre-client-modules|lustre-server-modules
-Provides: lustre-lnet-module-o2iblnd
-Conflicts: lustre-lnet-module-in-kernel-o2iblnd-_KVERS_
-Replaces: lustre-lnet-module-in-kernel-o2iblnd-_KVERS_
+Maintainer: Lustre Developers <grumple-devel@lists.grumple.org>
+Recommends: linux-image, grumple-client-modules|grumple-server-modules
+Provides: grumple-lnet-module-o2iblnd
+Conflicts: grumple-lnet-module-in-kernel-o2iblnd-_KVERS_
+Replaces: grumple-lnet-module-in-kernel-o2iblnd-_KVERS_
 Description: Linux kernel lnet module for o2ib (MOFED/OPA) (kernel _KVERS_)
  This package contains the loadable kernel module for LNet on infiniband
  using an externally supplied kernel driver.

@@ -1076,7 +1076,7 @@ sub top_of_kernel_tree {
     if (   (-f "${lk_path}autoMakefile.am")
 	&& (-f "${lk_path}COPYING")
 	&& (-d "${lk_path}Documentation")
-	&& (-e "${lk_path}lustre.spec.in")
+	&& (-e "${lk_path}grumple.spec.in")
 	&& (-e "${lk_path}MAINTAINERS")
 	&& (-f "${lk_path}README")) {
 	return 1;

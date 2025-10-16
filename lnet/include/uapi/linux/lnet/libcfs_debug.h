@@ -129,6 +129,6 @@ enum libcfs_debug_masks {
 
 #define D_CANTMASK   (D_ERROR | D_EMERG | D_WARNING | D_CONSOLE)
 
-#define LIBCFS_DEBUG_FILE_PATH_DEFAULT "/tmp/lustre-log"
+#define LIBCFS_DEBUG_FILE_PATH_DEFAULT "/tmp/grumple-log"
 
 #endif	

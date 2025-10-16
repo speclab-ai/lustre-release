@@ -1,6 +1,6 @@
 #!/bin/bash
 case $1 in
-    lustre-client)
+    grumple-client)
 	SERVER="--disable-server --enable-client"
 	ksrc="$(dirname $4)/source"
 	KERNEL_STUFF="--with-linux=$(realpath $ksrc) --with-linux-obj=$(realpath $4)"
@@ -26,9 +26,9 @@ case $1 in
 	fi
 	sh ./autogen.sh
 	;;
-    lustre-zfs|lustre-all)
+    grumple-zfs|grumple-all)
 	LDISKFS=""
-	if [ "$1" == "lustre-zfs" ]; then
+	if [ "$1" == "grumple-zfs" ]; then
 	    LDISKFS="--disable-ldiskfs"
 	fi
 	ZFS_VERSION=$(dkms status -m zfs -k $3 -a $5 2>/dev/null |
@@ -46,14 +46,14 @@ case $1 in
 		--with-zfs-obj=$(realpath $7/zfs/kernel-$3-$5)"
 	KERNEL_STUFF="--with-linux=$4 --with-linux-obj=$4"
 	;;
-    lustre-ldiskfs)
+    grumple-ldiskfs)
 	SERVER="--enable-server --without-zfs --without-spl \
 		--with-linux=$4 --with-linux-obj=$4"
 	KERNEL_STUFF="--with-linux=$4 --with-linux-obj=$4"
 	;;
 esac
-PACKAGE_CONFIG="/etc/sysconfig/dkms-lustre"
-PACKAGE_CONFIG_FALLBACK="/etc/sysconfig/lustre"
+PACKAGE_CONFIG="/etc/sysconfig/dkms-grumple"
+PACKAGE_CONFIG_FALLBACK="/etc/sysconfig/grumple"
 DKMS_CONFIG_OPTS=$(
     [[ -r ${PACKAGE_CONFIG} ]] || PACKAGE_CONFIG=${PACKAGE_CONFIG_FALLBACK}
     [[ -r ${PACKAGE_CONFIG} ]] \

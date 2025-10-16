@@ -33,9 +33,9 @@ get_rpmbuildopts() {
 patch_spec_common() {
 
     sed -i -e '/Provides: kernel-uname-r =/a\
-Provides: kernel-lustre = %{KVRA}%{?1:.%{1}}\\' \
+Provides: kernel-grumple = %{KVRA}%{?1:.%{1}}\\' \
            -e '/Provides: kernel-devel-uname-r =/a\
-Provides: kernel-devel-lustre = %{KVRA}%{?1:.%{1}}\\' \
+Provides: kernel-devel-grumple = %{KVRA}%{?1:.%{1}}\\' \
            -e '/find $RPM_BUILD_ROOT\/lib\/modules\/$KernelVer/a\
     cp -a fs/ext3/* $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/fs/ext3 \
     cp -a fs/ext4/* $RPM_BUILD_ROOT/lib/modules/$KernelVer/build/fs/ext4' \
@@ -58,9 +58,9 @@ prepare_and_build_srpm() {
 	pushd $TOPDIR >/dev/null
 	# create the buildid
 	if $ENABLE_KERNEL_DEBUG; then
-		local buildid="_lustre_debug${EXTRA_VERSION##*_lustre}"
+		local buildid="_grumple_debug${EXTRA_VERSION##*_grumple}"
 	else
-		local buildid="_lustre${EXTRA_VERSION##*_lustre}"
+		local buildid="_grumple${EXTRA_VERSION##*_grumple}"
 	fi
 
 	# edit the SPEC with our changes
@@ -126,10 +126,10 @@ prepare_and_build_srpm() {
 }
 
 devel_kernel_name() {
-    local lustre=${1:-false}
+    local grumple=${1:-false}
 
-    if $lustre; then
-        echo "kernel-lustre-$DEVEL_KERNEL_TYPE"
+    if $grumple; then
+        echo "kernel-grumple-$DEVEL_KERNEL_TYPE"
     else
         echo "kernel-$DEVEL_KERNEL_TYPE"
     fi
@@ -142,11 +142,11 @@ rpm_BUILD_kernel_dirname() {
     local lnxmin="$3"
     local arch="$4"
 
-    local lustre=""
+    local grumple=""
     if $KERNEL_LUSTRE_NAMING; then
-        $lustre="-lustre"
+        $grumple="-grumple"
     fi
-    echo kernel${lustre}${lnxmaj}${lnxmin}/linux-${lnxmaj}.$arch
+    echo kernel${grumple}${lnxmaj}${lnxmin}/linux-${lnxmaj}.$arch
 }
 
 find_linux_devel_paths() {

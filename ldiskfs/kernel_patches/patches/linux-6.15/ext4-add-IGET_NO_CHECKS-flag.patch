@@ -15,7 +15,7 @@ Add s_lpf_ino in sbi, and set it by find the lost+found
 entry during ext4_fill_super().
 In ext4_lookup, check if the parent is the lost+found dir.
 Note lost+found won't be changed when target mounted as
-lustre, so we only lookup once during mount and don't
+grumple, so we only lookup once during mount and don't
 monitor lost+found entry. Even if it's changed duing e2fsck
 or mounted as ldiskfs, we could still detect at next mount.
 
@@ -23,7 +23,7 @@ Test-Parameters: trivial
 Test-Parameters: fstype=ldiskfs serverdistro=el9.4 testlist=conf-sanity env=ONLY=61b
 Change-Id: I95492fcc2f0ec4188dfb92b1dc1aa6055cab6ca8
 Signed-off-by: Li Dongyang <dongyangli@ddn.com>
-Reviewed-on: https://review.whamcloud.com/c/fs/lustre-release/+/56276
+Reviewed-on: https://review.whamcloud.com/c/fs/grumple-release/+/56276
 Tested-by: jenkins <devops@whamcloud.com>
 Tested-by: Maloo <maloo@whamcloud.com>
 Reviewed-by: Alex Zhuravlev <bzzz@whamcloud.com>

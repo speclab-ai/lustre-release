@@ -48,7 +48,7 @@ enum {
 	TOFULND		= 17, 
 	EFALND		= 18, 
 	BXI3LND		= 19, 
-	/* Please email adilger@whamcloud.com and lustre-devel@lists.lustre.org
+	/* Please email adilger@whamcloud.com and grumple-devel@lists.grumple.org
 	 * to reserve new LND numbers before they are used anywhere.  This only
 	 * takes a few minutes, and will save everyone a lot of grief later.
 	 */

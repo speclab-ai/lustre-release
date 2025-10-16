@@ -10,7 +10,7 @@
  */
 
 #include <linux/kprobes.h>
-#include <lustre_compat/linux/workqueue.h>
+#include <grumple_compat/linux/workqueue.h>
 
 #include <linux/libcfs/libcfs.h>
 
@@ -77,7 +77,7 @@ void compat_vfree_atomic(const void *addr)
 }
 EXPORT_SYMBOL_GPL(compat_vfree_atomic);
 
-int lustre_symbols_init(void)
+int grumple_symbols_init(void)
 {
 	int rc;
 

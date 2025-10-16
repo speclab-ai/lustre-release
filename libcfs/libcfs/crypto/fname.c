@@ -282,7 +282,7 @@ static inline int llcrypt_base64url_decode(const char *src, int srclen, u8 *dst)
 	return bp - dst;
 }
 
-static inline int base64_chars(struct lustre_sb_info *lsi, int nbytes)
+static inline int base64_chars(struct grumple_sb_info *lsi, int nbytes)
 {
 	if (!(lsi->lsi_flags & LSI_FILENAME_ENC_B64_OLD_CLI))
 		return LLCRYPT_BASE64URL_CHARS(nbytes);
@@ -323,7 +323,7 @@ int llcrypt_fname_alloc_buffer(const struct inode *inode,
 			       u32 max_encrypted_len,
 			       struct llcrypt_str *crypto_str)
 {
-	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 	const u32 max_encoded_len =
 		max_t(u32,
 		   base64_chars(lsi, LLCRYPT_FNAME_MAX_UNDIGESTED_SIZE),
@@ -372,7 +372,7 @@ int llcrypt_fname_disk_to_usr(struct inode *inode,
 			struct llcrypt_str *oname)
 {
 	int (*b64_encode)(const u8 *src, int srclen, char *dst);
-	struct lustre_sb_info *lsi = s2lsi(inode->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(inode->i_sb);
 	const struct qstr qname = LLTR_TO_QSTR(iname);
 	struct llcrypt_digested_name digested_name;
 
@@ -456,7 +456,7 @@ EXPORT_SYMBOL(llcrypt_fname_disk_to_usr);
 int llcrypt_setup_filename(struct inode *dir, const struct qstr *iname,
 			      int lookup, struct llcrypt_name *fname)
 {
-	struct lustre_sb_info *lsi = s2lsi(dir->i_sb);
+	struct grumple_sb_info *lsi = s2lsi(dir->i_sb);
 	int ret;
 	int digested;
 
@@ -473,7 +473,7 @@ int llcrypt_setup_filename(struct inode *dir, const struct qstr *iname,
 		return ret;
 
 	if (llcrypt_has_encryption_key(dir)) {
-		struct lustre_sb_info *lsi = s2lsi(dir->i_sb);
+		struct grumple_sb_info *lsi = s2lsi(dir->i_sb);
 
 		if (!llcrypt_fname_encrypted_size(dir, iname->len,
 						  lsi ?

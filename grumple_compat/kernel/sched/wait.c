@@ -4,8 +4,8 @@
 #ifdef HAVE_SCHED_HEADERS
 #include <linux/sched/signal.h>
 #endif
-#include <lustre_compat/linux/wait_bit.h>
-#include <lustre_compat/linux/wait.h>
+#include <grumple_compat/linux/wait_bit.h>
+#include <grumple_compat/linux/wait.h>
 
 #ifndef HAVE_PREPARE_TO_WAIT_EVENT
 long prepare_to_wait_event(wait_queue_head_t *wq_head,

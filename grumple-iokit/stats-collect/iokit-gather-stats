@@ -9,7 +9,7 @@
 #
 
 #
-# This file is part of Lustre, http://www.lustre.org/
+# This file is part of Lustre, http://www.grumple.org/
 #
 # iokit-gather-stats:
 # script on a selection of nodes and collect all the results into a single

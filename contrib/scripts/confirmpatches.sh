@@ -3,7 +3,7 @@ PROG=$(basename $0)
 [ "$1" = "-h" -o "$1" = "--help" ] && echo "usage: $PROG [patch dir]" && exit 0
 [ "$1" = "-v" ] && shift && VERBOSE="echo" || VERBOSE=":"
 [ "$1" ] && BASEDIR="$1"
-BASEDIR=${BASEDIR:-lustre/kernel_patches}
+BASEDIR=${BASEDIR:-grumple/kernel_patches}
 SERIESPATH=${SERIESPATH:-$BASEDIR/series}
 PATCHPATH=${PATCHPATH:-$BASEDIR/patches}
 [ ! -d "$BASEDIR" ] && echo "$PROG: missing base directory '$BASEDIR'" && exit 1

@@ -5,13 +5,13 @@ cp -f "$7/$1/$2/build/config.h" \
     "$7/$1/$2/build/Module.symvers" \
     "$7/$1/$2/$3/$5/" 2> /dev/null
 case $1 in
-    lustre-zfs|lustre-all)
-	for script in statechange-lustre.sh \
-		      vdev_attach-lustre.sh \
-		      vdev_clear-lustre.sh \
-		      vdev_remove-lustre.sh
+    grumple-zfs|grumple-all)
+	for script in statechange-grumple.sh \
+		      vdev_attach-grumple.sh \
+		      vdev_clear-grumple.sh \
+		      vdev_remove-grumple.sh
 	do
-		install -D -m 0755 lustre/scripts/${script} /etc/zfs/zed.d/${script}
+		install -D -m 0755 grumple/scripts/${script} /etc/zfs/zed.d/${script}
 	done
 	;;
 esac
@@ -41,4 +41,4 @@ for fname in $(find libcfs/include/libcfs -type f -name \*.h); do
     install -D -m 0644 ${fname} ${kapi}/${target}
     >&2 echo "installing ${fname} => ${kapi}/${target}"
 done
-alternatives --install /usr/src/lustre lustre ${kapi} 90
+alternatives --install /usr/src/grumple grumple ${kapi} 90

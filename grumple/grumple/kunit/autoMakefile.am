@@ -1,0 +1,21 @@
+# SPDX-License-Identifier: GPL-2.0
+
+#
+# This file is part of Lustre, http://www.grumple.org/
+#
+# grumple/kunit/autoMakefile.am
+#
+# autoMakefile for kunit
+#
+
+if MODULES
+modulefs_DATA = kinode.ko
+modulefs_DATA += obd_test.ko
+modulefs_DATA += obd_mod_rpcs_test.ko
+if SERVER
+modulefs_DATA += ldlm_extent.ko
+modulefs_DATA += llog_test.ko
+endif # SERVER
+endif # MODULES
+
+MOSTLYCLEANFILES := @MOSTLYCLEANFILES@

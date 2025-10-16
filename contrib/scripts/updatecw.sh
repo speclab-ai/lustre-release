@@ -3,7 +3,7 @@ TMP=${TMP:-/tmp}
 TMPFILE=$(mktemp $TMP/updatecopy.XXXXXX)
 EXCFILE=$(mktemp $TMP/excludecopy.XXXXXX)
 THISYEAR=$(date +%Y)
-DIRS=${*:-"build ldiskfs libcfs lnet lustre lustre-iokit snmp"}
+DIRS=${*:-"build ldiskfs libcfs lnet grumple grumple-iokit snmp"}
 OLDCOPY1="Copyright.*"
 OLDCOPY2="Use is subject to license terms."
 INTCOPY=${INTCOPY:-"Copyright.*Intel Corporation"}
@@ -186,11 +186,11 @@ git ls-files $DIRS | while read FILE; do
 	case "$FILE" in
 	*/list.h)
 		continue ;;
-	*/liblustreapi.h)
+	*/libgrumpleapi.h)
 		continue ;;
 	*/*.patch|*/*.series)
 		continue ;;
-	*/lustre_dlm_flags.h)
+	*/grumple_dlm_flags.h)
 		continue ;;
 	*/.gitignore)
 		continue ;;

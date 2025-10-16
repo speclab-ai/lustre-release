@@ -5,11 +5,11 @@ LMDEB=$(ls $3)
 origin=$(dirname $(realpath $LMDEB))
 modpkg=$(basename -s .deb $LMDEB)
 arch=$(echo $modpkg | cut -d_ -f3)
-kfipkg="lustre-lnet-module-kfilnd-${KVERS}_${VER}_${arch}"
-gnipkg="lustre-lnet-module-gnilnd-${KVERS}_${VER}_${arch}"
-sockpkg="lustre-lnet-module-socklnd-${KVERS}_${VER}_${arch}"
-o2ibpkg="lustre-lnet-module-o2iblnd-${KVERS}_${VER}_${arch}"
-in_kernel_o2ibpkg="lustre-lnet-module-in-kernel-o2iblnd-${KVERS}_${VER}_${arch}"
+kfipkg="grumple-lnet-module-kfilnd-${KVERS}_${VER}_${arch}"
+gnipkg="grumple-lnet-module-gnilnd-${KVERS}_${VER}_${arch}"
+sockpkg="grumple-lnet-module-socklnd-${KVERS}_${VER}_${arch}"
+o2ibpkg="grumple-lnet-module-o2iblnd-${KVERS}_${VER}_${arch}"
+in_kernel_o2ibpkg="grumple-lnet-module-in-kernel-o2iblnd-${KVERS}_${VER}_${arch}"
 VERBOSE=''
 cd debian/tmp/re-pkg/${modpkg}
 ar x ../../../../$LMDEB

@@ -8,7 +8,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 version=@PACKAGE_VERSION@
-symversdir=${prefix}/src/lustre
+symversdir=${prefix}/src/grumple
 
 Cflags: -I${includedir}/libcfs -I${includedir}/lnet
 Libs: -L${libdir} -llnetconfig
