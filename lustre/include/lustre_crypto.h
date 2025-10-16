@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2019, 2020, Whamcloud.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTRE_CRYPTO_H_
@@ -119,19 +119,19 @@
 	FS_IOC_REMOVE_ENCRYPTION_KEY_ALL_USERS
 #define LL_IOC_GET_ENCRYPTION_KEY_STATUS FS_IOC_GET_ENCRYPTION_KEY_STATUS
 
-#else /* HAVE_LUSTRE_CRYPTO && !CONFIG_LL_ENCRYPTION */
+#else 
 #include <lustre_compat/linux/llcrypt.h>
 
 #define llcrypt_prepare_readdir(inode) llcrypt_get_encryption_info(inode)
 
 int llcrypt_d_revalidate(struct dentry *dentry, unsigned int flags);
 
-#endif /* !HAVE_LUSTRE_CRYPTO || CONFIG_LL_ENCRYPTION */
+#endif 
 
 #if !defined(HAVE_FSCRYPT_IS_NOKEY_NAME) || defined(CONFIG_LL_ENCRYPTION)
 
 #ifndef DCACHE_NOKEY_NAME
-#define DCACHE_NOKEY_NAME               0x02000000 /* Enc name without key */
+#define DCACHE_NOKEY_NAME               0x02000000 
 #endif
 
 static inline bool llcrypt_is_nokey_name(const struct dentry *dentry)
@@ -160,7 +160,7 @@ static inline bool llcrypt_is_nokey_name(const struct dentry *dentry)
 #define llcrypt_free_dummy_policy(policy)			{}
 #endif
 
-/* Macro to extract digest from Lustre specific structures */
+
 #if defined(HAVE_FSCRYPT_DIGESTED_NAME) && !defined(CONFIG_LL_ENCRYPTION)
 #define LLCRYPT_EXTRACT_DIGEST		FSCRYPT_FNAME_DIGEST
 #else
@@ -177,7 +177,7 @@ bool ll_sbi_has_encrypt(struct ll_sb_info *sbi);
 void ll_sbi_set_encrypt(struct ll_sb_info *sbi, bool set);
 bool ll_sbi_has_name_encrypt(struct ll_sb_info *sbi);
 void ll_sbi_set_name_encrypt(struct ll_sb_info *sbi, bool set);
-/* sizeof(struct fscrypt_context_v2) = 40 */
+
 #define LLCRYPT_ENC_CTX_SIZE 40
 
 /* Encoding/decoding routines inspired from yEnc principles.
@@ -195,7 +195,7 @@ static inline int critical_encode(const u8 *src, int len, char *dst)
 	u8 *p = (u8 *)src, *q = dst;
 
 	while (p - src < len) {
-		/* escape NULL, LF, CR, /, DEL and = */
+		
 		if (unlikely(*p == 0x0 || *p == 0xA || *p == 0xD ||
 			     *p == '/' || *p == 0x7F || *p == '=')) {
 			*(q++) = '=';
@@ -208,14 +208,14 @@ static inline int critical_encode(const u8 *src, int len, char *dst)
 	return (char *)q - dst;
 }
 
-/* returns the number of chars encoding would produce */
+
 static inline int critical_chars(const u8 *src, int len)
 {
 	u8 *p = (u8 *)src;
 	int newlen = len;
 
 	while (p - src < len) {
-		/* NULL, LF, CR, /, DEL and = cost an additional '=' */
+		
 		if (unlikely(*p == 0x0 || *p == 0xA || *p == 0xD ||
 			     *p == '/' || *p == 0x7F || *p == '='))
 			newlen++;
@@ -225,7 +225,7 @@ static inline int critical_chars(const u8 *src, int len)
 	return newlen;
 }
 
-/* decoding routine - returns the number of chars in output */
+
 static inline int critical_decode(const u8 *src, int len, char *dst)
 {
 	u8 *p = (u8 *)src, *q = dst;
@@ -256,4 +256,4 @@ static inline int critical_decode(const u8 *src, int len, char *dst)
 #define ll_has_encryption_key(inode)	\
 	(IS_PCCCOPY(inode) ? false : llcrypt_has_encryption_key(inode))
 
-#endif /* _LUSTRE_CRYPTO_H_ */
+#endif 

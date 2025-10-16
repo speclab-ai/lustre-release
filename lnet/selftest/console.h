@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kernel structure for LST console
  *
@@ -25,137 +25,137 @@
 #include "selftest.h"
 #include "conrpc.h"
 
-/* node descriptor */
+
 struct lstcon_node {
-	struct lnet_process_id		nd_id;    /* id of the node */
-	int				nd_ref;   /* reference count */
-	int				nd_state; /* state of the node */
-	int				nd_timeout; /* session timeout */
-	ktime_t				nd_stamp; /* last RPC reply timestamp */
-	struct lstcon_rpc		nd_ping;  /* ping rpc */
+	struct lnet_process_id		nd_id;    
+	int				nd_ref;   
+	int				nd_state; 
+	int				nd_timeout; 
+	ktime_t				nd_stamp; 
+	struct lstcon_rpc		nd_ping;  
 };
 
-/* node link descriptor */
+
 struct lstcon_ndlink {
-	struct list_head	ndl_link;	/* chain on list */
-	struct list_head	ndl_hlink;	/* chain on hash */
-	struct lstcon_node	*ndl_node;	/* pointer to node */
+	struct list_head	ndl_link;	
+	struct list_head	ndl_hlink;	
+	struct lstcon_node	*ndl_node;	
 };
 
-/* (alias of nodes) group descriptor */
+
 struct lstcon_group {
-	struct list_head	grp_link;	/* chain on global group list */
-	int			grp_ref;	/* reference count */
-	int			grp_userland;	/* has userland nodes */
-	int			grp_nnode;	/* # of nodes */
-	char			grp_name[LST_NAME_SIZE];	/* group name */
+	struct list_head	grp_link;	
+	int			grp_ref;	
+	int			grp_userland;	
+	int			grp_nnode;	
+	char			grp_name[LST_NAME_SIZE];	
 
-	struct list_head	grp_trans_list;	/* transaction list */
-	struct list_head	grp_ndl_list;	/* nodes list */
-	struct list_head	grp_ndl_hash[]; /* hash table for nodes */
+	struct list_head	grp_trans_list;	
+	struct list_head	grp_ndl_list;	
+	struct list_head	grp_ndl_hash[]; 
 };
 
-#define LST_BATCH_IDLE          0xB0            /* idle batch */
-#define LST_BATCH_RUNNING       0xB1            /* running batch */
+#define LST_BATCH_IDLE          0xB0            
+#define LST_BATCH_RUNNING       0xB1            
 
 struct lstcon_tsb_hdr {
-	struct lst_bid		tsb_id;         /* batch ID */
-	int			tsb_index;      /* test index */
+	struct lst_bid		tsb_id;         
+	int			tsb_index;      
 };
 
-/* (tests ) batch descriptor */
+
 struct lstcon_batch {
-	/* test_batch header */
+	
 	struct lstcon_tsb_hdr	bat_hdr;
-	/* chain on session's batches list */
+	
 	struct list_head	bat_link;
-	/* # of test */
+	
 	int			bat_ntest;
-	/* state of the batch */
+	
 	int			bat_state;
-	/* parameter for run|stop, timeout for run, force for stop */
+	
 	int			bat_arg;
-	/* name of batch */
+	
 	char			bat_name[LST_NAME_SIZE];
 
-	/* list head of tests (lstcon_test_t) */
+	
 	struct list_head	bat_test_list;
-	/* list head of transaction */
+	
 	struct list_head	bat_trans_list;
-	/* list head of client nodes (struct lstcon_node) */
+	
 	struct list_head	bat_cli_list;
-	/* hash table of client nodes */
+	
 	struct list_head	*bat_cli_hash;
-	/* list head of server nodes */
+	
 	struct list_head	bat_srv_list;
-	/* hash table of server nodes */
+	
 	struct list_head	*bat_srv_hash;
 };
 
-/* a single test descriptor */
+
 struct lstcon_test {
-	/* test batch header */
+	
 	struct lstcon_tsb_hdr	tes_hdr;
-	/* chain on batch's tests list */
+	
 	struct list_head	tes_link;
-	/* pointer to batch */
+	
 	struct lstcon_batch	*tes_batch;
-	int			tes_type;       /* type of the test, i.e: bulk, ping */
-	int			tes_stop_onerr; /* stop on error */
-	int			tes_oneside;    /* one-sided test */
-	int			tes_concur;     /* concurrency */
-	int			tes_loop;       /* loop count */
-	int			tes_dist;       /* nodes distribution of target group */
-	int			tes_span;       /* nodes span of target group */
-	int			tes_cliidx;     /* client index, used for RPC creating */
-	struct list_head	tes_trans_list; /* transaction list */
-	struct lstcon_group	*tes_src_grp;   /* group run the test */
-	struct lstcon_group	*tes_dst_grp;   /* target group */
-	int			tes_paramlen;   /* test parameter length */
-	char			tes_param[];    /* test parameter */
+	int			tes_type;       
+	int			tes_stop_onerr; 
+	int			tes_oneside;    
+	int			tes_concur;     
+	int			tes_loop;       
+	int			tes_dist;       
+	int			tes_span;       
+	int			tes_cliidx;     
+	struct list_head	tes_trans_list; 
+	struct lstcon_group	*tes_src_grp;   
+	struct lstcon_group	*tes_dst_grp;   
+	int			tes_paramlen;   
+	char			tes_param[];    
 };
 
-#define LST_GLOBAL_HASHSIZE     503   /* global nodes hash table size */
-#define LST_NODE_HASHSIZE       239   /* node hash table (for batch or group) */
+#define LST_GLOBAL_HASHSIZE     503   
+#define LST_NODE_HASHSIZE       239   
 
-#define LST_SESSION_NONE        0x0   /* no session */
-#define LST_SESSION_ACTIVE      0x1   /* working session */
+#define LST_SESSION_NONE        0x0   
+#define LST_SESSION_ACTIVE      0x1   
 
-#define LST_CONSOLE_TIMEOUT     300   /* default console timeout */
+#define LST_CONSOLE_TIMEOUT     300   
 
 struct lstcon_session {
-	struct mutex		ses_mutex;      /* only 1 thread in session */
-	struct lst_session_id	ses_id;         /* global session id */
-	u32			ses_key;        /* local session key */
-	int			ses_state;      /* state of session */
-	int			ses_timeout;    /* timeout in seconds */
-	time64_t		ses_laststamp;  /* last operation stamp (seconds) */
-	/** tests features of the session */
+	struct mutex		ses_mutex;      
+	struct lst_session_id	ses_id;         
+	u32			ses_key;        
+	int			ses_state;      
+	int			ses_timeout;    
+	time64_t		ses_laststamp;  
+	
 	unsigned int		ses_features;
-	/** features are synced with remote test nodes */
+	
 	unsigned int		ses_feats_updated:1;
-	/** force creating */
+	
 	unsigned int		ses_force:1;
-	/** session is shutting down */
+	
 	unsigned int		ses_shutdown:1;
-	/** console is timedout */
+	
 	unsigned int		ses_expired:1;
-	__u64			ses_id_cookie;  /* batch id cookie */
-	char			ses_name[LST_NAME_SIZE];  /* session name */
-	struct lstcon_rpc_trans	*ses_ping;      /* session pinger */
-	struct stt_timer	ses_ping_timer; /* timer for pinger */
-	struct lstcon_trans_stat ses_trans_stat;/* transaction stats */
+	__u64			ses_id_cookie;  
+	char			ses_name[LST_NAME_SIZE];  
+	struct lstcon_rpc_trans	*ses_ping;      
+	struct stt_timer	ses_ping_timer; 
+	struct lstcon_trans_stat ses_trans_stat;
 
-	struct list_head	ses_trans_list; /* global list of transaction */
-	struct list_head	ses_grp_list;   /* global list of groups */
-	struct list_head	ses_bat_list;   /* global list of batches */
-	struct list_head	ses_ndl_list;   /* global list of nodes */
-	struct list_head	*ses_ndl_hash;  /* hash table of nodes */
+	struct list_head	ses_trans_list; 
+	struct list_head	ses_grp_list;   
+	struct list_head	ses_bat_list;   
+	struct list_head	ses_ndl_list;   
+	struct list_head	*ses_ndl_hash;  
 
-	spinlock_t		ses_rpc_lock;   /* serialize */
-	atomic_t		ses_rpc_counter;/* # of initialized RPCs */
-	struct list_head	ses_rpc_freelist;/* idle console rpc */
-}; /* session descriptor */
+	spinlock_t		ses_rpc_lock;   
+	atomic_t		ses_rpc_counter;
+	struct list_head	ses_rpc_freelist;
+}; 
 
 extern struct lstcon_session console_session;
 

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Nathan Rutman <nathan.rutman@sun.com>
  *
@@ -22,7 +22,7 @@
 #include <lustre_compat/linux/generic-radix-tree.h>
 #include <net/genetlink.h>
 #include <net/sock.h>
-/* For declarations shared with userspace */
+
 #include <uapi/linux/lustre/lustre_kernelcomm.h>
 
 /**
@@ -206,10 +206,10 @@ enum lustre_target_prop_attrs {
 
 #define LUSTRE_TARGET_PROP_ATTR_MAX	(__LUSTRE_TARGET_PROP_ATTR_MAX_PLUS_ONE - 1)
 
-/* prototype for callback function on kuc groups */
+
 typedef int (*libcfs_kkuc_cb_t)(void *data, void *cb_arg);
 
-/* Kernel methods */
+
 int libcfs_kkuc_init(void);
 void libcfs_kkuc_fini(void);
 int libcfs_kkuc_msg_put(struct file *fp, void *payload);
@@ -220,5 +220,5 @@ int libcfs_kkuc_group_rem(const struct obd_uuid *uuid, int uid, int group);
 int libcfs_kkuc_group_foreach(const struct obd_uuid *uuid, int group,
 			      libcfs_kkuc_cb_t cb_func, void *cb_arg);
 
-#endif /* __LUSTRE_KERNELCOMM_H__ */
+#endif 
 

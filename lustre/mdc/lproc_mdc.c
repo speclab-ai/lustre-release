@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -52,7 +52,7 @@ static ssize_t active_store(struct kobject *kobj, struct attribute *attr,
 		imp = class_import_get(imp0);
 	if (rc)
 		return rc;
-	/* opposite senses */
+	
 	if (imp->imp_deactive == val)
 		rc = ptlrpc_set_import_active(imp, val);
 	else
@@ -165,7 +165,7 @@ static ssize_t max_dirty_mb_store(struct kobject *kobj,
 
 	pages_number = round_up(pages_number, 1024 * 1024) >> PAGE_SHIFT;
 	if (pages_number >= MiB_TO_PAGES(OSC_MAX_DIRTY_MB_MAX) ||
-	    pages_number > cfs_totalram_pages() / 4) /* 1/4 of RAM */
+	    pages_number > cfs_totalram_pages() / 4) 
 		return -ERANGE;
 
 	spin_lock(&cli->cl_loi_list_lock);
@@ -260,7 +260,7 @@ static int mdc_cached_mb_seq_show(struct seq_file *m, void *v)
 	return 0;
 }
 
-/* shrink the number of caching pages to a specific number */
+
 static ssize_t
 mdc_cached_mb_seq_write(struct file *file, const char __user *buffer,
 			size_t count, loff_t *off)
@@ -643,11 +643,11 @@ static ssize_t cur_grant_bytes_store(struct kobject *kobj,
 	if (rc < 0)
 		return rc;
 
-	/* this is only for shrinking grant */
+	
 	if (val >= cli->cl_avail_grant)
 		return 0;
 
-	/* grant shrinking to be implemented later */
+	
 
 	return count;
 }
@@ -763,7 +763,7 @@ static struct attribute *mdc_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(mdc); /* creates mdc_groups */
+KOBJ_ATTRIBUTE_GROUPS(mdc); 
 
 int mdc_tunables_init(struct obd_device *obd)
 {

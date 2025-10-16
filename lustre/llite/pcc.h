@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2017, DDN Storage Corporation.
@@ -24,19 +24,19 @@ extern struct kmem_cache *pcc_inode_slab;
 
 #define LPROCFS_WR_PCC_MAX_CMD 4096
 
-/* User/Group/Project ID */
+
 struct pcc_match_id {
 	__u32			pmi_id;
 	struct list_head	pmi_linkage;
 };
 
-/* Lazy file size */
+
 struct pcc_match_size {
 	__u64			pms_size;
 	struct list_head	pms_linkage;
 };
 
-/* wildcard file name */
+
 struct pcc_match_fname {
 	char			*pmf_name;
 	struct list_head	 pmf_linkage;
@@ -66,16 +66,16 @@ struct pcc_expression {
 	enum pcc_field_op	pe_opc;
 	union {
 		struct list_head	pe_cond;
-		__u64			pe_size;  /* file size in bytes */
-		__u64			pe_mtime; /* relative age in seconds */
-		__u32			pe_id;    /* UID/GID/PROJID */
+		__u64			pe_size;  
+		__u64			pe_mtime; 
+		__u32			pe_id;    
 	};
 };
 
 struct pcc_conjunction {
-	/* link to disjunction */
+	
 	struct list_head	pc_linkage;
-	/* list of logical conjunction */
+	
 	struct list_head	pc_expressions;
 };
 
@@ -98,51 +98,51 @@ struct pcc_matcher {
 
 enum pcc_dataset_flags {
 	PCC_DATASET_INVALID	= 0x0,
-	/* Indicate that known the file is not in PCC. */
+	
 	PCC_DATASET_NONE	= 0x01,
-	/* Try auto attach at open, enabled by default */
+	
 	PCC_DATASET_OPEN_ATTACH	= 0x02,
-	/* Try auto attach during IO when layout refresh, enabled by default */
+	
 	PCC_DATASET_IO_ATTACH	= 0x04,
-	/* Try auto attach at stat */
+	
 	PCC_DATASET_STAT_ATTACH	= 0x08,
 	PCC_DATASET_AUTO_ATTACH	= PCC_DATASET_OPEN_ATTACH |
 				  PCC_DATASET_IO_ATTACH |
 				  PCC_DATASET_STAT_ATTACH,
-	/* PCC backend is only used for PCC-RW */
+	
 	PCC_DATASET_PCCRW	= 0x10,
-	/* PCC backend is only used for PCC-RO */
+	
 	PCC_DATASET_PCCRO	= 0x20,
-	/* PCC backend provides caching services for both PCC-RW and PCC-RO */
+	
 	PCC_DATASET_PCC_ALL	= PCC_DATASET_PCCRW | PCC_DATASET_PCCRO,
-	/* Default PCC caching mode: PCC-RO mode */
+	
 	PCC_DATASET_PCC_DEFAULT	= PCC_DATASET_PCCRO,
-	/* Move pagecache from mapping of PCC copy to Lustre file for mmap */
+	
 	PCC_DATASET_MMAP_CONV	= 0x40,
-	/* Set the project ID for the PCC copy */
+	
 	PCC_DATASET_PROJ_QUOTA	= 0x80,
 };
 
 struct pcc_dataset {
-	__u32			pccd_rwid;	 /* Archive ID */
-	__u32			pccd_roid;	 /* Readonly ID */
-	struct pcc_match_rule	pccd_rule;	 /* Match rule */
-	enum pcc_dataset_flags	pccd_flags;	 /* Flags of PCC backend */
-	char			pccd_pathname[PATH_MAX]; /* full path */
-	struct path		pccd_path;	 /* Root path */
-	struct list_head	pccd_linkage;  /* Linked to pccs_datasets */
-	struct kref		pccd_refcount; /* Reference count */
-	enum hsmtool_type	pccd_hsmtool_type; /* HSM copytool type */
+	__u32			pccd_rwid;	 
+	__u32			pccd_roid;	 
+	struct pcc_match_rule	pccd_rule;	 
+	enum pcc_dataset_flags	pccd_flags;	 
+	char			pccd_pathname[PATH_MAX]; 
+	struct path		pccd_path;	 
+	struct list_head	pccd_linkage;  
+	struct kref		pccd_refcount; 
+	enum hsmtool_type	pccd_hsmtool_type; 
 };
 
 #define PCC_DEFAULT_ASYNC_THRESHOLD	(256 << 20)
 
 struct pcc_super {
-	/* Protect pccs_datasets */
+	
 	struct rw_semaphore	 pccs_rw_sem;
-	/* List of datasets */
+	
 	struct list_head	 pccs_datasets;
-	/* creds of process who forced instantiation of super block */
+	
 	const struct cred	*pccs_cred;
 	/*
 	 * Gobal PCC Generation: it will be increased once the configuration
@@ -150,7 +150,7 @@ struct pcc_super {
 	 * parameters for PCC.
 	 */
 	__u64			 pccs_generation;
-	/* Size threshold for asynchrous PCC-RO attach in background. */
+	
 	__u64			 pccs_async_threshold;
 	bool			 pccs_async_affinity;
 	umode_t			 pccs_mode;
@@ -158,36 +158,36 @@ struct pcc_super {
 
 struct pcc_inode {
 	struct ll_inode_info	*pcci_lli;
-	/* Cache path on local file system */
+	
 	struct path		 pcci_path;
 	/*
 	 * If reference count is 0, then the cache is not inited, if 1, then
 	 * no one is using it.
 	 */
 	atomic_t		 pcci_refcount;
-	/* Whether readonly or readwrite PCC */
+	
 	enum lu_pcc_type	 pcci_type:8;
-	/* Whether the inode attr is cached locally */
+	
 	bool			 pcci_attr_valid;
-	/* Whether the PCC inode is unlinked at detach */
+	
 	bool			 pcci_unlinked;
-	/* Layout generation */
+	
 	__u32			 pcci_layout_gen;
 	/*
 	 * How many IOs are on going on this cached object. Layout can be
 	 * changed only if there is no active IO.
 	 */
 	atomic_t		 pcci_active_ios;
-	/* Waitq - wait for PCC I/O completion. */
+	
 	wait_queue_head_t	 pcci_waitq;
 };
 
 struct pcc_file {
-	/* Opened cache file */
+	
 	struct file		*pccf_file;
-	/* Whether readonly or readwrite PCC */
+	
 	enum lu_pcc_type	 pccf_type;
-	/* I/O especially mmap() I/O must fallback to Lustre OSTs. */
+	
 	__u32			 pccf_fallback:1;
 };
 
@@ -204,23 +204,23 @@ struct pcc_attach_context {
 };
 
 enum pcc_io_type {
-	/* read system call */
+	
 	PIT_READ = 1,
-	/* write system call */
+	
 	PIT_WRITE,
-	/* truncate, utime system calls */
+	
 	PIT_SETATTR,
-	/* stat system call */
+	
 	PIT_GETATTR,
-	/* mmap write handling */
+	
 	PIT_PAGE_MKWRITE,
-	/* page fault handling */
+	
 	PIT_FAULT,
-	/* fsync system call handling */
+	
 	PIT_FSYNC,
-	/* splice_read system call */
+	
 	PIT_SPLICE_READ,
-	/* open system call */
+	
 	PIT_OPEN
 };
 
@@ -316,4 +316,4 @@ static inline struct file *pcc_vma_file(struct vm_area_struct *vma)
 	return file;
 }
 
-#endif /* LLITE_PCC_H */
+#endif 

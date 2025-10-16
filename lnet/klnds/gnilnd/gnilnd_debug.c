@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: GPL-2.0
 
-/* Copyright (C) 2009-2012 Cray, Inc. */
 
-/* This file is part of Lustre, http://www.lustre.org.
+
+
+/* This file is part of Lustre, http:
  *
  * Author: Nic Henke <nic@cray.com>
  */
@@ -20,7 +20,7 @@ _kgnilnd_debug_msg(kgn_msg_t *msg, struct libcfs_debug_msg_data *msgdata,
 	vaf.fmt = fmt;
 	vaf.va = &args;
 
-	/* XXX Nic TBD: add handling of gnm_u ? */
+	
 	libcfs_debug_msg(msgdata,
 			 "%pV msg@0x%p m/v/ty/ck/pck/pl %08x/%d/%d/%x/%x/%d x%d:%s\n",
 			 &vaf, msg, msg->gnm_magic, msg->gnm_version,

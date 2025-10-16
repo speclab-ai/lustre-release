@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre OST Proxy Device (OSP), procfs functions
  *
@@ -78,7 +78,7 @@ static ssize_t active_store(struct kobject *kobj, struct attribute *attr,
 		imp = class_import_get(imp0);
 	if (rc)
 		return rc;
-	/* opposite senses */
+	
 	if (imp->imp_deactive == val)
 		rc = ptlrpc_set_import_active(imp, val);
 	else
@@ -441,7 +441,7 @@ static ssize_t create_count_store(struct kobject *kobj, struct attribute *attr,
 	if (val > osp->opd_pre_max_create_count / 2)
 		val = osp->opd_pre_max_create_count / 2;
 
-	/* set to largest value <= 32, 64, 128 or a multiple of 256 */
+	
 	if (val > 256)
 		osp->opd_pre_create_count = val & 0xffffff00;
 	else
@@ -514,7 +514,7 @@ static ssize_t max_create_count_store(struct kobject *kobj,
 	if (osp->opd_pre_create_count > val)
 		osp->opd_pre_create_count = val;
 
-	/* Can be 0 after setting max_create_count to 0 */
+	
 	if (osp->opd_pre_create_count == 0 && val != 0)
 		osp->opd_pre_create_count = OST_MIN_PRECREATE;
 
@@ -1252,7 +1252,7 @@ static struct ldebugfs_vars ldebugfs_osp_md_vars[] = {
 };
 
 static struct attribute *osp_obd_attrs[] = {
-	/* First two for compatiability reasons */
+	
 	&lustre_attr_lfsck_max_rpcs_in_flight.attr,
 	&lustre_attr_destroys_in_flight.attr,
 	&lustre_attr_active.attr,
@@ -1283,10 +1283,10 @@ static struct attribute *osp_obd_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(osp_obd); /* creates osp_obd_groups from osp_obd_attrs */
+KOBJ_ATTRIBUTE_GROUPS(osp_obd); 
 
 static struct attribute *osp_md_attrs[] = {
-	/* First two for compatiability reasons */
+	
 	&lustre_attr_lfsck_max_rpcs_in_flight.attr,
 	&lustre_attr_destroys_in_flight.attr,
 	&lustre_attr_active.attr,
@@ -1304,7 +1304,7 @@ static struct attribute *osp_md_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(osp_md); /* creates osp_md_groups from osp_md_attrs */
+KOBJ_ATTRIBUTE_GROUPS(osp_md); 
 
 void osp_tunables_fini(struct osp_device *osp)
 {

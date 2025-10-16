@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0+ */
+
 
 #ifndef _LINUX_XARRAY_LUSTRE_H
 #define _LINUX_XARRAY_LUSTRE_H
@@ -32,4 +32,4 @@ static inline int __must_check ll_xa_insert(struct xarray *xa,
 	return rc;
 }
 
-#endif /* _LINUX_XARRAY_LUSTRE_H */
+#endif 

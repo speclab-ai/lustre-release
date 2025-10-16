@@ -59,7 +59,6 @@ LUSTRE_MSG_MAGIC_V2 = 0x0BD00BD3
 
 def get_ptlrpc_body(req):
     msg = req.rq_reqmsg
-#    msg = req.rq_repmsg
     if not msg or msg == None:
         return None
 
@@ -273,13 +272,11 @@ def dump_rpcs_cmd(args):
         if args.link_fld:
             dump_one_rpclist(args.rpc_addr[0], args.link_fld)
         else:
-            # dump_one_rpc(args.rpc_addr[0])
             dump_one_rpc(args.rpc_addr)
         return
     dump_daemon_rpclists()
 
 if __name__ == "__main__":
-#    usage = "$(prog)s [-o] [-s] [-l link_field] [addr]\n" + \
     description = "" +\
         "Displays lists of Lustre RPC requests. If no arguments are \n" +\
         "specified, all rpcs in the sent and pending queues of the \n" +\

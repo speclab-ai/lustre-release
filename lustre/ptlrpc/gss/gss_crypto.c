@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BSD-3-Clause
+
 
 /*
  * Modifications for Lustre
@@ -88,7 +88,7 @@ int gss_get_rawobj(char **ptr, const char *end, rawobj_t *res)
 	if (q > end || q < p)
 		return -EINVAL;
 
-	/* Support empty objects */
+	
 	if (len != 0) {
 		OBD_ALLOC_LARGE(res->data, len);
 		if (!res->data)

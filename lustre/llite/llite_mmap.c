@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <linux/errno.h>
@@ -52,7 +52,7 @@ struct vm_area_struct *our_vma(struct mm_struct *mm, unsigned long addr,
 
 	ENTRY;
 
-	/* mmap_lock must have been held by caller. */
+	
 	LASSERT(!mmap_write_trylock(mm));
 
 	vma_iter_init(&vmi, mm, addr);
@@ -119,7 +119,7 @@ restart:
 
 		LASSERT(vio->vui_cl.cis_io == io);
 
-		/* mmap lock must be MANDATORY it has to cache pages. */
+		
 		io->ci_lockreq = CILR_MANDATORY;
 		vio->vui_fd = lfd;
 	} else {
@@ -133,7 +133,7 @@ restart:
 	RETURN(io);
 }
 
-/* Sharing code of page_mkwrite method for rhel5 and rhel6 */
+
 static int ll_page_mkwrite0(struct vm_area_struct *vma, struct page *vmpage,
 			    bool *retry)
 {
@@ -291,11 +291,11 @@ static vm_fault_t ll_fault0(struct vm_area_struct *vma, struct vm_fault *vmf)
 		RETURN(PTR_ERR(env));
 
 	if (ll_sbi_has_fast_read(ll_i2sbi(inode))) {
-		/* do fast fault */
+		
 		bool allow_retry = vmf->flags & FAULT_FLAG_ALLOW_RETRY;
 		bool has_retry = vmf->flags & FAULT_FLAG_RETRY_NOWAIT;
 
-		/* To avoid loops, instruct downstream to not drop mmap_sem */
+		
 		/**
 		 * only need FAULT_FLAG_ALLOW_RETRY prior to Linux 5.1
 		 * (6b4c9f4469819), where FAULT_FLAG_RETRY_NOWAIT is enough
@@ -336,14 +336,14 @@ static vm_fault_t ll_fault0(struct vm_area_struct *vma, struct vm_fault *vmf)
 		vio->u.fault.ft_flags = 0;
 		vio->u.fault.ft_flags_valid = 0;
 
-		/* May call ll_readpage() */
+		
 		ll_cl_add(inode, env, io, LCC_MMAP);
 
 		result = cl_io_loop(env, io);
 
 		ll_cl_remove(inode, env);
 
-		/* ft_flags are only valid if we reached ll_filemap_fault() */
+		
 		if (vio->u.fault.ft_flags_valid)
 			fault_ret = vio->u.fault.ft_flags;
 
@@ -397,7 +397,7 @@ static vm_fault_t ll_fault(struct vm_area_struct *vma, struct vm_fault *vmf)
 	siginitsetinv(&new, sigmask(SIGKILL) | sigmask(SIGTERM));
 	sigprocmask(SIG_BLOCK, &new, &old);
 
-	/* make sure offset is not a negative number */
+	
 	if (vmf->pgoff > (MAX_LFS_FILESIZE >> PAGE_SHIFT))
 		return VM_FAULT_SIGBUS;
 
@@ -412,7 +412,7 @@ restart:
 		 */
 		lock_page(vmpage);
 		if (unlikely(vmpage->mapping == NULL) ||
-		    vmpage->private == 0) { /* unlucky */
+		    vmpage->private == 0) { 
 			unlock_page(vmpage);
 			put_page(vmpage);
 			vmf->page = NULL;
@@ -608,7 +608,7 @@ int ll_file_mmap(struct file *file, struct vm_area_struct *vma)
 	if (rc == 0) {
 		vma->vm_ops = &ll_file_vm_ops;
 		vma->vm_ops->open(vma);
-		/* update the inode's size and mtime */
+		
 		if (!cached)
 			rc = ll_glimpse_size(inode);
 	}

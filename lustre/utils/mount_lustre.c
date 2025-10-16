@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/mount_lustre.c
  *
@@ -113,52 +113,52 @@ static void usage(FILE *out)
  *
  ****************************************************************************/
 struct opt_map {
-	const char *opt;        /* option name */
-	int inv;                /* true if flag value should be inverted */
-	int mask;               /* flag mask value */
+	const char *opt;        
+	int inv;                
+	int mask;               
 };
 
 static const struct opt_map opt_map[] = {
-/* these flags are parsed by mount, not Lustre */
-{ .opt = "async",   .mask = MS_SYNCHRONOUS, .inv = 1 }, /* asynchronous I/O */
-{ .opt = "atime",   .mask = MS_NOATIME,	    .inv = 1 }, /* set access time */
-{ .opt = "auto" },					/* allow auto mount */
-{ .opt = "defaults" },					/* default options */
-{ .opt = "dev",	    .mask = MS_NODEV,	    .inv = 1 },	/* interpret devs */
-{ .opt = "exec",    .mask = MS_NOEXEC,	    .inv = 1 }, /* allow execution */
+
+{ .opt = "async",   .mask = MS_SYNCHRONOUS, .inv = 1 }, 
+{ .opt = "atime",   .mask = MS_NOATIME,	    .inv = 1 }, 
+{ .opt = "auto" },					
+{ .opt = "defaults" },					
+{ .opt = "dev",	    .mask = MS_NODEV,	    .inv = 1 },	
+{ .opt = "exec",    .mask = MS_NOEXEC,	    .inv = 1 }, 
 { .opt = "loop" },
-{ .opt = "noatime", .mask = MS_NOATIME },		/* do not set atime */
-{ .opt = "noauto" },					/* mount explicitly */
-{ .opt = "nodev",   .mask = MS_NODEV },			/* no interpret devs */
-{ .opt = "noowner",			    .inv = 1 },	/* no special privs */
-{ .opt = "nosuid",  .mask = MS_NOSUID },		/* do not honor suid */
-{ .opt = "nouser",			    .inv = 1 }, /* users cannot mount */
-{ .opt = "nousers",			    .inv = 1 }, /* users cannot mount */
-{ .opt = "_netdev" },					/* network only */
-{ .opt = "noexec",  .mask = MS_NOEXEC },		/* no execute */
-{ .opt = "remount", .mask = MS_REMOUNT },		/* remount */
-{ .opt = "ro",	    .mask = MS_RDONLY },		/* read-only */
-{ .opt = "rw",	    .mask = MS_RDONLY,	    .inv = 1 }, /* read-write */
-{ .opt = "suid",    .mask = MS_NOSUID,	    .inv = 1 }, /* honor suid */
-{ .opt = "sync",    .mask = MS_SYNCHRONOUS },		/* synchronous I/O */
+{ .opt = "noatime", .mask = MS_NOATIME },		
+{ .opt = "noauto" },					
+{ .opt = "nodev",   .mask = MS_NODEV },			
+{ .opt = "noowner",			    .inv = 1 },	
+{ .opt = "nosuid",  .mask = MS_NOSUID },		
+{ .opt = "nouser",			    .inv = 1 }, 
+{ .opt = "nousers",			    .inv = 1 }, 
+{ .opt = "_netdev" },					
+{ .opt = "noexec",  .mask = MS_NOEXEC },		
+{ .opt = "remount", .mask = MS_REMOUNT },		
+{ .opt = "ro",	    .mask = MS_RDONLY },		
+{ .opt = "rw",	    .mask = MS_RDONLY,	    .inv = 1 }, 
+{ .opt = "suid",    .mask = MS_NOSUID,	    .inv = 1 }, 
+{ .opt = "sync",    .mask = MS_SYNCHRONOUS },		
 #ifdef MS_NODIRATIME
-{ .opt = "diratime",					/* set access time */
-		    .mask = MS_NODIRATIME,  .inv = 1 },	/* on read */
-{ .opt = "nodiratime",					/* do not set access */
-		    .mask = MS_NODIRATIME },		/* time on read */
+{ .opt = "diratime",					
+		    .mask = MS_NODIRATIME,  .inv = 1 },	
+{ .opt = "nodiratime",					
+		    .mask = MS_NODIRATIME },		
 #endif
 #ifdef MS_RELATIME
-{ .opt = "norelatime",					/* do not set rel */
-		    .mask = MS_RELATIME,    .inv = 1 },	/* access time */
-{ .opt = "relatime",					/* set relative */
-		    .mask = MS_RELATIME },		/* access time */
+{ .opt = "norelatime",					
+		    .mask = MS_RELATIME,    .inv = 1 },	
+{ .opt = "relatime",					
+		    .mask = MS_RELATIME },		
 #endif
 #ifdef MS_STRICTATIME
 { .opt = "strictatime",
-		    .mask = MS_STRICTATIME },		/* strict access time */
+		    .mask = MS_STRICTATIME },		
 #endif
 { .opt = NULL } };
-/****************************************************************************/
+
 
 /*
  * 1  = don't pass on to lustre
@@ -223,7 +223,7 @@ static int append_option(char *options, size_t options_len,
 	}
 	return 0;
 out_err:
-	/* this 'too long' message is checked in conf-sanity test_98 */
+	
 	fprintf(stderr,
 		"error: add mount options %s%s too long, %zu over limit %zu\n",
 		param, value, strlen(options) + strlen(param) + strlen(value),
@@ -249,10 +249,10 @@ static int parse_options(struct mount_opts *mop, char *orig_options,
 	nextopt = orig_options;
 	while ((opt = strsep(&nextopt, ","))) {
 		if (!*opt)
-			/* empty option */
+			
 			continue;
 
-		/* Handle retries in a slightly different manner */
+		
 		arg = opt;
 		val = strchr(opt, '=');
 		/*
@@ -261,7 +261,7 @@ static int parse_options(struct mount_opts *mop, char *orig_options,
 		 * remove those mount options, see bug 22097.
 		 */
 		if (strcmp(opt, "force") == 0) {
-			/* XXX special check for 'force' option */
+			
 			++mop->mo_force;
 			printf("force: %d\n", mop->mo_force);
 		} else if (val && strncmp(arg, "max_sectors_kb", 14) == 0) {
@@ -337,27 +337,27 @@ static int parse_options(struct mount_opts *mop, char *orig_options,
 					"%s: test dummy encryption option ignored: could not insert dummy encryption key into session keyring\n",
 					progname);
 			} else {
-				/* pass this on as an option */
+				
 				rc = append_option(options, options_len, opt,
 						   NULL);
 				if (rc != 0)
 					goto out_options;
 			}
-#else /* !HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED */
-			/* pass this on as an option */
+#else 
+			
 			rc = append_option(options, options_len, opt,
 					   NULL);
 			if (rc != 0)
 				goto out_options;
 #endif
-#else /* HAVE_LIBKEYUTILS */
+#else 
 			fprintf(stderr,
 				"%s: test dummy encryption option ignored: Lustre not built with libkeyutils support\n",
 				progname);
 #endif
 #endif
 		} else if (parse_one_option(opt, flagp) == 0) {
-			/* pass this on as an option */
+			
 			rc = append_option(options, options_len, opt, NULL);
 			if (rc != 0)
 				goto out_options;
@@ -390,7 +390,7 @@ out_options:
 }
 
 #ifdef HAVE_SERVER_SUPPORT
-/* Add mgsnids from ldd params */
+
 static int add_mgsnids(struct mount_opts *mop, char *options,
 		       const char *params, size_t options_len)
 {
@@ -430,7 +430,7 @@ static int clear_update_ondisk(char *source, struct lustre_disk_data *ldd)
 	memset(&mkop, 0, sizeof(mkop));
 	mkop.mo_ldd = *ldd;
 	mkop.mo_ldd.ldd_flags &= ~LDD_F_UPDATE;
-	mkop.mo_flags = MO_NOHOSTID_CHECK; /* Ignore missing hostid */
+	mkop.mo_flags = MO_NOHOSTID_CHECK; 
 	if (strlen(source) > sizeof(mkop.mo_device) - 1) {
 		fatal();
 		fprintf(stderr, "Device name too long: %s\n", source);
@@ -447,7 +447,7 @@ static int clear_update_ondisk(char *source, struct lustre_disk_data *ldd)
 		return ret;
 	}
 
-	/* Create the loopback file */
+	
 	if (mkop.mo_flags & MO_IS_LOOP) {
 		ret = access(mkop.mo_device, F_OK);
 		if (ret) {
@@ -516,11 +516,11 @@ static int parse_ldd(char *source, struct mount_opts *mop,
 	if (ldd->ldd_flags & LDD_F_UPDATE)
 		clear_update_ondisk(source, ldd);
 
-	/* Since we never rewrite ldd, ignore temp flags */
+	
 	ldd->ldd_flags &= ~(LDD_F_VIRGIN | LDD_F_WRITECONF |
 			    LDD_F_NO_LOCAL_LOGS);
 
-	/* This is to make sure default options go first */
+	
 	temp_options = strdup(options);
 	if (!temp_options) {
 		fprintf(stderr, "%s: can't allocate memory for temp_options\n",
@@ -533,7 +533,7 @@ static int parse_ldd(char *source, struct mount_opts *mop,
 	if (rc != 0)
 		return rc;
 
-	/* svname of the form lustre:OST1234 means never registered */
+	
 	rc = strlen(ldd->ldd_svname);
 	if (strcmp(ldd->ldd_svname, "MGS") != 0) {
 		if (rc < 8) {
@@ -551,7 +551,7 @@ static int parse_ldd(char *source, struct mount_opts *mop,
 			ldd->ldd_flags |= LDD_F_NO_LOCAL_LOGS;
 		}
 	}
-	/* backend osd type */
+	
 	rc = append_option(options, options_len, "osd=",
 			   mt_type(ldd->ldd_mount_type));
 	if (rc != 0)
@@ -574,7 +574,7 @@ static int parse_ldd(char *source, struct mount_opts *mop,
 			skip_mgsnode_param = true;
 		}
 	}
-	/* Better have an mgsnid by now */
+	
 	if (!mop->mo_have_mgsnid) {
 		fprintf(stderr, "%s: missing option mgsnode=<nid>\n",
 			progname);
@@ -632,12 +632,12 @@ static int parse_ldd(char *source, struct mount_opts *mop,
 			return rc;
 	}
 
-	/* svname must be last option */
+	
 	rc = append_option(options, options_len, "svname=", ldd->ldd_svname);
 
 	return rc;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 static void set_defaults(struct mount_opts *mop)
 {
@@ -727,7 +727,7 @@ static int parse_opts(int argc, char *const argv[], struct mount_opts *mop,
 		usage(stderr);
 
 #ifdef HAVE_SERVER_SUPPORT
-	/* osd-wbcfs lustre_tgt */
+	
 	if (strcmp(mop->mo_usource, OSD_WBCFS_DEV) == 0) {
 		mop->mo_ldd.ldd_mount_type = LDD_MT_WBCFS;
 		mop->mo_source = strdup(mop->mo_usource);
@@ -753,7 +753,7 @@ static int parse_opts(int argc, char *const argv[], struct mount_opts *mop,
 			snprintf(path, sizeof(path), "/sys/block/%s/dm/name",
 				 ptr + 1);
 			if ((f = fopen(path, "r"))) {
-				/* read "<name>\n" from sysfs */
+				
 				if (fgets(name, sizeof(name), f) &&
 				    (sz = strlen(name)) > 1) {
 					name[sz - 1] = '\0';
@@ -820,9 +820,9 @@ static void label_lustre(struct mount_opts *mop)
 		}
 	}
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
-/* no-op version for mount, since it only needs temporary parameters */
+
 int jt_lcfg_setparam_perm(int argc, char **argv, struct param_opts *popt)
 {
 	return 0;
@@ -858,14 +858,14 @@ int parse_param_file(char *path)
 		while (getline(&param, &len, file) != -1) {
 			char *tmp;
 
-			/* skip any comments on lines */
+			
 			tmp = strchr(param, '#');
 			if (tmp) {
 				if (tmp == param)
 					continue;
 				*tmp = '\0';
 			}
-			/* remove trailing newline/whitespace. embedded OK */
+			
 			tmp = strchr(param, '\n');
 			if (tmp)
 				*tmp = '\0';
@@ -970,7 +970,7 @@ int main(int argc, char *const argv[])
 	}
 
 	if (strlen(mop.mo_orig_options) >= maxopt_len) {
-		/* this 'too long' message is checked in conf-sanity test_98 */
+		
 
 		fprintf(stderr,
 			"error: mount options too long, %zu over limit %zu\n",
@@ -1020,7 +1020,7 @@ int main(int argc, char *const argv[])
 
 	client = (strstr(mop.mo_usource, ":/") != NULL);
 	if (client) {
-		/* Check vm.dirty_ratio for client mounts */
+		
 		check_vm_dirty_ratio();
 	} else {
 #ifdef HAVE_SERVER_SUPPORT
@@ -1040,7 +1040,7 @@ int main(int argc, char *const argv[])
 	}
 
 #ifdef HAVE_GSS
-	/* For client mounts, auto check for .lgss file in mount point */
+	
 	if (client && mop.mo_skpath[0] == '\0') {
 		char lgss_path[PATH_MAX];
 		struct stat lgss_stat;
@@ -1055,14 +1055,14 @@ int main(int argc, char *const argv[])
 				printf("Found SSK key file %s, loading\n",
 				       lgss_path);
 
-			/* Set the skpath to the .lgss file */
+			
 			strscpy(mop.mo_skpath, lgss_path,
 				sizeof(mop.mo_skpath));
 		}
 	}
 
 	if (mop.mo_skpath[0] != '\0') {
-		/* Treat shared key failures as fatal */
+		
 		rc = load_shared_keys(&mop, client);
 		if (rc < 0) {
 			fprintf(stderr, "%s: Error loading shared keys: %s\n",
@@ -1070,7 +1070,7 @@ int main(int argc, char *const argv[])
 			goto out_osd;
 		}
 	}
-#endif /* HAVE_GSS */
+#endif 
 
 	/*
 	 * Auto-generate mgsname from device string if not already specified,
@@ -1084,7 +1084,7 @@ int main(int argc, char *const argv[])
 				   end - mop.mo_usource) != 0) {
 			char sep = *end;
 
-			*end = '\0'; /* temporarily NUL terminate mgsname */
+			*end = '\0'; 
 			rc = append_option(options, maxopt_len, "mgsname=",
 					   mop.mo_usource);
 			if (verbose)
@@ -1225,7 +1225,7 @@ int main(int argc, char *const argv[])
 			fprintf(stderr, "Check the syslog for more info.\n");
 		}
 
-		/* May as well try to clean up loop devs */
+		
 		if (strncmp(mop.mo_usource, "/dev/loop", 9) == 0) {
 			char cmd[256];
 			int ret;
@@ -1266,7 +1266,7 @@ out_options:
 	free(options);
 
 out_mo_source:
-	/* mo_usource should be freed, but we can rely on the kernel */
+	
 	free(mop.mo_source);
 	free(mop.mo_fsname);
 	return rc;

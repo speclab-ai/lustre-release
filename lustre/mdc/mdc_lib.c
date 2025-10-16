@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_MDC
@@ -181,13 +181,13 @@ void mdc_readdir_pack(struct req_capsule *pill, __u64 pgoff, size_t size,
 
 	b->mbo_fid1 = *fid;
 	b->mbo_valid |= OBD_MD_FLID;
-	b->mbo_size = pgoff;			/* !! */
-	b->mbo_nlink = size;			/* !! */
+	b->mbo_size = pgoff;			
+	b->mbo_nlink = size;			
 	__mdc_pack_body(b, -1);
 	b->mbo_mode = LUDA_FID | LUDA_TYPE;
 }
 
-/* packing of MDS records */
+
 void mdc_create_pack(struct req_capsule *pill, struct md_op_data *op_data,
 		     const void *data, size_t datalen, umode_t mode,
 		     uid_t uid, gid_t gid, kernel_cap_t cap_effective, u64 rdev,
@@ -247,7 +247,7 @@ void mdc_create_pack(struct req_capsule *pill, struct md_op_data *op_data,
 	mdc_file_encctx_pack(pill, op_data->op_file_encctx,
 			     op_data->op_file_encctx_size);
 
-	/* pack SELinux policy info if any */
+	
 	mdc_file_sepol_pack(pill, sepol);
 }
 
@@ -284,7 +284,7 @@ static inline __u64 mds_pack_open_flags(enum mds_open_flags flags)
 	return cr_flags;
 }
 
-/* packing of MDS records */
+
 void mdc_open_pack(struct req_capsule *pill, struct md_op_data *op_data,
 		   umode_t mode, __u64 rdev, __u64 flags, const void *lmm,
 		   size_t lmmlen, struct sptlrpc_sepol *sepol)
@@ -297,7 +297,7 @@ void mdc_open_pack(struct req_capsule *pill, struct md_op_data *op_data,
 		     sizeof(struct mdt_rec_create));
 	rec = req_capsule_client_get(pill, &RMF_REC_REINT);
 
-	/* XXX do something about time, uid, gid */
+	
 	rec->cr_opcode = REINT_OPEN;
 	rec->cr_fsuid	= from_kuid(&init_user_ns, current_fsuid());
 	rec->cr_fsgid	= from_kgid(&init_user_ns, current_fsgid());
@@ -330,7 +330,7 @@ void mdc_open_pack(struct req_capsule *pill, struct md_op_data *op_data,
 		mdc_file_encctx_pack(pill, op_data->op_file_encctx,
 				     op_data->op_file_encctx_size);
 
-		/* pack SELinux policy info if any */
+		
 		mdc_file_sepol_pack(pill, sepol);
 	}
 
@@ -385,7 +385,7 @@ static inline enum mds_attr_flags mdc_attr_pack(unsigned int ia_valid,
 	if (ia_xvalid & OP_XVALID_BLOCKS)
 		sa_valid |= MDS_ATTR_BLOCKS;
 	if (ia_xvalid & OP_XVALID_OWNEROVERRIDE)
-		/* NFSD hack (see bug 5781) */
+		
 		sa_valid |= MDS_OPEN_OWNEROVERRIDE;
 	if (ia_xvalid & OP_XVALID_PROJID)
 		sa_valid |= MDS_ATTR_PROJID;
@@ -453,7 +453,7 @@ void mdc_setattr_pack(struct req_capsule *pill, struct md_op_data *op_data,
 		return;
 
 	lum = req_capsule_client_get(pill, &RMF_EADATA);
-	if (ea == NULL) { /* Remove LOV EA */
+	if (ea == NULL) { 
 		lum->lmm_magic = cpu_to_le32(LOV_USER_MAGIC_V1);
 		lum->lmm_stripe_size = 0;
 		lum->lmm_stripe_count = 0;
@@ -489,7 +489,7 @@ void mdc_unlink_pack(struct req_capsule *pill, struct md_op_data *op_data,
 
 	mdc_pack_name(pill, &RMF_NAME, op_data->op_name, op_data->op_namelen);
 
-	/* pack SELinux policy info if any */
+	
 	mdc_file_sepol_pack(pill, sepol);
 }
 
@@ -504,8 +504,8 @@ void mdc_link_pack(struct req_capsule *pill, struct md_op_data *op_data,
 	LASSERT(rec != NULL);
 
 	rec->lk_opcode   = REINT_LINK;
-	rec->lk_fsuid    = op_data->op_fsuid; /* current->fsuid; */
-	rec->lk_fsgid    = op_data->op_fsgid; /* current->fsgid; */
+	rec->lk_fsuid    = op_data->op_fsuid; 
+	rec->lk_fsgid    = op_data->op_fsgid; 
 	rec->lk_cap      = ll_capability_u32(op_data->op_cap);
 	rec->lk_suppgid1 = op_data->op_suppgids[0];
 	rec->lk_suppgid2 = op_data->op_suppgids[1];
@@ -516,7 +516,7 @@ void mdc_link_pack(struct req_capsule *pill, struct md_op_data *op_data,
 
 	mdc_pack_name(pill, &RMF_NAME, op_data->op_name, op_data->op_namelen);
 
-	/* pack SELinux policy info if any */
+	
 	mdc_file_sepol_pack(pill, sepol);
 }
 
@@ -578,7 +578,7 @@ void mdc_rename_pack(struct req_capsule *pill, struct md_op_data *op_data,
 		     sizeof(struct mdt_rec_rename));
 	rec = req_capsule_client_get(pill, &RMF_REC_REINT);
 
-	/* XXX do something about time, uid, gid */
+	
 	rec->rn_opcode	 = REINT_RENAME;
 	rec->rn_fsuid    = op_data->op_fsuid;
 	rec->rn_fsgid    = op_data->op_fsgid;
@@ -596,7 +596,7 @@ void mdc_rename_pack(struct req_capsule *pill, struct md_op_data *op_data,
 	if (new != NULL)
 		mdc_pack_name(pill, &RMF_SYMTGT, new, newlen);
 
-	/* pack SELinux policy info if any */
+	
 	mdc_file_sepol_pack(pill, sepol);
 }
 

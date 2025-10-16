@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTRE_CL_OBJECT_H
@@ -110,18 +110,18 @@ struct cl_req_attr;
  * \see vvp_device, lov_device, lovsub_device, osc_device
  */
 struct cl_device {
-	/** Super-class. */
+	
 	struct lu_device                   cd_lu_dev;
 };
 
-/* cl_object */
+
 /**
  * "Data attributes" of cl_object. Data attributes can be updated
  * independently for a sub-object, and top-object's attributes are calculated
  * from sub-objects' ones.
  */
 struct cl_attr {
-	/** Object size, in bytes */
+	
 	loff_t cat_size;
 
 	unsigned int cat_kms_valid:1;
@@ -131,11 +131,11 @@ struct cl_attr {
 	 * This is only valid when at least one DLM lock is held.
 	 */
 	loff_t cat_kms;
-	/** Modification time. Measured in seconds since epoch. */
+	
 	time64_t cat_mtime;
-	/** Access time. Measured in seconds since epoch. */
+	
 	time64_t cat_atime;
-	/** Change time. Measured in seconds since epoch. */
+	
 	time64_t cat_ctime;
 	/**
 	 * Blocks allocated to this cl_object on the server file system.
@@ -152,10 +152,10 @@ struct cl_attr {
 	 */
 	gid_t  cat_gid;
 
-	/* nlink of the directory */
+	
 	__u64  cat_nlink;
 
-	/* Project identifier for quota purpose. */
+	
 	__u32  cat_projid;
 };
 
@@ -212,11 +212,11 @@ enum cl_attr_valid {
  * \see vvp_object, lov_object, lovsub_object, osc_object
  */
 struct cl_object {
-	/** super class */
+	
 	struct lu_object                   co_lu;
-	/** per-object-layer operations */
+	
 	const struct cl_object_operations *co_ops;
-	/** offset of page slice in cl_page buffer */
+	
 	int				   co_slice_off;
 };
 
@@ -226,7 +226,7 @@ struct cl_object {
  * fid.
  */
 struct cl_object_conf {
-	/** Super-class. */
+	
 	struct lu_object_conf     coc_lu;
 	union {
 		/**
@@ -255,31 +255,31 @@ struct cl_object_conf {
 };
 
 enum {
-	/** configure layout, new stripe, must must be holding layout lock. */
+	
 	OBJECT_CONF_SET = 0,
-	/** invalidate the current stripe config when losing layout lock. */
+	
 	OBJECT_CONF_INVALIDATE = 1,
-	/** wait for old layout to go away so that new layout can be set up. */
+	
 	OBJECT_CONF_WAIT = 2
 };
 
 enum {
-	CL_LAYOUT_GEN_NONE	= (u32)-2,	/* layout lock was cancelled */
-	CL_LAYOUT_GEN_EMPTY	= (u32)-1,	/* for empty layout */
+	CL_LAYOUT_GEN_NONE	= (u32)-2,	
+	CL_LAYOUT_GEN_EMPTY	= (u32)-1,	
 };
 
 struct cl_layout {
-	/** the buffer to return the layout in lov_mds_md format. */
+	
 	struct lu_buf	cl_buf;
-	/** size of layout in lov_mds_md format. */
+	
 	size_t		cl_size;
-	/** Layout generation. */
+	
 	u32		cl_layout_gen;
-	/** whether layout is a composite one */
+	
 	bool		cl_is_composite;
-	/** Whether layout is a HSM released one */
+	
 	bool		cl_is_released;
-	/** Whether layout is a readonly one */
+	
 	bool		cl_is_rdonly;
 };
 
@@ -455,7 +455,7 @@ struct cl_object_operations {
  * Extended header for client object.
  */
 struct cl_object_header {
-	/* Standard lu_object_header. cl_object::co_lu::lo_header points here.*/
+	
 	struct lu_object_header	coh_lu;
 
 	/**
@@ -752,15 +752,15 @@ enum cl_page_type {
  * cl_page::cp_owner (when set).
  */
 struct cl_page {
-	/** Reference counter. */
+	
 	refcount_t		cp_ref;
-	/** layout_entry + stripe index, composed using lov_comp_index() */
+	
 	unsigned int		cp_lov_index;
-	/** page->index of the page within the whole file */
+	
 	pgoff_t			cp_page_index;
-	/** An object this page is a part of. Immutable after creation. */
+	
 	struct cl_object	*cp_obj;
-	/** vmpage */
+	
 	struct page		*cp_vmpage;
 	/**
 	 * Assigned if doing direct IO, because in this case cp_vmpage is not
@@ -768,11 +768,11 @@ struct cl_page {
 	 * cp_vmpage->mapping->host.
 	 */
 	struct inode		*cp_inode;
-	/** Linkage of pages within group. Pages must be owned */
+	
 	struct list_head	cp_batch;
-	/** array of slices offset. Immutable after creation. */
+	
 	unsigned char		cp_layer_offset[CP_MAX_LAYER];
-	/** current slice index */
+	
 	unsigned char		cp_layer_count:2;
 	/**
 	 * Page state. This field is const to avoid accidental update, it is
@@ -789,9 +789,9 @@ struct cl_page {
 				cp_ra_used:1,
 				cp_in_kmem_array:1;
 	union {
-		/* which slab kmem index this memory allocated from */
+		
 		short int	cp_kmem_index;
-		/* or the page size if it's not in the slab kmem array */
+		
 		short int	cp_kmem_size;
 	};
 
@@ -800,7 +800,7 @@ struct cl_page {
 	 * by sub-io. Protected by a VM lock.
 	 */
 	struct cl_io            *cp_owner;
-	/** Assigned if doing a sync_io */
+	
 	struct cl_sync_io	*cp_sync_io;
 };
 
@@ -1105,15 +1105,15 @@ static inline bool __page_in_use(const struct cl_page *page, int refc)
  * Lock description.
  */
 struct cl_lock_descr {
-	/** Object this lock is granted for. */
+	
 	struct cl_object *cld_obj;
-	/** Index of the first page protected by this lock. */
+	
 	pgoff_t           cld_start;
-	/** Index of the last page (inclusive) protected by this lock. */
+	
 	pgoff_t           cld_end;
-	/** Group ID, for group lock */
+	
 	__u64             cld_gid;
-	/** Lock mode. */
+	
 	enum cl_lock_mode cld_mode;
 	/**
 	 * flags to enqueue lock. A combination of bit-flags from
@@ -1133,9 +1133,9 @@ const char *cl_lock_mode_name(const enum cl_lock_mode mode);
  * Layered client lock.
  */
 struct cl_lock {
-	/** List of slices. Immutable after creation. */
+	
 	struct list_head      cll_layers;
-	/** lock attribute, extent, cl_object, etc. */
+	
 	struct cl_lock_descr  cll_descr;
 };
 
@@ -1151,7 +1151,7 @@ struct cl_lock_slice {
 	 */
 	struct cl_object                *cls_obj;
 	const struct cl_lock_operations *cls_ops;
-	/** Linkage into cl_lock::cll_layers. Immutable after creation. */
+	
 	struct list_head		 cls_linkage;
 };
 
@@ -1291,15 +1291,15 @@ struct cl_2queue {
  * sub-io in its cl_io_operations::cio_iter_init() implementation.
  */
 
-/** IO types */
+
 enum cl_io_type {
-	/** read system call */
+	
 	CIT_READ = 1,
-	/** write system call */
+	
 	CIT_WRITE,
-	/** truncate, utime system calls */
+	
 	CIT_SETATTR,
-	/** get data version */
+	
 	CIT_DATA_VERSION,
 	/**
 	 * page fault handling
@@ -1349,23 +1349,23 @@ enum cl_io_type {
  * States of cl_io state machine
  */
 enum cl_io_state {
-	/** Not initialized. */
+	
 	CIS_ZERO,
-	/** Initialized. */
+	
 	CIS_INIT,
-	/** IO iteration started. */
+	
 	CIS_IT_STARTED,
-	/** Locks taken. */
+	
 	CIS_LOCKED,
-	/** Actual IO is in progress. */
+	
 	CIS_IO_GOING,
-	/** IO for the current iteration finished. */
+	
 	CIS_IO_FINISHED,
-	/** Locks released. */
+	
 	CIS_UNLOCKED,
-	/** Iteration completed. */
+	
 	CIS_IT_ENDED,
-	/** cl_io finalized. */
+	
 	CIS_FINI
 };
 
@@ -1379,9 +1379,9 @@ enum cl_io_state {
  */
 struct cl_io_slice {
 	struct cl_io			*cis_io;
-	/** corresponding object slice. Immutable after creation. */
+	
 	struct cl_object		*cis_obj;
-	/** io operations. Immutable after creation. */
+	
 	const struct cl_io_operations	*cis_iop;
 	/**
 	 * linkage into a list of all slices for a given cl_io, hanging off
@@ -1399,7 +1399,7 @@ struct cl_read_ahead {
 	 * cra_end is included.
 	 */
 	pgoff_t		cra_end_idx;
-	/* optimal RPC size for this read, by pages */
+	
 	unsigned long	cra_rpc_pages;
 	/* Release callback. If readahead holds resources underneath, this
 	 * function should be called to release it.
@@ -1407,7 +1407,7 @@ struct cl_read_ahead {
 	void		(*cra_release)(const struct lu_env *env,
 				       struct cl_read_ahead *ra);
 
-	/* Callback data for cra_release routine */
+	
 	void		*cra_dlmlock;
 	void		*cra_oio;
 
@@ -1417,7 +1417,7 @@ struct cl_read_ahead {
 	 */
 	struct list_head cra_linkage;
 
-	/* whether lock is in contention */
+	
 	bool		 cra_contention;
 };
 
@@ -1429,9 +1429,9 @@ static inline void cl_read_ahead_release(const struct lu_env *env,
 }
 
 enum cl_io_priority {
-	/* Normal I/O, usually just queue the pages in the client side cache. */
+	
 	IO_PRIO_NORMAL	= 0,
-	/* I/O is urgent and should flush queued pages to OSTs ASAP. */
+	
 	IO_PRIO_URGENT,
 	/* The memcg is under high memory pressure and the user write process
 	 * is dirty exceeded and under rate limiting in balance_dirty_pages().
@@ -1679,10 +1679,10 @@ enum cl_enq_flags {
  * same lock can be part of multiple io's simultaneously.
  */
 struct cl_io_lock_link {
-	/** linkage into one of cl_lockset lists. */
+	
 	struct list_head        cill_linkage;
 	struct cl_lock          cill_lock;
-	/** optional destructor */
+	
 	void                    (*cill_fini)(const struct lu_env *env,
 					     struct cl_io_lock_link *link);
 };
@@ -1718,9 +1718,9 @@ struct cl_io_lock_link {
  * enqueued.
  */
 struct cl_lockset {
-	/** locks to be acquired. */
+	
 	struct list_head  cls_todo;
-	/** locks acquired. */
+	
 	struct list_head  cls_done;
 };
 
@@ -1729,26 +1729,26 @@ struct cl_lockset {
  * but 'req' is always to be thought as 'request' :-)
  */
 enum cl_io_lock_dmd {
-	/** Always lock data (e.g., O_APPEND). */
+	
 	CILR_MANDATORY = 0,
-	/** Layers are free to decide between local and global locking. */
+	
 	CILR_MAYBE,
-	/** Never lock: there is no cache (e.g., liblustre). */
+	
 	CILR_NEVER
 };
 
 enum cl_fsync_mode {
-	/** start writeback, do not wait for them to finish */
+	
 	CL_FSYNC_NONE		= 0,
-	/** start writeback and wait for them to finish */
+	
 	CL_FSYNC_LOCAL		= 1,
-	/** discard all of dirty pages in a specific file range */
+	
 	CL_FSYNC_DISCARD	= 2,
 	/** start writeback and make sure they have reached storage before
 	 * return. OST_SYNC RPC must be issued and finished
 	 */
 	CL_FSYNC_ALL		= 3,
-	/** start writeback, thus the kernel can reclaim some memory */
+	
 	CL_FSYNC_RECLAIM	= 4,
 };
 
@@ -1758,11 +1758,11 @@ struct cl_io_rw_common {
 	int	crw_nonblock;
 };
 enum cl_setattr_subtype {
-	/** regular setattr **/
+	
 	CL_SETATTR_REG = 1,
-	/** truncate(2) **/
+	
 	CL_SETATTR_TRUNC,
-	/** fallocate(2) - mode preallocate **/
+	
 	CL_SETATTR_FALLOCATE
 };
 
@@ -1793,26 +1793,26 @@ struct cl_io_pt {
  * mutable cl_io fields.
  */
 struct cl_io {
-	/** type of this IO. Immutable after creation. */
+	
 	enum cl_io_type                ci_type;
-	/** current state of cl_io state machine. */
+	
 	enum cl_io_state               ci_state;
-	/** main object this io is against. Immutable after creation. */
+	
 	struct cl_object              *ci_obj;
-	/** top level dio_aio */
+	
 	struct cl_dio_aio	      *ci_dio_aio;
 	/**
 	 * Upper layer io, of which this io is a part of. Immutable after
 	 * creation.
 	 */
 	struct cl_io                  *ci_parent;
-	/** List of slices. Immutable after creation. */
+	
 	struct list_head		ci_layers;
-	/** list of locks (to be) acquired by this io. */
+	
 	struct cl_lockset              ci_lockset;
-	/** lock requirements, this is just a help info for sublayers. */
+	
 	enum cl_io_lock_dmd            ci_lockreq;
-	/** layout version when this IO occurs */
+	
 	__u32				ci_layout_version;
 	union {
 		struct cl_rd_io {
@@ -1827,19 +1827,19 @@ struct cl_io {
 		struct cl_setattr_io {
 			struct ost_lvb		 sa_attr;
 			unsigned int		 sa_attr_flags;
-			unsigned int		 sa_avalid; /* ATTR_* */
-			unsigned int		 sa_xvalid; /* OP_XVALID */
+			unsigned int		 sa_avalid; 
+			unsigned int		 sa_xvalid; 
 			int			 sa_stripe_index;
 			struct ost_layout	 sa_layout;
 			const struct lu_fid	*sa_parent_fid;
-			/* SETATTR interface is used for regular setattr, */
-			/* truncate(2) and fallocate(2) subtypes */
+			
+			
 			enum cl_setattr_subtype	 sa_subtype;
-			/* The following are used for fallocate(2) */
+			
 			int			 sa_falloc_mode;
 			loff_t			 sa_falloc_offset;
 			loff_t			 sa_falloc_end;
-			/* id fields used for truncate/fallocate */
+			
 			uid_t			 sa_attr_uid;
 			gid_t			 sa_attr_gid;
 			__u32			 sa_attr_projid;
@@ -1850,33 +1850,33 @@ struct cl_io {
 			int dv_flags;
 		} ci_data_version;
 		struct cl_fault_io {
-			/** page index within file. */
+			
 			pgoff_t		ft_index;
-			/** bytes valid byte on a faulted page. */
+			
 			size_t		ft_bytes;
-			/** writable page? for nopage() only */
+			
 			int		ft_writable;
-			/** page of an executable? */
+			
 			int		ft_executable;
-			/** page_mkwrite() */
+			
 			int		ft_mkwrite;
-			/** resulting page */
+			
 			struct cl_page *ft_page;
 		} ci_fault;
 		struct cl_fsync_io {
 			loff_t			 fi_start;
 			loff_t			 fi_end;
-			/** file system level fid */
+			
 			struct lu_fid	 	*fi_fid;
 			enum cl_fsync_mode	 fi_mode;
-			/* how many pages were written/discarded */
+			
 			unsigned int		 fi_nr_written;
 			enum cl_io_priority	 fi_prio;
 		} ci_fsync;
 		struct cl_ladvise_io {
 			__u64			 lio_start;
 			__u64			 lio_end;
-			/** file system level fid */
+			
 			struct lu_fid		*lio_fid;
 			enum lu_ladvise_type	 lio_advice;
 			__u64			 lio_flags;
@@ -1937,7 +1937,7 @@ struct cl_io {
 	 * O_NOATIME
 	 */
 			     ci_noatime:1,
-	/* Tell sublayers not to expand LDLM locks requested for this IO */
+	
 			     ci_lock_no_expand:1,
 	/**
 	 * Set if non-delay RPC should be used for this IO.
@@ -2002,7 +2002,7 @@ struct cl_io {
 	 * filling functions (fault, read, ...)
 	 */
 			     ci_invalidate_page_cache:1,
-	/* was this IO switched from BIO to DIO for hybrid IO? */
+	
 			     ci_hybrid_switched:1;
 
 	/**
@@ -2031,24 +2031,24 @@ struct cl_req_attr {
 	enum cl_req_type cra_type;
 	u64		 cra_flags;
 	struct cl_page  *cra_page;
-	/** Generic attributes for the server consumption. */
+	
 	struct obdo	*cra_oa;
-	/** process jobid/uid/gid performing the io */
+	
 	struct job_info	cra_jobinfo;
 };
 
 enum cache_stats_item {
-	/** how many cache lookups were performed */
+	
 	CS_lookup = 0,
-	/** how many times cache lookup resulted in a hit */
+	
 	CS_hit,
-	/** how many entities are in the cache right now */
+	
 	CS_total,
 	/** how many entities in the cache are actively used (and cannot be
 	 * evicted) right now
 	 */
 	CS_busy,
-	/** how many entities were created at all */
+	
 	CS_create,
 	CS_NR
 };
@@ -2063,7 +2063,7 @@ struct cache_stats {
 	atomic_t	cs_stats[CS_NR];
 };
 
-/** These are not exported so far */
+
 void cache_stats_init(struct cache_stats *cs, const char *name);
 
 /**
@@ -2244,7 +2244,7 @@ ssize_t cl_dio_pages_init(const struct lu_env *env, struct cl_object *obj,
 			  int rw, size_t maxsize, loff_t offset,
 			  bool unaligned);
 
-/* cl_page */
+
 struct cl_page *cl_page_find(const struct lu_env *env,
 			     struct cl_object *obj,
 			     pgoff_t idx, struct page *vmpage,
@@ -2376,7 +2376,7 @@ struct cl_client_cache *cl_cache_init(unsigned long lru_page_max);
 void cl_cache_incref(struct cl_client_cache *cache);
 void cl_cache_decref(struct cl_client_cache *cache);
 
-/* cl_lock */
+
 int cl_lock_request(const struct lu_env *env, struct cl_io *io,
 		    struct cl_lock *lock);
 int cl_lock_init(const struct lu_env *env, struct cl_lock *lock,
@@ -2392,7 +2392,7 @@ void cl_lock_cancel(const struct lu_env *env, struct cl_lock *lock);
 
 struct cl_dio_pages;
 
-/* cl_io */
+
 int   cl_io_init(const struct lu_env *env, struct cl_io *io,
 		 enum cl_io_type iot, struct cl_object *obj);
 int   cl_io_sub_init(const struct lu_env *env, struct cl_io *io,
@@ -2469,7 +2469,7 @@ struct cl_io *cl_io_top(struct cl_io *io);
 
 #define CL_IO_SLICE_CLEAN(obj, base) memset_startat(obj, 0, base)
 
-/* cl_page_list */
+
 /**
  * Last page in the page list.
  */
@@ -2529,7 +2529,7 @@ void cl_2queue_init_page(struct cl_2queue *queue, struct cl_page *page);
 void cl_req_attr_set(const struct lu_env *env, struct cl_object *obj,
 		     struct cl_req_attr *attr);
 
-/* cl_sync_io */
+
 struct cl_sync_io;
 struct cl_dio_aio;
 struct cl_sub_dio;
@@ -2566,21 +2566,21 @@ static inline void cl_sync_io_init(struct cl_sync_io *anchor, int nr)
  * anchor and wakes up waiting thread when transfer is complete.
  */
 struct cl_sync_io {
-	/** number of pages yet to be transferred. */
+	
 	atomic_t		csi_sync_nr;
-	/** has this i/o completed? */
+	
 	atomic_t		csi_complete;
-	/** error code. */
+	
 	int			csi_sync_rc;
-	/** completion to be signaled when transfer is complete. */
+	
 	wait_queue_head_t	csi_waitq;
-	/** callback to invoke when this IO is finished */
+	
 	cl_sync_io_end_t       *csi_end_io;
-	/* private pointer for an associated DIO/AIO */
+	
 	void		       *csi_dio_aio;
 };
 
-/** direct IO pages */
+
 struct cl_dio_pages {
 	/*
 	 * page array for RDMA - for aligned i/o, this is the user provided
@@ -2590,10 +2590,10 @@ struct cl_dio_pages {
 
 	struct cl_page		**cdp_cl_pages;
 	struct cl_sync_io	*cdp_sync_io;
-	/* the file offset of the first page. */
+	
 	loff_t                  cdp_file_offset;
 	unsigned int		cdp_lov_index;
-	/** # of pages in the array. */
+	
 	unsigned int		cdp_page_count;
 	/* the first and last page can be incomplete, this records the
 	 * offsets
@@ -2602,7 +2602,7 @@ struct cl_dio_pages {
 	int			cdp_to;
 };
 
-/* Top level struct used for AIO and DIO */
+
 struct cl_dio_aio {
 	struct cl_sync_io	cda_sync;
 	struct cl_object	*cda_obj;
@@ -2615,8 +2615,8 @@ struct cl_dio_aio {
 };
 
 struct cl_iter_dup {
-	void		*id_vec;             /* dup'd vec (iov/bvec/kvec) */
-	size_t		id_vec_size;         /* bytes allocated for id_vec */
+	void		*id_vec;             
+	size_t		id_vec_size;         
 };
 
 /* Sub-dio used for splitting DIO (and AIO, because AIO is DIO) according to
@@ -2677,7 +2677,7 @@ ssize_t ll_dio_user_copy(struct cl_sub_dio *sdio);
  * \see lu_env, lu_context, lu_context_key
  */
 
-/* cl_env */
+
 struct lu_env *cl_env_get(__u16 *refcheck);
 struct lu_env *cl_env_alloc(__u16 *refcheck, __u32 tags);
 void cl_env_put(struct lu_env *env, __u16 *refcheck);
@@ -2701,4 +2701,4 @@ void cl_global_fini(void);
 
 int lov_read_and_clear_async_rc(struct cl_object *clob);
 
-#endif /* _LINUX_CL_OBJECT_H */
+#endif 

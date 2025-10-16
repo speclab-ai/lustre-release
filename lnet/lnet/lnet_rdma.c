@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
+
 
 #include <lnet/lnet_rdma.h>
 #include <linux/libcfs/libcfs.h>
 
-/* MAX / MIN conflict */
+
 #include <lnet/lib-lnet.h>
 
 #define NVFS_HOLD_TIME_MS 1000
@@ -176,7 +176,7 @@ int lnet_rdma_unmap_sg(struct device *dev,
 		count = nvfs_ops->nvfs_dma_unmap_sg(dev, sg,
 						    nents, direction);
 
-		/* drop the count we got by calling nvfs_get_ops() */
+		
 		nvfs_put_ops();
 
 		if (count) {

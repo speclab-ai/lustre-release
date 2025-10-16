@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Modified from NFSv4 project for Lustre
@@ -56,7 +56,7 @@ int buffer_extract_bytes(const void **buf, __u32 *buflen,
 /*
  * default gc interval
  */
-#define GSS_GC_INTERVAL                 (60 * 60) /* 60 minutes */
+#define GSS_GC_INTERVAL                 (60 * 60) 
 
 static inline time64_t gss_round_ctx_expiry(time64_t expiry,
 					    unsigned long sec_flags)
@@ -173,7 +173,7 @@ struct gss_cli_ctx {
 	atomic_t		gc_seq;
 	rawobj_t		gc_handle;
 	struct gss_ctx		*gc_mechctx;
-	/* handle for the buddy svc ctx */
+	
 	rawobj_t		gc_svc_handle;
 };
 
@@ -212,7 +212,7 @@ struct gss_sec_keyring {
 	struct mutex			gsk_root_uc_lock;
 
 #ifdef HAVE_KEYRING_UPCALL_SERIALIZED
-	struct mutex		gsk_uc_lock;	/* serialize upcalls */
+	struct mutex		gsk_uc_lock;	
 #endif
 };
 
@@ -261,7 +261,7 @@ struct gss_svc_ctx *gss_svc_ctx2gssctx(struct ptlrpc_svc_ctx *ctx)
         return gss_svc_ctx2reqctx(ctx)->src_ctx;
 }
 
-/* sec_gss.c */
+
 int gss_cli_ctx_match(struct ptlrpc_cli_ctx *ctx, struct vfs_cred *vcred);
 int gss_cli_ctx_display(struct ptlrpc_cli_ctx *ctx, char *buf, int bufsize);
 int gss_cli_ctx_sign(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req);
@@ -319,7 +319,7 @@ int gss_cli_ctx_fini_common(struct ptlrpc_sec *sec,
 
 void gss_cli_ctx_flags2str(unsigned long flags, char *buf, int bufsize);
 
-/* gss_keyring.c */
+
 #ifndef HAVE_GSS_KEYRING
 static inline int  __init gss_init_keyring(void) { return 0; }
 static inline void __exit gss_exit_keyring(void) { return; }
@@ -329,7 +329,7 @@ void __exit gss_exit_keyring(void);
 #endif
 extern unsigned int gss_check_upcall_ns;
 
-/* gss_bulk.c */
+
 int gss_cli_prep_bulk(struct ptlrpc_request *req,
                       struct ptlrpc_bulk_desc *desc);
 int gss_cli_ctx_wrap_bulk(struct ptlrpc_cli_ctx *ctx,
@@ -345,21 +345,21 @@ int gss_svc_unwrap_bulk(struct ptlrpc_request *req,
 int gss_svc_wrap_bulk(struct ptlrpc_request *req,
                       struct ptlrpc_bulk_desc *desc);
 
-/* gss_generic_token.c */
+
 int g_token_size(rawobj_t *mech, unsigned int body_size);
 void g_make_token_header(rawobj_t *mech, int body_size, unsigned char **buf);
 __u32 g_verify_token_header(rawobj_t *mech, int *body_size,
                             unsigned char **buf_in, int toksize);
 
 
-/* gss_cli_upcall.c */
+
 int gss_do_ctx_init_rpc(char *buffer, unsigned long count);
 int gss_do_ctx_fini_rpc(struct gss_cli_ctx *gctx);
 
 int  __init gss_init_cli_upcall(void);
 void gss_exit_cli_upcall(void);
 
-/* gss_svc_upcall.c */
+
 __u64 gss_get_next_ctx_index(void);
 int gss_svc_upcall_install_rvs_ctx(struct obd_import *imp,
                                    struct gss_sec *gsec,
@@ -383,31 +383,31 @@ int  __init gss_init_svc_upcall(void);
 void gss_exit_svc_upcall(void);
 extern unsigned int krb5_allow_old_client_csum;
 
-/* lproc_gss.c */
+
 void gss_stat_oos_record_cli(int behind);
 void gss_stat_oos_record_svc(int phase, int replay);
 
 int  __init gss_init_tunables(void);
 void gss_exit_tunables(void);
 
-/* gss_null_mech.c */
+
 int __init init_null_module(void);
 void cleanup_null_module(void);
 
-/* gss_krb5_mech.c */
+
 int __init init_kerberos_module(void);
 void cleanup_kerberos_module(void);
 
-/* gss_sk_mech.c */
+
 #ifdef HAVE_OPENSSL_SSK
 int __init init_sk_module(void);
 void cleanup_sk_module(void);
 #else
 static inline int init_sk_module(void) { return 0; }
 static inline void cleanup_sk_module(void) { return; }
-#endif /* HAVE_OPENSSL_SSK */
+#endif 
 
-/* debug */
+
 static inline
 void __dbg_memdump(char *name, void *ptr, int size)
 {
@@ -450,4 +450,4 @@ struct gss_rsc *rsc_entry_get(struct upcall_cache *cache, struct gss_rsc *rsc);
 void rsc_entry_put(struct upcall_cache *cache, struct gss_rsc *rsc);
 void __rsc_free(struct gss_rsc *rsc);
 
-#endif /* __PTLRPC_GSS_GSS_INTERNAL_H_ */
+#endif 

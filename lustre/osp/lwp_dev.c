@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
@@ -29,10 +29,10 @@
 
 struct lwp_device {
 	struct lu_device	lpd_dev;
-	struct obd_device      *lpd_obd;   /* corresponding OBD device */
-	struct obd_export      *lpd_exp;   /* export of LWP */
-	struct task_struct     *lpd_notify_task; /* notify thread */
-	int			lpd_connects; /* use count, 0 or 1 */
+	struct obd_device      *lpd_obd;   
+	struct obd_export      *lpd_exp;   
+	struct task_struct     *lpd_notify_task; 
+	int			lpd_connects; 
 };
 
 static inline struct lwp_device *lu2lwp_dev(struct lu_device *d)

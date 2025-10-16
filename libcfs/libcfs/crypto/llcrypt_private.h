@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 /*
  * llcrypt_private.h
  *
@@ -39,7 +39,7 @@
 #define LLCRYPT_CONTEXT_V2	2
 
 struct llcrypt_context_v1 {
-	u8 version; /* LLCRYPT_CONTEXT_V1 */
+	u8 version; 
 	u8 contents_encryption_mode;
 	u8 filenames_encryption_mode;
 	u8 flags;
@@ -48,7 +48,7 @@ struct llcrypt_context_v1 {
 };
 
 struct llcrypt_context_v2 {
-	u8 version; /* LLCRYPT_CONTEXT_V2 */
+	u8 version; 
 	u8 contents_encryption_mode;
 	u8 filenames_encryption_mode;
 	u8 flags;
@@ -112,7 +112,7 @@ static inline int llcrypt_policy_size(const union llcrypt_policy *policy)
 	return 0;
 }
 
-/* Return the contents encryption mode of a valid encryption policy */
+
 static inline u8
 llcrypt_policy_contents_mode(const union llcrypt_policy *policy)
 {
@@ -125,7 +125,7 @@ llcrypt_policy_contents_mode(const union llcrypt_policy *policy)
 	BUG();
 }
 
-/* Return the filenames encryption mode of a valid encryption policy */
+
 static inline u8
 llcrypt_policy_fnames_mode(const union llcrypt_policy *policy)
 {
@@ -138,7 +138,7 @@ llcrypt_policy_fnames_mode(const union llcrypt_policy *policy)
 	BUG();
 }
 
-/* Return the flags (LLCRYPT_POLICY_FLAG*) of a valid encryption policy */
+
 static inline u8
 llcrypt_policy_flags(const union llcrypt_policy *policy)
 {
@@ -175,7 +175,7 @@ struct llcrypt_symlink_data {
  */
 struct llcrypt_info {
 
-	/* The actual crypto transform used for encryption and decryption */
+	
 	struct crypto_skcipher *ci_ctfm;
 
 	/*
@@ -190,7 +190,7 @@ struct llcrypt_info {
 	 */
 	struct llcrypt_mode *ci_mode;
 
-	/* Back-pointer to the inode */
+	
 	struct inode *ci_inode;
 
 	/*
@@ -212,10 +212,10 @@ struct llcrypt_info {
 	 */
 	struct llcrypt_direct_key *ci_direct_key;
 
-	/* The encryption policy used by this inode */
+	
 	union llcrypt_policy ci_policy;
 
-	/* This inode's nonce, copied from the llcrypt_context */
+	
 	u8 ci_nonce[FS_KEY_DERIVATION_NONCE_SIZE];
 };
 
@@ -247,7 +247,7 @@ static inline bool llcrypt_valid_enc_modes(u32 contents_mode,
 	return false;
 }
 
-/* crypto.c */
+
 enum llcrypt_crypto_engine_type {
 	LLCRYPT_ENGINE_INVALID		= 0,
 	LLCRYPT_ENGINE_SYSTEM_DEFAULT	= 1,
@@ -276,10 +276,10 @@ llcrypt_msg(const struct inode *inode, int mask, const char *fmt, ...);
 
 union llcrypt_iv {
 	struct {
-		/* logical block number within the file */
+		
 		__le64 lblk_num;
 
-		/* per-file nonce; only set in DIRECT_KEY mode */
+		
 		u8 nonce[FS_KEY_DERIVATION_NONCE_SIZE];
 	};
 	u8 raw[LLCRYPT_MAX_IV_SIZE];
@@ -288,14 +288,14 @@ union llcrypt_iv {
 void llcrypt_generate_iv(union llcrypt_iv *iv, u64 lblk_num,
 			 const struct llcrypt_info *ci);
 
-/* fname.c */
+
 extern int fname_encrypt(struct inode *inode, const struct qstr *iname,
 			 u8 *out, unsigned int olen);
 extern bool llcrypt_fname_encrypted_size(const struct inode *inode,
 					 u32 orig_len, u32 max_len,
 					 u32 *encrypted_len_ret);
 
-/* hkdf.c */
+
 
 struct llcrypt_hkdf {
 	struct crypto_shash *hmac_tfm;
@@ -321,7 +321,7 @@ extern int llcrypt_hkdf_expand(struct llcrypt_hkdf *hkdf, u8 context,
 
 extern void llcrypt_destroy_hkdf(struct llcrypt_hkdf *hkdf);
 
-/* keyring.c */
+
 
 /*
  * llcrypt_master_key_secret - secret key material of an in-use master key
@@ -334,10 +334,10 @@ struct llcrypt_master_key_secret {
 	 */
 	struct llcrypt_hkdf	hkdf;
 
-	/* Size of the raw key in bytes.  Set even if ->raw isn't set. */
+	
 	u32			size;
 
-	/* For v1 policy keys: the raw key.  Wiped for v2 policy keys. */
+	
 	u8			raw[LLCRYPT_MAX_KEY_SIZE];
 
 } __randomize_layout;
@@ -410,7 +410,7 @@ struct llcrypt_master_key {
 	struct list_head	mk_decrypted_inodes;
 	spinlock_t		mk_decrypted_inodes_lock;
 
-	/* Per-mode tfms for DIRECT_KEY policies, allocated on-demand */
+	
 	struct crypto_skcipher	*mk_mode_keys[__LLCRYPT_MODE_MAX + 1];
 
 } __randomize_layout;
@@ -462,7 +462,7 @@ extern int __init llcrypt_init_keyring(void);
 
 extern void __exit llcrypt_exit_keyring(void);
 
-/* keysetup.c */
+
 
 struct llcrypt_mode {
 	const char *friendly_name;
@@ -487,7 +487,7 @@ llcrypt_allocate_skcipher(struct llcrypt_mode *mode, const u8 *raw_key,
 extern int llcrypt_set_derived_key(struct llcrypt_info *ci,
 				   const u8 *derived_key);
 
-/* keysetup_v1.c */
+
 
 extern void llcrypt_put_direct_key(struct llcrypt_direct_key *dk);
 
@@ -496,7 +496,7 @@ extern int llcrypt_setup_v1_file_key(struct llcrypt_info *ci,
 
 extern int llcrypt_setup_v1_file_key_via_subscribed_keyrings(
 					struct llcrypt_info *ci);
-/* policy.c */
+
 
 extern bool llcrypt_policies_equal(const union llcrypt_policy *policy1,
 				   const union llcrypt_policy *policy2);
@@ -506,4 +506,4 @@ extern int llcrypt_policy_from_context(union llcrypt_policy *policy_u,
 				       const union llcrypt_context *ctx_u,
 				       int ctx_size);
 
-#endif /* _LLCRYPT_PRIVATE_H */
+#endif 

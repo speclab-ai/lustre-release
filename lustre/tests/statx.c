@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /*
  * Copyright (c) 2019, DDN Storage Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 /*
  *
@@ -39,7 +39,7 @@
 #include <selinux/selinux.h>
 #endif
 
-/* Factor out some of the common --help and --version processing code. */
+
 
 /* These enum values cannot possibly conflict with the option values
  * ordinarily used by commands, including CHAR_MAX + 1, etc.  Avoid
@@ -66,7 +66,7 @@ ssize_t statx(int dfd, const char *filename, int flags,
 {
 	return syscall(__NR_statx, dfd, filename, flags, mask, buffer);
 }
-#endif /* HAVE_STATX */
+#endif 
 
 #define xstrdup(str) strdup(str)
 static inline
@@ -83,7 +83,7 @@ char *xasprintf(const char *fmt, const char *old_fmt, const char *str)
 }
 
 
-/* coreutils/lib/intprops.h */
+
 #define _GL_SIGNED_TYPE_OR_EXPR(t) TYPE_SIGNED(__typeof__(t))
 
 /* Bound on length of the string representing an unsigned integer
@@ -115,7 +115,7 @@ char *xasprintf(const char *fmt, const char *old_fmt, const char *str)
  */
 #define INT_BUFSIZE_BOUND(t) (INT_STRLEN_BOUND(t) + 1)
 
-/* The maximum and minimum values for the integer type T.  */
+
 #define TYPE_MINIMUM(t) ((t)~TYPE_MAXIMUM(t))
 #define TYPE_MAXIMUM(t)						\
 	((t) (!TYPE_SIGNED(t)					\
@@ -123,14 +123,14 @@ char *xasprintf(const char *fmt, const char *old_fmt, const char *str)
 	: ((((t)1 << (TYPE_WIDTH(t) - 2)) - 1) * 2 + 1)))
 
 static bool o_dir_list;
-static bool long_format; /* use a long listing format */
+static bool long_format; 
 
 /* Current time in seconds and nanoseconds since 1970, updated as
  * needed when deciding whether a file is recent.
  */
 static struct timespec current_time;
 
-/* FIXME: these are used by printf.c, too */
+
 #define isodigit(c) ('0' <= (c) && (c) <= '7')
 #define octtobin(c) ((c) - '0')
 #define hextobin(c) ((c) >= 'a' && (c) <= 'f' ? (c) - 'a' + 10 : \
@@ -138,7 +138,7 @@ static struct timespec current_time;
 
 #define ISDIGIT(c) ((unsigned int)(c) - '0' <= 9)
 
-/* True if the real type T is signed.  */
+
 #define TYPE_SIGNED(t) (!((t)0 < (t)-1))
 
 static char const digits[] = "0123456789";
@@ -152,7 +152,7 @@ static char const digits[] = "0123456789";
  */
 static char const printf_flags[] = "'-+ #0I";
 
-/* Formats for the --terse option. */
+
 static char const fmt_terse_fs[] = "%n %i %l %t %s %S %b %f %a %c %d\n";
 static char const fmt_terse_regular[] = "%n %s %b %f %u %g %D %i %h %t %T %X %Y %Z %W %o\n";
 #ifdef HAVE_SELINUX
@@ -160,7 +160,7 @@ static char const fmt_terse_selinux[] = "%n %s %b %f %u %g %D %i %h %t %T %X %Y 
 #endif
 static char *format;
 
-/* Whether to follow symbolic links;  True for --dereference (-L).  */
+
 static bool follow_links;
 
 /* Whether to interpret backslash-escape sequences.
@@ -173,7 +173,7 @@ static bool interpret_backslash_escapes;
  */
 static char const *trailing_delim = "";
 
-/* The representation of the decimal point in the current locale.  */
+
 static char const *decimal_point;
 static size_t decimal_point_len;
 
@@ -249,7 +249,7 @@ static void usage(char *prog)
 	exit(0);
 }
 
-/* gnulib/lib/filemode.c */
+
 /* Return a character indicating the type of file described by
  * file mode BITS:
  * '-' regular file
@@ -269,13 +269,13 @@ static void usage(char *prog)
  */
 static char ftypelet(mode_t bits)
 {
-	/* These are the most common, so test for them first.*/
+	
 	if (S_ISREG(bits))
 		return '-';
 	if (S_ISDIR(bits))
 		return 'd';
 
-	/* Other letters standardized by POSIX 1003.1-2004.*/
+	
 	if (S_ISBLK(bits))
 		return 'b';
 	if (S_ISCHR(bits))
@@ -285,14 +285,14 @@ static char ftypelet(mode_t bits)
 	if (S_ISFIFO(bits))
 		return 'p';
 
-	/* Other file types (though not letters) standardized by POSIX.*/
+	
 	if (S_ISSOCK(bits))
 		return 's';
 
 	return '?';
 }
 
-/* Like filemodestring, but rely only on MODE.*/
+
 static void strmode(mode_t mode, char *str)
 {
 	str[0] = ftypelet(mode);
@@ -365,7 +365,7 @@ static void filemodestring(struct statx const *stxp, char *str)
 	strmode(stxp->stx_mode, str);
 }
 
-/* gnulib/lib/file-type.c */
+
 static char const *file_type(struct statx const *stx)
 {
 	/* See POSIX 1003.1-2001 XCU Table 4-8 lines 17093-17107 for some of
@@ -374,7 +374,7 @@ static char const *file_type(struct statx const *stx)
 	 * To keep diagnostics grammatical in English, the returned string
 	 * must start with a consonant.
 	 */
-	/* Do these three first, as they're the most common.  */
+	
 	if (S_ISREG(stx->stx_mode))
 		return stx->stx_size == 0 ? "regular empty file" :
 					    "regular file";
@@ -385,7 +385,7 @@ static char const *file_type(struct statx const *stx)
 	if (S_ISLNK(stx->stx_mode))
 		return "symbolic link";
 
-	/* The remaining are in alphabetical order.  */
+	
 	if (S_ISBLK(stx->stx_mode))
 		return "block special file";
 
@@ -401,7 +401,7 @@ static char const *file_type(struct statx const *stx)
 	return "weird file";
 }
 
-/* gnulib/lib/areadlink-with-size.c */
+
 /* SYMLINK_MAX is used only for an initial memory-allocation sanity
  * check, so it's OK to guess too small on hosts where there is no
  * arbitrary limit to symbolic link length.
@@ -430,7 +430,7 @@ static char *areadlink_with_size(char const *file, size_t size)
 	size_t initial_limit = (symlink_max < INITIAL_LIMIT_BOUND ?
 				symlink_max + 1 : INITIAL_LIMIT_BOUND);
 	enum { stackbuf_size = 128 };
-	/* The initial buffer size for the link value. */
+	
 	size_t buf_size = (size == 0 ? stackbuf_size : size < initial_limit ?
 			   size + 1 : initial_limit);
 
@@ -469,7 +469,7 @@ static char *areadlink_with_size(char const *file, size_t size)
 					return memcpy(buffer, buf,
 						      link_length + 1);
 			} else if (link_length + 1 < buf_size) {
-				/* Shrink BUFFER before returning it. */
+				
 				char *shrinked_buffer;
 
 				shrinked_buffer = realloc(buffer,
@@ -492,33 +492,33 @@ static char *areadlink_with_size(char const *file, size_t size)
 	}
 }
 
-/* coreutils/src/stat.c */
-/* Output a single-character \ escape.  */
+
+
 static void print_esc_char(char c)
 {
 	switch (c) {
-	case 'a':			/* Alert. */
+	case 'a':			
 		c = '\a';
 		break;
-	case 'b':			/* Backspace. */
+	case 'b':			
 		c = '\b';
 		break;
-	case 'e':			/* Escape. */
+	case 'e':			
 		c = '\x1B';
 		break;
-	case 'f':			/* Form feed. */
+	case 'f':			
 		c = '\f';
 		break;
-	case 'n':			/* New line. */
+	case 'n':			
 		c = '\n';
 		break;
-	case 'r':			/* Carriage return. */
+	case 'r':			
 		c = '\r';
 		break;
-	case 't':			/* Horizontal tab. */
+	case 't':			
 		c = '\t';
 		break;
-	case 'v':			/* Vertical tab. */
+	case 'v':			
 		c = '\v';
 		break;
 	case '"':
@@ -648,8 +648,8 @@ static char *human_time(const struct statx_timestamp *ts)
 	 * outlandish so that %z expands to a long string.
 	 */
 	static char str[INT_BUFSIZE_BOUND(intmax_t)
-		+ INT_STRLEN_BOUND(int) /* YYYY */
-		+ 1 /* because YYYY might equal INT_MAX + 1900 */
+		+ INT_STRLEN_BOUND(int) 
+		+ 1 
 		+ sizeof "-MM-DD HH:MM:SS.NNNNNNNNN +"];
 	struct tm tm;
 	time_t tim;
@@ -916,7 +916,7 @@ static int out_file_context(char *pformat, size_t prefix_len,
 	return rc;
 }
 
-/* Map a TS with negative TS.tv_nsec to {0,0}.  */
+
 static inline struct timespec neg_to_zero(struct timespec ts)
 {
 	if (ts.tv_nsec >= 0)
@@ -927,11 +927,11 @@ static inline struct timespec neg_to_zero(struct timespec ts)
 	return z;
 }
 
-/* All the mode bits that can be affected by chmod.  */
+
 #define CHMOD_MODE_BITS \
 	(S_ISUID | S_ISGID | S_ISVTX | 0700 | 0070 | 0007)
 
-/* Print statx info.  Return zero upon success, nonzero upon failure.  */
+
 static int print_statx(char *pformat, size_t prefix_len, unsigned int m,
 		       int fd, char const *filename, struct statx const *stx)
 {
@@ -1159,7 +1159,7 @@ static int print_it(int fd, char const *filename,
 			++b;
 			if (isodigit(*b)) {
 				int esc_value = octtobin(*b);
-				int esc_length = 1; /* number of octal digits */
+				int esc_length = 1; 
 
 				for (++b; esc_length < 3 && isodigit(*b);
 				     ++esc_length, ++b) {
@@ -1169,7 +1169,7 @@ static int print_it(int fd, char const *filename,
 				putchar(esc_value);
 				--b;
 			} else if (*b == 'x' && isxdigit(to_uchar(b[1]))) {
-				/* Value of \xhh escape. */
+				
 				int esc_value = hextobin(b[1]);
 				/* A hexadecimal \xhh escape sequence must have
 				 * 1 or 2 hex. digits.
@@ -1185,7 +1185,7 @@ static int print_it(int fd, char const *filename,
 			} else if (*b == '\0') {
 				printf("warning: backslash at end of format");
 				putchar('\\');
-				/* Arrange to exit the loop.  */
+				
 				--b;
 			} else {
 				print_esc_char(*b);
@@ -1226,7 +1226,7 @@ static char *default_format(bool fs, bool terse, bool device)
 			"Blocks: Total: %-10b Free: %-10f Available: %a\n"
 			"Inodes: Total: %-10c Free: %d\n");
 		}
-	} else /* ! fs */ {
+	} else  {
 		if (terse) {
 #ifdef HAVE_SELINUX
 			if (is_selinux_enabled() > 0)
@@ -1345,7 +1345,7 @@ static int do_statx(char const *filename, unsigned int request_mask, int flags)
 	return print_it(fd, filename, print_statx, &stx);
 }
 
-/* Return true if FILE should be ignored. */
+
 static bool file_ignored(char const *name)
 {
 	return name[0] == '.';
@@ -1372,11 +1372,11 @@ static int do_dir_list(char const *dirname, unsigned int request_mask,
 	while ((ent = readdir(dir)) != NULL) {
 		int ret;
 
-		/* skip "." and ".." */
+		
 		if (file_ignored(ent->d_name))
 			continue;
 
-		/* ls -1 */
+		
 		if (!format) {
 			if (o_quiet)
 				continue;
@@ -1554,4 +1554,4 @@ int main(int argc, char **argv)
 	printf("Skip: system does not support statx syscall.\n");
 	return 0;
 }
-#endif /* __NR_statx */
+#endif 

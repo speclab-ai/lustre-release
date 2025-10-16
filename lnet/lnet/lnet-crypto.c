@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright 2012 Xyratex Technology Limited
  *
@@ -63,7 +63,7 @@ static int cfs_crypto_hash_alloc(enum cfs_crypto_hash_alg hash_alg,
 		return -EINVAL;
 	}
 
-	/* Keys are only supported for the hmac version */
+	
 	if (key && key_len > 0) {
 		char *algo_name;
 
@@ -448,7 +448,7 @@ int cfs_crypto_register(void)
 	if (cfs_crypto_adler32_register() == 0)
 		adler32 = 1;
 
-	/* check all algorithms and do performance test */
+	
 	cfs_crypto_test_hashes();
 
 	return 0;

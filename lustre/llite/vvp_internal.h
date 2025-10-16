@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Internal definitions for VVP layer.
  *
@@ -31,7 +31,7 @@ struct page;
  * IO state private to VVP layer.
  */
 struct vvp_io {
-	/** super class */
+	
 	struct cl_io_slice     vui_cl;
 	struct cl_io_lock_link vui_link;
 	/**
@@ -70,7 +70,7 @@ struct vvp_io {
 			unsigned long vui_read;
 			int vui_from;
 			int vui_to;
-		} readwrite; /* normal io */
+		} readwrite; 
 	} u;
 
 	/**
@@ -83,10 +83,10 @@ struct vvp_io {
 	struct ll_file_data	*vui_fd;
 	struct kiocb		*vui_iocb;
 
-	/* Readahead state. */
+	
 	pgoff_t			vui_ra_start_idx;
 	pgoff_t			vui_ra_pages;
-	/* Set when vui_ra_{start,count} have been initialized. */
+	
 	bool			vui_ra_valid;
 };
 
@@ -240,10 +240,10 @@ struct vvp_object *cl_inode2vvp(struct inode *inode);
 			LINVRNT(0);					\
 		}							\
 	} while (0)
-#else /* !CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK */
+#else 
 # define CLOBINVRNT(env, clob, expr)					\
 	((void)sizeof(env), (void)sizeof(clob), (void)sizeof !!(expr))
-#endif /* CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK */
+#endif 
 
 int vvp_io_init(const struct lu_env *env, struct cl_object *obj,
 		struct cl_io *io);
@@ -269,7 +269,7 @@ extern unsigned int (*vvp_account_page_dirtied)(struct page *page,
 #define folio_memcg_lock_page(page)	folio_memcg_lock(page_folio((page)))
 #define folio_memcg_unlock_page(page)	folio_memcg_unlock(page_folio((page)))
 #elif defined(HAVE_KALLSYMS_LOOKUP_NAME)
-/* Use kallsyms_lookup_name to acquire folio_memcg_[un]lock */
+
 extern void (*vvp_folio_memcg_lock)(struct folio *folio);
 extern void (*vvp_folio_memcg_unlock)(struct folio *folio);
 #define folio_memcg_lock_page(page) \
@@ -287,4 +287,4 @@ extern void (*vvp_folio_memcg_unlock)(struct folio *folio);
 
 extern const struct file_operations vvp_dump_pgcache_file_ops;
 
-#endif /* VVP_INTERNAL_H */
+#endif 

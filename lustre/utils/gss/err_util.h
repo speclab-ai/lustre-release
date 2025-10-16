@@ -54,4 +54,4 @@ void printerr(int priority, char *format, ...)
 void print_hexl(int pri, unsigned char *cp, int length);
 void print_hex(int pri, unsigned char *cp, int length);
 
-#endif /* _ERR_UTIL_H_ */
+#endif 

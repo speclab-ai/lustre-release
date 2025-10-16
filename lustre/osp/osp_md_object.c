@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
@@ -38,7 +38,7 @@
 #include "osp_internal.h"
 
 #define OUT_UPDATE_BUFFER_SIZE_ADD	4096
-#define OUT_UPDATE_BUFFER_SIZE_MAX	(256 * 4096)  /*  1M update size now */
+#define OUT_UPDATE_BUFFER_SIZE_MAX	(256 * 4096)  
 
 /**
  * osp_create_interpreter() - Interpreter call for object creation
@@ -991,7 +991,7 @@ static int osp_md_object_unlock(const struct lu_env *env,
 {
 	struct lustre_handle	*lockh = einfo->ei_cbdata;
 
-	/* unlock finally */
+	
 	ldlm_lock_decref(lockh, einfo->ei_mode);
 
 	return 0;
@@ -1071,7 +1071,7 @@ static int osp_md_destroy(const struct lu_env *env, struct dt_object *dt,
 	 */
 	osp_check_and_set_rpc_version(oth, o);
 
-	/* retain the object and it's status until it's destroyed on remote */
+	
 	rc = osp_insert_update_callback(env, update, o, NULL,
 					osp_destroy_interpreter);
 	if (rc != 0)
@@ -1220,13 +1220,13 @@ static ssize_t osp_md_write(const struct lu_env *env, struct dt_object *dt,
 	if (rc < 0)
 		RETURN(rc);
 
-	/* to be able to invalidate object's state in case of an error */
+	
 	rc = osp_insert_update_callback(env, update, obj, NULL,
 			osp_write_interpreter);
 	if (rc < 0)
 		RETURN(rc);
 
-	/* XXX: how about the write error happened later? */
+	
 	*pos += buf->lb_len;
 
 	if (obj->opo_attr.la_valid & LA_SIZE && obj->opo_attr.la_size < *pos)
@@ -1312,10 +1312,10 @@ static ssize_t osp_md_read(const struct lu_env *env, struct dt_object *dt,
 	if (rc != 0)
 		GOTO(out_update, rc);
 
-	/* First *and* last might be partial pages, hence +1 */
+	
 	pages = DIV_ROUND_UP(rbuf->lb_len, PAGE_SIZE) + 1;
 
-	/* allocate bulk descriptor */
+	
 	desc = ptlrpc_prep_bulk_imp(req, pages, 1,
 				    PTLRPC_BULK_PUT_SINK,
 				    MDS_BULK_PORTAL,
@@ -1327,7 +1327,7 @@ static ssize_t osp_md_read(const struct lu_env *env, struct dt_object *dt,
 
 	osp_set_req_replay(osp, req);
 	req->rq_bulk_read = 1;
-	/* send request to master and wait for RPC to complete */
+	
 	rc = ptlrpc_queue_wait(req);
 	if (rc != 0)
 		GOTO(out, rc);
@@ -1368,7 +1368,7 @@ out_update:
 	RETURN(rc);
 }
 
-/* These body operation will be used to write symlinks during migration etc */
+
 const struct dt_body_operations osp_md_body_ops = {
 	.dbo_declare_write	= osp_md_declare_write,
 	.dbo_write		= osp_md_write,

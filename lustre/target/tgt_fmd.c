@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright  2008 Sun Microsystems, Inc. All rights reserved
@@ -10,7 +10,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file provides functions to handle Filter Modification Data (FMD).
  * The FMD is responsible for file attributes to be applied in
@@ -67,7 +67,7 @@ static void tgt_fmd_put(struct obd_export *exp, struct tgt_fmd_data *fmd)
 	struct tg_export_data *ted = &exp->exp_target_data;
 
 	spin_lock(&ted->ted_fmd_lock);
-	tgt_fmd_put_nolock(exp, fmd); /* caller reference */
+	tgt_fmd_put_nolock(exp, fmd); 
 	spin_unlock(&ted->ted_fmd_lock);
 }
 
@@ -103,7 +103,7 @@ static void tgt_fmd_expire_nolock(struct obd_export *exp,
 			break;
 
 		list_del_init(&fmd->fmd_list);
-		tgt_fmd_put_nolock(exp, fmd); /* list reference */
+		tgt_fmd_put_nolock(exp, fmd); 
 	}
 }
 
@@ -180,7 +180,7 @@ static struct tgt_fmd_data *tgt_fmd_find(struct obd_export *exp,
 	spin_lock(&ted->ted_fmd_lock);
 	fmd = tgt_fmd_find_nolock(exp, fid);
 	if (fmd)
-		fmd->fmd_refcount++;    /* caller reference */
+		fmd->fmd_refcount++;    
 	spin_unlock(&ted->ted_fmd_lock);
 
 	return fmd;
@@ -214,7 +214,7 @@ static struct tgt_fmd_data *tgt_fmd_get(struct obd_export *exp,
 		if (!found) {
 			list_add_tail(&fmd_new->fmd_list, &ted->ted_fmd_list);
 			fmd_new->fmd_fid = *fid;
-			fmd_new->fmd_refcount++;   /* list reference */
+			fmd_new->fmd_refcount++;   
 			found = fmd_new;
 			ted->ted_fmd_count++;
 		} else {
@@ -222,7 +222,7 @@ static struct tgt_fmd_data *tgt_fmd_get(struct obd_export *exp,
 		}
 	}
 	if (found) {
-		found->fmd_refcount++; /* caller reference */
+		found->fmd_refcount++; 
 		found->fmd_expire = ktime_get_seconds() +
 			class_exp2tgt(exp)->lut_fmd_max_age;
 	} else {

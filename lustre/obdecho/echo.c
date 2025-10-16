@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Peter Braam <braam@clusterfs.com>
  * Author: Andreas Dilger <adilger@clusterfs.com>
@@ -214,7 +214,7 @@ static int echo_map_nb_to_lb(struct obdo *oa, struct obd_ioobj *obj,
 		if (len < plen)
 			plen = len;
 
-		/* check for local buf overflow */
+		
 		if (*left == 0)
 			return -EINVAL;
 
@@ -229,7 +229,7 @@ static int echo_map_nb_to_lb(struct obdo *oa, struct obd_ioobj *obj,
 			res->lnb_page =
 				echo_persistent_pages[res->lnb_file_offset >>
 						      PAGE_SHIFT];
-			/* Take extra ref so __free_pages() can be called OK */
+			
 			get_page(res->lnb_page);
 		} else {
 			res->lnb_page = alloc_page(gfp_mask);
@@ -238,7 +238,7 @@ static int echo_map_nb_to_lb(struct obdo *oa, struct obd_ioobj *obj,
 				       POSTID(&obj->ioo_oid));
 				return -ENOMEM;
 			}
-			/* set mapping so page is not considered encrypted */
+			
 			res->lnb_page->mapping = ECHO_MAPPING_UNENCRYPTED;
 		}
 
@@ -298,13 +298,13 @@ static int echo_finalize_lb(struct obdo *oa, struct obd_ioobj *obj,
 							ostid_id(&obj->ioo_oid),
 							res->lnb_file_offset,
 							res->lnb_len);
-			/* check all the pages always */
+			
 			if (vrc != 0 && rc == 0)
 				rc = vrc;
 		}
 
 		kunmap_local(addr);
-		/* NB see comment above regarding persistent pages */
+		
 		__free_page(page);
 	}
 
@@ -328,7 +328,7 @@ static int echo_preprw(const struct lu_env *env, int cmd,
 	if (!obd)
 		RETURN(-EINVAL);
 
-	/* Temp fix to stop falling foul of osc_announce_cached() */
+	
 	oa->o_valid &= ~(OBD_MD_FLBLOCKS | OBD_MD_FLGRANT);
 
 	memset(res, 0, sizeof(*res) * *pages);
@@ -459,7 +459,7 @@ commitrw_cleanup:
 		if (!page)
 			continue;
 
-		/* NB see comment above regarding persistent pages */
+		
 		__free_page(page);
 		atomic_dec(&obd2echo(obd)->eo_prep);
 	}
@@ -751,15 +751,15 @@ static int echo_srv_init0(const struct lu_env *env,
 
 	esd->esd_dev.ld_ops = &echo_srv_lu_ops;
 	esd->esd_dev.ld_obd = obd;
-	/* set this lu_device to obd, because error handling need it */
+	
 	obd->obd_lu_dev = &esd->esd_dev;
 
-	/* No connection accepted until configurations will finish */
+	
 	spin_lock(&obd->obd_dev_lock);
 	obd->obd_no_conn = 1;
 	spin_unlock(&obd->obd_dev_lock);
 
-	/* non-replayable target */
+	
 	obd->obd_replayable = 0;
 
 	snprintf(ns_name, sizeof(ns_name), "echotgt-%s", obd->obd_uuid.uuid);
@@ -971,7 +971,7 @@ int echo_persistent_pages_init(void)
 		kaddr = kmap_local_page(pg);
 		memset(kaddr, 0, PAGE_SIZE);
 		kunmap_local(kaddr);
-		/* set mapping so page is not considered encrypted */
+		
 		pg->mapping = ECHO_MAPPING_UNENCRYPTED;
 
 		echo_persistent_pages[i] = pg;

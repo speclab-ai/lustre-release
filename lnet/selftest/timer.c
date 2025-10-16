@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Isaac Huang <isaac@clusterfs.com>
  */
@@ -25,7 +25,7 @@
  * sorted by increasing expiry time. The number of slots is 2**7 (128),
  * to cover a time period of 1024 seconds into the future before wrapping.
  */
-#define STTIMER_MINPOLL		3   /* log2 min poll interval (8 s) */
+#define STTIMER_MINPOLL		3   
 #define STTIMER_SLOTTIME	(1 << STTIMER_MINPOLL)
 #define STTIMER_SLOTTIMEMASK	(~(STTIMER_SLOTTIME - 1))
 #define STTIMER_NSLOTS		(1 << 7)
@@ -34,7 +34,7 @@
 
 static struct st_timer_data {
 	spinlock_t		stt_lock;
-	/* start time of the slot processed previously */
+	
 	time64_t		stt_prev_slot;
 	struct list_head	stt_hash[STTIMER_NSLOTS];
 	int			stt_shuttingdown;
@@ -55,7 +55,7 @@ stt_add_timer(struct stt_timer *timer)
 	LASSERT(list_empty(&timer->stt_list));
 	LASSERT(timer->stt_expires > ktime_get_real_seconds());
 
-	/* a simple insertion sort */
+	
 	list_for_each_prev(pos, STTIMER_SLOT(timer->stt_expires)) {
 		struct stt_timer *old = list_entry(pos, struct stt_timer,
 						   stt_list);
@@ -96,7 +96,7 @@ stt_del_timer(struct stt_timer *timer)
 	return ret;
 }
 
-/* called with stt_data.stt_lock held */
+
 static int
 stt_expire_list(struct list_head *slot, time64_t now)
 {

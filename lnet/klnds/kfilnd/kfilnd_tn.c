@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd transaction and state machine processing.
  */
@@ -51,18 +51,18 @@ static void kfilnd_tn_pack_hello_req(struct kfilnd_transaction *tn)
 {
 	struct kfilnd_msg *msg = tn->tn_tx_msg.msg;
 
-	/* Pack the protocol header and payload. */
+	
 	msg->proto.hello.version = KFILND_MSG_VERSION;
 	msg->proto.hello.rx_base = kfilnd_peer_target_rx_base(tn->tn_kp);
 	msg->proto.hello.session_key = tn->tn_kp->kp_local_session_key;
 
-	/* TODO: Support multiple RX contexts per peer. */
+	
 	msg->proto.hello.rx_count = 1;
 
-	/* Pack the transport header. */
+	
 	msg->magic = KFILND_MSG_MAGIC;
 
-	/* Mesage version zero is only valid for hello requests. */
+	
 	msg->version = 0;
 	msg->type = KFILND_MSG_HELLO_REQ;
 	msg->nob = sizeof(struct kfilnd_hello_msg) +
@@ -71,7 +71,7 @@ static void kfilnd_tn_pack_hello_req(struct kfilnd_transaction *tn)
 	msg->srcnid = lnet_nid_to_nid4(&tn->tn_ep->end_dev->kfd_ni->ni_nid);
 	msg->dstnid = tn->tn_kp->kp_nid;
 
-	/* Checksum entire message. */
+	
 	msg->cksum = kfilnd_tn_cksum(msg, msg->nob);
 
 	tn->tn_tx_msg.length = msg->nob;
@@ -81,18 +81,18 @@ static void kfilnd_tn_pack_hello_rsp(struct kfilnd_transaction *tn)
 {
 	struct kfilnd_msg *msg = tn->tn_tx_msg.msg;
 
-	/* Pack the protocol header and payload. */
+	
 	msg->proto.hello.version = tn->tn_kp->kp_version;
 	msg->proto.hello.rx_base = kfilnd_peer_target_rx_base(tn->tn_kp);
 	msg->proto.hello.session_key = tn->tn_kp->kp_local_session_key;
 
-	/* TODO: Support multiple RX contexts per peer. */
+	
 	msg->proto.hello.rx_count = 1;
 
-	/* Pack the transport header. */
+	
 	msg->magic = KFILND_MSG_MAGIC;
 
-	/* Mesage version zero is only valid for hello requests. */
+	
 	msg->version = 0;
 	msg->type = KFILND_MSG_HELLO_RSP;
 	msg->nob = sizeof(struct kfilnd_hello_msg) +
@@ -101,7 +101,7 @@ static void kfilnd_tn_pack_hello_rsp(struct kfilnd_transaction *tn)
 	msg->srcnid = lnet_nid_to_nid4(&tn->tn_ep->end_dev->kfd_ni->ni_nid);
 	msg->dstnid = tn->tn_kp->kp_nid;
 
-	/* Checksum entire message. */
+	
 	msg->cksum = kfilnd_tn_cksum(msg, msg->nob);
 
 	tn->tn_tx_msg.length = msg->nob;
@@ -111,7 +111,7 @@ static void kfilnd_tn_pack_bulk_req(struct kfilnd_transaction *tn)
 {
 	struct kfilnd_msg *msg = tn->tn_tx_msg.msg;
 
-	/* Pack the transport header. */
+	
 	msg->magic = KFILND_MSG_MAGIC;
 	msg->version = tn->tn_kp->kp_version;
 	msg->type = tn->msg_type;
@@ -123,7 +123,7 @@ static void kfilnd_tn_pack_bulk_req(struct kfilnd_transaction *tn)
 		msg->nob = sizeof(struct kfilnd_bulk_req_msg) +
 			offsetof(struct kfilnd_msg, proto);
 
-		/* Pack the protocol header and payload. */
+		
 		lnet_hdr_to_nid4(&tn->tn_lntmsg->msg_hdr,
 				 &msg->proto.bulk_req.hdr);
 		msg->proto.bulk_req.key = tn->tn_mr_key;
@@ -132,7 +132,7 @@ static void kfilnd_tn_pack_bulk_req(struct kfilnd_transaction *tn)
 		msg->nob = sizeof(struct kfilnd_bulk_req_msg_v2) +
 			offsetof(struct kfilnd_msg, proto);
 
-		/* Pack the protocol header and payload. */
+		
 		lnet_hdr_to_nid4(&tn->tn_lntmsg->msg_hdr,
 				 &msg->proto.bulk_req_v2.kbrm2_hdr);
 		msg->proto.bulk_req_v2.kbrm2_key = tn->tn_mr_key;
@@ -141,7 +141,7 @@ static void kfilnd_tn_pack_bulk_req(struct kfilnd_transaction *tn)
 						tn->tn_kp->kp_local_session_key;
 	}
 
-	/* Checksum entire message. */
+	
 	msg->cksum = kfilnd_tn_cksum(msg, msg->nob);
 
 	tn->tn_tx_msg.length = msg->nob;
@@ -151,7 +151,7 @@ static void kfilnd_tn_pack_immed_msg(struct kfilnd_transaction *tn)
 {
 	struct kfilnd_msg *msg = tn->tn_tx_msg.msg;
 
-	/* Pack the protocol header and payload. */
+	
 	lnet_hdr_to_nid4(&tn->tn_lntmsg->msg_hdr, &msg->proto.immed.hdr);
 
 	lnet_copy_kiov2flat(KFILND_IMMEDIATE_MSG_SIZE,
@@ -161,7 +161,7 @@ static void kfilnd_tn_pack_immed_msg(struct kfilnd_transaction *tn)
 			    tn->tn_num_iovec, tn->tn_kiov, 0,
 			    tn->tn_nob);
 
-	/* Pack the transport header. */
+	
 	msg->magic = KFILND_MSG_MAGIC;
 	msg->version = tn->tn_kp->kp_version;
 	msg->type = tn->msg_type;
@@ -170,7 +170,7 @@ static void kfilnd_tn_pack_immed_msg(struct kfilnd_transaction *tn)
 	msg->srcnid = lnet_nid_to_nid4(&tn->tn_ep->end_dev->kfd_ni->ni_nid);
 	msg->dstnid = tn->tn_kp->kp_nid;
 
-	/* Checksum entire message. */
+	
 	msg->cksum = kfilnd_tn_cksum(msg, msg->nob);
 
 	tn->tn_tx_msg.length = msg->nob;
@@ -186,13 +186,13 @@ static int kfilnd_tn_unpack_msg(struct kfilnd_ep *ep, struct kfilnd_msg *msg,
 		return -EPROTO;
 	}
 
-	/* TODO: Support byte swapping on mixed endian systems. */
+	
 	if (msg->magic != KFILND_MSG_MAGIC) {
 		KFILND_EP_ERROR(ep, "Bad magic: %#x", msg->magic);
 		return -EPROTO;
 	}
 
-	/* TODO: Allow for older versions. */
+	
 	if (msg->version > KFILND_MSG_VERSION) {
 		KFILND_EP_ERROR(ep, "Bad version: %#x", msg->version);
 		return -EPROTO;
@@ -204,7 +204,7 @@ static int kfilnd_tn_unpack_msg(struct kfilnd_ep *ep, struct kfilnd_msg *msg,
 		return -EPROTO;
 	}
 
-	/* If kfilnd_tn_cksum() returns a non-zero value, checksum is bad. */
+	
 	if (msg->cksum != NO_CHECKSUM && kfilnd_tn_cksum(msg, msg->nob)) {
 		KFILND_EP_ERROR(ep, "Bad checksum");
 		return -EPROTO;
@@ -306,7 +306,7 @@ static void kfilnd_tn_state_change(struct kfilnd_transaction *tn,
 static void kfilnd_tn_status_update(struct kfilnd_transaction *tn, int status,
 				    enum lnet_msg_hstatus hstatus)
 {
-	/* Only the first non-ok status will take. */
+	
 	if (tn->tn_status == 0) {
 		KFILND_TN_DEBUG(tn, "%d -> %d status change", tn->tn_status,
 				status);
@@ -341,10 +341,10 @@ void kfilnd_tn_process_rx_event(struct kfilnd_immediate_buffer *bufdesc,
 	enum tn_events event = TN_EVENT_RX_HELLO;
 	enum kfilnd_msg_type msg_type;
 
-	/* Increment buf ref count for this work */
+	
 	atomic_inc(&bufdesc->immed_ref);
 
-	/* Unpack the message */
+	
 	rc = kfilnd_tn_unpack_msg(ep, rx_msg, msg_size);
 	if (rc || CFS_FAIL_CHECK(CFS_KFI_FAIL_MSG_UNPACK)) {
 		kfilnd_ep_imm_buffer_put(bufdesc);
@@ -443,11 +443,11 @@ static void kfilnd_tn_finalize(struct kfilnd_transaction *tn, bool *tn_released)
 		*tn_released = true;
 	}
 
-	/* Release the reference on the multi-receive buffer. */
+	
 	if (tn->tn_posted_buf)
 		kfilnd_ep_imm_buffer_put(tn->tn_posted_buf);
 
-	/* Finalize LNet operation. */
+	
 	if (tn->tn_lntmsg) {
 		tn->tn_lntmsg->msg_health_status = tn->hstatus;
 		lnet_finalize(tn->tn_lntmsg, tn->tn_status);
@@ -531,7 +531,7 @@ static void kfilnd_tn_timeout_enable(struct kfilnd_transaction *tn)
 	mod_timer(&tn->timeout_timer, expires);
 }
 
-/*  The following are the state machine routines for the transactions. */
+
 static int kfilnd_tn_state_send_failed(struct kfilnd_transaction *tn,
 				       enum tn_events event, int status,
 				       bool *tn_released)
@@ -549,7 +549,7 @@ static int kfilnd_tn_state_send_failed(struct kfilnd_transaction *tn,
 		rc = kfilnd_tn_cancel_tag_recv(tn);
 
 		switch (rc) {
-		/* Async event will progress transaction. */
+		
 		case 0:
 			kfilnd_tn_state_change(tn, TN_STATE_FAIL);
 			return 0;
@@ -598,7 +598,7 @@ static int kfilnd_tn_state_tagged_recv_posted(struct kfilnd_transaction *tn,
 
 		rc = kfilnd_ep_post_send(tn->tn_ep, tn);
 		switch (rc) {
-		/* Async event will progress immediate send. */
+		
 		case 0:
 			kfilnd_tn_state_change(tn, TN_STATE_WAIT_COMP);
 			return 0;
@@ -720,10 +720,10 @@ static int kfilnd_tn_state_idle(struct kfilnd_transaction *tn,
 		else
 			kfilnd_tn_pack_hello_req(tn);
 
-		/* Send immediate message. */
+		
 		rc = kfilnd_ep_post_send(tn->tn_ep, tn);
 		switch (rc) {
-		/* Async event will progress immediate send. */
+		
 		case 0:
 			kfilnd_tn_state_change(tn, TN_STATE_IMM_SEND);
 			return 0;
@@ -750,11 +750,11 @@ static int kfilnd_tn_state_idle(struct kfilnd_transaction *tn,
 		break;
 
 	case TN_EVENT_INIT_BULK:
-		/* Post tagged receive buffer used to land bulk response. */
+		
 		rc = kfilnd_ep_post_tagged_recv(tn->tn_ep, tn);
 
 		switch (rc) {
-		/* Transition to TN_STATE_TAGGED_RECV_POSTED on success. */
+		
 		case 0:
 			kfilnd_tn_state_change(tn, TN_STATE_TAGGED_RECV_POSTED);
 
@@ -808,7 +808,7 @@ static int kfilnd_tn_state_idle(struct kfilnd_transaction *tn,
 		LASSERT(kfilnd_peer_is_new_peer(tn->tn_kp) == false);
 		msg = tn->tn_rx_msg.msg;
 
-		/* Update the NID address with the new preferred RX context. */
+		
 		kfilnd_peer_alive(tn->tn_kp);
 
 		/* Pass message up to LNet
@@ -818,7 +818,7 @@ static int kfilnd_tn_state_idle(struct kfilnd_transaction *tn,
 		KFILND_TN_DEBUG(tn, "%s -> TN_STATE_IMM_RECV state change",
 				tn_state_to_str(tn->tn_state));
 
-		/* TODO: Do not manually update this state change. */
+		
 		tn->tn_state = TN_STATE_IMM_RECV;
 		mutex_unlock(&tn->tn_lock);
 		*tn_released = true;
@@ -877,7 +877,7 @@ static int kfilnd_tn_state_idle(struct kfilnd_transaction *tn,
 
 			kfilnd_tn_pack_hello_rsp(tn);
 
-			/* Send immediate message. */
+			
 			rc = kfilnd_ep_post_send(tn->tn_ep, tn);
 			switch (rc) {
 			case 0:
@@ -993,7 +993,7 @@ static int kfilnd_tn_state_imm_recv(struct kfilnd_transaction *tn,
 			tn->tn_posted_buf = NULL;
 		}
 
-		/* Update the KFI address to use the response RX context. */
+		
 		tn->tn_target_addr =
 			kfi_rx_addr(KFILND_BASE_ADDR(tn->tn_kp->kp_addr),
 				    tn->tn_response_rx, KFILND_FAB_RX_CTX_BITS);
@@ -1012,7 +1012,7 @@ static int kfilnd_tn_state_imm_recv(struct kfilnd_transaction *tn,
 				rc = kfilnd_ep_post_write(tn->tn_ep, tn);
 
 			switch (rc) {
-			/* Async tagged RMA event will progress transaction. */
+			
 			case 0:
 				kfilnd_tn_state_change(tn,
 						       TN_STATE_WAIT_TAG_RMA_COMP);
@@ -1057,7 +1057,7 @@ static int kfilnd_tn_state_imm_recv(struct kfilnd_transaction *tn,
 
 			rc = kfilnd_ep_post_tagged_send(tn->tn_ep, tn);
 			switch (rc) {
-			/* Async tagged RMA event will progress transaction. */
+			
 			case 0:
 				kfilnd_tn_state_change(tn,
 						       TN_STATE_WAIT_TAG_COMP);
@@ -1124,7 +1124,7 @@ static int kfilnd_tn_state_wait_comp(struct kfilnd_transaction *tn,
 		    CFS_FAIL_CHECK(CFS_KFI_FAIL_WAIT_SEND_COMP3)) {
 			hstatus = LNET_MSG_STATUS_REMOTE_ERROR;
 			kfilnd_tn_status_update(tn, -EIO, hstatus);
-			/* Don't delete peer on debug/test path */
+			
 			kfilnd_peer_tn_failed(tn->tn_kp, -EIO, false);
 			kfilnd_tn_state_change(tn, TN_STATE_FAIL);
 			break;
@@ -1174,7 +1174,7 @@ static int kfilnd_tn_state_wait_comp(struct kfilnd_transaction *tn,
 		rc = kfilnd_tn_cancel_tag_recv(tn);
 
 		switch (rc) {
-		/* Async cancel event will progress transaction. */
+		
 		case 0:
 			kfilnd_tn_status_update(tn, status,
 						LNET_MSG_STATUS_LOCAL_ERROR);
@@ -1321,7 +1321,7 @@ static int kfilnd_tn_state_wait_tag_comp(struct kfilnd_transaction *tn,
 		rc = kfilnd_tn_cancel_tag_recv(tn);
 
 		switch (rc) {
-		/* Async cancel event will progress transaction. */
+		
 		case 0:
 			kfilnd_tn_state_change(tn,
 					       TN_STATE_WAIT_TIMEOUT_TAG_COMP);
@@ -1380,7 +1380,7 @@ static int kfilnd_tn_state_fail(struct kfilnd_transaction *tn,
 
 	switch (event) {
 	case TN_EVENT_TX_FAIL:
-		/* Prior TN states will have deleted the peer if necessary */
+		
 		kfilnd_peer_tn_failed(tn->tn_kp, status, false);
 		break;
 
@@ -1542,7 +1542,7 @@ void kfilnd_tn_free(struct kfilnd_transaction *tn)
 	if (tn->tn_mr_key)
 		kfilnd_ep_put_key(tn->tn_ep, tn->tn_mr_key);
 
-	/* Free send message buffer if needed. */
+	
 	if (tn->tn_tx_msg.msg)
 		kmem_cache_free(imm_buf_cache, tn->tn_tx_msg.msg);
 
@@ -1818,7 +1818,7 @@ int kfilnd_tn_set_kiov_buf(struct kfilnd_transaction *tn,
 		if (tmp_len + cur_len > len)
 			tmp_len = len - cur_len;
 
-		/* tn_kiov is an array of size LNET_MAX_IOV */
+		
 		if (cur_iov >= LNET_MAX_IOV)
 			return -EINVAL;
 

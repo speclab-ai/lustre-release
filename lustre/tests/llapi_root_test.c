@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * The purpose of this test is to check Lustre API root fd cache.
@@ -49,16 +49,16 @@
 		cleanup();						\
 	} while (0)
 
-/* Name of file/directory. Will be set once and will not change. */
-static char *mainpath;  /* path to file on mountpoint 1 */
-static char *mainpath2; /* path to file on mountpoint 2 */
 
-static char mnt_dir[PATH_MAX];	/* Lustre mountpoint 1 */
-static char mnt_dir2[PATH_MAX];	/* Lustre mountpoint 2 */
+static char *mainpath;  
+static char *mainpath2; 
+
+static char mnt_dir[PATH_MAX];	
+static char mnt_dir2[PATH_MAX];	
 static int mnt_fd = -1;
 static int mnt_fd2 = -1;
 
-/* Cleanup our test directory. */
+
 static void cleanup(void)
 {
 	int rc;
@@ -83,7 +83,7 @@ static void *test1_thr(void *arg)
 	return (void *) rc;
 }
 
-/* Race on root cache at startup */
+
 static void test1(void)
 {
 	static pthread_t thread[TEST1_THR_NBR];
@@ -103,13 +103,13 @@ static void test1(void)
 
 	snprintf(fidstr, sizeof(fidstr), DFID_NOBRACE, PFID(&fid));
 	for (iter = 0; iter < 100; iter++) {
-		/* reset cache on first mountpoint */
+		
 		fd = llapi_open_by_fid(mnt_dir, &fid, O_RDONLY);
 		ASSERTF(fd >= 0, "llapi_open_by_fid for " DFID_NOBRACE ": %d",
 			PFID(&fid), fd);
 		close(fd);
 
-		/* start threads with llapi_open_by_fid() */
+		
 		for (i = 0; i < TEST1_THR_NBR; i++)
 			pthread_create(&thread[i], NULL, &test1_thr, fidstr);
 
@@ -131,7 +131,7 @@ static void usage(char *prog)
 
 static void process_args(int argc, char *argv[])
 {
-	/* default mountpoints used */
+	
 	if (argc == 1)
 		return;
 
@@ -152,7 +152,7 @@ static int fill_default_paths(void)
 	static char tmp2[PATH_MAX] = "/mnt/lustre2/";
 	int fd;
 
-	/* default paths needed?*/
+	
 	if (mainpath || mainpath2)
 		return 0;
 

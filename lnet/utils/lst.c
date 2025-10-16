@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Liang Zhen <liangzhen@clusterfs.com>
  */
@@ -47,7 +47,7 @@ static int lst_query_batch_ioctl(char *batch, int test, int server,
 struct lst_sid LST_INVALID_SID = { .ses_nid = LNET_NID_ANY, .ses_stamp = -1 };
 static unsigned int session_key;
 
-/* All nodes running 2.6.50 or later understand feature LST_FEAT_BULK_LEN */
+
 static unsigned int session_features = LST_FEATS_MASK;
 static struct lstcon_trans_stat	trans_stat;
 
@@ -139,7 +139,7 @@ expand_lstr(lstr_t **list, lstr_t *l)
 		nob = strlen(expr);
 		n = nob;
 		if (sscanf(expr, "%u%n", &x, &n) >= 1 && n == nob) {
-			/* simple number */
+			
 			new_lstrs(list, l->lstr_str, b2, x, x, 1);
 			continue;
 		}
@@ -147,7 +147,7 @@ expand_lstr(lstr_t **list, lstr_t *l)
 		n = nob;
 		if (sscanf(expr, "%u-%u%n", &x, &y, &n) >= 2 && n == nob &&
 		    x < y) {
-			/* simple range */
+			
 			new_lstrs(list, l->lstr_str, b2, x, y, 1);
 			continue;
 		}
@@ -155,12 +155,12 @@ expand_lstr(lstr_t **list, lstr_t *l)
 		n = nob;
 		if (sscanf(expr, "%u-%u/%u%n", &x, &y, &z, &n) >= 3 &&
 		    n == nob && x < y) {
-			/* strided range */
+			
 			new_lstrs(list, l->lstr_str, b2, x, y, z);
 			continue;
 		}
 
-		/* syntax error */
+		
 		return -1;
 	} while ((expr = sep) != NULL);
 
@@ -201,7 +201,7 @@ expand_strs(char *str, lstr_t **head)
 			expanded |= rc > 0;
 		}
 
-		/* re-order onto 'list' */
+		
 		while ((l = nlist) != NULL) {
 			nlist = l->lstr_next;
 			l->lstr_next = list;
@@ -335,7 +335,7 @@ lst_print_error(char *sub, const char *def_format, ...)
 {
 	va_list ap;
 
-	/* local error returned from kernel */
+	
 	switch (errno) {
 	case ESRCH:
 		fprintf(stderr, "No session exists\n");
@@ -458,15 +458,15 @@ lst_ioctl(unsigned int opc, void *buf, int len)
 
 	rc = l_ioctl(LNET_DEV_ID, IOC_LIBCFS_LNETST, &data);
 
-	/* local error, no valid RPC result */
+	
 	if (rc != 0)
 		return -1;
 
-	/* RPC error */
+	
 	if (trans_stat.trs_rpc_errno != 0)
 		return -2;
 
-	/* Framework error */
+	
 	if (trans_stat.trs_fwk_errno != 0)
 		return -3;
 
@@ -505,7 +505,7 @@ static int lst_yaml_session(const char *label, const char *timeout, int nlflags,
 	if (session_key)
 		nl_socket_set_local_port(sk, session_key);
 
-	/* Setup reply parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -516,7 +516,7 @@ static int lst_yaml_session(const char *label, const char *timeout, int nlflags,
 	if (rc == 0)
 		goto parser_error;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	yaml_emitter_initialize(&request);
 	rc = yaml_emitter_set_output_netlink(&request, sk,
 					     LNET_SELFTEST_GENL_NAME,
@@ -1147,7 +1147,7 @@ static int lst_yaml_groups(int nlflags, char *name, int states, bool print)
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup reply parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -1158,7 +1158,7 @@ static int lst_yaml_groups(int nlflags, char *name, int states, bool print)
 	if (rc == 0)
 		goto parser_error;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	yaml_emitter_initialize(&request);
 	rc = yaml_emitter_set_output_netlink(&request, sk,
 					     LNET_SELFTEST_GENL_NAME,
@@ -1318,7 +1318,7 @@ emitter_error:
 	}
 	yaml_emitter_cleanup(&request);
 
-	/* display output */
+	
 	if (nlflags == NLM_F_DUMP)
 		rc = lst_yaml_display_groups(&reply, name, states, print);
 parser_error:
@@ -1497,7 +1497,7 @@ jt_lst_ping(int argc,  char **argv)
 	}
 
 	rc = lst_ping_ioctl(str, type, timeout, count, ids, &head);
-	if (rc == -1) { /* local failure */
+	if (rc == -1) { 
 		lst_print_error("debug", "Failed to ping %s: %s\n",
 				(str == NULL) ? "session" : str,
 				strerror(errno));
@@ -1505,7 +1505,7 @@ jt_lst_ping(int argc,  char **argv)
 		goto out;
 	}
 
-	/* ignore RPC errors and framwork errors */
+	
 	list_for_each_entry(ent, &head, rpe_link) {
 		fprintf(stdout, "\t%s: %s [session: %s id: %s]\n",
 			libcfs_id2str(ent->rpe_peer),
@@ -1641,7 +1641,7 @@ jt_lst_add_group(int argc, char **argv)
 	INIT_LIST_HEAD(&head);
 
 	for (i = 2; i < argc; i++) {
-		/* parse address list */
+		
 		rc = lst_parse_nids(argv[i], &count, &ids);
 		if (rc < 0) {
 			fprintf(stderr, "Ignore invalid id list %s\n",
@@ -1795,7 +1795,7 @@ jt_lst_update_group(int argc, char **argv)
 		c = getopt_long(argc, argv, "fc:r:", update_group_opts,
 				&optidx);
 
-		/* Detect the end of the options. */
+		
 		if (c == -1)
 			break;
 
@@ -1828,7 +1828,7 @@ jt_lst_update_group(int argc, char **argv)
 		}
 	}
 
-	/* no OPC or group is specified */
+	
 	if (opc == 0 || optind != argc - 1)
 		return lst_print_usage(argv[0]);
 
@@ -1917,7 +1917,7 @@ lst_list_group_all(void)
 	char name[LST_NAME_SIZE];
 	int rc, i;
 
-	/* no group is specified, list name of all groups */
+	
 	for (i = 0; ; i++) {
 		rc = lst_list_group_ioctl(LST_NAME_SIZE, name, i);
 		if (rc == 0) {
@@ -2028,7 +2028,7 @@ jt_lst_list_group(int argc, char **argv)
 	}
 old_api:
 	if (optind == argc) {
-		/* no group is specified, list name of all groups */
+		
 		rc = lst_list_group_all();
 
 		return rc;
@@ -2037,7 +2037,7 @@ old_api:
 	if (!verbose)
 		fprintf(stdout, LST_NODES_TITLE);
 
-	/* list nodes in specified groups */
+	
 	for (i = optind; i < argc; i++) {
 		rc = lst_info_group_ioctl(argv[i], &gent, NULL, NULL, NULL);
 		if (rc != 0) {
@@ -2200,7 +2200,7 @@ lst_stat_req_param_alloc(char *name, lst_stat_req_param_t **srpp, int save_old)
 }
 
 typedef struct {
-	/* TODO */
+	
 	int foo;
 } lst_srpc_stat_result;
 
@@ -2330,16 +2330,16 @@ lst_print_lnet_stat(char *name, int bwrt, int rdwr, int type, int mbs)
 
 	units = (mbs) ? "MB/s  " : "MiB/s ";
 
-	if (bwrt == 1) /* bw only */
+	if (bwrt == 1) 
 		start1 = 1;
 
-	if (bwrt == 2) /* rates only */
+	if (bwrt == 2) 
 		end1 = 0;
 
-	if (rdwr == 1) /* recv only */
+	if (rdwr == 1) 
 		start2 = 1;
 
-	if (rdwr == 2) /* send only */
+	if (rdwr == 2) 
 		end2 = 0;
 
 	for (i = start1; i <= end1; i++) {
@@ -2405,13 +2405,13 @@ lst_print_stat(char *name, struct list_head *resultp,
 		old = list_first_entry(&resultp[1 - idx], struct lstcon_rpc_ent,
 				       rpe_link);
 
-		/* first time get stats result, can't calculate diff */
+		
 		if (new->rpe_peer.nid == LNET_NID_ANY)
 			break;
 
 		if (new->rpe_peer.nid != old->rpe_peer.nid ||
 		    new->rpe_peer.pid != old->rpe_peer.pid) {
-			/* Something wrong. i.e, somebody change the group */
+			
 			break;
 		}
 
@@ -2449,7 +2449,7 @@ lst_print_stat(char *name, struct list_head *resultp,
 		delta = (float)(sfwk_new->running_ms -
 				sfwk_old->running_ms) / 1000;
 
-		if (!lnet) /* TODO */
+		if (!lnet) 
 			continue;
 
 		lst_cal_lnet_stat(delta, lnet_new, lnet_old, mbs);
@@ -2461,7 +2461,7 @@ lst_print_stat(char *name, struct list_head *resultp,
 	if (errcount > 0)
 		fprintf(stdout, "Failed to stat on %d nodes\n", errcount);
 
-	if (!lnet)  /* TODO */
+	if (!lnet)  
 		return;
 
 	lst_print_lnet_stat(name, bwrt, rdwr, type, mbs);
@@ -2474,15 +2474,15 @@ jt_lst_stat(int argc, char **argv)
 	lst_stat_req_param_t *srp;
 	time_t last    = 0;
 	int optidx = 0;
-	int timeout = 5; /* default timeout, 5 sec */
-	int delay = 5; /* default delay, 5 sec */
-	int count = -1; /* run forever */
-	int lnet = 1; /* lnet stat by default */
+	int timeout = 5; 
+	int delay = 5; 
+	int count = -1; 
+	int lnet = 1; 
 	int bwrt = 0;
 	int rdwr = 0;
 	int type = -1;
 	int idx = 0;
-	int mbs = 0; /* report as MB/s */
+	int mbs = 0; 
 	int rc, c;
 
 	static const struct option stat_opts[] = {
@@ -2586,7 +2586,7 @@ jt_lst_stat(int argc, char **argv)
 		return -1;
 	}
 
-	/* extra count to get first data point */
+	
 	if (count != -1)
 		count++;
 
@@ -2853,7 +2853,7 @@ jt_lst_start_batch(int argc, char **argv)
 		c = getopt_long(argc, argv, "t:",
 				start_batch_opts, &optidx);
 
-		/* Detect the end of the options. */
+		
 		if (c == -1)
 			break;
 
@@ -2949,7 +2949,7 @@ jt_lst_stop_batch(int argc, char **argv)
 
 	while (1) {
 		c = getopt_long(argc, argv, "f", stop_batch_opts, &optidx);
-		/* Detect the end of the options. */
+		
 		if (c == -1)
 			break;
 
@@ -3096,7 +3096,7 @@ lst_list_tsb_nodes(char *batch, int test, int server,
 	if (count == 0)
 		return 0;
 
-	/* verbose list, show nodes in batch or test */
+	
 	dents = malloc(count * sizeof(struct lstcon_node_ent));
 	if (dents == NULL) {
 		fprintf(stdout, "Can't allocate memory\n");
@@ -3139,7 +3139,7 @@ jt_lst_list_batch(int argc, char **argv)
 	struct lstcon_test_batch_ent ent;
 	char *batch   = NULL;
 	int optidx = 0;
-	int verbose = 0; /* list nodes in batch or test */
+	int verbose = 0; 
 	int invalid = 0;
 	int active = 0;
 	int server = 0;
@@ -3190,7 +3190,7 @@ jt_lst_list_batch(int argc, char **argv)
 	}
 
 	if (optind == argc) {
-		/* list all batches */
+		
 		rc = lst_list_batch_all();
 		return rc;
 	}
@@ -3206,7 +3206,7 @@ jt_lst_list_batch(int argc, char **argv)
 	batch = argv[optind];
 
 loop:
-	/* show detail of specified batch or test */
+	
 	rc = lst_info_batch_ioctl(batch, test, server, &ent, NULL, NULL, NULL);
 	if (rc != 0) {
 		lst_print_error((test > 0) ? "test" : "batch",
@@ -3217,7 +3217,7 @@ loop:
 	}
 
 	if (verbose) {
-		/* list nodes in test or batch */
+		
 		rc = lst_list_tsb_nodes(batch, test, server,
 					server ? ent.tbe_srv_nle.nle_nnode :
 						 ent.tbe_cli_nle.nle_nnode,
@@ -3225,13 +3225,13 @@ loop:
 		return rc;
 	}
 
-	/* only show number of hosts in batch or test */
+	
 	if (test == 0) {
 		fprintf(stdout, "Batch: %s Tests: %d State: %d\n",
 			batch, ent.u.tbe_batch.bae_ntest,
 			ent.u.tbe_batch.bae_state);
 		ntest = ent.u.tbe_batch.bae_ntest;
-		test = 1; /* starting from test 1 */
+		test = 1; 
 	} else {
 		fprintf(stdout,
 			"\tTest %d(%s) (loop: %d, concurrency: %d)\n",
@@ -3313,9 +3313,9 @@ jt_lst_query_batch(int argc, char **argv)
 	int optidx  = 0;
 	int verbose = 0;
 	int server  = 0;
-	int timeout = 5; /* default 5 seconds */
-	int delay = 5; /* default 5 seconds */
-	int loop = 1; /* default 1 loop */
+	int timeout = 5; 
+	int delay = 5; 
+	int loop = 1; 
 	int active = 0;
 	int error = 0;
 	int idle = 0;
@@ -3347,7 +3347,7 @@ jt_lst_query_batch(int argc, char **argv)
 		c = getopt_long(argc, argv, "o:d:c:t:saiel",
 				query_batch_opts, &optidx);
 
-		/* Detect the end of the options. */
+		
 		if (c == -1)
 			break;
 
@@ -3439,7 +3439,7 @@ jt_lst_query_batch(int argc, char **argv)
 		}
 
 		if (verbose) {
-			/* Verbose mode */
+			
 			lst_print_tsb_verbose(&head, active, idle, error);
 			continue;
 		}
@@ -3562,7 +3562,7 @@ lst_get_bulk_param(int argc, char **argv, struct lst_test_bulk_param *bulk)
 				return -1;
 			}
 
-			/* NB: blk_srv_off is reserved so far */
+			
 			bulk->blk_cli_off = bulk->blk_srv_off = off;
 			if (end == NULL)
 				return 0;
@@ -3601,7 +3601,7 @@ lst_get_test_param(char *test, int argc, char **argv, void **param, int *plen)
 
 	switch (type) {
 	case LST_TEST_PING:
-		/* unused but needs for kernel part */
+		
 		ping = malloc(sizeof(*ping));
 		if (ping == NULL) {
 			fprintf(stderr, "Out of memory\n");
@@ -3634,7 +3634,7 @@ lst_get_test_param(char *test, int argc, char **argv, void **param, int *plen)
 		break;
 	}
 
-	/* TODO: parse more parameter */
+	
 	return type;
 }
 
@@ -3708,7 +3708,7 @@ jt_lst_add_test(int argc, char **argv)
 		c = getopt_long(argc, argv, "b:c:d:f:l:t:",
 				add_test_opts, &optidx);
 
-		/* Detect the end of the options. */
+		
 		if (c == -1)
 			break;
 

@@ -1,6 +1,6 @@
 #ifndef HAVE_GENRADIX_SUPPORT
 
-/* Taken from 5.15 kernel */
+
 
 #include <linux/export.h>
 #include <lustre_compat/linux/generic-radix-tree.h>
@@ -13,10 +13,10 @@
 
 struct genradix_node {
 	union {
-		/* Interior node: */
+		
 		struct genradix_node	*children[GENRADIX_ARY];
 
-		/* Leaf: */
+		
 		u8			data[PAGE_SIZE];
 	};
 };
@@ -34,7 +34,7 @@ static inline size_t genradix_depth_size(unsigned depth)
 	return 1UL << genradix_depth_shift(depth);
 }
 
-/* depth that's needed for a genradix that can address up to ULONG_MAX: */
+
 #define GENRADIX_MAX_DEPTH	\
 	DIV_ROUND_UP(BITS_PER_LONG - PAGE_SHIFT, GENRADIX_ARY_SHIFT)
 
@@ -112,7 +112,7 @@ void *__genradix_ptr_alloc(struct __genradix *radix, size_t offset,
 	struct genradix_node *n, *new_node = NULL;
 	unsigned level;
 
-	/* Increase tree depth if necessary: */
+	
 	while (1) {
 		struct genradix_root *r = v, *new_root;
 
@@ -239,4 +239,4 @@ void __genradix_free(struct __genradix *radix)
 			      genradix_root_to_depth(r));
 }
 EXPORT_SYMBOL(__genradix_free);
-#endif /* !HAVE_GENRADIX_SUPPORT */
+#endif 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_RPC
@@ -33,7 +33,7 @@ void ptlrpc_fill_bulk_md(struct lnet_md *md, struct ptlrpc_bulk_desc *desc,
 		 mdidx, desc->bd_md_max_brw);
 	LASSERT(desc->bd_iov_count <= PTLRPC_MAX_BRW_PAGES);
 
-	/* just send a lnet header */
+	
 	if (mdidx >= desc->bd_md_count) {
 		md->umd_options |= LNET_MD_KIOV;
 		md->umd_length = 0;

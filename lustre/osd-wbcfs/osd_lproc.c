@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2025, Amazon and/or its affiliates. All rights reserved.
@@ -43,7 +43,7 @@ int osd_procfs_init(struct osd_device *osd, const char *name)
 	LASSERT(type);
 	LASSERT(name);
 
-	/* put reference taken by class_search_type */
+	
 	kobject_put(&type->typ_kobj);
 
 	osd->od_dt_dev.dd_ktype.default_groups = KOBJ_ATTR_GROUPS(wbcfs);

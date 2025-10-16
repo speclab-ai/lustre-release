@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright 2015 Cray Inc, all rights reserved.
@@ -53,14 +53,14 @@
 			(unsigned long long)time(NULL));		\
 	} while (0)
 
-/* Name of file/directory. Will be set once and will not change. */
+
 static char mainpath[PATH_MAX];
 static const char *maindir = "swap_lock_test_dir_4525654";
 
-static char fsmountdir[PATH_MAX];	/* Lustre mountpoint */
-static char *lustre_dir;		/* Test directory inside Lustre */
+static char fsmountdir[PATH_MAX];	
+static char *lustre_dir;		
 
-/* Cleanup our test directory. */
+
 static void cleanup(void)
 {
 	char cmd[PATH_MAX];
@@ -75,7 +75,7 @@ static void cleanup(void)
 		"rm command returned %d", WEXITSTATUS(rc));
 }
 
-/* Create a filename inside the test directory. Will assert on error. */
+
 static char *create_file_name(const char *name)
 {
 	char *filename;
@@ -105,7 +105,7 @@ static int create_file(const char *name, size_t size, unsigned char c)
 
 	free(filename);
 
-	/* Fill-up the new file. */
+	
 	memset(buf, c, sizeof(buf));
 
 	while (size) {
@@ -124,7 +124,7 @@ static int create_file(const char *name, size_t size, unsigned char c)
 	return fd;
 }
 
-/* Test basic swap */
+
 static void test10(void)
 {
 	int rc;
@@ -161,7 +161,7 @@ static void test10(void)
 	close(fd2);
 }
 
-/* Test self swap. It's a no-op and will always succeed. */
+
 static void test11(void)
 {
 	int rc;
@@ -181,7 +181,7 @@ static void test11(void)
 	close(fd1);
 }
 
-/* Test self swap, on different handles. Is a no-op and will always succeed. */
+
 static void test12(void)
 {
 	int rc;
@@ -205,7 +205,7 @@ static void test12(void)
 	close(fd2);
 }
 
-/* Swap with a non Lustre file */
+
 static void test13(void)
 {
 	int rc;
@@ -240,7 +240,7 @@ static void test13(void)
 	close(fd2);
 }
 
-/* Swap with bogus values */
+
 static void test14(void)
 {
 	int rc;
@@ -262,7 +262,7 @@ static void test14(void)
 		strerror(-rc));
 }
 
-/* Lease only test. */
+
 static void test15(void)
 {
 	int rc;
@@ -283,7 +283,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Read lease on read file */
+	
 	fd = open(filename, O_RDONLY);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -296,7 +296,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Write lease on write file */
+	
 	fd = open(filename, O_WRONLY);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -309,7 +309,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Read lease on read/write file */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -322,7 +322,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Write lease on read/write file */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -335,7 +335,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Read lease on write only file */
+	
 	fd = open(filename, O_WRONLY);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -349,7 +349,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Write lease on read only file */
+	
 	fd = open(filename, O_RDONLY);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -363,7 +363,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Get read lease again */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -380,7 +380,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Get write lease again */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -397,7 +397,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Get a lease, release and get again */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -421,7 +421,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Get a write lease, release and get again */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -445,7 +445,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Get and put lease in a loop */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -471,7 +471,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Get a write lease, release and take a read one */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -495,7 +495,7 @@ static void test15(void)
 
 	close(fd);
 
-	/* Get a read lease, release and take a write one */
+	
 	fd = open(filename, O_RDWR);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", filename, strerror(errno));
 
@@ -522,7 +522,7 @@ static void test15(void)
 	free(filename);
 }
 
-/* Lease on file opened by FID */
+
 static void test16(void)
 {
 	int rc;
@@ -556,13 +556,13 @@ static void test16(void)
 	free(filename);
 }
 
-/* Lease on directories */
+
 static void test17(void)
 {
 	int rc;
 	int fd;
 
-	/* On a directory */
+	
 	rc = mkdir(mainpath, 0);
 	ASSERTF(rc == 0, "mkdir failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -576,7 +576,7 @@ static void test17(void)
 
 	close(fd);
 
-	/* On lustre mountpoint */
+	
 	fd = open(fsmountdir, O_DIRECTORY);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", mainpath, strerror(errno));
 
@@ -587,7 +587,7 @@ static void test17(void)
 	close(fd);
 }
 
-/* Read then swap */
+
 static void test20(void)
 {
 	int rc;
@@ -606,7 +606,7 @@ static void test20(void)
 	fd1 = create_file("foo1", foo1_size, 'x');
 	fd2 = create_file("foo2", foo2_size, 'y');
 
-	/* foo2 is bigger than foo1. Read a byte in foo2, past foo1_size. */
+	
 	offset = lseek(fd2, foo1_size + 100, SEEK_SET);
 	ASSERTF(offset == foo1_size + 100, "lseek to pos %zu failed: %s",
 		foo1_size + 100, strerror(errno));
@@ -616,12 +616,12 @@ static void test20(void)
 		strerror(errno), rc);
 	ASSERTF(buf[0] == 'y', "invalid data found on foo2: %x", buf[0]);
 
-	/* Now swap */
+	
 	rc = llapi_fswap_layouts(fd1, fd2, 0, 0, 0);
 	ASSERTF(rc == 0, "llapi_fswap_layouts failed: %s",
 		strerror(-rc));
 
-	/* Read from fd1. file pointer is now positioned inside the new data. */
+	
 	rc = read(fd1, buf, 1);
 	ASSERTF(rc == 1, "read 1 byte on foo1 failed: %s", strerror(errno));
 	ASSERTF(buf[0] == 'y', "invalid data found on foo2: %x", buf[0]);
@@ -632,7 +632,7 @@ static void test20(void)
 		"invalid size found: %llu instead of %zu",
 		(unsigned long long)stbuf.st_size, foo1_size);
 
-	/* Read from fd2. After the swap, the file pointer is past the data. */
+	
 	rc = read(fd2, buf, 1);
 	ASSERTF(rc == 0, "unexpected read returned rc=%d (errno %s)",
 		rc, strerror(errno));
@@ -644,7 +644,7 @@ static void test20(void)
 	ASSERTF(rc == 0, "close failed: %s", strerror(errno));
 }
 
-/* Test multiple swaps between 2 files */
+
 static void test30(void)
 {
 	int rc;
@@ -686,7 +686,7 @@ static void test30(void)
 	close(fd2);
 }
 
-/* Test multiple swaps between 3 files */
+
 static void test31(void)
 {
 	int rc;
@@ -748,7 +748,7 @@ static void test31(void)
 	close(fd3);
 }
 
-/* Swap with lease */
+
 static void test40(void)
 {
 	int rc;
@@ -792,7 +792,7 @@ static void test40(void)
 	ASSERTF(rc == 0, "close failed: %s", strerror(errno));
 }
 
-/* Swap with close but no lease */
+
 static void test41(void)
 {
 	int rc;
@@ -812,7 +812,7 @@ static void test41(void)
 	ASSERTF(rc == -ENOLCK, "llapi_fswap_layouts failed: %s",
 		strerror(-rc));
 
-	/* swap failed, so fd1 has to be closed. */
+	
 	rc = close(fd1);
 	ASSERTF(rc == 0, "close failed: %s", strerror(errno));
 
@@ -820,7 +820,7 @@ static void test41(void)
 	ASSERTF(rc == 0, "close failed: %s", strerror(errno));
 }
 
-/* swap with data versions */
+
 static void test42(void)
 {
 	int rc;
@@ -864,7 +864,7 @@ static void test42(void)
 		close(fd2);
 	}
 
-	/* swaps that should fail */
+	
 	rc = llapi_fswap_layouts(fd1, fd2, 0, 0, SWAP_LAYOUTS_CHECK_DV1);
 	ASSERTF(rc == -EAGAIN, "incorrect return from swap: %s", strerror(-rc));
 
@@ -911,13 +911,13 @@ static void test42(void)
 
 	printf("DV = %llx and %llx\n", dv1, dv2);
 
-	/* Finally, a good swap */
+	
 	rc = llapi_fswap_layouts(fd1, fd2, dv1, dv2,
 				 SWAP_LAYOUTS_CHECK_DV1 |
 				 SWAP_LAYOUTS_CHECK_DV2);
 	ASSERTF(rc == 0, "incorrect return from swap: %s", strerror(-rc));
 
-	/* Check dataversion. */
+	
 	rc = llapi_get_data_version(fd1, &new_dv1, LL_DV_RD_FLUSH);
 	ASSERTF(rc == 0,
 		"cannot get new dataversion for fd1: %s", strerror(-rc));
@@ -932,7 +932,7 @@ static void test42(void)
 
 	printf("new DV = %llx and %llx\n", new_dv1, new_dv2);
 
-	/* Try again with same parameters. */
+	
 	rc = llapi_fswap_layouts(fd1, fd2, dv1, dv2,
 				 SWAP_LAYOUTS_CHECK_DV1 |
 				 SWAP_LAYOUTS_CHECK_DV2);
@@ -941,7 +941,7 @@ static void test42(void)
 	close(fd1);
 	close(fd2);
 
-	/* Reopen the files and check again the dataversion */
+	
 	name_fd1 = create_file_name("foo1");
 	fd1 = open(name_fd1, O_RDONLY);
 	ASSERTF(fd1 >= 0,
@@ -975,7 +975,7 @@ static void test42(void)
 	free(name_fd2);
 }
 
-/* swap group lock, no group */
+
 static void test50(void)
 {
 	int rc;
@@ -999,7 +999,7 @@ static void test50(void)
 	close(fd2);
 }
 
-/* swap group lock, with group */
+
 static void test51(void)
 {
 	int rc;
@@ -1023,7 +1023,7 @@ static void test51(void)
 	close(fd2);
 }
 
-/* swap group lock, with existing group locks */
+
 static void test52(void)
 {
 	int rc;
@@ -1040,7 +1040,7 @@ static void test52(void)
 	fd1 = create_file("foo1", foo1_size, 'x');
 	fd2 = create_file("foo2", foo2_size, 'y');
 
-	/* lock a descriptor, but swap without */
+	
 	rc = llapi_group_lock(fd1, gid);
 	ASSERTF(rc == 0, "cannot lock 'foo1': %s", strerror(-rc));
 
@@ -1055,7 +1055,7 @@ static void test52(void)
 	close(fd2);
 }
 
-/* Swap group lock, with existing group locks, on second descriptor */
+
 static void test53(void)
 {
 	int rc;
@@ -1072,7 +1072,7 @@ static void test53(void)
 	fd1 = create_file("foo1", foo1_size, 'x');
 	fd2 = create_file("foo2", foo2_size, 'y');
 
-	/* lock a descriptor, but swap without */
+	
 	rc = llapi_group_lock(fd2, gid);
 	ASSERTF(rc == 0, "cannot lock 'foo1': %s", strerror(-rc));
 
@@ -1087,7 +1087,7 @@ static void test53(void)
 	close(fd2);
 }
 
-/* swap group lock, lock a descriptor, and try to swap with it. */
+
 static void test54(void)
 {
 	int rc;
@@ -1152,7 +1152,7 @@ static void test55(void)
 	close(fd2);
 }
 
-/* Swap group lock, lock a descriptor, and try to swap with another one. */
+
 static void test56(void)
 {
 	int rc;
@@ -1190,7 +1190,7 @@ static void test56(void)
 	close(fd2);
 }
 
-/* Swap group lock, lock both descriptor, and try to swap with another one. */
+
 static void test57(void)
 {
 	int rc;
@@ -1267,7 +1267,7 @@ static void test58(void)
 	close(fd2);
 }
 
-/* Swap group lock, lock both descriptor with same gid, and swap with none. */
+
 static void test59(void)
 {
 	int rc;
@@ -1349,7 +1349,7 @@ int main(int argc, char *argv[])
 	 */
 	setvbuf(stdout, NULL, _IOLBF, 0);
 
-	/* Create a test filename and reuse it. Remove possibly old files. */
+	
 	rc = snprintf(mainpath, sizeof(mainpath), "%s/%s", lustre_dir, maindir);
 	ASSERTF(rc > 0 && rc < sizeof(mainpath), "invalid name for mainpath");
 

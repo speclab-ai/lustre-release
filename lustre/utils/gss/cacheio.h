@@ -46,4 +46,4 @@ int readline(int fd, char **buf, ssize_t *lenp);
 int qword_get(char **bpp, char *dest, int bufsize);
 int qword_get_int(char **bpp, int *anint);
 
-#endif /* _CACHEIO_H_ */
+#endif 

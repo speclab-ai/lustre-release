@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2016, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Fan, Yong <fan.yong@intel.com>
  */
@@ -124,7 +124,7 @@ static int lfsck_needs_scan_dir(const struct lu_env *env,
 	rc = dt_attr_get(env, obj, la);
 	if (unlikely(rc || (la->la_valid & LA_FLAGS &&
 			    la->la_flags & LUSTRE_ORPHAN_FL))) {
-		/* Orphan directory is empty, does not need scan. */
+		
 		CDEBUG(D_INFO,
 		       "%s: skip orphan dir "DFID", %llx/%x: rc = %d\n",
 		       lfsck_lfsck2name(lfsck), PFID(fid),
@@ -136,11 +136,11 @@ static int lfsck_needs_scan_dir(const struct lu_env *env,
 	LASSERT(ss != NULL);
 
 	while (1) {
-		/* Global /ROOT is visible. */
+		
 		if (unlikely(lu_fid_eq(fid, &lfsck->li_global_root_fid)))
 			return 1;
 
-		/* Backend root is invisible. */
+		
 		if (unlikely(lu_fid_eq(fid, &lfsck->li_local_root_fid)))
 			return 0;
 
@@ -167,7 +167,7 @@ static int lfsck_needs_scan_dir(const struct lu_env *env,
 		if (fid_is_norm(fid))
 			return 1;
 
-		/* Only true after "obj = NULL" set below */
+		
 		if (obj == NULL) {
 			obj = lfsck_object_find_bottom(env, lfsck, fid);
 			if (IS_ERR(obj))
@@ -273,7 +273,7 @@ static int lfsck_load_stripe_lmv(const struct lu_env *env,
 	RETURN(0);
 }
 
-/* LFSCK wrap functions */
+
 
 static void lfsck_fail(const struct lu_env *env, struct lfsck_instance *lfsck,
 		       bool new_checked)
@@ -429,7 +429,7 @@ static int lfsck_prep(const struct lu_env *env, struct lfsck_instance *lfsck,
 			pos = &com->lc_pos_start;
 	}
 
-	/* Init otable-based iterator. */
+	
 	if (pos == NULL) {
 		rc = iops->load(env, lfsck->li_di_oit, 0);
 		if (rc > 0 || unlikely(rc == -ENODATA)) {
@@ -449,7 +449,7 @@ static int lfsck_prep(const struct lu_env *env, struct lfsck_instance *lfsck,
 	if (!lfsck->li_master || fid_is_zero(&pos->lp_dir_parent))
 		GOTO(out, rc = 0);
 
-	/* Find the directory for namespace-based traverse. */
+	
 	obj = lfsck_object_find_bottom(env, lfsck, &pos->lp_dir_parent);
 	if (IS_ERR(obj))
 		RETURN(PTR_ERR(obj));
@@ -471,7 +471,7 @@ static int lfsck_prep(const struct lu_env *env, struct lfsck_instance *lfsck,
 
 		rc = lfsck_open_dir(env, lfsck, pos->lp_dir_cookie);
 		if (rc > 0)
-			/* The end of the directory. */
+			
 			rc = 0;
 	}
 
@@ -604,7 +604,7 @@ static int lfsck_post(const struct lu_env *env, struct lfsck_instance *lfsck,
 	lfsck->li_time_next_checkpoint = lfsck->li_time_last_checkpoint +
 					 LFSCK_CHECKPOINT_INTERVAL;
 
-	/* Ignore some component post failure to make other can go ahead. */
+	
 	return result;
 }
 
@@ -665,7 +665,7 @@ static void lfsck_quit(const struct lu_env *env, struct lfsck_instance *lfsck)
 	}
 }
 
-/* LFSCK engines */
+
 
 static int lfsck_master_dir_engine(const struct lu_env *env,
 				   struct lfsck_instance *lfsck)
@@ -714,7 +714,7 @@ static int lfsck_master_dir_engine(const struct lu_env *env,
 		if (ent->lde_attrs & LUDA_IGNORE)
 			goto checkpoint;
 
-		/* skip dot entry. */
+		
 		if (ent->lde_namelen == 1 && ent->lde_name[0] == '.')
 			goto checkpoint;
 
@@ -743,7 +743,7 @@ checkpoint:
 		if (rc != 0 && bk->lb_param & LPF_FAILOUT)
 			GOTO(out, rc);
 
-		/* Rate control. */
+		
 		lfsck_control_speed(lfsck);
 		if (CFS_FAIL_CHECK(OBD_FAIL_LFSCK_FATAL2))
 			GOTO(out, rc = -EINVAL);
@@ -949,7 +949,7 @@ checkpoint:
 		if (rc != 0 && bk->lb_param & LPF_FAILOUT)
 			RETURN(rc);
 
-		/* Rate control. */
+		
 		lfsck_control_speed(lfsck);
 
 		if (CFS_FAIL_CHECK(OBD_FAIL_LFSCK_FATAL1))
@@ -1069,7 +1069,7 @@ fini_oit:
 		lfsck_quit(env, lfsck);
 	}
 
-	/* XXX: Purge the pinned objects in the future. */
+	
 
 fini_args:
 	lfsck_thread_args_fini(lta);
@@ -1262,7 +1262,7 @@ static int lfsck_assistant_notify_others(const struct lu_env *env,
 		lr->lr_async_windows = bk->lb_async_windows;
 		lr->lr_flags = LEF_TO_OST;
 
-		/* Notify OSTs firstly, then handle other MDTs if needed. */
+		
 		ltds = &lfsck->li_ost_descs;
 		laia->laia_ltds = ltds;
 		down_read(&ltds->ltd_rw_sem);
@@ -1286,7 +1286,7 @@ static int lfsck_assistant_notify_others(const struct lu_env *env,
 		}
 		up_read(&ltds->ltd_rw_sem);
 
-		/* Sync up */
+		
 		rc = ptlrpc_set_wait(env, set);
 		if (rc < 0) {
 			ptlrpc_set_destroy(set);
@@ -1297,7 +1297,7 @@ next:
 		if (!(bk->lb_param & LPF_ALL_TGT))
 			break;
 
-		/* link other MDT targets locallly. */
+		
 		ltds = &lfsck->li_mdt_descs;
 		spin_lock(&ltds->ltd_lock);
 		if (com->lc_type == LFSCK_TYPE_LAYOUT) {
@@ -1336,12 +1336,12 @@ next:
 	case LE_PEER_EXIT: {
 		struct list_head *phase_head;
 
-		/* Handle other MDTs firstly if needed, then notify the OSTs. */
+		
 		if (bk->lb_param & LPF_ALL_TGT) {
 			phase_head = &lad->lad_mdt_list;
 			ltds = &lfsck->li_mdt_descs;
 			if (lr->lr_event == LE_STOP) {
-				/* unlink other MDT targets locallly. */
+				
 				spin_lock(&ltds->ltd_lock);
 				if (com->lc_type == LFSCK_TYPE_LAYOUT) {
 					list_for_each_entry_safe(ltd, next,
@@ -1635,7 +1635,7 @@ int lfsck_assistant_engine(void *args)
 			       "%s: LFSCK assistant sync before the second-stage scaning\n",
 			       lfsck_lfsck2name(lfsck));
 
-			/* Flush async updates before handling orphan. */
+			
 			rc2 = dt_sync(env, lfsck->li_next);
 
 			CDEBUG(D_LFSCK,
@@ -1681,7 +1681,7 @@ p2_next:
 	}
 
 cleanup:
-	/* Cleanup the unfinished requests. */
+	
 	spin_lock(&lad->lad_lock);
 	if (rc < 0)
 		lad->lad_assistant_status = rc;
@@ -1751,7 +1751,7 @@ cleanup:
 	CDEBUG(D_LFSCK, "%s: LFSCK assistant sync before exit\n",
 	       lfsck_lfsck2name(lfsck));
 
-	/* Flush async updates before exit. */
+	
 	rc2 = dt_sync(env, lfsck->li_next);
 
 	CDEBUG(D_LFSCK, "%s: LFSCK assistant synced before exit: rc = %d\n",

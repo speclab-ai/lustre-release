@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _GNU_SOURCE
@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	/* write the character '+' at offset */
+	
 	p_size = pwrite(fd, buf, 1, offset);
 	if (p_size != 1) {
 		fprintf(stderr, "pwrite %s fails (%s)\n",

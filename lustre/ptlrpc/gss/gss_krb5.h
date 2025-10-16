@@ -65,13 +65,13 @@
 #define FLAG_ACCEPTOR_SUBKEY            0x04
 
 struct krb5_header {
-	__u16           kh_tok_id;      /* token id */
-	__u8            kh_flags;       /* acceptor flags */
-	__u8            kh_filler;      /* 0xff */
-	__u16           kh_ec;          /* extra count */
-	__u16           kh_rrc;         /* right rotation count */
-	__u64           kh_seq;         /* sequence number */
-	__u8            kh_cksum[];     /* checksum */
+	__u16           kh_tok_id;      
+	__u8            kh_flags;       
+	__u8            kh_filler;      
+	__u16           kh_ec;          
+	__u16           kh_rrc;         
+	__u64           kh_seq;         
+	__u8            kh_cksum[];     
 };
 
 struct krb5_ctx {
@@ -84,9 +84,9 @@ struct krb5_ctx {
 	__u64			kc_seq_send;
 	__u64			kc_seq_recv;
 	__u32			kc_enctype;
-	struct gss_keyblock	kc_keye;	/* encryption */
-	struct gss_keyblock	kc_keyi;	/* integrity */
-	struct gss_keyblock	kc_keyc;	/* checksum */
+	struct gss_keyblock	kc_keye;	
+	struct gss_keyblock	kc_keyi;	
+	struct gss_keyblock	kc_keyc;	
 	rawobj_t		kc_mech_used;
 };
 
@@ -94,16 +94,16 @@ enum sgn_alg {
         SGN_ALG_DES_MAC_MD5           = 0x0000,
         SGN_ALG_MD2_5                 = 0x0001,
         SGN_ALG_DES_MAC               = 0x0002,
-        SGN_ALG_3                     = 0x0003, /* not published */
-        SGN_ALG_HMAC_MD5              = 0x0011, /* microsoft w2k; no support */
+        SGN_ALG_3                     = 0x0003, 
+        SGN_ALG_HMAC_MD5              = 0x0011, 
         SGN_ALG_HMAC_SHA1_DES3_KD     = 0x0004
 };
 
 enum seal_alg {
         SEAL_ALG_NONE                 = 0xffff,
         SEAL_ALG_DES                  = 0x0000,
-        SEAL_ALG_1                    = 0x0001, /* not published */
-        SEAL_ALG_MICROSOFT_RC4        = 0x0010, /* microsoft w2k; no support */
+        SEAL_ALG_1                    = 0x0001, 
+        SEAL_ALG_MICROSOFT_RC4        = 0x0010, 
         SEAL_ALG_DES3KD               = 0x0002
 };
 
@@ -111,8 +111,8 @@ enum seal_alg {
 #define CKSUMTYPE_RSA_MD4               0x0002
 #define CKSUMTYPE_RSA_MD4_DES           0x0003
 #define CKSUMTYPE_DESCBC                0x0004
-/* des-mac-k */
-/* rsa-md4-des-k */
+
+
 #define CKSUMTYPE_RSA_MD5               0x0007
 #define CKSUMTYPE_RSA_MD5_DES           0x0008
 #define CKSUMTYPE_NIST_SHA              0x0009
@@ -121,7 +121,7 @@ enum seal_alg {
 #define CKSUMTYPE_HMAC_SHA1_96_AES256   0x0010
 #define CKSUMTYPE_HMAC_MD5_ARCFOUR      -138
 
-/* from gssapi_err_krb5.h */
+
 #define KG_CCACHE_NOMATCH                        (39756032L)
 #define KG_KEYTAB_NOMATCH                        (39756033L)
 #define KG_TGT_MISSING                           (39756034L)
@@ -141,20 +141,20 @@ enum seal_alg {
  * these get mapped to linux kernel crypto routines.
  */
 #define ENCTYPE_NULL            0x0000
-/* deprecated ENCTYPE_DES_CBC_CRC     0x0001  DES cbc mode with CRC-32 */
-/* deprecated ENCTYPE_DES_CBC_MD4     0x0002  DES cbc mode with RSA-MD4 */
-/* deprecated ENCTYPE_DES_CBC_MD5     0x0003  DES cbc mode with RSA-MD5 */
-/* deprecated ENCTYPE_DES_CBC_RAW     0x0004  DES cbc mode raw */
-/* deprecated ENCTYPE_DES3_CBC_SHA    0x0005  DES-3 cbc mode with NIST-SHA */
-/* deprecated ENCTYPE_DES3_CBC_RAW    0x0006  DES-3 cbc mode raw */
-/* deprecated ENCTYPE_DES_HMAC_SHA1   0x0008  des-hmac-sha1 */
-/* deprecated ENCTYPE_DES3_CBC_SHA1   0x0010  des3-cbc-sha1 */
+
+
+
+
+
+
+
+
 #define ENCTYPE_AES128_CTS_HMAC_SHA1_96 0x0011
 #define ENCTYPE_AES256_CTS_HMAC_SHA1_96 0x0012
 #define ENCTYPE_AES128_CTS_HMAC_SHA256_128  0x0013
 #define ENCTYPE_AES256_CTS_HMAC_SHA384_192  0x0014
-/* deprecated ENCTYPE_ARCFOUR_HMAC    0x0017 arcfour-hmac-md5 */
-/* deprecated ENCTYPE_ARCFOUR_HMAC_EXP 0x0018 arcfour-hmac-exp */
+
+
 #define ENCTYPE_UNKNOWN         0x01ff
 
-#endif /* PTLRPC_GSS_KRB5_H */
+#endif 

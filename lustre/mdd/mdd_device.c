@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Server (mdd) routines
  *
@@ -38,7 +38,7 @@ static const char mdd_root_dir_name[] = "ROOT";
 static const char mdd_obf_dir_name[] = "fid";
 static const char mdd_lpf_dir_name[] = "lost+found";
 
-/* Slab for MDD object allocation */
+
 struct kmem_cache *mdd_object_kmem;
 
 static struct lu_kmem_descr mdd_caches[] = {
@@ -122,14 +122,14 @@ static int mdd_init0(const struct lu_env *env, struct mdd_device *mdd,
 
 	ENTRY;
 
-	/* LU-8040 Set defaults here, before values configs */
-	mdd->mdd_cl.mc_flags = 0; /* off by default */
-	/* per-server mask is set via parameters if needed */
+	
+	mdd->mdd_cl.mc_flags = 0; 
+	
 	mdd->mdd_cl.mc_proc_mask = CHANGELOG_MINMASK;
-	/* current mask is calculated from mask above and users masks */
+	
 	mdd->mdd_cl.mc_current_mask = CHANGELOG_MINMASK;
-	mdd->mdd_cl.mc_deniednext = 60; /* 60 secs by default */
-	mdd->mdd_cl.mc_enable_shard_pfid = false; /* master pFID by default */
+	mdd->mdd_cl.mc_deniednext = 60; 
+	mdd->mdd_cl.mc_enable_shard_pfid = false; 
 
 	/* Initialize changelog spinlocks early to avoid "spinlock bad magic"
 	 * errors during cleanup if mdd_changelog_init() is never called due to
@@ -153,23 +153,23 @@ static int mdd_init0(const struct lu_env *env, struct mdd_device *mdd,
 		RETURN(rc);
 
 	mdd->mdd_atime_diff = MAX_ATIME_DIFF;
-	/* sync permission changes */
+	
 	mdd->mdd_sync_permission = 1;
-	/* enable changelog garbage collection */
+	
 	mdd->mdd_changelog_gc = 1;
-	/* enable changelog cleanup due to lack of space */
+	
 	mdd->mdd_changelog_free_space_gc = true;
-	/* set when emergency GC is started */
+	
 	mdd->mdd_changelog_emrg_gc = false;
-	/* with a significant amount of idle time */
+	
 	mdd->mdd_changelog_max_idle_time = CHLOG_MAX_IDLE_TIME;
-	/* or a significant amount of late indexes */
+	
 	mdd->mdd_changelog_max_idle_indexes = CHLOG_MAX_IDLE_INDEXES;
-	/* with a reasonable interval between each check */
+	
 	mdd->mdd_changelog_min_gc_interval = CHLOG_MIN_GC_INTERVAL;
-	/* with a very few number of free catalog entries */
+	
 	mdd->mdd_changelog_min_free_cat_entries = CHLOG_MIN_FREE_CAT_ENTRIES;
-	/* special default striping for files created with O_APPEND */
+	
 	mdd->mdd_append_stripe_count = 1;
 	mdd->mdd_append_pool[0] = '\0';
 
@@ -284,7 +284,7 @@ struct changelog_orphan_data {
 	struct mdd_device	*clod_mdd;
 };
 
-/* find oldest changelog record index */
+
 static int changelog_detect_orphan_cb(const struct lu_env *env,
 				      struct llog_handle *llh,
 				      struct llog_rec_hdr *hdr, void *data)
@@ -318,7 +318,7 @@ static int changelog_detect_orphan_cb(const struct lu_env *env,
 	return LLOG_PROC_BREAK;
 }
 
-/* find oldest changelog user index */
+
 static int changelog_user_detect_orphan_cb(const struct lu_env *env,
 					   struct llog_handle *llh,
 					   struct llog_rec_hdr *hdr, void *data)
@@ -368,7 +368,7 @@ static int llog_changelog_cancel_cb(const struct lu_env *env,
 
 	ENTRY;
 
-	/* This is always a (sub)log, not the catalog */
+	
 	LASSERT(llh->lgh_hdr->llh_flags & LLOG_F_IS_PLAIN);
 
 	/* if current context is GC-thread allow it to stop upon umount
@@ -382,7 +382,7 @@ static int llog_changelog_cancel_cb(const struct lu_env *env,
 	 * can also take a long time if huge backlog of records
 	 */
 	if (unlikely(cl_cookie->mdd->mdd_cl.mc_gc_task == current)) {
-		/* wait to be released */
+		
 		while (CFS_FAIL_CHECK_QUIET(OBD_FAIL_FORCE_GC_THREAD))
 			schedule();
 
@@ -391,7 +391,7 @@ static int llog_changelog_cancel_cb(const struct lu_env *env,
 	}
 
 	if (rec->cr.cr_index > cl_cookie->endrec)
-		/* records are in order, so we're done */
+		
 		RETURN(LLOG_PROC_BREAK);
 
 	if (unlikely(CFS_FAIL_PRECHECK(OBD_FAIL_MDS_CHANGELOG_RACE))) {
@@ -440,13 +440,13 @@ static int llog_changelog_cancel(const struct lu_env *env,
 
 	ENTRY;
 
-	/* This should only be called with the catalog handle */
+	
 	LASSERT(cathandle->lgh_hdr->llh_flags & LLOG_F_IS_CAT);
 
 	rc = llog_cat_process(env, cathandle, llog_changelog_cancel_cb,
 			      cookie, 0, 0);
 	if (rc >= 0)
-		rc = 0; /* 0 or 1 means we're done */
+		rc = 0; 
 	else
 		CERROR("%s: cancel idx %u of catalog "DFID": rc = %d\n",
 		       ctxt->loc_obd->obd_name, cathandle->lgh_last_idx,
@@ -516,7 +516,7 @@ static int mdd_changelog_llog_init(const struct lu_env *env,
 
 	ENTRY;
 
-	/* LU-2844 mdd setup failure should not cause umount oops */
+	
 	if (CFS_FAIL_CHECK(OBD_FAIL_MDS_CHANGELOG_INIT))
 		RETURN(-EIO);
 
@@ -555,7 +555,7 @@ static int mdd_changelog_llog_init(const struct lu_env *env,
 	CDEBUG(D_IOCTL, "changelog starting index=%llu\n",
 	       mdd->mdd_cl.mc_index);
 
-	/* setup user changelog */
+	
 	rc = llog_setup(env, obd, &obd->obd_olg, LLOG_CHANGELOG_USER_ORIG_CTXT,
 			obd, &changelog_orig_logops);
 	if (rc) {
@@ -584,10 +584,10 @@ static int mdd_changelog_llog_init(const struct lu_env *env,
 		GOTO(out_uclose, rc);
 	}
 
-	/* Finally apply per-server mask */
+	
 	mdd->mdd_cl.mc_current_mask |= mdd->mdd_cl.mc_proc_mask;
 
-	/* If we have registered users, assume we want changelogs on */
+	
 	if (mdd->mdd_cl.mc_lastuser > 0) {
 		rc = mdd_changelog_on(env, mdd);
 		if (rc < 0)
@@ -628,7 +628,7 @@ static int mdd_changelog_llog_init(const struct lu_env *env,
 		CWARN("%s : orphan changelog records found, starting from index %llu to index %llu, being cleared now\n",
 		      obd->obd_name, clod.clod_index, user_orphan.clod_index);
 
-		/* XXX we may need to run end of purge as a separate thread */
+		
 		rc = llog_changelog_cancel(env, ctxt, &cl_cookie);
 		if (rc < 0) {
 			CERROR("%s: purge of changelog orphan records failed: rc = %d\n",
@@ -660,7 +660,7 @@ static int mdd_changelog_init(const struct lu_env *env, struct mdd_device *mdd)
 	mdd->mdd_cl.mc_starttime = ktime_get();
 	mdd->mdd_cl.mc_lastuser = 0;
 
-	/* ensure a GC check will, and a thread run may, occur upon start */
+	
 	mdd->mdd_cl.mc_gc_time = 0;
 	mdd->mdd_cl.mc_gc_task = MDD_CHLG_GC_NONE;
 	mdd->mdd_cl.mc_mintime = (__u32)ktime_get_real_seconds();
@@ -687,10 +687,10 @@ static void mdd_changelog_fini(const struct lu_env *env,
 	mdd->mdd_cl.mc_flags = CLM_CLEANUP_DONE;
 
 again:
-	/* stop GC-thread if running */
+	
 	spin_lock(&mdd->mdd_cl.mc_lock);
 	if (likely(mdd->mdd_cl.mc_gc_task == MDD_CHLG_GC_NONE)) {
-		/* avoid any attempt to run a GC-thread */
+		
 		mdd->mdd_cl.mc_gc_task = current;
 		spin_unlock(&mdd->mdd_cl.mc_lock);
 	} else {
@@ -702,7 +702,7 @@ again:
 			 * and to have set mc_gc_task to itself
 			 */
 			spin_unlock(&mdd->mdd_cl.mc_lock);
-			/* Add a tiny sleep */
+			
 			schedule_timeout_uninterruptible(1);
 			/* go back to fully check if GC-thread has started or
 			 * even already exited or if a new one is starting...
@@ -813,7 +813,7 @@ int mdd_changelog_write_header(const struct lu_env *env,
 	rec->cr.cr_type = CL_MARK;
 	rec->cr.cr_namelen = len;
 	memcpy(changelog_rec_name(&rec->cr), obd->obd_name, rec->cr.cr_namelen);
-	/* Status and action flags */
+	
 	rec->cr.cr_markerflags = mdd->mdd_cl.mc_flags | markerflags;
 	rec->cr_hdr.lrh_len = llog_data_len(changelog_rec_size(&rec->cr) +
 					    rec->cr.cr_namelen);
@@ -828,7 +828,7 @@ int mdd_changelog_write_header(const struct lu_env *env,
 		rc = 0;
 	llog_ctxt_put(ctxt);
 
-	/* assume on or off event; reset repeat-access time */
+	
 	mdd->mdd_cl.mc_starttime = ktime_get();
 	RETURN(rc);
 }
@@ -859,7 +859,7 @@ static int obf_lookup(const struct lu_env *env, struct md_object *p,
 	    !fid_seq_is_dot(f->f_seq))
 		GOTO(out, rc = -ENOENT);
 
-	/* Check if object with this fid exists */
+	
 	child = mdd_object_find(env, mdd, f);
 	if (IS_ERR(child))
 		GOTO(out, rc = PTR_ERR(child));
@@ -985,7 +985,7 @@ static int mdd_lpf_setup(const struct lu_env *env, struct mdd_device *m)
 	RETURN(0);
 }
 
-/* Create special in-memory "fid" object for open-by-fid.  */
+
 static int mdd_obf_setup(const struct lu_env *env, struct mdd_device *m)
 {
 	struct md_object	*mdo;
@@ -1028,7 +1028,7 @@ static void mdd_dot_lustre_cleanup(const struct lu_env *env,
 	}
 }
 
-/** Setup ".lustre" directory object */
+
 static int mdd_dot_lustre_setup(const struct lu_env *env, struct mdd_device *m)
 {
 	struct md_object	*mdo;
@@ -1036,7 +1036,7 @@ static int mdd_dot_lustre_setup(const struct lu_env *env, struct mdd_device *m)
 	int			 rc;
 
 	ENTRY;
-	/* Create ".lustre" directory in ROOT. */
+	
 	fid = LU_DOT_LUSTRE_FID;
 	rc = mdd_local_file_create(env, m, &m->mdd_root_fid,
 				   dot_lustre_name,
@@ -1073,7 +1073,7 @@ out:
 	return rc;
 }
 
-/* set llog methods and create LLOG_AGENT_ORIG_CTXT llog object in obd_device */
+
 static int mdd_hsm_actions_llog_init(const struct lu_env *env,
 				     struct mdd_device *m)
 {
@@ -1121,7 +1121,7 @@ out_cleanup:
 	return rc;
 }
 
-/* cleanup the context created by llog_setup_named() */
+
 static int mdd_hsm_actions_llog_fini(const struct lu_env *env,
 				     struct mdd_device *m)
 {
@@ -1183,7 +1183,7 @@ static int mdd_process_config(const struct lu_env *env,
 		count = class_modify_config(cfg, PARAM_MDD, &m->mdd_kobj);
 		rc = count > 0 ? 0 : count;
 		if (rc)
-			/* we don't understand; pass it on */
+			
 			rc = next->ld_ops->ldo_process_config(env, next, cfg);
 		break;
 	}
@@ -1243,7 +1243,7 @@ int mdd_local_file_create(const struct lu_env *env, struct mdd_device *mdd,
 	if (unlikely(IS_ERR(parent)))
 		RETURN(PTR_ERR(parent));
 
-	/* create local file/dir, if @fid is passed then try to use it */
+	
 	if (fid_is_zero(fid))
 		dto = local_file_find_or_create(env, mdd->mdd_los, parent,
 						name, mode);
@@ -1289,7 +1289,7 @@ static int mdd_prepare(const struct lu_env *env,
 	if (rc)
 		RETURN(rc);
 
-	/* Setup local dirs */
+	
 	fid.f_seq = FID_SEQ_LOCAL_NAME;
 	fid.f_oid = 1;
 	fid.f_ver = 0;
@@ -1485,7 +1485,7 @@ static int mdd_root_get(const struct lu_env *env,
 	RETURN(0);
 }
 
-/* No permission check is needed.  */
+
 static int mdd_statfs(const struct lu_env *env, struct md_device *m,
 		      struct obd_statfs *sfs)
 {
@@ -1556,7 +1556,7 @@ static struct lu_device *mdd_device_alloc(const struct lu_env *env,
 	return l;
 }
 
-/* we use exports to track all mdd users */
+
 static int mdd_obd_connect(const struct lu_env *env, struct obd_export **exp,
 			   struct obd_device *obd, struct obd_uuid *cluuid,
 			   struct obd_connect_data *data, void *localdata)
@@ -1575,14 +1575,14 @@ static int mdd_obd_connect(const struct lu_env *env, struct obd_export **exp,
 
 	*exp = class_conn2export(&conn);
 
-	/* Why should there ever be more than 1 connect? */
+	
 	LASSERT(mdd->mdd_connects == 0);
 	mdd->mdd_connects++;
 
 	RETURN(0);
 }
 
-/* once last export (don't count self-export) disappeared mdd can be released */
+
 static int mdd_obd_disconnect(struct obd_export *exp)
 {
 	struct obd_device *obd = exp->exp_obd;
@@ -1689,7 +1689,7 @@ static int mdd_changelog_name_check(const struct lu_env *env,
 
 	ENTRY;
 
-	/* first symbol is a letter */
+	
 	if (!isalpha(name[0])) {
 		rc = -EINVAL;
 		CERROR("%s: first char '%c' in '%s' is not letter: rc = %d\n",
@@ -1697,7 +1697,7 @@ static int mdd_changelog_name_check(const struct lu_env *env,
 		RETURN(rc);
 	}
 
-	/* name is valid: contains letters, numbers and '-', '_' only */
+	
 	while (name[++chr]) {
 		if (!(isalnum(name[chr]) || name[chr] == '_' ||
 		      name[chr] == '-')) {
@@ -1787,7 +1787,7 @@ static int mdd_changelog_user_register(const struct lu_env *env,
 	if (mask) {
 		u64 newmask = CHANGELOG_DEFMASK;
 
-		/* if user will use relative mask apply it on default one */
+		
 		rc = cfs_str2mask(mask, changelog_type2str, &newmask,
 				  CHANGELOG_MINMASK, CHANGELOG_ALLMASK,
 				  CHANGELOG_DEFMASK);
@@ -1816,7 +1816,7 @@ static int mdd_changelog_user_register(const struct lu_env *env,
 		GOTO(out_users, rc);
 	}
 
-	/* apply user mask finally */
+	
 	spin_lock(&mdd->mdd_cl.mc_user_lock);
 	mdd->mdd_cl.mc_current_mask |= rec->cur_mask;
 	spin_unlock(&mdd->mdd_cl.mc_user_lock);
@@ -1824,10 +1824,10 @@ static int mdd_changelog_user_register(const struct lu_env *env,
 	CDEBUG(D_IOCTL, "%s: registered changelog user '%s', mask %#x\n",
 	       mdd2obd_dev(mdd)->obd_name, user_name, rec->cur_mask);
 
-	/* Assume we want it on since somebody registered */
+	
 	rc = mdd_changelog_on(env, mdd);
 	if (rc)
-		/* record is added, so don't decrement users on error */
+		
 		GOTO(out, rc);
 out_users:
 	if (rc) {
@@ -1944,14 +1944,14 @@ static int mdd_changelog_user_purge_cb(const struct lu_env *env,
 	mcup->mcup_usercount++;
 
 	if (rec->cur_id != mcup->mcup_id) {
-		/* truncate to the lowest endrec that is not this user */
+		
 		mcup->mcup_minrec = min(mcup->mcup_minrec, rec->cur_endrec);
 		RETURN(0);
 	}
 
 	mdd_chlg_username(rec, mcup->mcup_name, sizeof(mcup->mcup_name));
 
-	/* Unregister this user */
+	
 	cookie.lgc_lgl = llh->lgh_id;
 	cookie.lgc_index = hdr->lrh_index;
 	rc = llog_cat_cancel_records(env, llh->u.phd.phd_cat_handle,
@@ -2005,7 +2005,7 @@ int mdd_changelog_user_purge(const struct lu_env *env,
 	if (mcup.mcup_usercount == 0) {
 		spin_lock(&mdd->mdd_cl.mc_user_lock);
 		if (mdd->mdd_cl.mc_users == 0) {
-			/* No more users; turn changelogs off */
+			
 			CDEBUG(D_IOCTL, "turning off changelogs\n");
 			rc = mdd_changelog_off(env, mdd);
 		}
@@ -2068,7 +2068,7 @@ static int mdd_changelog_clear_cb(const struct lu_env *env,
 		RETURN(-ENXIO);
 
 	rec = container_of(hdr, typeof(*rec), cur_hdr);
-	/* Does the changelog id match the requested id? */
+	
 	if (rec->cur_id != mcuc->mcuc_id) {
 		mcuc->mcuc_minrec = min(mcuc->mcuc_minrec, rec->cur_endrec);
 		mcuc->mcuc_mintime = min(mcuc->mcuc_mintime, rec->cur_time);
@@ -2076,7 +2076,7 @@ static int mdd_changelog_clear_cb(const struct lu_env *env,
 	}
 
 	mdd_chlg_username(rec, mcuc->mcuc_name, sizeof(mcuc->mcuc_name));
-	/* cur_endrec is the oldest purgeable record, make sure we're newer */
+	
 	if (rec->cur_endrec > mcuc->mcuc_endrec) {
 		rc = -EINVAL;
 		CDEBUG(D_IOCTL,
@@ -2098,13 +2098,13 @@ static int mdd_changelog_clear_cb(const struct lu_env *env,
 	CDEBUG(D_IOCTL, "%s: update changelog user %s endrec = %llu\n",
 	       mdd2obd_dev(mdd)->obd_name, mcuc->mcuc_name, rec->cur_endrec);
 
-	/* Update the endrec */
+	
 	rc = llog_write(env, llh, hdr, hdr->lrh_index);
 
 	RETURN(rc);
 }
 
-/* Clear a changelog up to entry specified by endrec for user id. */
+
 static int mdd_changelog_clear(const struct lu_env *env,
 			       struct mdd_device *mdd, __u32 id,
 			       __u64 endrec)
@@ -2125,7 +2125,7 @@ static int mdd_changelog_clear(const struct lu_env *env,
 
 	CDEBUG(D_IOCTL, "%s: Purge request: id=%u, endrec=%llu\n",
 	       mdd2obd_dev(mdd)->obd_name, id, endrec);
-	/* start_rec is the newest (largest value) entry in the changelogs*/
+	
 	spin_lock(&mdd->mdd_cl.mc_lock);
 	start_rec = mdd->mdd_cl.mc_index;
 	spin_unlock(&mdd->mdd_cl.mc_lock);
@@ -2230,7 +2230,7 @@ static int mdd_changelog_user_deregister(const struct lu_env *env,
 	if (!rc)
 		rc = mdd_changelog_user_purge(env, mdd, *id);
 
-	/* recalc changelog current mask */
+	
 	mdd_changelog_recalc_mask(env, mdd);
 
 	RETURN(rc);
@@ -2259,7 +2259,7 @@ static int mdd_iocontrol(const struct lu_env *env, struct md_device *m,
 		RETURN(OBD_IOC_ERROR(obd->obd_name, cmd, "karg=NULL", rc));
 	data = karg;
 
-	/* Doesn't use obd_ioctl_data */
+	
 	switch (cmd) {
 	case OBD_IOC_CHANGELOG_CLEAR: {
 		struct changelog_setinfo *cs = karg;
@@ -2289,7 +2289,7 @@ static int mdd_iocontrol(const struct lu_env *env, struct md_device *m,
 		RETURN(rc);
 	}
 
-	/* Below ioctls use obd_ioctl_data */
+	
 	if (data->ioc_version != OBD_IOCTL_VERSION) {
 		CERROR("%s: iocontrol from '%s' bad magic %x != %x: rc = %d\n",
 		       obd->obd_name, current->comm,
@@ -2324,7 +2324,7 @@ static int mdd_iocontrol(const struct lu_env *env, struct md_device *m,
 	RETURN(rc);
 }
 
-/* type constructor/destructor: mdd_type_init, mdd_type_fini */
+
 LU_TYPE_INIT_FINI(mdd, &mdd_thread_key);
 
 static const struct md_device_operations mdd_ops = {
@@ -2355,7 +2355,7 @@ static struct lu_device_type mdd_device_type = {
 	.ldt_ctx_tags = LCT_MD_THREAD
 };
 
-/* context key constructor: mdd_key_init */
+
 LU_KEY_INIT(mdd, struct mdd_thread_info);
 
 static void mdd_key_fini(const struct lu_context *ctx,
@@ -2371,7 +2371,7 @@ static void mdd_key_fini(const struct lu_context *ctx,
 	OBD_FREE_PTR(info);
 }
 
-/* context key: mdd_thread_key */
+
 LU_CONTEXT_KEY_DEFINE(mdd, LCT_MD_THREAD);
 
 int mdd_generic_thread_start(struct mdd_generic_thread *thread,
@@ -2431,7 +2431,7 @@ static void __exit mdd_exit(void)
 	lu_kmem_fini(mdd_caches);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Meta-data Device Driver ("LUSTRE_MDD_NAME")");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

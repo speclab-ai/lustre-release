@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
  *
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Author: Zach Brown <zab@zabbo.net>
  * Author: Peter J. Braam <braam@clusterfs.com>
@@ -33,7 +33,7 @@
 static struct ksock_tx *
 ksocknal_queue_tx_msg_v1(struct ksock_conn *conn, struct ksock_tx *tx_msg)
 {
-	/* V1.x, just enqueue it */
+	
 	list_add_tail(&tx_msg->tx_list, &conn->ksnc_tx_queue);
 	return NULL;
 }
@@ -43,13 +43,13 @@ ksocknal_next_tx_carrier(struct ksock_conn *conn)
 {
 	struct ksock_tx *tx = conn->ksnc_tx_carrier;
 
-	/* Called holding BH lock: conn->ksnc_scheduler->kss_lock */
+	
 	LASSERT(!list_empty(&conn->ksnc_tx_queue));
 	LASSERT(tx != NULL);
 
-	/* Next TX that can carry ZC-ACK or LNet message */
+	
 	if (tx->tx_list.next == &conn->ksnc_tx_queue) {
-		/* no more packets queued */
+		
 		conn->ksnc_tx_carrier = NULL;
 	} else {
 		conn->ksnc_tx_carrier = list_next_entry(tx, tx_list);
@@ -82,7 +82,7 @@ ksocknal_queue_tx_zcack_v2(struct ksock_conn *conn,
 	}
 
 	if (tx->tx_msg.ksm_type == KSOCK_MSG_NOOP) {
-		/* tx is noop zc-ack, can't piggyback zc-ack cookie */
+		
 		if (tx_ack != NULL)
 			list_add_tail(&tx_ack->tx_list, &conn->ksnc_tx_queue);
 		return 0;
@@ -94,9 +94,9 @@ ksocknal_queue_tx_zcack_v2(struct ksock_conn *conn,
 	if (tx_ack != NULL)
 		cookie = tx_ack->tx_msg.ksm_zc_cookies[1];
 
-	/* piggyback the zc-ack cookie */
+	
 	tx->tx_msg.ksm_zc_cookies[1] = cookie;
-	/* move on to the next TX which can carry cookie */
+	
 	ksocknal_next_tx_carrier(conn);
 
 	return 1;
@@ -113,24 +113,24 @@ ksocknal_queue_tx_msg_v2(struct ksock_conn *conn, struct ksock_tx *tx_msg)
 	 * . If there is NOOP on the connection, piggyback the cookie
 	 *   and replace the NOOP tx, and return the NOOP tx.
 	 */
-	if (tx == NULL) { /* nothing on queue */
+	if (tx == NULL) { 
 		list_add_tail(&tx_msg->tx_list, &conn->ksnc_tx_queue);
 		conn->ksnc_tx_carrier = tx_msg;
 		return NULL;
 	}
 
-	if (tx->tx_msg.ksm_type == KSOCK_MSG_LNET) { /* nothing to carry */
+	if (tx->tx_msg.ksm_type == KSOCK_MSG_LNET) { 
 		list_add_tail(&tx_msg->tx_list, &conn->ksnc_tx_queue);
 		return NULL;
 	}
 
 	LASSERT(tx->tx_msg.ksm_type == KSOCK_MSG_NOOP);
 
-	/* There is a noop zc-ack can be piggybacked */
+	
 	tx_msg->tx_msg.ksm_zc_cookies[1] = tx->tx_msg.ksm_zc_cookies[1];
 	ksocknal_next_tx_carrier(conn);
 
-	/* use new_tx to replace the noop zc-ack packet */
+	
 	list_splice(&tx->tx_list, &tx_msg->tx_list);
 
 	return tx;
@@ -145,7 +145,7 @@ ksocknal_queue_tx_zcack_v3(struct ksock_conn *conn,
 	if (conn->ksnc_type != SOCKLND_CONN_ACK)
 		return ksocknal_queue_tx_zcack_v2(conn, tx_ack, cookie);
 
-	/* non-blocking ZC-ACK (to router) */
+	
 	LASSERT(tx_ack == NULL ||
 		 tx_ack->tx_msg.ksm_type == KSOCK_MSG_NOOP);
 
@@ -158,16 +158,16 @@ ksocknal_queue_tx_zcack_v3(struct ksock_conn *conn,
 		return 0;
 	}
 
-	/* conn->ksnc_tx_carrier != NULL */
+	
 
 	if (tx_ack != NULL)
 		cookie = tx_ack->tx_msg.ksm_zc_cookies[1];
 
-	if (cookie == SOCKNAL_KEEPALIVE_PING) /* ignore keepalive PING */
+	if (cookie == SOCKNAL_KEEPALIVE_PING) 
 		return 1;
 
 	if (tx->tx_msg.ksm_zc_cookies[1] == SOCKNAL_KEEPALIVE_PING) {
-		/* replace the keepalive PING with a real ACK */
+		
 		LASSERT(tx->tx_msg.ksm_zc_cookies[0] == 0);
 		tx->tx_msg.ksm_zc_cookies[1] = cookie;
 		return 1;
@@ -177,7 +177,7 @@ ksocknal_queue_tx_zcack_v3(struct ksock_conn *conn,
 	    cookie == tx->tx_msg.ksm_zc_cookies[1]) {
 		CWARN("%s: duplicated ZC cookie: %llu\n",
 		      libcfs_idstr(&conn->ksnc_peer->ksnp_id), cookie);
-		return 1; /* XXX return error in the future */
+		return 1; 
 	}
 
 	if (tx->tx_msg.ksm_zc_cookies[0] == 0) {
@@ -201,11 +201,11 @@ ksocknal_queue_tx_zcack_v3(struct ksock_conn *conn,
 		return 1;
 	}
 
-	/* takes two or more cookies already */
+	
 	if (tx->tx_msg.ksm_zc_cookies[0] > tx->tx_msg.ksm_zc_cookies[1]) {
 		__u64   tmp = 0;
 
-		/* two separated cookies: (a+2, a) or (a+1, a) */
+		
 		LASSERT(tx->tx_msg.ksm_zc_cookies[0] -
 			 tx->tx_msg.ksm_zc_cookies[1] <= 2);
 
@@ -220,7 +220,7 @@ ksocknal_queue_tx_zcack_v3(struct ksock_conn *conn,
 		}
 
 		if (tmp != 0) {
-			/* range of cookies */
+			
 			tx->tx_msg.ksm_zc_cookies[0] = tmp - 1;
 			tx->tx_msg.ksm_zc_cookies[1] = tmp + 1;
 			return 1;
@@ -235,7 +235,7 @@ ksocknal_queue_tx_zcack_v3(struct ksock_conn *conn,
 			CWARN("%s: duplicated ZC cookie: %llu\n",
 			      libcfs_idstr(&conn->ksnc_peer->ksnp_id),
 			      cookie);
-			return 1; /* XXX: return error in the future */
+			return 1; 
 		}
 
 		if (cookie == tx->tx_msg.ksm_zc_cookies[1] + 1) {
@@ -249,10 +249,10 @@ ksocknal_queue_tx_zcack_v3(struct ksock_conn *conn,
 		}
 	}
 
-	/* failed to piggyback ZC-ACK */
+	
 	if (tx_ack != NULL) {
 		list_add_tail(&tx_ack->tx_list, &conn->ksnc_tx_queue);
-		/* the next tx can piggyback at least 1 ACK */
+		
 		ksocknal_next_tx_carrier(conn);
 	}
 
@@ -270,7 +270,7 @@ ksocknal_match_tx(struct ksock_conn *conn, struct ksock_tx *tx, int nonblk)
 #endif
 
 	if (tx == NULL || tx->tx_lnetmsg == NULL) {
-		/* noop packet */
+		
 		nob = sizeof(struct ksock_msg_hdr);
 	} else {
 		nob = tx->tx_lnetmsg->msg_len +
@@ -279,7 +279,7 @@ ksocknal_match_tx(struct ksock_conn *conn, struct ksock_tx *tx, int nonblk)
 			sizeof(struct lnet_hdr_nid4);
 	}
 
-	/* default checking for typed connection */
+	
 	switch (conn->ksnc_type) {
 	case SOCKLND_CONN_ANY:
 		return SOCKNAL_MATCH_YES;
@@ -400,7 +400,7 @@ ksocknal_match_tx_v4(struct ksock_conn *conn, struct ksock_tx *tx, int nonblk)
 	}
 }
 
-/* (Sink) handle incoming ZC request from sender */
+
 static int
 ksocknal_handle_zcreq(struct ksock_conn *c, __u64 cookie, int remote)
 {
@@ -423,7 +423,7 @@ ksocknal_handle_zcreq(struct ksock_conn *c, __u64 cookie, int remote)
 
 		spin_unlock_bh(&sched->kss_lock);
 
-		if (rc) { /* piggybacked */
+		if (rc) { 
 			read_unlock(&ksocknal_data.ksnd_global_lock);
 			return 0;
 		}
@@ -431,7 +431,7 @@ ksocknal_handle_zcreq(struct ksock_conn *c, __u64 cookie, int remote)
 
 	read_unlock(&ksocknal_data.ksnd_global_lock);
 
-	/* ACK connection is not ready, or can't piggyback the ACK */
+	
 	tx = ksocknal_alloc_tx_noop(cookie, !!remote);
 	if (tx == NULL)
 		return -ENOMEM;
@@ -444,7 +444,7 @@ ksocknal_handle_zcreq(struct ksock_conn *c, __u64 cookie, int remote)
 	return rc;
 }
 
-/* (Sender) handle ZC_ACK from sink */
+
 static int
 ksocknal_handle_zcack(struct ksock_conn *conn, __u64 cookie1, __u64 cookie2)
 {
@@ -462,7 +462,7 @@ ksocknal_handle_zcack(struct ksock_conn *conn, __u64 cookie1, __u64 cookie2)
 	if (cookie2 == SOCKNAL_KEEPALIVE_PING &&
 	    (conn->ksnc_proto == &ksocknal_protocol_v3x ||
 	     conn->ksnc_proto == &ksocknal_protocol_v4x)) {
-		/* keepalive PING for V3.x, just ignore it */
+		
 		return count == 1 ? 0 : -EPROTO;
 	}
 
@@ -522,9 +522,9 @@ ksocknal_send_hello_v1(struct ksock_conn *conn, struct ksock_hello_msg *hello)
 	hmv->version_minor = cpu_to_le16 (KSOCK_PROTO_V1_MINOR);
 
 	if (the_lnet.ln_testprotocompat) {
-		/* single-shot proto check */
+		
 		if (test_and_clear_bit(0, &the_lnet.ln_testprotocompat))
-			hmv->version_major++;   /* just different! */
+			hmv->version_major++;   
 
 		if (test_and_clear_bit(1, &the_lnet.ln_testprotocompat))
 			hmv->magic = LNET_PROTO_MAGIC;
@@ -593,9 +593,9 @@ ksocknal_send_hello_v2(struct ksock_conn *conn, struct ksock_hello_msg *hello)
 	hello4->kshm_nips = hello->kshm_nips;
 
 	if (the_lnet.ln_testprotocompat) {
-		/* single-shot proto check */
+		
 		if (test_and_clear_bit(0, &the_lnet.ln_testprotocompat))
-			hello->kshm_version++;   /* just different! */
+			hello->kshm_version++;   
 	}
 	hello4->kshm_magic = LNET_PROTO_MAGIC;
 	hello4->kshm_version = hello->kshm_version;
@@ -676,7 +676,7 @@ ksocknal_recv_hello_v1(struct ksock_conn *conn, struct ksock_hello_msg *hello,
 		goto out;
 	}
 
-	/* ...and check we got what we expected */
+	
 	if (hdr->type != cpu_to_le32 (LNET_MSG_HELLO)) {
 		rc = -EPROTO;
 		CERROR("Expecting a HELLO hdr, but got type %d from %pISc: rc = %d\n",
@@ -751,7 +751,7 @@ ksocknal_recv_hello_v2(struct ksock_conn *conn, struct ksock_hello_msg *hello,
 	}
 
 	if (conn->ksnc_flip) {
-		/* These must be copied in reverse order to avoid corruption. */
+		
 		hello->kshm_nips = __swab32(hello4->kshm_nips);
 		hello->kshm_ctype = __swab32(hello4->kshm_ctype);
 		hello->kshm_dst_incarnation = __swab64(hello4->kshm_dst_incarnation);
@@ -761,7 +761,7 @@ ksocknal_recv_hello_v2(struct ksock_conn *conn, struct ksock_hello_msg *hello,
 		lnet_nid4_to_nid(hello4->kshm_dst_nid, &hello->kshm_dst_nid);
 		lnet_nid4_to_nid(hello4->kshm_src_nid, &hello->kshm_src_nid);
 	} else {
-		/* These must be copied in reverse order to avoid corruption. */
+		
 		hello->kshm_nips = hello4->kshm_nips;
 		hello->kshm_ctype = hello4->kshm_ctype;
 		hello->kshm_dst_incarnation = hello4->kshm_dst_incarnation;
@@ -843,7 +843,7 @@ ksocknal_recv_hello_v4(struct ksock_conn *conn, struct ksock_hello_msg *hello,
 static void
 ksocknal_pack_msg_v1(struct ksock_tx *tx)
 {
-	/* V1.x has no KSOCK_MSG_NOOP */
+	
 	LASSERT(tx->tx_msg.ksm_type != KSOCK_MSG_NOOP);
 	LASSERT(tx->tx_lnetmsg != NULL);
 

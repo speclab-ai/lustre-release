@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre user credentials context infrastructure.
  *
@@ -23,7 +23,7 @@
 #include <lu_object.h>
 #include <md_object.h>
 
-/* context key constructor/destructor: lu_ucred_key_init, lu_ucred_key_fini */
+
 LU_KEY_INIT_FINI(lu_ucred, struct lu_ucred);
 
 static struct lu_context_key lu_ucred_key = {

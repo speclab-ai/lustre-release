@@ -42,15 +42,10 @@ GERRIT_AUTH_PATH = os.getenv('GERRIT_AUTH_PATH', 'GERRIT_AUTH')
 GERRIT_CHANGE_NUMBER = os.getenv('GERRIT_CHANGE_NUMBER', None)
 
 # GERRIT_AUTH should contain a single JSON dictionary of the form:
-# {
 #     "review.example.com": {
 #         "gerrit/http": {
-#             "username": "example-checkpatch",
 #             "password": "1234"
-#         }
-#     }
 #     ...
-# }
 
 CHECKPATCH_PATHS = _getenv_list('CHECKPATCH_PATHS', ['checkpatch.pl'])
 CHECKPATCH_ARGS = os.getenv('CHECKPATCH_ARGS','--show-types -').split(' ')

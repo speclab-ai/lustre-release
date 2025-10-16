@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
+
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _MOUNT_UTILS_H_
@@ -48,7 +48,7 @@ extern int failover;
 #define vprint(fmt, arg...) if (verbose > 0) printf(fmt, ##arg)
 #define verrprint(fmt, arg...) if (verbose >= 0) fprintf(stderr, fmt, ##arg)
 
-/* mo_flags */
+
 #define MO_IS_LOOP		0x01
 #define MO_FORCEFORMAT		0x02
 #define MO_FAILOVER		0x04
@@ -61,20 +61,20 @@ extern int failover;
 #define MAX_LOOP_DEVICES	16
 #define INDEX_UNASSIGNED	0xFFFF
 
-/* Maximum length of on-disk parameters in the form key=<value> */
+
 #define PARAM_MAX		4096
 
 #ifdef HAVE_SERVER_SUPPORT
-/* used to describe the options to format the lustre disk, not persistent */
+
 struct mkfs_opts {
-	struct lustre_disk_data	mo_ldd; /* to be written in MOUNT_DATA_FILE */
-	char		mo_device[128];   /* disk device name */
-	char		**mo_pool_vdevs;  /* list of pool vdevs */
-	char		mo_loopdev[128];  /* in case a loop dev is needed */
-	char		mo_mkfsopts[512]; /* options for backing-store mkfs */
-	char		*mo_mountopts;    /* mount options for backing fs */
-	long long	mo_device_kb;     /* in KB */
-	int		mo_blocksize_kb;  /* blocksize in KB */
+	struct lustre_disk_data	mo_ldd; 
+	char		mo_device[128];   
+	char		**mo_pool_vdevs;  
+	char		mo_loopdev[128];  
+	char		mo_mkfsopts[512]; 
+	char		*mo_mountopts;    
+	long long	mo_device_kb;     
+	int		mo_blocksize_kb;  
 	int		mo_stripe_count;
 	int		mo_flags;
 	int		mo_mgs_failnodes;
@@ -82,18 +82,18 @@ struct mkfs_opts {
 };
 #endif
 
-/* used to describe the options to mount the lustre disk */
+
 struct mount_opts {
 #ifdef HAVE_SERVER_SUPPORT
 	struct lustre_disk_data	 mo_ldd;
 #endif
 	char	*mo_orig_options;
-	char	*mo_usource;		/* user-specified mount device */
-	char	*mo_source;		/* our mount device name */
-	char	*mo_fsname;		/* file system name */
-	char	 mo_target[PATH_MAX];	/* mount directory */
+	char	*mo_usource;		
+	char	*mo_source;		
+	char	*mo_fsname;		
+	char	 mo_target[PATH_MAX];	
 #ifdef HAVE_GSS
-	char	 mo_skpath[PATH_MAX];	/* shared key file/directory */
+	char	 mo_skpath[PATH_MAX];	
 #endif
 	int	 mo_nomtab;
 	int	 mo_fake;
@@ -144,7 +144,7 @@ static inline const char *mt_type(enum ldd_mount_type mt)
 }
 
 #define OSD_WBCFS_DEV "lustre-wbcfs"
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 #define MT_STR(data)   mt_str((data)->ldd_mount_type)
 
@@ -156,7 +156,7 @@ static inline const char *mt_type(enum ldd_mount_type mt)
 			  LDD_F_SV_TYPE_MDT | LDD_F_SV_TYPE_OST))
 
 
-/* mkfs/mount helper functions */
+
 void fatal(void);
 int run_command_err(char *cmd, int cmdsz, char *error_msg);
 int run_command(char *cmd, int cmdsz);
@@ -180,13 +180,13 @@ __u64 get_device_size(char* device);
 int lustre_rename_fsname(struct mkfs_opts *mop, const char *mntpt,
 			 const char *oldname);
 
-/* loopback helper functions */
+
 int file_create(char *path, __u64 size);
 int loop_format(struct mkfs_opts *mop);
 int loop_setup(struct mkfs_opts *mop);
 int loop_cleanup(struct mkfs_opts *mop);
 
-/* generic target support */
+
 int osd_write_ldd(struct mkfs_opts *mop);
 int osd_read_ldd(char *dev, struct lustre_disk_data *ldd);
 int osd_erase_ldd(struct mkfs_opts *mop, char *param);

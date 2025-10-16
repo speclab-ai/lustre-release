@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2015, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Author: Phil Schwan <phil@clusterfs.com>
  */
@@ -21,7 +21,7 @@
 #include <linux/inet.h>
 #include <linux/inetdevice.h>
 
-/* max value for numeric network address */
+
 #define MAX_NUMERIC_VALUE 0xffffffff
 
 #define IPSTRING_LENGTH 16
@@ -122,31 +122,31 @@ struct nidrange {
 };
 
 struct nidmask {
-	/* Link to nidrange::nr_nidmasks */
+	
 	struct list_head nm_link;
 
-	/* This is the base address that was parsed */
+	
 	union {
 		struct in_addr ipv4;
 		struct in6_addr ipv6;
 	} nm_addr;
 
-	/* Netmask derived from the prefix length */
+	
 	union {
 		struct in_addr ipv4;
 		struct in6_addr ipv6;
 	} nm_netmask;
 
-	/* Network address derived from the base address and the netmask */
+	
 	union {
 		struct in_addr ipv4;
 		struct in6_addr ipv6;
 	} nm_netaddr;
 
-	/* Address family */
+	
 	sa_family_t nm_family;
 
-	/* Prefix length */
+	
 	u8 nm_prefix_len;
 };
 
@@ -200,7 +200,7 @@ cfs_range_expr_parse(char *src, unsigned int min, unsigned int max,
 	if (kstrtouint(src, 0, &num) == 0) {
 		if (num < min || num > max)
 			goto failed;
-		/* <number> is parsed */
+		
 		re->re_lo = num;
 		re->re_hi = re->re_lo;
 		re->re_stride = 1;
@@ -217,17 +217,17 @@ cfs_range_expr_parse(char *src, unsigned int min, unsigned int max,
 		goto failed;
 	re->re_lo = num;
 
-	/* <number> - */
+	
 	if (kstrtouint(strim(src), 0, &num) == 0) {
 		if (num < min || num > max)
 			goto failed;
 		re->re_hi = num;
-		/* <number> - <number> is parsed */
+		
 		re->re_stride = 1;
 		goto out;
 	}
 
-	/* go to check <number> '-' <number> '/' <number> */
+	
 	tok = strim(strsep(&src, "/"));
 	if (!src)
 		goto failed;
@@ -294,7 +294,7 @@ cfs_expr_list_values(struct cfs_expr_list *expr_list, int max, u32 **valpp)
 		}
 	}
 
-	if (count == 0) /* empty expression list */
+	if (count == 0) 
 		return 0;
 
 	if (count > max) {
@@ -497,11 +497,11 @@ parse_prefix_len(char *str)
 	unsigned int prefix_len;
 	char *slash = strchr(str, '/');
 
-	/* IPv4 netmask must include an explicit prefix length */
+	
 	if (!(slash || strchr(str, ':')))
 		return 0;
 
-	/* We treat an IPv6 address without a prefix length as having /128 */
+	
 	if (!slash)
 		return 128;
 
@@ -530,7 +530,7 @@ parse_nidmask(char *str, struct nidrange *nr)
 	if (!nm)
 		return -ENOMEM;
 
-	/* Add to nr_nidmasks so that our caller can free us on error */
+	
 	list_add_tail(&nm->nm_link, &nr->nr_nidmasks);
 
 	nm->nm_prefix_len = parse_prefix_len(str);
@@ -576,7 +576,7 @@ add_nidrange(char *str, struct list_head *nidlist)
 		return NULL;
 	end = str + strlen(nf->nf_name);
 	if (!*end) {
-		/* network name only, e.g. "elan" or "tcp" */
+		
 		netnum = 0;
 	} else {
 		/* e.g. "elan25" or "tcp23", refuse to parse if
@@ -635,7 +635,7 @@ parse_nidrange(char *str, struct list_head *nidlist)
 	if (!nr)
 		return -EINVAL;
 
-	/* Check for a '/' that does not appear inside '[]' */
+	
 	slash = strchr(addrrange, '/');
 	if (strchr(addrrange, ':') || (slash && !strchr(slash, ']')))
 		rc = parse_nidmask(addrrange, nr);
@@ -939,7 +939,7 @@ int cfs_print_nidlist(char *buffer, int count, struct list_head *nidlist)
 }
 EXPORT_SYMBOL(cfs_print_nidlist);
 
-/* Caller should provide a nidlist with a single nidmask */
+
 u8
 cfs_nidmask_get_length(struct list_head *nidlist)
 {
@@ -958,7 +958,7 @@ cfs_nidmask_get_length(struct list_head *nidlist)
 }
 EXPORT_SYMBOL(cfs_nidmask_get_length);
 
-/* Caller should provide a nidlist with a single nidmask */
+
 int
 cfs_nidmask_get_base_nidstr(char *buf, int count, struct list_head *nidlist)
 {
@@ -1032,9 +1032,9 @@ libcfs_ip_str2addr(const char *str, int nob, __u32 *addr)
 	unsigned int	b;
 	unsigned int	c;
 	unsigned int	d;
-	int		n = nob; /* XscanfX */
+	int		n = nob; 
 
-	/* numeric IP? */
+	
 	if (sscanf(str, "%u.%u.%u.%u%n", &a, &b, &c, &d, &n) >= 4 &&
 	    n == nob &&
 	    (a & ~0xff) == 0 && (b & ~0xff) == 0 &&
@@ -1077,7 +1077,7 @@ libcfs_ip_str2addr_size(const char *str, int nob,
 }
 
 
-/* Used by lnet/config.c so it can't be static */
+
 int
 cfs_ip_addr_parse(char *str, int len_ignored, struct list_head *list)
 {
@@ -1483,10 +1483,10 @@ cfs_match_nid_net(struct lnet_nid *nid, __u32 net_type,
 	if (!nf)
 		return 0;
 
-	/* FIXME handle long-addr nid */
+	
 	address = LNET_NIDADDR(lnet_nid_to_nid4(nid));
 
-	/* if either the address or net number don't match then no match */
+	
 	if (!nf->nf_match_addr(address, addr) ||
 	    !cfs_match_net(LNET_NID_NET(nid), net_type, net_num_list))
 		return 0;
@@ -1698,7 +1698,7 @@ libcfs_str2net_internal(const char *str, __u32 *net)
 	if (strlen(str) == (unsigned int)nob) {
 		netnum = 0;
 	} else {
-		if (nf->nf_type == LOLND) /* net number not allowed */
+		if (nf->nf_type == LOLND) 
 			return NULL;
 
 		str += nob;

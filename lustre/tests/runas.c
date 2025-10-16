@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <stdio.h>
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 		Usage_and_abort(name);
 	}
 
-	/* get UID and GID */
+	
 	while ((c = getopt(argc, argv, "+u:g:v:j:hG:")) != -1) {
 		switch (c) {
 		case 'u':
@@ -157,7 +157,7 @@ int main(int argc, char **argv)
 		Usage_and_abort(name);
 	}
 
-	/* assemble the command */
+	
 	my_argv = (char **)malloc(sizeof(char *) * (argc + 1 - optind));
 	if (!my_argv) {
 		fprintf(stderr, "Error in allocating memory. (%s)\n",
@@ -174,7 +174,7 @@ int main(int argc, char **argv)
 	system("whoami");
 #endif
 
-	/* set GID */
+	
 	if (!egid_is_set)
 		egid = grp_id;
 	status = setregid(grp_id, egid);
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 		exit(-1);
 	}
 
-	/* set UID */
+	
 	if (!euid_is_set)
 		euid = user_id;
 	status = setreuid(user_id, euid);
@@ -219,7 +219,7 @@ int main(int argc, char **argv)
 	fprintf(stderr, "\n");
 	fflush(stderr);
 
-	/* The command to be run */
+	
 	execvp(my_argv[0], my_argv);
 	fprintf(stderr, "execvp fails running %s (%d): %s\n", my_argv[0],
 		errno, strerror(errno));

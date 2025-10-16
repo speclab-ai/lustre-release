@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2020, DDN Storage Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Batch Metadata Updating on the server (MDT)
  *
@@ -85,7 +85,7 @@ static int mdt_batch_getattr(struct tgt_session_info *tsi)
 	RETURN(rc);
 }
 
-/* Batch UpdaTe Request with a format known in advance */
+
 #define TGT_BUT_HDL(flags, opc, fn)			\
 [opc - BUT_FIRST_OPC] = {				\
 	.th_name	= #opc,				\
@@ -112,7 +112,7 @@ static struct tgt_handler *mdt_batch_handler_find(__u32 opc)
 		LASSERTF(h->th_opc == opc, "opcode mismatch %d != %d\n",
 			 h->th_opc, opc);
 	} else {
-		h = NULL; /* unsupported opc */
+		h = NULL; 
 	}
 	return h;
 }
@@ -175,7 +175,7 @@ int mdt_batch(struct tgt_session_info *tsi)
 			GOTO(out, rc = err_serious(-EPROTO));
 
 		for (i = 0; i < update_buf_count; i++)
-			/* First *and* last might be partial pages, hence +1 */
+			
 			page_count += DIV_ROUND_UP(bub[i].bub_size,
 						   PAGE_SIZE) + 1;
 
@@ -219,7 +219,7 @@ int mdt_batch(struct tgt_session_info *tsi)
 		GOTO(out, rc);
 	}
 
-	/* Prepare the update reply buffer */
+	
 	reply = req_capsule_server_get(&req->rq_pill, &RMF_BUT_REPLY);
 	if (reply == NULL)
 		GOTO(out, rc = -EPROTO);
@@ -235,7 +235,7 @@ int mdt_batch(struct tgt_session_info *tsi)
 		GOTO(out, rc = -ENOMEM);
 
 	need_reconstruct = tgt_check_resent(req, trd);
-	/* Walk through sub requests in the batch request to execute them. */
+	
 	for (i = 0; i < update_buf_count; i++) {
 		struct batch_update_request *bur;
 		struct lustre_msg *reqmsg = NULL;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -11,7 +11,7 @@
  * of the stat(3) utility and is deprecated.  Either test(3) ([ ]) or
  * stat(3) should be used in all new tests.
  *
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <stdio.h>

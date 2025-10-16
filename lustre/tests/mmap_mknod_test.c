@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -8,7 +8,7 @@
  * Copyright (c) 2019, Whamcloud.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <stdio.h>
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* Create file without striping */
+	
 	rc = mknod(argv[1], S_IFREG | 0666, 0);
 	if (rc) {
 		save_errno = errno;
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 		exit(save_errno);
 	}
 
-	/* use truncate to extend file size */
+	
 	rc = truncate(argv[1], 4096);
 	if (rc) {
 		save_errno = errno;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
 		exit(save_errno);
 	}
 
-	/* mmap of file without striping should work */
+	
 	mmappedData = mmap(NULL, 4096, PROT_READ,
 			   MAP_SHARED, rc, 0);
 	if (mmappedData == MAP_FAILED) {

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: LGPL-2.1-or-later */
+
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
  *     alternatives
@@ -40,14 +40,14 @@
 #define WANT_DEV    0x20
 #define WANT_NID    0x40
 
-/* Define a fixed 4096-byte encryption unit size */
+
 #define LUSTRE_ENCRYPTION_BLOCKBITS   12
 #define LUSTRE_ENCRYPTION_UNIT_SIZE   ((size_t)1 << LUSTRE_ENCRYPTION_BLOCKBITS)
 #define LUSTRE_ENCRYPTION_MASK        (~(LUSTRE_ENCRYPTION_UNIT_SIZE - 1))
 
 #define OBD_NOT_FOUND	(-1)
 
-/* mount point listings in /proc/mounts */
+
 #ifndef PROC_MOUNTS
 #define PROC_MOUNTS "/proc/mounts"
 #endif
@@ -101,9 +101,9 @@ poolpath(glob_t *pool_path, const char *fsname, char *pathname)
 	return rc;
 }
 
-#define LLAPI_LAYOUT_MAGIC 0x11AD1107 /* LLAPILOT */
+#define LLAPI_LAYOUT_MAGIC 0x11AD1107 
 
-/* Helper functions for testing validity of stripe attributes. */
+
 
 static inline bool llapi_stripe_size_is_aligned(uint64_t size)
 {
@@ -133,7 +133,7 @@ static inline bool llapi_pool_name_is_valid(const char **pool_name)
 	if (*pool_name == NULL)
 		return false;
 
-	/* Strip off any 'fsname.' portion. */
+	
 	ptr = strchr(*pool_name, '.');
 	if (ptr != NULL)
 		*pool_name = ptr + 1;
@@ -239,7 +239,7 @@ static inline struct timespec timespec_sub(struct timespec *before,
 	return ret;
 }
 
-/* not ready to expose as official APIs yet, but want to share code */
+
 void llapi_bandwidth_throttle(struct timespec *now, struct timespec *start_time,
 			      uint64_t bandwidth_bytes_sec,
 			      uint64_t total_bytes_written);
@@ -247,4 +247,4 @@ void llapi_stats_log(struct timespec *now, struct timespec *start_time,
 		     struct timespec *last_print, int stats_interval_sec,
 		     uint64_t read_bytes, uint64_t write_bytes,
 		     uint64_t offset, uint64_t file_size_bytes);
-#endif /* _LUSTREAPI_INTERNAL_H_ */
+#endif 

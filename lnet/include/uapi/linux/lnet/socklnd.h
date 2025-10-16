@@ -1,10 +1,10 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * #defines shared between socknal implementation and utilities
  */

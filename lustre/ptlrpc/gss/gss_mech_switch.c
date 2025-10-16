@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BSD-3-Clause
+
 
 /*
  * Modifications for Lustre
@@ -181,7 +181,7 @@ __u32 lgss_inquire_context(struct gss_ctx *context_handle,
                                       endtime);
 }
 
-/* gss_get_mic: compute a mic over message and return mic_token. */
+
 __u32 lgss_get_mic(struct gss_ctx *context_handle,
 		   int msgcnt,
 		   rawobj_t *msg,
@@ -203,7 +203,7 @@ __u32 lgss_get_mic(struct gss_ctx *context_handle,
                               mic_token);
 }
 
-/* gss_verify_mic: check whether the provided mic_token verifies message. */
+
 __u32 lgss_verify_mic(struct gss_ctx *context_handle,
 		      int msgcnt,
 		      rawobj_t *msg,

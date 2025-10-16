@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * OFD access logs: OST (OFD) RPC handlers log accesses by FID and
  * PFID which are read from userspace through character device files
@@ -48,7 +48,7 @@ enum {
 };
 
 struct ofd_access_log {
-	char oal_name[128]; /* lustre-OST0000 */
+	char oal_name[128]; 
 	struct device oal_device;
 	struct cdev oal_cdev;
 	struct rw_semaphore oal_buf_list_sem;
@@ -74,7 +74,7 @@ static DECLARE_WAIT_QUEUE_HEAD(oal_control_wait_queue);
 
 static struct class *oal_log_class;
 static unsigned int oal_log_major;
-static DEFINE_IDR(oal_log_minor_idr); /* TODO Use ida instead. */
+static DEFINE_IDR(oal_log_minor_idr); 
 static DEFINE_SPINLOCK(oal_log_minor_lock);
 
 bool ofd_access_log_size_is_valid(unsigned int size)
@@ -158,7 +158,7 @@ static ssize_t oal_write_entry(struct oal_circ_buf *ocb,
 	memcpy(&circ->buf[head], entry, entry_size);
 	rc = entry_size;
 
-	/* Ensure the entry is stored before we update the head. */
+	
 	smp_store_release(&circ->head,
 			(head + oal->oal_entry_size) & (oal->oal_log_size - 1));
 
@@ -187,7 +187,7 @@ static ssize_t oal_read_entry(struct oal_circ_buf *ocb,
 	 * because you know what you are doing. */
 	spin_lock(&ocb->ocb_read_lock);
 
-	/* Memory barrier usage follows circular-buffers.txt. */
+	
 	head = smp_load_acquire(&circ->head);
 	tail = circ->tail;
 
@@ -198,11 +198,11 @@ static ssize_t oal_read_entry(struct oal_circ_buf *ocb,
 
 	BUG_ON(CIRC_CNT(head, tail, oal->oal_log_size) < oal->oal_entry_size);
 
-	/* Extract one entry from the buffer. */
+	
 	rc = min_t(size_t, oal->oal_entry_size, entry_buf_size);
 	memcpy(entry_buf, &circ->buf[tail], rc);
 
-	/* Memory barrier usage follows circular-buffers.txt. */
+	
 	smp_store_release(&circ->tail,
 			(tail + oal->oal_entry_size) & (oal->oal_log_size - 1));
 
@@ -242,7 +242,7 @@ static int oal_file_open(struct inode *inode, struct file *filp)
 	return nonseekable_open(inode, filp);
 }
 
-/* User buffer size must be a multiple of ofd access entry size. */
+
 static ssize_t oal_file_read(struct file *filp, char __user *buf, size_t count,
 			loff_t *ppos)
 {
@@ -273,7 +273,7 @@ static ssize_t oal_file_read(struct file *filp, char __user *buf, size_t count,
 			if (rc)
 				break;
 		} else if (rc <= 0) {
-			break; /* cloed or error */
+			break; 
 		} else {
 			if (copy_to_user(buf, entry, oal->oal_entry_size)) {
 				rc = -EFAULT;
@@ -526,7 +526,7 @@ void ofd_access(const struct lu_env *env,
 	unsigned int flags = (rw == READ) ? OFD_ACCESS_READ : OFD_ACCESS_WRITE;
 	struct ofd_access_log *oal = m->ofd_access_log;
 
-	/* obdfilter-survey does not set parent FIDs. */
+	
 	if (fid_is_zero(parent_fid))
 		return;
 
@@ -546,7 +546,7 @@ void ofd_access(const struct lu_env *env,
 		struct oal_circ_buf *ocb;
 		int rc;
 
-		/* learn target MDT from FID's sequence */
+		
 		rc = fld_server_lookup(env, m->ofd_seq_site.ss_server_fld,
 				       fid_seq(parent_fid), &range);
 		if (unlikely(rc))
@@ -555,7 +555,7 @@ void ofd_access(const struct lu_env *env,
 
 		down_read(&oal->oal_buf_list_sem);
 		list_for_each_entry(ocb, &oal->oal_circ_buf_list, ocb_list) {
-			/* filter by MDT index if requested */
+			
 			if (ocb->ocb_filter == 0xffffffff ||
 			    range.lsr_index == ocb->ocb_filter)
 				oal_write_entry(ocb, &oae, sizeof(oae));
@@ -588,7 +588,7 @@ void ofd_access_log_delete(struct ofd_access_log *oal)
 	put_device(&oal->oal_device);
 }
 
-/* private_data for control device file. */
+
 struct oal_control_file {
 	int ccf_event_count;
 };
@@ -609,7 +609,7 @@ static int oal_control_file_open(struct inode *inode, struct file *filp)
 	if (rc)
 		return rc;
 
-	/* ccf->ccf_event_count = 0 on open */
+	
 	ccf = kzalloc(sizeof(*ccf), GFP_KERNEL);
 	if (!ccf)
 		return -ENOMEM;

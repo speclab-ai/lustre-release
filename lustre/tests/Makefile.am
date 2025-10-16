@@ -1,10 +1,7 @@
-# Lustre test Makefile
 AM_CFLAGS := -fPIC -D_GNU_SOURCE \
 	     -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64
-
 DIST_SUBDIRS = mpi
 DIST_SUBDIRS += lutf iabf
-
 noinst_DATA =
 noinst_DATA += disk2_7-ldiskfs.tar.bz2 disk2_7-zfs.tar.bz2
 noinst_DATA += disk2_9-zfs.tar.bz2 disk2_9-ldiskfs.tar.bz2
@@ -48,10 +45,8 @@ nobase_noinst_SCRIPTS += posix/posix.cfg
 nobase_noinst_DATA = acl/*.test
 nobase_noinst_DATA += clientapi/simple_test.c
 nobase_noinst_DATA += except/*.ex
-
 EXTRA_DIST = $(noinst_SCRIPTS) $(noinst_DATA) \
              $(nobase_noinst_SCRIPTS) $(nobase_noinst_DATA)
-
 THETESTS = openunlink truncate directio writeme utime
 THETESTS += tchmod fsx test_brw sendfile
 THETESTS += createmany chownmany statmany multifstat createtest
@@ -73,25 +68,17 @@ THETESTS += check_fallocate splice-test lseek_test expand_truncate_test
 THETESTS += foreign_symlink_striping lov_getstripe_old io_uring_probe
 THETESTS += fadvise_dontneed_helper llapi_root_test aheadmany
 THETESTS += monitor_lustrefs
-
 if LIBAIO
 THETESTS += aiocp
 endif
-
-
 if TESTS
-
 SUBDIRS = iabf
-
 if MPITESTS
 SUBDIRS += mpi
 endif
-
-# Build LUTF only if the packages are available
 if BUILD_LUTF
 SUBDIRS += lutf
-endif # BUILD_LUTF
-
+endif
 bin_PROGRAMS = mcreate statx
 testdir = $(libdir)/lustre/tests
 test_SCRIPTS = $(noinst_SCRIPTS)
@@ -99,13 +86,10 @@ test_PROGRAMS = $(THETESTS)
 nobase_test_SCRIPTS = $(nobase_noinst_SCRIPTS)
 test_DATA = $(noinst_DATA)
 nobase_test_DATA = $(nobase_noinst_DATA)
-
 LIBLUSTREAPI = $(top_builddir)/lustre/utils/liblustreapi.la
-
 if NO_STRINGOP_OVERFLOW
 badarea_io_CFLAGS=-Wno-stringop-overflow
-endif # NO_STRINGOP_OVERFLOW
-
+endif
 mmap_sanity_LDADD = $(LIBLUSTREAPI) $(PTHREAD_LIBS)
 multiop_LDADD = $(LIBLUSTREAPI) $(PTHREAD_LIBS)
 llapi_layout_test_SOURCES = llapi_layout_test.c llapi_test_utils.c llapi_test_utils.h
@@ -135,4 +119,4 @@ if LIBAIO
 aiocp_LDADD= -laio
 endif
 statx_LDADD = $(SELINUX)
-endif # TESTS
+endif

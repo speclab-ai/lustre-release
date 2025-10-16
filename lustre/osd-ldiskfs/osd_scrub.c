@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Top-level entry points into osd module
  *
@@ -33,7 +33,7 @@
 
 #define OSD_OTABLE_MAX_HASH		0x00000000ffffffffULL
 
-/* high priority inconsistent items list APIs */
+
 #define SCRUB_BAD_OIMAP_DECAY_INTERVAL	60
 
 /**
@@ -201,7 +201,7 @@ int osd_scrub_refresh_mapping(struct osd_thread_info *info,
 	case DTO_INDEX_UPDATE:
 		rc = osd_oi_update(info, dev, fid, id, th, flags);
 		if (unlikely(rc == -ENOENT)) {
-			/* Some unlink thread may removed the OI mapping. */
+			
 			rc = 1;
 		}
 		break;
@@ -284,7 +284,7 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 
 	ENTRY;
 	down_write(&scrub->os_rwsem);
-	/* remove IDIF support to simplify logic */
+	
 	if (val == SCRUB_NEXT_OSTOBJ_OLD)
 		GOTO(out, rc = -EOPNOTSUPP);
 
@@ -310,11 +310,11 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 	if (fid_is_igif(fid))
 		sf->sf_items_igif++;
 
-	/* verify inode */
+	
 	inode = osd_iget(info, dev, lid, 0);
 	if (IS_ERR(inode)) {
 		rc = PTR_ERR(inode);
-		/* someone removed the inode. */
+		
 		if (rc == -ENOENT || rc == -ESTALE)
 			bad_inode = true;
 		else
@@ -324,7 +324,7 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 		    CFS_FAIL_CHECK(OBD_FAIL_FID_NOLMA))
 			GOTO(out, rc = 0);
 
-		/* set LMA if missing */
+		
 		sf->sf_flags |= SF_UPGRADE;
 		if (!(sf->sf_param & SP_DRYRUN)) {
 			rc = osd_ea_fid_set(info, inode, fid, 0, 0);
@@ -333,10 +333,10 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 		}
 	}
 
-	/* checking existing mapping */
+	
 	rc = osd_oi_lookup(info, dev, fid, lid2, flags);
 	if (rc != 0) {
-		/* insert if mapping doesn't exist */
+		
 		if (rc == -ENOENT)
 			ops = DTO_INDEX_INSERT;
 		else if (rc != -ESTALE)
@@ -348,9 +348,9 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 		if (val == SCRUB_NEXT_OSTOBJ)
 			sf->sf_flags |= SF_INCONSISTENT;
 	} else if (osd_id_eq(lid, lid2)) {
-		/* mapping matches */
+		
 		if (bad_inode) {
-			/* delete mapping if it's stale */
+			
 			rc = osd_scrub_refresh_mapping(info, dev, fid, lid,
 				DTO_INDEX_DELETE, false, flags, NULL);
 			CDEBUG(D_LFSCK,
@@ -363,7 +363,7 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 		struct inode *inode2;
 		struct lu_fid *fid2;
 
-		/* mapping mismatch */
+		
 		if (!scrub->os_partial_scan) {
 			spin_lock(&scrub->os_lock);
 			scrub->os_full_speed = 1;
@@ -371,11 +371,11 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 		}
 		sf->sf_flags |= SF_INCONSISTENT;
 
-		/* if new inode is bad, keep existing mapping */
+		
 		if (bad_inode)
 			GOTO(skip, rc = 0);
 
-		/* verify existing mapping */
+		
 		inode2 = osd_iget(info, dev, lid2, 0);
 		if (IS_ERR(inode2)) {
 			rc = PTR_ERR(inode2);
@@ -393,7 +393,7 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 			GOTO(out, rc);
 		}
 
-		/* if inode2 looks better, keep existing mapping */
+		
 		fid2 = &info->oti_ost_attrs.loa_lma.lma_self_fid;
 		if ((rc == 0 && lu_fid_eq(fid, fid2)) &&
 		    ((inode->i_size == 0 && inode2->i_size > 0 &&
@@ -404,7 +404,7 @@ osd_scrub_check_update(struct osd_thread_info *info, struct osd_device *dev,
 		}
 		iput(inode2);
 delete:
-		/* otherwise delete existing mapping */
+		
 		CDEBUG(D_LFSCK, "%s: delete stale OI "DFID" -> %u/%u\n",
 		       osd_dev2name(dev), PFID(fid), lid2->oii_ino,
 		       lid2->oii_gen);
@@ -412,7 +412,7 @@ delete:
 				DTO_INDEX_DELETE, false, flags, NULL);
 		if (rc < 0)
 			GOTO(out, rc);
-		/* and then insert new one */
+		
 		ops = DTO_INDEX_INSERT;
 	}
 	LASSERT(ops == DTO_INDEX_INSERT || ops == DTO_INDEX_UPDATE);
@@ -451,7 +451,7 @@ out:
 				       osd_dev2name(dev), PFID(fid),
 				       lid->oii_ino, lid->oii_gen);
 		} else if (oii) {
-			/* release fixed inconsistent item */
+			
 			CDEBUG(D_LFSCK,
 			       "%s: inconsistent OI "DFID" -> %u/%u %s\n",
 			       osd_dev2name(dev), PFID(fid), lid->oii_ino,
@@ -467,7 +467,7 @@ out:
 	}
 skip:
 	if (oii) {
-		/* something strange with item, moving to stale */
+		
 		osd_scrub_oi_mark_stale(scrub, oii);
 		CDEBUG(D_LFSCK,
 		       "%s: fix inconsistent OI "DFID" -> %u/%u failed: %d\n",
@@ -482,7 +482,7 @@ skip:
 	RETURN(sf->sf_param & SP_FAILOUT ? rc : 0);
 }
 
-/* iteration engine */
+
 
 typedef int (*osd_iit_next_policy)(struct osd_thread_info *info,
 				   struct osd_device *dev,
@@ -510,7 +510,7 @@ again:
 
 	offset = param->offset++;
 	if (unlikely(*pos == param->gbase + offset && *pos != param->start)) {
-		/* We should NOT find the same object more than once. */
+		
 		CERROR("%s: scan the same object multiple times at the pos: "
 		       "group = %u, base = %u, offset = %u, start = %u\n",
 		       osd_sb2name(param->sb), (__u32)param->bg, param->gbase,
@@ -566,11 +566,11 @@ static int osd_scrub_get_fid(struct osd_thread_info *info,
 		if (fid_is_idif(fid))
 			return SCRUB_NEXT_OSTOBJ_OLD;
 
-		/* For local object. */
+		
 		if (fid_is_internal(fid))
 			return 0;
 
-		/* For external visible MDT-object with non-normal FID. */
+		
 		if (fid_is_namespace_visible(fid) && !fid_is_norm(fid))
 			return 0;
 
@@ -583,7 +583,7 @@ static int osd_scrub_get_fid(struct osd_thread_info *info,
 		rc = osd_get_idif(info, inode, &info->oti_obj_dentry, fid);
 		if (rc == 0) {
 			if (scrub)
-				/* It is 2.3 or older OST-object. */
+				
 				rc = SCRUB_NEXT_OSTOBJ_OLD;
 			return rc;
 		}
@@ -594,7 +594,7 @@ static int osd_scrub_get_fid(struct osd_thread_info *info,
 				 * to generate its FID, ignore it directly. */
 				rc = SCRUB_NEXT_CONTINUE;
 			else
-				/* It is 2.4 or newer OST-object. */
+				
 				rc = SCRUB_NEXT_OSTOBJ_OLD;
 			return rc;
 		}
@@ -645,7 +645,7 @@ static int osd_iit_iget(struct osd_thread_info *info, struct osd_device *dev,
 		     is_remote_parent_ino(dev, pos)))
 		RETURN(SCRUB_NEXT_CONTINUE);
 
-	 /* Skip project quota inode since it is greater than s_first_ino. */
+	 
 #ifdef HAVE_PROJECT_QUOTA
 	if (ldiskfs_has_feature_project(sb) &&
 	    pos == le32_to_cpu(LDISKFS_SB(sb)->s_es->s_prj_quota_inum))
@@ -677,7 +677,7 @@ static int osd_iit_iget(struct osd_thread_info *info, struct osd_device *dev,
 
 	if (is_scrub &&
 	    ldiskfs_test_inode_state(inode, LDISKFS_STATE_LUSTRE_NOSCRUB)) {
-		/* Only skip it for the first OI scrub accessing. */
+		
 		ldiskfs_clear_inode_state(inode, LDISKFS_STATE_LUSTRE_NOSCRUB);
 		GOTO(put, rc = SCRUB_NEXT_NOSCRUB);
 	}
@@ -833,7 +833,7 @@ static int osd_scrub_exec(struct osd_thread_info *info, struct osd_device *dev,
 		CDEBUG(D_LFSCK, "%s: fail to checkpoint, pos = %llu: "
 		       "rc = %d\n", osd_scrub2name(scrub),
 		       scrub->os_pos_current, rc);
-		/* Continue, as long as the scrub itself can go ahead. */
+		
 	}
 
 	if (scrub->os_in_prior) {
@@ -1288,7 +1288,7 @@ noenv:
 	scrub->os_running = 0;
 	spin_unlock(&scrub->os_lock);
 	if (xchg(&scrub->os_task, NULL) == NULL)
-		/* scrub_stop() is waiting, we need to synchronize */
+		
 		wait_var_event(scrub, kthread_should_stop());
 	wake_up_var(scrub);
 
@@ -1306,7 +1306,7 @@ noenv:
 	return rc;
 }
 
-/* initial OI scrub */
+
 
 typedef int (*scandir_t)(struct osd_thread_info *, struct osd_device *,
 			 struct dentry *, filldir_t filldir);
@@ -1358,9 +1358,9 @@ struct osd_lf_map {
 	filldir_t	 olm_filldir;
 };
 
-/* Add the new introduced local files in the list in the future. */
+
 static const struct osd_lf_map osd_lf_maps[] = {
-	/* CATALOGS */
+	
 	{
 		.olm_name	= CATLIST,
 		.olm_fid	= {
@@ -1371,7 +1371,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof(CATLIST) - 1,
 	},
 
-	/* CONFIGS */
+	
 	{
 		.olm_name	= MOUNT_CONFIGS_DIR,
 		.olm_fid	= {
@@ -1384,7 +1384,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_filldir	= osd_ios_varfid_fill,
 	},
 
-	/* NIDTBL_VERSIONS */
+	
 	{
 		.olm_name	= MGS_NIDTBL_DIR,
 		.olm_flags	= OLF_SCAN_SUBITEMS,
@@ -1393,13 +1393,13 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_filldir	= osd_ios_varfid_fill,
 	},
 
-	/* PENDING */
+	
 	{
 		.olm_name	= MDT_ORPHAN_DIR,
 		.olm_namelen	= sizeof(MDT_ORPHAN_DIR) - 1,
 	},
 
-	/* ROOT */
+	
 	{
 		.olm_name	= "ROOT",
 		.olm_fid	= {
@@ -1411,19 +1411,19 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_scandir	= osd_ios_ROOT_scan,
 	},
 
-	/* changelog_catalog */
+	
 	{
 		.olm_name	= CHANGELOG_CATALOG,
 		.olm_namelen	= sizeof(CHANGELOG_CATALOG) - 1,
 	},
 
-	/* changelog_users */
+	
 	{
 		.olm_name	= CHANGELOG_USERS,
 		.olm_namelen	= sizeof(CHANGELOG_USERS) - 1,
 	},
 
-	/* fld */
+	
 	{
 		.olm_name	= "fld",
 		.olm_fid	= {
@@ -1434,7 +1434,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof("fld") - 1,
 	},
 
-	/* last_rcvd */
+	
 	{
 		.olm_name	= LAST_RCVD,
 		.olm_fid	= {
@@ -1445,7 +1445,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof(LAST_RCVD) - 1,
 	},
 
-	/* reply_data */
+	
 	{
 		.olm_name	= REPLY_DATA,
 		.olm_fid	= {
@@ -1456,7 +1456,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof(REPLY_DATA) - 1,
 	},
 
-	/* lov_objid */
+	
 	{
 		.olm_name	= LOV_OBJID,
 		.olm_fid	= {
@@ -1467,7 +1467,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof(LOV_OBJID) - 1,
 	},
 
-	/* lov_objseq */
+	
 	{
 		.olm_name	= LOV_OBJSEQ,
 		.olm_fid	= {
@@ -1478,7 +1478,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof(LOV_OBJSEQ) - 1,
 	},
 
-	/* quota_master */
+	
 	{
 		.olm_name	= QMT_DIR,
 		.olm_flags	= OLF_SCAN_SUBITEMS,
@@ -1487,7 +1487,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_filldir	= osd_ios_varfid_fill,
 	},
 
-	/* quota_slave */
+	
 	{
 		.olm_name	= QSD_DIR,
 		.olm_flags	= OLF_SCAN_SUBITEMS,
@@ -1496,7 +1496,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_filldir	= osd_ios_varfid_fill,
 	},
 
-	/* seq_ctl */
+	
 	{
 		.olm_name	= "seq_ctl",
 		.olm_fid	= {
@@ -1507,7 +1507,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof("seq_ctl") - 1,
 	},
 
-	/* seq_srv */
+	
 	{
 		.olm_name	= "seq_srv",
 		.olm_fid	= {
@@ -1518,7 +1518,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof("seq_srv") - 1,
 	},
 
-	/* health_check */
+	
 	{
 		.olm_name	= HEALTH_CHECK,
 		.olm_fid	= {
@@ -1529,7 +1529,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof(HEALTH_CHECK) - 1,
 	},
 
-	/* LFSCK */
+	
 	{
 		.olm_name	= LFSCK_DIR,
 		.olm_flags	= OLF_SCAN_SUBITEMS,
@@ -1538,25 +1538,25 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_filldir	= osd_ios_varfid_fill,
 	},
 
-	/* lfsck_bookmark */
+	
 	{
 		.olm_name	= LFSCK_BOOKMARK,
 		.olm_namelen	= sizeof(LFSCK_BOOKMARK) - 1,
 	},
 
-	/* lfsck_layout */
+	
 	{
 		.olm_name	= LFSCK_LAYOUT,
 		.olm_namelen	= sizeof(LFSCK_LAYOUT) - 1,
 	},
 
-	/* lfsck_namespace */
+	
 	{
 		.olm_name	= LFSCK_NAMESPACE,
 		.olm_namelen	= sizeof(LFSCK_NAMESPACE) - 1,
 	},
 
-	/* OBJECTS, upgrade from old device */
+	
 	{
 		.olm_name	= OBJECTS,
 		.olm_flags	= OLF_SCAN_SUBITEMS,
@@ -1564,19 +1564,19 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_scandir	= osd_ios_OBJECTS_scan,
 	},
 
-	/* lquota_v2.user, upgrade from old device */
+	
 	{
 		.olm_name	= "lquota_v2.user",
 		.olm_namelen	= sizeof("lquota_v2.user") - 1,
 	},
 
-	/* lquota_v2.group, upgrade from old device */
+	
 	{
 		.olm_name	= "lquota_v2.group",
 		.olm_namelen	= sizeof("lquota_v2.group") - 1,
 	},
 
-	/* LAST_GROUP, upgrade from old device */
+	
 	{
 		.olm_name	= "LAST_GROUP",
 		.olm_fid	= {
@@ -1587,7 +1587,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof("LAST_GROUP") - 1,
 	},
 
-	/* committed batchid for cross-MDT operation */
+	
 	{
 		.olm_name	= "BATCHID",
 		.olm_fid	= {
@@ -1602,7 +1602,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 	 * and f_oid = index for their log files.  See lu_update_log{_dir}_fid()
 	 * for more details. */
 
-	/* update_log */
+	
 	{
 		.olm_name	= "update_log",
 		.olm_fid	= {
@@ -1612,7 +1612,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_namelen	= sizeof("update_log") - 1,
 	},
 
-	/* update_log_dir */
+	
 	{
 		.olm_name	= "update_log_dir",
 		.olm_fid	= {
@@ -1625,7 +1625,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_filldir	= osd_ios_uld_fill,
 	},
 
-	/* lost+found */
+	
 	{
 		.olm_name	= "lost+found",
 		.olm_fid	= {
@@ -1638,17 +1638,17 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_filldir	= osd_ios_lf_fill,
 	},
 
-	/* hsm_actions */
+	
 	{
 		.olm_name	= HSM_ACTIONS,
 	},
 
-	/* nodemap */
+	
 	{
 		.olm_name	= LUSTRE_NODEMAP_NAME,
 	},
 
-	/* index_backup */
+	
 	{
 		.olm_name	= INDEX_BACKUP_DIR,
 		.olm_fid	= {
@@ -1666,9 +1666,9 @@ static const struct osd_lf_map osd_lf_maps[] = {
 	}
 };
 
-/* Add the new introduced files under .lustre/ in the list in the future. */
+
 static const struct osd_lf_map osd_dl_maps[] = {
-	/* .lustre/fid */
+	
 	{
 		.olm_name	= "fid",
 		.olm_fid	= {
@@ -1678,7 +1678,7 @@ static const struct osd_lf_map osd_dl_maps[] = {
 		.olm_namelen	= sizeof("fid") - 1,
 	},
 
-	/* .lustre/lost+found */
+	
 	{
 		.olm_name	= "lost+found",
 		.olm_fid	= {
@@ -1701,7 +1701,7 @@ struct osd_ios_item {
 };
 
 struct osd_ios_filldir_buf {
-	/* please keep it as first member */
+	
 	struct dir_context	 ctx;
 	struct osd_thread_info	*oifb_info;
 	struct osd_device	*oifb_dev;
@@ -1763,11 +1763,11 @@ static void osd_ios_index_register(const struct lu_env *env,
 	int rc;
 	ENTRY;
 
-	/* Index must be a regular file. */
+	
 	if (!S_ISREG(inode->i_mode))
 		RETURN_EXIT;
 
-	/* Index's size must be block aligned. */
+	
 	if (inode->i_size < sb->s_blocksize ||
 	    (inode->i_size & (sb->s_blocksize - 1)) != 0)
 		RETURN_EXIT;
@@ -1927,7 +1927,7 @@ osd_ios_scan_one(struct osd_thread_info *info, struct osd_device *dev,
 					       inode);
 	}
 
-	/* Since this called from iterate_dir() the inode lock will be taken */
+	
 	rc = osd_oi_lookup(info, dev, &tfid, id2, OI_LOCKED);
 	if (rc != 0) {
 		if (rc != -ENOENT)
@@ -1988,7 +1988,7 @@ static int osd_ios_lf_fill(void *buf,
 
 	fill_buf->oifb_items++;
 
-	/* skip any '.' started names */
+	
 	if (name[0] == '.')
 		RETURN(0);
 
@@ -2043,7 +2043,7 @@ put:
 	if (rc < 0)
 		scrub->os_lf_failed++;
 	dput(child);
-	/* skip the failure to make the scanning to continue. */
+	
 	return 0;
 }
 WRAP_FILLDIR_FN(do_, osd_ios_lf_fill)
@@ -2065,7 +2065,7 @@ static int osd_ios_varfid_fill(void *buf,
 
 	fill_buf->oifb_items++;
 
-	/* skip any '.' started names */
+	
 	if (name[0] == '.')
 		RETURN(0);
 
@@ -2103,7 +2103,7 @@ static int osd_ios_dl_fill(void *buf,
 
 	fill_buf->oifb_items++;
 
-	/* skip any '.' started names */
+	
 	if (name[0] == '.')
 		RETURN(0);
 
@@ -2149,7 +2149,7 @@ static int osd_ios_uld_fill(void *buf,
 
 	fill_buf->oifb_items++;
 
-	/* skip any non-DFID format name */
+	
 	if (name[0] != '[')
 		RETURN(0);
 
@@ -2157,7 +2157,7 @@ static int osd_ios_uld_fill(void *buf,
 	if (IS_ERR(child))
 		RETURN(PTR_ERR(child));
 
-	/* skip the start '[' */
+	
 	sscanf(&name[1], SFID, RFID(&tfid));
 	if (fid_is_sane(&tfid))
 		rc = osd_ios_scan_one(fill_buf->oifb_info, fill_buf->oifb_dev,
@@ -2189,7 +2189,7 @@ static int osd_ios_root_fill(void *buf,
 
 	fill_buf->oifb_items++;
 
-	/* skip any '.' started names */
+	
 	if (name[0] == '.')
 		RETURN(0);
 
@@ -2330,7 +2330,7 @@ osd_ios_ROOT_scan(struct osd_thread_info *info, struct osd_device *dev,
 	inode_unlock(dentry->d_inode);
 	if (rc == -ENOENT) {
 out_scrub:
-		/* It is 1.8 MDT device. */
+		
 		if (!(sf->sf_flags & SF_UPGRADE)) {
 			scrub_file_reset(scrub, dev->od_uuid,
 					 SF_UPGRADE);
@@ -2406,7 +2406,7 @@ static void osd_initial_OI_scrub(struct osd_thread_info *info,
 	const struct osd_lf_map *map     = osd_lf_maps;
 	ENTRY;
 
-	/* Lookup IGIF in OI by force for initial OI scrub. */
+	
 	dev->od_igif_inoi = 1;
 
 	while (1) {
@@ -2506,7 +2506,7 @@ char *osd_lf_fid2name(const struct lu_fid *fid)
 	return NULL;
 }
 
-/* OI scrub start/stop */
+
 
 int osd_scrub_start(const struct lu_env *env, struct osd_device *dev,
 		    __u32 flags)
@@ -2518,7 +2518,7 @@ int osd_scrub_start(const struct lu_env *env, struct osd_device *dev,
 	if (dev->od_dt_dev.dd_rdonly)
 		RETURN(-EROFS);
 
-	/* od_otable_mutex: prevent curcurrent start/stop */
+	
 	mutex_lock(&dev->od_otable_mutex);
 	rc = scrub_start(osd_scrub_main, scrub, dev, flags);
 	if (rc == -EALREADY) {
@@ -2537,7 +2537,7 @@ void osd_scrub_stop(struct osd_device *dev)
 {
 	struct lustre_scrub *scrub = &dev->od_scrub.os_scrub;
 
-	/* od_otable_mutex: prevent curcurrent start/stop */
+	
 	mutex_lock(&dev->od_otable_mutex);
 	spin_lock(&scrub->os_lock);
 	scrub->os_paused = 1;
@@ -2549,7 +2549,7 @@ void osd_scrub_stop(struct osd_device *dev)
 	osd_scrub_ois_fini(scrub, &scrub->os_stale_items);
 }
 
-/* OI scrub setup/cleanup */
+
 
 static const char osd_scrub_name[] = "OI_scrub";
 
@@ -2672,7 +2672,7 @@ int osd_scrub_setup(const struct lu_env *env, struct osd_device *dev,
 			GOTO(cleanup_obj, rc);
 	}
 
-	/* Initialize OI files. */
+	
 	rc = osd_oi_init(info, dev, restored);
 	if (rc < 0)
 		GOTO(cleanup_obj, rc);
@@ -2745,7 +2745,7 @@ void osd_scrub_cleanup(const struct lu_env *env, struct osd_device *dev)
 	}
 }
 
-/* object table based iteration APIs */
+
 
 static struct dt_it *osd_otable_it_init(const struct lu_env *env,
 				       struct dt_object *dt, __u32 attr)
@@ -2759,7 +2759,7 @@ static struct dt_it *osd_otable_it_init(const struct lu_env *env,
 	int			rc;
 	ENTRY;
 
-	/* od_otable_mutex: prevent curcurrent init/fini */
+	
 	mutex_lock(&dev->od_otable_mutex);
 	if (dev->od_otable_it != NULL)
 		GOTO(out, it = ERR_PTR(-EALREADY));
@@ -2799,7 +2799,7 @@ static struct dt_it *osd_otable_it_init(const struct lu_env *env,
 		OBD_FREE_PTR(it);
 		it = ERR_PTR(rc);
 	} else {
-		/* We have to start from the begining. */
+		
 		it->ooi_cache.ooc_pos_preload =
 			LDISKFS_FIRST_INO(osd_sb(dev)) + 1;
 	}
@@ -2816,7 +2816,7 @@ static void osd_otable_it_fini(const struct lu_env *env, struct dt_it *di)
 	struct osd_otable_it *it  = (struct osd_otable_it *)di;
 	struct osd_device    *dev = it->ooi_dev;
 
-	/* od_otable_mutex: prevent curcurrent init/fini */
+	
 	mutex_lock(&dev->od_otable_mutex);
 	scrub_stop(&dev->od_scrub.os_scrub);
 	LASSERT(dev->od_otable_it == it);
@@ -2917,7 +2917,7 @@ static int osd_otable_it_rec(const struct lu_env *env, const struct dt_it *di,
 
 	*(struct lu_fid *)rec = ooc->ooc_cache[ooc->ooc_consumer_idx].oic_fid;
 
-	/* Filter out Invald FID already. */
+	
 	LASSERTF(fid_is_sane((struct lu_fid *)rec),
 		 "Invalid FID "DFID", p_idx = %d, c_idx = %d\n",
 		 PFID((struct lu_fid *)rec),
@@ -2954,7 +2954,7 @@ static int osd_otable_it_load(const struct lu_env *env,
 	int			 rc;
 	ENTRY;
 
-	/* Forbid to set iteration position after iteration started. */
+	
 	if (it->ooi_user_ready)
 		RETURN(-EPERM);
 
@@ -2982,7 +2982,7 @@ static int osd_otable_it_load(const struct lu_env *env,
 			LDISKFS_INODES_PER_GROUP(param->sb);
 	param->gbase = 1 + param->bg * LDISKFS_INODES_PER_GROUP(param->sb);
 
-	/* Unplug OSD layer iteration by the first next() call. */
+	
 	rc = osd_otable_it_next(env, (struct dt_it *)it);
 
 	RETURN(rc);
@@ -3091,7 +3091,7 @@ static int osd_remove_ml_file(struct osd_thread_info *info,
 	if (IS_ERR(th))
 		RETURN(PTR_ERR(th));
 
-	/* Should be created by the VFS layer */
+	
 	dentry.d_inode = dir;
 	dentry.d_sb = dir->i_sb;
 	rc = osd_obj_del_entry(info, dev, &dentry, oie->oie_dirent->oied_name,

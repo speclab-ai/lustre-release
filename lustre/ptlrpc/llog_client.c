@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * remote api for llog - client side
  *
@@ -72,7 +72,7 @@ static int llog_client_open(const struct lu_env *env,
 	if (IS_ERR(imp))
 		return PTR_ERR(imp);
 
-	/* client cannot create llog */
+	
 	LASSERTF(open_param != LLOG_OPEN_NEW, "%#x\n", open_param);
 	LASSERT(lgh);
 
@@ -188,7 +188,7 @@ static int llog_client_next_block(const struct lu_env *env,
 	if (rc < 0)
 		GOTO(out, rc);
 
-	/* The log records are swabbed as they are processed */
+	
 	ptr = req_capsule_server_get(&req->rq_pill, &RMF_EADATA);
 	if (!ptr)
 		GOTO(out, rc = -EFAULT);
@@ -298,7 +298,7 @@ static int llog_client_read_header(const struct lu_env *env,
 	memcpy(handle->lgh_hdr, hdr, hdr->llh_hdr.lrh_len);
 	handle->lgh_last_idx = LLOG_HDR_TAIL(handle->lgh_hdr)->lrt_index;
 
-	/* sanity checks */
+	
 	llh_hdr = &handle->lgh_hdr->llh_hdr;
 	if (llh_hdr->lrh_type != LLOG_HDR_MAGIC) {
 		CERROR("bad log header magic: %#x (expecting %#x)\n",

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
@@ -198,7 +198,7 @@ static int barrier_freeze(const struct lu_env *env,
 			RETURN(1);
 		}
 
-		/* sync again after all inflight modifications done. */
+		
 		rc = dt_sync(env, barrier->bi_next);
 		if (rc) {
 			CDEBUG(D_SNAPSHOT, "failed with dt_sync: %d\n", rc);
@@ -238,7 +238,7 @@ bool barrier_entry(struct dt_device *key)
 
 	barrier = barrier_instance_find(key);
 	if (unlikely(!barrier))
-		/* Fail open */
+		
 		RETURN(true);
 
 	read_lock(&barrier->bi_rwlock);
@@ -284,7 +284,7 @@ int barrier_handler(struct dt_device *key, struct ptlrpc_request *req)
 	int rc = 0;
 	ENTRY;
 
-	/* glimpse on barrier locks always packs a glimpse descriptor */
+	
 	req_capsule_extend(&req->rq_pill, &RQF_LDLM_GL_CALLBACK_DESC);
 	desc = req_capsule_client_get(&req->rq_pill, &RMF_DLM_GL_DESC);
 	if (!desc)

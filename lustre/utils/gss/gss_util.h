@@ -35,9 +35,9 @@
 
 #ifndef fallthrough
 # if defined(__GNUC__) && __GNUC__ >= 7
-#  define fallthrough  __attribute__((fallthrough)) /* fallthrough */
+#  define fallthrough  __attribute__((fallthrough)) 
 # else
-#  define fallthrough do {} while (0)  /* fallthrough */
+#  define fallthrough do {} while (0)  
 # endif
 #endif
 
@@ -48,4 +48,4 @@ void pgsserr(char *msg, u_int32_t maj_stat, u_int32_t min_stat,
 int gssd_check_mechs(void);
 void gssd_cleanup_realms(void);
 
-#endif /* _GSS_UTIL_H_ */
+#endif 

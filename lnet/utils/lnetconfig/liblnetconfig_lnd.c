@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 
 /*
  * Copyright (c) 2015, James Simmons
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: James Simmons <jsimmons@infradead.org>
  */

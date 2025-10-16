@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2018, DataDirect Networks Storage.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Checksum functions
  *
@@ -15,7 +15,7 @@
 #include <obd_class.h>
 #include <obd_cksum.h>
 
-/* Server uses algos that perform at 50% or better of the Adler */
+
 enum cksum_types obd_cksum_types_supported_server(const char *obd_name)
 {
 	enum cksum_types ret = OBD_CKSUM_ADLER;

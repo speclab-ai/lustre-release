@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Sequence Manager
  *
@@ -75,7 +75,7 @@ static int seq_update_cb_add(struct thandle *th, struct lu_server_seq *seq)
 	return rc;
 }
 
-/* This function implies that caller takes care about locking. */
+
 int seq_store_update(const struct lu_env *env, struct lu_server_seq *seq,
 		     struct lu_seq_range *out, int sync)
 {
@@ -95,7 +95,7 @@ int seq_store_update(const struct lu_env *env, struct lu_server_seq *seq,
 	if (IS_ERR(th))
 		RETURN(PTR_ERR(th));
 
-	/* Store ranges in le format. */
+	
 	range_cpu_to_le(&info->sti_space, &seq->lss_space);
 
 	rc = dt_declare_record_write(env, seq->lss_obj,
@@ -134,7 +134,7 @@ int seq_store_update(const struct lu_env *env, struct lu_server_seq *seq,
 	 * in case of sync operation this is not needed obviously
 	 */
 	if (!sync)
-		/* if callback can't be added then sync always */
+		
 		sync = !!seq_update_cb_add(th, seq);
 
 	th->th_sync |= sync;

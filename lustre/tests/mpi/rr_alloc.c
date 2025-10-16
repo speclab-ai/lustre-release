@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2017, Seagate Technology LLC
  *
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 	path3 = strdup(argv[1]);
 	fname = basename(path1);
 	dname = basename(dirname(path2));
-	/* dirname looping depends on the depth of the file from mount path */
+	
 	strncpy(mnt_path, dirname(dirname(path3)), sizeof(mnt_path) - 1);
 
 	file_no = atoi(argv[2]);
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
 	 * eg: job 0,1 will be executed by /tmp/mnt/lustre0, /tmp/mnt/lustre1,
 	 * etc. on each client node.
 	 */
-	/* Number of processes on each client nodes */
+	
 	proc_per_cli_node = nproc / client_nodes;
 
 	/*

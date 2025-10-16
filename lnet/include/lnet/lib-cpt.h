@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /* Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  *
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * CPU partition
  *   . CPU partition is virtual processing unit
@@ -73,7 +73,7 @@
 #include <linux/vmalloc.h>
 #include <lustre_compat/linux/workqueue.h>
 
-/* any CPU partition */
+
 #define CFS_CPT_ANY		(-1)
 
 struct cfs_cpt_table;
@@ -210,7 +210,7 @@ int cfs_cpt_spread_node(struct cfs_cpt_table *cptab, int cpt);
 int cfs_cpu_init(void);
 void cfs_cpu_fini(void);
 
-#else /* !CONFIG_SMP */
+#else 
 
 #define cfs_cpt_tab ((struct cfs_cpt_table *)NULL)
 
@@ -312,9 +312,9 @@ static inline void cfs_cpu_fini(void)
 {
 }
 
-#endif /* CONFIG_SMP */
+#endif 
 
-/* Module parameters */
+
 extern int cpu_npartitions;
 extern char *cpu_pattern;
 
@@ -342,7 +342,7 @@ struct workqueue_struct *cfs_cpt_bind_workqueue(const char *wq_name,
 		cpus_read_lock();
 		compat_apply_workqueue_attrs(wq, attrs);
 		cpus_read_unlock();
-		/* Same as free_workqueue_attrs() which is not exported */
+		
 		free_cpumask_var(attrs->cpumask);
 		kfree(attrs);
 	}
@@ -356,7 +356,7 @@ struct workqueue_struct *cfs_cpt_bind_workqueue(const char *wq_name,
  *	cptab == NULL: size of array is number of HW cores
  */
 void *cfs_percpt_alloc(struct cfs_cpt_table *cptab, unsigned int size);
-/* destroy per-cpu-partition variable */
+
 void cfs_percpt_free(void *vars);
 int cfs_percpt_number(void *vars);
 
@@ -424,4 +424,4 @@ cfs_mem_cache_cpt_alloc(struct kmem_cache *cachep, struct cfs_cpt_table *cptab,
 #define cfs_cpt_for_each(i, cptab)	\
 	for (i = 0; i < cfs_cpt_number(cptab); i++)
 
-#endif /* __LIBCFS_CPU_H__ */
+#endif 

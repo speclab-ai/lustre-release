@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * MDS data structures.
  * See also lustre_idl.h for wire formats of requests.
@@ -26,7 +26,7 @@
 #include <linux/dcache.h>
 #ifdef CONFIG_LUSTRE_FS_POSIX_ACL
 # include <lustre_compat.h>
-#endif /* CONFIG_LUSTRE_FS_POSIX_ACL */
+#endif 
 #include <lustre_handles.h>
 #include <lustre_intent.h>
 #include <obd_class.h>
@@ -71,7 +71,7 @@ static inline void mdc_update_max_ea_from_body(struct obd_export *exp,
 }
 
 
-/* mdc/mdc_locks.c */
+
 int it_open_error(int phase, struct lookup_intent *it);
 
 static inline bool cl_is_lov_delay_create(enum mds_open_flags flags)
@@ -89,11 +89,11 @@ static inline unsigned long hash_x_index(__u64 hash, int hash64)
 {
 	if (BITS_PER_LONG == 32 && hash64)
 		hash >>= 32;
-	/* save hash 0 with hash 1 */
+	
 	return ~0UL - (hash + !hash);
 }
 
 
-/** @} mdc */
+
 
 #endif

@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2020, DataDirect Networks Inc, all rights reserved.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for lseek-related functionality
  *
@@ -18,7 +18,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #ifndef FALLOC_FL_PUNCH_HOLE
-#include <linux/falloc.h> /* for RHEL7.3 glibc-headers and earlier */
+#include <linux/falloc.h> 
 #endif
 #include <sys/syscall.h>
 #include <sys/ioctl.h>
@@ -41,7 +41,7 @@ bool llapi_file_is_sparse(int fd)
 	file_end = lseek(fd, 0, SEEK_END);
 	hole_off = lseek(fd, 0, SEEK_HOLE);
 
-	/* Errors are ignored and file is just reported as non-sparse */
+	
 	return file_end > 0 && hole_off >= 0 && hole_off < file_end;
 }
 
@@ -77,7 +77,7 @@ off_t llapi_data_seek(int src_fd, off_t offset, size_t *length)
 			return rc;
 		}
 		hole_off = lseek(src_fd, 0, SEEK_END);
-		if (data_off > hole_off) /* out of file range */
+		if (data_off > hole_off) 
 			return -ENXIO;
 		/* no more data in src file, return end of file and zero size
 		 * so caller will know there must be hole up to that offset

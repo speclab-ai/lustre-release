@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -47,12 +47,12 @@ static struct lu_kmem_descr qsd_caches[] = {
 	}
 };
 
-/* define qsd thread key */
+
 LU_KEY_INIT_FINI(qsd, struct qsd_thread_info);
 LU_CONTEXT_KEY_DEFINE(qsd, LCT_MD_THREAD | LCT_MG_THREAD | LCT_DT_THREAD | LCT_LOCAL);
 LU_KEY_INIT_GENERIC(qsd);
 
-/* some procfs helpers */
+
 static int qsd_state_seq_show(struct seq_file *m, void *data)
 {
 	struct qsd_instance	*qsd = m->private;
@@ -198,7 +198,7 @@ lprocfs_force_reint_seq_write(struct file *file, const char __user *buffer,
 	} else if (!qsd->qsd_prepared) {
 		rc = -EAGAIN;
 	} else {
-		/* mark all indexes as stale */
+		
 		for (qtype = USRQUOTA; qtype < LL_MAXQUOTAS; qtype++) {
 			qsd->qsd_type_array[qtype]->qqi_glb_uptodate = false;
 			qsd->qsd_type_array[qtype]->qqi_slv_uptodate = false;
@@ -209,7 +209,7 @@ lprocfs_force_reint_seq_write(struct file *file, const char __user *buffer,
 	if (rc)
 		return rc;
 
-	/* kick off reintegration */
+	
 	for (qtype = USRQUOTA; qtype < LL_MAXQUOTAS; qtype++) {
 		rc = qsd_start_reint_thread(qsd->qsd_type_array[qtype]);
 		if (rc)
@@ -306,13 +306,13 @@ static int qsd_conn_callback(void *data)
 	int                  type;
 	ENTRY;
 
-	/* qsd_exp should now be valid */
+	
 	LASSERT(qsd->qsd_exp);
 
 	qsd->qsd_ns = class_exp2obd(qsd->qsd_exp)->obd_namespace;
 
 	write_lock(&qsd->qsd_lock);
-	/* notify that qsd_exp is now valid */
+	
 	qsd->qsd_exp_valid = true;
 	write_unlock(&qsd->qsd_lock);
 
@@ -362,11 +362,11 @@ static void qsd_qtype_fini(const struct lu_env *env, struct qsd_instance *qsd,
 	qqi = qsd->qsd_type_array[qtype];
 	qsd->qsd_type_array[qtype] = NULL;
 
-	/* all deferred work lists should be empty */
+	
 	LASSERT(list_empty(&qqi->qqi_deferred_glb));
 	LASSERT(list_empty(&qqi->qqi_deferred_slv));
 
-	/* shutdown lquota site */
+	
 	if (qqi->qqi_site != NULL && !IS_ERR(qqi->qqi_site)) {
 		lquota_site_free(env, qqi->qqi_site);
 		qqi->qqi_site = NULL;
@@ -394,23 +394,23 @@ static void qsd_qtype_fini(const struct lu_env *env, struct qsd_instance *qsd,
 		schedule_timeout_interruptible(cfs_time_seconds(1));
 	}
 
-	/* by now, all qqi users should have gone away */
+	
 	LASSERT(atomic_read(&qqi->qqi_ref) == 1);
 
-	/* release accounting object */
+	
 	if (qqi->qqi_acct_obj != NULL && !IS_ERR(qqi->qqi_acct_obj)) {
 		dt_object_put(env, qqi->qqi_acct_obj);
 		qqi->qqi_acct_obj = NULL;
 	}
 
-	/* release slv index */
+	
 	if (qqi->qqi_slv_obj != NULL && !IS_ERR(qqi->qqi_slv_obj)) {
 		dt_object_put(env, qqi->qqi_slv_obj);
 		qqi->qqi_slv_obj = NULL;
 		qqi->qqi_slv_ver = 0;
 	}
 
-	/* release global index */
+	
 	if (qqi->qqi_glb_obj != NULL && !IS_ERR(qqi->qqi_glb_obj)) {
 		dt_object_put(env, qqi->qqi_glb_obj);
 		qqi->qqi_glb_obj = NULL;
@@ -479,14 +479,14 @@ static int qsd_qtype_init(const struct lu_env *env, struct qsd_instance *qsd,
 
 	LASSERT(qsd->qsd_type_array[qtype] == NULL);
 
-	/* allocate structure for this quota type */
+	
 	OBD_ALLOC_PTR(qqi);
 	if (qqi == NULL)
 		RETURN(-ENOMEM);
 	qsd->qsd_type_array[qtype] = qqi;
-	atomic_set(&qqi->qqi_ref, 1); /* referenced from qsd */
+	atomic_set(&qqi->qqi_ref, 1); 
 
-	/* set backpointer and other parameters */
+	
 	qqi->qqi_qsd   = qsd;
 	qqi->qqi_qtype = qtype;
 	qqi->qqi_glb_uptodate = false;
@@ -496,7 +496,7 @@ static int qsd_qtype_init(const struct lu_env *env, struct qsd_instance *qsd,
 	INIT_LIST_HEAD(&qqi->qqi_deferred_slv);
 	lquota_generate_fid(&qqi->qqi_fid, QSD_RES_TYPE(qsd), qtype);
 
-	/* open accounting object */
+	
 	LASSERT(qqi->qqi_acct_obj == NULL);
 	qqi->qqi_acct_obj = acct_obj_lookup(env, qsd->qsd_dev, qtype);
 	if (IS_ERR(qqi->qqi_acct_obj)) {
@@ -507,7 +507,7 @@ static int qsd_qtype_init(const struct lu_env *env, struct qsd_instance *qsd,
 		qqi->qqi_acct_failed = true;
 	}
 
-	/* open global index copy */
+	
 	LASSERT(qqi->qqi_glb_obj == NULL);
 	qqi->qqi_glb_obj = lquota_disk_glb_find_create(env, qsd->qsd_dev,
 						       qsd->qsd_root,
@@ -520,7 +520,7 @@ static int qsd_qtype_init(const struct lu_env *env, struct qsd_instance *qsd,
 	}
 	qqi->qqi_glb_ver = dt_version_get(env, qqi->qqi_glb_obj);
 
-	/* open slave index copy */
+	
 	LASSERT(qqi->qqi_slv_obj == NULL);
 	obd_str2uuid(&uuid, qsd->qsd_svname);
 	qqi->qqi_slv_obj = lquota_disk_slv_find_create(env, qsd->qsd_dev,
@@ -535,7 +535,7 @@ static int qsd_qtype_init(const struct lu_env *env, struct qsd_instance *qsd,
 	}
 	qqi->qqi_slv_ver = dt_version_get(env, qqi->qqi_slv_obj);
 
-	/* allocate site */
+	
 	qqi->qqi_site = lquota_site_alloc(env, qqi, false, qtype, &qsd_lqe_ops);
 	if (IS_ERR(qqi->qqi_site)) {
 		CERROR("%s: can't allocate site "DFID" %ld\n", qsd->qsd_svname,
@@ -543,7 +543,7 @@ static int qsd_qtype_init(const struct lu_env *env, struct qsd_instance *qsd,
 		GOTO(out, rc = PTR_ERR(qqi->qqi_site));
 	}
 
-	/* register proc entry for accounting & global index copy objects */
+	
 	rc = lprocfs_seq_create(qsd->qsd_proc, qtype2acct_name(qtype),
 				0444, &lprocfs_quota_seq_fops,
 				qqi->qqi_acct_obj);
@@ -590,16 +590,16 @@ void qsd_fini(const struct lu_env *env, struct qsd_instance *qsd)
 	qsd->qsd_stopping = true;
 	write_unlock(&qsd->qsd_lock);
 
-	/* remove qsd proc entry */
+	
 	if (qsd->qsd_proc != NULL) {
 		lprocfs_remove(&qsd->qsd_proc);
 		qsd->qsd_proc = NULL;
 	}
 
-	/* stop the writeback thread */
+	
 	qsd_stop_upd_thread(qsd);
 
-	/* shutdown the reintegration threads */
+	
 	for (qtype = USRQUOTA; qtype < LL_MAXQUOTAS; qtype++) {
 		if (qsd->qsd_type_array[qtype] == NULL)
 			continue;
@@ -610,31 +610,31 @@ void qsd_fini(const struct lu_env *env, struct qsd_instance *qsd)
 		qsd->qsd_ns = NULL;
 	}
 
-	/* release per-filesystem information */
+	
 	if (qsd->qsd_fsinfo != NULL) {
 		mutex_lock(&qsd->qsd_fsinfo->qfs_mutex);
-		/* remove from the list of fsinfo */
+		
 		list_del_init(&qsd->qsd_link);
 		mutex_unlock(&qsd->qsd_fsinfo->qfs_mutex);
 		qsd_put_fsinfo(qsd->qsd_fsinfo);
 		qsd->qsd_fsinfo = NULL;
 	}
 
-	/* free per-quota type data */
+	
 	for (qtype = USRQUOTA; qtype < LL_MAXQUOTAS; qtype++)
 		qsd_qtype_fini(env, qsd, qtype);
 
-	/* deregister connection to the quota master */
+	
 	qsd->qsd_exp_valid = false;
 	lustre_deregister_lwp_item(&qsd->qsd_exp);
 
-	/* release quota root directory */
+	
 	if (qsd->qsd_root != NULL) {
 		dt_object_put(env, qsd->qsd_root);
 		qsd->qsd_root = NULL;
 	}
 
-	/* release reference on dt_device */
+	
 	if (qsd->qsd_dev != NULL) {
 		lu_device_put(&qsd->qsd_dev->dd_lu_dev);
 		qsd->qsd_dev = NULL;
@@ -669,17 +669,17 @@ struct qsd_instance *qsd_init(const struct lu_env *env, char *svname,
 	int			 rc, type, idx;
 	ENTRY;
 
-	/* only configure qsd for MDT & OST */
+	
 	type = server_name2index(svname, &idx, NULL);
 	if (type != LDD_F_SV_TYPE_MDT && type != LDD_F_SV_TYPE_OST)
 		RETURN(NULL);
 
-	/* allocate qsd instance */
+	
 	OBD_ALLOC_PTR(qsd);
 	if (qsd == NULL)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	/* generic initializations */
+	
 	rwlock_init(&qsd->qsd_lock);
 	INIT_LIST_HEAD(&qsd->qsd_link);
 	INIT_LIST_HEAD(&qsd->qsd_upd_list);
@@ -691,35 +691,35 @@ struct qsd_instance *qsd_init(const struct lu_env *env, char *svname,
 	qsd->qsd_updating = false;
 	qsd->qsd_exclusive = excl;
 
-	/* copy service name */
+	
 	rc = strscpy(qsd->qsd_svname, svname, sizeof(qsd->qsd_svname));
 	if (rc < 0)
 		GOTO(out, rc);
 
-	/* grab reference on osd device */
+	
 	lu_device_get(&dev->dd_lu_dev);
 	qsd->qsd_dev = dev;
 
-	/* get fsname from svname */
+	
 	rc = server_name2fsname(svname, qti->qti_buf, NULL);
 	if (rc) {
 		CERROR("%s: fail to extract filesystem name\n", svname);
 		GOTO(out, rc);
 	}
 
-	/* look up quota setting for the filesystem the target belongs to */
+	
 	qsd->qsd_fsinfo = qsd_get_fsinfo(qti->qti_buf, 1);
 	if (qsd->qsd_fsinfo == NULL) {
 		CERROR("%s: failed to locate filesystem information\n", svname);
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* add in the list of lquota_fsinfo */
+	
 	mutex_lock(&qsd->qsd_fsinfo->qfs_mutex);
 	list_add_tail(&qsd->qsd_link, &qsd->qsd_fsinfo->qfs_qsd_list);
 	mutex_unlock(&qsd->qsd_fsinfo->qfs_mutex);
 
-	/* register procfs directory */
+	
 	if (qsd->qsd_is_md)
 		qsd->qsd_proc = lprocfs_register(QSD_DIR_MD, osd_proc,
 						 lprocfs_quota_qsd_vars, qsd);
@@ -789,7 +789,7 @@ int qsd_prepare(const struct lu_env *env, struct qsd_instance *qsd)
 	else
 		qsd->qsd_sync_threshold = LQUOTA_LEAST_QUNIT(LQUOTA_RES_DT);
 
-	/* look-up on-disk directory for the quota slave */
+	
 	qsd->qsd_root = lquota_disk_dir_find_create(env, qsd->qsd_dev, NULL,
 						    QSD_DIR);
 	if (IS_ERR(qsd->qsd_root)) {
@@ -800,14 +800,14 @@ int qsd_prepare(const struct lu_env *env, struct qsd_instance *qsd)
 		RETURN(rc);
 	}
 
-	/* initialize per-quota type data */
+	
 	for (qtype = USRQUOTA; qtype < LL_MAXQUOTAS; qtype++) {
 		rc = qsd_qtype_init(env, qsd, qtype);
 		if (rc)
 			RETURN(rc);
 	}
 
-	/* pools successfully setup, mark the qsd as prepared */
+	
 	write_lock(&qsd->qsd_lock);
 	qsd->qsd_prepared = true;
 	write_unlock(&qsd->qsd_lock);
@@ -815,7 +815,7 @@ int qsd_prepare(const struct lu_env *env, struct qsd_instance *qsd)
 	if (qsd->qsd_dev->dd_rdonly)
 		RETURN(0);
 
-	/* start reintegration thread for each type, if required */
+	
 	for (qtype = USRQUOTA; qtype < LL_MAXQUOTAS; qtype++) {
 		struct qsd_qtype_info	*qqi = qsd->qsd_type_array[qtype];
 
@@ -837,7 +837,7 @@ int qsd_prepare(const struct lu_env *env, struct qsd_instance *qsd)
 		}
 	}
 
-	/* start writeback thread */
+	
 	rc = qsd_start_upd_thread(qsd);
 	if (rc) {
 		CERROR("%s: failed to start writeback thread (%d)\n",
@@ -845,7 +845,7 @@ int qsd_prepare(const struct lu_env *env, struct qsd_instance *qsd)
 		RETURN(rc);
 	}
 
-	/* generate osp name */
+	
 	rc = tgt_name2lwp_name(qsd->qsd_svname, qti->qti_buf,
 			       MTI_NAME_MAXLEN, 0);
 	if (rc) {
@@ -894,7 +894,7 @@ int qsd_start(const struct lu_env *env, struct qsd_instance *qsd)
 		CERROR("%s: qsd instance already started\n", qsd->qsd_svname);
 		rc = -EALREADY;
 	} else {
-		/* notify that the qsd_instance is now started */
+		
 		qsd->qsd_started = true;
 	}
 	write_unlock(&qsd->qsd_lock);

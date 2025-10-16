@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Test client & Server
  *
@@ -24,8 +24,8 @@ module_param(ping_srv_workitems, int, 0644);
 MODULE_PARM_DESC(ping_srv_workitems, "# PING server workitems");
 
 struct lst_ping_data {
-	spinlock_t	pnd_lock;	/* serialize */
-	int		pnd_counter;	/* sequence counter */
+	spinlock_t	pnd_lock;	
+	int		pnd_counter;	
 };
 
 static struct lst_ping_data lst_ping_data;
@@ -104,7 +104,7 @@ ping_client_done_rpc(struct sfw_test_unit *tsu, struct srpc_client_rpc *rpc)
 	LASSERT(sn != NULL);
 
 	if (rpc->crpc_status != 0) {
-		if (!tsi->tsi_stopping) /* rpc could have been aborted */
+		if (!tsi->tsi_stopping) 
 			atomic_inc(&sn->sn_ping_errors);
 		CERROR("Unable to ping %s (%d): %d\n",
 		       libcfs_id2str(rpc->crpc_dest),

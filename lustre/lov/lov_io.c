@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_io for LOV layer.
  *
@@ -118,7 +118,7 @@ static int lov_io_sub_init(const struct lu_env *env, struct lov_io *lio,
 		 PFID(lu_object_fid(lov2lu(lov))), io->ci_type, index,
 		 lio->lis_mirror_index);
 
-	/* obtain new environment */
+	
 	sub->sub_env = cl_env_get(&sub->sub_refcheck);
 	if (IS_ERR(sub->sub_env)) {
 		result = PTR_ERR(sub->sub_env);
@@ -326,11 +326,11 @@ static int lov_io_mirror_init(struct lov_io *lio, struct lov_object *obj,
 		RETURN(0);
 	}
 
-	/* transfer the layout version for verification */
+	
 	if (io->ci_layout_version == 0)
 		io->ci_layout_version = obj->lo_lsm->lsm_layout_gen;
 
-	/* find the corresponding mirror for designated mirror IO */
+	
 	if (io->ci_designated_mirror > 0) {
 		struct lov_mirror_entry *entry;
 
@@ -388,12 +388,12 @@ static int lov_io_mirror_init(struct lov_io *lio, struct lov_object *obj,
 			io->ci_write_intent.e_end =
 					io->u.ci_setattr.sa_attr.lvb_size + 1;
 		}
-		/* stop cl_io_init() loop */
+		
 		RETURN(1);
 	}
 
-	if (io->ci_ndelay_tried == 0 || /* first time to try */
-	    /* reset the mirror index if layout has changed */
+	if (io->ci_ndelay_tried == 0 || 
+	    
 	    lio->lis_mirror_layout_gen != obj->lo_lsm->lsm_layout_gen) {
 		lio->lis_mirror_layout_gen = obj->lo_lsm->lsm_layout_gen;
 		index = lio->lis_mirror_index = comp->lo_preferred_mirror;
@@ -401,7 +401,7 @@ static int lov_io_mirror_init(struct lov_io *lio, struct lov_object *obj,
 		index = lio->lis_mirror_index;
 		LASSERT(index >= 0);
 
-		/* move mirror index to the next one */
+		
 		index = (index + 1) % comp->lo_mirror_count;
 	}
 
@@ -427,12 +427,12 @@ static int lov_io_mirror_init(struct lov_io *lio, struct lov_object *obj,
 				found = true;
 				break;
 			}
-		} /* each component of the mirror */
+		} 
 		if (found) {
 			index = (index + i) % comp->lo_mirror_count;
 			break;
 		}
-	} /* each mirror */
+	} 
 
 	if (i == comp->lo_mirror_count) {
 		CERROR(DFID": failed to find a component covering "
@@ -602,7 +602,7 @@ static int lov_io_slice_init(struct lov_io *lio,
 	if (result)
 		GOTO(out, result);
 
-	/* check if it needs to instantiate layout */
+	
 	if (!(io->ci_type == CIT_WRITE || cl_io_is_mkwrite(io) ||
 	      cl_io_is_fallocate(io) ||
 	      (cl_io_is_trunc(io) && io->u.ci_setattr.sa_attr.lvb_size > 0)))
@@ -710,7 +710,7 @@ static void lov_io_sub_inherit(struct lov_io_sub *sub, struct lov_io *lio,
 		io->u.ci_setattr.sa_stripe_index = stripe;
 		io->u.ci_setattr.sa_parent_fid =
 					parent->u.ci_setattr.sa_parent_fid;
-		/* For SETATTR(fallocate) pass the subtype to lower IO */
+		
 		io->u.ci_setattr.sa_subtype = parent->u.ci_setattr.sa_subtype;
 		if (cl_io_is_fallocate(io)) {
 			io->u.ci_setattr.sa_falloc_offset = start;
@@ -899,13 +899,13 @@ static int lov_io_iter_init(const struct lu_env *env,
 				tested_trunc_stripe = true;
 				if (ext.e_start < lsm->lsm_entries[index]->
 							lsme_extent.e_start) {
-					/* need previous stripe involvement */
+					
 					lio->lis_trunc_stripe_index[index] = prev;
 				} else {
 					div64_u64_rem(ext.e_start,
 						      stripe_width(lsm, index),
 						      &tr_start);
-					/* tr_start %= stripe_swidth */
+					
 					if (tr_start == stripe * lsm->
 							lsm_entries[index]->
 							lsme_stripe_size)
@@ -913,7 +913,7 @@ static int lov_io_iter_init(const struct lu_env *env,
 				}
 			}
 
-			/* if the last stripe is the trunc stripeno */
+			
 			if (is_trunc &&
 			    lio->lis_trunc_stripe_index[index] == stripe)
 				lio->lis_trunc_stripe_index[index] = -1;
@@ -979,7 +979,7 @@ static int lov_io_rw_iter_init(const struct lu_env *env,
 		RETURN(lov_io_iter_init(env, ios));
 
 	index = lov_io_layout_at(lio, io->u.ci_rw.crw_pos);
-	if (index < 0) { /* non-existing layout component */
+	if (index < 0) { 
 		if (io->ci_type == CIT_READ) {
 			/*
 			 * TODO: it needs to detect the next component and
@@ -1044,7 +1044,7 @@ static int lov_io_setattr_iter_init(const struct lu_env *env,
 
 	if (cl_io_is_trunc(io) && lio->lis_pos > 0) {
 		index = lov_io_layout_at(lio, lio->lis_pos - 1);
-		/* no entry found for such offset */
+		
 		if (index < 0)
 			RETURN(io->ci_result = -ENODATA);
 	}
@@ -1198,7 +1198,7 @@ static int lov_io_read_ahead(const struct lu_env *env,
 	loff_t			 offset;
 	loff_t			 suboff;
 	pgoff_t			 ra_end;
-	unsigned int		 pps; /* pages per stripe */
+	unsigned int		 pps; 
 	int			 stripe;
 	int			 index;
 	int			 rc;
@@ -1210,7 +1210,7 @@ static int lov_io_read_ahead(const struct lu_env *env,
 	    lsm_entry_is_foreign(loo->lo_lsm, index))
 		RETURN(-ENODATA);
 
-	/* avoid readahead to expand to stale components */
+	
 	if (!lov_entry(loo, index)->lle_valid)
 		RETURN(-EIO);
 
@@ -1241,18 +1241,18 @@ static int lov_io_read_ahead(const struct lu_env *env,
 	 * make sure it's not beyond stripe and component boundary.
 	 */
 
-	/* cra_end is stripe level, convert it into file level */
+	
 	ra_end = ra->cra_end_idx;
 	if (ra_end != CL_PAGE_EOF)
 		ra->cra_end_idx = lov_stripe_pgoff(loo->lo_lsm, index,
 						   ra_end, stripe);
 
-	/* boundary of current component */
+	
 	ra_end = lov_io_extent(lio, index)->e_end >> PAGE_SHIFT;
 	if (ra_end != CL_PAGE_EOF && ra->cra_end_idx >= ra_end)
 		ra->cra_end_idx = ra_end - 1;
 
-	if (r0->lo_nr == 1) /* single stripe file */
+	if (r0->lo_nr == 1) 
 		RETURN(0);
 
 	pps = lov_lse(loo, index)->lsme_stripe_size >> PAGE_SHIFT;
@@ -1262,7 +1262,7 @@ static int lov_io_read_ahead(const struct lu_env *env,
 	       PFID(lu_object_fid(lov2lu(loo))), ra->cra_end_idx, pps, index,
 	       lov_lse(loo, index)->lsme_stripe_size, stripe, start);
 
-	/* never exceed the end of the stripe */
+	
 	ra->cra_end_idx = min_t(pgoff_t, ra->cra_end_idx,
 				start + pps - start % pps - 1);
 	RETURN(0);
@@ -1408,10 +1408,10 @@ static int lov_io_submit(const struct lu_env *env,
 		cl_page_list_move(&cl2q->c2_qin, qin, page);
 
 		index = page->cp_lov_index;
-		/* DIO is already split by stripe */
+		
 		if (!dio) {
 			cl_page_list_for_each_safe(page, tmp, qin) {
-				/* this page is not on this stripe */
+				
 				if (index != page->cp_lov_index)
 					continue;
 
@@ -1489,7 +1489,7 @@ static int lov_io_commit_async(const struct lu_env *env,
 			cl_page_list_move(plist, queue, page);
 		}
 
-		if (queue->pl_nr > 0) /* still has more pages */
+		if (queue->pl_nr > 0) 
 			stripe_to = PAGE_SIZE;
 
 		sub = lov_sub_get(env, lio, index);
@@ -1502,7 +1502,7 @@ static int lov_io_commit_async(const struct lu_env *env,
 			break;
 		}
 
-		if (plist->pl_nr > 0) /* short write */
+		if (plist->pl_nr > 0) 
 			break;
 
 		from = 0;
@@ -1517,10 +1517,10 @@ static int lov_io_commit_async(const struct lu_env *env,
 			cl_io_extent_release(sub->sub_env, &sub->sub_io, prio);
 	}
 
-	/* for error case, add the page back into the qin list */
+	
 	LASSERT(ergo(rc == 0, plist->pl_nr == 0));
 	while (plist->pl_nr > 0) {
-		/* error occurred, add the uncommitted pages back into queue */
+		
 		page = cl_page_list_last(plist);
 		cl_page_list_move_head(queue, plist, page);
 	}
@@ -1663,12 +1663,12 @@ static void lov_io_lseek_end(const struct lu_env *env,
 		       index, stripe, seek_hole ? "HOLE" : "DATA",
 		       subio->u.ci_lseek.ls_start);
 
-		/* first subio with positive result is what we need */
+		
 		sub_off = subio->u.ci_lseek.ls_result;
-		/* Expected error, offset is out of stripe file size */
+		
 		if (sub_off == -ENXIO)
 			continue;
-		/* Any other errors are not expected with ci_result == 0 */
+		
 		if (sub_off < 0) {
 			CDEBUG(D_INFO, "unexpected error: rc = %lld\n",
 			       sub_off);
@@ -1698,9 +1698,9 @@ static void lov_io_lseek_end(const struct lu_env *env,
 		 * case there is no more components ahead
 		 */
 		if (lov_off >= comp_end) {
-			/* must be SEEK_HOLE case */
+			
 			if (likely(seek_hole)) {
-				/* save comp end as potential hole offset */
+				
 				hole_off = max_t(__u64, comp_end, hole_off);
 			} else {
 				io->ci_result = -EINVAL;
@@ -1717,7 +1717,7 @@ static void lov_io_lseek_end(const struct lu_env *env,
 		       sub->sub_io.ci_result);
 		offset = min_t(__u64, offset, lov_off);
 	}
-	/* no result but some component returns hole as component end */
+	
 	if (seek_hole && offset == -ENXIO && hole_off > 0)
 		offset = hole_off;
 
@@ -2035,7 +2035,7 @@ int lov_io_init_released(const struct lu_env *env, struct cl_object *obj,
 	RETURN(result);
 }
 
-/* confirm this offset is in the given layout entry */
+
 bool lov_io_layout_at_confirm(struct lov_io *lio, int entry, __u64 offset)
 {
 	struct lov_object *lov = lio->lis_object;
@@ -2061,7 +2061,7 @@ int lov_io_layout_at(struct lov_io *lio, __u64 offset)
 
 	LASSERT(lov->lo_type == LLT_COMP);
 
-	/* This is actual file offset so nothing can cover eof. */
+	
 	if (offset == LUSTRE_EOF)
 		return -1;
 
@@ -2090,4 +2090,4 @@ int lov_io_layout_at(struct lov_io *lio, __u64 offset)
 	return -1;
 }
 
-/** @} lov */
+

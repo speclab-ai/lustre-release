@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2017, Intel Corporation. All rights reserved.
  * Use is subject to license terms.
@@ -261,7 +261,7 @@ static void mirror_copy(int argc, char *argv[])
 	close(fd);
 }
 
-/* XXX - does not work. Leave here as place holder */
+
 static void mirror_ost_lv(int argc, char *argv[])
 {
 	int id = -1;
@@ -375,7 +375,7 @@ static void mirror_resync(int argc, char *argv[])
 	fname = argv[optind];
 	fd = open_file(fname);
 
-	/* set the lease on the file */
+	
 	ioc = calloc(sizeof(*ioc) + sizeof(__u32) * 4096, 1);
 	syserr(ioc == NULL, "no memory");
 
@@ -416,7 +416,7 @@ static void mirror_resync(int argc, char *argv[])
 
 	printf("%s: found %zd stale components\n", fname, comp_size);
 
-	/* get the read range [start, end) */
+	
 	start = comp_array[0].lrc_start;
 	end = comp_array[0].lrc_end;
 	for (idx = 1; idx < comp_size; idx++) {
@@ -438,7 +438,7 @@ static void mirror_resync(int argc, char *argv[])
 		free(ioc);
 	syserrx(rc < 0, "llapi_mirror_resync_many");
 
-	/* prepare ioc for lease put */
+	
 	ioc->lil_mode = LL_LEASE_UNLCK;
 	ioc->lil_flags = LL_LEASE_RESYNC_DONE;
 	ioc->lil_count = 0;
@@ -453,11 +453,11 @@ static void mirror_resync(int argc, char *argv[])
 		ioc->lil_count = 0;
 
 	if (error_inject & INVALID_IDS && ioc->lil_count > 0)
-		ioc->lil_ids[ioc->lil_count - 1] = 567; /* inject error */
+		ioc->lil_ids[ioc->lil_count - 1] = 567; 
 
 	llapi_layout_free(layout);
 
-	if (error_inject & OPEN_TEST_FILE) /* break lease */
+	if (error_inject & OPEN_TEST_FILE) 
 		close(open(argv[optind], O_RDONLY));
 
 	rc = llapi_lease_set(fd, ioc);

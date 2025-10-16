@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: LGPL-2.1-or-later */
+
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
  *     alternatives
@@ -72,36 +72,36 @@ int write_param(const char *path, const char *param_name,
 
 #define LCFG_THREADS_DEF 8
 
-/* A work item for parallel set_param */
+
 struct sp_work_item {
-	/* The full path to the parameter file */
+	
 	char *spwi_path;
 
-	/* The parameter name as returned by display_name */
+	
 	char *spwi_param_name;
 
-	/* The value to which the parameter is to be set */
+	
 	char *spwi_value;
 };
 
-/* A work queue struct for parallel set_param */
+
 struct sp_workq {
-	/* The parameter options passed to set_param */
+	
 	struct param_opts *spwq_popt;
 
-	/* The number of valid items in spwq_items */
+	
 	int spwq_len;
 
-	/* The size of the spwq_items list */
+	
 	int spwq_size;
 
-	/* The current index into the spwq_items list */
+	
 	int spwq_cur_index;
 
-	/* Array of work items. */
+	
 	struct sp_work_item *spwq_items;
 
-	/* A mutex to control access to the work queue */
+	
 	pthread_mutex_t spwq_mutex;
 };
 

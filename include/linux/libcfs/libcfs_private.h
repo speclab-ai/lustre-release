@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Various defines for libcfs.
  */
@@ -58,7 +58,7 @@ do {									\
 
 #define LASSERT(cond) LASSERTF(cond, "\n")
 
-#else /* !LASSERT_CHECKED */
+#else 
 
 #define LASSERTF(cond, fmt, ...)					\
 do {									\
@@ -72,12 +72,12 @@ do {									\
 } while (0)
 
 #define LASSERT(cond) LASSERTF(cond, "\n")
-#endif /* !LASSERT_CHECKED */
-#else /* !LIBCFS_DEBUG */
-/* sizeof is to use expression without evaluating it. */
+#endif 
+#else 
+
 # define LASSERT(e) ((void)sizeof!!(e))
 # define LASSERTF(cond, ...) ((void)sizeof!!(cond))
-#endif /* !LIBCFS_DEBUG */
+#endif 
 
 #ifdef CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK
 /**
@@ -127,10 +127,10 @@ do {						\
 # define libcfs_kmem_inc(ptr, size) do {} while (0)
 # define libcfs_kmem_dec(ptr, size) do {} while (0)
 # define libcfs_kmem_read()	(0)
-#endif /* LIBCFS_DEBUG */
+#endif 
 
 #ifndef LIBCFS_VMALLOC_SIZE
-#define LIBCFS_VMALLOC_SIZE        (2 << PAGE_SHIFT) /* 2 pages */
+#define LIBCFS_VMALLOC_SIZE        (2 << PAGE_SHIFT) 
 #endif
 
 #define LIBCFS_ALLOC_PRE(size, mask)					    \
@@ -140,7 +140,7 @@ do {									    \
 		 ((mask) & GFP_ATOMIC) != 0));				    \
 } while (0)
 
-/* message format here needs to match regexp in lustre/tests/leak_finder.pl */
+
 #define LIBCFS_MEM_MSG(ptr, size, name)					      \
 	CDEBUG(D_MALLOC, name " '" #ptr "': %d at %p.\n", (int)(size), ptr)
 
@@ -200,7 +200,7 @@ do {									    \
 	LIBCFS_ALLOC_POST((ptr), (size), "alloc");			    \
 } while (0)
 
-/** default numa allocator */
+
 #define LIBCFS_CPT_ALLOC(ptr, cptab, cpt, size)				    \
 	LIBCFS_CPT_ALLOC_GFP(ptr, (cptab), (cpt), (size), GFP_NOFS)
 
@@ -216,7 +216,7 @@ do {									\
 	}								\
 } while (0)
 
-/******************************************************************************/
+
 
 void libcfs_debug_dumplog(void);
 int libcfs_debug_init(unsigned long bufsize);
@@ -232,9 +232,9 @@ int libcfs_debug_mark_buffer(const char *text);
 #define CFS_FREE_PTR_ARRAY(ptr, count)			\
 	LIBCFS_FREE(ptr, (count) * sizeof(*(ptr)))
 
-/* implication */
+
 #define ergo(a, b) (!(a) || (b))
-/* logical equivalence */
+
 #define equi(a, b) (!!(a) == !!(b))
 
 #endif

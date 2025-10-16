@@ -59,4 +59,4 @@ static inline void list_replace_init(struct list_head *old_node,
 	list_del_init(old_node);
 }
 
-#endif /* _OFD_ACCESS_BATCH_H_ */
+#endif 

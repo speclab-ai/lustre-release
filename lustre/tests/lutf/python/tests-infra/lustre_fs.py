@@ -106,7 +106,6 @@ class SimpleLustreFS():
 		for i in range(0, len(self.__mgs_nodes)):
 			if i >= num_mgs:
 				break
-			#self.__mgs_nodes[i].configure_lustre(mgs_nids=self.__mgs_nids, index=i)
 			self.__mgs_nodes[i].configure_lustre(index=i)
 
 	def mount_servers(self, num_mgs=100, num_oss=100):

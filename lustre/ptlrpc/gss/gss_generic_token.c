@@ -61,7 +61,7 @@
 #include "gss_asn1.h"
 
 
-/* TWRITE_STR from gssapiP_generic.h */
+
 #define TWRITE_STR(ptr, str, len) \
         memcpy((ptr), (char *) (str), (len)); \
         (ptr) += (len);
@@ -165,8 +165,8 @@ int der_read_length(unsigned char **buf, int *bufsize)
  */
 int g_token_size(rawobj_t *mech, unsigned int body_size)
 {
-        /* set body_size to sequence contents size */
-        body_size += 4 + (int) mech->len; /* NEED overflow check */
+        
+        body_size += 4 + (int) mech->len; 
         return (1 + der_length_size(body_size) + body_size);
 }
 

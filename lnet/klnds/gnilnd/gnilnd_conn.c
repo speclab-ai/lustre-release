@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (C) 2012 Cray, Inc.
  *
  * Copyright (c) 2014, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org.
+/* This file is part of Lustre, http:
  *
  * Author: Nic Henke <nic@cray.com>
  * Author: James Shimek <jshimek@cray.com>
@@ -36,7 +36,7 @@ kgnilnd_map_fmablk(kgn_device_t *device, kgn_fma_memblock_t *fma_blk)
 
 	fma_blk->gnm_hold_timeout = 0;
 
-	/* make sure we are mapping a clean block */
+	
 	LASSERTF(fma_blk->gnm_hndl.qword1 == 0UL,
 		 "fma_blk %px dirty\n", fma_blk);
 
@@ -68,7 +68,7 @@ kgnilnd_map_fmablk(kgn_device_t *device, kgn_fma_memblock_t *fma_blk)
 	}
 
 	atomic_inc(&device->gnd_n_mdd);
-	/* nfmablk is live (mapped) blocks */
+	
 	atomic_inc(&device->gnd_nfmablk);
 
 	RETURN(0);
@@ -176,7 +176,7 @@ kgnilnd_alloc_fmablk(kgn_device_t *device, int use_phys)
 		fma_blk->gnm_state = GNILND_FMABLK_VIRT;
 	}
 
-	/* allocate just enough space for the bits to track the mailboxes */
+	
 	CFS_ALLOC_PTR_ARRAY(fma_blk->gnm_bit_array, BITS_TO_LONGS(num_mbox));
 	if (fma_blk->gnm_bit_array == NULL) {
 		CNETERR("could not allocate mailbox bitmask, %lu bytes for %d mbox\n",
@@ -211,7 +211,7 @@ kgnilnd_alloc_fmablk(kgn_device_t *device, int use_phys)
 		fma_blk->gnm_mbox_size, fma_blk->gnm_hndl.qword1,
 		fma_blk->gnm_hndl.qword2);
 
-	/* lock Is protecting data structures, not semaphore */
+	
 
 	spin_lock(&device->gnd_fmablk_lock);
 	list_add_tail(&fma_blk->gnm_bufflist, &device->gnd_fma_buffs);
@@ -283,7 +283,7 @@ kgnilnd_unmap_fmablk(kgn_device_t *dev, kgn_fma_memblock_t *fma_blk)
 		atomic_dec(&dev->gnd_n_mdd);
 	}
 
-	/* PHYS blocks don't get mapped */
+	
 	if (fma_blk->gnm_state != GNILND_FMABLK_PHYS) {
 		atomic64_sub(fma_blk->gnm_blk_size, &dev->gnd_nbytes_map);
 		fma_blk->gnm_state = GNILND_FMABLK_IDLE;
@@ -294,12 +294,12 @@ kgnilnd_unmap_fmablk(kgn_device_t *dev, kgn_fma_memblock_t *fma_blk)
 		fma_blk->gnm_hndl.qword1 = fma_blk->gnm_hndl.qword2 = 0UL;
 	}
 
-	/* Decrement here as this is the # of mapped blocks */
+	
 	atomic_dec(&dev->gnd_nfmablk);
 }
 
 
-/* needs lock on gnd_fmablk_lock to cover gnd_fma_buffs */
+
 void
 kgnilnd_free_fmablk_locked(kgn_device_t *dev, kgn_fma_memblock_t *fma_blk)
 {
@@ -316,7 +316,7 @@ kgnilnd_free_fmablk_locked(kgn_device_t *dev, kgn_fma_memblock_t *fma_blk)
 			fma_blk, fma_blk->gnm_blk_size, fma_blk->gnm_avail_mboxs,
 			fma_blk->gnm_held_mboxs, fma_blk->gnm_mbox_size);
 
-		/* We leave MDD dangling over stack reset */
+		
 		if (!kgnilnd_data.kgn_in_reset) {
 			kgnilnd_mem_mdd_release(dev->gnd_handle, &fma_blk->gnm_hndl);
 		}
@@ -363,7 +363,7 @@ kgnilnd_find_free_mbox(kgn_conn_t *conn)
 		    fma_blk->gnm_state <= GNILND_FMABLK_IDLE) {
 			continue;
 		}
-		/* look in bitarray for available mailbox */
+		
 		do {
 			id = find_next_zero_bit(
 				fma_blk->gnm_bit_array,
@@ -371,7 +371,7 @@ kgnilnd_find_free_mbox(kgn_conn_t *conn)
 				fma_blk->gnm_next_avail_mbox);
 		      if (id == fma_blk->gnm_num_mboxs &&
 			  fma_blk->gnm_next_avail_mbox != 0) {
-				/* wrap around */
+				
 				fma_blk->gnm_next_avail_mbox = 0;
 			} else {
 				break;
@@ -433,13 +433,13 @@ kgnilnd_setup_mbox(kgn_conn_t *conn)
 	int                      err = 0;
 
 	smsg_attr->msg_buffer = NULL;
-	/* Look for available mbox */
+	
 	do {
 		kgnilnd_find_free_mbox(conn);
 
-		/* nothing in the existing buffers, make a new one */
+		
 		if (smsg_attr->msg_buffer == NULL) {
-			/* for runtime allocations, we only want vmalloc */
+			
 			err = kgnilnd_alloc_fmablk(conn->gnc_device, 0);
 			if (err) {
 				break;
@@ -463,7 +463,7 @@ kgnilnd_release_mbox(kgn_conn_t *conn, int purgatory_hold)
 	int                     found = 0;
 	int                     id;
 
-	/* if we failed to setup mbox and now destroying conn */
+	
 	if (smsg_attr->msg_buffer == NULL) {
 		return;
 	}
@@ -557,10 +557,10 @@ kgnilnd_release_mbox(kgn_conn_t *conn, int purgatory_hold)
 			kgnilnd_unmap_fmablk(dev, fma_blk);
 		}
 
-		/* But we can only free once they are all avail */
+		
 		if (fma_blk->gnm_avail_mboxs == fma_blk->gnm_num_mboxs &&
 		    fma_blk->gnm_held_mboxs == 0) {
-			/* all mailboxes are released, free fma_blk */
+			
 			kgnilnd_free_fmablk_locked(dev, fma_blk);
 		}
 	}
@@ -609,7 +609,7 @@ kgnilnd_map_phys_fmablk(kgn_device_t *device)
 	int                     rc = 0;
 	kgn_fma_memblock_t     *fma_blk;
 
-	/* use mutex to gate access to single thread, just in case */
+	
 	mutex_lock(&device->gnd_fmablk_mutex);
 
 	spin_lock(&device->gnd_fmablk_lock);
@@ -634,7 +634,7 @@ kgnilnd_unmap_fma_blocks(kgn_device_t *device)
 
 	kgn_fma_memblock_t      *fma_blk;
 
-	/* use mutex to gate access to single thread, just in case */
+	
 	mutex_lock(&device->gnd_fmablk_mutex);
 
 	spin_lock(&device->gnd_fmablk_lock);
@@ -653,7 +653,7 @@ kgnilnd_free_phys_fmablk(kgn_device_t *device)
 
 	kgn_fma_memblock_t      *fma_blk, *fma_blkN;
 
-	/* use mutex to gate access to single thread, just in case */
+	
 	mutex_lock(&device->gnd_fmablk_mutex);
 
 	spin_lock(&device->gnd_fmablk_lock);
@@ -667,7 +667,7 @@ kgnilnd_free_phys_fmablk(kgn_device_t *device)
 	mutex_unlock(&device->gnd_fmablk_mutex);
 }
 
-/* kgnilnd dgram nid->struct managment */
+
 
 static inline struct list_head *
 kgnilnd_nid2dgramlist(kgn_device_t *dev, lnet_nid_t nid)
@@ -678,7 +678,7 @@ kgnilnd_nid2dgramlist(kgn_device_t *dev, lnet_nid_t nid)
 }
 
 
-/* needs dev->gnd_dgram_lock held */
+
 kgn_dgram_t *
 kgnilnd_find_dgram_locked(kgn_device_t *dev, lnet_nid_t dst_nid)
 {
@@ -687,7 +687,7 @@ kgnilnd_find_dgram_locked(kgn_device_t *dev, lnet_nid_t dst_nid)
 
 	list_for_each_entry(dgram, dgram_list, gndg_list) {
 
-		/* if state > POSTED, we are already handling cancel/completion */
+		
 		if ((dgram->gndg_conn_out.gncr_dstnid != dst_nid) ||
 		     dgram->gndg_state > GNILND_DGRAM_POSTED)
 			continue;
@@ -722,10 +722,10 @@ kgnilnd_pack_connreq(kgn_connreq_t *connreq, kgn_conn_t *conn,
 {
 	int err = 0;
 
-	/* ensure we haven't violated max datagram size */
+	
 	BUILD_BUG_ON(sizeof(kgn_connreq_t) > GNI_DATAGRAM_MAXSIZE);
 
-	/* no need to zero out, we do that when allocating dgram */
+	
 	connreq->gncr_magic     = GNILND_MSG_MAGIC;
 
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_PACK_SRCNID)) {
@@ -763,13 +763,13 @@ kgnilnd_pack_connreq(kgn_connreq_t *connreq, kgn_conn_t *conn,
 		connreq->gncr_timeout   = conn->gnc_timeout;
 	}
 
-	/* the rest pack the data into the payload in other places */
+	
 	if (type == GNILND_CONNREQ_REQ) {
 		kgn_gniparams_t       *req_params = &connreq->gncr_gnparams;
 		req_params->gnpr_host_id = conn->gnc_device->gnd_host_id;
 		req_params->gnpr_cqid = conn->gnc_cqid;
 
-		/* allocate mailbox for this connection */
+		
 		err = kgnilnd_setup_mbox(conn);
 		if (err != 0) {
 			CERROR("Failed to setup FMA mailbox (%d)\n", err);
@@ -777,7 +777,7 @@ kgnilnd_pack_connreq(kgn_connreq_t *connreq, kgn_conn_t *conn,
 		req_params->gnpr_smsg_attr = conn->gnpr_smsg_attr;
 	}
 
-	/* XXX Nic: TBD - checksum computation */
+	
 
 	return err;
 }
@@ -794,7 +794,7 @@ kgnilnd_unpack_connreq(kgn_dgram_t *dgram)
 
 	if (connreq->gncr_magic != GNILND_MSG_MAGIC &&
 	    connreq->gncr_magic != __swab32(GNILND_MSG_MAGIC)) {
-		/* Unexpected magic! */
+		
 		CERROR("Unexpected magic %08x\n",
 		       connreq->gncr_magic);
 		return -EBADF;
@@ -828,7 +828,7 @@ kgnilnd_unpack_connreq(kgn_dgram_t *dgram)
 
 		if (LNET_NIDADDR(dgram->gndg_conn_out.gncr_dstnid) !=
 				LNET_NIDADDR(incoming)) {
-			/* we got a datagram match for the wrong nid... */
+			
 			CERROR("matched datagram 0x%p with srcnid %s "
 				"(%x), expecting %s (%x)\n",
 				dgram,
@@ -845,7 +845,7 @@ kgnilnd_unpack_connreq(kgn_dgram_t *dgram)
 		 * corrupted packet, otherwise we'll just verify that the dstnid
 		 * matches the NID for the NET that the dgram was posted */
 
-		/* make sure their wildcard didn't match ours, that is unpossible */
+		
 		LASSERTF(connreq->gncr_dstnid != LNET_NID_ANY,
 			 "dgram 0x%p from %s, connreq 0x%p; "
 			 "wildcard matched wildcard \n", dgram,
@@ -878,7 +878,7 @@ kgnilnd_unpack_connreq(kgn_dgram_t *dgram)
 			return -EBADSLT;
 		}
 
-		/* kgnilnd_find_net takes a ref on the net it finds, You need to decref it when not needed. */
+		
 		kgnilnd_net_decref(net);
 	}
 
@@ -887,7 +887,7 @@ kgnilnd_unpack_connreq(kgn_dgram_t *dgram)
 		return -EPROTO;
 	}
 
-	/* XXX Nic: TBD - checksum validation */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_CONNREQ_DROP)) {
 		return -EBADF;
 	}
@@ -913,7 +913,7 @@ kgnilnd_unpack_connreq(kgn_dgram_t *dgram)
 	 * will take care of dropping datagrams if we don't have that network.
 	 */
 
-	/* few more idiot software or configuration checks */
+	
 
 	switch (connreq->gncr_type) {
 	case GNILND_CONNREQ_REQ:
@@ -982,8 +982,8 @@ kgnilnd_process_dgram(kgn_dgram_t *dgram, gni_post_state_t post_state)
 
 	switch (post_state) {
 	case GNI_POST_COMPLETED:
-		/* normal state for dgrams that need actual processing */
-		/* GOTO to avoid processing dgram as canceled/done */
+		
+		
 		GOTO(process_out, rc);
 
 	case GNI_POST_PENDING:
@@ -996,10 +996,10 @@ kgnilnd_process_dgram(kgn_dgram_t *dgram, gni_post_state_t post_state)
 			 dgram, dgram->gndg_type, kgnilnd_dgram_type2str(dgram),
 			 dgram->gndg_state, kgnilnd_dgram_state2str(dgram));
 
-		/* positive RC as this dgram isn't done yet */
+		
 		rc = EINPROGRESS;
 
-		/* GOTO as this isn't done yet */
+		
 		GOTO(process_out, rc);
 		break;
 
@@ -1046,10 +1046,10 @@ kgnilnd_process_dgram(kgn_dgram_t *dgram, gni_post_state_t post_state)
 	/* now finish cleaning up a dgram that is canceled/terminated and needs to
 	 * go away */
 
-	/* If this was actively canceled, drop the count now that we are processing */
+	
 	if (dgram->gndg_state == GNILND_DGRAM_CANCELED) {
 		atomic_dec(&dgram->gndg_conn->gnc_device->gnd_canceled_dgrams);
-		/* caller responsible for gndg_list removal */
+		
 	}
 
 process_out:
@@ -1057,7 +1057,7 @@ process_out:
 	RETURN(rc);
 }
 
-/* needs dev->gnd_dgram_lock held */
+
 void
 kgnilnd_cancel_dgram_locked(kgn_dgram_t *dgram)
 {
@@ -1081,13 +1081,13 @@ kgnilnd_cancel_dgram_locked(kgn_dgram_t *dgram)
 	dgram->gndg_state = GNILND_DGRAM_CANCELED;
 
 	if (dgram->gndg_conn->gnc_state >= GNILND_CONN_ESTABLISHED) {
-		/* we don't need to cancel_by_id if the datagram was good */
+		
 		return;
 	}
 
-	/* let folks know there are outstanding cancels */
+	
 	atomic_inc(&dgram->gndg_conn->gnc_device->gnd_canceled_dgrams);
-	/* leave on nid list until cancel is done for debugging fun */
+	
 	grc = kgnilnd_ep_postdata_cancel_by_id(dgram->gndg_conn->gnc_ephandle, (__u64) dgram);
 
 	/* if we don't get success here, we have hosed up the dgram tracking
@@ -1126,7 +1126,7 @@ kgnilnd_cancel_dgram_locked(kgn_dgram_t *dgram)
 			post_state, remote_addr, remote_id);
 
 		if (grc == GNI_RC_NO_MATCH) {
-			/* she's gone, reduce count and move along */
+			
 			dgram->gndg_state = GNILND_DGRAM_DONE;
 			atomic_dec(&dgram->gndg_conn->gnc_device->gnd_canceled_dgrams);
 			RETURN_EXIT;
@@ -1143,9 +1143,9 @@ kgnilnd_cancel_dgram_locked(kgn_dgram_t *dgram)
 			dgram->gndg_state = GNILND_DGRAM_DONE;
 			atomic_dec(&dgram->gndg_conn->gnc_device->gnd_canceled_dgrams);
 
-			/* caller context responsible for calling kgnilnd_release_dgram() */
+			
 		} else {
-			/* still pending, let it simmer until golden brown and delicious */
+			
 		}
 	}
 
@@ -1157,7 +1157,7 @@ kgnilnd_cancel_dgram_locked(kgn_dgram_t *dgram)
 void
 kgnilnd_cleanup_dgram(kgn_dgram_t *dgram)
 {
-	/* release the dgram ref on conn */
+	
 	if (dgram->gndg_conn) {
 		kgnilnd_conn_decref(dgram->gndg_conn);
 		dgram->gndg_conn = NULL;
@@ -1172,7 +1172,7 @@ kgnilnd_free_dgram(kgn_device_t *dev, kgn_dgram_t *dgram)
 		 "dgram 0x%p with bad state %s\n",
 		 dgram, kgnilnd_dgram_state2str(dgram));
 
-	/* bit of poisoning to help detect bad driver data */
+	
 	dgram->gndg_magic = 0x6f5a6b5f;
 	atomic_dec(&dev->gnd_ndgrams);
 
@@ -1223,12 +1223,12 @@ kgnilnd_post_dgram(kgn_device_t *dev, lnet_nid_t dstnid, kgn_connreq_type_t type
 	}
 
 	if (dgram->gndg_type == GNILND_DGRAM_WC_REQ) {
-		/* clear buffer for sanity on reuse of wildcard */
+		
 		memset(&dgram->gndg_conn_in, 0, sizeof(kgn_connreq_t));
 	}
 
 	if (dstnid == LNET_NID_ANY) {
-		/* set here to reset any dgram re-use */
+		
 		dgram->gndg_conn->gnc_state = GNILND_CONN_LISTEN;
 	} else {
 		__u32            host_id;
@@ -1273,14 +1273,14 @@ kgnilnd_post_dgram(kgn_device_t *dev, lnet_nid_t dstnid, kgn_connreq_type_t type
 
 	dgram->gndg_post_time = jiffies;
 
-	/* XXX Nic: here is where we'd add in logical network multiplexing */
+	
 
 	CDEBUG(D_NETTRACE, "dgram 0x%p type %s %s->%s cdm %d\n",
 	       dgram, kgnilnd_dgram_type2str(dgram),
 	       libcfs_nid2str(srcnid),
 	       libcfs_nid2str(dstnid), dev->gnd_id);
 
-	/* this allocates memory, can't hold locks across */
+	
 	grc = kgnilnd_ep_postdata_w_id(dgram->gndg_conn->gnc_ephandle,
 				   &dgram->gndg_conn_out, sizeof(kgn_connreq_t),
 				   &dgram->gndg_conn_in, sizeof(kgn_connreq_t),
@@ -1313,7 +1313,7 @@ kgnilnd_post_dgram(kgn_device_t *dev, lnet_nid_t dstnid, kgn_connreq_type_t type
 			 dgram, libcfs_nid2str(dstnid));
 	}
 
-	/* unmunge dstnid to help processing code cope... */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_PACK_DSTNID)) {
 		dgram->gndg_conn_out.gncr_dstnid = dstnid;
 	}
@@ -1331,7 +1331,7 @@ post_failed:
 	RETURN(rc);
 }
 
-/* The shutdown flag is set from the shutdown and stack reset threads. */
+
 void
 kgnilnd_release_dgram(kgn_device_t *dev, kgn_dgram_t *dgram, int shutdown)
 {
@@ -1397,7 +1397,7 @@ kgnilnd_release_dgram(kgn_device_t *dev, kgn_dgram_t *dgram, int shutdown)
 			}
 		}
 
-		/* always free the old dgram */
+		
 		kgnilnd_free_dgram(dev, dgram);
 	}
 }
@@ -1423,7 +1423,7 @@ kgnilnd_probe_for_dgram(kgn_device_t *dev, kgn_dgram_t **dgramp)
 	grc = kgnilnd_postdata_probe_by_id(dev->gnd_handle, &readyid);
 	if (grc != GNI_RC_SUCCESS) {
 		spin_unlock(&dev->gnd_dgram_lock);
-		/* return 0 to indicate nothing happened */
+		
 		RETURN(0);
 	}
 
@@ -1446,7 +1446,7 @@ kgnilnd_probe_for_dgram(kgn_device_t *dev, kgn_dgram_t **dgramp)
 		 dgram, kgnilnd_dgram_state2str(dgram),
 		 kgnilnd_dgram_type2str(dgram));
 
-	/* now we know that the datagram structure is ok, so pull off list */
+	
 	list_del_init(&dgram->gndg_list);
 
 	/* while we have the gnn_dgram_lock and BEFORE we call test_by_id
@@ -1463,7 +1463,7 @@ kgnilnd_probe_for_dgram(kgn_device_t *dev, kgn_dgram_t **dgramp)
 					     (__u64)dgram, &post_state,
 					     &remote_addr, &remote_id);
 
-	/* we now "own" this datagram */
+	
 	spin_unlock(&dev->gnd_dgram_lock);
 
 	LASSERTF(grc != GNI_RC_NO_MATCH, "kgni lied! probe_by_id told us that"
@@ -1490,12 +1490,12 @@ kgnilnd_probe_for_dgram(kgn_device_t *dev, kgn_dgram_t **dgramp)
 		 rc, dgram, post_state);
 
 	if (rc == 0) {
-		/* dgram is good enough for the data to be used */
+		
 		dgram->gndg_state = GNILND_DGRAM_PROCESSING;
-		/* fake rc to mark that we've done something */
+		
 		rc = 1;
 	} else {
-		/* let kgnilnd_release_dgram take care of canceled dgrams */
+		
 		if (dgram->gndg_state != GNILND_DGRAM_CANCELED) {
 			dgram->gndg_state = GNILND_DGRAM_DONE;
 		}
@@ -1513,7 +1513,7 @@ probe_for_out:
 int
 kgnilnd_setup_wildcard_dgram(kgn_device_t *dev)
 {
-	/* if kgn_wildcard is zero, return error */
+	
 	int     rc = -ENOENT, i;
 	ENTRY;
 
@@ -1554,7 +1554,7 @@ kgnilnd_cancel_net_dgrams(kgn_net_t *net)
 	for (i = 0; i < *kgnilnd_tunables.kgn_peer_hash_size; i++) {
 		list_for_each_entry_safe(dg, dgN, &net->gnn_dev->gnd_dgrams[i], gndg_list) {
 
-			/* skip nids not on our net or are wildcards */
+			
 
 
 			if (dg->gndg_type == GNILND_DGRAM_WC_REQ ||
@@ -1598,7 +1598,7 @@ kgnilnd_cancel_wc_dgrams(kgn_device_t *dev)
 
 			kgnilnd_cancel_dgram_locked(dg);
 
-			/* WC could be DONE already, check and if so add to list to be released */
+			
 			if (dg->gndg_state == GNILND_DGRAM_DONE)
 				list_move_tail(&dg->gndg_list, &zombies);
 		}
@@ -1671,7 +1671,7 @@ kgnilnd_wait_for_canceled_dgrams(kgn_device_t *dev)
 			"Waiting for %d canceled datagrams to clear on device %d\n",
 			atomic_read(&dev->gnd_canceled_dgrams), dev->gnd_id);
 
-		/* check once a second */
+		
 		grc = kgnilnd_postdata_probe_wait_by_id(dev->gnd_handle,
 		       250, &readyid);
 
@@ -1683,7 +1683,7 @@ kgnilnd_wait_for_canceled_dgrams(kgn_device_t *dev)
 
 		rc = kgnilnd_probe_for_dgram(dev, &dgram);
 		if (rc != 0) {
-			/* if we got a valid dgram or one that is now done, clean up */
+			
 			kgnilnd_release_dgram(dev, dgram, 1);
 		}
 	} while (atomic_read(&dev->gnd_canceled_dgrams));
@@ -1702,7 +1702,7 @@ kgnilnd_start_connect(kgn_peer_t *peer)
 
 	write_lock(&kgnilnd_data.kgn_peer_conn_lock);
 	if (!kgnilnd_peer_active(peer) || peer->gnp_connecting != GNILND_PEER_CONNECT) {
-		/* raced with peer getting unlinked */
+		
 		write_unlock(&kgnilnd_data.kgn_peer_conn_lock);
 		rc = ESTALE;
 		GOTO(out, rc);
@@ -1745,7 +1745,7 @@ kgnilnd_start_connect(kgn_peer_t *peer)
 	}
 	peer->gnp_connecting = GNILND_PEER_POSTED;
 	write_unlock(&kgnilnd_data.kgn_peer_conn_lock);
-	/* reaper thread will take care of any timeouts */
+	
 	CDEBUG(D_NET, "waiting for connect to finish to %s rc %d\n",
 	       libcfs_nid2str(peer->gnp_nid), rc);
 
@@ -1775,8 +1775,8 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 	 * kgnilnd_unpack_connreq makes sure that conn_in.gncr_srcnid is
 	 * HER and conn_out.gncr_srcnid is ME for both active and WC dgrams */
 
-	/* assume this is a new peer  - it makes locking cleaner when it isn't */
-	/* no holding kgn_net_rw_sem - already are at the kgnilnd_dgram_mover level */
+	
+	
 
 	rc = kgnilnd_create_peer_safe(&new_peer, her_nid, NULL, GNILND_PEER_UP);
 	if (rc != 0) {
@@ -1786,10 +1786,10 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 
 	write_lock(&kgnilnd_data.kgn_peer_conn_lock);
 
-	/* this transfers ref from create_peer to the kgn_peer table */
+	
 	kgnilnd_add_peer_locked(her_nid, new_peer, &peer);
 
-	/* if we found an existing peer, is it really ready for a new conn ? */
+	
 	if (peer != new_peer) {
 		/* if this was an active connect attempt but we can't find a peer waiting for it
 		 * we will dump in the trash */
@@ -1809,15 +1809,15 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 			spin_lock(&peer->gnp_net->gnn_dev->gnd_connd_lock);
 			if (!list_empty(&peer->gnp_connd_list)) {
 				list_del_init(&peer->gnp_connd_list);
-				/* drop connd ref */
+				
 				kgnilnd_peer_decref(peer);
 			}
 			spin_unlock(&peer->gnp_net->gnn_dev->gnd_connd_lock);
-			/* clear rc to make sure we don't have fake error */
+			
 			rc = 0;
 		}
 
-		/* no matter what, we are no longer waiting to connect this peer now */
+		
 		peer->gnp_connecting = GNILND_PEER_IDLE;
 
 		/* Refuse to duplicate an existing connection (both sides might try to
@@ -1845,12 +1845,12 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 	 * kgnilnd_add_peer_locked will use our ref on new_peer (from create_peer_safe) as the
 	 * ref for the peer table. */
 
-	/* at this point, the connection request is a winner */
+	
 
-	/* mark 'DONE' to avoid cancel being called from release */
+	
 	dgram->gndg_state = GNILND_DGRAM_DONE;
 
-	/* initialise timestamps before reaper looks at them */
+	
 	conn->gnc_last_rx = conn->gnc_last_rx_cq = jiffies;
 
 	/* last_tx is initialized to jiffies - (keepalive*2) so that if the NOOP fails it will
@@ -1860,7 +1860,7 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 	conn->gnc_last_tx = jiffies - (cfs_time_seconds(GNILND_TO2KA(conn->gnc_timeout)) * 2);
 	conn->gnc_state = GNILND_CONN_ESTABLISHED;
 
-	/* save the dgram type used to establish this connection */
+	
 	conn->gnc_dgram_type = dgram->gndg_type;
 
 	/* refs are not transferred from dgram to tables, so increment to
@@ -1870,7 +1870,7 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 	conn->gnc_peer = peer;
 	list_add_tail(&conn->gnc_list, &peer->gnp_conns);
 
-	kgnilnd_conn_addref(conn);               /* +1 ref for conn table */
+	kgnilnd_conn_addref(conn);               
 	list_add_tail(&conn->gnc_hashlist,
 		      kgnilnd_cqid2connlist(conn->gnc_cqid));
 	kgnilnd_data.kgn_conn_version++;
@@ -1888,17 +1888,17 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 		}
 	}
 
-	/* Schedule all packets blocking for a connection */
+	
 	list_for_each_entry_safe(tx, txn, &peer->gnp_tx_queue, tx_list) {
-		/* lock held here is the peer_conn lock */
+		
 		kgnilnd_tx_del_state_locked(tx, peer, NULL, GNILND_TX_ALLOCD);
 		kgnilnd_queue_tx(conn, tx);
 	}
 
-	/* If this is an active connection lets mark its timestamp on the MBoX */
+	
 	if (dgram->gndg_conn_out.gncr_dstnid != LNET_NID_ANY) {
 		mbox = &conn->gnc_fma_blk->gnm_mbox_info[conn->gnc_mbox_id];
-		/* conn->gnc_last_rx is jiffies it better exist as it was just set */
+		
 		mbox->mbx_release_purg_active_dgram = conn->gnc_last_rx;
 	}
 
@@ -1908,14 +1908,14 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 	 * we just check for set and then clear */
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_FINISH_PURG)) {
 		cfs_fail_loc = 0x0;
-		/* get scheduler thread moving again */
+		
 		kgnilnd_schedule_device(conn->gnc_device);
 	}
 
 	CDEBUG(D_NET, "New conn 0x%p->%s dev %d\n",
 	       conn, libcfs_nid2str(her_nid), conn->gnc_device->gnd_id);
 
-	/* make sure we reset peer reconnect interval now that we have a good conn */
+	
 	kgnilnd_peer_alive(peer);
 	peer->gnp_reconnect_interval = 0;
 
@@ -1928,7 +1928,7 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 		CDEBUG(D_NET, "Clearing peer unlink %p\n",peer);
 	}
 
-	/* add ref to make it hang around until after we drop the lock */
+	
 	kgnilnd_conn_addref(conn);
 
 	/* Once the peer_conn lock is dropped, the conn could actually move into
@@ -1943,7 +1943,7 @@ kgnilnd_finish_connect(kgn_dgram_t *dgram)
 	lnet_notify(peer->gnp_net->gnn_ni, &peer_nid, true, true,
 		    ktime_get_seconds());
 
-	/* drop our 'hold' ref */
+	
 	kgnilnd_conn_decref(conn);
 
 out:
@@ -2021,7 +2021,7 @@ kgnilnd_process_nak(kgn_dgram_t *dgram)
 		spin_lock(&dgram->gndg_conn->gnc_device->gnd_connd_lock);
 
 		if (list_empty(&peer->gnp_connd_list)) {
-			/* if peer isn't on waiting list, try to find one to nuke */
+			
 			rc = kgnilnd_find_and_cancel_dgram(peer->gnp_net->gnn_dev,
 							   peer->gnp_nid);
 
@@ -2039,13 +2039,13 @@ kgnilnd_process_nak(kgn_dgram_t *dgram)
 			/* peer is on list, meaning it is a new connect attempt from the one
 			 * we started that generated the NAK - so just drop NAK */
 
-			/* use negative to prevent error message */
+			
 			rc = -EAGAIN;
 		}
 		spin_unlock(&dgram->gndg_conn->gnc_device->gnd_connd_lock);
 	}
 
-	/* success! we found a peer and at least marked pending_nak */
+	
 	write_unlock(&kgnilnd_data.kgn_peer_conn_lock);
 
 	return rc;
@@ -2059,7 +2059,7 @@ kgnilnd_process_connreq(kgn_dgram_t *dgram, int *needs_nak)
 	rc = kgnilnd_unpack_connreq(dgram);
 	if (rc < 0) {
 		if (rc != -EBADF) {
-			/* only NAK if we have good srcnid to use */
+			
 			*needs_nak = 1;
 		}
 		goto connreq_out;
@@ -2067,10 +2067,10 @@ kgnilnd_process_connreq(kgn_dgram_t *dgram, int *needs_nak)
 
 	switch (dgram->gndg_conn_in.gncr_type) {
 	case GNILND_CONNREQ_REQ:
-		/* wire up peer & conn, send queued TX */
+		
 		rc = kgnilnd_finish_connect(dgram);
 
-		/* don't nak when the nid is hosed */
+		
 		if ((rc < 0)) {
 			*needs_nak = 1;
 		}
@@ -2078,7 +2078,7 @@ kgnilnd_process_connreq(kgn_dgram_t *dgram, int *needs_nak)
 		break;
 	case GNILND_CONNREQ_NAK:
 		rc = kgnilnd_process_nak(dgram);
-		/* return early to prevent reconnect bump */
+		
 		return rc;
 	default:
 		CERROR("unexpected connreq type %s (%d) from %s\n",
@@ -2116,7 +2116,7 @@ kgnilnd_probe_and_process_dgram(kgn_device_t *dev)
 	} else if (rc < 0) {
 		GOTO(inform_peer, rc);
 	} else {
-		/* rc > 1 means it did something, reset for this func  */
+		
 		rc = 0;
 	}
 
@@ -2135,7 +2135,7 @@ kgnilnd_probe_and_process_dgram(kgn_device_t *dev)
 		break;
 	}
 
-	/* stash data to use after releasing current datagram */
+	
 	/* don't stash net - we are operating on a net already,
 	 * so the lock on rw_net_lock is sufficient */
 
@@ -2166,13 +2166,13 @@ inform_peer:
 			 * so we can tell LNet about him */
 			kgnilnd_peer_addref(peer);
 
-			/* if he still cares about the outstanding connect */
+			
 			if (peer->gnp_connecting >= GNILND_PEER_CONNECT) {
-				/* check if he is on the connd list and remove.. */
+				
 				spin_lock(&peer->gnp_net->gnn_dev->gnd_connd_lock);
 				if (!list_empty(&peer->gnp_connd_list)) {
 					list_del_init(&peer->gnp_connd_list);
-					/* drop connd ref */
+					
 					kgnilnd_peer_decref(peer);
 				}
 				spin_unlock(&peer->gnp_net->gnn_dev->gnd_connd_lock);
@@ -2188,7 +2188,7 @@ inform_peer:
 		}
 		write_unlock(&kgnilnd_data.kgn_peer_conn_lock);
 
-		/* now that we are outside the lock, tell Mommy */
+		
 		if (peer != NULL) {
 			kgnilnd_peer_notify(peer, rc, 0);
 			kgnilnd_peer_decref(peer);
@@ -2215,7 +2215,7 @@ kgnilnd_reaper_dgram_check(kgn_device_t *dev)
 			unsigned long            now = jiffies;
 			unsigned long            timeout;
 
-			/* don't timeout stuff if the network is mucked or shutting down */
+			
 			if (kgnilnd_check_hw_quiesce()) {
 				break;
 			}
@@ -2264,19 +2264,19 @@ kgnilnd_dgram_waitq(void *arg)
 
 	snprintf(name, sizeof(name), "kgnilnd_dgn_%02d", dev->gnd_id);
 
-	/* all gnilnd threads need to run fairly urgently */
+	
 	set_user_nice(current, *kgnilnd_tunables.kgn_nice);
 
-	/* we dont shut down until the device shuts down ... */
+	
 	while (!kgnilnd_data.kgn_shutdown) {
-		/* to quiesce or to not quiesce, that is the question */
+		
 		if (unlikely(kgnilnd_data.kgn_quiesce_trigger)) {
 			KGNILND_SPIN_QUIESCE;
 		}
 
 		while (CFS_FAIL_TIMEOUT(CFS_FAIL_GNI_PAUSE_DGRAM_COMP, 1)) {}
 
-		/* check once a second */
+		
 		grc = kgnilnd_postdata_probe_wait_by_id(dev->gnd_handle,
 						       1000, &readyid);
 
@@ -2284,11 +2284,11 @@ kgnilnd_dgram_waitq(void *arg)
 			CDEBUG(D_INFO, "waking up dgram mover thread\n");
 			kgnilnd_schedule_dgram(dev);
 
-			/* wait for dgram thread to ping us before spinning again */
+			
 			prepare_to_wait(&dev->gnd_dgping_waitq, &mover_done,
 					TASK_INTERRUPTIBLE);
 
-			/* don't sleep if we need to quiesce */
+			
 			if (likely(!kgnilnd_data.kgn_quiesce_trigger)) {
 				schedule();
 			}
@@ -2308,12 +2308,12 @@ kgnilnd_start_outbound_dgrams(kgn_device_t *dev, unsigned long deadline)
 
 	spin_lock(&dev->gnd_connd_lock);
 
-	/* Active connect - we added this in kgnilnd_launch_tx */
+	
 	while (!list_empty(&dev->gnd_connd_peers) && time_before(jiffies, deadline)) {
 		peer = list_first_entry(&dev->gnd_connd_peers,
 					kgn_peer_t, gnp_connd_list);
 
-		/* ref for connd removed in if/else below */
+		
 	       list_del_init(&peer->gnp_connd_list);
 
 		/* gnp_connecting and membership on gnd_connd_peers should be
@@ -2334,7 +2334,7 @@ kgnilnd_start_outbound_dgrams(kgn_device_t *dev, unsigned long deadline)
 		rc = kgnilnd_start_connect(peer);
 
 		if (likely(rc >= 0)) {
-			/* 0 on success, positive on 'just drop peer' errors */
+			
 			kgnilnd_peer_decref(peer);
 		} else if (rc == -ENOMEM) {
 			/* if we are out of wildcards, add back to
@@ -2347,16 +2347,16 @@ kgnilnd_start_outbound_dgrams(kgn_device_t *dev, unsigned long deadline)
 				list_add_tail(&peer->gnp_connd_list,
 					      &dev->gnd_connd_peers);
 			} else {
-				/* connecting changed while we were posting */
+				
 
 				LASSERTF(peer->gnp_connecting == GNILND_PEER_NEEDS_DEATH, "Peer is in invalid"
 					" state 0x%p->%s, connecting %d\n",
 					peer, libcfs_nid2str(peer->gnp_nid), peer->gnp_connecting);
 				peer->gnp_connecting = GNILND_PEER_KILL;
 				spin_lock(&dev->gnd_connd_lock);
-				/* remove the peer ref frrom the cond list */
+				
 				kgnilnd_peer_decref(peer);
-				/* let the system handle itself */
+				
 			}
 			write_unlock(&kgnilnd_data.kgn_peer_conn_lock);
 			/* the datagrams are a global pool,
@@ -2365,7 +2365,7 @@ kgnilnd_start_outbound_dgrams(kgn_device_t *dev, unsigned long deadline)
 			did_something -= 1;
 			break;
 		} else {
-			/* something bad happened, you lose */
+			
 			CNETERR("could not start connecting to %s "
 				"rc %d: Will retry until TX timeout\n",
 			       libcfs_nid2str(peer->gnp_nid), rc);
@@ -2432,7 +2432,7 @@ kgnilnd_dgram_poke_with_stick(cfs_timer_cb_arg_t arg)
 	wake_up(&t->dev->gnd_dgram_waitq);
 }
 
-/* use single thread for dgrams - should be sufficient for performance */
+
 int
 kgnilnd_dgram_mover(void *arg)
 {
@@ -2447,7 +2447,7 @@ kgnilnd_dgram_mover(void *arg)
 
 	snprintf(name, sizeof(name), "kgnilnd_dg_%02d", dev->gnd_id);
 
-	/* all gnilnd threads need to run fairly urgently */
+	
 	set_user_nice(current, *kgnilnd_tunables.kgn_nice);
 
 	/* we are ok not locking for these variables as the dgram waitq threads
@@ -2455,7 +2455,7 @@ kgnilnd_dgram_mover(void *arg)
 	 * event for the dgram_waitq (kgn_quiesce_trigger) */
 	deadline = jiffies + cfs_time_seconds(*kgnilnd_tunables.kgn_dgram_timeout);
 	while (!kgnilnd_data.kgn_shutdown) {
-		/* Safe: kgn_shutdown only set when quiescent */
+		
 
 		/* race with stack reset - we want to hold off seeing any new incoming dgrams
 		 * so we can force a dirty WC dgram for Bug 762072 - put right before
@@ -2463,7 +2463,7 @@ kgnilnd_dgram_mover(void *arg)
 		 * dgram mucking */
 		CFS_RACE(CFS_FAIL_GNI_WC_DGRAM_FREE);
 
-		/* to quiesce or to not quiesce, that is the question */
+		
 		if (unlikely(kgnilnd_data.kgn_quiesce_trigger)) {
 			KGNILND_SPIN_QUIESCE;
 		}
@@ -2471,7 +2471,7 @@ kgnilnd_dgram_mover(void *arg)
 
 		CFS_RACE(CFS_FAIL_GNI_QUIESCE_RACE);
 
-		/* process any newly completed dgrams */
+		
 		down_read(&kgnilnd_data.kgn_net_rw_sem);
 
 		rc = kgnilnd_probe_and_process_dgram(dev);
@@ -2483,12 +2483,12 @@ kgnilnd_dgram_mover(void *arg)
 
 		CFS_FAIL_TIMEOUT(CFS_FAIL_GNI_DGRAM_DEADLINE,
 			(*kgnilnd_tunables.kgn_dgram_timeout + 1));
-		/* start new outbound dgrams */
+		
 		did_something += kgnilnd_start_outbound_dgrams(dev, deadline);
 
-		/* find dead dgrams */
+		
 		if (time_after_eq(jiffies, next_purge_check)) {
-			/* these don't need to be checked that often */
+			
 			kgnilnd_reaper_dgram_check(dev);
 
 			next_purge_check = (long) jiffies +
@@ -2497,7 +2497,7 @@ kgnilnd_dgram_mover(void *arg)
 
 		did_something += kgnilnd_repost_wc_dgrams(dev);
 
-		/* careful with the jiffy wrap... */
+		
 		timeout = (long)(next_purge_check - jiffies);
 
 		CDEBUG(D_INFO, "did %d timeout %lu next %lu jiffies %lu\n",
@@ -2516,7 +2516,7 @@ kgnilnd_dgram_mover(void *arg)
 		timer.dev = dev;
 		mod_timer(&timer.timer, (long) jiffies + timeout);
 
-		/* last second chance for others to poke us */
+		
 		did_something += xchg(&dev->gnd_dgram_ready, GNILND_DGRAM_IDLE);
 
 		/* check flag variables before committing even if we

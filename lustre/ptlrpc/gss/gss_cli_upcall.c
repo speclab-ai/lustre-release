@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Eric Mei <ericm@clusterfs.com>
  */
@@ -64,7 +64,7 @@ int ctx_init_pack_request(struct obd_import *imp,
 		return -EINVAL;
 	}
 
-	/* gss hdr */
+	
 	ghdr = lustre_msg_buf(msg, 0, sizeof(*ghdr));
 	ghdr->gh_version = PTLRPC_GSS_VERSION;
 	ghdr->gh_sp = (__u8) imp->imp_sec->ps_part;
@@ -74,7 +74,7 @@ int ctx_init_pack_request(struct obd_import *imp,
 	ghdr->gh_svc = SPTLRPC_SVC_NULL;
 	ghdr->gh_handle.len = 0;
 
-	/* fix the user desc */
+	
 	if (req->rq_pack_udesc) {
 		ghdr->gh_flags |= LUSTRE_GSS_PACK_USER;
 
@@ -87,20 +87,20 @@ int ctx_init_pack_request(struct obd_import *imp,
 		offset++;
 	}
 
-	/* new clients are expected to set KCSUM flag */
+	
 	ghdr->gh_flags |= LUSTRE_GSS_PACK_KCSUM;
 
-	/* security payload */
+	
 	p = lustre_msg_buf(msg, offset, 0);
 	size = msg->lm_buflens[offset];
 	LASSERT(p);
 
-	/* 1. lustre svc type */
+	
 	LASSERT(size > 4);
 	*p++ = cpu_to_le32(lustre_srv);
 	size -= 4;
 
-	/* 2. target uuid */
+	
 	obj.len = strlen(imp->imp_obd->u.cli.cl_target_uuid.uuid) + 1;
 	obj.data = imp->imp_obd->u.cli.cl_target_uuid.uuid;
 	LASSERT(!rawobj_serialize(&obj, &p, &size));
@@ -112,7 +112,7 @@ int ctx_init_pack_request(struct obd_import *imp,
 	obj.data = (__u8 *) &gsec->gs_rvs_hdl;
 	LASSERT(!rawobj_serialize(&obj, &p, &size));
 
-	/* 4. now the token */
+	
 	total_size = sizeof(__u32) + token_size;
 	if (size < total_size) {
 		CERROR("%s: security token is too large (%d > %d): rc = %d\n",
@@ -180,7 +180,7 @@ int ctx_init_parse_reply(struct lustre_msg *msg, int swabbed,
 	outbuf += 4;
 	effective += 4 * 4;
 
-	/* handle */
+	
 	obj_len = ghdr->gh_handle.len;
 	round_len = (obj_len + 3) & ~3;
 	if (copy_to_user(outbuf, &obj_len, 4))
@@ -191,7 +191,7 @@ int ctx_init_parse_reply(struct lustre_msg *msg, int swabbed,
 	outbuf += round_len;
 	effective += 4 + round_len;
 
-	/* out token */
+	
 	obj_len = msg->lm_buflens[2];
 	round_len = (obj_len + 3) & ~3;
 	if (copy_to_user(outbuf, &obj_len, 4))
@@ -229,7 +229,7 @@ int gss_do_ctx_init_rpc(char *buffer, unsigned long count)
 		RETURN(-EINVAL);
 	}
 
-	/* take name */
+	
 	if (strncpy_from_user(obdname, (const char __user *)param.uuid,
 			      sizeof(obdname)) <= 0) {
 		CERROR("Invalid obdname pointer\n");
@@ -317,7 +317,7 @@ int gss_do_ctx_init_rpc(char *buffer, unsigned long count)
 		goto out_copy;
 	}
 
-	/* get token */
+	
 	rc = ctx_init_pack_request(imp, req,
 				   param.lustre_svc,
 				   param.uid, param.gid,
@@ -415,7 +415,7 @@ int gss_do_ctx_fini_rpc(struct gss_cli_ctx *gctx)
 	if (rc)
 		GOTO(out_ref, rc);
 
-        /* fix the user desc */
+        
         if (req->rq_pack_udesc) {
                 /* we rely the fact that this request is in AUTH mode,
                  * and user_desc at offset 2. */

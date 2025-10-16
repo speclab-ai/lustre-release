@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _OFD_INTERNAL_H
@@ -28,7 +28,7 @@
 #define OFD_PRECREATE_SMALL_FS		(1024ULL * 1024 * 1024)
 #define OFD_PRECREATE_BATCH_SMALL	8
 
-/* Limit the returned fields marked valid to those that we actually might set */
+
 #define OFD_VALID_FLAGS (LA_TYPE | LA_MODE | LA_SIZE | LA_BLOCKS | \
 			 LA_BLKSIZE | LA_ATIME | LA_MTIME | LA_CTIME)
 
@@ -38,16 +38,16 @@
  * update atime if on-disk value older than client's one
  * by OFD_ATIME_DIFF or more
  */
-#define OFD_DEF_ATIME_DIFF	0 /* disabled */
+#define OFD_DEF_ATIME_DIFF	0 
 
-/* Special mode value for OST objects with unset attributes */
+
 #define OFD_UNSET_ATTRS_MODE (S_IFREG | S_ISUID | S_ISGID | S_ISVTX | 0666)
 
-/* Resource ID repair default and limit values */
+
 #define OFD_ID_REPAIR_QUEUE_COUNT_LIMIT 65536
 #define OFD_ID_REPAIR_QUEUE_COUNT_DEFAULT 1024
 
-/* request stats */
+
 enum {
 	LPROC_OFD_STATS_READ_BYTES = 0,
 	LPROC_OFD_STATS_WRITE_BYTES,
@@ -100,10 +100,10 @@ struct ofd_device {
 	struct dt_device	 ofd_dt_dev;
 	struct dt_device	*ofd_osd;
 	struct obd_export	*ofd_osd_exp;
-	/* DLM name-space for meta-data locks maintained by this server */
+	
 	struct ldlm_namespace	*ofd_namespace;
 
-	/* last_rcvd file */
+	
 	struct lu_target	 ofd_lut;
 	struct dt_object	*ofd_health_check_file;
 	struct local_oid_storage *ofd_los;
@@ -121,13 +121,13 @@ struct ofd_device {
 	int			ofd_precreate_batch;
 	spinlock_t		ofd_batch_lock;
 
-	/* preferred BRW size, decided by storage type and capability */
+	
 	__u32			 ofd_brw_size;
 	spinlock_t		 ofd_flags_lock;
 	unsigned long		 ofd_raid_degraded:1,
-				 /* sync journal on writes */
+				 
 				 ofd_sync_journal:1,
-				 /* Protected by ofd_lastid_rwsem. */
+				 
 				 ofd_lastid_rebuilding:1,
 				 ofd_record_fid_accessed:1,
 				 ofd_lfsck_verify_pfid:1,
@@ -135,20 +135,20 @@ struct ofd_device {
 				 ofd_readonly:1,
 				 ofd_enable_resource_id_repair:1;
 	struct seq_server_site	 ofd_seq_site;
-	/* the limit of SOFT_SYNC RPCs that will trigger a soft sync */
+	
 	unsigned int		 ofd_soft_sync_limit;
-	/* Protect ::ofd_lastid_rebuilding */
+	
 	struct rw_semaphore	 ofd_lastid_rwsem;
 	__u64			 ofd_lastid_gen;
 	struct task_struct	*ofd_inconsistency_task;
 	struct list_head	 ofd_inconsistency_list;
 	spinlock_t		 ofd_inconsistency_lock;
-	/* Backwards compatibility */
+	
 	struct attribute	*ofd_read_cache_enable;
 	struct attribute	*ofd_read_cache_max_filesize;
 	struct attribute	*ofd_write_cache_enable;
 	time64_t		 ofd_atime_diff;
-	/* Object ID repair */
+	
 	struct task_struct	*ofd_id_repair_task;
 	struct list_head	 ofd_id_repair_list;
 	spinlock_t		 ofd_id_repair_lock;
@@ -274,11 +274,11 @@ struct ofd_thread_info {
 	struct ost_id			 fti_ostid;
 	struct ofd_object		*fti_obj;
 	union {
-		char			 name[64]; /* for ofd_init0() */
-		struct obd_statfs	 osfs;    /* for obdofd_statfs() */
+		char			 name[64]; 
+		struct obd_statfs	 osfs;    
 	} fti_u;
 
-	/* Ops object filename */
+	
 	struct lu_name			 fti_name;
 	struct dt_object_format		 fti_dof;
 	struct lu_buf			 fti_buf;
@@ -291,7 +291,7 @@ struct ofd_thread_info {
 	};
 };
 
-/* ofd_access_log.c */
+
 bool ofd_access_log_size_is_valid(unsigned int size);
 int ofd_access_log_module_init(void);
 void ofd_access_log_module_exit(void);
@@ -303,17 +303,17 @@ void ofd_access(const struct lu_env *env, struct ofd_device *m,
 		const struct lu_fid *parent_fid, __u64 begin, __u64 end,
 		unsigned int size, unsigned int segment_count, int rw);
 
-/* ofd_oss.c */
+
 int oss_mod_init(void);
 void oss_mod_exit(void);
 
-/* ofd_dev.c */
+
 extern struct lu_context_key ofd_thread_key;
 int ofd_postrecov(const struct lu_env *env, struct ofd_device *ofd);
 int ofd_fiemap_get(const struct lu_env *env, struct ofd_device *ofd,
 		   struct lu_fid *fid, struct fiemap *fiemap);
 
-/* ofd_obd.c */
+
 extern const struct obd_ops ofd_obd_ops;
 int ofd_destroy_by_fid(const struct lu_env *env, struct ofd_device *ofd,
 		       const struct lu_fid *fid, int orphan);
@@ -321,7 +321,7 @@ int ofd_statfs(const struct lu_env *env,  struct obd_export *exp,
 	       struct obd_statfs *osfs, time64_t max_age, __u32 flags);
 int ofd_obd_disconnect(struct obd_export *exp);
 
-/* ofd_fs.c */
+
 u64 ofd_seq_last_oid(struct ofd_seq *oseq);
 void ofd_seq_last_oid_set(struct ofd_seq *oseq, u64 id);
 int ofd_seq_last_oid_write(const struct lu_env *env, struct ofd_device *ofd,
@@ -339,7 +339,7 @@ struct ofd_seq *ofd_seq_load(const struct lu_env *env, struct ofd_device *ofd,
 void ofd_seqs_fini(const struct lu_env *env, struct ofd_device *ofd);
 void ofd_seqs_free(const struct lu_env *env, struct ofd_device *ofd);
 
-/* ofd_io.c */
+
 int ofd_start_inconsistency_verification_thread(struct ofd_device *ofd);
 int ofd_stop_inconsistency_verification_thread(struct ofd_device *ofd);
 int ofd_verify_ff(const struct lu_env *env, struct ofd_object *fo,
@@ -356,7 +356,7 @@ int ofd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 		 struct niobuf_local *lnb, int old_rc, int nob,
 		 ktime_t kstart);
 
-/* ofd_trans.c */
+
 struct thandle *ofd_trans_create(const struct lu_env *env,
 				 struct ofd_device *ofd);
 int ofd_trans_start(const struct lu_env *env,
@@ -367,7 +367,7 @@ int ofd_trans_stop(const struct lu_env *env, struct ofd_device *ofd,
 int ofd_txn_stop_cb(const struct lu_env *env, struct thandle *txn,
 		    void *cookie);
 
-/* lproc_ofd.c */
+
 int ofd_tunables_init(struct ofd_device *ofd);
 #ifdef CONFIG_PROC_FS
 void ofd_stats_counter_init(struct lprocfs_stats *stats, unsigned int offset,
@@ -379,7 +379,7 @@ ofd_stats_counter_init(struct lprocfs_stats *stats,
 		       enum lprocfs_counter_config cntr_umask) {}
 #endif
 
-/* ofd_objects.c */
+
 struct ofd_object *ofd_object_find(const struct lu_env *env,
 				   struct ofd_device *ofd,
 				   const struct lu_fid *fid);
@@ -433,16 +433,16 @@ struct ofd_object *ofd_object_find_exists(const struct lu_env *env,
 	return fo;
 }
 
-/* ofd_dev.c */
+
 int ofd_fid_set_index(const struct lu_env *env, struct ofd_device *ofd,
 		      int index);
 int ofd_fid_init(const struct lu_env *env, struct ofd_device *ofd);
 int ofd_fid_fini(const struct lu_env *env, struct ofd_device *ofd);
 
-/* ofd_lvb.c */
+
 extern struct ldlm_valblock_ops ofd_lvbo;
 
-/* ofd_dlm.c */
+
 extern struct kmem_cache *ldlm_glimpse_work_kmem;
 
 int ofd_intent_policy(const struct lu_env *env, struct ldlm_namespace *ns,
@@ -484,7 +484,7 @@ static inline struct ofd_thread_info *tsi2ofd_info(struct tgt_session_info *tsi)
 	info->fti_exp = tsi->tsi_exp;
 
 	info->fti_xid = req->rq_xid;
-	/** VBR: take versions from request */
+	
 	if (req->rq_reqmsg != NULL &&
 	    lustre_msg_get_flags(req->rq_reqmsg) & MSG_REPLAY) {
 		__u64 *pre_version = lustre_msg_get_versions(req->rq_reqmsg);
@@ -510,7 +510,7 @@ static inline int ofd_validate_seq(struct obd_export *exp, __u64 seq)
 	struct filter_export_data *fed = &exp->exp_filter_data;
 
 	if (unlikely(seq == FID_SEQ_OST_MDT0 && fed->fed_group != 0)) {
-		/* IDIF request only operates on MDT0 group */
+		
 		CERROR("%s: Invalid sequence %#llx for group %u\n",
 		       exp->exp_obd->obd_name, seq, fed->fed_group);
 		RETURN(-EINVAL);
@@ -555,4 +555,4 @@ static inline int ofd_seq_is_exhausted(struct ofd_device *ofd,
 	return -EINVAL;
 }
 
-#endif /* _OFD_INTERNAL_H */
+#endif 

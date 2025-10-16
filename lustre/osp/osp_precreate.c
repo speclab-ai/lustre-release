@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre OST Proxy Device
  *
@@ -60,7 +60,7 @@ static void osp_statfs_timer_cb(cfs_timer_cb_arg_t data)
 	struct osp_device *d = cfs_from_timer(d, data, opd_statfs_timer);
 
 	LASSERT(d);
-	/* invalidate statfs data so osp_precreate_thread() can refresh */
+	
 	d->opd_statfs_fresh_till = ktime_sub_ns(ktime_get(), NSEC_PER_SEC);
 	if (d->opd_pre_task)
 		wake_up(&d->opd_pre_waitq);
@@ -92,7 +92,7 @@ static void osp_pre_update_status_msfs(struct osp_device *d,
 	wake_up_all(&d->opd_pre_user_waitq);
 }
 
-/* Pass in the old statfs data in case the limits have changed */
+
 void osp_pre_update_status(struct osp_device *d, int rc)
 {
 	osp_pre_update_status_msfs(d, &d->opd_statfs, rc);
@@ -142,7 +142,7 @@ static int osp_statfs_interpret(const struct lu_env *env,
 	else
 		osp_pre_update_msfs(d, msfs);
 
-	/* schedule next update */
+	
 	maxage_ns = d->opd_statfs_maxage * NSEC_PER_SEC;
 	d->opd_statfs_fresh_till = ktime_add_ns(ktime_get(), maxage_ns);
 	mod_timer(&d->opd_statfs_timer,
@@ -160,7 +160,7 @@ static int osp_statfs_interpret(const struct lu_env *env,
 
 	RETURN(0);
 out:
-	/* couldn't update statfs, try again with a small delay */
+	
 	d->opd_statfs_fresh_till = ktime_add_ns(ktime_get(), 10 * NSEC_PER_SEC);
 	d->opd_statfs_update_in_progress = 0;
 	if (d->opd_pre && d->opd_pre_task)
@@ -229,7 +229,7 @@ static int osp_statfs_update(const struct lu_env *env, struct osp_device *d)
 
 	ptlrpcd_add_req(req);
 
-	/* we still want to sync changes if no new changes are coming */
+	
 	if (ktime_before(ktime_get(), d->opd_sync_next_commit_cb))
 		GOTO(out, rc);
 
@@ -303,7 +303,7 @@ static inline int osp_precreate_is_low_nolock(struct osp_device *d)
 	if (precreate_needed > 1024)
 		precreate_needed = 1024;
 
-	/* no new precreation until OST is healthy and has free space */
+	
 	return ((d->opd_pre_create_count - available > precreate_needed ||
 		 d->opd_force_creation) && (d->opd_pre_status == 0));
 }
@@ -324,7 +324,7 @@ static inline int osp_precreate_is_low(struct osp_device *d)
 	if (d->opd_pre == NULL)
 		return 0;
 
-	/* XXX: do we really need locking here? */
+	
 	spin_lock(&d->opd_pre_lock);
 	rc = osp_precreate_is_low_nolock(d);
 	spin_unlock(&d->opd_pre_lock);
@@ -480,7 +480,7 @@ static int osp_precreate_rollover_new_seq(struct lu_env *env,
 	LCONSOLE(D_INFO, "%s: update sequence from %#llx to %#llx\n",
 		 osp->opd_obd->obd_name, fid_seq(last_fid),
 		 fid_seq(fid));
-	/* Update last_xxx to the new seq */
+	
 	spin_lock(&osp->opd_pre_lock);
 	osp->opd_last_used_fid = *fid;
 	osp_fid_to_obdid(fid, &osp->opd_last_id);
@@ -579,7 +579,7 @@ static int osp_precreate_send(const struct lu_env *env, struct osp_device *d)
 	struct lu_fid		*fid = &oti->osi_fid;
 	ENTRY;
 
-	/* don't precreate new objects till OST healthy and has free space */
+	
 	if (unlikely(d->opd_pre_status)) {
 		CDEBUG(D_INFO, "%s: don't send new precreate: rc = %d\n",
 		       d->opd_obd->obd_name, d->opd_pre_status);
@@ -627,7 +627,7 @@ static int osp_precreate_send(const struct lu_env *env, struct osp_device *d)
 	*fid = d->opd_pre_last_created_fid;
 	rc = osp_precreate_fids(env, d, fid, &grow);
 	if (rc == 1)
-		/* Current seq has been used up*/
+		
 		GOTO(out_req, rc = -ENOSPC);
 
 	if (!osp_is_fid_client(d)) {
@@ -650,7 +650,7 @@ static int osp_precreate_send(const struct lu_env *env, struct osp_device *d)
 		CERROR("%s: can't precreate: rc = %d\n", d->opd_obd->obd_name,
 		       rc);
 		if (req->rq_net_err)
-			/* have osp_precreate_reserve() to wait for repeat */
+			
 			rc = -ENOTCONN;
 		GOTO(out_req, rc);
 	}
@@ -700,7 +700,7 @@ ready:
 	       d->opd_obd->obd_name, PFID(&d->opd_pre_used_fid),
 	       PFID(&d->opd_pre_last_created_fid));
 out_req:
-	/* now we can wakeup all users awaiting for objects */
+	
 	osp_pre_update_status(d, rc);
 
 	ptlrpc_req_put(req);
@@ -879,10 +879,10 @@ static int osp_precreate_cleanup_orphans(struct lu_env *env,
 	CFS_FAIL_TIMEOUT(OBD_FAIL_MDS_DELAY_DELORPHAN, cfs_fail_val);
 
 	*last_fid = d->opd_last_used_fid;
-	/* The OSP should already get the valid seq now */
+	
 	LASSERT(!fid_is_zero(last_fid));
 	if (fid_oid(&d->opd_last_used_fid) < 2) {
-		/* lastfid looks strange... ask OST */
+		
 		rc = osp_get_lastfid_from_ost(env, d, true);
 		if (rc)
 			GOTO(out, rc);
@@ -913,7 +913,7 @@ static int osp_precreate_cleanup_orphans(struct lu_env *env,
 
 	ptlrpc_request_set_replen(req);
 
-	/* Don't resend the delorphan req */
+	
 	req->rq_no_resend = req->rq_no_delay = 1;
 
 	rc = ptlrpc_queue_wait(req);
@@ -1015,11 +1015,11 @@ static void osp_pre_update_msfs(struct osp_device *d, struct obd_statfs *msfs)
 	u32 old_state = d->opd_statfs.os_state;
 	u64 available_mb;
 
-	/* statfs structure not initialized yet */
+	
 	if (unlikely(!msfs->os_type))
 		return;
 
-	/* if the low and high watermarks have not been initialized yet */
+	
 	if (unlikely(d->opd_reserved_mb_high == 0 &&
 		     d->opd_reserved_mb_low == 0)) {
 		/* Use ~0.1% by default to disable object allocation,
@@ -1060,13 +1060,13 @@ static void osp_pre_update_msfs(struct osp_device *d, struct obd_statfs *msfs)
 		msfs->os_state |= OS_STATFS_ENOINO;
 	else if (msfs->os_ffree <= d->opd_reserved_ino_high)
 		msfs->os_state |= old_state & OS_STATFS_ENOINO;
-	/* else don't clear flags in new msfs->os_state sent from OST */
+	
 
 	if (available_mb < d->opd_reserved_mb_low)
 		msfs->os_state |= OS_STATFS_ENOSPC;
 	else if (available_mb <= d->opd_reserved_mb_high)
 		msfs->os_state |= old_state & OS_STATFS_ENOSPC;
-	/* else don't clear flags in new msfs->os_state sent from OST */
+	
 
 	CDEBUG(D_INFO,
 	       "%s: blocks=%llu free=%llu avail=%llu avail_mb=%llu hwm_mb=%u files=%llu ffree=%llu state=%x: rc = %d\n",
@@ -1100,17 +1100,17 @@ static void osp_pre_update_msfs(struct osp_device *d, struct obd_statfs *msfs)
 		       d->opd_obd->obd_name, msfs->os_state,
 		       d->opd_pre_status);
 	} else {
-		/* we only get here if rc == 0 in the caller */
+		
 		d->opd_pre_status = 0;
 	}
 
-	/* Object precreation skipped on OST if manually disabled */
+	
 	if (d->opd_pre_max_create_count == 0)
 		msfs->os_state |= OS_STATFS_NOCREATE;
-	/* else don't clear flags in new msfs->os_state sent from OST */
+	
 
 update:
-	/* copy only new statfs state to make it visible to MDS threads */
+	
 	if (&d->opd_statfs != msfs)
 		d->opd_statfs = *msfs;
 }
@@ -1174,7 +1174,7 @@ static int osp_init_pre_fid(struct lu_env *env, struct osp_device *osp)
 	osi = osp_env_info(env);
 	last_fid = &osi->osi_fid;
 	fid_zero(last_fid);
-	/* For a freshed fs, it will allocate a new sequence first */
+	
 	if (osp_is_fid_client(osp) && osp->opd_group != 0) {
 		cli_seq = osp->opd_obd->u.cli.cl_seq;
 		rc = seq_client_get_seq(env, cli_seq, &last_fid->f_seq);
@@ -1238,7 +1238,7 @@ static int osp_precreate_thread(void *_args)
 
 	complete(args->opta_started);
 
-	/* wait for connection from the layers above */
+	
 	wait_event_idle(d->opd_pre_waitq,
 			kthread_should_stop() ||
 			d->opd_obd->u.cli.cl_seq->lcs_exp != NULL);
@@ -1273,7 +1273,7 @@ static int osp_precreate_thread(void *_args)
 			LASSERT(d->opd_obd->u.cli.cl_seq != NULL);
 			LASSERT(d->opd_obd->u.cli.cl_seq->lcs_exp != NULL);
 
-			/* Init fid for osp_precreate if necessary */
+			
 			rc = osp_init_pre_fid(env, d);
 			if (rc != 0) {
 				CERROR("%s: init pre fid error: rc = %d\n",
@@ -1380,13 +1380,13 @@ static int osp_precreate_thread(void *_args)
 static int osp_precreate_ready_condition(const struct lu_env *env,
 					 struct osp_device *d)
 {
-	/* Bail out I/O fails to OST */
+	
 	if (d->opd_pre_status != 0 &&
 	    d->opd_pre_status != -EAGAIN &&
 	    d->opd_pre_status != -ENODEV &&
 	    d->opd_pre_status != -ENOTCONN &&
 	    d->opd_pre_status != -ENOSPC) {
-		/* DEBUG LU-3230 */
+		
 		if (d->opd_pre_status != -EIO)
 			CERROR("%s: precreate failed opd_pre_status %d\n",
 			       d->opd_obd->obd_name, d->opd_pre_status);
@@ -1396,12 +1396,12 @@ static int osp_precreate_ready_condition(const struct lu_env *env,
 	if (d->opd_pre_recovering || d->opd_force_creation)
 		return 0;
 
-	/* ready if got enough precreated objects */
-	/* we need to wait for others (opd_pre_reserved) and our object (+1) */
+	
+	
 	if (d->opd_pre_reserved + 1 < osp_objs_precreated(d))
 		return 1;
 
-	/* ready if OST reported no space and no destroys in progress */
+	
 	if (atomic_read(&d->opd_sync_changes) +
 	    atomic_read(&d->opd_sync_rpcs_in_progress) == 0 &&
 	    d->opd_pre_status == -ENOSPC)
@@ -1447,7 +1447,7 @@ int osp_precreate_reserve(const struct lu_env *env, struct osp_device *d,
 		 "Next FID "DFID"\n", PFID(&d->opd_pre_last_created_fid),
 		 PFID(&d->opd_pre_used_fid));
 
-	/* opd_pre_max_create_count 0 to not use specified OST. */
+	
 	if (d->opd_pre_max_create_count == 0)
 		RETURN(-ENOBUFS);
 
@@ -1509,7 +1509,7 @@ int osp_precreate_reserve(const struct lu_env *env, struct osp_device *d,
 		 */
 		if (unlikely(rc == -ENOSPC)) {
 			if (atomic_read(&d->opd_sync_changes) && synced == 0) {
-				/* force local commit to release space */
+				
 				dt_commit_async(env, d->opd_storage);
 				osp_sync_check_for_work(d);
 				synced = 1;
@@ -1521,12 +1521,12 @@ int osp_precreate_reserve(const struct lu_env *env, struct osp_device *d,
 			}
 			if (atomic_read(&d->opd_sync_changes) +
 			    atomic_read(&d->opd_sync_rpcs_in_progress) == 0) {
-				/* no hope for free space */
+				
 				break;
 			}
 		}
 
-		/* XXX: don't wake up if precreation is in progress */
+		
 		wake_up(&d->opd_pre_waitq);
 
 		if (ktime_get_seconds() >= expire) {
@@ -1592,7 +1592,7 @@ int osp_precreate_get_fid(const struct lu_env *env, struct osp_device *d,
 {
 	struct lu_fid *pre_used_fid = &d->opd_pre_used_fid;
 
-	/* grab next id from the pool */
+	
 	spin_lock(&d->opd_pre_lock);
 
 	LASSERTF(osp_fid_diff(&d->opd_pre_used_fid,
@@ -1692,7 +1692,7 @@ int osp_object_truncate(const struct lu_env *env, struct dt_object *dt,
 	 */
 	req->rq_no_resend = req->rq_no_delay = 1;
 
-	req->rq_request_portal = OST_IO_PORTAL; /* bug 7198 */
+	req->rq_request_portal = OST_IO_PORTAL; 
 	ptlrpc_at_set_req_timeout(req);
 
 	OBD_ALLOC_PTR(oa);
@@ -1710,8 +1710,8 @@ int osp_object_truncate(const struct lu_env *env, struct dt_object *dt,
 	LASSERT(body);
 	lustre_set_wire_obdo(&req->rq_import->imp_connect_data, &body->oa, oa);
 
-	/* XXX: capa support? */
-	/* osc_pack_capa(req, body, capa); */
+	
+	
 
 	ptlrpc_request_set_replen(req);
 
@@ -1757,7 +1757,7 @@ int osp_init_precreate(struct osp_device *d)
 	if (d->opd_pre == NULL)
 		RETURN(-ENOMEM);
 
-	/* initially precreation isn't ready */
+	
 	init_waitqueue_head(&d->opd_pre_user_waitq);
 	d->opd_pre_status = -EAGAIN;
 	fid_zero(&d->opd_pre_used_fid);
@@ -1815,7 +1815,7 @@ int osp_init_statfs(struct osp_device *d)
 	/*
 	 * Initialize statfs-related things
 	 */
-	d->opd_statfs_maxage = 5; /* defaultupdate interval */
+	d->opd_statfs_maxage = 5; 
 	d->opd_statfs_fresh_till = ktime_sub_ns(ktime_get(),
 						1000 * NSEC_PER_SEC);
 	CDEBUG(D_OTHER, "current %lldns, fresh till %lldns\n",

@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0
 
-/* This file is part of Lustre, http://www.lustre.org/
+
+/* This file is part of Lustre, http:
  *
  * percpu partition lock
  *
@@ -19,19 +19,19 @@
  */
 
 enum {
-	CFS_PERCPT_LOCK_EX	= -1,	/* negative */
+	CFS_PERCPT_LOCK_EX	= -1,	
 };
 
 struct cfs_percpt_lock {
-	/* cpu-partition-table for this lock */
+	
 	struct cfs_cpt_table	 *pcl_cptab;
-	/* exclusively locked */
+	
 	unsigned int		  pcl_locked;
-	/* private lock table */
+	
 	spinlock_t		**pcl_locks;
 };
 
-/* return number of private locks */
+
 #define cfs_percpt_lock_num(pcl)	cfs_cpt_number(pcl->pcl_cptab)
 
 /* create a cpu-partition lock based on CPU partition table \a cptab,
@@ -39,18 +39,18 @@ struct cfs_percpt_lock {
  */
 struct cfs_percpt_lock *cfs_percpt_lock_create(struct cfs_cpt_table *cptab,
 					       struct lock_class_key *keys);
-/* destroy a cpu-partition lock */
+
 void cfs_percpt_lock_free(struct cfs_percpt_lock *pcl);
 
-/* lock private lock \a index of \a pcl */
+
 void cfs_percpt_lock(struct cfs_percpt_lock *pcl, int index);
 
-/* unlock private lock \a index of \a pcl */
+
 void cfs_percpt_unlock(struct cfs_percpt_lock *pcl, int index);
 
 #define CFS_PERCPT_LOCK_KEYS	256
 
-/* NB: don't allocate keys dynamically, lockdep needs them to be in ".data" */
+
 #define cfs_percpt_lock_alloc(cptab)					\
 ({									\
 	static struct lock_class_key ___keys[CFS_PERCPT_LOCK_KEYS];	\

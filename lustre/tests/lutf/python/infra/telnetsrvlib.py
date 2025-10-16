@@ -20,7 +20,6 @@ Various settings can affect the operation of the server:
 				   Function.aliases may be a list of alternative spellings
 """
 
-#from telnetlib import IAC, WILL, WONT, DO, DONT, ECHO, SGA, Telnet
 import threading
 import socketserver
 import socket
@@ -305,17 +304,8 @@ class TelnetHandler(socketserver.BaseRequestHandler):
 	def options_handler(self, sock, cmd, opt):
 		"Negotiate options"
 #		if CMDS.has_key(cmd):
-#			cmdtxt = CMDS[cmd]
-#		else:
-#			cmdtxt = "cmd:%d" % ord(cmd)
 #		if cmd in [WILL, WONT, DO, DONT]:
 #			if CMDS.has_key(opt):
-#				opttxt = CMDS[opt]
-#			else:
-#				opttxt = "opt:%d" % ord(opt)
-#		else:
-#			opttxt = ""
-#		logging.debug("OPTION: %s %s" % (cmdtxt, opttxt, ))
 		if cmd == NOP:
 			self.sendcommand(NOP)
 		elif cmd == WILL or cmd == WONT:
@@ -347,36 +337,22 @@ class TelnetHandler(socketserver.BaseRequestHandler):
 	def sendcommand(self, cmd, opt=None):
 		"Send a telnet command (IAC)"
 #		if CMDS.has_key(cmd):
-#			cmdtxt = CMDS[cmd]
-#		else:
-#			cmdtxt = "cmd:%d" % ord(cmd)
 #		if opt == None:
-#			opttxt = ''
-#		else:
 #			if CMDS.has_key(opt):
-#				opttxt = CMDS[opt]
-#			else:
-#				opttxt = "opt:%d" % ord(opt)
 		if cmd in [DO, DONT]:
 			if opt not in self.DOOPTS:
 				self.DOOPTS[opt] = None
 			if (((cmd == DO) and (self.DOOPTS[opt] != True))
 			or ((cmd == DONT) and (self.DOOPTS[opt] != False))):
-#				logging.debug("Sending %s %s" % (cmdtxt, opttxt, ))
 				self.DOOPTS[opt] = (cmd == DO)
 				self.writecooked(IAC + cmd + opt)
-#			else:
-#				logging.debug("Not resending %s %s" % (cmdtxt, opttxt, ))
 		elif cmd in [WILL, WONT]:
 			if opt not in self.WILLOPTS:
 				self.WILLOPTS[opt] = ''
 			if (((cmd == WILL) and (self.WILLOPTS[opt] != True))
 			or ((cmd == WONT) and (self.WILLOPTS[opt] != False))):
-#				logging.debug("Sending %s %s" % (cmdtxt, opttxt, ))
 				self.WILLOPTS[opt] = (cmd == WILL)
 				self.writecooked(IAC + cmd + opt)
-#			else:
-#				logging.debug("Not resending %s %s" % (cmdtxt, opttxt, ))
 		else:
 			self.writecooked(IAC + cmd)
 
@@ -616,7 +592,6 @@ class TelnetHandler(socketserver.BaseRequestHandler):
 					if cmd in (DO, DONT, WILL, WONT):
 						self.options_handler(self.sock, cmd, c)
 		except EOFError:
-			#self.finish()
 			pass
 
 # ------------------------------- Basic Commands ---------------------------

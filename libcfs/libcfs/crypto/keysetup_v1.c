@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /*
  * Key setup for v1 encryption policies
  *
@@ -32,8 +32,8 @@
 
 #include "llcrypt_private.h"
 
-/* Table of keys referenced by DIRECT_KEY policies */
-static DEFINE_HASHTABLE(llcrypt_direct_keys, 6); /* 6 bits = 64 buckets */
+
+static DEFINE_HASHTABLE(llcrypt_direct_keys, 6); 
 static DEFINE_SPINLOCK(llcrypt_direct_keys_lock);
 
 /*
@@ -116,7 +116,7 @@ find_and_lock_process_key(const char *prefix,
 	down_read(&key->sem);
 	ukp = user_key_payload_locked(key);
 
-	if (!ukp) /* was the key revoked before we acquired its semaphore? */
+	if (!ukp) 
 		goto invalid;
 
 	payload = (const struct llcrypt_key *)ukp->data;
@@ -145,7 +145,7 @@ invalid:
 	return ERR_PTR(-ENOKEY);
 }
 
-/* Master key referenced by DIRECT_KEY policy */
+
 struct llcrypt_direct_key {
 	struct hlist_node		dk_node;
 	refcount_t			dk_refcount;
@@ -205,7 +205,7 @@ find_or_insert_direct_key(struct llcrypt_direct_key *to_insert,
 			continue;
 		if (crypto_memneq(raw_key, dk->dk_raw, ci->ci_mode->keysize))
 			continue;
-		/* using existing tfm with same (descriptor, mode, raw_key) */
+		
 		refcount_inc(&dk->dk_refcount);
 		spin_unlock(&llcrypt_direct_keys_lock);
 		free_direct_key(to_insert);
@@ -217,19 +217,19 @@ find_or_insert_direct_key(struct llcrypt_direct_key *to_insert,
 	return to_insert;
 }
 
-/* Prepare to encrypt directly using the master key in the given mode */
+
 static struct llcrypt_direct_key *
 llcrypt_get_direct_key(const struct llcrypt_info *ci, const u8 *raw_key)
 {
 	struct llcrypt_direct_key *dk;
 	int err;
 
-	/* Is there already a tfm for this key? */
+	
 	dk = find_or_insert_direct_key(NULL, raw_key, ci);
 	if (dk)
 		return dk;
 
-	/* Nope, allocate one. */
+	
 	dk = kzalloc(sizeof(*dk), GFP_NOFS);
 	if (!dk)
 		return ERR_PTR(-ENOMEM);
@@ -253,7 +253,7 @@ err_free_dk:
 	return ERR_PTR(err);
 }
 
-/* v1 policy, DIRECT_KEY: use the master key directly */
+
 static int setup_v1_file_key_direct(struct llcrypt_info *ci,
 				    const u8 *raw_master_key)
 {
@@ -274,7 +274,7 @@ static int setup_v1_file_key_direct(struct llcrypt_info *ci,
 		return -EINVAL;
 	}
 
-	/* ESSIV implies 16-byte IVs which implies !DIRECT_KEY */
+	
 	if (WARN_ON(mode->needs_essiv))
 		return -EINVAL;
 
@@ -286,7 +286,7 @@ static int setup_v1_file_key_direct(struct llcrypt_info *ci,
 	return 0;
 }
 
-/* v1 policy, !DIRECT_KEY: derive the file's encryption key */
+
 static int setup_v1_file_key_derived(struct llcrypt_info *ci,
 				     const u8 *raw_master_key)
 {

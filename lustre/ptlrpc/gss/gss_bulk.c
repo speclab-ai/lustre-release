@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Eric Mei <eric.mei@sun.com>
  */
@@ -98,7 +98,7 @@ int gss_cli_ctx_wrap_bulk(struct ptlrpc_cli_ctx *ctx,
 		bsd->bsd_nob = desc->bd_nob;
 
 		if (bsd->bsd_svc == SPTLRPC_BULK_SVC_INTG) {
-			/* integrity mode */
+			
 			token.data = bsd->bsd_data;
 			token.len = lustre_msg_buflen(msg, offset) -
 				    sizeof(*bsd);
@@ -112,7 +112,7 @@ int gss_cli_ctx_wrap_bulk(struct ptlrpc_cli_ctx *ctx,
 				RETURN(-EACCES);
 			}
 		} else {
-			/* privacy mode */
+			
 			if (desc->bd_iov_count == 0)
 				RETURN(0);
 
@@ -161,7 +161,7 @@ int gss_cli_ctx_unwrap_bulk(struct ptlrpc_cli_ctx *ctx,
 
                 rmsg = req->rq_reqbuf;
 		LASSERT(rmsg != NULL && rmsg->lm_bufcount >= 3);
-                roff = rmsg->lm_bufcount - 1; /* last segment */
+                roff = rmsg->lm_bufcount - 1; 
                 break;
         case SPTLRPC_SVC_AUTH:
         case SPTLRPC_SVC_INTG:
@@ -171,7 +171,7 @@ int gss_cli_ctx_unwrap_bulk(struct ptlrpc_cli_ctx *ctx,
 
                 rmsg = req->rq_reqbuf;
 		LASSERT(rmsg != NULL && rmsg->lm_bufcount >= 4);
-                roff = rmsg->lm_bufcount - 2; /* second last segment */
+                roff = rmsg->lm_bufcount - 2; 
                 break;
         case SPTLRPC_SVC_PRIV:
                 vmsg = req->rq_repdata;
@@ -180,7 +180,7 @@ int gss_cli_ctx_unwrap_bulk(struct ptlrpc_cli_ctx *ctx,
 
                 rmsg = req->rq_clrbuf;
 		LASSERT(rmsg != NULL && rmsg->lm_bufcount >= 2);
-                roff = rmsg->lm_bufcount - 1; /* last segment */
+                roff = rmsg->lm_bufcount - 1; 
                 break;
         default:
                 LBUG();
@@ -228,7 +228,7 @@ int gss_cli_ctx_unwrap_bulk(struct ptlrpc_cli_ctx *ctx,
 		if (bsdv->bsd_svc == SPTLRPC_BULK_SVC_INTG) {
 			int i, nob;
 
-			/* fix the actual data size */
+			
 			for (i = 0, nob = 0; i < desc->bd_iov_count; i++) {
 				if (desc->bd_vec[i].bv_len + nob >
 				    desc->bd_nob_transferred) {
@@ -366,7 +366,7 @@ int gss_svc_unwrap_bulk(struct ptlrpc_request *req,
         bsdr = grctx->src_reqbsd;
         bsdv = grctx->src_repbsd;
 
-        /* bsdr has been sanity checked during unpacking */
+        
         bsdv->bsd_version = 0;
         bsdv->bsd_type = SPTLRPC_BULK_DEFAULT;
         bsdv->bsd_svc = bsdr->bsd_svc;
@@ -410,7 +410,7 @@ int gss_svc_unwrap_bulk(struct ptlrpc_request *req,
                         RETURN(-EACCES);
                 }
 
-		/* mimic gss_cli_ctx_unwrap_bulk */
+		
 		desc->bd_nob_transferred = desc->bd_nob;
 
                 break;
@@ -443,7 +443,7 @@ int gss_svc_wrap_bulk(struct ptlrpc_request *req,
         bsdr = grctx->src_reqbsd;
         bsdv = grctx->src_repbsd;
 
-        /* bsdr has been sanity checked during unpacking */
+        
         bsdv->bsd_version = 0;
         bsdv->bsd_type = SPTLRPC_BULK_DEFAULT;
         bsdv->bsd_svc = bsdr->bsd_svc;

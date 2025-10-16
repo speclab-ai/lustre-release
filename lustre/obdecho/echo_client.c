@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_ECHO
@@ -31,7 +31,7 @@
 
 #define ETI_NAME_LEN	20
 
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 #include "echo_internal.h"
 
@@ -39,7 +39,7 @@
  * @{
  */
 
-/* echo thread key have a CL_THREAD flag, which set cl_env function directly */
+
 #define ECHO_MD_CTX_TAG (LCT_REMEMBER | LCT_MD_THREAD)
 #define ECHO_DT_CTX_TAG (LCT_REMEMBER | LCT_DT_THREAD)
 #define ECHO_SES_TAG    (LCT_REMEMBER | LCT_SESSION | LCT_SERVER_SESSION)
@@ -56,7 +56,7 @@ struct echo_device {
 #ifdef HAVE_SERVER_SUPPORT
 	struct local_oid_storage *ed_los;
 	struct lu_fid		  ed_root_fid;
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 };
 
 struct echo_object {
@@ -88,7 +88,7 @@ struct echo_md_device {
 	struct lu_fid			 emd_root_fid;
 	struct lu_fid			 emd_local_root_fid;
 };
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 static int echo_client_setup(const struct lu_env *env,
 			     struct obd_device *obd,
@@ -160,9 +160,9 @@ static struct obd_device *emd2obd_dev(struct echo_md_device *d)
 {
 	return d->emd_md_dev.md_lu_dev.ld_obd;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
-/** @} echo_helpers */
+
 
 static int cl_echo_object_put(struct echo_object *eco);
 
@@ -177,17 +177,17 @@ struct echo_thread_info {
 	struct lov_user_md_v3   eti_lum;
 	struct md_attr          eti_ma;
 	struct lu_name          eti_lname;
-	/* per-thread values, can be re-used */
-	void			*eti_big_lmm; /* may be vmalloc'd */
+	
+	void			*eti_big_lmm; 
 	int			eti_big_lmmsize;
 	char                    eti_name[ETI_NAME_LEN];
 	struct lu_buf           eti_buf;
-	/* If we want to test large ACL, then need to enlarge the buffer. */
+	
 	char                    eti_xattr_buf[LUSTRE_POSIX_ACL_MAX_SIZE_OLD];
 #endif
 };
 
-/* No session used right now */
+
 struct echo_session_info {
 	unsigned long dummy;
 };
@@ -276,7 +276,7 @@ static void echo_object_delete(const struct lu_env *env, struct lu_object *obj)
 
 	ENTRY;
 
-	/* object delete called unconditolally - layer init or not */
+	
 	if (eco->eo_dev == NULL)
 		return;
 
@@ -327,7 +327,7 @@ static const struct lu_object_operations echo_lu_obj_ops = {
 	.loo_object_print     = echo_object_print,
 	.loo_object_invariant = NULL
 };
-/** @} echo_lu_ops */
+
 
 /** \defgroup echo_lu_dev_ops  lu_device operations
  *
@@ -343,7 +343,7 @@ static struct lu_object *echo_object_alloc(const struct lu_env *env,
 	struct lu_object *obj = NULL;
 
 	ENTRY;
-	/* we're the top dev. */
+	
 	LASSERT(hdr == NULL);
 	OBD_SLAB_ALLOC_PTR_GFP(eco, echo_object_kmem, GFP_NOFS);
 	if (eco) {
@@ -364,7 +364,7 @@ static const struct lu_device_operations echo_device_lu_ops = {
 	.ldo_object_alloc   = echo_object_alloc,
 };
 
-/** @} echo_lu_dev_ops */
+
 
 /** \defgroup echo_init Setup and teardown
  *
@@ -377,7 +377,7 @@ static int echo_site_init(const struct lu_env *env, struct echo_device *ed)
 	struct cl_site *site = &ed->ed_site_myself;
 	int rc;
 
-	/* initialize site */
+	
 	rc = cl_site_init(site, &ed->ed_cl);
 	if (rc) {
 		CERROR("Cannot initialize site for echo client(%d)\n", rc);
@@ -474,7 +474,7 @@ static int echo_fid_init(struct echo_device *ed, char *obd_name,
 
 	snprintf(prefix, MAX_OBD_NAME + 5, "srv-%s", obd_name);
 
-	/* Init client side sequence-manager */
+	
 	seq_client_init(ed->ed_cl_seq, NULL,
 			LUSTRE_SEQ_METADATA,
 			prefix, ss->ss_server_seq);
@@ -528,7 +528,7 @@ echo_md_local_file_create(const struct lu_env *env, struct echo_md_device *emd,
 	if (unlikely(IS_ERR(parent)))
 		RETURN(PTR_ERR(parent));
 
-	/* create local file with @fid */
+	
 	dto = local_file_find_or_create_with_fid(env, emd->emd_bottom, fid,
 						 parent, name, mode);
 	if (IS_ERR(dto))
@@ -555,7 +555,7 @@ echo_md_root_get(const struct lu_env *env, struct echo_md_device *emd,
 	int rc = 0;
 
 	ENTRY;
-	/* Setup local dirs */
+	
 	fid.f_seq = FID_SEQ_LOCAL_NAME;
 	fid.f_oid = 1;
 	fid.f_ver = 0;
@@ -584,7 +584,7 @@ out_los:
 
 	RETURN(rc);
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 static struct lu_device *echo_device_alloc(const struct lu_env *env,
 					   struct lu_device_type *t,
@@ -593,7 +593,7 @@ static struct lu_device *echo_device_alloc(const struct lu_env *env,
 	struct lu_device   *next;
 	struct echo_device *ed;
 	struct cl_device   *cd;
-	struct obd_device  *obd = NULL; /* to keep compiler happy */
+	struct obd_device  *obd = NULL; 
 	struct obd_device  *tgt;
 	const char *tgt_type_name;
 	int rc;
@@ -649,7 +649,7 @@ static struct lu_device *echo_device_alloc(const struct lu_env *env,
 
 	if (ed->ed_next_ismd) {
 #ifdef HAVE_SERVER_SUPPORT
-		/* Suppose to connect to some Metadata layer */
+		
 		struct lu_site		*ls = NULL;
 		struct lu_device	*ld = NULL;
 		struct md_device	*md = NULL;
@@ -688,7 +688,7 @@ static struct lu_device *echo_device_alloc(const struct lu_env *env,
 		}
 
 		next = ld;
-		/* For MD echo client, it will use the site in MDS stack */
+		
 		ed->ed_site = ls;
 		ed->ed_cl.cd_lu_dev.ld_site = ls;
 		rc = echo_fid_init(ed, obd->obd_name, lu_site2seq(ls));
@@ -705,11 +705,11 @@ static struct lu_device *echo_device_alloc(const struct lu_env *env,
 				emd2obd_dev(emd)->obd_name, rc);
 			GOTO(out, rc);
 		}
-#else /* !HAVE_SERVER_SUPPORT */
+#else 
 		CERROR(
 		       "Local operations are NOT supported on client side. Only remote operations are supported. Metadata client must be run on server side.\n");
 		GOTO(out, rc = -EOPNOTSUPP);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 	} else {
 		/*
 		 * if echo client is to be stacked upon ost device, the next is
@@ -806,13 +806,13 @@ static struct lu_device *echo_device_free(const struct lu_env *env,
 		eco->eo_deleted = 1;
 	spin_unlock(&ec->ec_lock);
 
-	/* purge again */
+	
 	lu_site_purge(env, ed->ed_site, -1);
 
 	CDEBUG(D_INFO,
 	       "Waiting for the reference of echo object to be dropped\n");
 
-	/* Wait for the last reference to be dropped. */
+	
 	spin_lock(&ec->ec_lock);
 	while (!list_empty(&ec->ec_objects)) {
 		spin_unlock(&ec->ec_lock);
@@ -866,7 +866,7 @@ static struct lu_device_type echo_device_type = {
 	.ldt_ops      = &echo_device_type_ops,
 	.ldt_ctx_tags = LCT_CL_THREAD | LCT_MD_THREAD | LCT_DT_THREAD,
 };
-/** @} echo_init */
+
 
 /** \defgroup echo_exports Exported operations
  *
@@ -875,7 +875,7 @@ static struct lu_device_type echo_device_type = {
  * @{
  */
 
-/* Interfaces to echo client obd device */
+
 static struct echo_object *
 cl_echo_object_find(struct echo_device *d, const struct ost_id *oi)
 {
@@ -893,7 +893,7 @@ cl_echo_object_find(struct echo_device *d, const struct ost_id *oi)
 	LASSERTF(ostid_id(oi) != 0, DOSTID"\n", POSTID(oi));
 	LASSERTF(ostid_seq(oi) == FID_SEQ_ECHO, DOSTID"\n", POSTID(oi));
 
-	/* Never return an object if the obd is to be freed. */
+	
 	if (echo_dev2cl(d)->cd_lu_dev.ld_obd->obd_stopping)
 		RETURN(ERR_PTR(-ENODEV));
 
@@ -955,7 +955,7 @@ static int cl_echo_object_put(struct echo_object *eco)
 	if (IS_ERR(env))
 		RETURN(PTR_ERR(env));
 
-	/* an external function to kill an object? */
+	
 	if (eco->eo_deleted) {
 		struct lu_object_header *loh = obj->co_lu.lo_header;
 
@@ -968,7 +968,7 @@ static int cl_echo_object_put(struct echo_object *eco)
 	RETURN(0);
 }
 
-/** @} echo_exports */
+
 
 static u64 last_object_id;
 
@@ -981,7 +981,7 @@ static void echo_md_build_name(struct lu_name *lname, char *name,
 	lname->ln_namelen = strlen(name);
 }
 
-/* similar to mdt_attr_get_complex */
+
 static int echo_big_lmm_get(const struct lu_env *env, struct md_object *o,
 			    struct md_attr *ma)
 {
@@ -1001,12 +1001,12 @@ static int echo_big_lmm_get(const struct lu_env *env, struct md_object *o,
 	if (rc < 0)
 		RETURN(rc);
 
-	/* big_lmm may need to be grown */
+	
 	if (info->eti_big_lmmsize < rc) {
 		int size = size_roundup_power2(rc);
 
 		if (info->eti_big_lmmsize > 0) {
-			/* free old buffer */
+			
 			LASSERT(info->eti_big_lmm);
 			OBD_FREE_LARGE(info->eti_big_lmm,
 				       info->eti_big_lmmsize);
@@ -1070,7 +1070,7 @@ static int echo_attr_get_complex(const struct lu_env *env,
 			ma->ma_lmm_size = rc2;
 			ma->ma_valid |= MA_LOV;
 		} else if (rc2 == -ENODATA) {
-			/* no LOV EA */
+			
 			ma->ma_lmm_size = 0;
 		} else if (rc2 == -ERANGE) {
 			rc2 = echo_big_lmm_get(env, next, ma);
@@ -1090,7 +1090,7 @@ static int echo_attr_get_complex(const struct lu_env *env,
 			ma->ma_lmm_size = rc2;
 			ma->ma_valid |= MA_LMV;
 		} else if (rc2 == -ENODATA) {
-			/* no LMV EA */
+			
 			ma->ma_lmm_size = 0;
 		} else if (rc2 == -ERANGE) {
 			rc2 = echo_big_lmm_get(env, next, ma);
@@ -1110,7 +1110,7 @@ static int echo_attr_get_complex(const struct lu_env *env,
 			ma->ma_acl_size = rc2;
 			ma->ma_valid |= MA_ACL_DEF;
 		} else if (rc2 == -ENODATA) {
-			/* no ACLs */
+			
 			ma->ma_acl_size = 0;
 		} else {
 			GOTO(out, rc = rc2);
@@ -1339,13 +1339,13 @@ static int echo_create_md_object(const struct lu_env *env,
 	if (name) {
 		lname->ln_name = name;
 		lname->ln_namelen = namelen;
-		/* If name is specified, only create one object by name */
+		
 		rc = echo_md_create_internal(env, ed, lu2md(new_parent), fid,
 					     lname, spec, ma);
 		GOTO(out_put, rc);
 	}
 
-	/* Create multiple object sequenced by id */
+	
 	for (i = 0; i < count; i++) {
 		char *tmp_name = info->eti_name;
 
@@ -1575,7 +1575,7 @@ static int echo_lookup_object(const struct lu_env *env,
 	if (rc != 0)
 		RETURN(rc);
 
-	/*prepare the requests*/
+	
 	for (i = 0; i < count; i++) {
 		echo_md_build_name(lname, name, id);
 
@@ -1690,7 +1690,7 @@ static int echo_destroy_object(const struct lu_env *env,
 		GOTO(out_put, rc);
 	}
 
-	/*prepare the requests*/
+	
 	for (i = 0; i < count; i++) {
 		char *tmp_name = info->eti_name;
 
@@ -1806,14 +1806,14 @@ static void echo_ucred_init(struct lu_env *env)
 				from_kgid(&init_user_ns, current_fsgid());
 	ucred->uc_cap = current_cap();
 
-	/* remove fs privilege for non-root user. */
+	
 	if (ucred->uc_fsuid) {
 		kcap = cap_drop_nfsd_set(kcap);
 		kcap = cap_drop_fs_set(kcap);
 	}
 	ucred->uc_cap = kcap;
 	ucred->uc_valid = UCRED_NEW;
-	/* do not let rbac interfere with obdecho */
+	
 	ucred->uc_rbac_file_perms = 1;
 	ucred->uc_rbac_dne_ops = 1;
 	ucred->uc_rbac_quota_ops = 1;
@@ -1866,7 +1866,7 @@ static int echo_md_handler(struct echo_device *ed, int command,
 	if (rc != 0)
 		GOTO(out_env, rc);
 
-	/* init big_lmm buffer */
+	
 	info = echo_env_info(env);
 	LASSERT(info->eti_big_lmm == NULL);
 	OBD_ALLOC_LARGE(info->eti_big_lmm, MIN_MD_SIZE);
@@ -1950,7 +1950,7 @@ out_env:
 	cl_env_put(env, &refcheck);
 	return rc;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 static int echo_create_object(const struct lu_env *env, struct echo_device *ed,
 			      struct obdo *oa)
@@ -2044,7 +2044,7 @@ static void echo_client_page_debug_setup(struct page *page, int rw, u64 id,
 	u64 stripe_id;
 	int delta;
 
-	/* no partial pages on the client */
+	
 	LASSERT(count == PAGE_SIZE);
 
 	addr = kmap_local_page(page);
@@ -2074,7 +2074,7 @@ echo_client_page_debug_check(struct page *page, u64 id, u64 offset, u64 count)
 	int rc;
 	int rc2;
 
-	/* no partial pages on the client */
+	
 	LASSERT(count == PAGE_SIZE);
 
 	addr = kmap_local_page(page);
@@ -2147,7 +2147,7 @@ static int echo_client_prep_commit(const struct lu_env *env,
 		for (i = 0; i < lpages; i++) {
 			struct page *page = lnb[i].lnb_page;
 
-			/* read past eof? */
+			
 			if (!page && lnb[i].lnb_rc == 0)
 				continue;
 
@@ -2176,7 +2176,7 @@ static int echo_client_prep_commit(const struct lu_env *env,
 		if (ret != 0)
 			break;
 
-		/* Reuse env context. */
+		
 		lu_context_exit((struct lu_context *)&env->le_ctx);
 		lu_context_enter((struct lu_context *)&env->le_ctx);
 	}
@@ -2209,7 +2209,7 @@ static int echo_client_brw_ioctl(const struct lu_env *env, int rw,
 
 	oa->o_valid &= ~OBD_MD_FLHANDLE;
 
-	/* OFD/obdfilter works only via prep/commit */
+	
 	test_mode = (long)data->ioc_pbuf1;
 	if (!ed->ed_next && test_mode != 3) {
 		test_mode = 3;
@@ -2219,7 +2219,7 @@ static int echo_client_brw_ioctl(const struct lu_env *env, int rw,
 	if (test_mode == 3)
 		async = 1;
 
-	/* Truncate batch size to maximum */
+	
 	if (data->ioc_plen1 > PTLRPC_MAX_BRW_SIZE)
 		data->ioc_plen1 = PTLRPC_MAX_BRW_SIZE;
 
@@ -2271,7 +2271,7 @@ echo_client_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 		ostid_set_seq_echo(&oa->o_oi);
 	}
 
-	/* This FID is unpacked just for validation at this point */
+	
 	rc = ostid_to_fid(&fid, &oa->o_oi, 0);
 	if (rc < 0)
 		RETURN(rc);
@@ -2297,13 +2297,13 @@ echo_client_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 
 #ifdef HAVE_SERVER_SUPPORT
 	tsi = tgt_ses_info(env);
-	/* treat as local operation */
+	
 	tsi->tsi_exp = NULL;
 	tsi->tsi_jobid = NULL;
 #endif
 
 	switch (cmd) {
-	case OBD_IOC_CREATE:                    /* may create echo object */
+	case OBD_IOC_CREATE:                    
 		if (!capable(CAP_SYS_ADMIN))
 			GOTO(out, rc = -EPERM);
 
@@ -2362,7 +2362,7 @@ echo_client_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 			return -EFAULT;
 		GOTO(out, rc);
 	}
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 	case OBD_IOC_DESTROY:
 		if (!capable(CAP_SYS_ADMIN))
 			GOTO(out, rc = -EPERM);
@@ -2496,7 +2496,7 @@ static int echo_client_cleanup(struct obd_device *obd)
 	int rc;
 
 	ENTRY;
-	/*Do nothing for Metadata echo client*/
+	
 	if (!ed)
 		RETURN(0);
 
@@ -2567,7 +2567,7 @@ static int __init obdecho_init(void)
 	int rc;
 
 	ENTRY;
-	LCONSOLE_INFO("Echo OBD driver; http://www.lustre.org/\n");
+	LCONSOLE_INFO("Echo OBD driver; http:
 
 	LASSERT(PAGE_SIZE % OBD_ECHO_BLOCK_SIZE == 0);
 
@@ -2618,7 +2618,7 @@ static void __exit obdecho_exit(void)
 #endif
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Echo Client test driver");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");
@@ -2626,4 +2626,4 @@ MODULE_LICENSE("GPL");
 module_init(obdecho_init);
 module_exit(obdecho_exit);
 
-/** @} echo_client */
+

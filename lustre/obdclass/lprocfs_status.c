@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Hariharan Thantry <thantry@users.sourceforge.net>
  */
@@ -21,7 +21,7 @@
 #include <lustre_kernelcomm.h>
 #include <obd_cksum.h>
 
-/* enable start/elapsed_time in stats headers by default */
+
 unsigned int obd_enable_stats_header = 1;
 
 static int lprocfs_no_percpu_stats = 0;
@@ -204,7 +204,7 @@ lprocfs_register(const char *name, struct proc_dir_entry *parent,
 	return newchild;
 }
 EXPORT_SYMBOL(lprocfs_register);
-#endif /* CONFIG_PROC_FS */
+#endif 
 
 static const struct file_operations ldebugfs_empty_ops = { };
 
@@ -233,7 +233,7 @@ void ldebugfs_add_vars(struct dentry *parent, struct ldebugfs_vars *list,
 }
 EXPORT_SYMBOL_GPL(ldebugfs_add_vars);
 
-/* Generic callbacks */
+
 static ssize_t uuid_show(struct kobject *kobj, struct attribute *attr,
 			 char *buf)
 {
@@ -494,7 +494,7 @@ int lprocfs_server_uuid_seq_show(struct seq_file *m, void *data)
 }
 EXPORT_SYMBOL(lprocfs_server_uuid_seq_show);
 
-/** add up per-cpu counters */
+
 
 /**
  * Lock statistics structure for access, possibly only on this CPU.
@@ -583,14 +583,14 @@ static __s64 sum_check(__s64 old, __s64 incr)
 	__s64 new;
 
 	new = old + incr;
-	/* check overflow */
+	
 	if (unlikely(new < old))
 		new = LLONG_MAX;
 
 	return new;
 }
 
-/** add up per-cpu counters */
+
 void lprocfs_stats_collect(struct lprocfs_stats *stats, int idx,
 			   struct lprocfs_counter *cnt)
 {
@@ -602,7 +602,7 @@ void lprocfs_stats_collect(struct lprocfs_stats *stats, int idx,
 	memset(cnt, 0, sizeof(*cnt));
 
 	if (!stats) {
-		/* set count to 1 to avoid divide-by-zero errs in callers */
+		
 		cnt->lc_count = 1;
 		return;
 	}
@@ -659,7 +659,7 @@ int obd_io_latency_stats_seq_show(struct seq_file *seq,
 	lprocfs_stats_header(seq, ktime_get_real(), stats_init, 13,
 			     ":", false, "");
 
-	/* Print read latency histograms */
+	
 	for (i = 0, kb = PAGE_SIZE / 1024; i < num_buckets; i++, kb <<= 1) {
 		if (!read_io_latency_by_size)
 			continue;
@@ -687,7 +687,7 @@ int obd_io_latency_stats_seq_show(struct seq_file *seq,
 		}
 		seq_puts(seq, "}\n");
 	}
-	/* Print write latency histograms */
+	
 	for (i = 0, kb = PAGE_SIZE / 1024; i < num_buckets; i++, kb <<= 1) {
 		if (!write_io_latency_by_size)
 			continue;
@@ -743,112 +743,112 @@ static void obd_import_flags2str(struct obd_import *imp, struct seq_file *m)
 }
 
 static const char *const obd_connect_names[] = {
-	"read_only",			/* 0x01 */
-	"lov_index",			/* 0x02 */
-	"connect_from_mds",		/* 0x03 */
-	"write_grant",			/* 0x04 */
-	"server_lock",			/* 0x10 */
-	"version",			/* 0x20 */
-	"mgs_nidlist",			/* 0x40 */
-	"acl",				/* 0x80 */
-	"xattr",			/* 0x100 */
-	"create_on_write",		/* 0x200 */
-	"truncate_lock",		/* 0x400 */
-	"initial_transno",		/* 0x800 */
-	"inode_bit_locks",		/* 0x1000 */
-	"barrier",			/* 0x2000 */
-	"getattr_by_fid",		/* 0x4000 */
-	"no_oh_for_devices",		/* 0x8000 */
-	"remote_client",		/* 0x10000 */
-	"remote_client_by_force",	/* 0x20000 */
-	"max_byte_per_rpc",		/* 0x40000 */
-	"64bit_qdata",			/* 0x80000 */
-	"mds_capability",		/* 0x100000 */
-	"oss_capability",		/* 0x200000 */
-	"early_lock_cancel",		/* 0x400000 */
-	"som",				/* 0x800000 */
-	"adaptive_timeouts",		/* 0x1000000 */
-	"lru_resize",			/* 0x2000000 */
-	"mds_mds_connection",		/* 0x4000000 */
-	"real_conn",			/* 0x8000000 */
-	"change_qunit_size",		/* 0x10000000 */
-	"alt_checksum_algorithm",	/* 0x20000000 */
-	"fid_is_enabled",		/* 0x40000000 */
-	"version_recovery",		/* 0x80000000 */
-	"pools",			/* 0x100000000 */
-	"grant_shrink",			/* 0x200000000 */
-	"skip_orphan",			/* 0x400000000 */
-	"large_ea",			/* 0x800000000 */
-	"full20",			/* 0x1000000000 */
-	"layout_lock",			/* 0x2000000000 */
-	"64bithash",			/* 0x4000000000 */
-	"object_max_bytes",		/* 0x8000000000 */
-	"imp_recov",			/* 0x10000000000 */
-	"jobstats",			/* 0x20000000000 */
-	"umask",			/* 0x40000000000 */
-	"einprogress",			/* 0x80000000000 */
-	"grant_param",			/* 0x100000000000 */
-	"flock_owner",			/* 0x200000000000 */
-	"lvb_type",			/* 0x400000000000 */
-	"nanoseconds_times",		/* 0x800000000000 */
-	"lightweight_conn",		/* 0x1000000000000 */
-	"short_io",			/* 0x2000000000000 */
-	"pingless",			/* 0x4000000000000 */
-	"flock_deadlock",		/* 0x8000000000000 */
-	"disp_stripe",			/* 0x10000000000000 */
-	"open_by_fid",			/* 0x20000000000000 */
-	"lfsck",			/* 0x40000000000000 */
-	"unknown",			/* 0x80000000000000 */
-	"unlink_close",			/* 0x100000000000000 */
-	"multi_mod_rpcs",		/* 0x200000000000000 */
-	"dir_stripe",			/* 0x400000000000000 */
-	"subtree",			/* 0x800000000000000 */
-	"lockahead",			/* 0x1000000000000000 */
-	"bulk_mbits",			/* 0x2000000000000000 */
-	"compact_obdo",			/* 0x4000000000000000 */
-	"second_flags",			/* 0x8000000000000000 */
-	/* ocd_connect_flags2 names */
-	"file_secctx",			/* 0x01 */
-	"lockaheadv2",			/* 0x02 */
-	"dir_migrate",			/* 0x04 */
-	"sum_statfs",			/* 0x08 */
-	"overstriping",			/* 0x10 */
-	"flr",				/* 0x20 */
-	"wbc",				/* 0x40 */
-	"lock_convert",			/* 0x80 */
-	"archive_id_array",		/* 0x100 */
-	"increasing_xid",		/* 0x200 */
-	"selinux_policy",		/* 0x400 */
-	"lsom",				/* 0x800 */
-	"pcc",				/* 0x1000 */
-	"crush",			/* 0x2000 */
-	"async_discard",		/* 0x4000 */
-	"client_encryption",		/* 0x8000 */
-	"fidmap",			/* 0x10000 */
-	"getattr_pfid",			/* 0x20000 */
-	"lseek",			/* 0x40000 */
-	"dom_lvb",			/* 0x80000 */
-	"reply_mbits",			/* 0x100000 */
-	"mode_convert",			/* 0x200000 */
-	"batch_rpc",			/* 0x400000 */
-	"pcc_ro",			/* 0x800000 */
-	"mne_nid_type",			/* 0x1000000 */
-	"lock_contend",			/* 0x2000000 */
-	"atomic_open_lock",		/* 0x4000000 */
-	"name_encryption",		/* 0x8000000 */
-	"mkdir_replay",			/* 0x10000000 */
-	"dmv_imp_inherit",		/* 0x20000000 */
-	"encryption_fid2path",		/* 0x40000000 */
-	"replay_create",		/* 0x80000000 */
-	"large_nid",			/* 0x100000000 */
-	"compressed_file",		/* 0x200000000 */
-	"unaligned_dio",		/* 0x400000000 */
-	"conn_policy",			/* 0x800000000 */
-	"sparse_read",		       /* 0x1000000000 */
-	"mirror_id_fix",	       /* 0x2000000000 */
-	"update_layout",	       /* 0x4000000000 */
-	"readdir_open",		       /* 0x8000000000 */
-	"flr_ec",			/* 0x1000000000 */
+	"read_only",			
+	"lov_index",			
+	"connect_from_mds",		
+	"write_grant",			
+	"server_lock",			
+	"version",			
+	"mgs_nidlist",			
+	"acl",				
+	"xattr",			
+	"create_on_write",		
+	"truncate_lock",		
+	"initial_transno",		
+	"inode_bit_locks",		
+	"barrier",			
+	"getattr_by_fid",		
+	"no_oh_for_devices",		
+	"remote_client",		
+	"remote_client_by_force",	
+	"max_byte_per_rpc",		
+	"64bit_qdata",			
+	"mds_capability",		
+	"oss_capability",		
+	"early_lock_cancel",		
+	"som",				
+	"adaptive_timeouts",		
+	"lru_resize",			
+	"mds_mds_connection",		
+	"real_conn",			
+	"change_qunit_size",		
+	"alt_checksum_algorithm",	
+	"fid_is_enabled",		
+	"version_recovery",		
+	"pools",			
+	"grant_shrink",			
+	"skip_orphan",			
+	"large_ea",			
+	"full20",			
+	"layout_lock",			
+	"64bithash",			
+	"object_max_bytes",		
+	"imp_recov",			
+	"jobstats",			
+	"umask",			
+	"einprogress",			
+	"grant_param",			
+	"flock_owner",			
+	"lvb_type",			
+	"nanoseconds_times",		
+	"lightweight_conn",		
+	"short_io",			
+	"pingless",			
+	"flock_deadlock",		
+	"disp_stripe",			
+	"open_by_fid",			
+	"lfsck",			
+	"unknown",			
+	"unlink_close",			
+	"multi_mod_rpcs",		
+	"dir_stripe",			
+	"subtree",			
+	"lockahead",			
+	"bulk_mbits",			
+	"compact_obdo",			
+	"second_flags",			
+	
+	"file_secctx",			
+	"lockaheadv2",			
+	"dir_migrate",			
+	"sum_statfs",			
+	"overstriping",			
+	"flr",				
+	"wbc",				
+	"lock_convert",			
+	"archive_id_array",		
+	"increasing_xid",		
+	"selinux_policy",		
+	"lsom",				
+	"pcc",				
+	"crush",			
+	"async_discard",		
+	"client_encryption",		
+	"fidmap",			
+	"getattr_pfid",			
+	"lseek",			
+	"dom_lvb",			
+	"reply_mbits",			
+	"mode_convert",			
+	"batch_rpc",			
+	"pcc_ro",			
+	"mne_nid_type",			
+	"lock_contend",			
+	"atomic_open_lock",		
+	"name_encryption",		
+	"mkdir_replay",			
+	"dmv_imp_inherit",		
+	"encryption_fid2path",		
+	"replay_create",		
+	"large_nid",			
+	"compressed_file",		
+	"unaligned_dio",		
+	"conn_policy",			
+	"sparse_read",		       
+	"mirror_id_fix",	       
+	"update_layout",	       
+	"readdir_open",		       
+	"flr_ec",			
 	NULL
 };
 
@@ -1036,7 +1036,7 @@ static void lprocfs_import_seq_show_locked(struct seq_file *m,
 				  nidstr, sizeof(nidstr));
 		if (j)
 			seq_puts(m, ", ");
-		/* Place nidstr in quotes */
+		
 		seq_printf(m, "\"%s\"", nidstr);
 		j++;
 	}
@@ -1119,7 +1119,7 @@ static void lprocfs_import_seq_show_locked(struct seq_file *m,
 		   imp->imp_peer_committed_transno,
 		   imp->imp_last_transno_checked);
 
-	/* avg data rates */
+	
 	for (rw = 0; rw <= 1; rw++) {
 		lprocfs_stats_collect(obd->obd_svc_stats,
 				      PTLRPC_LAST_CNTR + BRW_READ_BYTES + rw,
@@ -1197,7 +1197,7 @@ int lprocfs_at_hist_helper(struct seq_file *m, struct adaptive_timeout *at)
 }
 EXPORT_SYMBOL(lprocfs_at_hist_helper);
 
-/* See also ptlrpc_lprocfs_timeouts_show_seq */
+
 static void lprocfs_timeouts_seq_show_locked(struct seq_file *m,
 					     struct obd_device *obd,
 					     struct obd_import *imp)
@@ -1210,7 +1210,7 @@ static void lprocfs_timeouts_seq_show_locked(struct seq_file *m,
 
 	now = ktime_get_real_seconds();
 
-	/* Some network health info for kicks */
+	
 	seq_printf(m, "%-10s : %lld, %llds ago\n",
 		   "last reply", (s64)imp->imp_last_reply_time,
 		   (s64)(now - imp->imp_last_reply_time));
@@ -1369,7 +1369,7 @@ int lprocfs_obd_cleanup(struct obd_device *obd)
 	debugfs_remove_recursive(obd->obd_debugfs_gss_dir);
 	obd->obd_debugfs_gss_dir = NULL;
 #ifdef HAVE_SERVER_SUPPORT
-	/* Should be no exports left */
+	
 	debugfs_remove_recursive(obd->obd_debugfs_exports);
 	obd->obd_debugfs_exports = NULL;
 #endif
@@ -1381,7 +1381,7 @@ int lprocfs_obd_cleanup(struct obd_device *obd)
 	debugfs_remove_recursive(obd->obd_debugfs_entry);
 	obd->obd_debugfs_entry = NULL;
 
-	/* obd device never allocated a kset */
+	
 	if (!obd->obd_kset.kobj.state_initialized)
 		return 0;
 
@@ -1416,7 +1416,7 @@ int lprocfs_stats_alloc_one(struct lprocfs_stats *stats, unsigned int cpuid)
 				stats->ls_biggest_alloc_num = cpuid + 1;
 			spin_unlock(&stats->ls_lock);
 		}
-		/* initialize the ls_percpu[cpuid] non-zero counter */
+		
 		for (i = 0; i < stats->ls_num; ++i) {
 			cntr = lprocfs_stats_counter_get(stats, cpuid, i);
 			cntr->lc_min = LC_MIN_INIT;
@@ -1443,7 +1443,7 @@ struct lprocfs_stats *lprocfs_stats_alloc(unsigned int num,
 	else
 		num_entry = num_possible_cpus();
 
-	/* alloc percpu pointers for all possible cpu slots */
+	
 	LIBCFS_ALLOC(stats, offsetof(typeof(*stats), ls_percpu[num_entry]));
 	if (!stats)
 		return NULL;
@@ -1455,13 +1455,13 @@ struct lprocfs_stats *lprocfs_stats_alloc(unsigned int num,
 	kref_init(&stats->ls_refcount);
 	stats->ls_index = -1;
 
-	/* alloc num of counter headers */
+	
 	CFS_ALLOC_PTR_ARRAY(stats->ls_cnt_header, stats->ls_num);
 	if (!stats->ls_cnt_header)
 		goto fail;
 
 	if ((flags & LPROCFS_STATS_FLAG_NOPERCPU) != 0) {
-		/* contains only one set counters */
+		
 		percpusize = lprocfs_stats_counter_size(stats);
 		LIBCFS_ALLOC_ATOMIC(stats->ls_percpu[0], percpusize);
 		if (!stats->ls_percpu[0])
@@ -1630,7 +1630,7 @@ unsigned int lustre_stats_scan(struct lustre_stats_list *slist, const char *sour
 					continue;
 				}
 
-				/* We know src -> start is the obd_type */
+				
 				len = start - src;
 				snprintf(filter, sizeof(filter), "%.*s%s",
 					 len, src, source + 1);
@@ -1692,7 +1692,7 @@ void lprocfs_stats_clear(struct lprocfs_stats *stats)
 
 	num_entry = lprocfs_stats_lock(stats, LPROCFS_GET_NUM_CPU, &flags);
 
-	/* clear histogram if exists */
+	
 	for (j = 0; j < stats->ls_num; j++) {
 		struct obd_histogram *hist = stats->ls_cnt_header[j].lc_hist;
 
@@ -1788,7 +1788,7 @@ void lprocfs_stats_header(struct seq_file *seq, ktime_t now, ktime_t ts_init,
 }
 EXPORT_SYMBOL(lprocfs_stats_header);
 
-/* seq file export of one lprocfs counter */
+
 static int lprocfs_stats_seq_show(struct seq_file *p, void *v)
 {
 	struct lprocfs_stats *stats = p->private;
@@ -1873,7 +1873,7 @@ int lprocfs_stats_register(struct proc_dir_entry *root, const char *name,
 	return 0;
 }
 EXPORT_SYMBOL(lprocfs_stats_register);
-#endif /* CONFIG_PROC_FS */
+#endif 
 
 static const char *lprocfs_counter_config_units(const char *name,
 					 enum lprocfs_counter_config config)
@@ -2092,7 +2092,7 @@ static int string_to_decimal(u64 *int_d, u64 *frac_d, u32 *frac_div,
 	if (!count)
 		return -EINVAL;
 
-	/* parse integer */
+	
 	if (*str != '.') {
 		rc = sscanf(str, "%llu%n", int_d, &len);
 		if (rc < 0)
@@ -2102,7 +2102,7 @@ static int string_to_decimal(u64 *int_d, u64 *frac_d, u32 *frac_div,
 		str += len;
 	}
 
-	/* parse fractional  */
+	
 	if (*str != '.')
 		return len ? len : -EINVAL;
 
@@ -2118,7 +2118,7 @@ static int string_to_decimal(u64 *int_d, u64 *frac_d, u32 *frac_div,
 	if (len > count)
 		return -EINVAL;
 
-	/* if frac_len >= 10, the frac_div will overflow */
+	
 	if (frac_len >= 10)
 		return -EOVERFLOW;
 
@@ -2186,7 +2186,7 @@ static int string_to_blksize(u64 *blk_size, const char *buffer, size_t count)
 		return -EINVAL;
 	}
 
-	/* handle the optional "iB" suffix */
+	
 	if (unit == STRING_UNITS_2 && (count - len) >= 2 &&
 	    buffer[len] == 'i' && buffer[len + 1] == 'B')
 		len += 2;
@@ -2264,7 +2264,7 @@ static int __string_to_size(u64 *size, const char *buffer, size_t count,
 		if (whole > 100 || (whole == 100 && frac))
 			return -ERANGE;
 
-		/* *size = (total * whole + total * frac / frac_dev) / 100 */
+		
 		rc = scale64_rem(total, 100, &whole, &rem);
 		if (rc)
 			return rc;
@@ -2427,8 +2427,8 @@ char *lprocfs_find_named_value(const char *buffer, const char *name,
 	if (!val)
 		return (char *)buffer;
 
-	val += strlen(name);                             /* skip prefix */
-	while (val < buffer + buflen && isspace(*val)) /* skip separator */
+	val += strlen(name);                             
+	while (val < buffer + buflen && isspace(*val)) 
 		val++;
 
 	*count = 0;
@@ -2451,7 +2451,7 @@ int lprocfs_seq_create(struct proc_dir_entry *parent,
 	struct proc_dir_entry *entry;
 	ENTRY;
 
-	/* Disallow secretly (un)writable entries. */
+	
 	LASSERT(!seq_fops->proc_write == !(mode & 0222));
 
 	entry = proc_create_data(name, mode, parent, seq_fops, data);
@@ -2659,14 +2659,14 @@ ssize_t max_pages_per_rpc_store(struct kobject *kobj, struct attribute *attr,
 	if (rc)
 		return rc;
 
-	/* if the max_pages is specified in bytes, convert to pages */
+	
 	if (val >= ONE_MB_BRW_SIZE)
 		val >>= PAGE_SHIFT;
 
 	with_imp_locked(obd, imp, rc) {
 		ocd = &imp->imp_connect_data;
 		chunk_mask = ~((1 << (cli->cl_chunkbits - PAGE_SHIFT)) - 1);
-		/* max_pages_per_rpc must be chunk aligned */
+		
 		val = (val + ~chunk_mask) & chunk_mask;
 		if (val == 0 || (ocd->ocd_brw_size != 0 &&
 				 val > ocd->ocd_brw_size >> PAGE_SHIFT)) {
@@ -2698,7 +2698,7 @@ ssize_t short_io_bytes_show(struct kobject *kobj, struct attribute *attr,
 }
 EXPORT_SYMBOL(short_io_bytes_show);
 
-/* Used to catch people who think they're specifying pages. */
+
 #define MIN_SHORT_IO_BYTES 64U
 
 ssize_t short_io_bytes_store(struct kobject *kobj, struct attribute *attr,
@@ -2810,7 +2810,7 @@ int lprocfs_wr_root_squash(const char __user *buffer, unsigned long count,
 	}
 	kernbuf[count] = '\0';
 
-	/* look for uid gid separator */
+	
 	tmp = strchr(kernbuf, ':');
 	if (!tmp) {
 		errmsg = "needs uid:gid format";
@@ -2819,13 +2819,13 @@ int lprocfs_wr_root_squash(const char __user *buffer, unsigned long count,
 	*tmp = '\0';
 	tmp++;
 
-	/* parse uid */
+	
 	if (kstrtoul(kernbuf, 0, &uid) != 0) {
 		errmsg = "bad uid";
 		GOTO(failed, rc = -EINVAL);
 	}
 
-	/* parse gid */
+	
 	if (kstrtoul(tmp, 0, &gid) != 0) {
 		errmsg = "bad gid";
 		GOTO(failed, rc = -EINVAL);
@@ -2885,7 +2885,7 @@ int lprocfs_wr_nosquash_nids(const char __user *buffer, unsigned long count,
 
 	if ((len == 4 && strncmp(kernbuf, "NONE", len) == 0) ||
 	    (len == 5 && strncmp(kernbuf, "clear", len) == 0)) {
-		/* empty string is special case */
+		
 		spin_lock(&squash->rsi_lock);
 		if (!list_empty(&squash->rsi_nosquash_nids))
 			cfs_free_nidlist(&squash->rsi_nosquash_nids);

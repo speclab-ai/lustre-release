@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Peter Braam <braam@clusterfs.com>
  * Author: Phil Schwan <phil@clusterfs.com>
@@ -64,7 +64,7 @@ ldlm_plain_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 		if (req == lock)
 			RETURN(compat);
 
-		/* Advance loop cursor to last lock of mode group. */
+		
 		next_lock = list_entry(list_entry(lock->l_sl_mode.prev,
 						  struct ldlm_lock,
 						  l_sl_mode)->l_res_link.next,
@@ -145,16 +145,16 @@ int ldlm_process_plain_lock(struct ldlm_lock *lock, __u64 *flags,
 
 	RETURN(LDLM_ITER_CONTINUE);
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 void ldlm_plain_policy_wire_to_local(const union ldlm_wire_policy_data *wpolicy,
 				     union ldlm_policy_data *lpolicy)
 {
-	/* No policy for plain locks */
+	
 }
 
 void ldlm_plain_policy_local_to_wire(const union ldlm_policy_data *lpolicy,
 				     union ldlm_wire_policy_data *wpolicy)
 {
-	/* No policy for plain locks */
+	
 }

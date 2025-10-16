@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2015, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <stdio.h>
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
 	filesize = getFilesize(argv[1]);
 
-	/* Open file */
+	
 	fd = open(argv[1], O_RDONLY, 0);
 	if (fd == -1) {
 		save_errno = errno;
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
 		exit(save_errno);
 	}
 
-	/* Execute mmap */
+	
 	mmappedData = mmap(NULL, filesize, PROT_READ,
 			   MAP_PRIVATE | MAP_POPULATE, fd, 0);
 	if (mmappedData == MAP_FAILED) {
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 		exit(save_errno);
 	}
 
-	/* Write the mmapped data to stdout (= FD #1) */
+	
 	rc = write(1, mmappedData, filesize);
 	if (rc == -1) {
 		save_errno = errno;

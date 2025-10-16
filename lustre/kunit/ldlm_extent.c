@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -43,9 +43,9 @@ static void test_one(struct ldlm_resource *res,
 	enum ldlm_error err;
 	ldlm_processing_policy pol;
 	struct ldlm_lock *lock = ldlm_lock_new_testing(res);
-	//struct ldlm_lock *lock = ldlm_lock_create(ns, &RES_ID,
-	//					  LDLM_EXTENT, LCK_EX,
-	//					  NULL, NULL, 0, LVB_T_NONE);
+	
+	
+	
 
 	refcount_inc(&res->lr_refcount);
 

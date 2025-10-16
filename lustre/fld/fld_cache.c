@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * FLD (Fids Location Database)
  *
@@ -54,7 +54,7 @@ struct fld_cache *fld_cache_init(const char *name, int cache_size,
 	cache->fci_cache_size = cache_size;
 	cache->fci_threshold = cache_threshold;
 
-	/* Init fld cache info. */
+	
 	memset(&cache->fci_stat, 0, sizeof(cache->fci_stat));
 
 	CDEBUG(D_INFO, "%s: FLD cache - Size: %d, Threshold: %d\n",
@@ -120,7 +120,7 @@ restart_fixup:
 			 "cur lsr_start "DRANGE" next lsr_start "DRANGE"\n",
 			 PRANGE(c_range), PRANGE(n_range));
 
-		/* check merge possibility with next range */
+		
 		if (c_range->lsr_end == n_range->lsr_start) {
 			if (c_range->lsr_index != n_range->lsr_index)
 				continue;
@@ -129,7 +129,7 @@ restart_fixup:
 			continue;
 		}
 
-		/* check if current range overlaps with next range. */
+		
 		if (n_range->lsr_start < c_range->lsr_end) {
 			if (c_range->lsr_index == n_range->lsr_index) {
 				n_range->lsr_start = c_range->lsr_start;
@@ -150,7 +150,7 @@ restart_fixup:
 			goto restart_fixup;
 		}
 
-		/* kill duplicates */
+		
 		if (c_range->lsr_start == n_range->lsr_start &&
 		    c_range->lsr_end == n_range->lsr_end)
 			fld_cache_entry_delete(cache, f_curr);
@@ -239,26 +239,26 @@ static void fld_cache_punch_hole(struct fld_cache *cache,
 	if (!fldt) {
 		OBD_FREE_PTR(f_new);
 		EXIT;
-		/* overlap is not allowed, so dont mess up list. */
+		
 		return;
 	}
 	/*  break f_curr RANGE into three RANGES:
 	 *        f_curr, f_new , fldt
 	 */
 
-	/* fldt */
+	
 	fldt->fce_range.lsr_start = new_end;
 	fldt->fce_range.lsr_end = f_curr->fce_range.lsr_end;
 	fldt->fce_range.lsr_index = f_curr->fce_range.lsr_index;
 
-	/* f_curr */
+	
 	f_curr->fce_range.lsr_end = new_start;
 
-	/* add these two entries to list */
+	
 	fld_cache_entry_add(cache, f_new, &f_curr->fce_list);
 	fld_cache_entry_add(cache, fldt, &f_new->fce_list);
 
-	/* no need to fixup */
+	
 	EXIT;
 }
 
@@ -300,7 +300,7 @@ static void fld_cache_overlap_handle(struct fld_cache *cache,
 
 	} else if (f_curr->fce_range.lsr_start < new_start &&
 			new_end < f_curr->fce_range.lsr_end) {
-		/* case 2: new range fit within existing range. */
+		
 
 		fld_cache_punch_hole(cache, f_curr, f_new);
 
@@ -373,14 +373,14 @@ int fld_cache_insert_nolock(struct fld_cache *cache,
 	head = &cache->fci_entries_head;
 
 	list_for_each_entry_safe(f_curr, n, head, fce_list) {
-		/* add list if next is end of list */
+		
 		if (new_end < f_curr->fce_range.lsr_start ||
 		   (new_end == f_curr->fce_range.lsr_start &&
 		    new_flags != f_curr->fce_range.lsr_flags))
 			break;
 
 		prev = &f_curr->fce_list;
-		/* check if this range is to left of new range. */
+		
 		if (new_start < f_curr->fce_range.lsr_end &&
 		    new_flags == f_curr->fce_range.lsr_flags) {
 			fld_cache_overlap_handle(cache, f_curr, f_new);
@@ -392,7 +392,7 @@ int fld_cache_insert_nolock(struct fld_cache *cache,
 		prev = head;
 
 	CDEBUG(D_INFO, "insert range "DRANGE"\n", PRANGE(&f_new->fce_range));
-	/* Add new entry to cache and lru list. */
+	
 	fld_cache_entry_add(cache, f_new, prev);
 out:
 	RETURN(0);
@@ -426,7 +426,7 @@ void fld_cache_delete_nolock(struct fld_cache *cache,
 
 	head = &cache->fci_entries_head;
 	list_for_each_entry_safe(flde, tmp, head, fce_list) {
-		/* add list if next is end of list */
+		
 		if (range->lsr_start == flde->fce_range.lsr_start ||
 		   (range->lsr_end == flde->fce_range.lsr_end &&
 		    range->lsr_flags == flde->fce_range.lsr_flags)) {

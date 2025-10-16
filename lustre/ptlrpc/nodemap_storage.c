@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2015, Trustees of Indiana University
@@ -43,11 +43,11 @@
 #include <linux/libcfs/libcfs_caps.h>
 #include "nodemap_internal.h"
 
-/* list of registered nodemap index files, except MGS */
+
 static LIST_HEAD(ncf_list_head);
 static DEFINE_MUTEX(ncf_list_lock);
 
-/* MGS index is different than others, others are listeners to MGS idx */
+
 static struct nm_config_file *nodemap_mgs_ncf;
 
 bool nodemap_mgs(void)
@@ -255,7 +255,7 @@ static void nodemap_global_rec_init(union nodemap_rec *nr, bool active)
 	nr->ngr.ngr_padding6 = 0;
 }
 
-/* should be called with dt_write lock */
+
 static void nodemap_inc_version(const struct lu_env *env,
 				struct dt_object *nodemap_idx,
 				struct thandle *th)
@@ -297,13 +297,13 @@ static struct dt_object *nodemap_cache_find_create(const struct lu_env *env,
 	}
 
 again:
-	/* if loading index fails the first time, create new index */
+	
 	if (create_new == NCFC_CREATE_NEW && rc != -ENOENT) {
 		CDEBUG(D_INFO, "removing old index, creating new one\n");
 		rc = local_object_unlink(env, dev, root_obj,
 					 LUSTRE_NODEMAP_NAME);
 		if (rc < 0) {
-			/* XXX not sure the best way to get obd name. */
+			
 			CERROR("cannot destroy nodemap index: rc = %d\n",
 			       rc);
 			GOTO(out_root, nm_obj = ERR_PTR(rc));
@@ -873,7 +873,7 @@ static int nodemap_idx_fileset_fragments_add(
 	if (nr_array == NULL)
 		GOTO(out_cleanup, rc = -ENOMEM);
 
-	/* setup fileset fragment keys and records to be inserted */
+	
 	size_remaining = (unsigned int) strlen(fset_info->nfi_fileset) + 1;
 	fragment_size = LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE;
 	for (i = 0; i < fset_info->nfi_fragment_cnt; i++) {
@@ -930,7 +930,7 @@ static int nodemap_idx_fileset_fragments_del(
 	if (nk_array == NULL)
 		RETURN(-ENOMEM);
 
-	/* setup fileset fragment keys to be deleted */
+	
 	for (i = 0; i < fset_info->nfi_fragment_cnt; i++) {
 		nodemap_cluster_key_init(&nk_array[i], fset_info->nfi_nm_id,
 					 fset_info->nfi_subid_fragments + i);
@@ -990,7 +990,7 @@ static int nodemap_idx_fileset_fragments_clear(const struct lu_nodemap *nodemap,
 	if (!nk_array)
 		RETURN(-ENOMEM);
 
-	/* setup fileset fragment keys to be deleted */
+	
 	for (i = 0; i < count; i++) {
 		subid = fset_subid_header + i;
 		nodemap_cluster_key_init(&nk_array[i], nodemap->nm_id, subid);
@@ -1099,7 +1099,7 @@ int nodemap_idx_fileset_add(const struct lu_nodemap *nodemap,
 			GOTO(out_wipe, rc2);
 		if (inserted == 0)
 			GOTO(out, rc);
-		/* Only some fileset fragments were added, attempt undo */
+		
 		fset_info->nfi_fragment_cnt = inserted;
 
 		rc2 = nodemap_idx_fileset_fragments_del(fset_info, &env, idx,
@@ -1110,7 +1110,7 @@ out_wipe:
 	if (rc2 < 0 && deleted != fset_info->nfi_fragment_cnt) {
 		CERROR("%s: undo adding fileset failed. rc = %d : rc2 = %d\n",
 			fset_info->nfi_fileset, rc, rc2);
-		/* undo failed. wipe the fileset and set error code */
+		
 		rc2 = nodemap_idx_fileset_fragments_clear(
 			nodemap, &env, idx, fset_info->nfi_subid_header);
 		rc = -EIO;
@@ -1221,13 +1221,13 @@ int nodemap_idx_fileset_update_header(
 		GOTO(out, rc);
 
 	rc = nodemap_idx_fileset_header_add(fset_info_new, &env, idx);
-	/* attempt undo */
+	
 	if (rc) {
 		rc2 = nodemap_idx_fileset_header_add(fset_info_old, &env, idx);
 		if (rc2) {
 			CERROR("%s: Undo updating fileset header failed. Corrupt fileset is deleted. rc = %d : rc2 = %d\n",
 			       fset_info_new->nfi_fileset, rc, rc2);
-			/* undo failed. wipe the fileset and set error code */
+			
 			rc2 = nodemap_idx_fileset_fragments_clear(
 				nodemap, &env, idx,
 				fset_info_old->nfi_subid_header);
@@ -1308,7 +1308,7 @@ out_wipe:
 	if (rc2 < 0 && inserted != fset_info->nfi_fragment_cnt) {
 		CERROR("%s: undo deleting fileset failed. rc = %d : rc2 = %d\n",
 		       fset_info->nfi_fileset, rc, rc2);
-		/* undo failed. wipe the fileset and set error code */
+		
 		rc2 = nodemap_idx_fileset_fragments_clear(
 			nodemap, &env, idx, fset_info->nfi_subid_header);
 		rc = -EIO;
@@ -1605,7 +1605,7 @@ static int nodemap_cluster_rec_helper(struct nodemap_config *config,
 		if (IS_ERR(nodemap))
 			return PTR_ERR(nodemap);
 
-		/* we need to override the local ID with the saved ID */
+		
 		nodemap->nm_id = nodemap_id;
 		if (nodemap_id > config->nmc_nodemap_highest_id)
 			config->nmc_nodemap_highest_id = nodemap_id;
@@ -1718,7 +1718,7 @@ static int nodemap_cluster_rec_fileset_fragment(const union nodemap_rec *rec,
 	fragment_id = le16_to_cpu(rec->nfr.nfr_fragment_id);
 	fragment_len = LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE;
 
-	/* compute nodemap fileset position */
+	
 	fset_offset = fragment_id * LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE;
 	fset_len_remain = fileset_size - fset_offset;
 
@@ -1748,7 +1748,7 @@ static int nodemap_cluster_rec_fileset_prim(struct lu_nodemap *nodemap,
 	unsigned int fset_prealloc_size = PATH_MAX + 1;
 	int rc = 0;
 
-	/* preallocate fileset for first occurring fragment */
+	
 	if (!nodemap->nm_fileset_prim) {
 		OBD_ALLOC(nodemap->nm_fileset_prim, fset_prealloc_size);
 		if (!nodemap->nm_fileset_prim)
@@ -1756,7 +1756,7 @@ static int nodemap_cluster_rec_fileset_prim(struct lu_nodemap *nodemap,
 		nodemap->nm_fileset_prim_size = fset_prealloc_size;
 	}
 
-	/* apply header or fragment */
+	
 	if (is_header) {
 		nodemap->nm_fileset_prim_ro = rec->nfhr.nfhr_flags &
 					      NM_FS_FL_READONLY;
@@ -1808,7 +1808,7 @@ static int nodemap_cluster_rec_fileset_alt(struct lu_nodemap *nodemap,
 			GOTO(out, rc);
 	}
 
-	/* apply header or fragment */
+	
 	if (is_header) {
 		fset_alt->nfa_ro = rec->nfhr.nfhr_flags & NM_FS_FL_READONLY;
 	} else {
@@ -1921,7 +1921,7 @@ static int nodemap_process_keyrec(struct nodemap_config *config,
 	CDEBUG(D_INFO, "found config entry, nm_id %d type %d subtype %d\n",
 	       nodemap_id, type, subtype);
 
-	/* find the correct nodemap in the load list */
+	
 	if (type == NODEMAP_RANGE_IDX || type == NODEMAP_NID_MASK_IDX ||
 	    type == NODEMAP_UIDMAP_IDX || type == NODEMAP_GIDMAP_IDX ||
 	    type == NODEMAP_PROJIDMAP_IDX ||
@@ -1944,7 +1944,7 @@ static int nodemap_process_keyrec(struct nodemap_config *config,
 				GOTO(out, rc = -ENOENT);
 		}
 
-		/* update most recently used nodemap if necessary */
+		
 		if (nodemap != *recent_nodemap)
 			*recent_nodemap = nodemap;
 	}
@@ -1964,7 +1964,7 @@ static int nodemap_process_keyrec(struct nodemap_config *config,
 		} else if (cluster_idx_key == NODEMAP_CLUSTER_ROLES) {
 			rc = nodemap_cluster_roles_helper(nodemap, rec);
 		} else if (cluster_idx_key == NODEMAP_CLUSTER_OFFSET) {
-			/* only works for offset UID = GID = PROJID */
+			
 			rc = nodemap_add_offset_helper(
 				nodemap, le32_to_cpu(rec->nor.nor_start_uid),
 				le32_to_cpu(rec->nor.nor_limit_uid));
@@ -2096,15 +2096,15 @@ static int nodemap_load_entries(const struct lu_env *env,
 	if (rc < 0)
 		GOTO(out_iops_fini, rc);
 
-	/* rc == 0 means we need to advance to record */
+	
 	if (rc == 0) {
 		rc = iops->next(env, it);
 
 		if (rc < 0)
 			GOTO(out_iops_put, rc);
-		/* rc > 0 is eof, will be checked in while below */
+		
 	} else {
-		/* rc == 1, we found initial record and can process below */
+		
 		rc = 0;
 	}
 
@@ -2115,7 +2115,7 @@ static int nodemap_load_entries(const struct lu_env *env,
 		GOTO(out_iops_put, rc);
 	}
 
-	/* rc > 0 is eof, check initial iops->next here as well */
+	
 	while (rc == 0) {
 		struct nodemap_key *key;
 		union nodemap_rec rec;
@@ -2149,7 +2149,7 @@ static int nodemap_load_entries(const struct lu_env *env,
 			rc = iops->next(env, it);
 		while (rc == -ESTALE);
 
-		/* move to second pass */
+		
 		if (rc > 0 && cur_pass == NM_READ_CLUSTERS) {
 			cur_pass = NM_READ_ATTRIBUTES;
 			rc = iops->load(env, it, 0);
@@ -2169,7 +2169,7 @@ out_nodemap_config:
 	if (rc != 0)
 		nodemap_config_dealloc(new_config);
 	else
-		/* creating new default needs to be done outside dt read lock */
+		
 		activate_nodemap = true;
 out_iops_put:
 	iops->put(env, it);
@@ -2186,7 +2186,7 @@ out:
 		RETURN(rc);
 
 	if (new_config->nmc_default_nodemap == NULL) {
-		/* new MGS won't have a default nm on disk, so create it here */
+		
 		struct lu_nodemap *nodemap =
 			nodemap_create(DEFAULT_NODEMAP, new_config, 1, false);
 		if (IS_ERR(nodemap)) {
@@ -2200,7 +2200,7 @@ out:
 		}
 	}
 
-	/* new nodemap config won't have an active/inactive record */
+	
 	if (rc == 0 && loaded_global_idx == false) {
 		struct nodemap_key	 nk;
 		union nodemap_rec	 nr;
@@ -2241,14 +2241,14 @@ nodemap_save_config_cache(const struct lu_env *env,
 
 	ENTRY;
 
-	/* create a new index file to fill with active config */
+	
 	o = nodemap_cache_find_create(env, dev, los, NCFC_CREATE_NEW);
 	if (IS_ERR(o))
 		RETURN(o);
 
 	mutex_lock(&active_config_lock);
 
-	/* convert hash to list so we don't spin */
+	
 	cfs_hash_for_each_safe(active_config->nmc_nodemap_hash,
 			       nm_hash_list_cb, &nodemap_list_head);
 
@@ -2390,7 +2390,7 @@ static void nodemap_save_all_caches(void)
 	struct lu_env		 env;
 	int			 rc = 0;
 
-	/* recreating nodemap cache requires fld_thread_key be in env */
+	
 	rc = lu_env_init(&env, LCT_MD_THREAD | LCT_DT_THREAD | LCT_MG_THREAD);
 	if (rc != 0) {
 		CWARN("cannot init env for nodemap config: rc = %d\n", rc);
@@ -2415,7 +2415,7 @@ static void nodemap_save_all_caches(void)
 
 		dev = lu2dt_dev(ncf->ncf_obj->do_lu.lo_dev);
 		obd = ncf->ncf_obj->do_lu.lo_dev->ld_obd;
-		/* put current config file so save conf can rewrite it */
+		
 		dt_object_put_nocache(&env, ncf->ncf_obj);
 		ncf->ncf_obj = NULL;
 
@@ -2483,7 +2483,7 @@ static void nodemap_fileset_resize(struct nodemap_config *config)
 		if (fset_size_actual == fset_size_prealloc)
 			continue;
 
-		/* Shrink fileset size to actual */
+		
 		OBD_ALLOC(fset_tmp, fset_size_actual);
 		if (!fset_tmp) {
 			CERROR("%s: Nodemaps's fileset cannot be resized: rc = %d\n",
@@ -2590,7 +2590,7 @@ struct nm_config_file *nm_config_file_register_tgt(const struct lu_env *env,
 	if (ncf == NULL)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	/* don't load from cache if config already loaded */
+	
 	mutex_lock(&nodemap_config_loaded_lock);
 	if (nodemap_config_loaded < 1) {
 		config_obj = nodemap_cache_find_create(env, dev, los, 0);
@@ -2606,7 +2606,7 @@ struct nm_config_file *nm_config_file_register_tgt(const struct lu_env *env,
 	if (rc)
 		GOTO(out_ncf, rc);
 
-	/* sync on disk caches w/ loaded config in memory, ncf_obj may change */
+	
 	if (!config_obj) {
 		config_obj = nodemap_save_config_cache(env, dev, los);
 		if (IS_ERR(config_obj))
@@ -2691,7 +2691,7 @@ int nodemap_process_idx_pages(struct nodemap_config *config, union lu_page *lip,
 		if (lip->lp_idx.lip_magic != LIP_MAGIC)
 			return -EINVAL;
 
-		/* get and process keys and records from page */
+		
 		for (k = 0; k < lip->lp_idx.lip_nr; k++) {
 			entry = lip->lp_idx.lip_entries + k * size;
 			key = (struct nodemap_key *)entry;
@@ -2727,7 +2727,7 @@ static int nodemap_page_build(const struct lu_env *env, struct dt_object *obj,
 	if (bytes < LIP_HDR_SIZE)
 		return -EINVAL;
 
-	/* initialize the header of the new container */
+	
 	memset(lip, 0, LIP_HDR_SIZE);
 	lip->lip_magic = LIP_MAGIC;
 	bytes -= LIP_HDR_SIZE;
@@ -2740,7 +2740,7 @@ static int nodemap_page_build(const struct lu_env *env, struct dt_object *obj,
 		enum nodemap_idx_type key_type;
 		int sub_type;
 
-		/* fetch 64-bit hash value */
+		
 		hash = iops->store(env, it);
 		ii->ii_hash_end = hash;
 
@@ -2771,14 +2771,14 @@ static int nodemap_page_build(const struct lu_env *env, struct dt_object *obj,
 			memcpy(tmp_entry, key, ii->ii_keysize);
 			tmp_entry += ii->ii_keysize;
 
-			/* and finally the record */
+			
 			rc = iops->rec(env, it, (struct dt_rec *)tmp_entry,
 				       attr);
 			if (rc != -ESTALE) {
 				if (rc != 0)
 					GOTO(out, rc);
 
-				/* hash/key/record successfully copied! */
+				
 				lip->lip_nr++;
 				if (unlikely(lip->lip_nr == 1 &&
 				    ii->ii_count == 0))
@@ -2789,12 +2789,12 @@ static int nodemap_page_build(const struct lu_env *env, struct dt_object *obj,
 			}
 		}
 
-		/* move on to the next record */
+		
 		do {
 			rc = iops->next(env, it);
 		} while (rc == -ESTALE);
 
-		/* move to second pass */
+		
 		if (rc > 0 && ii->ii_attrs == NM_READ_CLUSTERS) {
 			ii->ii_attrs = NM_READ_ATTRIBUTES;
 			rc = iops->load(env, it, 0);
@@ -2811,10 +2811,10 @@ static int nodemap_page_build(const struct lu_env *env, struct dt_object *obj,
 	GOTO(out, rc);
 out:
 	if (rc >= 0 && lip->lip_nr > 0)
-		/* one more container */
+		
 		ii->ii_count++;
 	if (rc > 0)
-		/* no more entries */
+		
 		ii->ii_hash_end = II_END_OFF;
 	return rc;
 }
@@ -2902,7 +2902,7 @@ int nodemap_get_config_req(struct obd_device *mgs_obd,
 	CDEBUG(D_INFO, "reading nodemap log, name '%s', size = %u\n",
 	       body->mcb_name, rdpg.rp_count);
 
-	/* allocate pages to store the containers */
+	
 	OBD_ALLOC_PTR_ARRAY(rdpg.rp_pages, rdpg.rp_npages);
 	if (rdpg.rp_pages == NULL)
 		RETURN(-ENOMEM);

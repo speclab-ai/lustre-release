@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <errno.h>
@@ -99,14 +99,14 @@ int main(int argc, char **argv)
 	int size = 0;
 	int rc = 0;
 
-	/* Handle the deprecated positional last argument "-seconds" */
+	
 	if (argc > 1 && argv[argc - 1][0] == '-' &&
 	    (end = strtol(argv[argc - 1] + 1, &endp, 0)) && *endp == '\0') {
 		fprintf(stderr,
 			"warning: '-runtime' deprecated, use '-t runtime' instead\n");
 		argv[--argc] = NULL;
 	} else {
-		/* Not '-number', let regular argument parsing handle it. */
+		
 		end = ~0U >> 1;
 	}
 
@@ -392,7 +392,7 @@ int main(int argc, char **argv)
 							 unlink_has_fmt_spec);
 
 			rc = do_rmdir ? rmdir(filename) : unlink(filename);
-			/* use rmdir if this is a directory */
+			
 			if (!do_rmdir && rc && errno == EISDIR) {
 				do_rmdir = true;
 				rc = rmdir(filename);
@@ -437,7 +437,7 @@ int main(int argc, char **argv)
 
 	stderr_fd = fileno(stderr);
 	start = last_t;
-	/* Assume fd is allocated in order, doing extra closes is not harmful */
+	
 	for (i = 0; i < total && last_fd > stderr_fd; i++, --last_fd) {
 		close(last_fd);
 

@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for packing/unpacking obd_ioctl_data structure to
  * send commands to different OBD devices.  Mostly for internal use.
@@ -88,7 +88,7 @@ int llapi_ioctl_dev(int dev_id, unsigned int cmd, void *buf)
 	unsigned int oldcmd;
 	int rc;
 
-	/* common case, ioctl works as expected */
+	
 	rc = l_ioctl(dev_id, cmd, buf);
 	if (rc >= 0 || errno != ENOTTY)
 		return rc;
@@ -100,12 +100,12 @@ int llapi_ioctl_dev(int dev_id, unsigned int cmd, void *buf)
 	 *
 	 * Version in comment is to allow finding this code for later removal.
 	 */
-#ifdef OBD_IOC_BARRIER		/* < OBD_OCD_VERSION(2, 19, 53, 0) */
+#ifdef OBD_IOC_BARRIER		
 	case OBD_IOC_BARRIER_V2:
 		oldcmd = OBD_IOC_BARRIER;
 		break;
 #endif
-#ifdef IOC_OSC_SET_ACTIVE	/* < OBD_OCD_VERSION(2, 19, 53, 0) */
+#ifdef IOC_OSC_SET_ACTIVE	
 	case OBD_IOC_SET_ACTIVE:
 		oldcmd = IOC_OSC_SET_ACTIVE;
 		break;
@@ -136,7 +136,7 @@ int llapi_ioctl(int fd, unsigned int cmd, void *buf)
 	if (fd < 0)
 		return -EBADF;
 
-	/* common case, ioctl works as expected */
+	
 	rc = ioctl(fd, cmd, buf);
 	if (rc >= 0 || errno != ENOTTY)
 		return rc;
@@ -148,7 +148,7 @@ int llapi_ioctl(int fd, unsigned int cmd, void *buf)
 	 *
 	 * Version in comment is to allow finding this code for later removal.
 	 */
-#ifdef OBD_IOC_GETNAME_OLD	/* < OBD_OCD_VERSION(2, 18, 53, 0) */
+#ifdef OBD_IOC_GETNAME_OLD	
 	case OBD_IOC_GETDTNAME:
 		oldcmd = OBD_IOC_GETNAME_OLD;
 		break;
@@ -173,7 +173,7 @@ int llapi_ioctl_unpack(struct obd_ioctl_data *data, char *pbuf, int max_len)
 
 	overlay = (struct obd_ioctl_data *)pbuf;
 
-	/* Preserve the caller's buffer pointers */
+	
 	overlay->ioc_inlbuf1 = data->ioc_inlbuf1;
 	overlay->ioc_inlbuf2 = data->ioc_inlbuf2;
 	overlay->ioc_inlbuf3 = data->ioc_inlbuf3;

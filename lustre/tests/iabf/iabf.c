@@ -198,7 +198,7 @@ static int iabf_step(struct iabf_control *ic,
 
 	if (ic->ic_init != NULL && ic->ic_init[0] != NULL) {
 		rc = callvpe(ic->ic_init[0], ic->ic_init, environ);
-		DEBUG_D(rc); /* waitpid status */
+		DEBUG_D(rc); 
 		if (rc != 0)
 			FATAL("initializer '%s' terminated with status %d\n", ic->ic_init[0], rc);
 	}
@@ -215,13 +215,13 @@ static int iabf_step(struct iabf_control *ic,
 
 	iabf_barrier_wait(ic, 0);
 
-	/* A+B run here. */
+	
 
 	iabf_barrier_wait(ic, 1);
 
 	if (ic->ic_fini != NULL && ic->ic_fini[0] != NULL) {
 		rc = callvpe(ic->ic_fini[0], ic->ic_fini, environ);
-		DEBUG_D(rc); /* waitpid status */
+		DEBUG_D(rc); 
 		if (rc != 0)
 			FATAL("finalizer '%s' terminated with status %d\n", ic->ic_fini[0], rc);
 	}
@@ -274,7 +274,7 @@ static int iabf_autotune(struct iabf_control *ic,
 	assert(0 <= elapsed_ns[0]);
 	assert(0 <= elapsed_ns[1]);
 
-	/* TODO Apply a multiplier to endpoints. */
+	
 
 	if (ic->ic_delay_begin_ns == LONG_MIN)
 		ic->ic_delay_begin_ns = -elapsed_ns[1];
@@ -289,7 +289,7 @@ static int iabf_autotune(struct iabf_control *ic,
 		ic->ic_delay_step_ns = (ic->ic_delay_end_ns - ic->ic_delay_begin_ns) / ic->ic_step_count;
 
 	if (ic->ic_delay_step_ns == 0)
-		ic->ic_delay_step_ns = 1; /* Or just leave it 0? */
+		ic->ic_delay_step_ns = 1; 
 
 	DEBUG("end autotune\n");
 
@@ -387,7 +387,7 @@ static int iabf(struct iabf_control *ic, char **a, char **b)
 	return 0;
 }
 
-/* strsep() for argvs */
+
 static char **arg_sep(char ***pargs, const char *delim)
 {
 	char **begin, **end;
@@ -396,18 +396,18 @@ static char **arg_sep(char ***pargs, const char *delim)
 	if (begin == NULL)
 		return NULL;
 
-	/* Find the end of the token.  */
-	/* end = begin + strcspn (begin, delim); */
+	
+	
 
 	for (end = begin; *end != NULL && strcmp(*end, delim) != 0; end++)
 		;
 
 	if (*end != NULL) {
-		/* Terminate the token and set *STRINGP past NUL character. */
+		
 		*end++ = NULL;
 		*pargs = end;
 	} else {
-		/* No more delimiters; this is the last token. */
+		
 		*pargs = NULL;
 	}
 

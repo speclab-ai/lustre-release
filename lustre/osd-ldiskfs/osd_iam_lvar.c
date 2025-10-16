@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of iam format for fixed size records, variable sized keys.
  *
@@ -27,8 +27,8 @@ enum {
 };
 
 struct lvar_leaf_header {
-	__le16 vlh_magic; /* magic number IAM_LVAR_LEAF_MAGIC */
-	__le16 vlh_used;  /* used bytes, including header */
+	__le16 vlh_magic; 
+	__le16 vlh_used;  
 };
 
 /*
@@ -305,10 +305,10 @@ static int n_invariant(const struct iam_leaf *leaf)
 	}
 	return 1;
 }
-/* LDISKFS_INVARIANT_ON */
+
 #endif
 
-/* LDISKFS_CORRECTNESS_ON */
+
 #endif
 
 static struct iam_ikey *lvar_ikey(const struct iam_leaf *l,
@@ -746,7 +746,7 @@ static const struct iam_leaf_operations lvar_leaf_ops = {
  */
 
 enum {
-	/* egrep -i '^o?x?[olabcdef]*$' /usr/share/dict/words */
+	
 	IAM_LVAR_ROOT_MAGIC = 0xb01dface
 };
 
@@ -911,7 +911,7 @@ static void lvar_root(void *buf,
 	 */
 	*(lvar_hash_t *)entry = 0;
 	entry += sizeof(lvar_hash_t);
-	/* now @entry points to <ptr> */
+	
 	if (ptrsize == 4)
 		*(u_int32_t *)entry = cpu_to_le32(1);
 	else
@@ -930,7 +930,7 @@ static void lvar_leaf(void *buf,
 	struct lvar_leaf_header *head;
 	struct lvar_leaf_entry *entry;
 
-	/* form leaf */
+	
 	head = buf;
 	*head = (typeof(*head)) {
 		.vlh_magic = cpu_to_le16(IAM_LVAR_LEAF_MAGIC),

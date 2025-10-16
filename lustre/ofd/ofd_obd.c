@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file contains OBD API methods for OBD Filter Device (OFD) which are
  * used for export handling, configuration purposes and recovery.
@@ -54,12 +54,12 @@ static int ofd_export_stats_init(struct ofd_device *ofd,
 
 	ENTRY;
 	if (obd_uuid_equals(&exp->exp_client_uuid, &obd->obd_uuid))
-		/* Self-export gets no proc entry */
+		
 		RETURN(0);
 
 	rc = lprocfs_exp_setup(exp, client_nid);
 	if (rc != 0)
-		/* Mask error for already created /proc entries */
+		
 		RETURN(rc == -EALREADY ? 0 : rc);
 
 	stats = exp->exp_nid_stats;
@@ -124,7 +124,7 @@ static int ofd_parse_connect_data(const struct lu_env *env,
 	       data->ocd_grant, data->ocd_index, data->ocd_group);
 
 	if (fed->fed_group != 0 && fed->fed_group != data->ocd_group) {
-		CWARN("!!! This export (nid %s) used object group %d earlier; now it's trying to use group %d!  This could be a bug in the MDS. Please report to https://jira.whamcloud.com/\n",
+		CWARN("!!! This export (nid %s) used object group %d earlier; now it's trying to use group %d!  This could be a bug in the MDS. Please report to https:
 		      obd_export_nid2str(exp), fed->fed_group,
 		      data->ocd_group);
 		RETURN(-EPROTO);
@@ -136,14 +136,14 @@ static int ofd_parse_connect_data(const struct lu_env *env,
 	if (data->ocd_connect_flags & OBD_CONNECT_FLAGS2)
 		data->ocd_connect_flags2 &= OST_CONNECT_SUPPORTED2;
 
-	/* Kindly make sure the SKIP_ORPHAN flag is from MDS. */
+	
 	if (data->ocd_connect_flags & OBD_CONNECT_MDS)
 		CDEBUG(D_HA, "%s: Received MDS connection for group %u\n",
 		       exp->exp_obd->obd_name, data->ocd_group);
 	else if (data->ocd_connect_flags & OBD_CONNECT_SKIP_ORPHAN)
 		RETURN(-EPROTO);
 
-	/* Determine optimal brw size before calculating grant */
+	
 	if (CFS_FAIL_CHECK(OBD_FAIL_OST_BRW_SIZE)) {
 		data->ocd_brw_size = 65536;
 	} else if (OCD_HAS_FLAG(data, BRW_SIZE)) {
@@ -162,7 +162,7 @@ static int ofd_parse_connect_data(const struct lu_env *env,
 	if (OCD_HAS_FLAG(data, GRANT_PARAM)) {
 		struct dt_device_param *ddp = &ofd->ofd_lut.lut_dt_conf;
 
-		/* client is reporting its page size, for future use */
+		
 		exp->exp_target_data.ted_pagebits = data->ocd_grant_blkbits;
 		data->ocd_grant_blkbits  = ofd->ofd_lut.lut_tgd.tgd_blockbits;
 		/*
@@ -170,7 +170,7 @@ static int ofd_parse_connect_data(const struct lu_env *env,
 		 * it's LDISKFS_DIR_REC_LEN(20) = 28.
 		 */
 		data->ocd_grant_inobits = fls(ddp->ddp_inodespace - 1);
-		/* ocd_grant_tax_kb is in 1K byte blocks */
+		
 		data->ocd_grant_tax_kb = ddp->ddp_extent_tax >> 10;
 		data->ocd_grant_max_blks = ddp->ddp_max_extent_blks;
 	}
@@ -195,7 +195,7 @@ static int ofd_parse_connect_data(const struct lu_env *env,
 			RETURN(-EBADF);
 		}
 		if (!(lsd->lsd_feature_compat & OBD_COMPAT_OST)) {
-			/* this will only happen on the first connect */
+			
 			lsd->lsd_feature_compat |= OBD_COMPAT_OST;
 			/*
 			 * sync is not needed here as tgt_client_new will
@@ -404,7 +404,7 @@ int ofd_obd_disconnect(struct obd_export *exp)
 	if (!(exp->exp_flags & OBD_OPT_FORCE))
 		tgt_grant_sanity_check(ofd_obd(ofd), __func__);
 
-	/* Do not erase record for recoverable client. */
+	
 	if (exp->exp_obd->obd_replayable &&
 	    (!exp->exp_obd->obd_fail || exp->exp_failed)) {
 		rc = lu_env_init(&env, LCT_DT_THREAD);
@@ -440,7 +440,7 @@ static int ofd_init_export(struct obd_export *exp)
 	exp->exp_connecting = 1;
 	spin_unlock(&exp->exp_lock);
 
-	/* self-export doesn't need client data and ldlm initialization */
+	
 	if (unlikely(obd_uuid_equals(&exp->exp_obd->obd_uuid,
 				     &exp->exp_client_uuid)))
 		return 0;
@@ -738,12 +738,12 @@ int ofd_statfs(const struct lu_env *env,  struct obd_export *exp,
 
 	if (CFS_FAIL_CHECK_VALUE(OBD_FAIL_OST_ENOINO,
 				 ofd->ofd_lut.lut_lsd.lsd_osd_index)) {
-		/* Reduce free inode count to zero, but keep "used" intact */
+		
 		osfs->os_files -= osfs->os_ffree;
 		osfs->os_ffree -= osfs->os_ffree;
 	}
 
-	/* OS_STATFS_READONLY can be set by OSD already, only add flags */
+	
 	if (ofd->ofd_readonly)
 		osfs->os_state |= OS_STATFS_READONLY;
 
@@ -771,7 +771,7 @@ int ofd_statfs(const struct lu_env *env,  struct obd_export *exp,
 
 	if (CFS_FAIL_CHECK_VALUE(OBD_FAIL_OST_ENOSPC,
 				 ofd->ofd_lut.lut_lsd.lsd_osd_index)) {
-		/* Reduce free blocks count near zero, but keep "used" intact */
+		
 		osfs->os_bavail -= osfs->os_bavail - 2;
 		osfs->os_blocks -= osfs->os_bfree - 2;
 		osfs->os_bfree -= osfs->os_bfree - 2;
@@ -843,7 +843,7 @@ static int ofd_echo_setattr(const struct lu_env *env, struct obd_export *exp,
 	la_from_obdo(&info->fti_attr, oa, oa->o_valid);
 	info->fti_attr.la_valid &= ~LA_TYPE;
 
-	/* setting objects attributes (including owner/group) */
+	
 	rc = ofd_attr_set(env, fo, &info->fti_attr, oa);
 	if (rc)
 		GOTO(out_unlock, rc);
@@ -913,7 +913,7 @@ int ofd_destroy_by_fid(const struct lu_env *env, struct ofd_device *ofd,
 				    ldlm_blocking_ast, ldlm_completion_ast,
 				    NULL, NULL, 0, LVB_T_NONE, NULL, &lockh);
 
-	/* We only care about the side-effects, just drop the lock. */
+	
 	if (rc == ELDLM_OK) {
 		ldlm_lock_decref(&lockh, LCK_PW);
 
@@ -1122,7 +1122,7 @@ static int ofd_echo_getattr(const struct lu_env *env, struct obd_export *exp,
 		obdo_from_la(oa, &info->fti_attr,
 			     OFD_VALID_FLAGS | LA_UID | LA_GID | LA_PROJID);
 
-		/* Store object version in reply */
+		
 		curr_version = dt_version_get(env, ofd_object_child(fo));
 		if ((__s64)curr_version != -EOPNOTSUPP) {
 			oa->o_valid |= OBD_MD_FLDATAVERSION;
@@ -1238,7 +1238,7 @@ static int ofd_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 	if (rc)
 		RETURN(rc);
 
-	/* handle commands that don't use @karg first */
+	
 	rc = -EINVAL;
 	switch (cmd) {
 	case OBD_IOC_ABORT_RECOVERY:
@@ -1276,7 +1276,7 @@ static int ofd_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 		struct lfsck_stop stop;
 
 		stop.ls_status = LS_STOPPED;
-		/* Old lfsck utils may pass NULL @stop. */
+		
 		if (!data->ioc_inlbuf1)
 			stop.ls_flags = 0;
 		else
@@ -1324,7 +1324,7 @@ static int ofd_health_check(const struct lu_env *nul, struct obd_device *obd)
 	int rc1 = 0;
 	int rc = 0;
 
-	/* obd_proc_read_health pass NULL env, we need real one */
+	
 	rc = lu_env_init(&env, LCT_DT_THREAD);
 	if (rc)
 		RETURN(rc);
@@ -1356,7 +1356,7 @@ static int ofd_health_check(const struct lu_env *nul, struct obd_device *obd)
 	if (rc)
 		goto out_stop;
 
-	th->th_sync = 1; /* sync IO is needed */
+	th->th_sync = 1; 
 	rc = dt_trans_start_local(&env, ofd->ofd_osd, th);
 
 	if (rc)

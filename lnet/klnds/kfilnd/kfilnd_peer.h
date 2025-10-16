@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd peer interface.
  */
@@ -30,4 +30,4 @@ u16 kfilnd_peer_target_rx_base(struct kfilnd_peer *kp);
 void kfilnd_peer_process_hello(struct kfilnd_peer *kp, struct kfilnd_msg *msg);
 void kfilnd_peer_tn_failed(struct kfilnd_peer *kp, int error, bool delete);
 
-#endif /* _KFILND_PEER_ */
+#endif 

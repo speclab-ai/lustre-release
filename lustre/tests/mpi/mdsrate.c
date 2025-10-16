@@ -32,8 +32,8 @@
 
 #include "mpi.h"
 
-/* lustre */
-#include <lustre/lustreapi.h>        /* for O_LOV_DELAY_CREATE */
+
+#include <lustre/lustreapi.h>        
 
 #define CHECK_COUNT 10000
 #define DISPLAY_COUNT (CHECK_COUNT * 10)
@@ -80,7 +80,7 @@ struct option longOpts[] = {
 	{ .name = "unlink", .has_arg = no_argument, .val = UNLINK },
 	{ .name = "begin", .has_arg = required_argument, .val = BEGIN },
 	{ .name = "iters", .has_arg = required_argument, .val = ITERS },
-	/* time is in seconds */
+	
 	{ .name = "time", .has_arg = required_argument, .val = TIME },
 	{ .name = "dirfmt", .has_arg = required_argument, .val = DIRFMT },
 	{ .name = "ndirs", .has_arg = required_argument, .val = NDIRS },
@@ -145,7 +145,7 @@ struct stat statbuf;
 bool   with_xattr;
 char   xattrname[] = "user.mdsrate";
 char   xattrbuf[4096];
-/* max xattr name + value length is block size, use 4000 here to avoid ENOSPC */
+
 int    xattrlen = 4000;
 bool   smallwrite;
 int    mnt_count = -1;
@@ -204,7 +204,7 @@ usage(FILE *stream, char *fmt, ...)
 	exit(stream == stderr);
 }
 
-/* Print process myrank and message, and exit (i.e. a fatal error) */
+
 static int
 fatal(int rank, const char *fmt, ...)
 {
@@ -242,7 +242,7 @@ process_args(int argc, char *argv[])
 	strcpy(filefmt, "f%d");
 	gethostname(hostname, sizeof(hostname));
 
-	/* auto create shortOpts rather than maintaining a static string. */
+	
 	for (opt = longOpts, cp = shortOpts; opt->name != NULL; opt++, cp++) {
 		*cp = opt->val;
 		if (opt->has_arg)
@@ -336,7 +336,7 @@ process_args(int argc, char *argv[])
 			if (strlen(optarg) > 4080)
 				fatal(0, "--filefmt too long\n");
 
-			/* Use %%d where you want the file # in the name. */
+			
 			sprintf(filefmt, optarg, myrank);
 			break;
 		case NFILES:
@@ -488,7 +488,7 @@ process_args(int argc, char *argv[])
 		      "one --create, --mknod, --open, --stat, --lookup, --unlink or --setxattr must be specifed.");
 	}
 
-	/* support for multiple threads in a dir, set begin/end appropriately.*/
+	
 	dirnum = myrank % ndirs;
 	dirthreads = nthreads / ndirs;
 	if (nthreads > (ndirs * dirthreads + dirnum))
@@ -582,7 +582,7 @@ static inline char *next_file()
 		return filename;
 	}
 
-	/* readdir order */
+	
 
 	dir_entry = readdir(directory);
 	if (!dir_entry) {
@@ -847,7 +847,7 @@ main(int argc, char *argv[])
 				if ((rc = errno) == ENOENT) {
 					if (ignore)
 						continue;
-					/* no more files to unlink */
+					
 					break;
 				}
 				fatal(myrank, "unlink(%s) error: %s\n",

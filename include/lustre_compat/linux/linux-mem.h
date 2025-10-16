@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Basic library routines.
  */
@@ -46,7 +46,7 @@ static inline void bitmap_free(const unsigned long *bitmap)
 {
 	kfree(bitmap);
 }
-#endif /* !HAVE_BITMAP_ALLOC */
+#endif 
 
 #ifndef HAVE_MMAP_LOCK
 static inline void mmap_write_lock(struct mm_struct *mm)
@@ -80,16 +80,16 @@ static inline void mmap_read_unlock(struct mm_struct *mm)
 }
 #else
  #ifndef HAVE_MMAP_WRITE_TRYLOCK
-/* Replacement for mmap_write_trylock() */
+
 static inline bool mmap_write_trylock(struct mm_struct *mm)
 {
 	return down_write_trylock(&mm->mmap_lock) != 0;
 }
- #endif /* HAVE_MMAP_WRITE_TRYLOCK */
+ #endif 
 #endif
 
 #ifndef HAVE_KFREE_SENSITIVE
 #define kfree_sensitive(x)      kzfree(x)
 #endif
 
-#endif /* __LINUX_CFS_MEM_H__ */
+#endif 

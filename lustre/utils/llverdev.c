@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -7,7 +7,7 @@
  *
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/llverdev.c
  *
@@ -71,21 +71,21 @@
 #define BLOCKSIZE 4096
 #define MAX_ALLOWED_IO_ERR 100
 
-/* Structure for writting test pattern */
+
 struct block_data {
 	unsigned long long bd_offset;
 	unsigned long long bd_time;
 	unsigned long long bd_inode;
 };
 
-static char *progname;		 /* name by which this program was run. */
-static unsigned int verbose = 1; /* prints offset in kB, operation rate */
-static int readoption;		 /* run test in read-only (verify) mode */
-static int writeoption;		 /* run test in write_only mode */
-const char *devname;		 /* name of device to be tested. */
-static unsigned int full = 1;	 /* flag to full check */
-static int error_count;		 /* number of IO errors hit during run */
-static ino_t ino_st;		 /* inode number of file under test */
+static char *progname;		 
+static unsigned int verbose = 1; 
+static int readoption;		 
+static int writeoption;		 
+const char *devname;		 
+static unsigned int full = 1;	 
+static int error_count;		 
+static ino_t ino_st;		 
 static int isatty_flag;
 
 static struct option const long_opts[] = {
@@ -175,11 +175,11 @@ static size_t sizeof_dev(int fd, unsigned long long dev_size)
 		fprintf(stderr, "%s: error accessing '%s': %s\n",
 			progname, devname, strerror(errno));
 	}
-#if defined BLKGETSIZE64	/* in sys/mount.h */
+#if defined BLKGETSIZE64	
 	if (ioctl(fd, BLKGETSIZE64, &numbytes) >= 0)
 		goto out;
 #endif
-#if defined BLKGETSIZE		/* in sys/mount.h */
+#if defined BLKGETSIZE		
 	{
 		unsigned long sectors;
 
@@ -397,7 +397,7 @@ static int read_chunks(int fd, unsigned long long offset,
 			chunksize = read_end - offset;
 
 		nread = 0;
-		/* reset errno before calling pread */
+		
 		errno = 0;
 read_more:
 		rc = pread(fd, chunk_buf + nread, chunksize - nread,
@@ -443,11 +443,11 @@ static int parse_size(const char *optarg, unsigned long long *size,
 	if (*end != '\0') {
 		size_units = 1;
 		switch (*end) {
-		case 'e': case 'E': size_units <<= 10; /* fallthrough */
-		case 'p': case 'P': size_units <<= 10; /* fallthrough */
-		case 't': case 'T': size_units <<= 10; /* fallthrough */
-		case 'g': case 'G': size_units <<= 10; /* fallthrough */
-		case 'm': case 'M': size_units <<= 10; /* fallthrough */
+		case 'e': case 'E': size_units <<= 10; 
+		case 'p': case 'P': size_units <<= 10; 
+		case 't': case 'T': size_units <<= 10; 
+		case 'g': case 'G': size_units <<= 10; 
+		case 'm': case 'M': size_units <<= 10; 
 		case 'k': case 'K': size_units <<= 10; break;
 		default:
 			return -1;
@@ -460,14 +460,14 @@ static int parse_size(const char *optarg, unsigned long long *size,
 
 int main(int argc, char **argv)
 {
-	unsigned long long chunksize = ONE_MB; /* IO chunk size */
-	unsigned long long offset = 0; /* offset in kB */
+	unsigned long long chunksize = ONE_MB; 
+	unsigned long long offset = 0; 
 	unsigned long long dev_size = 0;
-	unsigned int force = 0; /* run test run without confirmation*/
-	time_t time_st = 0; /* Default timestamp */
+	unsigned int force = 0; 
+	time_t time_st = 0; 
 	char *chunk_buf = NULL;
 	char yesno[4];
-	int mode = O_RDWR; /* mode which device should be opened */
+	int mode = O_RDWR; 
 	int error = 0, c;
 	int fd;
 
@@ -609,7 +609,7 @@ int main(int argc, char **argv)
 			error = 3;
 			goto chunk_buf;
 		}
-		if (!full && c != -ENOSPC) { /* end of device block-aligned */
+		if (!full && c != -ENOSPC) { 
 			offset = ((dev_size - chunksize + BLOCKSIZE - 1) &
 				  ~(BLOCKSIZE - 1));
 			c = write_chunks(fd, offset, &dev_size, chunk_buf,
@@ -629,7 +629,7 @@ int main(int argc, char **argv)
 			error = 2;
 			goto chunk_buf;
 		}
-		if (!full && c != -ENOSPC) { /* end of device block-aligned */
+		if (!full && c != -ENOSPC) { 
 			offset = ((dev_size - chunksize + BLOCKSIZE - 1) &
 				  ~(BLOCKSIZE - 1));
 			if (read_chunks(fd, offset, dev_size, chunk_buf,

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,18 +6,18 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/mkfs_lustre.c
  *
  * Author: Nathan Rutman <nathan@clusterfs.com>
 */
 
-/* This source file is compiled into both mkfs.lustre and tunefs.lustre */
+
 
 #if HAVE_CONFIG_H
 #  include "config.h"
-#endif /* HAVE_CONFIG_H */
+#endif 
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -182,7 +182,7 @@ static void set_defaults(struct mkfs_opts *mop)
 	mop->mo_pool_vdevs = NULL;
 }
 
-/* Make the mdt/ost server obd name based on the filesystem name */
+
 static bool server_make_name(__u32 flags, __u16 index, const char *fs,
 			     char *name_buf, size_t name_buf_size)
 {
@@ -251,10 +251,10 @@ static int erase_param(const char *const buf, const char *const param,
 		return EINVAL;
 	}
 
-	/* add_param() writes a space as the first character in ldd_params */
+	
 	search[0] = ' ';
 
-	/* "key" or "key=<value>" */
+	
 	if (withval) {
 		char *keyend;
 
@@ -397,7 +397,7 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 			if (rc != 0)
 				return rc;
 
-			/* Must update the mgs logs */
+			
 			ldd->ldd_flags |= LDD_F_UPDATE;
 			if (opt == 'f') {
 				ldd->ldd_flags &= ~LDD_F_NO_PRIMNODE;
@@ -420,10 +420,10 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 			int base;
 
 			index_option = true;
-			/* LU-2374: check whether it is OST/MDT later */
+			
 			base = (strlen(optarg) > 1 &&
 				!strncmp(optarg, "0x", 2)) ? 16 : 10;
-			/* Allowed input are base 16 and base 10 numbers only */
+			
 			mop->mo_ldd.ldd_svindex = strtoul(optarg,
 							  &endptr, base);
 			if (*endptr != '\0') {
@@ -507,7 +507,7 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 			rc = add_param(ldd->ldd_params, NULL, optarg);
 			if (rc != 0)
 				return rc;
-			/* Must update the mgs logs */
+			
 			ldd->ldd_flags |= LDD_F_UPDATE;
 			break;
 		case 'q':
@@ -529,7 +529,7 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 			if (rc != 0)
 				return rc;
 
-			/* Must update the mgs logs */
+			
 			ldd->ldd_flags |= LDD_F_UPDATE;
 			break;
 		case 'u':
@@ -598,7 +598,7 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 		case 'r':
 			mop->mo_flags |= MO_FORCEFORMAT;
 			break;
-#else /* TUNEFS */
+#else 
 		case 'E':
 			rc = erase_param(ldd->ldd_params, optarg, false);
 			/*
@@ -612,11 +612,11 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 				if (rc)
 					return rc;
 			}
-			/* Must update the mgs logs */
+			
 			ldd->ldd_flags |= LDD_F_UPDATE;
 			break;
 		case 'e':
-			/* Already done in the beginning */
+			
 			break;
 		case 'Q':
 			mop->mo_flags |= MO_QUOTA;
@@ -680,7 +680,7 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 			}
 			ldd->ldd_flags |= LDD_F_NO_LOCAL_LOGS;
 			break;
-#endif /* !TUNEFS */
+#endif 
 		default:
 			if (opt != '?') {
 				fatal();
@@ -735,22 +735,22 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 	}
 #endif
 
-	/* Need to clear this flag after parsing 'L' and 'i' options. */
+	
 	if (replace)
 		ldd->ldd_flags &= ~LDD_F_VIRGIN;
 
 	if (optind == argc) {
-		/* The user didn't specify device name */
+		
 		fatal();
 		fprintf(stderr,
 			"Not enough arguments - device name or pool/dataset name not specified.\n");
 		return EINVAL;
 	}
 
-	/*  The device or pool/filesystem name */
+	
 	strscpy(mop->mo_device, argv[optind], sizeof(mop->mo_device));
 
-	/* Followed by optional vdevs */
+	
 	if (optind < argc - 1)
 		mop->mo_pool_vdevs = (char **)&argv[optind + 1];
 
@@ -765,7 +765,7 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
  */
 static int chk_args(int argc, char *const argv[])
 {
-	/* If no argument is given to mkfs.lustre, bail out */
+	
 	if (argc < 2)
 		return 1;
 
@@ -825,7 +825,7 @@ int main(int argc, char *const argv[])
 	memset(&mop, 0, sizeof(mop));
 	set_defaults(&mop);
 
-	/* device is last arg */
+	
 	strscpy(mop.mo_device, argv[argc - 1], sizeof(mop.mo_device));
 
 #ifdef TUNEFS
@@ -834,7 +834,7 @@ int main(int argc, char *const argv[])
 	 * new ones.
 	 */
 
-	/* Check whether the disk has already been formatted by mkfs.lustre */
+	
 	ret = osd_is_lustre(mop.mo_device, &mount_type);
 	if (ret == 0) {
 		fatal();
@@ -852,7 +852,7 @@ int main(int argc, char *const argv[])
 	ldd->ldd_flags &= ~(LDD_F_WRITECONF | LDD_F_VIRGIN |
 			    LDD_F_NO_LOCAL_LOGS);
 
-	/* svname of the form lustre:OST1234 means never registered */
+	
 	ret = strlen(ldd->ldd_svname);
 	if (ldd->ldd_svname[ret - 8] == ':') {
 		ldd->ldd_svname[ret - 8] = '-';
@@ -870,7 +870,7 @@ int main(int argc, char *const argv[])
 
 	if (verbose > 0)
 		print_ldd("Read previous values", &mop);
-#endif /* TUNEFS */
+#endif 
 
 	ret = parse_opts(argc, argv, &mop, &mountopts, old_fsname,
 			 mountdata_arg);
@@ -878,7 +878,7 @@ int main(int argc, char *const argv[])
 		goto out;
 
 #ifdef TUNEFS
-	/* Reset mountdata */
+	
 	if (mountdata_arg[0] != '\0') {
 		ret = osd_mountdata_reset(&mop, mountdata_arg);
 		if (ret != 0)
@@ -911,10 +911,10 @@ int main(int argc, char *const argv[])
 		goto out;
 	}
 
-	/* Stand alone MGS doesn't need an index */
+	
 	if (!IS_MDT(ldd) && IS_MGS(ldd)) {
 #ifndef TUNEFS
-		/* But if --index was specified flag an error */
+		
 		if (!(ldd->ldd_flags & LDD_F_NEED_INDEX)) {
 			badopt("index", "MDT,OST");
 			goto out;
@@ -928,7 +928,7 @@ int main(int argc, char *const argv[])
 			"warning: %s: for Lustre 2.4 and later, the target index must be specified with --index\n",
 			mop.mo_device);
 
-	/* If no index is supplied for MDT by default set index to zero */
+	
 	if (IS_MDT(ldd) && (ldd->ldd_svindex == INDEX_UNASSIGNED)) {
 		ldd->ldd_flags &= ~LDD_F_NEED_INDEX;
 		ldd->ldd_svindex = 0;
@@ -958,7 +958,7 @@ int main(int argc, char *const argv[])
 		goto out;
 	}
 
-	/* These are the permanent mount options (always included) */
+	
 	ret = osd_prepare_lustre(&mop,
 				 wanted_mountopts, sizeof(wanted_mountopts));
 	if (ret != 0) {
@@ -978,7 +978,7 @@ int main(int argc, char *const argv[])
 	} else {
 #ifdef TUNEFS
 		if (ldd->ldd_mount_opts[0] == 0)
-		/* use the defaults unless old opts exist */
+		
 #endif
 		{
 			snprintf(ldd->ldd_mount_opts,
@@ -1017,14 +1017,14 @@ int main(int argc, char *const argv[])
 		return EEXIST;
 	}
 
-	/* Create the loopback file */
+	
 	if (mop.mo_flags & MO_IS_LOOP) {
 		ret = access(mop.mo_device, F_OK);
 		if (ret != 0)
 			ret = errno;
 
 #ifndef TUNEFS
-		/* Reformat the loopback file */
+		
 		if (ret != 0 || (mop.mo_flags & MO_FORCEFORMAT)) {
 			ret = loop_format(&mop);
 			if (ret != 0)
@@ -1042,7 +1042,7 @@ int main(int argc, char *const argv[])
 	}
 
 #ifndef TUNEFS
-	/* Check whether the disk has already been formatted by mkfs.lustre */
+	
 	if (!(mop.mo_flags & MO_FORCEFORMAT)) {
 		ret = osd_is_lustre(mop.mo_device, &mount_type);
 		if (ret != 0) {
@@ -1054,15 +1054,15 @@ int main(int argc, char *const argv[])
 		}
 	}
 
-	/* Format the backing filesystem */
+	
 	ret = osd_make_lustre(&mop);
 	if (ret != 0) {
 		fatal();
 		fprintf(stderr, "mkfs failed %d\n", ret);
 		goto out;
 	}
-#else /* TUNEFS */
-	/* update svname with '-' */
+#else 
+	
 	if (replace) {
 		struct mount_opts opts;
 
@@ -1071,7 +1071,7 @@ int main(int argc, char *const argv[])
 		(void)osd_label_lustre(&opts);
 	}
 
-	/* update svname with '=' to refresh config */
+	
 	if (ldd->ldd_flags & LDD_F_WRITECONF) {
 		struct mount_opts opts;
 
@@ -1080,7 +1080,7 @@ int main(int argc, char *const argv[])
 		(void)osd_label_lustre(&opts);
 	}
 
-	/* update svname with '+' to force remote logs */
+	
 	if (ldd->ldd_flags & LDD_F_NO_LOCAL_LOGS) {
 		struct mount_opts opts;
 
@@ -1089,14 +1089,14 @@ int main(int argc, char *const argv[])
 		(void) osd_label_lustre(&opts);
 	}
 
-	/* Rename filesystem fsname */
+	
 	if (mop.mo_flags & MO_RENAME) {
 		ret = osd_rename_fsname(&mop, old_fsname);
 		if (ret)
 			goto out;
 	}
 
-	/* Enable quota accounting */
+	
 	if (mop.mo_flags & MO_QUOTA) {
 		ret = osd_enable_quota(&mop);
 		goto out;
@@ -1104,9 +1104,9 @@ int main(int argc, char *const argv[])
 
 write:
 
-#endif /* !TUNEFS */
+#endif 
 
-	/* Write our config files */
+	
 	ret = osd_write_ldd(&mop);
 	if (ret != 0) {
 		fatal();
@@ -1119,7 +1119,7 @@ out:
 	if (ret == 0)
 		ret = ret2;
 
-	/* Fix any crazy return values from system() */
+	
 	if (ret != 0 && ((ret & 255) == 0))
 		return 1;
 

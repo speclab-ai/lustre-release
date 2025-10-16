@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_object for OSC layer.
  *
@@ -102,7 +102,7 @@ void osc_object_free(const struct lu_env *env, struct lu_object *obj)
 	LASSERT(atomic_read(&osc->oo_nr_ios) == 0);
 
 	lu_object_fini(obj);
-	/* osc doen't contain an lu_object_header, so we don't need call_rcu */
+	
 	OBD_SLAB_FREE_PTR(osc, osc_object_kmem);
 }
 EXPORT_SYMBOL(osc_object_free);
@@ -197,7 +197,7 @@ static int osc_object_ast_clear(struct ldlm_lock *lock, void *data)
 		LASSERT(osc->oo_oinfo != NULL);
 		LASSERT(lvb != NULL);
 
-		/* Updates lvb in lock by the cached oinfo */
+		
 		oinfo = osc->oo_oinfo;
 
 		LDLM_DEBUG(lock, "update lock size %llu blocks %llu [cma]time: "
@@ -268,14 +268,14 @@ static int osc_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 			       &resid, LDLM_EXTENT, &policy,
 			       LCK_PR | LCK_PW, 0, &lockh);
 	fmkey->lfik_oa.o_valid |= OBD_MD_FLFLAGS;
-	if (mode) { /* lock is cached on client */
+	if (mode) { 
 		fmkey->lfik_oa.o_flags &= ~OBD_FL_SRVLOCK;
 		if (mode != LCK_PR) {
 			ldlm_lock_addref(&lockh, LCK_PR);
 			ldlm_lock_decref(&lockh, LCK_PW);
 		}
 		CFS_FAIL_TIMEOUT(OBD_FAIL_OSC_FIEMAP, cfs_fail_val);
-	} else { /* no cached lock, needs acquire lock on server side */
+	} else { 
 		fmkey->lfik_oa.o_flags |= OBD_FL_SRVLOCK;
 	}
 
@@ -453,16 +453,16 @@ int osc_object_invalidate(const struct lu_env *env, struct osc_object *osc)
 
 	wait_event_idle(osc->oo_io_waitq, atomic_read(&osc->oo_nr_ios) == 0);
 
-	/* Discard all dirty pages of this object. */
+	
 	osc_cache_truncate_start(env, osc, 0, NULL);
 
-	/* Discard all caching pages */
+	
 	osc_lock_discard_pages(env, osc, 0, CL_PAGE_EOF, true);
 
-	/* Clear ast data of dlm lock. Do this after discarding all pages */
+	
 	cl_object_prune(env, osc2cl(osc));
 
 	RETURN(0);
 }
 EXPORT_SYMBOL(osc_object_invalidate);
-/** @} osc */
+

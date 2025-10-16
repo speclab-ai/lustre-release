@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BSD-3-Clause
+
 
 /*
  * Modifications for Lustre
@@ -50,12 +50,12 @@ static DEFINE_SPINLOCK(krb5_seq_lock);
 
 struct krb5_enctype {
         char           *ke_dispname;
-        char           *ke_enc_name;            /* linux tfm name */
-        char           *ke_hash_name;           /* linux tfm name */
-        int             ke_enc_mode;            /* linux tfm mode */
-        int             ke_hash_size;           /* checksum size */
-        int             ke_conf_size;           /* confounder size */
-        unsigned int    ke_hash_hmac:1;         /* is hmac? */
+        char           *ke_enc_name;            
+        char           *ke_hash_name;           
+        int             ke_enc_mode;            
+        int             ke_hash_size;           
+        int             ke_conf_size;           
+        unsigned int    ke_hash_hmac:1;         
 };
 
 /*
@@ -64,7 +64,7 @@ struct krb5_enctype {
  * yet. this need to be fixed in the future.
  */
 static struct krb5_enctype enctypes[] = {
-	[ENCTYPE_AES128_CTS_HMAC_SHA1_96] = {	/* aes128-cts */
+	[ENCTYPE_AES128_CTS_HMAC_SHA1_96] = {	
 		.ke_dispname	= "aes128-cts-hmac-sha1-96",
 		.ke_enc_name	= "cbc(aes)",
 		.ke_hash_name	= "sha1",
@@ -72,7 +72,7 @@ static struct krb5_enctype enctypes[] = {
 		.ke_conf_size	= 16,
 		.ke_hash_hmac	= 1,
 	},
-	[ENCTYPE_AES128_CTS_HMAC_SHA256_128] = { /* aes128-cts-hmac-sha2 */
+	[ENCTYPE_AES128_CTS_HMAC_SHA256_128] = { 
 		.ke_dispname	= "aes128-cts-hmac-sha256-128",
 		.ke_enc_name	= "cbc(aes)",
 		.ke_hash_name	= "sha256",
@@ -80,7 +80,7 @@ static struct krb5_enctype enctypes[] = {
 		.ke_conf_size	= 16,
 		.ke_hash_hmac	= 1,
 	},
-	[ENCTYPE_AES256_CTS_HMAC_SHA1_96] = {	/* aes256-cts */
+	[ENCTYPE_AES256_CTS_HMAC_SHA1_96] = {	
 		.ke_dispname	= "aes256-cts-hmac-sha1-96",
 		.ke_enc_name	= "cbc(aes)",
 		.ke_hash_name	= "sha1",
@@ -88,7 +88,7 @@ static struct krb5_enctype enctypes[] = {
 		.ke_conf_size	= 16,
 		.ke_hash_hmac	= 1,
 	},
-	[ENCTYPE_AES256_CTS_HMAC_SHA384_192] = { /* aes256-cts-hmac-sha2 */
+	[ENCTYPE_AES256_CTS_HMAC_SHA384_192] = { 
 		.ke_dispname	= "aes256-cts-hmac-sha384-192",
 		.ke_enc_name	= "cbc(aes)",
 		.ke_hash_name	= "sha384",
@@ -122,7 +122,7 @@ int krb5_init_keys(struct krb5_ctx *kctx)
 	if (gss_keyblock_init(&kctx->kc_keye, ke->ke_enc_name, ke->ke_enc_mode))
 		return -1;
 
-	/* tfm hmac is stateful, user should alloc-use-free by his own */
+	
 	if (ke->ke_hash_hmac == 0 &&
 	    gss_keyblock_init(&kctx->kc_keyi, ke->ke_enc_name, ke->ke_enc_mode))
 		return -1;
@@ -148,16 +148,16 @@ __u32 import_context_rfc1964(struct krb5_ctx *kctx, char *p, char *end)
 {
 	unsigned int    tmp_uint, keysize;
 
-	/* seed_init flag */
+	
 	if (gss_get_bytes(&p, end, &tmp_uint, sizeof(tmp_uint)))
 		goto out_err;
 	kctx->kc_seed_init = (tmp_uint != 0);
 
-	/* seed */
+	
 	if (gss_get_bytes(&p, end, kctx->kc_seed, sizeof(kctx->kc_seed)))
 		goto out_err;
 
-	/* sign/seal algorithm, not really used now */
+	
 	if (gss_get_bytes(&p, end, &tmp_uint, sizeof(tmp_uint)) ||
 	    gss_get_bytes(&p, end, &tmp_uint, sizeof(tmp_uint)))
 		goto out_err;
@@ -166,17 +166,17 @@ __u32 import_context_rfc1964(struct krb5_ctx *kctx, char *p, char *end)
 	 * still uses 32 bits. To delay the 2038 bug see the incoming
 	 * value as a u32 which give us until 2106. See the link for details:
 	 *
-	 * http://web.mit.edu/kerberos/www/krb5-current/doc/appdev/y2038.html
+	 * http:
 	 */
 	if (gss_get_bytes(&p, end, &kctx->kc_endtime, sizeof(u32)))
 		goto out_err;
 
-	/* seq send */
+	
 	if (gss_get_bytes(&p, end, &tmp_uint, sizeof(tmp_uint)))
 		goto out_err;
 	kctx->kc_seq_send = tmp_uint;
 
-	/* mech oid */
+	
 	if (gss_get_rawobj(&p, end, &kctx->kc_mech_used))
 		goto out_err;
 
@@ -187,7 +187,7 @@ __u32 import_context_rfc1964(struct krb5_ctx *kctx, char *p, char *end)
 	 * we decompose them to fit into the new context
 	 */
 
-	/* enc key */
+	
 	if (gss_get_bytes(&p, end, &kctx->kc_enctype, sizeof(kctx->kc_enctype)))
 		goto out_err;
 
@@ -197,7 +197,7 @@ __u32 import_context_rfc1964(struct krb5_ctx *kctx, char *p, char *end)
 	if (gss_get_keyblock(&p, end, &kctx->kc_keye, keysize))
 		goto out_err;
 
-	/* seq key */
+	
 	if (gss_get_bytes(&p, end, &tmp_uint, sizeof(tmp_uint)) ||
 	    tmp_uint != kctx->kc_enctype)
 		goto out_err;
@@ -209,7 +209,7 @@ __u32 import_context_rfc1964(struct krb5_ctx *kctx, char *p, char *end)
 	if (gss_get_keyblock(&p, end, &kctx->kc_keyc, keysize))
 		goto out_err;
 
-	/* old style fallback */
+	
 	if (gss_keyblock_dup(&kctx->kc_keyi, &kctx->kc_keyc))
 		goto out_err;
 
@@ -222,7 +222,7 @@ out_err:
 	return GSS_S_FAILURE;
 }
 
-/* Flags for version 2 context flags */
+
 #define KRB5_CTX_FLAG_INITIATOR		0x00000001
 #define KRB5_CTX_FLAG_CFX		0x00000002
 #define KRB5_CTX_FLAG_ACCEPTOR_SUBKEY	0x00000004
@@ -236,12 +236,12 @@ __u32 import_context_rfc4121(struct krb5_ctx *kctx, char *p, char *end)
 	 * still uses 32 bits. To delay the 2038 bug see the incoming
 	 * value as a u32 which give us until 2106. See the link for details:
 	 *
-	 * http://web.mit.edu/kerberos/www/krb5-current/doc/appdev/y2038.html
+	 * http:
 	 */
 	if (gss_get_bytes(&p, end, &kctx->kc_endtime, sizeof(u32)))
 		goto out_err;
 
-	/* flags */
+	
 	if (gss_get_bytes(&p, end, &tmp_uint, sizeof(tmp_uint)))
 		goto out_err;
 
@@ -252,20 +252,20 @@ __u32 import_context_rfc4121(struct krb5_ctx *kctx, char *p, char *end)
 	if (tmp_uint & KRB5_CTX_FLAG_ACCEPTOR_SUBKEY)
 		kctx->kc_have_acceptor_subkey = 1;
 
-	/* seq send */
+	
 	if (gss_get_bytes(&p, end, &kctx->kc_seq_send,
 	    sizeof(kctx->kc_seq_send)))
 		goto out_err;
 
-	/* enctype */
+	
 	if (gss_get_bytes(&p, end, &kctx->kc_enctype, sizeof(kctx->kc_enctype)))
 		goto out_err;
 
-	/* size of each key */
+	
 	if (gss_get_bytes(&p, end, &keysize, sizeof(keysize)))
 		goto out_err;
 
-	/* number of keys - should always be 3 */
+	
 	if (gss_get_bytes(&p, end, &tmp_uint, sizeof(tmp_uint)))
 		goto out_err;
 
@@ -274,13 +274,13 @@ __u32 import_context_rfc4121(struct krb5_ctx *kctx, char *p, char *end)
 		goto out_err;
 	}
 
-	/* ke */
+	
 	if (gss_get_keyblock(&p, end, &kctx->kc_keye, keysize))
 		goto out_err;
-	/* ki */
+	
 	if (gss_get_keyblock(&p, end, &kctx->kc_keyi, keysize))
 		goto out_err;
-	/* ki */
+	
 	if (gss_get_keyblock(&p, end, &kctx->kc_keyc, keysize))
 		goto out_err;
 
@@ -309,7 +309,7 @@ __u32 gss_import_sec_context_kerberos(rawobj_t *inbuf,
 		return GSS_S_FAILURE;
 	}
 
-        /* only support 0, 1 for the moment */
+        
         if (tmp_uint > 2) {
                 CERROR("Invalid version %u\n", tmp_uint);
                 return GSS_S_FAILURE;
@@ -424,7 +424,7 @@ __s32 krb5_make_checksum(__u32 enctype,
 
 	hash_algo = cfs_crypto_hash_alg(ke->ke_hash_name);
 
-	/* For the cbc(des) case we want md5 instead of hmac(md5) */
+	
 	if (strcmp(ke->ke_enc_name, "cbc(des)"))
 		req = cfs_crypto_hash_init(hash_algo, kb->kb_key.data,
 					   kb->kb_key.len);
@@ -517,7 +517,7 @@ static __u32 verify_krb5_header(struct krb5_ctx *kctx,
                 ec_rrc = 0xffff;
         }
 
-        /* sanity checks */
+        
         if (be16_to_cpu(khdr->kh_tok_id) != tok_id) {
                 CERROR("bad token id\n");
                 return GSS_S_DEFECTIVE_TOKEN;
@@ -556,12 +556,12 @@ __u32 gss_get_mic_kerberos(struct gss_ctx *gctx,
 	rawobj_t cksum = RAWOBJ_EMPTY;
 	u32 major;
 
-	/* fill krb5 header */
+	
 	LASSERT(token->len >= sizeof(*khdr));
 	khdr = (struct krb5_header *)token->data;
 	fill_krb5_header(kctx, khdr, 0);
 
-	/* checksum */
+	
 	if (krb5_make_checksum(kctx->kc_enctype, &kctx->kc_keyc, khdr,
 			       msgcnt, msgs, iovcnt, iovs, &cksum,
 			       gctx->hash_func))
@@ -654,7 +654,7 @@ int krb5_encrypt_bulk(struct crypto_sync_skcipher *tfm,
 	LASSERT(blocksize > 1);
 	LASSERT(cipher->len == blocksize + sizeof(*khdr));
 
-	/* encrypt confounder */
+	
 	rc = gss_setup_sgtable(&sg_src, &src, confounder, blocksize);
 	if (rc != 0)
 		return rc;
@@ -680,7 +680,7 @@ int krb5_encrypt_bulk(struct crypto_sync_skcipher *tfm,
 		return rc;
 	}
 
-	/* encrypt clear pages */
+	
 	for (i = 0; i < desc->bd_iov_count; i++) {
 		sg_init_table(&src, 1);
 		sg_set_page(&src, desc->bd_vec[i].bv_page,
@@ -707,7 +707,7 @@ int krb5_encrypt_bulk(struct crypto_sync_skcipher *tfm,
 		}
 	}
 
-	/* encrypt krb5 header */
+	
 	rc = gss_setup_sgtable(&sg_src, &src, khdr, sizeof(*khdr));
 	if (rc != 0) {
 		skcipher_request_zero(req);
@@ -788,7 +788,7 @@ int krb5_decrypt_bulk(struct crypto_sync_skcipher *tfm,
 		return -EPROTO;
 	}
 
-	/* decrypt head (confounder) */
+	
 	rc = gss_setup_sgtable(&sg_src, &src, cipher->data, blocksize);
 	if (rc != 0)
 		return rc;
@@ -840,7 +840,7 @@ int krb5_decrypt_bulk(struct crypto_sync_skcipher *tfm,
 				desc->bd_vec[i].bv_len =
 				  desc->bd_nob - pt_nob;
 		} else {
-			/* this should be guaranteed by LNET */
+			
 			LASSERT(ct_nob + desc->bd_enc_vec[i].
 				bv_len <=
 				desc->bd_nob_transferred);
@@ -896,12 +896,12 @@ int krb5_decrypt_bulk(struct crypto_sync_skcipher *tfm,
 		return -EFAULT;
 	}
 
-	/* if needed, clear up the rest unused iovs */
+	
 	if (adj_nob)
 		while (i < desc->bd_iov_count)
 			desc->bd_vec[i++].bv_len = 0;
 
-	/* decrypt tail (krb5 header) */
+	
 	rc = gss_setup_sgtable(&sg_src, &src, cipher->data + blocksize,
 			       sizeof(*khdr));
 	if (rc != 0)
@@ -970,12 +970,12 @@ __u32 gss_wrap_kerberos(struct gss_ctx *gctx,
 	 * ---------------------------------------------------
 	 */
 
-	/* fill krb5 header */
+	
 	LASSERT(token->len >= sizeof(*khdr));
 	khdr = (struct krb5_header *)token->data;
 	fill_krb5_header(kctx, khdr, 1);
 
-	/* generate confounder */
+	
 	get_random_bytes(conf, ke->ke_conf_size);
 
 	/* Get encryption blocksize. Note kc_keye might be associated with
@@ -985,7 +985,7 @@ __u32 gss_wrap_kerberos(struct gss_ctx *gctx,
 	blocksize = crypto_sync_skcipher_blocksize(kctx->kc_keye.kb_tfm);
 	LASSERT(blocksize <= ke->ke_conf_size);
 
-	/* padding the message */
+	
 	if (gss_add_padding(msg, msg_buflen, blocksize))
 		GOTO(out_free_conf, major = GSS_S_FAILURE);
 
@@ -1002,7 +1002,7 @@ __u32 gss_wrap_kerberos(struct gss_ctx *gctx,
 	data_desc[2].data = msg->data;
 	data_desc[2].len = msg->len;
 
-	/* compute checksum */
+	
 	if (krb5_make_checksum(kctx->kc_enctype, &kctx->kc_keyi,
 			       khdr, 3, data_desc, 0, NULL, &cksum,
 			       gctx->hash_func))
@@ -1022,7 +1022,7 @@ __u32 gss_wrap_kerberos(struct gss_ctx *gctx,
 	data_desc[2].data = (__u8 *) khdr;
 	data_desc[2].len = sizeof(*khdr);
 
-	/* cipher text will be directly inplace */
+	
 	cipher.data = (__u8 *)(khdr + 1);
 	cipher.len = token->len - sizeof(*khdr);
 	LASSERT(cipher.len >= ke->ke_conf_size + msg->len + sizeof(*khdr));
@@ -1032,13 +1032,13 @@ __u32 gss_wrap_kerberos(struct gss_ctx *gctx,
 	if (rc)
 		GOTO(out_free_cksum, major = GSS_S_FAILURE);
 
-	/* fill in checksum */
+	
 	LASSERT(token->len >= sizeof(*khdr) + cipher.len + ke->ke_hash_size);
 	memcpy((char *)(khdr + 1) + cipher.len,
 	       cksum.data + cksum.len - ke->ke_hash_size,
 	       ke->ke_hash_size);
 
-	/* final token length */
+	
 	token->len = sizeof(*khdr) + cipher.len + ke->ke_hash_size;
 	major = GSS_S_COMPLETE;
 out_free_cksum:
@@ -1108,12 +1108,12 @@ __u32 gss_wrap_bulk_kerberos(struct gss_ctx *gctx,
 	 * --------------------------------------------------
 	 */
 
-	/* fill krb5 header */
+	
 	LASSERT(token->len >= sizeof(*khdr));
 	khdr = (struct krb5_header *)token->data;
 	fill_krb5_header(kctx, khdr, 1);
 
-	/* generate confounder */
+	
 	get_random_bytes(conf, ke->ke_conf_size);
 
 	/* Get encryption blocksize. Note kc_keye might be associated with
@@ -1140,7 +1140,7 @@ __u32 gss_wrap_bulk_kerberos(struct gss_ctx *gctx,
 	data_desc[0].data = conf;
 	data_desc[0].len = ke->ke_conf_size;
 
-	/* compute checksum */
+	
 	if (krb5_make_checksum(kctx->kc_enctype, &kctx->kc_keyi,
 			       khdr, 1, data_desc,
 			       desc->bd_iov_count, desc->bd_vec,
@@ -1171,13 +1171,13 @@ __u32 gss_wrap_bulk_kerberos(struct gss_ctx *gctx,
 	if (rc)
 		GOTO(out_free_cksum, major = GSS_S_FAILURE);
 
-	/* fill in checksum */
+	
 	LASSERT(token->len >= sizeof(*khdr) + cipher.len + ke->ke_hash_size);
 	memcpy((char *)(khdr + 1) + cipher.len,
 	       cksum.data + cksum.len - ke->ke_hash_size,
 	       ke->ke_hash_size);
 
-	/* final token length */
+	
 	token->len = sizeof(*khdr) + cipher.len + ke->ke_hash_size;
 	major = GSS_S_COMPLETE;
 out_free_cksum:
@@ -1218,7 +1218,7 @@ __u32 gss_unwrap_kerberos(struct gss_ctx  *gctx,
 		return major;
 	}
 
-	/* block size */
+	
 	LASSERT(kctx->kc_keye.kb_tfm);
 	blocksz = crypto_sync_skcipher_blocksize(kctx->kc_keye.kb_tfm);
 
@@ -1245,7 +1245,7 @@ __u32 gss_unwrap_kerberos(struct gss_ctx  *gctx,
 		return GSS_S_FAILURE;
 	}
 
-	/* decrypting */
+	
 	OBD_ALLOC_LARGE(tmpbuf, bodysize);
 	if (!tmpbuf)
 		return GSS_S_FAILURE;
@@ -1271,7 +1271,7 @@ __u32 gss_unwrap_kerberos(struct gss_ctx  *gctx,
 	 * -----------------------------------------
 	 */
 
-	/* verify krb5 header in token is not modified */
+	
 	if (memcmp(khdr, plain_out.data + plain_out.len - sizeof(*khdr),
 		   sizeof(*khdr))) {
 		CERROR("decrypted krb5 header mismatch\n");
@@ -1342,7 +1342,7 @@ __u32 gss_unwrap_bulk_kerberos(struct gss_ctx *gctx,
 		return major;
 	}
 
-	/* block size */
+	
 	LASSERT(kctx->kc_keye.kb_tfm);
 	blocksz = crypto_sync_skcipher_blocksize(kctx->kc_keye.kb_tfm);
 	LASSERT(sizeof(*khdr) >= blocksz && sizeof(*khdr) % blocksz == 0);
@@ -1452,7 +1452,7 @@ static struct subflavor_desc gss_kerberos_sfs[] = {
 };
 
 static struct gss_api_mech gss_kerberos_mech = {
-	/* .gm_owner uses default NULL value for THIS_MODULE */
+	
         .gm_name        = "krb5",
         .gm_oid         = (rawobj_t)
                                 {9, "\052\206\110\206\367\022\001\002\002"},

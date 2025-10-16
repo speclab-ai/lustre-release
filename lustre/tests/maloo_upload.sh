@@ -1,9 +1,6 @@
 #!/bin/bash
-
 set -e
-
 FILENAME=$1
-
 if [ -r ~/.maloorc ] ; then
 	source ~/.maloorc
 else
@@ -12,17 +9,14 @@ else
 	     "under 'Upload results'"
 	exit 1
 fi
-
 if [ -z $FILENAME ] ; then
 	echo "Usage: ${0} <tarball or directory>"
 	exit 2
 fi
-
 if [ ! -r $FILENAME ] ; then
 	echo "Input file '$FILENAME' not found"
 	exit 3
 fi
-
 echo Uploading $FILENAME to $MALOO_URL
 if [ -d $FILENAME ] ; then
 	pushd $FILENAME

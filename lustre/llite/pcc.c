@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, DDN Storage Corporation.
@@ -106,7 +106,7 @@ int pcc_super_init(struct pcc_super *super)
 	if (!cred)
 		return -ENOMEM;
 
-	/* Never override disk quota limits or use reserved space */
+	
 	cap_lower(cred->cap_effective, CAP_SYS_RESOURCE);
 	init_rwsem(&super->pccs_rw_sem);
 	INIT_LIST_HEAD(&super->pccs_datasets);
@@ -117,7 +117,7 @@ int pcc_super_init(struct pcc_super *super)
 	return 0;
 }
 
-/* Rule based auto caching */
+
 static void pcc_id_list_free(struct pcc_expression *expr)
 {
 	struct pcc_match_id *id, *n;
@@ -381,13 +381,13 @@ static int pcc_expr_time_parse(char *str, struct pcc_expression *expr)
 	unsigned long mtime;
 	int len = strlen(str);
 	unsigned int mult = 1;
-	char buf[11]; /* +1 for NUL */
+	char buf[11]; 
 	int rc;
 
 	if (expr->pe_opc == PCC_FIELD_OP_EQ)
 		return -EOPNOTSUPP;
 
-	/* 1B seconds is enough, and avoids the need for overflow checking */
+	
 	if (len >= sizeof(buf))
 		return -EOVERFLOW;
 
@@ -475,14 +475,14 @@ pcc_expression_parse(char *str, struct list_head *cond_list)
 
 	opc = pcc_get_field_opcode(&str, &field);
 	if (opc == PCC_FIELD_OP_INV)
-		/* No LHS or no '=' */
+		
 		GOTO(out, rc = -EINVAL);
 	str = skip_spaces(str);
 	len = strlen(str);
 	if (str[0] != '{' || str[len - 1] != '}')
 		GOTO(out, rc = -EINVAL);
 
-	/* Skip '{' and '}' */
+	
 	str[len - 1] = '\0';
 	str += 1;
 
@@ -594,7 +594,7 @@ pcc_parse_value_pair(struct pcc_cmd *cmd, char *buffer)
 	if (val == NULL || strlen(val) == 0)
 		return -EINVAL;
 
-	/* Key of the value pair */
+	
 	if (strcmp(key, "rwid") == 0) {
 		rc = kstrtoul(val, 10, &id);
 		if (rc)
@@ -699,7 +699,7 @@ pcc_parse_value_pairs(struct pcc_cmd *cmd, char *buffer)
 	switch (cmd->pccc_cmd) {
 	case PCC_ADD_DATASET:
 		cmd->u.pccc_add.pccc_hsmtool_type = HSMTOOL_UNKNOWN;
-		/* Enable these features by default */
+		
 		cmd->u.pccc_add.pccc_flags |= PCC_DATASET_AUTO_ATTACH |
 					      PCC_DATASET_PROJ_QUOTA;
 		break;
@@ -756,7 +756,7 @@ pcc_dataset_rule_init(struct pcc_match_rule *rule, struct pcc_cmd *cmd)
 	return rc;
 }
 
-/* Rule Matching */
+
 static int
 pcc_id_list_match(struct list_head *id_list, __u32 id_val)
 {
@@ -853,7 +853,7 @@ pcc_expr_size_match(struct pcc_expression *expr, __u64 sz)
 static inline int
 pcc_expr_time_match(struct pcc_expression *expr, __u64 time)
 {
-	/* pe_mtime and pe_size are both __u64 in the same union */
+	
 	return pcc_expr_size_match(expr, ktime_get_real_seconds() - time);
 }
 
@@ -965,7 +965,7 @@ pcc_dataset_flags_check(struct pcc_super *super, struct pcc_cmd *cmd)
 			return -EOPNOTSUPP;
 	} else if ((cmd->u.pccc_add.pccc_flags & PCC_DATASET_PCC_ALL) == 0) {
 		cmd->u.pccc_add.pccc_flags |= PCC_DATASET_PCC_DEFAULT;
-	} /* else RWPCC or ROPCC must have been given */
+	} 
 
 	if (cmd->u.pccc_add.pccc_rwid == 0 &&
 	    cmd->u.pccc_add.pccc_roid == 0)
@@ -1174,7 +1174,7 @@ void pcc_super_fini(struct pcc_super *super)
 
 static bool pathname_is_valid(const char *pathname)
 {
-	/* Needs to be absolute path */
+	
 	if (pathname == NULL || strlen(pathname) == 0 ||
 	    strlen(pathname) >= PATH_MAX || pathname[0] != '/')
 		return false;
@@ -1193,7 +1193,7 @@ pcc_cmd_parse(char *buffer, unsigned long count)
 	if (cmd == NULL)
 		GOTO(out, rc = -ENOMEM);
 
-	/* clear all setting */
+	
 	if (strncmp(buffer, "clear", 5) == 0) {
 		cmd->pccc_cmd = PCC_CLEAR_ALL;
 		GOTO(out, rc = 0);
@@ -1204,7 +1204,7 @@ pcc_cmd_parse(char *buffer, unsigned long count)
 	if (val == NULL || strlen(val) == 0)
 		GOTO(out_free_cmd, rc = -EINVAL);
 
-	/* Type of the command */
+	
 	if (strcmp(token, "add") == 0) {
 		cmd->pccc_cmd = PCC_ADD_DATASET;
 		INIT_LIST_HEAD(&cmd->u.pccc_add.pccc_conds);
@@ -1214,7 +1214,7 @@ pcc_cmd_parse(char *buffer, unsigned long count)
 		GOTO(out_free_cmd, rc = -EINVAL);
 	}
 
-	/* Pathname of the dataset */
+	
 	token = strsep(&val, " ");
 	if ((val == NULL && cmd->pccc_cmd != PCC_DEL_DATASET) ||
 	    !pathname_is_valid(token))
@@ -1222,14 +1222,14 @@ pcc_cmd_parse(char *buffer, unsigned long count)
 	cmd->pccc_pathname = token;
 
 	if (cmd->pccc_cmd == PCC_ADD_DATASET) {
-		/* List of ID */
+		
 		LASSERT(val);
 		token = val;
 		val = strrchr(token, '}');
 		if (!val)
 			GOTO(out_free_cmd, rc = -EINVAL);
 
-		/* Skip '}' */
+		
 		val++;
 		if (*val == '\0') {
 			val = NULL;
@@ -1315,7 +1315,7 @@ static void pcc_inode_fini(struct pcc_inode *pcci)
 	struct inode *pcc_inode = pcci->pcci_path.dentry->d_inode;
 	struct ll_inode_info *lli = pcci->pcci_lli;
 
-	/* The PCC file was once mmaped? */
+	
 	if (pcc_inode && pcc_inode->i_mapping != &pcc_inode->i_data)
 		pcc_inode->i_mapping = &pcc_inode->i_data;
 
@@ -1503,7 +1503,7 @@ static int pcc_get_layout_info(struct inode *inode, struct cl_layout *clt)
 	RETURN(rc < 0 ? rc : 0);
 }
 
-/* Must be called with pcci->pcci_lock held */
+
 static void pcc_inode_attach_init(struct pcc_dataset *dataset,
 				  struct pcc_inode *pcci,
 				  struct dentry *dentry,
@@ -1557,11 +1557,11 @@ static struct dentry *pcc_lookup(struct dentry *base, char *pathname)
 
 	ptr = pathname;
 
-	/* move past any initial '/' to the start of the first path component*/
+	
 	while (*ptr == '/')
 		ptr++;
 
-	/* store the start of the first path component */
+	
 	component = ptr;
 
 	parent = dget(base);
@@ -1578,12 +1578,12 @@ static struct dentry *pcc_lookup(struct dentry *base, char *pathname)
 		if (ptr)
 			*ptr = '\0';
 
-		/* look up the current component */
+		
 		inode_lock(parent->d_inode);
 		child = lookup_one_len(component, parent, strlen(component));
 		inode_unlock(parent->d_inode);
 
-		/* repair the path string: put '/' back in place of the NUL */
+		
 		if (ptr)
 			*ptr = '/';
 
@@ -1592,23 +1592,23 @@ static struct dentry *pcc_lookup(struct dentry *base, char *pathname)
 		if (IS_ERR_OR_NULL(child))
 			break;
 
-		/* we may find a cached negative dentry */
+		
 		if (!d_is_positive(child)) {
 			dput(child);
 			child = NULL;
 			break;
 		}
 
-		/* descend in to the next level of the path */
+		
 		parent = child;
 
-		/* move the pointer past the '/' to the next component */
+		
 		if (ptr)
 			ptr++;
 		component = ptr;
 	}
 
-	/* NULL child means we didn't find anything */
+	
 	if (!child)
 		child = ERR_PTR(-ENOENT);
 
@@ -1648,18 +1648,18 @@ static int pcc_try_dataset_attach(struct inode *inode, __u32 gen,
 		CDEBUG(D_CACHE, "%s: path lookup error on "DFID":%s: rc = %d\n",
 		       ll_i2sbi(inode)->ll_fsname, PFID(&lli->lli_fid),
 		       pathname, rc);
-		/* ignore this error */
+		
 		GOTO(out, rc = 0);
 	}
 
 	rc = ll_vfs_getxattr(pcc_dentry, pcc_dentry->d_inode, pcc_xattr_layout,
 			     &pcc_gen, sizeof(pcc_gen));
 	if (rc < 0)
-		/* ignore this error */
+		
 		GOTO(out_put_pcc_dentry, rc = 0);
 
 	rc = 0;
-	/* The file is still valid cached in PCC, attach it immediately. */
+	
 	if (pcc_gen == gen) {
 		CDEBUG(D_CACHE, DFID" L.Gen (%d) consistent, auto attached.\n",
 		       PFID(&lli->lli_fid), gen);
@@ -1867,7 +1867,7 @@ static int pcc_readonly_attach_async(struct file *file,
 		GOTO(out, rc = -ENOMEM);
 
 	if (ll_i2pccs(inode)->pccs_async_affinity) {
-		/* Create a attach kthread on the current node. */
+		
 		task = kthread_create(pcc_readonly_attach_thread, pccx,
 				      "ll_pcc_%u", current->pid);
 	} else {
@@ -1915,7 +1915,7 @@ static inline int pcc_do_readonly_attach(struct file *file,
 	return rc;
 }
 
-/* Call with pcci_mutex hold */
+
 static int pcc_try_readonly_open_attach(struct inode *inode, struct file *file,
 					bool *cached)
 {
@@ -1956,7 +1956,7 @@ static int pcc_try_readonly_open_attach(struct inode *inode, struct file *file,
 			CDEBUG(D_CACHE,
 			       "Failed to try PCC-RO attach "DFID", rc = %d\n",
 			       PFID(&ll_i2info(inode)->lli_fid), rc);
-			/* ignore the error during auto PCC-RO attach. */
+			
 			rc = 0;
 		} else {
 			CDEBUG(D_CACHE,
@@ -2001,7 +2001,7 @@ static int pcc_try_auto_attach(struct inode *inode, bool *cached,
 	if (lli->lli_pcc_state & PCC_STATE_FL_ATTACHING)
 		RETURN(0);
 
-	/* Forbid to auto attach the file once mmapped into PCC. */
+	
 	if (atomic_read(&lli->lli_pcc_mapcnt) > 0)
 		RETURN(0);
 
@@ -2046,7 +2046,7 @@ static int pcc_try_auto_attach(struct inode *inode, bool *cached,
 		rc = pcc_try_datasets_attach(inode, iot, clt.cl_layout_gen,
 					     LU_PCC_READWRITE, cached);
 	} else if (clt.cl_is_rdonly) {
-		/* Not try read-only attach for data modification operations */
+		
 		if (iot == PIT_WRITE || iot == PIT_SETATTR)
 			RETURN(0);
 
@@ -2068,7 +2068,7 @@ static inline bool pcc_may_auto_attach(struct inode *inode,
 
 	ENTRY;
 
-	/* Known the file was not in any PCC backend. */
+	
 	if (lli->lli_pcc_dsflags & PCC_DATASET_NONE)
 		RETURN(false);
 
@@ -2087,7 +2087,7 @@ static inline bool pcc_may_auto_attach(struct inode *inode,
 	if (super->pccs_generation != lli->lli_pcc_generation)
 		RETURN(true);
 
-	/* The cached setting @lli_pcc_dsflags is valid */
+	
 	if (iot == PIT_OPEN)
 		RETURN(lli->lli_pcc_dsflags & PCC_DATASET_OPEN_ATTACH);
 
@@ -2124,7 +2124,7 @@ static inline void pcc_inode_mapping_reset(struct inode *inode)
 
 	pcc_wait_ios_finish(pcci);
 
-	/* Did we mmap this file? */
+	
 	if (pcc_inode->i_mapping == &pcc_inode->i_data)
 		return;
 
@@ -2186,7 +2186,7 @@ static inline void pcc_inode_mmap_put(struct inode *inode)
 	pcc_inode_unlock(inode);
 }
 
-/* Call with inode lock held. */
+
 static inline void pcc_inode_detach(struct inode *inode)
 {
 	struct pcc_inode *pcci = ll_i2pcci(inode);
@@ -2225,7 +2225,7 @@ void pcc_layout_invalidate(struct inode *inode)
 	EXIT;
 }
 
-/* Tolerate the IO failure on PCC and fall back to normal Lustre IO path */
+
 static bool pcc_io_tolerate(struct pcc_inode *pcci,
 			    enum pcc_io_type iot, int rc)
 {
@@ -2301,7 +2301,7 @@ static void pcc_io_init(struct inode *inode, enum pcc_io_type iot,
 		LASSERT(atomic_read(&pcci->pcci_refcount) > 0);
 		if (pcci->pcci_type == LU_PCC_READONLY &&
 		    (iot == PIT_WRITE || iot == PIT_SETATTR)) {
-			/* Detach from PCC. Fall back to normal I/O path */
+			
 			*cached = false;
 			pcc_inode_detach_put(inode);
 		} else {
@@ -2483,7 +2483,7 @@ ssize_t pcc_file_read_iter(struct kiocb *iocb,
 	if (!*cached)
 		RETURN(0);
 
-	/* Fake I/O error on PCC-RO */
+	
 	if (CFS_FAIL_CHECK(OBD_FAIL_LLITE_PCC_FAKE_ERROR))
 		GOTO(out, rc = -EIO);
 
@@ -2497,7 +2497,7 @@ ssize_t pcc_file_read_iter(struct kiocb *iocb,
 		GOTO(out_filp, result);
 	}
 
-	/* from this point, we are dealing with an encrypted inode */
+	
 	blockbits = inode->i_blkbits;
 	blocksize = 1 << blockbits;
 	start_index = iocb->ki_pos >> PAGE_SHIFT;
@@ -2508,7 +2508,7 @@ ssize_t pcc_file_read_iter(struct kiocb *iocb,
 		end_index = (min(iocb->ki_pos + (loff_t)iov_iter_count(iter),
 				 i_size_read(inode)) - 1) >> PAGE_SHIFT;
 
-	/* Proceed to decryption of PCC-RO page cache pages */
+	
 	for (index = start_index; index <= end_index; index++) {
 		struct address_space *mapping;
 		struct page *vmpage = NULL;
@@ -2519,12 +2519,12 @@ ssize_t pcc_file_read_iter(struct kiocb *iocb,
 		if (vmpage == NULL)
 			continue;
 
-		/* vmpage has already been decrypted */
+		
 		if (PagePrivate2(vmpage))
 			goto out_pageprivate2;
 
 		if (PageDirty(vmpage))
-			/* this should not happen with PCC-RO */
+			
 			GOTO(out_pageprivate2, rc = -EIO);
 		if (!PageUptodate(vmpage)) {
 #ifdef HAVE_AOPS_READ_FOLIO
@@ -2548,7 +2548,7 @@ ssize_t pcc_file_read_iter(struct kiocb *iocb,
 				       (offs >> blockbits);
 			unsigned int i;
 
-			/* do not decrypt if page is all 0s */
+			
 			if (memchr_inv(page_address(vmpage) + offs, 0,
 				       LUSTRE_ENCRYPTION_UNIT_SIZE) ==
 			    NULL)
@@ -2721,7 +2721,7 @@ int pcc_inode_getattr(struct inode *inode, u32 request_mask,
 		mtime = stat.mtime.tv_sec;
 
 	size = stat.size;
-	/* The pcc_xattr_encsize xattr is only valid for PCC-RO. */
+	
 	if (IS_ENCRYPTED(inode) && pcci->pcci_type == LU_PCC_READONLY) {
 		loff_t encsize;
 
@@ -2948,9 +2948,9 @@ static int pcc_mmap_pages_convert(struct inode *inode,
 			 * (ext4-dax) for performance reason on the NVMe
 			 * hardware.
 			 */
-			/* Remove the page from the mapping of the PCC copy. */
+			
 			cfs_delete_from_page_cache(page);
-			/* Add the page into the mapping of the Lustre file. */
+			
 			rc = add_to_page_cache_locked(page, inode->i_mapping,
 						      page->index, GFP_KERNEL);
 			if (rc) {
@@ -2970,7 +2970,7 @@ static int pcc_mmap_pages_convert(struct inode *inode,
 	return rc;
 #else
 	return 0;
-#endif /* HAVE_ADD_TO_PAGE_CACHE_LOCKED */
+#endif 
 }
 
 static int pcc_mmap_mapping_set(struct inode *inode, struct inode *pcc_inode)
@@ -3000,7 +3000,7 @@ static int pcc_mmap_mapping_set(struct inode *inode, struct inode *pcc_inode)
 
 	truncate_inode_pages(mapping, 0);
 
-	/* Wait all active I/Os on the PCC copy finished. */
+	
 	wait_event_idle(pcci->pcci_waitq,
 			atomic_read(&pcci->pcci_active_ios) == 0);
 
@@ -3017,7 +3017,7 @@ static int pcc_mmap_mapping_set(struct inode *inode, struct inode *pcc_inode)
 		if (rc)
 			return rc;
 	} else {
-		/* Drop all pagecache on the PCC copy directly. */
+		
 		truncate_inode_pages(pcc_inode->i_mapping, 0);
 	}
 
@@ -3101,7 +3101,7 @@ int pcc_file_mmap(struct file *file, struct vm_area_struct *vma,
 			GOTO(out, rc);
 		}
 
-		/* Save the vm ops of backend PCC */
+		
 		pccv->pccv_vm_ops = vma->vm_ops;
 		pccv->pccv_file = file;
 		atomic_set(&pccv->pccv_refcnt, 0);
@@ -3203,7 +3203,7 @@ int pcc_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
 		*cached = true;
 		RETURN(VM_FAULT_RETRY | VM_FAULT_NOPAGE);
 	}
-	/* Pause to allow for a race with concurrent detach */
+	
 	CFS_FAIL_TIMEOUT(OBD_FAIL_LLITE_PCC_MKWRITE_PAUSE, cfs_fail_val);
 
 	pcc_mmap_io_init(inode, PIT_PAGE_MKWRITE, vma, cached);
@@ -3288,7 +3288,7 @@ int pcc_fault(struct vm_area_struct *vma, struct vm_fault *vmf,
 	if (!*cached)
 		RETURN(0);
 
-	/* Tolerate the mmap read failure for PCC-RO */
+	
 	if (CFS_FAIL_CHECK(OBD_FAIL_LLITE_PCC_FAKE_ERROR))
 		GOTO(out, rc = VM_FAULT_SIGBUS);
 
@@ -3327,7 +3327,7 @@ static int pcc_inode_remove(struct inode *inode, struct dentry *pcc_dentry)
 	return rc;
 }
 
-/* Create directory under base if directory does not exist */
+
 static struct dentry *
 pcc_mkdir(struct dentry *base, const char *name, umode_t mode)
 {
@@ -3377,7 +3377,7 @@ pcc_mkdir_p(struct dentry *root, char *path, umode_t mode)
 	return child;
 }
 
-/* Create file under base. If file already exist, return failure */
+
 static struct dentry *
 pcc_create(struct dentry *base, const char *name, umode_t mode)
 {
@@ -3474,7 +3474,7 @@ static int __pcc_file_reset_projid(struct file *file, __u32 projid)
 	struct inode *inode = d_inode(dentry);
 	int rc;
 
-	/* project quota not supported on backing filesystem */
+	
 	if (!inode->i_op->fileattr_set)
 		return -EOPNOTSUPP;
 
@@ -3484,7 +3484,7 @@ static int __pcc_file_reset_projid(struct file *file, __u32 projid)
 	mm_segment_t old_fs;
 	int rc;
 
-	/* project quota not supported on backing filesystem */
+	
 	if (!file->f_op->unlocked_ioctl)
 		return -EOPNOTSUPP;
 
@@ -3497,7 +3497,7 @@ static int __pcc_file_reset_projid(struct file *file, __u32 projid)
 	return rc;
 }
 
-/* Set the project ID for PCC copy.*/
+
 static int pcc_file_reset_projid(struct pcc_dataset *dataset, struct file *file,
 				 __u32 projid)
 {
@@ -3604,7 +3604,7 @@ int pcc_inode_create_fini(struct inode *inode, struct pcc_create_attach *pca)
 		GOTO(out_unlock, rc);
 	}
 
-	/* Set the layout generation of newly created file with 0 */
+	
 	pcc_layout_gen_set(pcci, 0);
 
 	rc = pcc_encsize_xattr_set(pcci);
@@ -3645,7 +3645,7 @@ void pcc_create_attach_cleanup(struct super_block *sb,
 		if (rc)
 			CWARN("%s: failed to unlink PCC file %pd: rc = %d\n",
 			      ll_s2sbi(sb)->ll_fsname, pca->pca_dentry, rc);
-		/* ignore the unlink failure */
+		
 		revert_creds(old_cred);
 		dput(pca->pca_dentry);
 	}
@@ -3833,7 +3833,7 @@ int pcc_readwrite_attach(struct file *file, struct inode *inode,
 	if (rc)
 		GOTO(out_dataset_put, rc);
 
-	/* Pause to allow for a race with concurrent HSM remove */
+	
 	CFS_FAIL_TIMEOUT(OBD_FAIL_LLITE_PCC_ATTACH_PAUSE, cfs_fail_val);
 
 	pcc_inode_lock(inode);
@@ -3886,7 +3886,7 @@ int pcc_readwrite_attach_fini(struct file *file, struct inode *inode,
 		GOTO(out_unlock, rc);
 	}
 
-	/* PCC inode may be released due to layout lock revocatioin */
+	
 	if (!pcci)
 		GOTO(out_unlock, rc = -ESTALE);
 
@@ -3975,7 +3975,7 @@ repeat:
 			RETURN(rc);
 
 		rc = ll_layout_refresh(inode, gen);
-	} else { /* Readonly layout */
+	} else { 
 		struct pcc_inode *pcci;
 
 		*gen = clt.cl_layout_gen;

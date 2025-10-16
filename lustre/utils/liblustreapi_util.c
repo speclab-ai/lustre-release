@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2015, Cray Inc, all rights reserved.
  *
  * Copyright (c) 2016, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Misc LGPL-licenced utility functions for liblustreapi.
  *
@@ -25,9 +25,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/syscall.h>
-#include <libgen.h> /* for dirname() */
+#include <libgen.h> 
 #include <lustre/lustreapi.h>
-#include <linux/lustre/lustre_ver.h>	/* only until LUSTRE_VERSION_CODE is gone */
+#include <linux/lustre/lustre_ver.h>	
 #include "lustreapi_internal.h"
 
 /*
@@ -156,7 +156,7 @@ int llapi_get_version(char *buffer, int buffer_size, char **version)
 	}
 
 	rc = llapi_get_version_string(buffer, buffer_size);
-	/* keep old return style for this legacy function */
+	
 	if (rc == -1)
 		rc = -errno;
 	else
@@ -164,7 +164,7 @@ int llapi_get_version(char *buffer, int buffer_size, char **version)
 
 	return rc;
 }
-#endif /* LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 4, 53, 0) */
+#endif 
 
 /*
  * fsname must be specified
@@ -199,7 +199,7 @@ int llapi_search_tgt(const char *fsname, const char *poolname,
 			len = strlen(tgtname);
 	}
 
-	/* You need one or the other to have something in it */
+	
 	if (!poolname && !tgtname) {
 		rc = -EINVAL;
 		goto out;
@@ -403,7 +403,7 @@ int llapi_unlink_foreign(char *name)
 		}
 	}
 
-	/* allow foreign symlink file/dir to be unlinked */
+	
 	if (ioctl(fd, LL_IOC_UNLOCK_FOREIGN)) {
 		llapi_error(LLAPI_MSG_ERROR, errno,
 			    "error on ioctl %#lx for '%s' (%d)",

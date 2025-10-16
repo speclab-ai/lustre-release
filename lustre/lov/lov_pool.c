@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * OST pool methods
  *
@@ -64,7 +64,7 @@ static int pool_cmpfn(struct rhashtable_compare_arg *arg, const void *obj)
 }
 
 static const struct rhashtable_params pools_hash_params = {
-	.key_len	= 1, /* actually variable */
+	.key_len	= 1, 
 	.key_offset	= offsetof(struct lov_pool_desc, pool_name),
 	.head_offset	= offsetof(struct lov_pool_desc, pool_hash),
 	.hashfn		= pool_hashfh,
@@ -131,8 +131,8 @@ void lov_pool_putref(struct lov_pool_desc *pool)
  */
 #define POOL_IT_MAGIC 0xB001CEA0
 struct pool_iterator {
-	int magic; /* POOL_IT_MAGIC */
-	int idx;   /* from 0 to pool_tgt_size - 1 */
+	int magic; 
+	int idx;   
 	struct lov_pool_desc *pool;
 };
 
@@ -160,18 +160,18 @@ static void *pool_proc_next(struct seq_file *s, void *v, loff_t *pos)
 	LASSERTF(iter->magic == POOL_IT_MAGIC, "%08X\n", iter->magic);
 
 	(*pos)++;
-	/* test if end of file */
+	
 	if (*pos > pool_tgt_count(iter->pool))
 		return NULL;
 
-	/* iterate to find a non empty entry */
+	
 	prev_idx = iter->idx;
 	iter->idx++;
 	if (iter->idx >= pool_tgt_count(iter->pool)) {
-		iter->idx = prev_idx; /* we stay on the last entry */
+		iter->idx = prev_idx; 
 		return NULL;
 	}
-	/* return != NULL to continue */
+	
 	return iter;
 }
 
@@ -212,7 +212,7 @@ static void *pool_proc_start(struct seq_file *s, loff_t *pos)
 
 	/* we use seq_file private field to memorized iterator so
 	 * we can free it at stop() */
-	/* /!\ do not forget to restore it to pool before freeing it */
+	
 	s->private = iter;
 	down_read(&pool_tgt_rw_sem(pool));
 	if (*pos > 0) {
@@ -320,7 +320,7 @@ static const struct proc_ops pool_proc_operations = {
 	.proc_lseek	= seq_lseek,
 	.proc_release	= seq_release,
 };
-#endif /* CONFIG_PROC_FS */
+#endif 
 
 static void pools_hash_exit(void *vpool, void *data)
 {
@@ -380,7 +380,7 @@ int lov_pool_new(struct obd_device *obd, char *poolname)
 		GOTO(out_free_pool, rc);
 
 #ifdef CONFIG_PROC_FS
-	/* get ref for /proc file */
+	
 	lov_pool_getref(new_pool);
 	new_pool->pool_proc_entry = lprocfs_add_simple(lov->lov_pool_proc_entry,
 						       poolname, new_pool,
@@ -399,7 +399,7 @@ int lov_pool_new(struct obd_device *obd, char *poolname)
 	lov->lov_pool_count++;
 	spin_unlock(&obd->obd_dev_lock);
 
-	/* Add to hash table only when it is fully ready. */
+	
 	rc = rhashtable_lookup_insert_fast(&lov->lov_pools_hash_body,
 					   &new_pool->pool_hash,
 					   pools_hash_params);
@@ -464,7 +464,7 @@ int lov_pool_del(struct obd_device *obd, char *poolname)
 
 	lov = &(obd->u.lov);
 
-	/* lookup and kill hash reference */
+	
 	rcu_read_lock();
 	pool = rhashtable_lookup(&lov->lov_pools_hash_body, poolname,
 				 pools_hash_params);
@@ -487,7 +487,7 @@ int lov_pool_del(struct obd_device *obd, char *poolname)
 	lov->lov_pool_count--;
 	spin_unlock(&obd->obd_dev_lock);
 
-	/* release last reference */
+	
 	lov_pool_putref(pool);
 
 	RETURN(0);
@@ -525,7 +525,7 @@ int lov_pool_add(struct obd_device *obd, char *poolname, char *ostname)
 
 	obd_str2uuid(&ost_uuid, ostname);
 
-	/* search ost in lov array */
+	
 	lov_tgts_getref(obd);
 	lov_foreach_tgt(lov, tgt) {
 		if (obd_uuid_equals(&ost_uuid, &tgt->ltd_uuid)) {
@@ -575,7 +575,7 @@ int lov_pool_remove(struct obd_device *obd, char *poolname, char *ostname)
 	int rc = -EINVAL;
 
 	ENTRY;
-	/* lookup and kill hash reference */
+	
 	rcu_read_lock();
 	pool = rhashtable_lookup(&lov->lov_pools_hash_body, poolname,
 				 pools_hash_params);
@@ -588,7 +588,7 @@ int lov_pool_remove(struct obd_device *obd, char *poolname, char *ostname)
 	obd_str2uuid(&ost_uuid, ostname);
 
 	lov_tgts_getref(obd);
-	/* search ost in lov array, to get index */
+	
 	lov_foreach_tgt(lov, tgt) {
 		if (obd_uuid_equals(&ost_uuid, &tgt->ltd_uuid)) {
 			rc = 0;

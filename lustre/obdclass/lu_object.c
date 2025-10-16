@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Object.
  * These are the only exported functions, they provide some generic
@@ -223,7 +223,7 @@ still_active:
 				       obj_hash_params);
 
 	spin_unlock(&bkt->lsb_waitq.lock);
-	/* Object was already removed from hash above, can kill it. */
+	
 	lu_object_free(env, orig);
 }
 EXPORT_SYMBOL(lu_object_put);
@@ -296,7 +296,7 @@ static struct lu_object *lu_object_alloc(const struct lu_env *env,
 		return ERR_PTR(-ENOMEM);
 	if (IS_ERR(top))
 		return top;
-	/* The only place where obj fid is assigned. It's constant after this */
+	
 	top->lo_header->loh_fid = *f;
 
 	return top;
@@ -358,7 +358,7 @@ next:
 	return 0;
 }
 
-/* Free an object. */
+
 static void lu_object_free(const struct lu_env *env, struct lu_object *o)
 {
 	wait_queue_head_t *wq;
@@ -370,7 +370,7 @@ static void lu_object_free(const struct lu_env *env, struct lu_object *o)
 	site = o->lo_dev->ld_site;
 	layers = &o->lo_header->loh_layers;
 	wq = lu_site_wq_from_fid(site, &o->lo_header->loh_fid);
-	/* First call ->loo_object_delete() method to release all resources. */
+	
 	list_for_each_entry_reverse(scan, layers, lo_linkage) {
 		if (scan->lo_ops->loo_object_delete != NULL)
 			scan->lo_ops->loo_object_delete(env, scan);
@@ -488,10 +488,10 @@ again:
 	mutex_unlock(&s->ls_purge_mutex);
 
 	if (nr != 0 && did_sth && start != 0) {
-		start = 0; /* restart from the first bucket */
+		start = 0; 
 		goto again;
 	}
-	/* race on s->ls_purge_start, but nobody cares */
+	
 	s->ls_purge_start = i & (s->ls_bkt_cnt - 1);
 out:
 	return nr;
@@ -524,11 +524,11 @@ enum {
 };
 
 struct lu_cdebug_data {
-	/* Temporary buffer */
+	
 	char lck_area[LU_CDEBUG_LINE];
 };
 
-/* context key constructor/destructor: lu_global_key_init, lu_global_key_fini */
+
 LU_KEY_INIT_FINI(lu_global, struct lu_cdebug_data);
 
 /*
@@ -542,7 +542,7 @@ static struct lu_context_key lu_global_key = {
 	.lct_fini = lu_global_key_fini
 };
 
-/* Printer function emitting messages through libcfs_debug_msg(). */
+
 int lu_cdebug_printer(const struct lu_env *env,
 		      void *cookie, const char *format, ...)
 {
@@ -559,7 +559,7 @@ int lu_cdebug_printer(const struct lu_env *env,
 
 	used = strlen(key->lck_area);
 	complete = format[strlen(format) - 1] == '\n';
-	/* Append new chunk to the buffer. */
+	
 	vsnprintf(key->lck_area + used,
 		  ARRAY_SIZE(key->lck_area) - used, format, args);
 	if (complete) {
@@ -572,7 +572,7 @@ int lu_cdebug_printer(const struct lu_env *env,
 }
 EXPORT_SYMBOL(lu_cdebug_printer);
 
-/* Print object header. */
+
 void lu_object_header_print(const struct lu_env *env, void *cookie,
 			    lu_printer_t printer,
 			    const struct lu_object_header *hdr)
@@ -587,7 +587,7 @@ void lu_object_header_print(const struct lu_env *env, void *cookie,
 }
 EXPORT_SYMBOL(lu_object_header_print);
 
-/* Print human readable representation of the \a o to the \a printer. */
+
 void lu_object_print(const struct lu_env *env, void *cookie,
 		     lu_printer_t printer, const struct lu_object *o)
 {
@@ -600,7 +600,7 @@ void lu_object_print(const struct lu_env *env, void *cookie,
 	(*printer)(env, cookie, "{\n");
 
 	list_for_each_entry(o, &top->loh_layers, lo_linkage) {
-		/* print '.' \a depth times followed by type name and address */
+		
 		(*printer)(env, cookie, "%*.*s%s@%p", depth, depth, ruler,
 			   o->lo_dev->ld_type->ldt_name, o);
 
@@ -614,7 +614,7 @@ void lu_object_print(const struct lu_env *env, void *cookie,
 }
 EXPORT_SYMBOL(lu_object_print);
 
-/* Check object consistency. */
+
 int lu_object_invariant(const struct lu_object *o)
 {
 	struct lu_object_header *top;
@@ -678,7 +678,7 @@ try_again:
 		h = rhashtable_lookup(&s->ls_obj_hash, f, obj_hash_params);
 
 	if (IS_ERR_OR_NULL(h)) {
-		/* Not found */
+		
 		if (!new)
 			lprocfs_counter_incr(s->ls_stats, LU_SS_CACHE_MISS);
 		rcu_read_unlock();
@@ -716,7 +716,7 @@ try_again:
 		lprocfs_counter_incr(s->ls_stats, LU_SS_CACHE_MISS);
 		return ERR_PTR(-ENOENT);
 	}
-	/* Now protected by spinlock */
+	
 	rcu_read_unlock();
 
 	if (!list_empty(&h->loh_lru)) {
@@ -749,7 +749,7 @@ struct lu_object *lu_object_find(const struct lu_env *env,
 }
 EXPORT_SYMBOL(lu_object_find);
 
-/* Get a 'first' ref to an obj that was found looking through the hash table */
+
 struct lu_object *lu_object_get_first(struct lu_object_header *h,
 				      struct lu_device *dev)
 {
@@ -880,7 +880,7 @@ struct lu_object *lu_object_find_at(const struct lu_env *env,
 		int status = rhashtable_insert_fast(hs, &o->lo_header->loh_hash,
 						    obj_hash_params);
 		if (status)
-			/* Strange error - go the slow way */
+			
 			shadow = htable_lookup(env, dev, bkt, f, o->lo_header);
 		else
 			shadow = ERR_PTR(-ENOENT);
@@ -978,11 +978,11 @@ void lu_device_type_fini(struct lu_device_type *ldt)
 }
 EXPORT_SYMBOL(lu_device_type_fini);
 
-/* Global list of all sites on this node */
+
 static LIST_HEAD(lu_sites);
 static DECLARE_RWSEM(lu_sites_guard);
 
-/* Global environment used by site shrinker. */
+
 static struct lu_env lu_shrink_env;
 
 struct lu_site_print_arg {
@@ -1006,7 +1006,7 @@ lu_site_obj_print(struct lu_object_header *h, struct lu_site_print_arg *arg)
 	}
 }
 
-/* Print all objects in \a s. */
+
 void lu_site_print(const struct lu_env *env, struct lu_site *s, atomic_t *ref,
 		   int msg_flag, lu_printer_t printer)
 {
@@ -1036,7 +1036,7 @@ void lu_site_print(const struct lu_env *env, struct lu_site *s, atomic_t *ref,
 }
 EXPORT_SYMBOL(lu_site_print);
 
-/* Return desired hash table order. */
+
 static void lu_htable_limits(struct lu_device *top)
 {
 	unsigned long cache_size;
@@ -1051,12 +1051,12 @@ static void lu_htable_limits(struct lu_device *top)
 	cache_size = cfs_totalram_pages();
 
 #if BITS_PER_LONG == 32
-	/* limit hashtable size for lowmem systems to low RAM */
+	
 	if (cache_size > 1 << (30 - PAGE_SHIFT))
 		cache_size = 1 << (30 - PAGE_SHIFT) * 3 / 4;
 #endif
 
-	/* clear off unreasonable cache setting. */
+	
 	if (lu_cache_percent == 0 || lu_cache_percent > LU_CACHE_PERCENT_MAX) {
 		CWARN("obdclass: invalid lu_cache_percent: %u, it must be in the range of (0, %u]. Will use default value: %u.\n",
 		      lu_cache_percent, LU_CACHE_PERCENT_MAX,
@@ -1088,7 +1088,7 @@ void lu_dev_del_linkage(struct lu_site *s, struct lu_device *d)
 }
 EXPORT_SYMBOL(lu_dev_del_linkage);
 
-/* Initialize site \a s, with \a d as the top level device.  */
+
 int lu_site_init(struct lu_site *s, struct lu_device *top)
 {
 	struct lu_site_bkt_data *bkt;
@@ -1161,7 +1161,7 @@ int lu_site_init(struct lu_site *s, struct lu_device *top)
 }
 EXPORT_SYMBOL(lu_site_init);
 
-/* Finalize \a s and release its resources. */
+
 void lu_site_fini(struct lu_site *s)
 {
 	down_write(&lu_sites_guard);
@@ -1187,7 +1187,7 @@ void lu_site_fini(struct lu_site *s)
 }
 EXPORT_SYMBOL(lu_site_fini);
 
-/* Called when initialization of stack for this site is completed. */
+
 int lu_site_init_finish(struct lu_site *s)
 {
 	int result;
@@ -1202,14 +1202,14 @@ int lu_site_init_finish(struct lu_site *s)
 }
 EXPORT_SYMBOL(lu_site_init_finish);
 
-/* Acquire additional reference on device \a d */
+
 void lu_device_get(struct lu_device *d)
 {
 	atomic_inc(&d->ld_ref);
 }
 EXPORT_SYMBOL(lu_device_get);
 
-/* Release reference on device \a d. */
+
 void lu_device_put(struct lu_device *d)
 {
 	LASSERT(atomic_read(&d->ld_ref) > 0);
@@ -1217,13 +1217,13 @@ void lu_device_put(struct lu_device *d)
 }
 EXPORT_SYMBOL(lu_device_put);
 
-enum { /* Maximal number of tld slots. */
+enum { 
 	LU_CONTEXT_KEY_NR = 40
 };
 static struct lu_context_key *lu_keys[LU_CONTEXT_KEY_NR] = { NULL, };
 static DECLARE_RWSEM(lu_key_initing);
 
-/* Initialize device \a d of type \a t. */
+
 int lu_device_init(struct lu_device *d, struct lu_device_type *t)
 {
 	if (atomic_add_unless(&t->ldt_device_nr, 1, 0) == 0) {
@@ -1243,7 +1243,7 @@ int lu_device_init(struct lu_device *d, struct lu_device_type *t)
 }
 EXPORT_SYMBOL(lu_device_init);
 
-/* Finalize device \a d. */
+
 void lu_device_fini(struct lu_device *d)
 {
 	struct lu_device_type *t = d->ld_type;
@@ -1263,7 +1263,7 @@ void lu_device_fini(struct lu_device *d)
 }
 EXPORT_SYMBOL(lu_device_fini);
 
-/* Initialize obj o that is part of compound obj h and was created by dev d */
+
 int lu_object_init(struct lu_object *o, struct lu_object_header *h,
 		   struct lu_device *d)
 {
@@ -1277,7 +1277,7 @@ int lu_object_init(struct lu_object *o, struct lu_object_header *h,
 }
 EXPORT_SYMBOL(lu_object_init);
 
-/* Finalize object and release its resources. */
+
 void lu_object_fini(struct lu_object *o)
 {
 	struct lu_device *dev = o->lo_dev;
@@ -1318,7 +1318,7 @@ void lu_object_add(struct lu_object *before, struct lu_object *o)
 }
 EXPORT_SYMBOL(lu_object_add);
 
-/* Initialize compound object. */
+
 int lu_object_header_init(struct lu_object_header *h)
 {
 	memset(h, 0, sizeof(*h));
@@ -1329,7 +1329,7 @@ int lu_object_header_init(struct lu_object_header *h)
 }
 EXPORT_SYMBOL(lu_object_header_init);
 
-/* Finalize compound object. */
+
 void lu_object_header_fini(struct lu_object_header *h)
 {
 	LASSERT(list_empty(&h->loh_layers));
@@ -1337,7 +1337,7 @@ void lu_object_header_fini(struct lu_object_header *h)
 }
 EXPORT_SYMBOL(lu_object_header_fini);
 
-/* Free lu_object_header with proper RCU handling */
+
 void lu_object_header_free(struct lu_object_header *h)
 {
 	lu_object_header_fini(h);
@@ -1393,7 +1393,7 @@ void lu_stack_fini(const struct lu_env *env, struct lu_device *top)
 		lu_device_put(scan);
 	}
 
-	/* purge again. */
+	
 	lu_site_purge(env, site, ~0);
 
 	for (scan = top; scan != NULL; scan = next) {
@@ -1416,7 +1416,7 @@ EXPORT_SYMBOL(lu_stack_fini);
  */
 static atomic_t key_set_version = ATOMIC_INIT(0);
 
-/* Register new key. */
+
 int lu_context_key_register(struct lu_context_key *key)
 {
 	int result;
@@ -1474,7 +1474,7 @@ static void key_fini(struct lu_context *ctx, int index)
 	}
 }
 
-/* Deregister key. */
+
 void lu_context_key_degister(struct lu_context_key *key)
 {
 	LASSERT(atomic_read(&key->lct_used) >= 1);
@@ -1491,7 +1491,7 @@ void lu_context_key_degister(struct lu_context_key *key)
 	atomic_dec(&key->lct_used);
 	wait_var_event(&key->lct_used, atomic_read(&key->lct_used) == 0);
 
-	smp_store_release(&lu_keys[key->lct_index], NULL); /* release key */
+	smp_store_release(&lu_keys[key->lct_index], NULL); 
 }
 EXPORT_SYMBOL(lu_context_key_degister);
 
@@ -1544,7 +1544,7 @@ void lu_context_key_degister_many(struct lu_context_key *k, ...)
 }
 EXPORT_SYMBOL(lu_context_key_degister_many);
 
-/* Revive a number of keys. */
+
 void lu_context_key_revive_many(struct lu_context_key *k, ...)
 {
 	va_list args;
@@ -1558,7 +1558,7 @@ void lu_context_key_revive_many(struct lu_context_key *k, ...)
 }
 EXPORT_SYMBOL(lu_context_key_revive_many);
 
-/* Quiescent a number of keys. */
+
 void lu_context_key_quiesce_many(struct lu_device_type *t,
 				 struct lu_context_key *k, ...)
 {
@@ -1573,7 +1573,7 @@ void lu_context_key_quiesce_many(struct lu_device_type *t,
 }
 EXPORT_SYMBOL(lu_context_key_quiesce_many);
 
-/* Return value associated with key \a key in context \a ctx. */
+
 void *lu_context_key_get(const struct lu_context *ctx,
 			 const struct lu_context_key *key)
 {
@@ -1588,9 +1588,9 @@ EXPORT_SYMBOL(lu_context_key_get);
  * List of remembered contexts.
  */
 
-/* lu_context tracked for lifetime (until module unload) */
+
 static LIST_HEAD(lu_context_remembered);
-/* serialization for above */
+
 static DEFINE_SPINLOCK(lu_context_remembered_guard);
 
 /*
@@ -1684,7 +1684,7 @@ static int keys_fill(struct lu_context *ctx)
 			LASSERT(key->lct_owner != NULL);
 			if (!(ctx->lc_tags & LCT_NOREF) &&
 			    try_module_get(key->lct_owner) == 0) {
-				/* module is unloading, skip this key */
+				
 				continue;
 			}
 
@@ -1719,7 +1719,7 @@ static int keys_init(struct lu_context *ctx)
 	return -ENOMEM;
 }
 
-/* Initialize context data-structure. Create values for all keys. */
+
 int lu_context_init(struct lu_context *ctx, __u32 tags)
 {
 	int	rc;
@@ -1743,7 +1743,7 @@ int lu_context_init(struct lu_context *ctx, __u32 tags)
 }
 EXPORT_SYMBOL(lu_context_init);
 
-/* Finalize context data-structure. Destroy key values. */
+
 void lu_context_fini(struct lu_context *ctx)
 {
 	LINVRNT(ctx->lc_state == LCS_INITIALIZED || ctx->lc_state == LCS_LEFT);
@@ -1752,7 +1752,7 @@ void lu_context_fini(struct lu_context *ctx)
 	if ((ctx->lc_tags & LCT_REMEMBER) == 0) {
 		LASSERT(list_empty(&ctx->lc_remember));
 	} else {
-		/* could race with key degister */
+		
 		spin_lock(&lu_context_remembered_guard);
 		list_del_init(&ctx->lc_remember);
 		spin_unlock(&lu_context_remembered_guard);
@@ -1761,7 +1761,7 @@ void lu_context_fini(struct lu_context *ctx)
 }
 EXPORT_SYMBOL(lu_context_fini);
 
-/* Called before entering context. */
+
 void lu_context_enter(struct lu_context *ctx)
 {
 	LINVRNT(ctx->lc_state == LCS_INITIALIZED || ctx->lc_state == LCS_LEFT);
@@ -1769,7 +1769,7 @@ void lu_context_enter(struct lu_context *ctx)
 }
 EXPORT_SYMBOL(lu_context_enter);
 
-/* Called after exiting from \a ctx */
+
 void lu_context_exit(struct lu_context *ctx)
 {
 	unsigned int i;
@@ -1801,7 +1801,7 @@ void lu_context_exit(struct lu_context *ctx)
 		}
 	}
 
-	smp_store_release(&ctx->lc_state, LCS_LEFT); /* release ownership  */
+	smp_store_release(&ctx->lc_state, LCS_LEFT); 
 	preempt_enable();
 }
 EXPORT_SYMBOL(lu_context_exit);
@@ -1926,7 +1926,7 @@ EXPORT_SYMBOL(lu_env_refill_by_tags);
 
 
 struct lu_env_item {
-	struct task_struct *lei_task;	/* rhashtable key */
+	struct task_struct *lei_task;	
 	struct rhash_head lei_linkage;
 	struct lu_env *lei_env;
 	struct rcu_head lei_rcu_head;
@@ -2141,7 +2141,7 @@ static unsigned long lu_cache_shrink_scan(struct shrinker *sk,
 
 static struct shrinker *lu_site_shrinker;
 
-/* Initialization of global lu_* data. */
+
 int lu_global_init(void)
 {
 	char path[MAX_OBD_NAME];
@@ -2197,7 +2197,7 @@ int lu_global_init(void)
 out_shrinker:
 	ll_shrinker_free(lu_site_shrinker);
 out_env:
-	/* ordering here is explained in lu_global_fini() */
+	
 	lu_context_key_degister(&lu_global_key);
 	down_write(&lu_sites_guard);
 	lu_env_fini(&lu_shrink_env);
@@ -2206,7 +2206,7 @@ out:
 	return result;
 }
 
-/* Dual to lu_global_init(). */
+
 void lu_global_fini(void)
 {
 	ll_shrinker_free(lu_site_shrinker);
@@ -2270,7 +2270,7 @@ int lu_site_stats_seq_print(const struct lu_site *s, struct seq_file *m)
 }
 EXPORT_SYMBOL(lu_site_stats_seq_print);
 
-/* Helper function to initialize a number of kmem slab caches at once. */
+
 int lu_kmem_init(struct lu_kmem_descr *caches)
 {
 	int result;
@@ -2282,7 +2282,7 @@ int lu_kmem_init(struct lu_kmem_descr *caches)
 						     0, 0, NULL);
 		if (*iter->ckd_cache == NULL) {
 			result = -ENOMEM;
-			/* free all previously allocated caches */
+			
 			lu_kmem_fini(caches);
 			break;
 		}
@@ -2297,7 +2297,7 @@ EXPORT_SYMBOL(lu_kmem_init);
  */
 void lu_kmem_fini(struct lu_kmem_descr *caches)
 {
-	/* wait for all RCU callbacks freeing objects are done */
+	
 	rcu_barrier();
 	for (; caches->ckd_cache != NULL; ++caches) {
 		if (*caches->ckd_cache != NULL) {
@@ -2325,14 +2325,14 @@ try_again:
 	rc = rhashtable_lookup_insert_fast(&s->ls_obj_hash,
 					   &o->lo_header->loh_hash,
 					   obj_hash_params);
-	/* supposed to be unique */
+	
 	LASSERT(rc != -EEXIST);
-	/* handle hash table resizing */
+	
 	if (rc == -ENOMEM || rc == -EBUSY) {
 		msleep(20);
 		goto try_again;
 	}
-	/* trim the hash if its growing to big */
+	
 	lu_object_limit(env, o->lo_dev);
 	if (rc == -E2BIG)
 		goto try_again;
@@ -2438,7 +2438,7 @@ int lu_buf_check_and_grow(struct lu_buf *buf, size_t len)
 	if (ptr == NULL)
 		return -ENOMEM;
 
-	/* Free the old buf */
+	
 	if (buf->lb_buf != NULL) {
 		memcpy(ptr, buf->lb_buf, buf->lb_len);
 		OBD_FREE_LARGE(buf->lb_buf, buf->lb_len);

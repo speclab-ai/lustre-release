@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2016, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #ifndef __LNET_API_H__
 #define __LNET_API_H__
@@ -32,7 +32,7 @@
  * @{ */
 int LNetNIInit(lnet_pid_t requested_pid);
 int LNetNIFini(void);
-/** @} lnet_init_fini */
+
 
 /** \defgroup lnet_addr LNet addressing and basic types
  *
@@ -68,7 +68,7 @@ int LNetRegisterNIDUpdates(int (*nid_update_cb)(void *private,
 			   void *cb_data);
 void LNetUnRegisterNIDUpdates(void *cb_data);
 
-/** @} lnet_addr */
+
 
 
 /** \defgroup lnet_me Match entries
@@ -90,7 +90,7 @@ LNetMEAttach(unsigned int portal,
 	     __u64 ignore_bits_in,
 	     enum lnet_unlink unlink_in,
 	     enum lnet_ins_pos pos_in);
-/** @} lnet_me */
+
 
 /** \defgroup lnet_md Memory descriptors
  *
@@ -116,7 +116,7 @@ int LNetMDBind(const struct lnet_md *md_in,
 int LNetMDUnlink(struct lnet_handle_md md_in);
 
 void lnet_assert_handler_unused(lnet_handler_t handler);
-/** @} lnet_md */
+
 
 /** \defgroup lnet_data Data movement operations
  *
@@ -139,7 +139,7 @@ int LNetGet(struct lnet_nid		*self,
 	    __u64			match_bits_in,
 	    unsigned int		offset_in,
 	    bool			recovery);
-/** @} lnet_data */
+
 
 
 /** \defgroup lnet_misc Miscellaneous operations.
@@ -153,7 +153,7 @@ void LNetDebugPeer(struct lnet_processid *id);
 int LNetGetPeerDiscoveryStatus(void);
 void LNetAddPeer(struct lnet_nid *nids, int num_nids);
 
-/** @} lnet_misc */
 
-/** @} lnet */
+
+
 #endif

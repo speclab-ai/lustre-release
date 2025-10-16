@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2024, Amazon and/or its affiliates. All rights reserved.
@@ -216,4 +216,4 @@ struct module_backfs_ops wbcfs_ops = {
 	.enable_quota		= wbcfs_enable_quota,
 	.rename_fsname		= wbcfs_rename_fsname,
 };
-#endif /* PLUGIN_DIR */
+#endif 

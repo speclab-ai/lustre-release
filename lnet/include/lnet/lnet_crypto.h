@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /* Copyright 2012 Xyratex Technology Limited
  *
@@ -11,7 +11,7 @@
 #include <asm/page.h>
 #include <uapi/linux/lnet/lnet-crypto.h>
 
-/* cfs crypto hash descriptor */
+
 struct ahash_request *
 	cfs_crypto_hash_init(enum cfs_crypto_hash_alg hash_alg,
 			     unsigned char *key, unsigned int key_len);

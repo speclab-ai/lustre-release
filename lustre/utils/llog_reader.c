@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 /** \defgroup llog_reader Lustre Log Reader
  *
@@ -268,7 +268,7 @@ int llog_pack_buffer(int fd, struct llog_log_hdr **llog,
 		goto clear_file_buf;
 	}
 
-	/* the llog header not countable here.*/
+	
 	recs_num = count - 1;
 	if (recs_num == 0)
 		return 0;
@@ -330,7 +330,7 @@ int llog_pack_buffer(int fd, struct llog_log_hdr **llog,
 				       idx, len, offset, offset + len);
 				errors++;
 			}
-			/* The header counts only set records */
+			
 		}
 
 		cur_tail = (struct llog_rec_tail *)(ptr + len - sizeof(*cur_tail));
@@ -354,7 +354,7 @@ int llog_pack_buffer(int fd, struct llog_log_hdr **llog,
 			       " but" : ", not");
 			errors++;
 		}
-		/* index may decrease only when crosses index zero in catalog */
+		
 		if (last_idx > idx && idx != 1) {
 			printf("error: rec #%d index is less than last #%d\n",
 			       idx, last_idx);
@@ -382,13 +382,13 @@ int llog_pack_buffer(int fd, struct llog_log_hdr **llog,
 		printf("error: header reports %d records but %d were found\n",
 		       recs_num, i);
 
-	/* don't set rc to output what was found */
+	
 	if (errors)
 		llapi_error(LLAPI_MSG_NO_ERRNO, 0,
 			    "The llog is corrupted, %d errors found", errors);
 
 	*recs = recs_pr;
-	/* don't try to output more recs than was found or allocated */
+	
 	*recs_number = i > recs_num ? recs_num : i;
 
 	return 0;
@@ -430,7 +430,7 @@ void print_llog_header(struct llog_log_hdr *llog_buf)
 	printf("Target uuid : %s\n",
 	       (char *)(&llog_buf->llh_tgtuuid));
 
-	/* Add the other info you want to view here */
+	
 
 	printf("-----------------------\n");
 }
@@ -468,7 +468,7 @@ static char *lustre_cfg_string(struct lustre_cfg *lcfg, __u32 index)
 		size_t last = __ALIGN_KERNEL(lcfg->lcfg_buflens[index], 8) - 1;
 		char lost;
 
-		/* Use the smaller value */
+		
 		if (last > lcfg->lcfg_buflens[index])
 			last = lcfg->lcfg_buflens[index];
 
@@ -781,7 +781,7 @@ static void print_changelog_rec(struct llog_changelog_rec *rec)
 				changelog_rec_openmode(&rec->cr);
 			char mode[] = "---";
 
-			/* exec mode must be exclusive */
+			
 			if (__le32_to_cpu(omd->cr_openflags) & MDS_FMODE_EXEC) {
 				mode[2] = 'x';
 			} else {
@@ -1110,4 +1110,4 @@ static void print_records(struct llog_rec_hdr **recs,
 	}
 }
 
-/** @} llog_reader */
+

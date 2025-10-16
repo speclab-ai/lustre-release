@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Zach Brown <zab@clusterfs.com>
  * Author: Phil Schwan <phil@clusterfs.com>
@@ -49,7 +49,7 @@ static struct task_struct *tctl_task;
 static atomic_t cfs_tage_allocated = ATOMIC_INIT(0);
 static DECLARE_RWSEM(cfs_tracefile_sem);
 
-/* trace file lock routines */
+
 /* The walking argument indicates the locking comes from all tcd types
  * iterator and we must lock it and dissable local irqs to avoid deadlocks
  * with other interrupt locks that might be happening. See LU-1311
@@ -133,7 +133,7 @@ static struct cfs_trace_page *cfs_tage_alloc(gfp_t gfp)
 	struct page            *page;
 	struct cfs_trace_page *tage;
 
-	/* My caller is trying to free memory */
+	
 	if (!in_interrupt() && (current->flags & PF_MEMALLOC))
 		return NULL;
 
@@ -176,7 +176,7 @@ static void cfs_tage_to_tail(struct cfs_trace_page *tage,
 	list_move_tail(&tage->linkage, queue);
 }
 
-/* return a page that has 'len' bytes left at the end */
+
 static struct cfs_trace_page *
 cfs_trace_get_tage_try(struct cfs_trace_cpu_data *tcd, unsigned long len)
 {
@@ -252,7 +252,7 @@ static void cfs_tcd_shrink(struct cfs_trace_cpu_data *tcd)
 	}
 }
 
-/* return a page that has 'len' bytes left at the end */
+
 static struct cfs_trace_page *cfs_trace_get_tage(struct cfs_trace_cpu_data *tcd,
 						 unsigned long len)
 {
@@ -458,7 +458,7 @@ static void debug_format_buffer_put_locked(struct debug_format_buffer *dfb)
 	clear_bit(PF_INUSE, &dfb->dfb_flags);
 }
 
-/* return number of %p to %px replacements or < 0 on error */
+
 static bool rewrite_format(const char *fmt, size_t nfsz, char *new_fmt)
 {
 	const char *p = fmt;
@@ -478,7 +478,7 @@ static bool rewrite_format(const char *fmt, size_t nfsz, char *new_fmt)
 		*q++ = *p++;
 		written++;
 
-		/* Replace %p with %px */
+		
 		if (p[-1] == '%') {
 			if (p[0] == '%') {
 				if (written + 2 >= nfsz)
@@ -519,7 +519,7 @@ static inline const char *debug_format(const char *fmt,
 	if (!strstr(fmt, "%p"))
 		return fmt;
 
-	/* try to rewrite format into buf */
+	
 	dfb_fmt = debug_format_buffer_get_locked();
 	if (dfb_fmt) {
 		size_t len = sizeof(dfb_fmt->dfb_buf) - 1;
@@ -540,11 +540,11 @@ void libcfs_debug_msg(struct libcfs_debug_msg_data *msgdata,
 	struct cfs_trace_cpu_data *tcd = NULL;
 	struct ptldebug_header header = {0};
 	struct cfs_trace_page *tage;
-	/* string_buf is used only if tcd != NULL, and is always set then */
+	
 	char *string_buf = NULL;
 	char *debug_buf;
 	int known_size;
-	int needed = 85; /* seeded with average message length */
+	int needed = 85; 
 	int max_nob;
 	va_list ap;
 	int retry;
@@ -566,7 +566,7 @@ void libcfs_debug_msg(struct libcfs_debug_msg_data *msgdata,
 	 */
 	cfs_set_ptldebug_header(&header, msgdata);
 
-	if (!tcd)                /* arch may not log in IRQ context */
+	if (!tcd)                
 		goto console;
 
 	if (tcd->tcd_cur_pages == 0)
@@ -624,11 +624,11 @@ void libcfs_debug_msg(struct libcfs_debug_msg_data *msgdata,
 			needed = vsnprintf(string_buf, max_nob, format, ap);
 		va_end(ap);
 
-		if (needed < max_nob) /* well. printing ok.. */
+		if (needed < max_nob) 
 			break;
 	}
 
-	/* `needed` is actual bytes written to string_buf */
+	
 	if (unlikely(*(string_buf + needed - 1) != '\n')) {
 		pr_info("Lustre: format at %s:%d:%s doesn't end in newline\n",
 			file, header.ph_line_num, fn);
@@ -661,14 +661,14 @@ void libcfs_debug_msg(struct libcfs_debug_msg_data *msgdata,
 console:
 	if ((header.ph_mask & libcfs_printk) == 0 &&
 	    (header.ph_subsys & libcfs_subsystem_printk) == 0) {
-		/* no console output requested */
+		
 		if (tcd != NULL)
 			cfs_trace_put_tcd(tcd);
 		goto out;
 	}
 
 	if (cdls != NULL) {
-		/* avoid unlikely case of many errors between printing */
+		
 		if (unlikely(cdls->cdls_count < 0 &&
 			     cdls->cdls_count >= -600)) {
 			cdls->cdls_next = jiffies +
@@ -676,9 +676,9 @@ console:
 			cdls->cdls_count = 1;
 		}
 		if (libcfs_console_ratelimit &&
-		    cdls->cdls_next != 0 &&	/* not first time ever */
+		    cdls->cdls_next != 0 &&	
 		    time_before(jiffies, cdls->cdls_next)) {
-			/* skipping a console message */
+			
 			cdls->cdls_count++;
 			if (tcd != NULL)
 				cfs_trace_put_tcd(tcd);
@@ -688,7 +688,7 @@ console:
 		if (time_after(jiffies, cdls->cdls_next +
 					libcfs_console_max_delay +
 					cfs_time_seconds(10))) {
-			/* last timeout was a long time ago */
+			
 			cdls->cdls_delay /= libcfs_console_backoff * 4;
 		} else {
 			cdls->cdls_delay *= libcfs_console_backoff;
@@ -699,7 +699,7 @@ console:
 		else if (cdls->cdls_delay > libcfs_console_max_delay)
 			cdls->cdls_delay = libcfs_console_max_delay;
 
-		/* ensure cdls_next is never zero after it's been seen */
+		
 		cdls->cdls_next = (jiffies + cdls->cdls_delay) | 1;
 	}
 
@@ -746,7 +746,7 @@ cfs_trace_assertion_failed(const char *str,
 
 	panic("Lustre debug assertion failure\n");
 
-	/* not reached */
+	
 }
 
 static void
@@ -887,7 +887,7 @@ void cfs_trace_debug_print(void)
 	}
 	up_write(&cfs_tracefile_sem);
 }
-#endif /* LNET_DUMP_ON_PANIC */
+#endif 
 
 int cfs_tracefile_dump_all_pages(char *filename)
 {
@@ -1262,7 +1262,7 @@ int cfs_trace_start_thread(void)
 	if (IS_ERR(tsk))
 		rc = -ECHILD;
 	else if (cmpxchg(&tctl_task, NULL, tsk) != NULL)
-		/* already running */
+		
 		kthread_stop(tsk);
 	else
 		wake_up_process(tsk);
@@ -1281,11 +1281,11 @@ void cfs_trace_stop_thread(void)
 	}
 }
 
-/* percents to share the total debug memory for each type */
+
 static unsigned int pages_factor[CFS_TCD_TYPE_CNT] = {
-	80, /* 80% pages for CFS_TCD_TYPE_PROC */
-	10, /* 10% pages for CFS_TCD_TYPE_SOFTIRQ */
-	10  /* 10% pages for CFS_TCD_TYPE_IRQ */
+	80, 
+	10, 
+	10  
 };
 
 int cfs_tracefile_init(int max_pages)
@@ -1294,7 +1294,7 @@ int cfs_tracefile_init(int max_pages)
 	int i;
 	int j;
 
-	/* initialize trace_data */
+	
 	memset(cfs_trace_data, 0, sizeof(cfs_trace_data));
 	for (i = 0; i < CFS_TCD_TYPE_CNT; i++) {
 		cfs_trace_data[i] =
@@ -1305,7 +1305,7 @@ int cfs_tracefile_init(int max_pages)
 			goto out_trace_data;
 	}
 
-	/* arch related info initialized */
+	
 	cfs_tcd_for_each(tcd, i, j) {
 		int factor = pages_factor[i];
 
@@ -1360,7 +1360,7 @@ static void trace_cleanup_on_all_cpus(void)
 	for_each_possible_cpu(cpu) {
 		cfs_tcd_for_each_type_lock(tcd, i, cpu) {
 			if (!tcd->tcd_pages_factor)
-				/* Not initialised */
+				
 				continue;
 			tcd->tcd_shutting_down = 1;
 

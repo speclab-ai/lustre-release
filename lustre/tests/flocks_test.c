@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2014, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <errno.h>
@@ -35,7 +35,7 @@ static double now(void)
 	return (double)tv.tv_sec + (double)tv.tv_usec / 1000000;
 }
 
-/* helper functions */
+
 static int t_fcntl(int fd, int cmd, ...)
 {
 	va_list ap;
@@ -199,7 +199,7 @@ static void *t2_thread1(void *arg)
 	lock->l_type = F_WRLCK;
 	t_fcntl(fd, F_SETLKW, lock);
 	printf("thread 1: set write lock done: rc = %d\n", ti->rc);
-	(void)t_fcntl(fd, F_GETLK, lock); /* ignore this, operation will fail */
+	(void)t_fcntl(fd, F_GETLK, lock); 
 	printf("thread 1: unlock: rc = %d\n", ti->rc);
 	lock->l_type = F_UNLCK;
 	ti->rc += t_fcntl(fd, F_SETLK, lock);
@@ -225,7 +225,7 @@ static void *t2_thread2(void *arg)
 	lock->l_type = F_WRLCK;
 	ti->rc += t_fcntl(fd, F_SETLK, lock);
 	printf("thread 2: set write lock done: rc = %d\n", ti->rc);
-	(void)t_fcntl(fd, F_GETLK, lock); /* ignore this, operation will fail */
+	(void)t_fcntl(fd, F_GETLK, lock); 
 
 	if (ti->rc)
 		fprintf(stdout, "thread2 exiting with rc = %d\n", ti->rc);
@@ -610,7 +610,7 @@ int _op_fds(int num, void *ptr)
 		fdn = 0;
 		return 0;
 	}
-	if (num <= 0) /* Invlid value, ignore */
+	if (num <= 0) 
 		return 0;
 
 	if (getrlimit(RLIMIT_NOFILE, &rlb)) {
@@ -631,7 +631,7 @@ int _op_fds(int num, void *ptr)
 	}
 	for (i = 0; i < fdn; i++) {
 		if (fds[i] == num) {
-			cfd = i; /* Already open */
+			cfd = i; 
 			return 0;
 		}
 	}
@@ -674,10 +674,10 @@ int set_lock(struct flock *lock, char *buf)
 		{ 'W', F_WRLCK },
 		{ 'R', F_RDLCK },
 		{ 'U', F_UNLCK },
-		{ 'S', 0 },	// setrlimit
-		{ 'F', 0 },	// file select
-		{ 'T', 0 },     // test lock
-		{ 'P', 0 },     // pause
+		{ 'S', 0 },	
+		{ 'F', 0 },	
+		{ 'T', 0 },     
+		{ 'P', 0 },     
 		{ 0, 0 }
 	};
 
@@ -695,7 +695,7 @@ int set_lock(struct flock *lock, char *buf)
 			lock->l_start = atol(head);
 			if (lock->l_start < 0)
 				break;
-			/* for special tag */
+			
 			if (tags[v].tag == 'S') {
 				struct rlimit rlb;
 
@@ -853,7 +853,7 @@ static void usage(void)
 		"usage: flocks_test test# [corresponding arguments]\n");
 }
 
-/* program entry */
+
 int main(int argc, char *argv[])
 {
 	int rc = EXIT_SUCCESS;

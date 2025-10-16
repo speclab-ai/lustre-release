@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre directory restripe and auto-split
  */
@@ -12,7 +12,7 @@
 #include <linux/kthread.h>
 #include "mdt_internal.h"
 
-/* add directory into splitting list and wake up restripe thread */
+
 void mdt_auto_split_add(struct mdt_thread_info *info, struct mdt_object *o)
 {
 	struct mdt_device *mdt = info->mti_mdt;
@@ -65,7 +65,7 @@ void mdt_restripe_update_add(struct mdt_thread_info *info,
 
 	spin_lock(&restriper->mdr_lock);
 	if (!o->mot_restriping) {
-		/* update LMV */
+		
 		o->mot_restriping = 1;
 		mdt_object_get(NULL, o);
 		if (list_empty(&restriper->mdr_updating))
@@ -118,7 +118,7 @@ static void mdt_auto_split_prep(struct mdt_thread_info *info,
 	spec->sp_migrate_close = 0;
 }
 
-/* restripe directory: split or merge stripes */
+
 int mdt_restripe_internal(struct mdt_thread_info *info,
 			  struct mdt_object *parent,
 			  struct mdt_object *child,
@@ -145,23 +145,23 @@ int mdt_restripe_internal(struct mdt_thread_info *info,
 		if (!lmv_is_sane(lmv))
 			RETURN(-EBADF);
 
-		/* don't allow restripe if dir layout is changing */
+		
 		if (lmv_is_layout_changing(lmv))
 			RETURN(-EBUSY);
 
-		/* check whether stripe count and hash unchanged */
+		
 		if (lum->lum_stripe_count == lmv->lmv_stripe_count &&
 		    lum->lum_hash_type == lmv->lmv_hash_type)
 			RETURN(-EALREADY);
 
 		lmv_stripe_count = le32_to_cpu(lmv->lmv_stripe_count);
 	} else if (le32_to_cpu(lum->lum_stripe_count) < 2) {
-		/* stripe count unchanged for plain directory */
+		
 		RETURN(-EALREADY);
 	}
 
 	if (le32_to_cpu(lum->lum_stripe_count) > lmv_stripe_count) {
-		/* split */
+		
 		struct md_layout_change *mlc = &info->mti_mlc;
 		struct mdt_object *tobj = NULL;
 		s64 mtime = ma->ma_attr.la_mtime;
@@ -175,7 +175,7 @@ int mdt_restripe_internal(struct mdt_thread_info *info,
 		if (!(ma->ma_valid & MA_INODE))
 			RETURN(-EBADF);
 
-		/* mtime is from from client or set outside */
+		
 		ma->ma_attr.la_mtime = mtime;
 
 		if (!lmv_stripe_count) {
@@ -209,7 +209,7 @@ int mdt_restripe_internal(struct mdt_thread_info *info,
 		else
 			*tfid = *mdt_object_fid(child);
 	} else {
-		/* merge only needs to override LMV */
+		
 		struct lu_buf *buf = &info->mti_buf;
 		__u32 version;
 
@@ -217,7 +217,7 @@ int mdt_restripe_internal(struct mdt_thread_info *info,
 		lmv = &ma->ma_lmv->lmv_md_v1;
 		version = cpu_to_le32(lmv->lmv_layout_version);
 
-		/* adjust 0 to 1 */
+		
 		if (lum->lum_stripe_count == 0)
 			lum->lum_stripe_count = cpu_to_le32(1);
 
@@ -287,7 +287,7 @@ static int mdt_auto_split(struct mdt_thread_info *info)
 		GOTO(out, rc);
 
 	if (ma->ma_valid & MA_LMV) {
-		/* stripe dirent exceeds threshold, find its master object */
+		
 		struct lmv_mds_md_v1 *lmv = &ma->ma_lmv->lmv_md_v1;
 
 		/* auto-split won't be done on striped directory master object
@@ -298,7 +298,7 @@ static int mdt_auto_split(struct mdt_thread_info *info)
 		if (le32_to_cpu(lmv->lmv_magic) != LMV_MAGIC_STRIPE)
 			GOTO(out, rc = -EINVAL);
 
-		/* race with migrate? */
+		
 		if (lmv_hash_is_migrating(cpu_to_le32(lmv->lmv_hash_type)))
 			GOTO(out, rc = -EBUSY);
 
@@ -310,7 +310,7 @@ static int mdt_auto_split(struct mdt_thread_info *info)
 		stripe = child;
 		child = NULL;
 
-		/* get master object FID from linkea */
+		
 		rc = mdt_attr_get_pfid(info, stripe, &ma->ma_pfid);
 		if (rc)
 			GOTO(out, rc);
@@ -321,7 +321,7 @@ static int mdt_auto_split(struct mdt_thread_info *info)
 
 		spin_lock(&restriper->mdr_lock);
 		if (child->mot_restriping) {
-			/* race? */
+			
 			spin_unlock(&restriper->mdr_lock);
 			GOTO(out, rc = -EBUSY);
 		}
@@ -336,7 +336,7 @@ static int mdt_auto_split(struct mdt_thread_info *info)
 			GOTO(restriping_clear, rc = -EREMOTE);
 	}
 
-	/* striped directory split adds mdr_auto_split_delta stripes */
+	
 	lum_stripe_count = min_t(unsigned int,
 				lmv_stripe_count +
 					mdt->mdt_restriper.mdr_dir_split_delta,
@@ -344,7 +344,7 @@ static int mdt_auto_split(struct mdt_thread_info *info)
 	if (lmv_stripe_count >= lum_stripe_count)
 		GOTO(restriping_clear, rc = -EALREADY);
 
-	/* get dir name and parent FID */
+	
 	rc = mdt_attr_get_pfid_name(info, child, fid, lname);
 	if (rc)
 		GOTO(restriping_clear, rc);
@@ -406,7 +406,7 @@ out:
 		LASSERT(stripe->mot_restriping);
 		LASSERT(list_empty(&stripe->mot_restripe_linkage));
 		stripe->mot_restriping = 0;
-		/* lock may not be taken, don't cache stripe LMV */
+		
 		mo_invalidate(env, mdt_object_child(stripe));
 		mdt_object_put(env, stripe);
 	}
@@ -417,7 +417,7 @@ out:
 	return rc;
 }
 
-/* sub-files under one stripe are migrated, clear MIGRATION flag in its LMV */
+
 static int mdt_restripe_migrate_finish(struct mdt_thread_info *info,
 				       struct mdt_object *stripe,
 				       struct lmv_mds_md_v1 *lmv)
@@ -495,7 +495,7 @@ static void mdt_restripe_migrate_prep(struct mdt_thread_info *info,
 	spec->sp_cr_flags = MDS_OPEN_HAS_EA;
 	spec->no_create = 0;
 	spec->sp_migrate_close = 0;
-	/* if 'nsonly' is set, don't migrate inode */
+	
 	if (S_ISDIR(type))
 		spec->sp_migrate_nsonly = 1;
 	else
@@ -503,7 +503,7 @@ static void mdt_restripe_migrate_prep(struct mdt_thread_info *info,
 			info->mti_mdt->mdt_dir_restripe_nsonly;
 }
 
-/* migrate sub-file from @mdr_restripe_offset */
+
 static int mdt_restripe_migrate(struct mdt_thread_info *info)
 {
 	const struct lu_env *env = info->mti_env;
@@ -535,7 +535,7 @@ static int mdt_restripe_migrate(struct mdt_thread_info *info)
 	stripe = list_entry(restriper->mdr_migrating.next, typeof(*stripe),
 			    mot_restripe_linkage);
 
-	/* get master object FID and stripe name */
+	
 	rc = mdt_attr_get_pfid_name(info, stripe, &fid1, lname);
 	if (rc)
 		GOTO(out, rc);
@@ -553,7 +553,7 @@ static int mdt_restripe_migrate(struct mdt_thread_info *info)
 		idx = idx * 10 + lname->ln_name[len++] - '0';
 	};
 
-	/* check whether stripe is newly created in split */
+	
 	rc = mdt_stripe_get(info, stripe, ma, XATTR_NAME_LMV);
 	if (rc)
 		GOTO(out, rc);
@@ -625,7 +625,7 @@ static int mdt_restripe_migrate(struct mdt_thread_info *info)
 		GOTO(out, rc = -EBADF);
 	}
 
-	/* copy name out because it should end with '\0' */
+	
 	memcpy(info->mti_filename, name, namelen);
 	info->mti_filename[namelen] = '\0';
 	lname->ln_name = info->mti_filename;
@@ -646,7 +646,7 @@ static int mdt_restripe_migrate(struct mdt_thread_info *info)
 	mdt_restripe_migrate_prep(info, &fid1, &fid2, lname, type, lmv);
 
 	rc = mdt_reint_migrate(info, NULL);
-	/* mti_big_buf is allocated in XATTR migration */
+	
 	if (unlikely(info->mti_big_buf.lb_buf))
 		lu_buf_free(&info->mti_big_buf);
 	if (rc == -EALREADY)
@@ -661,7 +661,7 @@ static int mdt_restripe_migrate(struct mdt_thread_info *info)
 			break;
 
 		namelen = le16_to_cpu(ent->lde_namelen);
-	} while (namelen == 0); /* Skip dummy record */
+	} while (namelen == 0); 
 
 	if (ent)
 		stripe->mot_restripe_offset = le64_to_cpu(ent->lde_hash);
@@ -680,7 +680,7 @@ out:
 		kaddr = NULL;
 	}
 	if (rc) {
-		/* -EBUSY: file is opened by others */
+		
 		if (rc != -EBUSY)
 			CERROR("%s: migrate "DFID"/"DNAME" failed: rc = %d\n",
 			       mdt_obd_name(mdt), PFID(&fid1),
@@ -776,7 +776,7 @@ static int mdt_restripe_layout_update(struct mdt_thread_info *info)
 	if (!lmv_is_restriping(lmv))
 		GOTO(out, rc = -EINVAL);
 
-	/* use different buffer to store stripe LMV */
+	
 	ma->ma_lmv = &restriper->mdr_lmv;
 	ma->ma_lmv_size = sizeof(restriper->mdr_lmv);
 	for (i = 0; i < le32_to_cpu(lmv->lmv_stripe_count); i++) {
@@ -787,7 +787,7 @@ static int mdt_restripe_layout_update(struct mdt_thread_info *info)
 
 		ma->ma_valid = 0;
 		rc = __mdt_stripe_get(info, stripe, ma, XATTR_NAME_LMV);
-		/* LMV is checked without lock, don't cache it */
+		
 		mo_invalidate(env, mdt_object_child(stripe));
 		mdt_object_put(env, stripe);
 		if (rc)
@@ -796,7 +796,7 @@ static int mdt_restripe_layout_update(struct mdt_thread_info *info)
 		if (!(ma->ma_valid & MA_LMV))
 			GOTO(out, rc = -ENODATA);
 
-		/* check MIGRATION flag cleared on all stripes */
+		
 		if (lmv_is_restriping(&ma->ma_lmv->lmv_md_v1))
 			GOTO(out, rc = -EINPROGRESS);
 	}
@@ -911,7 +911,7 @@ int mdt_restriper_start(struct mdt_device *mdt)
 	uc->uc_umask = 0644;
 	uc->uc_ginfo = NULL;
 	uc->uc_identity = NULL;
-	/* do not let rbac interfere with restriper internal processing */
+	
 	uc->uc_rbac_file_perms = 1;
 	uc->uc_rbac_dne_ops = 1;
 	uc->uc_rbac_quota_ops = 1;

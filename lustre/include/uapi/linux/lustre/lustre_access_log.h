@@ -1,7 +1,7 @@
-/* SPDX-License-Identifier: LGPL-2.1+ WITH Linux-syscall-note */
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTRE_ACCESS_LOG_H
@@ -25,16 +25,16 @@ enum ofd_access_flags {
 };
 
 struct ofd_access_entry_v1 {
-	struct lu_fid	oae_parent_fid; /* 16 */
-	__u64		oae_begin; /* 24 */
-	__u64		oae_end; /* 32 */
-	__u64		oae_time; /* 40 */
-	__u32		oae_size; /* 44 */
-	__u32		oae_segment_count; /* 48 */
-	__u32		oae_flags; /* 52 enum ofd_access_flags */
-	__u32		oae_reserved1; /* 56 */
-	__u32		oae_reserved2; /* 60 */
-	__u32		oae_reserved3; /* 64 */
+	struct lu_fid	oae_parent_fid; 
+	__u64		oae_begin; 
+	__u64		oae_end; 
+	__u64		oae_time; 
+	__u32		oae_size; 
+	__u32		oae_segment_count; 
+	__u32		oae_flags; 
+	__u32		oae_reserved1; 
+	__u32		oae_reserved2; 
+	__u32		oae_reserved3; 
 };
 
 /* The name of the subdirectory of devtmpfs (/dev) containing the
@@ -49,12 +49,12 @@ enum {
 };
 
 struct lustre_access_log_info_v1 {
-	__u32	lali_version; /* LUSTRE_ACCESS_LOG_VERSION_1 */
-	__u32	lali_type; /* LUSTRE_ACCESS_LOG_TYPE_OFD */
-	char	lali_name[LUSTRE_ACCESS_LOG_NAME_SIZE]; /* obd_name */
+	__u32	lali_version; 
+	__u32	lali_type; 
+	char	lali_name[LUSTRE_ACCESS_LOG_NAME_SIZE]; 
 	__u32	lali_log_size;
 	__u32	lali_entry_size;
-	 /* underscore prefix members are for test and debug only */
+	 
 	__u32	_lali_head;
 	__u32	_lali_tail;
 	__u32	_lali_entry_space;
@@ -63,9 +63,9 @@ struct lustre_access_log_info_v1 {
 	__u32	_lali_is_closed;
 };
 
-/* /dev/lustre-access-log/control ioctl: return lustre access log */
+
 enum {
-	/* return lustre access log interface version. */
+	
 	LUSTRE_ACCESS_LOG_IOCTL_VERSION = _IO('O', 0x81),
 
 	/* return device major used for access log devices.
@@ -92,4 +92,4 @@ enum {
 	LUSTRE_ACCESS_LOG_IOCTL_FILTER = _IOW('O', 0x85, __u32),
 };
 
-#endif /* _LUSTRE_ACCESS_LOG_H */
+#endif 

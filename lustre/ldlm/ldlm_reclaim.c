@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2015, Intel Corporation.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Niu Yawei <yawei.niu@intel.com>
  */
@@ -37,7 +37,7 @@
 
 #ifdef HAVE_SERVER_SUPPORT
 
-/* Lock count is stored in ldlm_reclaim_threshold & ldlm_lock_limit */
+
 __u64 ldlm_reclaim_threshold;
 __u64 ldlm_lock_limit;
 
@@ -139,7 +139,7 @@ static int ldlm_reclaim_lock_cb(struct cfs_hash *hs, struct cfs_hash_bd *bd,
 			list_add(&lock->l_rk_ast, &data->rcd_rpc_list);
 			ldlm_lock_get(lock);
 			if (++data->rcd_added == data->rcd_total) {
-				rc = 1; /* stop the iteration */
+				rc = 1; 
 				break;
 			}
 		}
@@ -398,7 +398,7 @@ void ldlm_reclaim_cleanup(void)
 	percpu_counter_destroy(&ldlm_granted_total);
 }
 
-#else /* HAVE_SERVER_SUPPORT */
+#else 
 
 bool ldlm_reclaim_full(void)
 {
@@ -422,4 +422,4 @@ void ldlm_reclaim_cleanup(void)
 {
 }
 
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 

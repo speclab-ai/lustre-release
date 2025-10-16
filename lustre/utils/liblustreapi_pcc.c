@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2017, DDN Storage Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for Persistent Client Cache.
  *
@@ -54,7 +54,7 @@ static int llapi_pcc_attach_rw_fd(int fd, __u32 archive_id)
 	data->lil_ids[0] = archive_id;
 	rc = llapi_lease_set(fd, data);
 	if (rc <= 0) {
-		if (rc == 0) /* lost lease lock */
+		if (rc == 0) 
 			rc = -EBUSY;
 		llapi_error(LLAPI_MSG_ERROR, rc,
 			    "cannot attach with ID: %u", archive_id);
@@ -244,7 +244,7 @@ int llapi_pcc_detach_fd(int fd, __u32 flags)
 
 	detach.pccd_flags = flags;
 	rc = ioctl(fd, LL_IOC_PCC_DETACH, &detach);
-	/* If error, save errno value */
+	
 	rc = rc ? -errno : 0;
 
 	return rc;
@@ -380,7 +380,7 @@ int llapi_pcc_state_get_fd(int fd, struct lu_pcc_state *state)
 	int rc;
 
 	rc = ioctl(fd, LL_IOC_PCC_STATE, state);
-	/* If error, save errno value */
+	
 	rc = rc ? -errno : 0;
 
 	return rc;
@@ -465,7 +465,7 @@ int llapi_pccdev_set(const char *mntpath, const char *cmd)
 			llapi_error(LLAPI_MSG_ERROR, rc,
 				    "error: setting llite.%s.pcc='%s'",
 				    buf, cmd);
-	} else if (count < strlen(cmd)) { /* Truncate case */
+	} else if (count < strlen(cmd)) { 
 		rc = -EINVAL;
 		llapi_error(LLAPI_MSG_ERROR, rc,
 			    "setting llite.%s.pcc='%s': wrote only %zd",
@@ -483,7 +483,7 @@ out:
 int llapi_pccdev_get(const char *mntpath)
 {
 	char pathbuf[sizeof(struct obd_uuid)];
-	char buf[65536]; /* large engough to hold PPC dev list */
+	char buf[65536]; 
 	glob_t path;
 	int fd;
 	int rc;
@@ -499,7 +499,7 @@ int llapi_pccdev_get(const char *mntpath)
 	if (rc != 0)
 		return -errno;
 
-	/* Read the contents of file to stdout */
+	
 	fd = open(path.gl_pathv[0], O_RDONLY);
 	if (fd < 0) {
 		rc = -errno;
@@ -549,7 +549,7 @@ static int llapi_pcc_scan_detach(const char *pname, const char *fname,
 	bool lov_file;
 	int rc;
 
-	/* It is the saved lov file when archive on HSM backend. */
+	
 	detach.pccd_flags = PCC_DETACH_FL_UNCACHE;
 	lov_file = endswith(fname, ".lov");
 	if (lov_file) {
@@ -610,7 +610,7 @@ static int llapi_pcc_scan_detach(const char *pname, const char *fname,
 		if (detach.pccd_flags & PCC_DETACH_FL_KNOWN_READWRITE) {
 			snprintf(fullname, sizeof(fullname), "%s/%s",
 				 pname, fname);
-			/* Remove *.lov file */
+			
 			unlink(fullname);
 		}
 	}
@@ -731,7 +731,7 @@ static int llapi_pcc_yaml_cb_helper(struct pcc_cmd_handler *pch)
 	}
 
 out_free:
-	/* Not found the given PCC backend on the client. */
+	
 	if (pch->pch_iter_cont && (pch->pch_cmd == PCC_CMD_DEL ||
 	    pch->pch_cmd == PCC_CMD_BACKEND_SELECT))
 		rc = -ENOENT;
@@ -819,7 +819,7 @@ static int llapi_pcc_yaml_backend_get(struct cYAML *node,
 {
 	struct cYAML *pccid;
 
-	/* TODO: check the flags of PCC backends. */
+	
 	pccid = cYAML_get_object_item(node, pch->pch_type == LU_PCC_READWRITE ?
 				      PCC_YAML_RWID : PCC_YAML_ROID);
 	if (!pccid || pccid->cy_valueint == 0)
@@ -965,7 +965,7 @@ int llapi_pcc_pin_file(const char *path, __u32 id)
 		goto out;
 	}
 
-	/* Now we have an valid pin object, search for existing entry */
+	
 	for (node = yaml->cy_child; node != NULL; node = node->cy_next) {
 		if (strcmp(node->cy_string, PIN_YAML_HSM_STR) == 0 &&
 		    node->cy_valueint == id)
@@ -1014,7 +1014,7 @@ int llapi_pcc_unpin_file(const char *path, __u32 id)
 		goto out;
 	}
 
-	/* We have an valid pin object, search for the entry to be deleted */
+	
 	for (node = yaml->cy_child; node != NULL; node = node->cy_next) {
 		if (strcmp(node->cy_string, PIN_YAML_HSM_STR) == 0 &&
 		    node->cy_valueint == id)
@@ -1025,14 +1025,14 @@ int llapi_pcc_unpin_file(const char *path, __u32 id)
 		goto out;
 	}
 
-	/* Remove the node */
+	
 	if (node == yaml->cy_child) {
-		/* the first child */
+		
 		if (node->cy_next)
 			node->cy_next->cy_prev = NULL;
 		yaml->cy_child = node->cy_next;
 	} else {
-		/* not the first child */
+		
 		node->cy_prev->cy_next = node->cy_next;
 		if (node->cy_next)
 			node->cy_next->cy_prev = node->cy_prev;

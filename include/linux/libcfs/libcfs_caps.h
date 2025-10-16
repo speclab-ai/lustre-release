@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2025 Whamcloud
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Generic capabilities manipulation functions.
  *
@@ -21,40 +21,40 @@ static inline const char *libcfs_cap2str(int cap)
 	 * CAP_SYS_ADMIN for a bunch of HSM operations (that should be fixed).
 	 */
 	static const char *const capability_names[] = {
-		"cap_chown",			/*  0 */
-		"cap_dac_override",		/*  1 */
-		"cap_dac_read_search",		/*  2 */
-		"cap_fowner",			/*  3 */
-		"cap_fsetid",			/*  4 */
-		NULL,				/*  5 */
-		NULL,				/*  6 */
-		NULL,				/*  7 */
-		NULL,				/*  8 */
-		"cap_linux_immutable",		/*  9 */
-		NULL,				/* 10 */
-		NULL,				/* 11 */
-		NULL,				/* 12 */
-		NULL,				/* 13 */
-		NULL,				/* 14 */
-		NULL,				/* 15 */
-		NULL,				/* 16 */
-		NULL,				/* 17 */
-		NULL,				/* 18 */
-		NULL,				/* 19 */
-		NULL,				/* 20 */
-		/* we should use more precise capabilities than this */
-		"cap_sys_admin",		/* 21 */
-		NULL,				/* 22 */
-		NULL,				/* 23 */
-		"cap_sys_resource",		/* 24 */
-		NULL,				/* 25 */
-		NULL,				/* 26 */
-		"cap_mknod",			/* 27 */
-		NULL,				/* 28 */
-		NULL,				/* 29 */
-		NULL,				/* 30 */
-		NULL,				/* 31 */
-		"cap_mac_override",		/* 32 */
+		"cap_chown",			
+		"cap_dac_override",		
+		"cap_dac_read_search",		
+		"cap_fowner",			
+		"cap_fsetid",			
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		"cap_linux_immutable",		
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		
+		"cap_sys_admin",		
+		NULL,				
+		NULL,				
+		"cap_sys_resource",		
+		NULL,				
+		NULL,				
+		"cap_mknod",			
+		NULL,				
+		NULL,				
+		NULL,				
+		NULL,				
+		"cap_mac_override",		
 	};
 
 	if (cap >= ARRAY_SIZE(capability_names))
@@ -63,7 +63,7 @@ static inline const char *libcfs_cap2str(int cap)
 	return capability_names[cap];
 }
 
-/* convert a capability into an integer to print or manage more easily */
+
 static inline u64 libcfs_cap2num(kernel_cap_t cap)
 {
 #ifdef CAP_FOR_EACH_U32
@@ -79,7 +79,7 @@ static inline u64 libcfs_cap2num(kernel_cap_t cap)
 #endif
 }
 
-/* convert an integer into a capabilityt */
+
 static inline kernel_cap_t libcfs_num2cap(u64 num)
 {
 	kernel_cap_t cap;

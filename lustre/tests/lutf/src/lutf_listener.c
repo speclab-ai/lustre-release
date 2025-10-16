@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf_listener.c
  *
@@ -81,13 +81,13 @@ static lutf_rc_t process_msg_rpc_request(char *msg, lutf_agent_blk_t *agent)
 static lutf_rc_t process_msg_hb(char *msg, lutf_agent_blk_t *agent)
 {
 	lutf_msg_hb_t *hb = (lutf_msg_hb_t *)msg;
-	//PERROR("Procesing HB message");
+	
 
-	/* endian convert message */
+	
 	hb->telnet_port = ntohl(hb->telnet_port);
 	hb->node_type = ntohl(hb->node_type);
 
-	/* update the agent with the information */
+	
 	agent->telnet_port = hb->telnet_port;
 	agent->node_type = hb->node_type;
 	strncpy(agent->hostname, hb->node_hostname, MAX_STR_LEN);
@@ -121,7 +121,7 @@ static lutf_rc_t process_agent_message(lutf_agent_blk_t *agent, int fd)
 	char *buffer;
 	msg_process_fn_t proc_fn;
 
-	/* get the header first */
+	
 	rc = readTcpMessage(fd, (char *)&hdr, sizeof(hdr),
 			    TCP_READ_TIMEOUT_SEC);
 
@@ -135,7 +135,7 @@ static lutf_rc_t process_agent_message(lutf_agent_blk_t *agent, int fd)
 		return EN_LUTF_RC_BAD_VERSION;
 	}
 
-	/* if the ips don't match ignore the message */
+	
 	if (memcmp(&agent->addr.sin_addr, &hdr.ip, sizeof(hdr.ip)))
 		return rc;
 
@@ -146,7 +146,7 @@ static lutf_rc_t process_agent_message(lutf_agent_blk_t *agent, int fd)
 	if (!buffer)
 		return EN_LUTF_RC_OOM;
 
-	/* get the rest of the message */
+	
 	rc = readTcpMessage(fd, buffer, hdr.len,
 			    TCP_READ_TIMEOUT_SEC);
 
@@ -155,7 +155,7 @@ static lutf_rc_t process_agent_message(lutf_agent_blk_t *agent, int fd)
 		return rc;
 	}
 
-	/* call the appropriate processing function */
+	
 	proc_fn = msg_process_tbl[hdr.type];
 	if (proc_fn)
 		rc = proc_fn(buffer, agent);
@@ -171,10 +171,10 @@ static lutf_rc_t init_comm(unsigned short server_port)
 
 	signal(SIGPIPE, SIG_IGN);
 
-	/*  Create a socket to listen to.  */
+	
 	g_iListenFd = socket(AF_INET, SOCK_STREAM, 0);
 	if (g_iListenFd < 0) {
-		/*  Cannot create a listening socket.  */
+		
 		return EN_LUTF_RC_SOCKET_FAIL;
 	}
 
@@ -184,12 +184,12 @@ static lutf_rc_t init_comm(unsigned short server_port)
 	iFlags = 1;
 	if (setsockopt(g_iListenFd, SOL_SOCKET, SO_REUSEADDR, (void *) &iFlags,
 		       sizeof(iFlags)) < 0) {
-		/*  Cannot change the socket options.  */
+		
 		closeTcpConnection(g_iListenFd);
 		return EN_LUTF_RC_FAIL;
 	}
 
-	/*  Bind to our listening socket.  */
+	
 	bzero((char *) &sServAddr, sizeof(sServAddr));
 	sServAddr.sin_family = AF_INET;
 	sServAddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -197,7 +197,7 @@ static lutf_rc_t init_comm(unsigned short server_port)
 
 	if (bind(g_iListenFd, (struct sockaddr *) &sServAddr,
 		 sizeof(sServAddr)) < 0) {
-		/*  Cannot bind our listening socket.  */
+		
 		closeTcpConnection(g_iListenFd);
 		return EN_LUTF_RC_BIND_FAILED;
 	}
@@ -206,7 +206,7 @@ static lutf_rc_t init_comm(unsigned short server_port)
 	 * connections.
 	 */
 	if (listen(g_iListenFd, 2) < 0) {
-		/*  Cannot listen to socket, close and fail  */
+		
 		closeTcpConnection(g_iListenFd);
 		return EN_LUTF_RC_LISTEN_FAILED;
 	}
@@ -218,7 +218,7 @@ static lutf_rc_t init_comm(unsigned short server_port)
 	iFlags = fcntl(g_iListenFd, F_GETFL, 0);
 	fcntl(g_iListenFd, F_SETFL, iFlags | O_NONBLOCK);
 
-	/*  Add the listening socket to our select() mask.  */
+	
 	FD_ZERO(&g_tAllSet);
 	FD_SET(g_iListenFd, &g_tAllSet);
 
@@ -237,7 +237,7 @@ lutf_rc_t send_hb(lutf_agent_blk_t *agent, char *name, int telnet_port,
 	hb.node_name[MAX_STR_LEN-1] = '\0';
 	gethostname(hb.node_hostname, MAX_STR_LEN);
 
-	/* send the heart beat */
+	
 	rc = lutf_send_msg(agent->iFileDesc, (char *)&hb,
 			   sizeof(hb), EN_MSG_TYPE_HB);
 	if (rc != EN_LUTF_RC_OK) {
@@ -250,7 +250,7 @@ lutf_rc_t send_hb(lutf_agent_blk_t *agent, char *name, int telnet_port,
 
 lutf_rc_t complete_agent_connection(lutf_agent_blk_t *agent, int fd)
 {
-	/* we assume the first connection is an HB connection */
+	
 	if (!(agent->state & LUTF_AGENT_HB_CHANNEL_CONNECTED)) {
 		if (agent->iFileDesc != INVALID_TCP_SOCKET) {
 			PERROR("agent in unexpected state. state is %s, but HB FD is %d",
@@ -369,7 +369,7 @@ void *lutf_listener_main(void *usr_data)
 	 * to shutdown.
 	 */
 	while (!g_bShutdown) {
-		/*  Wait on our select mask for an event to occur.  */
+		
 		select_to.tv_sec = HB_TO;
 		select_to.tv_usec = 0;
 
@@ -380,9 +380,9 @@ void *lutf_listener_main(void *usr_data)
 
 		release_dead_list_agents();
 
-		/*  Determine if we failed the select call */
+		
 		if (iNReady < 0) {
-			/*  Check to see if we were interrupted by a signal.  */
+			
 			if ((errno == EINTR) || (errno == EAGAIN)) {
 				PERROR("Select failure: errno = %d", errno);
 			} else if (errno != ECONNABORTED) {
@@ -395,17 +395,17 @@ void *lutf_listener_main(void *usr_data)
 				lutf_listener_shutdown();
 			}
 
-			/* store the current time */
+			
 			time_1 = time_2;
 
-			/* Zero out the g_tAllSet */
+			
 			FD_ZERO(&g_tAllSet);
 
 			continue;
 		}
 
 		if (FD_ISSET(g_iListenFd, &tReadSet)) {
-			/*  A new client is trying to connect.  */
+			
 			tCliLen = sizeof(sCliAddr);
 			iConnFd = accept(g_iListenFd,
 					 (struct sockaddr *) &sCliAddr,
@@ -425,7 +425,7 @@ void *lutf_listener_main(void *usr_data)
 				 */
 				agent = find_create_agent_blk_by_addr(&sCliAddr);
 				if (!agent) {
-					/*  Cannot support more clients...just ignore.  */
+					
 					PERROR("Cannot accept more clients");
 					closeTcpConnection(iConnFd);
 				} else {
@@ -443,7 +443,7 @@ void *lutf_listener_main(void *usr_data)
 					 */
 					agent->listen_port = info->listen_port;
 
-					/*  Add new client to our select mask.  */
+					
 					FD_SET(iConnFd, &g_tAllSet);
 					g_iMaxSelectFd = get_highest_fd();
 
@@ -467,7 +467,7 @@ void *lutf_listener_main(void *usr_data)
 				}
 			}
 
-			/*  See if there are other messages waiting.  */
+			
 			iNReady--;
 		}
 
@@ -495,9 +495,9 @@ void *lutf_listener_main(void *usr_data)
 				    rpc_fd == INVALID_TCP_SOCKET)
 					continue;
 
-				/* process heart beat */
+				
 				if (hb_fd != INVALID_TCP_SOCKET) {
-					/* process the message */
+					
 					rc = process_agent_message(agent, hb_fd);
 					if (rc)
 						PERROR("msg failure: %s",
@@ -512,9 +512,9 @@ void *lutf_listener_main(void *usr_data)
 					continue;
 				}
 
-				/* process rpc */
+				
 				if (rpc_fd != INVALID_TCP_SOCKET) {
-					/* process the message */
+					
 					rc = process_agent_message(agent, rpc_fd);
 					if (rc)
 						PERROR("msg failure: %s",
@@ -606,7 +606,7 @@ void *lutf_listener_main(void *usr_data)
 			 * time we collected the time
 			 */
 			if (time_2.tv_sec - time_1.tv_sec >= HB_TO * 100) {
-				/* do the heartbeat check */
+				
 				agent_hb_check(&time_1, info->type);
 			}
 		}
@@ -641,11 +641,11 @@ void *lutf_listener_main(void *usr_data)
 			} while (agent);
 		}
 
-		/* store the current time */
+		
 		memcpy(&time_1, &time_2, sizeof(time_1));
 	}
 
-	/* Zero out the g_tAllSet */
+	
 	FD_ZERO(&g_tAllSet);
 
 	return NULL;

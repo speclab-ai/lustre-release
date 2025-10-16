@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Access Control List.
  *
@@ -77,7 +77,7 @@ int lustre_posix_acl_permission(struct lu_ucred *mu, const struct lu_attr *la,
 		lustre_posix_acl_le_to_cpu(&ae, pa);
 		switch (ae.e_tag) {
 		case ACL_USER_OBJ:
-			/* (May have been checked already) */
+			
 			if (la->la_uid == mu->uc_fsuid)
 				goto check_perm;
 			break;

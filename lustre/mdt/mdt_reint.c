@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Target (mdt) reintegration routines
  *
@@ -67,9 +67,9 @@ static int mdt_version_check(struct ptlrpc_request *req,
 		RETURN(0);
 
 	LASSERT(req_is_replay(req));
-	/** VBR: version is checked always because costs nothing */
+	
 	LASSERT(idx < PTLRPC_NUM_VERSIONS);
-	/** Sanity check for malformed buffers */
+	
 	if (pre_ver == NULL) {
 		CERROR("No versions in request buffer\n");
 		spin_lock(&req->rq_export->exp_lock);
@@ -111,7 +111,7 @@ static void mdt_version_save(struct ptlrpc_request *req, __u64 version,
  */
 static void mdt_enoent_version_save(struct mdt_thread_info *info, int idx)
 {
-	/* save version of file name for replay, it must be ENOENT here */
+	
 	if (!req_is_replay(mdt_info_req(info))) {
 		info->mti_ver[idx] = ENOENT_VERSION;
 		mdt_version_save(mdt_info_req(info), info->mti_ver[idx], idx);
@@ -126,7 +126,7 @@ static void mdt_enoent_version_save(struct mdt_thread_info *info, int idx)
 void mdt_version_get_save(struct mdt_thread_info *info,
 			  struct mdt_object *mto, int idx)
 {
-	/* don't save versions during replay */
+	
 	if (!req_is_replay(mdt_info_req(info))) {
 		mdt_obj_version_get(info, mto, &info->mti_ver[idx]);
 		mdt_version_save(mdt_info_req(info), info->mti_ver[idx], idx);
@@ -139,7 +139,7 @@ void mdt_version_get_save(struct mdt_thread_info *info,
 int mdt_version_get_check(struct mdt_thread_info *info,
 			  struct mdt_object *mto, int idx)
 {
-	/* only check versions during replay */
+	
 	if (!req_is_replay(mdt_info_req(info)))
 		return 0;
 
@@ -179,7 +179,7 @@ int mdt_lookup_version_check(struct mdt_thread_info *info,
 
 	rc = mdo_lookup(info->mti_env, mdt_object_child(p), lname, fid,
 			&info->mti_spec);
-	/* Check version only during replay */
+	
 	if (!req_is_replay(mdt_info_req(info)))
 		return rc;
 
@@ -305,7 +305,7 @@ int mdt_object_stripes_lock(struct mdt_thread_info *info,
 	if (!S_ISDIR(child->mot_header.loh_attr))
 		RETURN(0);
 
-	/* lock stripes for striped directory */
+	
 	rc = mdt_stripes_lock(info, child, lh->mlh_reg_mode, ibits, einfo);
 	if (rc == -EIO && CFS_FAIL_CHECK(OBD_FAIL_LFSCK_BAD_SLAVE_NAME))
 		rc = 0;
@@ -369,7 +369,7 @@ static int mdt_restripe(struct mdt_thread_info *info,
 		GOTO(unlock_parent, rc);
 
 	if (ma->ma_valid & MA_LMV) {
-		/* don't allow restripe if parent dir layout is changing */
+		
 		lmv = &ma->ma_lmv->lmv_md_v1;
 		if (!lmv_is_sane2(lmv))
 			GOTO(unlock_parent, rc = -EBADF);
@@ -409,12 +409,12 @@ static int mdt_restripe(struct mdt_thread_info *info,
 	if (rc)
 		GOTO(out_child, rc);
 
-	/* race with migrate? */
+	
 	if ((ma->ma_valid & MA_LMV) &&
 	     lmv_is_migrating(&ma->ma_lmv->lmv_md_v1))
 		GOTO(out_child, rc = -EBUSY);
 
-	/* lock object */
+	
 	lhc = &info->mti_lh[MDT_LH_CHILD];
 	rc = mdt_object_stripes_lock(info, parent, child, lhc, einfo,
 				     MDS_INODELOCK_ELC, LCK_PW);
@@ -428,7 +428,7 @@ static int mdt_restripe(struct mdt_thread_info *info,
 
 	spin_lock(&mdt->mdt_restriper.mdr_lock);
 	if (child->mot_restriping) {
-		/* race? */
+		
 		spin_unlock(&mdt->mdt_restriper.mdr_lock);
 		GOTO(unlock_child, rc = -EBUSY);
 	}
@@ -604,10 +604,10 @@ static int mdt_create(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 			}
 			GOTO(put_parent, rc);
 		} else if (restripe) {
-			/* restripe, dirent exists but inode not */
+			
 			GOTO(put_parent, rc = -EINVAL);
 		} else if (!mdt_object_remote(parent)) {
-			/* create, parent is on local MDT and dirent exists */
+			
 			LASSERT(info->mti_spec.sp_replay);
 			GOTO(put_parent, rc = -EEXIST);
 		}
@@ -623,7 +623,7 @@ static int mdt_create(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 	}
 
 	if (unlikely(info->mti_spec.sp_replay)) {
-		/* check version only during replay */
+		
 		rc = mdt_version_check(mdt_info_req(info), ENOENT_VERSION, 1);
 		if (rc)
 			GOTO(put_parent, rc);
@@ -631,7 +631,7 @@ static int mdt_create(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 		CFS_FAIL_TIMEOUT(OBD_FAIL_MDS_PAUSE_CREATE_AFTER_LOOKUP,
 				 cfs_fail_val);
 
-		/* save version of file name for replay, must be ENOENT here */
+		
 		mdt_enoent_version_save(info, 1);
 	}
 
@@ -672,7 +672,7 @@ static int mdt_create(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 	mdt_fail_write(info->mti_env, info->mti_mdt->mdt_bottom,
 			OBD_FAIL_MDS_REINT_CREATE_WRITE);
 
-	/* Version of child will be updated on disk. */
+	
 	tgt_vbr_obj_set(info->mti_env, mdt_obj2dt(child));
 	rc = mdt_version_get_check_save(info, child, 2);
 	if (rc)
@@ -693,7 +693,7 @@ static int mdt_create(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 		info->mti_spec.sp_cr_lookup = 1;
 	info->mti_spec.sp_feat = &dt_directory_features;
 
-	/* set jobid xattr name from sysfs parameter */
+	
 	strncpy(info->mti_spec.sp_cr_job_xattr, mdt->mdt_job_xattr,
 		XATTR_JOB_MAX_LEN);
 
@@ -727,7 +727,7 @@ static int mdt_create(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 	}
 
 	if (ma->ma_valid & MA_LMV_DEF) {
-		/* Return -EOPNOTSUPP for old client. */
+		
 		if (!mdt_is_striped_client(mdt_info_req(info)->rq_export))
 			GOTO(put_child, rc = -EOPNOTSUPP);
 
@@ -752,7 +752,7 @@ static int mdt_create(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 		mdt_object_stripes_unlock(info, child, lhc, einfo, rc);
 	}
 
-	/* Return fid & attr to client. */
+	
 	if (ma->ma_valid & MA_INODE)
 		mdt_pack_attr2body(info, repbody, &ma->ma_attr,
 				   mdt_object_fid(child));
@@ -826,24 +826,24 @@ static int mdt_attr_set(struct mdt_thread_info *info, struct mdt_object *mo,
 	if (rc != 0)
 		RETURN(rc);
 
-	/* all attrs are packed into mti_attr in unpack_setattr */
+	
 	mdt_fail_write(info->mti_env, info->mti_mdt->mdt_bottom,
 		       OBD_FAIL_MDS_REINT_SETATTR_WRITE);
 
-	/* VBR: update version if attr changed are important for recovery */
+	
 	if (do_vbr) {
-		/* update on-disk version of changed object */
+		
 		tgt_vbr_obj_set(info->mti_env, mdt_obj2dt(mo));
 		rc = mdt_version_get_check_save(info, mo, 0);
 		if (rc)
 			GOTO(out_unlock, rc);
 	}
 
-	/* Ensure constant striping during chown(). See LU-2789. */
+	
 	if (ma->ma_attr.la_valid & (LA_UID|LA_GID|LA_PROJID))
 		mutex_lock(&mo->mot_lov_mutex);
 
-	/* all attrs are packed into mti_attr in unpack_setattr */
+	
 	rc = mo_attr_set(info->mti_env, mdt_object_child(mo), ma);
 
 	if (ma->ma_attr.la_valid & (LA_UID|LA_GID|LA_PROJID))
@@ -872,7 +872,7 @@ int mdt_add_dirty_flag(struct mdt_thread_info *info, struct mdt_object *mo,
 	int rc;
 
 	ENTRY;
-	/* If the file was modified, add the dirty flag */
+	
 	ma->ma_need = MA_HSM;
 	rc = mdt_attr_get_complex(info, mo, ma);
 	if (rc) {
@@ -881,7 +881,7 @@ int mdt_add_dirty_flag(struct mdt_thread_info *info, struct mdt_object *mo,
 		RETURN(rc);
 	}
 
-	/* If an up2date copy exists in the backend, add dirty flag */
+	
 	if ((ma->ma_valid & MA_HSM) && (ma->ma_hsm.mh_flags & HS_EXISTS)
 	    && !(ma->ma_hsm.mh_flags & (HS_DIRTY|HS_RELEASED))) {
 		ma->ma_hsm.mh_flags |= HS_DIRTY;
@@ -938,13 +938,13 @@ static int mdt_reint_setattr(struct mdt_thread_info *info,
 		GOTO(out_put, rc = -EREMOTE);
 
 	ma->ma_enable_chprojid_gid = mdt->mdt_enable_chprojid_gid;
-	/* revoke lease lock if size is going to be changed */
+	
 	if (unlikely(ma->ma_attr.la_valid & LA_SIZE &&
 		     !(ma->ma_attr_flags & MDS_TRUNC_KEEP_LEASE) &&
 		     atomic_read(&mo->mot_lease_count) > 0)) {
 		down_read(&mo->mot_open_sem);
 
-		if (atomic_read(&mo->mot_lease_count) > 0) { /* lease exists */
+		if (atomic_read(&mo->mot_lease_count) > 0) { 
 			lhc = &info->mti_lh[MDT_LH_LOCAL];
 			rc = mdt_object_lock(info, mo, lhc, MDS_INODELOCK_OPEN,
 					     LCK_CW);
@@ -953,14 +953,14 @@ static int mdt_reint_setattr(struct mdt_thread_info *info,
 				GOTO(out_put, rc);
 			}
 
-			/* revoke lease lock */
+			
 			mdt_object_unlock(info, mo, lhc, 1);
 		}
 		up_read(&mo->mot_open_sem);
 	}
 
 	if (ma->ma_attr.la_valid & LA_SIZE || rr->rr_flags & MRF_OPEN_TRUNC) {
-		/* Check write access for the O_TRUNC case */
+		
 		if (mdt_write_read(mo) < 0)
 			GOTO(out_put, rc = -ETXTBSY);
 
@@ -1000,7 +1000,7 @@ static int mdt_reint_setattr(struct mdt_thread_info *info,
 		if (ma->ma_valid & MA_LOV)
 			GOTO(out_put, rc = -EPROTO);
 
-		/* MDT supports FMD for regular files due to Data-on-MDT */
+		
 		if (S_ISREG(lu_object_attr(&mo->mot_obj)) &&
 		    ma->ma_attr.la_valid & (LA_ATIME | LA_MTIME | LA_CTIME)) {
 			tgt_fmd_update(info->mti_exp, mdt_object_fid(mo),
@@ -1023,7 +1023,7 @@ static int mdt_reint_setattr(struct mdt_thread_info *info,
 		struct mdt_lock_handle *lh;
 		const char *name;
 
-		/* reject if either remote or striped dir is disabled */
+		
 		if (ma->ma_valid & MA_LMV) {
 			if (!mdt->mdt_enable_remote_dir ||
 			    !mdt->mdt_enable_striped_dir)
@@ -1103,7 +1103,7 @@ static int mdt_reint_setattr(struct mdt_thread_info *info,
 		GOTO(out_put, rc = -EPROTO);
 	}
 
-	/* If file data is modified, add the dirty flag */
+	
 	if (ma->ma_attr_flags & MDS_DATA_MODIFIED)
 		rc = mdt_add_dirty_flag(info, mo, ma);
 
@@ -1167,7 +1167,7 @@ static int mdt_reint_create(struct mdt_thread_info *info,
 			mdt_counter_incr(req, LPROC_MDT_MKDIR,
 					 ktime_us_delta(ktime_get(), kstart));
 		else
-			/* Special file should stay on the same node as parent*/
+			
 			mdt_counter_incr(req, LPROC_MDT_MKNOD,
 					 ktime_us_delta(ktime_get(), kstart));
 	}
@@ -1232,7 +1232,7 @@ static int mdt_reint_unlink(struct mdt_thread_info *info,
 
 	if (info->mti_spec.sp_rm_entry) {
 		if (!mdt_is_dne_client(req->rq_export))
-			/* Return -ENOTSUPP for old client */
+			
 			GOTO(unlock_parent, rc = -ENOTSUPP);
 
 		if (!cap_raised(uc->uc_cap, CAP_SYS_ADMIN))
@@ -1248,7 +1248,7 @@ static int mdt_reint_unlink(struct mdt_thread_info *info,
 	if (info->mti_spec.sp_cr_flags & MDS_OP_WITH_FID) {
 		*child_fid = *rr->rr_fid2;
 	} else {
-		/* lookup child object along with version checking */
+		
 		fid_zero(child_fid);
 		rc = mdt_lookup_version_check(info, mp, &rr->rr_name, child_fid,
 					      1);
@@ -1281,7 +1281,7 @@ static int mdt_reint_unlink(struct mdt_thread_info *info,
 	if (!fid_is_md_operative(child_fid))
 		GOTO(unlock_parent, rc = -EPERM);
 
-	/* We will lock the child regardless it is local or remote. No harm. */
+	
 	mc = mdt_object_find(info->mti_env, info->mti_mdt, child_fid);
 	if (IS_ERR(mc))
 		GOTO(unlock_parent, rc = PTR_ERR(mc));
@@ -1317,7 +1317,7 @@ static int mdt_reint_unlink(struct mdt_thread_info *info,
 		       PFID(mdt_object_fid(mc)));
 
 		if (!mdt_is_dne_client(req->rq_export))
-			/* Return -ENOTSUPP for old client */
+			
 			GOTO(put_child, rc = -ENOTSUPP);
 
 		/* Revoke the LOOKUP lock of the remote object granted by
@@ -1355,7 +1355,7 @@ static int mdt_reint_unlink(struct mdt_thread_info *info,
 
 	mdt_fail_write(info->mti_env, info->mti_mdt->mdt_bottom,
 		       OBD_FAIL_MDS_REINT_UNLINK_WRITE);
-	/* save version when object is locked */
+	
 	mdt_version_get_save(info, mc, 1);
 
 	mutex_lock(&mc->mot_lov_mutex);
@@ -1401,7 +1401,7 @@ out_stat:
 	EXIT;
 
 unlock_child:
-	/* after unlink the object is gone, no need to keep lock */
+	
 	mdt_object_stripes_unlock(info, mc, child_lh, einfo, 1);
 put_child:
 	if (info->mti_spec.sp_cr_flags & MDS_OP_WITH_FID &&
@@ -1460,12 +1460,12 @@ static int mdt_reint_link(struct mdt_thread_info *info,
 	    !fid_is_md_operative(rr->rr_fid2))
 		RETURN(-EPERM);
 
-	/* step 1: find target parent dir */
+	
 	mp = mdt_object_find(info->mti_env, info->mti_mdt, rr->rr_fid2);
 	if (IS_ERR(mp))
 		RETURN(PTR_ERR(mp));
 
-	/* step 2: find source */
+	
 	ms = mdt_object_find(info->mti_env, info->mti_mdt, rr->rr_fid1);
 	if (IS_ERR(ms))
 		GOTO(put_parent, rc = PTR_ERR(ms));
@@ -1508,7 +1508,7 @@ static int mdt_reint_link(struct mdt_thread_info *info,
 	if (rc != 0)
 		GOTO(unlock_parent, rc);
 
-	/* step 3: link it */
+	
 	mdt_fail_write(info->mti_env, info->mti_mdt->mdt_bottom,
 			OBD_FAIL_MDS_REINT_LINK_WRITE);
 
@@ -1517,12 +1517,12 @@ static int mdt_reint_link(struct mdt_thread_info *info,
 	if (rc)
 		GOTO(unlock_source, rc);
 
-	/** check target version by name during replay */
+	
 	rc = mdt_lookup_version_check(info, mp, &rr->rr_name,
 				      &info->mti_tmp_fid1, 2);
 	if (rc != 0 && rc != -ENOENT)
 		GOTO(unlock_source, rc);
-	/* save version of file name for replay, it must be ENOENT here */
+	
 	if (!req_is_replay(mdt_info_req(info))) {
 		if (rc != -ENOENT) {
 			CDEBUG(D_INFO, "link target "DNAME" existed!\n",
@@ -1597,7 +1597,7 @@ static void mdt_rename_unlock(struct mdt_thread_info *info,
 			      struct mdt_lock_handle *lh)
 {
 	ENTRY;
-	/* Cancel the single rename lock right away */
+	
 	mdt_object_unlock(info, NULL, lh, 1);
 	EXIT;
 }
@@ -1614,7 +1614,7 @@ static struct mdt_object *mdt_parent_find_check(struct mdt_thread_info *info,
 	if (IS_ERR(dir))
 		RETURN(dir);
 
-	/* check early, the real version will be saved after locking */
+	
 	rc = mdt_version_get_check(info, dir, idx);
 	if (rc)
 		GOTO(out_put, rc);
@@ -1683,7 +1683,7 @@ static void mdt_rename_source_unlock(struct mdt_thread_info *info,
 	mdt_object_unlock(info, NULL, lh_lookup, decref);
 }
 
-/* migration takes UPDATE lock of link parent, and LOOKUP lock of link */
+
 struct mdt_link_lock {
 	struct mdt_object *mll_obj;
 	struct mdt_lock_handle mll_lh;
@@ -1749,7 +1749,7 @@ static int mdt_migrate_link_parent_lock(struct mdt_thread_info *info,
 
 	ENTRY;
 
-	/* check if it's already locked */
+	
 	list_for_each_entry(entry, update_locks, mll_linkage) {
 		if (lu_fid_eq(mdt_object_fid(entry->mll_obj), fid)) {
 			CDEBUG(D_INFO, "skip "DFID" lock\n", PFID(fid));
@@ -1757,11 +1757,11 @@ static int mdt_migrate_link_parent_lock(struct mdt_thread_info *info,
 		}
 	}
 
-	/* link parent UPDATE lock */
+	
 	CDEBUG(D_INFO, "lock "DFID"\n", PFID(fid));
 
 	if (*blocked) {
-		/* revoke lock instead of take in *blocked* mode */
+		
 		rc = mdt_object_lock(info, lnkp, lhl, MDS_INODELOCK_UPDATE,
 				     LCK_PW);
 		if (rc)
@@ -1835,7 +1835,7 @@ static int mdt_migrate_link_lock(struct mdt_thread_info *info,
 
 	ENTRY;
 
-	/* check if it's already locked by source */
+	
 	rc = mdt_fids_different_target(info, fid, mdt_object_fid(spobj));
 	if (rc <= 0) {
 		CDEBUG(D_INFO, "skip lookup lock on source parent "DFID"\n",
@@ -1843,7 +1843,7 @@ static int mdt_migrate_link_lock(struct mdt_thread_info *info,
 		RETURN(rc);
 	}
 
-	/* check if it's already locked by other links */
+	
 	list_for_each_entry(entry, lookup_locks, mll_linkage) {
 		rc = mdt_fids_different_target(info, fid,
 					       mdt_object_fid(entry->mll_obj));
@@ -1925,7 +1925,7 @@ static int mdt_migrate_links_lock(struct mdt_thread_info *info,
 		linkea_entry_unpack(ldata.ld_lee, &ldata.ld_reclen, lname,
 				    &fid);
 
-		/* check if link parent is source parent too */
+		
 		if (lu_fid_eq(mdt_object_fid(spobj), &fid)) {
 			CDEBUG(D_INFO,
 			       "skip lock on source parent "DFID"/"DNAME"\n",
@@ -1933,7 +1933,7 @@ static int mdt_migrate_links_lock(struct mdt_thread_info *info,
 			continue;
 		}
 
-		/* check if link parent is target parent too */
+		
 		if (tpobj != spobj && lu_fid_eq(mdt_object_fid(tpobj), &fid)) {
 			CDEBUG(D_INFO,
 			       "skip lock on target parent "DFID"/"DNAME"\n",
@@ -1959,7 +1959,7 @@ relock:
 		rc = mdt_migrate_link_parent_lock(info, lnkp, &update_locks,
 						  &blocked);
 		if (!saved && blocked) {
-			/* unlock all locks taken to avoid deadlock */
+			
 			mdt_migrate_links_unlock(info, &update_locks, 1);
 			mdt_object_unlock(info, spobj, lhsp, 1);
 			if (tpobj != spobj)
@@ -2035,7 +2035,7 @@ static int mdt_migrate_lookup(struct mdt_thread_info *info,
 	int rc;
 
 	if (ma->ma_valid & MA_LMV) {
-		/* if parent is striped, lookup on corresponding stripe */
+		
 		struct lmv_mds_md_v1 *lmv = &ma->ma_lmv->lmv_md_v1;
 		struct lu_fid *fid2 = &info->mti_tmp_fid2;
 
@@ -2063,7 +2063,7 @@ static int mdt_migrate_lookup(struct mdt_thread_info *info,
 		rc = mdo_lookup(env, mdt_object_child(*spobj), lname, fid,
 				&info->mti_spec);
 		if ((rc == -ENOENT || rc == 0) && lmv_is_layout_changing(lmv)) {
-			/* fail check here to let top dir migration succeed. */
+			
 			if (CFS_FAIL_CHECK_RESET(OBD_FAIL_MIGRATE_ENTRIES, 0))
 				GOTO(spobj_put, rc = -EIO);
 
@@ -2142,7 +2142,7 @@ spobj_put:
 	return rc;
 }
 
-/* end lease and close file for regular file */
+
 static int mdd_migrate_close(struct mdt_thread_info *info,
 			     struct mdt_object *obj)
 {
@@ -2168,7 +2168,7 @@ static int mdd_migrate_close(struct mdt_thread_info *info,
 	if (!lease)
 		goto close;
 
-	/* check if the lease was already canceled */
+	
 	lock_res_and_lock(lease);
 	rc = (lease->l_flags & LDLM_FL_CANCEL);
 	unlock_res_and_lock(lease);
@@ -2196,7 +2196,7 @@ close:
 	return rc ?: rc2;
 }
 
-/* LFSCK used to clear hash type and MIGRATION flag upon migration failure */
+
 static inline bool lmv_is_failed_migration(const struct lmv_mds_md_v1 *lmv)
 {
 	return le32_to_cpu(lmv->lmv_hash_type) ==
@@ -2258,7 +2258,7 @@ int mdt_reint_migrate(struct mdt_thread_info *info,
 	    !fid_is_md_operative(rr->rr_fid2))
 		RETURN(-EPERM);
 
-	/* don't allow migrate . or .. */
+	
 	if (lu_name_is_dot_or_dotdot(&rr->rr_name))
 		RETURN(-EBUSY);
 
@@ -2291,7 +2291,7 @@ int mdt_reint_migrate(struct mdt_thread_info *info,
 		}
 	}
 
-	/* pobj is master object of parent */
+	
 	pobj = mdt_object_find(env, mdt, rr->rr_fid1);
 	if (IS_ERR(pobj))
 		GOTO(unlock_rename, rc = PTR_ERR(pobj));
@@ -2347,7 +2347,7 @@ int mdt_reint_migrate(struct mdt_thread_info *info,
 		GOTO(put_parent, rc);
 	reverse = rc;
 
-	/* parent unchanged, this happens in dir restripe */
+	
 	if (info->mti_spec.sp_migrate_nsonly && spobj == tpobj)
 		GOTO(put_source, rc = -EALREADY);
 
@@ -2356,7 +2356,7 @@ lock_parent:
 	LASSERT(tpobj);
 	lhsp = &info->mti_lh[MDT_LH_PARENT];
 	lhtp = &info->mti_lh[MDT_LH_CHILD];
-	/* lock spobj and tpobj in stripe index order */
+	
 	if (reverse) {
 		rc = mdt_parent_lock(info, tpobj, lhtp, &rr->rr_name, LCK_PW);
 		if (rc)
@@ -2379,10 +2379,10 @@ lock_parent:
 		}
 	}
 
-	/* if inode is not migrated, or is dir, no need to lock links */
+	
 	if (!info->mti_spec.sp_migrate_nsonly &&
 	    !S_ISDIR(lu_object_attr(&sobj->mot_obj))) {
-		/* lock link parents, and take LOOKUP lock of links */
+		
 		rc = mdt_migrate_links_lock(info, spobj, tpobj, sobj, lhsp,
 					    lhtp, &link_locks);
 		if (rc == -EBUSY && lock_retries-- > 0) {
@@ -2402,7 +2402,7 @@ lock_parent:
 		do_sync = rc;
 	}
 
-	/* lock source */
+	
 	lhs = &info->mti_lh[MDT_LH_OLD];
 	lhl = &info->mti_lh[MDT_LH_LOOKUP];
 	rc = mdt_rename_source_lock(info, spobj, sobj, lhs, lhl,
@@ -2420,7 +2420,7 @@ lock_parent:
 	}
 
 	if (S_ISREG(lu_object_attr(&sobj->mot_obj))) {
-		/* TODO: DoM migration is not supported, migrate dirent only */
+		
 		rc = mdt_stripe_get(info, sobj, ma, XATTR_NAME_LOV);
 		if (rc)
 			GOTO(unlock_source, rc);
@@ -2435,7 +2435,7 @@ lock_parent:
 		if (!(ma->ma_valid & MA_LMV))
 			is_plain_dir = true;
 		else if (lmv_is_restriping(&ma->ma_lmv->lmv_md_v1))
-			/* race with restripe/auto-split */
+			
 			GOTO(unlock_source, rc = -EBUSY);
 		else if (lmv_is_failed_migration(&ma->ma_lmv->lmv_md_v1)) {
 			struct lu_buf *buf = &info->mti_buf;
@@ -2460,7 +2460,7 @@ lock_parent:
 		}
 	}
 
-	/* if migration HSM is allowed */
+	
 	if (!mdt->mdt_migrate_hsm_allowed) {
 		ma->ma_need = MA_HSM;
 		ma->ma_valid = 0;
@@ -2472,11 +2472,11 @@ lock_parent:
 			GOTO(unlock_source, rc = -EOPNOTSUPP);
 	}
 
-	/* end lease and close file for regular file */
+	
 	if (info->mti_spec.sp_migrate_close) {
-		/* try to hold open_sem so that nobody else can open the file */
+		
 		if (!down_write_trylock(&sobj->mot_open_sem)) {
-			/* migrate only dentry */
+			
 			if (!info->mti_spec.sp_migrate_nsonly)
 				CWARN("%s: "DFID"/%s is open, migrate only dentry\n",
 				      mdt2obd_dev(mdt)->obd_name,
@@ -2496,7 +2496,7 @@ lock_parent:
 	if (IS_ERR(tobj))
 		GOTO(unlock_open_sem, rc = PTR_ERR(tobj));
 
-	/* Don't do lookup sanity check. We know name doesn't exist. */
+	
 	info->mti_spec.sp_cr_lookup = 0;
 	info->mti_spec.sp_feat = &dt_directory_features;
 
@@ -2507,7 +2507,7 @@ lock_parent:
 	if (rc)
 		GOTO(put_target, rc);
 
-	/* save target locks for directory */
+	
 	if (S_ISDIR(lu_object_attr(&sobj->mot_obj)) &&
 	    !info->mti_spec.sp_migrate_nsonly) {
 		struct mdt_lock_handle *lht = &info->mti_lh[MDT_LH_NEW];
@@ -2592,7 +2592,7 @@ static int mdt_rename_determine_lock_order(struct mdt_thread_info *info,
 	__u32 tindex;
 	int rc;
 
-	/* sobj and tobj are the same */
+	
 	if (sobj == tobj)
 		return 0;
 
@@ -2602,7 +2602,7 @@ static int mdt_rename_determine_lock_order(struct mdt_thread_info *info,
 	if (fid_is_root(mdt_object_fid(tobj)))
 		return 1;
 
-	/* check whether sobj is child of tobj */
+	
 	rc = mdo_is_subdir(info->mti_env, mdt_object_child(sobj),
 			   mdt_object_fid(tobj));
 	if (rc < 0)
@@ -2611,7 +2611,7 @@ static int mdt_rename_determine_lock_order(struct mdt_thread_info *info,
 	if (rc == 1)
 		return 1;
 
-	/* check whether sobj and tobj are children of the same parent */
+	
 	rc = mdt_attr_get_pfid(info, sobj, spfid);
 	if (rc)
 		return rc;
@@ -2627,7 +2627,7 @@ static int mdt_rename_determine_lock_order(struct mdt_thread_info *info,
 	if (!lu_fid_eq(spfid, tpfid))
 		goto order_by_fid;
 
-	/* check whether sobj and tobj are sibling stripes */
+	
 	rc = mdt_stripe_get(info, sobj, ma, XATTR_NAME_LMV);
 	if (rc)
 		return rc;
@@ -2653,14 +2653,14 @@ static int mdt_rename_determine_lock_order(struct mdt_thread_info *info,
 		return -EINVAL;
 	tindex = le32_to_cpu(lmv->lmv_master_mdt_index);
 
-	/* check stripe index of sobj and tobj */
+	
 	if (sindex == tindex)
 		return -EINVAL;
 
 	return sindex < tindex ? 0 : 1;
 
 order_by_fid:
-	/* To avoid AB/BA deadlock given two phase locking */
+	
 	if (lu_fid_cmp(rr->rr_fid1, rr->rr_fid2) > 0)
 		return 1;
 	return 0;
@@ -2758,7 +2758,7 @@ lock_bfl:
 	fid_zero(old_fid);
 	fid_zero(new_fid);
 
-	/* find both parents. */
+	
 	msrcdir = mdt_parent_find_check(info, rr->rr_fid1, 0);
 	if (IS_ERR(msrcdir))
 		RETURN(PTR_ERR(msrcdir));
@@ -2783,7 +2783,7 @@ lock_bfl:
 			GOTO(out_put_srcdir, rc = PTR_ERR(mtgtdir));
 	}
 
-	/* if this succeeds we do not need to check "mnew" later again */
+	
 	rc = mdt_check_resource_ids(info, mtgtdir);
 	if (unlikely(rc))
 		GOTO(out_put_tgtdir, rc);
@@ -2856,7 +2856,7 @@ lock_bfl:
 	CFS_RACE(OBD_FAIL_MDS_REINT_OPEN);
 	CFS_RACE(OBD_FAIL_MDS_REINT_OPEN2);
 
-	/* lock parents in the proper order. */
+	
 	lh_srcdirp = &info->mti_lh[MDT_LH_PARENT];
 	lh_tgtdirp = &info->mti_lh[MDT_LH_CHILD];
 	mdt_lock_pdo_init(lh_srcdirp, LCK_PW, &rr->rr_name);
@@ -2888,7 +2888,7 @@ lock_bfl:
 	CFS_FAIL_TIMEOUT(OBD_FAIL_MDS_RENAME4, 5);
 	CFS_FAIL_TIMEOUT(OBD_FAIL_MDS_RENAME2, 5);
 
-	/* find mold object. */
+	
 	fid_zero(old_fid);
 	rc = mdt_lookup_version_check(info, msrcdir, &rr->rr_name, old_fid, 2);
 	if (rc != 0)
@@ -2918,7 +2918,7 @@ lock_bfl:
 	if (mdt_object_remote(mold) && !mdt->mdt_enable_remote_rename)
 		GOTO(out_put_old, rc = -EXDEV);
 
-	/* we used msrcdir as a hint to take BFL, but it may be wrong */
+	
 	need_bfl |= !req_is_replay(req) &&
 		    !S_ISDIR(ma->ma_attr.la_mode) &&
 		    mdt_object_remote(mold);
@@ -2948,7 +2948,7 @@ lock_bfl:
 	if (rc == 0) {
 		bool child_reverse_lock = false;
 
-		/* the new_fid should have been filled at this moment */
+		
 		if (lu_fid_eq(old_fid, new_fid))
 			GOTO(out_put_old, rc);
 
@@ -2973,7 +2973,7 @@ lock_bfl:
 		if (mdt_object_remote(mnew)) {
 			struct mdt_body	 *repbody;
 
-			/* Always send rename req to the target child MDT */
+			
 			repbody = req_capsule_server_get(info->mti_pill,
 							 &RMF_MDT_BODY);
 			LASSERT(repbody != NULL);
@@ -3017,7 +3017,7 @@ lock_bfl:
 		if (rc < 0)
 			GOTO(out_unlock_new, rc);
 
-		/* save version after locking */
+		
 		mdt_version_get_save(info, mold, 2);
 
 		/* Check if @msrcdir is subdir of @mnew, before locking child
@@ -3047,7 +3047,7 @@ lock_bfl:
 				GOTO(out_unlock_new, rc);
 		}
 
-		/* get and save version after locking */
+		
 		mdt_version_get_save(info, mnew, 3);
 	} else if (rc != -ENOENT) {
 		GOTO(out_put_old, rc);
@@ -3085,14 +3085,14 @@ lock_bfl:
 			msi = LPROC_MDT_RENAME_TRYLOCK;
 
 			if (mtgtdir != msrcdir) {
-				/* Check if @mtgtdir is subdir of @mold */
+				
 				rc = mdo_is_subdir(info->mti_env,
 						   mdt_object_child(mtgtdir),
 						   old_fid);
 				if (rc)
 					GOTO(out_unlock_new,
 					     rc = (rc == 1) ? -EINVAL : rc);
-				/* Check if @msrcdir is subdir of @mnew */
+				
 				if (mnew) {
 					rc = mdo_is_subdir(info->mti_env,
 						      mdt_object_child(msrcdir),
@@ -3105,7 +3105,7 @@ lock_bfl:
 		}
 	}
 	if (need_bfl && !got_bfl) {
-		/* drop child locks if we didn't get BFL with trylock above */
+		
 		if (mnew != NULL)
 			mdt_object_unlock(info, mnew, lh_newp, 1);
 		mdt_object_unlock(info, NULL, lh_lookup, 1);
@@ -3125,7 +3125,7 @@ lock_bfl:
 		goto lock_bfl;
 	}
 
-	/* step 5: rename it */
+	
 	mdt_reint_init_ma(info, ma);
 
 	mdt_fail_write(info->mti_env, info->mti_mdt->mdt_bottom,
@@ -3142,7 +3142,7 @@ lock_bfl:
 	if (mnew != NULL)
 		mutex_unlock(&mnew->mot_lov_mutex);
 
-	/* handle last link of tgt object */
+	
 	if (rc == 0) {
 		if (mnew) {
 			mdt_handle_last_unlink(info, mnew, ma);
@@ -3156,7 +3156,7 @@ lock_bfl:
 	EXIT;
 out_unlock_new:
 	if (mnew != NULL)
-		/* mnew is gone, no need to keep lock */
+		
 		mdt_object_unlock(info, mnew, lh_newp, 1);
 
 	mdt_object_unlock(info, NULL, lh_lookup, rc);
@@ -3240,7 +3240,7 @@ static int mdt_reint_resync(struct mdt_thread_info *info,
 	if (lease_broken)
 		GOTO(out_unlock, rc = -EBUSY);
 
-	/* the file has yet opened by anyone else after we took the lease. */
+	
 	layout.mlc_opc = MD_LAYOUT_RESYNC;
 	lhc = &info->mti_lh[MDT_LH_LOCAL];
 	rc = mdt_layout_change(info, mo, lhc, &layout);

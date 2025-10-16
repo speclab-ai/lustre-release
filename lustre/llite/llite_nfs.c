@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * NFS export of Lustre Light File System
  *
@@ -73,7 +73,7 @@ struct inode *search_inode_for_lustre(struct super_block *sb,
 	op_data->op_mode = eadatalen;
 	op_data->op_valid = OBD_MD_FLEASIZE;
 
-	/* mds_fid2dentry ignores f_type */
+	
 	rc = md_getattr(sbi->ll_md_exp, op_data, &req);
 	OBD_FREE_PTR(op_data);
 	if (rc) {
@@ -114,7 +114,7 @@ ll_iget_for_nfs(struct super_block *sb, struct lu_fid *fid, struct lu_fid *paren
 		RETURN(ERR_CAST(inode));
 
 	if (is_bad_inode(inode)) {
-		/* we didn't find the right inode.. */
+		
 		iput(inode);
 		RETURN(ERR_PTR(-ESTALE));
 	}
@@ -186,7 +186,7 @@ free_dot:
 		RETURN(result);
 	}
 
-	/* N.B. d_obtain_alias() drops inode ref on error */
+	
 	result = d_obtain_alias(inode);
 	if (IS_ERR(result))
 		RETURN(result);
@@ -310,7 +310,7 @@ static int ll_nfs_get_name_filldir(void *cookie, const char *name, int namelen,
 
 	return do_nfs_get_name_filldir(lgd, name, namelen, hash, ino, type);
 }
-#endif /* HAVE_FILLDIR_USE_CTX */
+#endif 
 
 static int ll_get_name(struct dentry *dentry, char *name, struct dentry *child)
 {

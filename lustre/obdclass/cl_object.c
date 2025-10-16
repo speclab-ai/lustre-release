@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Client Lustre Object.
  *
@@ -42,7 +42,7 @@ struct kmem_cache *cl_sub_dio_kmem;
 struct kmem_cache *cl_page_kmem_array[16];
 unsigned short cl_page_kmem_size_array[16];
 
-/** Lock class of cl_object_header::coh_attr_guard */
+
 static struct lock_class_key cl_attr_guard_class;
 
 /**
@@ -1151,7 +1151,7 @@ struct cl_thread_info *cl_env_info(const struct lu_env *env)
         return lu_context_key_get(&env->le_ctx, &cl_key);
 }
 
-/* defines cl_key_{init,fini}() */
+
 LU_KEY_INIT_FINI(cl, struct cl_thread_info);
 
 static struct lu_context_key cl_key = {
@@ -1205,7 +1205,7 @@ int cl_global_init(void)
 		GOTO(out_kmem, result);
 
 	result = cl_env_percpu_init();
-	if (result) /* no cl_env_percpu_fini on error */
+	if (result) 
 		GOTO(out_keys, result);
 
 	return 0;

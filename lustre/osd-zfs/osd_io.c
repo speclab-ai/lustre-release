@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Alex Zhuravlev <bzzz@whamcloud.com>
  * Author: Mike Pershin <tappro@whamcloud.com>
@@ -209,7 +209,7 @@ static int osd_zfs_fake_lnb(const struct lu_env *env,
 		lnb->lnb_file_offset = offset;
 		lnb->lnb_page_offset = poff;
 		lnb->lnb_len = plen;
-		/* lnb->lnb_flags = rnb->rnb_flags; */
+		
 		lnb->lnb_flags = 0;
 		lnb->lnb_rc = 0;
 		lnb->lnb_guard_rpc = 0;
@@ -249,7 +249,7 @@ static ssize_t osd_declare_write(const struct lu_env *env, struct dt_object *dt,
 	 * initialization
 	 */
 
-	/* size change (in dnode) will be declared by dmu_tx_hold_write() */
+	
 	if (dt_object_exists(dt))
 		oid = obj->oo_dn->dn_object;
 	else
@@ -267,7 +267,7 @@ static ssize_t osd_declare_write(const struct lu_env *env, struct dt_object *dt,
 		loff_t tstart, tend, end = pos + buf->lb_len;
 		dmu_tx_hold_t *txh;
 
-		/* try to find a close declared window to fit/extend */
+		
 		for (txh = list_head(&oh->ot_tx->tx_holds); txh != NULL;
 		    txh = list_next(&oh->ot_tx->tx_holds, txh)) {
 			if (obj->oo_dn != txh->txh_dnode)
@@ -275,7 +275,7 @@ static ssize_t osd_declare_write(const struct lu_env *env, struct dt_object *dt,
 			if (txh->txh_type != THT_WRITE)
 				continue;
 
-			/* bytes already declared in this handle */
+			
 			tstart = txh->txh_arg1;
 			tend = txh->txh_arg1 + txh->txh_arg2;
 
@@ -283,10 +283,10 @@ static ssize_t osd_declare_write(const struct lu_env *env, struct dt_object *dt,
 				tstart = pos;
 			if (tend < end)
 				tend = end;
-			/* if this is an append, then extend it */
+			
 			if (_pos == -1 && txh->txh_arg1 == max)
 				tend += buf->lb_len;
-			/* don't let too big appends */
+			
 			if (tend - tstart > 4*1024*1024)
 				continue;
 			if (pos >= tend || end <= tstart)
@@ -335,14 +335,14 @@ static void osd_put_dbuf(struct osd_object *obj, dmu_buf_t *db)
 		if (dbs[i] == db)
 			return;
 	}
-	/* get rid of dbuf with blkd > 0 */
+	
 	for (i = 0; i < OSD_MAX_DBUFS; i++) {
 		if (dbs[i] == NULL) {
 			dbs[i] = db;
 			return;
 		}
 		if (dbs[i]->db_offset > 0) {
-			/* replace this one */
+			
 			dbuf_rele((dmu_buf_impl_t *)dbs[i], osd_0copy_tag);
 			dbs[i] = db;
 			return;
@@ -471,12 +471,12 @@ static int osd_bufs_put(const struct lu_env *env, struct dt_object *dt,
 			goto next;
 		}
 		if (lnb[i].lnb_page->mapping == (void *)obj) {
-			/* this is anonymous page allocated for copy-write */
+			
 			lnb[i].lnb_page->mapping = NULL;
 			__free_page(lnb[i].lnb_page);
 			atomic_dec(&osd->od_zerocopy_alloc);
 		} else {
-			/* see comment in osd_bufs_get_read() */
+			
 			ptr = (unsigned long)lnb[i].lnb_data;
 			if (ptr & 1UL) {
 				ptr &= ~1UL;
@@ -585,7 +585,7 @@ static int osd_bufs_get_read(const struct lu_env *env, struct osd_object *obj,
 			bufoff = off - dbp[i]->db_offset;
 			tocpy = min_t(int, dbp[i]->db_size - bufoff, len);
 
-			/* kind of trick to differentiate dbuf vs. arcbuf */
+			
 			LASSERT(((unsigned long)dbp[i] & 1) == 0);
 			dbf = (void *) ((unsigned long)dbp[i] | 1);
 
@@ -621,7 +621,7 @@ static int osd_bufs_get_read(const struct lu_env *env, struct osd_object *obj,
 			if (drop_cache)
 				dbuf_set_pending_evict(dbp[i]);
 
-			/* steal dbuf so dmu_buf_rele_array() can't free it */
+			
 			dbp[i] = NULL;
 		}
 
@@ -693,7 +693,7 @@ static int osd_bufs_get_write(const struct lu_env *env, struct osd_object *obj,
 
 		abuf = NULL;
 		if (sz_in_block == bs) {
-			/* full block, try to use zerocopy */
+			
 			abuf = osd_request_arcbuf(dn, bs);
 			if (unlikely(IS_ERR(abuf)))
 				GOTO(out_err, rc = PTR_ERR(abuf));
@@ -720,7 +720,7 @@ static int osd_bufs_get_write(const struct lu_env *env, struct osd_object *obj,
 				else
 					lnb[i].lnb_data = NULL;
 
-				/* this one is not supposed to fail */
+				
 				lnb[i].lnb_page = kmem_to_page(abuf->b_data +
 							off_in_block);
 				LASSERT(lnb[i].lnb_page);
@@ -741,7 +741,7 @@ static int osd_bufs_get_write(const struct lu_env *env, struct osd_object *obj,
 				lprocfs_counter_add(osd->od_stats,
 						LPROC_OSD_TAIL_IO, 1);
 
-			/* can't use zerocopy, allocate temp. buffers */
+			
 			poff = off & (PAGE_SIZE - 1);
 			while (sz_in_block > 0) {
 				plen = min_t(int, poff + sz_in_block,
@@ -891,13 +891,13 @@ static int osd_declare_write_commit(const struct lu_env *env,
 			declare_flags |= OSD_QID_FORCE;
 
 		if (size == 0) {
-			/* first valid lnb */
+			
 			offset = lnb[i].lnb_file_offset;
 			size = lnb[i].lnb_len;
 			continue;
 		}
 		if (offset + size == lnb[i].lnb_file_offset) {
-			/* this lnb is contiguous to the previous one */
+			
 			size += lnb[i].lnb_len;
 			continue;
 		}
@@ -923,7 +923,7 @@ static int osd_declare_write_commit(const struct lu_env *env,
 		space += osd_roundup2blocksz(size, offset, blksz);
 	}
 
-	/* backend zfs FS might be configured to store multiple data copies */
+	
 	space  *= osd->od_os->os_copies;
 	space   = toqb(space);
 	CDEBUG(D_QUOTA, "writing %d pages, reserving %lldK of quota space\n",
@@ -931,7 +931,7 @@ static int osd_declare_write_commit(const struct lu_env *env,
 
 	record_start_io(osd, WRITE, discont_pages);
 retry:
-	/* acquire quota space if needed */
+	
 	rc = osd_declare_quota(env, osd, obj->oo_attr.la_uid,
 			       obj->oo_attr.la_gid, obj->oo_attr.la_projid,
 			       space, oh, &local_flags, declare_flags);
@@ -979,7 +979,7 @@ static int osd_grow_blocksize(struct osd_object *obj, struct osd_thandle *oh)
 
 	if (obj->oo_next_blocksize == 0)
 		return 0;
-	if (dn->dn_maxblkid > 0) /* can't change block size */
+	if (dn->dn_maxblkid > 0) 
 		GOTO(out, rc);
 	if (dn->dn_datablksz >= osd->od_max_blksz)
 		GOTO(out, rc);
@@ -1029,7 +1029,7 @@ static void osd_choose_next_blocksize(struct osd_object *obj,
 	if (!is_power_of_2(blksz))
 		blksz = size_roundup_power2(blksz);
 
-	/* XXX: locking? */
+	
 	if (blksz > obj->oo_next_blocksize)
 		obj->oo_next_blocksize = blksz;
 }
@@ -1069,7 +1069,7 @@ static int osd_write_commit(const struct lu_env *env, struct dt_object *dt,
 	LASSERT(th != NULL);
 	oh = container_of(th, struct osd_thandle, ot_super);
 
-	/* adjust block size. Assume the buffers are sorted. */
+	
 	(void)osd_grow_blocksize(obj, oh);
 
 	if (obj->oo_attr.la_size >= osd->od_readcache_max_filesize ||
@@ -1145,7 +1145,7 @@ static int osd_write_commit(const struct lu_env *env, struct dt_object *dt,
 				      lnb[i].lnb_page_offset, oh->ot_tx);
 			kunmap(kmap_to_page(addr));
 			iosize += lnb[i].lnb_len;
-			abufsz = lnb[i].lnb_len; /* to drop cache below */
+			abufsz = lnb[i].lnb_len; 
 		} else if (lnb[i].lnb_data) {
 			int j, apages;
 
@@ -1192,7 +1192,7 @@ static int osd_write_commit(const struct lu_env *env, struct dt_object *dt,
 	}
 
 	if (unlikely(new_size == 0)) {
-		/* no pages to write, no transno is needed */
+		
 		th->th_local = 1;
 		/* it is important to return 0 even when all lnb_rc == -ENOSPC
 		 * since ofd_commitrw_write() retries several times on ENOSPC
@@ -1202,7 +1202,7 @@ static int osd_write_commit(const struct lu_env *env, struct dt_object *dt,
 		RETURN(0);
 	}
 
-	/* if file has grown, take user_size into account */
+	
 	if (user_size && new_size > user_size)
 		new_size = user_size;
 	write_lock(&obj->oo_attr_lock);
@@ -1247,11 +1247,11 @@ static int osd_read_prep(const struct lu_env *env, struct dt_object *dt,
 		lnb[i].lnb_rc = lnb[i].lnb_len;
 
 		if (lnb[i].lnb_file_offset + lnb[i].lnb_len >= eof) {
-			/* send complete pages all the time */
+			
 			if (eof <= lnb[i].lnb_file_offset)
 				lnb[i].lnb_rc = 0;
 
-			/* all subsequent rc should be 0 */
+			
 			while (++i < npages)
 				lnb[i].lnb_rc = 0;
 			break;
@@ -1282,9 +1282,9 @@ static int __osd_object_punch(struct osd_object *obj, objset_t *os,
 	uint64_t size = obj->oo_attr.la_size;
 	int rc = 0;
 
-	/* Confirm if transaction has been assigned to a transaction group */
+	
 	LASSERT(tx->tx_txg != 0);
-	/* Nothing to do if file already at desired length. */
+	
 	if (len == DMU_OBJECT_END && size == off)
 		return 0;
 
@@ -1301,7 +1301,7 @@ static int __osd_object_punch(struct osd_object *obj, objset_t *os,
 			LUSTRE_ENCRYPTION_UNIT_SIZE;
 
 
-	/* XXX: dnode_free_range() can be used to save on dnode lookup */
+	
 	if (off < size)
 		dmu_free_range(os, dn->dn_object, off, len, tx);
 
@@ -1325,7 +1325,7 @@ static int osd_punch(const struct lu_env *env, struct dt_object *dt,
 	oh = container_of(th, struct osd_thandle, ot_super);
 
 	write_lock(&obj->oo_attr_lock);
-	/* truncate */
+	
 	if (end == OBD_OBJECT_EOF || end >= obj->oo_attr.la_size)
 		len = DMU_OBJECT_END;
 	else
@@ -1338,7 +1338,7 @@ static int osd_punch(const struct lu_env *env, struct dt_object *dt,
 
 	rc = __osd_object_punch(obj, osd->od_os, oh->ot_tx, start, len);
 
-	/* set new size */
+	
 	if (len == DMU_OBJECT_END) {
 		write_lock(&obj->oo_attr_lock);
 		obj->oo_attr.la_size = start;
@@ -1368,7 +1368,7 @@ static int osd_declare_punch(const struct lu_env *env, struct dt_object *dt,
 	else
 		len = end - start;
 
-	/* declare we'll free some blocks ... */
+	
 	/* if object holds encrypted content, we need to make sure we truncate
 	 * on an encryption unit boundary, or subsequent reads will get
 	 * corrupted content
@@ -1428,7 +1428,7 @@ static loff_t osd_lseek(const struct lu_env *env, struct dt_object *dt,
 again:
 	rc = osd_dmu_offset_next(osd->od_os, obj->oo_dn->dn_object, hole,
 				 &result);
-	/* dirty inode, lseek result is unreliable without sync */
+	
 	if (rc == EBUSY) {
 		txg_wait_synced(dmu_objset_pool(osd->od_os), 0ULL);
 		goto again;

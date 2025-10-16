@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/ll_dirstripe_verify.c
  *
@@ -61,7 +61,7 @@ static int read_proc_entry(char *proc_path, char *buf, int len)
 				  "read zero bytes from '%s'", proc_path);
 		rc = -4;
 	} else if (buf[rc - 1] == '\n') {
-		buf[rc - 1] = '\0'; /* Remove trailing newline */
+		buf[rc - 1] = '\0'; 
 	}
 
 	close(fd);
@@ -286,7 +286,7 @@ int main(int argc, char **argv)
 		goto cleanup;
 	}
 
-	/* XXX should be llapi_lov_getname() */
+	
 	rc = llapi_file_get_lov_uuid(argv[1], &uuid);
 	if (rc) {
 		llapi_error(LLAPI_MSG_ERROR, rc,

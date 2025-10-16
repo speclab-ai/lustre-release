@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * (Un)packing of OST/MDS requests
  *
@@ -172,7 +172,7 @@ static unsigned int lov_lsme_pack_foreign(struct lov_stripe_md_entry *lsme,
 	lfm->lfm_type = cpu_to_le32(lsme->lsme_type);
 	lfm->lfm_flags = cpu_to_le32(lsme->lsme_foreign_flags);
 
-	/* TODO: support for foreign layout other than HSM, i.e. DAOS. */
+	
 	if (lov_hsm_type_supported(lsme->lsme_type))
 		lov_foreign_hsm_to_le(lfm, &lsme->lsme_hsm);
 
@@ -187,7 +187,7 @@ static unsigned int lov_lsme_pack_v1v3(struct lov_stripe_md_entry *lsme,
 	unsigned int i;
 
 	lmm->lmm_magic = cpu_to_le32(lsme->lsme_magic);
-	/* lmm->lmm_oi not set */
+	
 	lmm->lmm_pattern = cpu_to_le32(lsme->lsme_pattern);
 	lmm->lmm_stripe_size = cpu_to_le32(lsme->lsme_stripe_size);
 	lmm->lmm_stripe_count = cpu_to_le16(lsme->lsme_stripe_count);
@@ -278,12 +278,12 @@ ssize_t lov_lsm_pack(const struct lov_stripe_md *lsm, void *buf,
 			size = lov_lsme_pack_v1v3(lsme, lmm);
 		lcme->lcme_size = cpu_to_le32(size);
 		offset += size;
-	} /* for each layout component */
+	} 
 
 	RETURN(lmm_size);
 }
 
-/* Find the max stripecount we should use */
+
 __u16 lov_get_stripe_count(struct lov_obd *lov, __u32 magic, __u16 stripe_count)
 {
 	struct lu_tgt_descs *ltd = &lov->lov_ost_descs;
@@ -359,7 +359,7 @@ int lov_getstripe(const struct lu_env *env, struct lov_object *obj,
 		  struct lov_stripe_md *lsm, struct lov_user_md __user *lump,
 		  size_t size)
 {
-	/* we use lov_user_md_v3 because it is larger than lov_user_md_v1 */
+	
 	struct lov_mds_md *lmmk, *lmm;
 	struct lov_foreign_md *lfm;
 	struct lov_user_md_v1 lum;

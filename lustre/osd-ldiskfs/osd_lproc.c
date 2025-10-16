@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Mikhail Pershin <tappro@sun.com>
  */
@@ -837,7 +837,7 @@ static struct attribute *ldiskfs_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(ldiskfs); /* creates ldiskfs_groups from ldiskfs_attrs */
+KOBJ_ATTRIBUTE_GROUPS(ldiskfs); 
 
 int osd_procfs_init(struct osd_device *osd, const char *name)
 {
@@ -856,7 +856,7 @@ int osd_procfs_init(struct osd_device *osd, const char *name)
 
 	CDEBUG(D_CONFIG, "%s: register osd-ldiskfs tunable parameters\n", name);
 
-	/* put reference taken by class_search_type */
+	
 	kobject_put(&type->typ_kobj);
 
 	osd->od_dt_dev.dd_ktype.default_groups = KOBJ_ATTR_GROUPS(ldiskfs);
@@ -871,7 +871,7 @@ int osd_procfs_init(struct osd_device *osd, const char *name)
 	if (osd->od_proc_entry)
 		RETURN(0);
 
-	/* Find the type procroot and add the proc entry for this device */
+	
 	osd->od_proc_entry = lprocfs_register(name, type->typ_procroot,
 					      NULL, &osd->od_dt_dev);
 	if (IS_ERR(osd->od_proc_entry)) {

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,14 +6,14 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Peter J. Braam <braam@clusterfs.com>
  * Author: Phil Schwan <phil@clusterfs.com>
  * Author: Robert Read <rread@clusterfs.com>
  */
 
-/* for O_DIRECTORY */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -41,7 +41,7 @@
 #include <sys/sysmacros.h>
 #include <time.h>
 #include <fnmatch.h>
-#include <libgen.h> /* for dirname() */
+#include <libgen.h> 
 #include <linux/limits.h>
 #ifdef HAVE_LINUX_UNISTD_H
 #include <linux/unistd.h>
@@ -79,14 +79,14 @@ struct lustre_foreign_type lu_foreign_types[] = {
 	{.lft_type = LU_FOREIGN_TYPE_PCCRO,	.lft_name = "pccro"},
 	{.lft_type = LU_FOREIGN_TYPE_S3,	.lft_name = "S3"},
 	{.lft_type = LU_FOREIGN_TYPE_SYMLINK,	.lft_name = "symlink"},
-	/* must be the last element */
+	
 	{.lft_type = LU_FOREIGN_TYPE_UNKNOWN, .lft_name = NULL}
-	/* array max dimension must be <= UINT32_MAX */
+	
 };
 
 void llapi_msg_set_level(int level)
 {
-	/* ensure level is in the good range */
+	
 	if (level < LLAPI_MSG_OFF)
 		llapi_msg_level = LLAPI_MSG_OFF;
 	else if (level > LLAPI_MSG_MAX)
@@ -164,7 +164,7 @@ static llapi_log_callback_t llapi_error_callback = error_callback_default;
 static llapi_log_callback_t llapi_info_callback = info_callback_default;
 
 
-/* llapi_error will preserve errno */
+
 void llapi_error(enum llapi_message_level level, int err, const char *fmt, ...)
 {
 	va_list	 args;
@@ -179,7 +179,7 @@ void llapi_error(enum llapi_message_level level, int err, const char *fmt, ...)
 	errno = tmp_errno;
 }
 
-/* llapi_printf will preserve errno */
+
 void llapi_printf(enum llapi_message_level level, const char *fmt, ...)
 {
 	va_list	 args;
@@ -263,7 +263,7 @@ int llapi_parse_size(const char *optarg, unsigned long long *size,
 
 		argbuf = end + 1;
 		frac = strtoull(argbuf, &end, 10);
-		/* count decimal places */
+		
 		for (i = 0; i < (end - argbuf); i++)
 			frac_d *= 10;
 	}
@@ -395,7 +395,7 @@ static int llapi_stripe_param_verify(const struct llapi_stripe_param *param,
 		}
 	}
 
-	/* Make sure we have a good pool */
+	
 	if (*pool_name != NULL) {
 		if (!llapi_pool_name_is_valid(pool_name)) {
 			rc = -EINVAL;
@@ -405,7 +405,7 @@ static int llapi_stripe_param_verify(const struct llapi_stripe_param *param,
 		}
 
 		if (!lov_pool_is_ignored((const char *) *pool_name)) {
-			/* Make sure the pool exists */
+			
 			rc = llapi_search_ost(fsname, *pool_name, NULL);
 			if (rc < 0) {
 				llapi_error(LLAPI_MSG_ERROR, rc,
@@ -531,7 +531,7 @@ int llapi_file_open_param(const char *name, int flags, mode_t mode,
 	size_t lum_size;
 	int fd, rc = 0;
 
-	/* Make sure we are on a Lustre file system */
+	
 	if (pool_name && !lov_pool_is_ignored(pool_name)) {
 		rc = llapi_search_fsname(name, fsname);
 		if (rc) {
@@ -541,7 +541,7 @@ int llapi_file_open_param(const char *name, int flags, mode_t mode,
 		}
 	}
 
-	/* Check if the stripe pattern is sane. */
+	
 	rc = llapi_stripe_param_verify(param, &pool_name, fsname);
 	if (rc < 0)
 		return rc;
@@ -577,7 +577,7 @@ retry_open:
 		return rc;
 	}
 
-	/*  Initialize IOCTL striping pattern structure */
+	
 	lum->lmm_magic = LOV_USER_MAGIC_V1;
 	lum->lmm_pattern = param->lsp_stripe_pattern;
 	lum->lmm_stripe_size = param->lsp_stripe_size;
@@ -829,7 +829,7 @@ static int verify_dir_param(const char *name,
 	char *pool_name = param->lsp_pool;
 	int rc;
 
-	/* Make sure we are on a Lustre file system */
+	
 	rc = llapi_search_fsname(name, fsname);
 	if (rc) {
 		llapi_error(LLAPI_MSG_ERROR, rc,
@@ -838,14 +838,14 @@ static int verify_dir_param(const char *name,
 		return rc;
 	}
 
-	/* Check if the stripe pattern is sane. */
+	
 	rc = dir_stripe_limit_check(param->lsp_stripe_offset,
 				    param->lsp_stripe_count,
 				    param->lsp_stripe_pattern);
 	if (rc != 0)
 		return rc;
 
-	/* Make sure we have a good pool */
+	
 	if (pool_name != NULL) {
 		/*
 		 * in case user gives the full pool name <fsname>.<poolname>,
@@ -865,7 +865,7 @@ static int verify_dir_param(const char *name,
 			pool_name = ptr + 1;
 		}
 
-		/* Make sure the pool exists and is non-empty */
+		
 		rc = llapi_search_tgt(fsname, pool_name, NULL, true);
 		if (rc < 1) {
 			char *err = rc == 0 ? "has no OSTs" : "does not exist";
@@ -876,7 +876,7 @@ static int verify_dir_param(const char *name,
 		}
 	}
 
-	/* sanity check of target list */
+	
 	if (param->lsp_is_specific) {
 		char mdtname[MAX_OBD_NAME + 64];
 		bool found = false;
@@ -898,7 +898,7 @@ static int verify_dir_param(const char *name,
 				return rc;
 			}
 
-			/* Make sure stripe offset is in MDT list. */
+			
 			if (param->lsp_tgts[i] == param->lsp_stripe_offset)
 				found = true;
 		}
@@ -945,7 +945,7 @@ int llapi_dir_set_default_lmv(const char *name,
 	if (rc)
 		return rc;
 
-	/* TODO: default lmv doesn't support specific targets yet */
+	
 	if (param->lsp_is_specific)
 		return -EINVAL;
 
@@ -1049,7 +1049,7 @@ int llapi_dir_create(const char *name, mode_t mode,
 	data.ioc_inllen2 = lmu_size;
 	data.ioc_type = mode;
 	if (param->lsp_is_create)
-		/* borrow obdo1.o_flags to store this flag */
+		
 		data.ioc_obdo1.o_flags = OBD_FL_OBDMDEXISTS;
 	rc = llapi_ioctl_pack(&data, &buf, sizeof(rawbuf));
 	if (rc) {
@@ -1222,7 +1222,7 @@ int llapi_get_poolmembers(const char *poolname, char **members,
 	int nb_entries = 0;
 	int used = 0;
 
-	/* name is FSNAME.POOLNAME */
+	
 	if (strlen(poolname) >= sizeof(fsname))
 		return -EOVERFLOW;
 
@@ -1261,7 +1261,7 @@ int llapi_get_poolmembers(const char *poolname, char **members,
 			break;
 		}
 		buf[sizeof(buf) - 1] = '\0';
-		/* remove '\n' */
+		
 		tmp = strchr(buf, '\n');
 		if (tmp != NULL)
 			*tmp = '\0';
@@ -1305,16 +1305,16 @@ int llapi_get_poollist(const char *name, char **poollist, int list_size,
 	unsigned int used = 0;
 	unsigned int i;
 
-	/* initialize output array */
+	
 	for (i = 0; i < list_size; i++)
 		poollist[i] = NULL;
 
-	/* is name a pathname ? */
+	
 	ptr = strchr(name, '/');
 	if (ptr != NULL) {
 		char fsname_buf[MAXNAMLEN];
 
-		/* We will need fsname for printing later */
+		
 		rc = llapi_getname(name, fsname_buf, sizeof(fsname_buf));
 		if (rc)
 			return rc;
@@ -1327,7 +1327,7 @@ int llapi_get_poollist(const char *name, char **poollist, int list_size,
 		if (!fsname)
 			return -ENOMEM;
 	} else {
-		/* name is FSNAME */
+		
 		fsname = strdup(name);
 		if (!fsname)
 			return -ENOMEM;
@@ -1357,17 +1357,17 @@ int llapi_get_poollist(const char *name, char **poollist, int list_size,
 			goto free_dir;
 		}
 
-		/* ignore . and .. */
+		
 		if (!strcmp(pool->d_name, ".") || !strcmp(pool->d_name, ".."))
 			continue;
 
-		/* check output bounds */
+		
 		if (nb_entries >= list_size) {
 			rc = -EOVERFLOW;
 			goto free_dir_no_msg;
 		}
 
-		/* +2 for '.' and final '\0' */
+		
 		if (used + strlen(pool->d_name) + strlen(fsname) + 2
 		    > buffer_size) {
 			rc = -EOVERFLOW;
@@ -1396,7 +1396,7 @@ free_path:
 	return rc != 0 ? rc : nb_entries;
 }
 
-/* wrapper for lfs.c and obd.c */
+
 int llapi_poollist(const char *name)
 {
 	int poolcount, rc, i;
@@ -1471,11 +1471,11 @@ retry_get_pools:
 	list = (char **) (buffer + bufsize);
 
 	if (!poolname) {
-		/* name is a path or fsname */
+		
 		nb = llapi_get_poollist(name, list, obdcount,
 					buffer, bufsize);
 	} else {
-		/* name is a pool name (<fsname>.<poolname>) */
+		
 		nb = llapi_get_poolmembers(name, list, obdcount,
 					   buffer, bufsize);
 	}
@@ -1493,7 +1493,7 @@ retry_get_pools:
 		*poolcount = nb;
 	}
 err:
-	/* Don't free buffer, it will be used later */
+	
 	if (rc && buffer)
 		free(buffer);
 	if (fsname != NULL && type == FILTER_BY_FS_NAME)
@@ -1534,7 +1534,7 @@ int common_param_init(struct find_param *param, char *path)
 	if (lum_size < 0)
 		return lum_size;
 
-	/* migrate has fp_lmv_md initialized outside */
+	
 	if (param->fp_migrate)
 		return 0;
 
@@ -1580,7 +1580,7 @@ int cb_common_fini(char *path, int p, int *dp, void *data,
 	return 0;
 }
 
-/* set errno upon failure */
+
 int open_parent(const char *path)
 {
 	char *path_copy;
@@ -1640,7 +1640,7 @@ again:
 		did_nofollow = true;
 		fd = open(path, O_RDONLY | O_NOFOLLOW | O_NONBLOCK);
 		if (fd < 0) {
-			/* restore original errno */
+			
 			errno = ENOTTY;
 			return ret;
 		}
@@ -1651,16 +1651,16 @@ again:
 		}
 		if (!S_ISFIFO(st.st_mode))
 			fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
-		/* close original fd and set new */
+		
 		close(*d);
 		*d = fd;
 		ret2 = ioctl(fd, LL_IOC_LMV_GETSTRIPE, param->fp_lmv_md);
 		if (ret2 < 0 && errno != E2BIG) {
-			/* restore original errno */
+			
 			errno = ENOTTY;
 			return ret;
 		}
-		/* LMV is ok or need to handle E2BIG case now */
+		
 		ret = ret2;
 	}
 
@@ -1668,7 +1668,7 @@ again:
 		int stripe_count;
 		int lmv_size;
 
-		/* if foreign LMV case, fake stripes number */
+		
 		if (lmv_is_foreign(param->fp_lmv_md->lum_magic)) {
 			struct lmv_foreign_md *lfm;
 
@@ -1818,11 +1818,11 @@ retry_getinfo:
 
 			dir_fd2 = open(path, O_RDONLY | O_NDELAY | O_NOFOLLOW);
 			if (dir_fd2 < 0) {
-				/* return original error */
+				
 				errno = ENOTTY;
 			} else {
 				ret = ioctl(dir_fd2, cmd, lmdbuf);
-				/* pass new errno or success back to caller */
+				
 
 				close(dir_fd2);
 			}
@@ -2002,16 +2002,16 @@ int llapi_semantic_traverse(char *path, int size, int parent,
 
 		}
 
-		/* ENOTDIR */
+		
 		if (parent == -1 && d == -1) {
-			/* Open the parent dir. */
+			
 			p = open_parent(path);
 			if (p == -1) {
 				ret = -errno;
 				goto out;
 			}
 		}
-	} else { /* d != -1 */
+	} else { 
 		int d2;
 
 		/* try to reopen dir with O_NOFOLLOW just in case of a foreign
@@ -2022,7 +2022,7 @@ int llapi_semantic_traverse(char *path, int size, int parent,
 			close(d);
 			d = d2;
 		} else {
-			/* continue with d */
+			
 			errno = 0;
 		}
 	}
@@ -2038,7 +2038,7 @@ int llapi_semantic_traverse(char *path, int size, int parent,
 
 	dir = fdopendir(d);
 	if (dir == NULL) {
-		/* ENOTDIR if fake symlink, do not consider it as an error */
+		
 		if (errno != ENOTDIR)
 			llapi_error(LLAPI_MSG_ERROR, errno,
 				    "fdopendir() failed");
@@ -2085,7 +2085,7 @@ int llapi_semantic_traverse(char *path, int size, int parent,
 					  __func__, dent->d_name, dent->d_type);
 			break;
 		case DT_DIR:
-			/* recursion down into a new subdirectory here */
+			
 			if (param->fp_thread_count) {
 				rc = work_unit_create_and_add(path, param,
 							      dent);
@@ -2200,7 +2200,7 @@ int llapi_file_get_lov_uuid(const char *path, struct obd_uuid *lov_uuid)
 {
 	int fd, rc;
 
-	/* do not follow faked symlinks */
+	
 	fd = open(path, O_RDONLY | O_NONBLOCK | O_NOFOLLOW);
 	if (fd < 0) {
 		/* real symlink should have failed with ELOOP so retry without
@@ -2264,7 +2264,7 @@ int llapi_file_get_type_uuid(const char *path, enum tgt_type type,
 {
 	int fd, rc;
 
-	/* do not follow faked symlinks */
+	
 	fd = open(path, O_RDONLY | O_NONBLOCK | O_NOFOLLOW);
 	if (fd < 0) {
 		/* real symlink should have failed with ELOOP so retry without
@@ -2396,7 +2396,7 @@ retry_get_uuids:
 		int maxidx = LOV_V1_INSANE_STRIPE_COUNT;
 		char *end = NULL;
 
-		/* The user may have specified a simple index */
+		
 		i = strtol(obduuids[obdnum].uuid, &end, 0);
 		if (end && *end == '\0' && i < LOV_V1_INSANE_STRIPE_COUNT) {
 			indexes[obdnum] = i;
@@ -2726,7 +2726,7 @@ static void lov_dump_user_lmm_header(struct lov_user_md *lum, char *path,
 				llapi_error(LLAPI_MSG_ERROR, rc,
 					    "Cannot determine default stripe size.");
 		} else {
-			/* Extension size is in KiB */
+			
 			llapi_printf(LLAPI_MSG_NORMAL, "%llu",
 				     extension ?
 				     (unsigned long long)(lum->lmm_stripe_size * SEL_UNIT_SIZE) :
@@ -3019,7 +3019,7 @@ static void lmv_dump_user_lmm(struct lmv_user_md *lum, char *pool_name,
 	if (!obdstripe)
 		return;
 
-	/* show all information default */
+	
 	if (!verbose) {
 		if (lum->lum_magic == LMV_USER_MAGIC)
 			verbose = VERBOSE_POOL | VERBOSE_STRIPE_COUNT |
@@ -3316,7 +3316,7 @@ static void lov_dump_comp_v1_entry(struct find_param *param,
 		lcme_flags2str(entry->lcme_flags);
 		separator = "\n";
 	}
-	/* print snapshot timestamp if its a nosync comp */
+	
 	if ((verbose & VERBOSE_COMP_FLAGS) &&
 	    (entry->lcme_flags & LCME_FL_NOSYNC)) {
 		llapi_printf(LLAPI_MSG_NORMAL, "%s", separator);
@@ -3403,7 +3403,7 @@ static int find_value_cmp(unsigned long long file, unsigned long long limit,
 	int ret = -1;
 
 	if (sign > 0) {
-		/* Drop the fraction of margin (of days or size). */
+		
 		if (file + margin <= limit)
 			ret = mds ? 0 : 1;
 	} else if (sign == 0) {
@@ -3450,11 +3450,11 @@ lov_v1v3_pool_name(struct lov_user_md *v1, char *pool_name)
 static inline bool
 print_last_init_comp(struct find_param *param)
 {
-	/* print all component info */
+	
 	if ((param->fp_verbose & VERBOSE_DEFAULT) == VERBOSE_DEFAULT)
 		return false;
 
-	/* print specific component info */
+	
 	if (param->fp_check_comp_id || param->fp_check_comp_flags ||
 	    param->fp_check_comp_start || param->fp_check_comp_end ||
 	    param->fp_check_mirror_id || param->fp_check_mirror_index)
@@ -3468,11 +3468,11 @@ static int find_comp_end_cmp(unsigned long long end, struct find_param *param)
 	int match;
 
 	if (param->fp_comp_end == LUSTRE_EOF) {
-		if (param->fp_comp_end_sign == 0) /* equal to EOF */
+		if (param->fp_comp_end_sign == 0) 
 			match = end == LUSTRE_EOF ? 1 : -1;
-		else if (param->fp_comp_end_sign > 0) /* at most EOF */
+		else if (param->fp_comp_end_sign > 0) 
 			match = end == LUSTRE_EOF ? -1 : 1;
-		else /* at least EOF */
+		else 
 			match = -1;
 		if (param->fp_exclude_comp_end)
 			match = ~match + 1;
@@ -3649,7 +3649,7 @@ static void lov_dump_comp_v1(struct find_param *param, char *path,
 
 			if (param->fp_verbose & VERBOSE_EXT_SIZE) {
 				if (entry->lcme_flags & LCME_FL_EXTENSION)
-					/* moved back below */
+					
 					i++;
 				else
 					continue;
@@ -3742,7 +3742,7 @@ static inline bool has_any_comp_options(struct find_param *param)
 	    param->fp_check_comp_flags)
 		return true;
 
-	/* show full layout information, not component specific */
+	
 	if ((verbose & ~VERBOSE_DETAIL) == VERBOSE_DEFAULT)
 		return false;
 
@@ -3766,16 +3766,16 @@ lov_forge_comp_v1(struct lov_user_mds_data *orig, bool is_dir)
 		llapi_printf(LLAPI_MSG_NORMAL, "out of memory\n");
 		return new;
 	}
-	/* struct lov_user_mds_data header */
+	
 	memcpy(new, orig, lumd_hdr);
-	/* fill comp_v1 */
+	
 	comp_v1 = (struct lov_comp_md_v1 *)&new->lmd_lmm;
 	comp_v1->lcm_magic = lum->lmm_magic;
 	comp_v1->lcm_size = lum_off + lum_size;
 	comp_v1->lcm_layout_gen = is_dir ? 0 : lum->lmm_layout_gen;
 	comp_v1->lcm_flags = 0;
 	comp_v1->lcm_entry_count = 1;
-	/* fill entry */
+	
 	ent = &comp_v1->lcm_entries[0];
 	ent->lcme_id = 0;
 	ent->lcme_flags = is_dir ? 0 : LCME_FL_INIT;
@@ -3783,7 +3783,7 @@ lov_forge_comp_v1(struct lov_user_mds_data *orig, bool is_dir)
 	ent->lcme_extent.e_end = LUSTRE_EOF;
 	ent->lcme_offset = lum_off;
 	ent->lcme_size = lum_size;
-	/* fill blob at end of entry */
+	
 	memcpy((char *)&comp_v1->lcm_entries[1], lum, lum_size);
 
 	return new;
@@ -3901,7 +3901,7 @@ static void llapi_lov_dump_user_lmm(struct find_param *param, char *path,
 	if (param->fp_get_lmv || param->fp_get_default_lmv)
 		magic = (__u32)param->fp_lmv_md->lum_magic;
 	else
-		magic = *(__u32 *)&param->fp_lmd->lmd_lmm; /* lum->lmm_magic */
+		magic = *(__u32 *)&param->fp_lmd->lmd_lmm; 
 
 	if (param->fp_raw)
 		flags |= LDF_IS_RAW;
@@ -3956,7 +3956,7 @@ static int llapi_file_get_stripe1(const char *path, struct lov_user_md *lum)
 
 	fname = strrchr(path, '/');
 
-	/* It should be a file (or other non-directory) */
+	
 	if (fname == NULL) {
 		dname = (char *)malloc(2);
 		if (dname == NULL)
@@ -3999,14 +3999,14 @@ int llapi_file_get_stripe(const char *path, struct lov_user_md *lum)
 	if (!(rc == -ENOTTY || rc == -ENODATA))
 		goto out;
 
-	/* Handle failure due to symlinks by dereferencing path manually. */
+	
 	canon_path = canonicalize_file_name(path);
 	if (canon_path == NULL)
-		goto out; /* Keep original rc. */
+		goto out; 
 
 	rc2 = llapi_file_get_stripe1(canon_path, lum);
 	if (rc2 < 0)
-		goto out; /* Keep original rc. */
+		goto out; 
 
 	rc = 0;
 out:
@@ -4059,7 +4059,7 @@ static int find_time_check(struct find_param *param, int mds)
 	int rc = 1;
 	int rc2;
 
-	/* Check if file is accepted. */
+	
 	if (param->fp_atime) {
 		rc2 = find_value_cmp(lmd->lmd_stx.stx_atime.tv_sec,
 				     param->fp_atime, param->fp_asign,
@@ -4113,7 +4113,7 @@ static int find_newerxy_check(struct find_param *param, int mds, bool from_mdt)
 	int rc2;
 
 	for (i = 0; i < 2; i++) {
-		/* Check if file is accepted. */
+		
 		if (param->fp_newery[NEWERXY_ATIME][i]) {
 			rc2 = find_value_cmp(lmd->lmd_stx.stx_atime.tv_sec,
 					     param->fp_newery[NEWERXY_ATIME][i],
@@ -4197,7 +4197,7 @@ static int check_obd_match(struct find_param *param)
 	if (!S_ISREG(lmd->lmd_stx.stx_mode))
 		return 0;
 
-	/* exclude foreign */
+	
 	if (v1->lmm_magic == LOV_USER_MAGIC_FOREIGN)
 		return param->fp_exclude_obd;
 
@@ -4238,7 +4238,7 @@ static int check_mdt_match(struct find_param *param)
 	if (param->fp_mdt_uuid && param->fp_mdt_index == OBD_NOT_FOUND)
 		return 0;
 
-	/* FIXME: For striped dir, we should get stripe information and check */
+	
 	for (i = 0; i < param->fp_num_mdts; i++) {
 		if (param->fp_mdt_indexes[i] == param->fp_file_mdt_index)
 			return !param->fp_exclude_mdt;
@@ -4349,7 +4349,7 @@ static int find_check_ext_size(struct find_param *param)
 				     param->fp_ext_size_sign,
 				     param->fp_exclude_ext_size,
 				     param->fp_ext_size_units, 0);
-		/* If any ext_size matches */
+		
 		if (ret != -1)
 			break;
 	}
@@ -4409,7 +4409,7 @@ static int find_check_layout(struct find_param *param)
 		if (comp_v1)
 			v1 = lov_comp_entry(comp_v1, i);
 
-		/* foreign file have a special magic but no pattern field */
+		
 		if (v1->lmm_magic == LOV_USER_MAGIC_FOREIGN)
 			continue;
 
@@ -4483,7 +4483,7 @@ static int find_check_pool(struct find_param *param)
 	if (v3->lmm_magic == LOV_USER_MAGIC_COMP_V1) {
 		comp_v1 = (struct lov_comp_md_v1 *)v3;
 		count = comp_v1->lcm_entry_count;
-		/* empty requested pool is taken as no pool search */
+		
 		if (count == 0 && param->fp_poolname[0] == '\0') {
 			found = true;
 			goto found;
@@ -4548,7 +4548,7 @@ static int find_check_comp_options(struct find_param *param)
 		entry->lcme_extent.e_end = LUSTRE_EOF;
 	}
 
-	/* invalid case, don't match for any kind of search. */
+	
 	if (comp_v1->lcm_entry_count == 0) {
 		ret = -1;
 		goto out;
@@ -4594,7 +4594,7 @@ static int find_check_comp_options(struct find_param *param)
 				continue;
 		}
 
-		/* the component matches all criteria */
+		
 		break;
 	}
 out:
@@ -4644,7 +4644,7 @@ static int find_check_attr_options(struct find_param *param)
 	attrs = param->fp_lmd->lmd_stx.stx_attributes_mask &
 		param->fp_lmd->lmd_stx.stx_attributes;
 
-	/* This is a AND between all (negated) specified attributes */
+	
 	if ((param->fp_attrs && (param->fp_attrs & attrs) != param->fp_attrs) ||
 	    (param->fp_neg_attrs && (param->fp_neg_attrs & attrs)))
 		found = false;
@@ -4688,7 +4688,7 @@ static int xattr_done_matching(struct xattr_match_info *xmi)
 	int i;
 
 	for (i = 0; i < xmi->xattr_regex_count; i++) {
-		/* if any pattern still undecided, need to keep going */
+		
 		if (!xmi->xattr_regex_matched[i])
 			return false;
 	}
@@ -4714,12 +4714,12 @@ static int find_check_xattrs(char *path, struct xattr_match_info *xmi)
 		return -1;
 	}
 
-	/* loop over all xattr names on the file */
+	
 	for (p = xmi->xattr_name_buf;
 	     p - xmi->xattr_name_buf < list_len;
 	     p = strchr(p, '\0'), p++) {
 		fetched_val = false;
-		/* loop over all regex patterns specified and check them */
+		
 		for (i = 0; i < xmi->xattr_regex_count; i++) {
 			if (xmi->xattr_regex_matched[i])
 				continue;
@@ -4841,7 +4841,7 @@ static int printf_format_escape(char *seq, char *buffer, size_t size,
 				int *wrote)
 {
 	*wrote = 0;
-	/* For now, only handle single char escape sequences: \n, \t, \\ */
+	
 	if (size < 2)
 		return 0;
 
@@ -4881,7 +4881,7 @@ static int printf_format_timestamp(char *seq, char *buffer, size_t size,
 	struct tm *tm;
 	time_t t;
 	int rc = 0;
-	char *fmt = "%c";  /* Print in ctime format by default */
+	char *fmt = "%c";  
 	*wrote = 0;
 
 	switch (*seq) {
@@ -4934,7 +4934,7 @@ static int printf_format_timestamp(char *seq, char *buffer, size_t size,
 	}
 
 	if (rc) {
-		/* Found valid format, print to buffer */
+		
 		t = ts.tv_sec;
 		tm = localtime(&t);
 		*wrote = strftime(buffer, size, fmt, tm);
@@ -4959,7 +4959,7 @@ static int printf_format_ost_indices(char *buffer, size_t size,
 	uint64_t count, idx, i;
 	int err, bytes, wrote = 0;
 
-	/* Make sure to start at the first component */
+	
 	err = llapi_layout_comp_use(layout, LLAPI_LAYOUT_COMP_USE_FIRST);
 	if (err) {
 		llapi_error(LLAPI_MSG_ERROR, err,
@@ -4995,16 +4995,16 @@ static int printf_format_ost_indices(char *buffer, size_t size,
 				goto format_done;
 			buffer += bytes;
 		}
-		/* Overwrite last comma with closing bracket */
+		
 		*(buffer - 1) = ']';
 
 		err = llapi_layout_comp_use(layout, LLAPI_LAYOUT_COMP_USE_NEXT);
-		if (err == 0)		/* next component is found */
+		if (err == 0)		
 			continue;
 		if (err < 0)
 			llapi_error(LLAPI_MSG_ERROR, err,
 				    "error: layout component iteration failed\n");
-		/* At this point, either got error or reached last component */
+		
 		break;
 	}
 
@@ -5033,14 +5033,14 @@ static int printf_format_file_attributes(char *buffer, size_t size,
 	uint64_t known_attrs = 0;
 	struct attrs_name *ap;
 
-	/* before all, print '---' if no attributes, and exit */
+	
 	if (!attrs) {
 		bytes = snprintf(buffer, size - wrote, "---");
 		wrote += bytes;
 		goto format_done;
 	}
 
-	/* first, browse list of known attributes */
+	
 	for (ap = (struct attrs_name *)attrs_array; ap->an_attr != 0; ap++) {
 		known_attrs |= ap->an_attr;
 		if (attrs & ap->an_attr) {
@@ -5058,7 +5058,7 @@ static int printf_format_file_attributes(char *buffer, size_t size,
 		}
 	}
 
-	/* second, print hex value for unknown attributes */
+	
 	attrs &= ~known_attrs;
 	if (attrs) {
 		bytes = snprintf(buffer, size - wrote, "%s0x%lx",
@@ -5101,11 +5101,11 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 	char pool_name[LOV_MAXPOOLNAME + 1] = { '\0' };
 	int err, bytes, i;
 	bool longopt = true;
-	int rc = 2;	/* all current valid sequences are 2 chars */
+	int rc = 2;	
 	void *lstx;
 	*wrote = 0;
 
-	/* Sanity check.  Formats always look like %L{X} */
+	
 	if (*seq++ != 'L') {
 		rc = 0;
 		goto format_done;
@@ -5116,7 +5116,7 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 	 * and dirs, so handle all of those here.
 	 */
 	switch (*seq) {
-	case 'a': /* file attributes */
+	case 'a': 
 		longopt = false;
 		fallthrough;
 	case 'A':
@@ -5139,10 +5139,10 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 		goto format_done;
 	}
 
-	/* Other formats for files/dirs need to be handled differently */
-	if (d == -1) {		/* file */
-		//layout = llapi_layout_get_by_xattr(&param->fp_lmd->lmd_lmm,
-		//				   param->fp_lum_size, 0);
+	
+	if (d == -1) {		
+		
+		
 		layout = llapi_layout_get_by_path(path, 0);
 		if (layout == NULL) {
 			llapi_error(LLAPI_MSG_ERROR, errno,
@@ -5163,7 +5163,7 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 		}
 
 		switch (*seq) {
-		case 'c':	/* stripe count */
+		case 'c':	
 			err = llapi_layout_stripe_count_get(layout, &str_cnt);
 			if (err) {
 				llapi_error(LLAPI_MSG_ERROR, err,
@@ -5172,10 +5172,10 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 			}
 			*wrote = snprintf(buffer, size, "%"PRIu64, str_cnt);
 			break;
-		case 'h':	/* hash info */
-			/* Not applicable to files.  Skip it. */
+		case 'h':	
+			
 			break;
-		case 'i':	/* starting index */
+		case 'i':	
 			err = llapi_layout_ost_index_get(layout, 0, &idx);
 			if (err) {
 				llapi_error(LLAPI_MSG_ERROR, err,
@@ -5184,10 +5184,10 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 			}
 			*wrote = snprintf(buffer, size, "%"PRIu64, idx);
 			break;
-		case 'o':	/* list of object indices */
+		case 'o':	
 			*wrote = printf_format_ost_indices(buffer, size, layout);
 			break;
-		case 'p':	/* pool name */
+		case 'p':	
 			err = llapi_layout_pool_name_get(layout, pool_name,
 							 sizeof(pool_name));
 			if (err) {
@@ -5197,7 +5197,7 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 			}
 			*wrote = snprintf(buffer, size, "%s", pool_name);
 			break;
-		case 'S':	/* stripe size */
+		case 'S':	
 			err = llapi_layout_stripe_size_get(layout, &str_size);
 			if (err) {
 				llapi_error(LLAPI_MSG_ERROR, rc,
@@ -5210,16 +5210,16 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 			rc = 0;
 			break;
 		}
-	} else {		/* directory */
+	} else {		
 		lum = (struct lmv_user_md *)param->fp_lmv_md;
 		objects = lum->lum_objects;
 
 		switch (*seq) {
-		case 'c':	/* stripe count */
+		case 'c':	
 			*wrote = snprintf(buffer, size, "%d",
 					  (int)lum->lum_stripe_count);
 			break;
-		case 'h':	/* hash info */
+		case 'h':	
 			hash_type = lum->lum_hash_type & LMV_HASH_TYPE_MASK;
 			if (hash_type < LMV_HASH_TYPE_MAX)
 				*wrote = snprintf(buffer, size, "%s",
@@ -5228,11 +5228,11 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 				*wrote = snprintf(buffer, size, "%#x",
 						  hash_type);
 			break;
-		case 'i':	/* starting index */
+		case 'i':	
 			*wrote = snprintf(buffer, size, "%d",
 					  lum->lum_stripe_offset);
 			break;
-		case 'o':	/* list of object indices */
+		case 'o':	
 			str_cnt = (int) lum->lum_stripe_count;
 			*wrote = snprintf(buffer, size, "%s", "[");
 			if (*wrote >= size)
@@ -5247,21 +5247,21 @@ static int printf_format_lustre(char *seq, char *buffer, size_t size,
 				buffer += bytes;
 			}
 			if (str_cnt == 0) {
-				/* Use lum_offset as the only list entry */
+				
 				bytes = snprintf(buffer, (size - *wrote),
 						"%d]", lum->lum_stripe_offset);
 				*wrote += bytes;
 			} else {
-				/* Overwrite last comma with closing bracket */
+				
 				*(buffer - 1) = ']';
 			}
 			break;
-		case 'p':	/* pool name */
+		case 'p':	
 			*wrote = snprintf(buffer, size, "%s",
 					  lum->lum_pool_name);
 			break;
-		case 'S':	/* stripe size */
-			/* This has no meaning for directories.  Skip it. */
+		case 'S':	
+			
 			break;
 		default:
 			rc = 0;
@@ -5274,7 +5274,7 @@ format_done:
 		llapi_layout_free(layout);
 
 	if (*wrote >= size)
-		/* output of snprintf was truncated */
+		
 		*wrote = size - 1;
 
 	return rc;
@@ -5346,7 +5346,7 @@ static int parse_format_width(char **seq, size_t buf_size, int *width,
 	*padding = ' ';
 	*width = 0;
 
-	/* GNU find supports formats such as "%----10s" */
+	
 	while (**seq == '-') {
 		(*seq)++;
 		parsed++;
@@ -5366,13 +5366,13 @@ static int parse_format_width(char **seq, size_t buf_size, int *width,
 	if (*width >= buf_size)
 		*width = buf_size - 1;
 
-	/* increase the number of processed characters */
+	
 	parsed += end - *seq;
 	*seq = end;
 	if (negative_width)
 		*width = -*width;
 
-	/* GNU find only does 0 padding for %S, %d and %m. */
+	
 	switch (**seq) {
 	case 'S':
 	case 'd':
@@ -5410,7 +5410,7 @@ static int printf_format_directive(char *seq, char *buffer, size_t size,
 	__u16 mode = param->fp_lmd->lmd_stx.stx_mode;
 	char padding;
 	int width_rc;
-	int rc = 1;  /* most specifiers are single character */
+	int rc = 1;  
 	int width;
 
 	*wrote = 0;
@@ -5423,13 +5423,13 @@ static int printf_format_directive(char *seq, char *buffer, size_t size,
 	case 'a': case 'A':
 	case 'c': case 'C':
 	case 't': case 'T':
-	case 'w': case 'W':	/* timestamps */
+	case 'w': case 'W':	
 		rc = printf_format_timestamp(seq, buffer, size, wrote, param);
 		break;
-	case 'b':	/* file size (in 512B blocks) */
+	case 'b':	
 		*wrote = snprintf(buffer, size, "%"PRIu64, blocks);
 		break;
-	case 'g': { /* groupname of owner*/
+	case 'g': { 
 		static char save_gr_name[LOGIN_NAME_MAX + 1];
 		static gid_t save_gid = -1;
 
@@ -5449,39 +5449,39 @@ static int printf_format_directive(char *seq, char *buffer, size_t size,
 		}
 		fallthrough;
 	}
-	case 'G':	/* GID of owner */
+	case 'G':	
 		*wrote = snprintf(buffer, size, "%u",
 				  param->fp_lmd->lmd_stx.stx_gid);
 		break;
-	case 'i':	/* inode number */
+	case 'i':	
 		*wrote = snprintf(buffer, size, "%llu",
 				  param->fp_lmd->lmd_stx.stx_ino);
 		break;
-	case 'k':	/* file size (in 1K blocks) */
+	case 'k':	
 		*wrote = snprintf(buffer, size, "%"PRIu64, (blocks + 1)/2);
 		break;
-	case 'L':	/* Lustre-specific formats */
+	case 'L':	
 		rc = printf_format_lustre(seq, buffer, size, wrote, param,
 					  path, projid, d);
 		break;
-	case 'm':	/* file mode in octal */
+	case 'm':	
 		*wrote = snprintf(buffer, size, "%o", (mode & (~S_IFMT)));
 		break;
-	case 'M':	/* file access mode */
+	case 'M':	
 		*wrote = snprintf_access_mode(buffer, size, mode);
 		break;
-	case 'n':	/* number of hard links */
+	case 'n':	
 		*wrote = snprintf(buffer, size, "%u",
 				  param->fp_lmd->lmd_stx.stx_nlink);
 		break;
-	case 'p':	/* Path name of file */
+	case 'p':	
 		*wrote = snprintf(buffer, size, "%s", path);
 		break;
-	case 's':	/* file size (in bytes) */
+	case 's':	
 		*wrote = snprintf(buffer, size, "%"PRIu64,
 				   (uint64_t) param->fp_lmd->lmd_stx.stx_size);
 		break;
-	case 'u': {/* username of owner */
+	case 'u': {
 		static char save_username[LOGIN_NAME_MAX + 1];
 		static uid_t save_uid = -1;
 
@@ -5501,11 +5501,11 @@ static int printf_format_directive(char *seq, char *buffer, size_t size,
 		}
 		fallthrough;
 	}
-	case 'U':	/* UID of owner */
+	case 'U':	
 		*wrote = snprintf(buffer, size, "%u",
 				   param->fp_lmd->lmd_stx.stx_uid);
 		break;
-	case 'y':	/* file type */
+	case 'y':	
 		if (S_ISREG(mode))
 			*buffer = 'f';
 		else if (S_ISDIR(mode))
@@ -5528,25 +5528,25 @@ static int printf_format_directive(char *seq, char *buffer, size_t size,
 		*buffer = '%';
 		*wrote = 1;
 		break;
-	default:	/* invalid format specifier */
+	default:	
 		rc = 0;
 		break;
 	}
 
 	if (rc == 0)
-		/* if parsing failed, return 0 to avoid skipping width_rc */
+		
 		return 0;
 
 	if (width > 0 && width > *wrote) {
-		/* left padding */
+		
 		int shift = width - *wrote;
 
-		/* '\0' is added by caller if necessary */
+		
 		memmove(buffer + shift, buffer, *wrote);
 		memset(buffer, padding, shift);
 		*wrote += shift;
 	} else if (width < 0 && -width > *wrote) {
-		/* right padding */
+		
 		int shift = -width - *wrote;
 
 		memset(buffer + *wrote, padding, shift);
@@ -5554,7 +5554,7 @@ static int printf_format_directive(char *seq, char *buffer, size_t size,
 	}
 
 	if (*wrote >= size)
-		/* output of snprintf was truncated */
+		
 		*wrote = size - 1;
 
 	return width_rc + rc;
@@ -5585,7 +5585,7 @@ static void printf_format_string(struct find_param *param, char *path,
 	*buff = '\0';
 	buff_size = FORMATTED_BUF_LEN;
 
-	/* Always leave one free byte in buffer for trailing NUL */
+	
 	while (*fmt_char && (buff_size > 1)) {
 		rc = 0;
 		written = 0;
@@ -5616,7 +5616,7 @@ static void printf_format_string(struct find_param *param, char *path,
 		}
 	}
 
-	/* Terminate output buffer and print */
+	
 	*buff = '\0';
 	llapi_printf(LLAPI_MSG_NORMAL, "%s", output);
 }
@@ -5642,9 +5642,9 @@ static int get_projid(const char *path, int *fd, mode_t mode, __u32 *projid)
 	struct lu_project lu_project = { 0 };
 	int ret = 0;
 
-	/* Check the mode of the file */
+	
 	if (S_ISREG(mode) || S_ISDIR(mode)) {
-		/* This is a regular file type or directory */
+		
 		if (*fd < 0) {
 			/* If we haven't yet opened the file,
 			 * open it in read-only mode
@@ -5735,7 +5735,7 @@ int cb_find_init(char *path, int p, int *dp,
 	struct find_param *param = (struct find_param *)data;
 	struct lov_user_mds_data *lmd = param->fp_lmd;
 	int d = dp == NULL ? -1 : *dp;
-	int decision = 1; /* 1 is accepted; -1 is rejected. */
+	int decision = 1; 
 	int lustre_fs = 1;
 	int checked_type = 0;
 	int ret = 0;
@@ -5747,18 +5747,18 @@ int cb_find_init(char *path, int p, int *dp,
 
 	if (p == -1 && d == -1)
 		return -EINVAL;
-	/* if below minimum depth do not process further */
+	
 	if (param->fp_depth < param->fp_min_depth)
 		goto decided;
 
-	/* Reset this value between invocations */
+	
 	param->fp_get_lmv = 0;
 
-	/* Gather all file/dir info, not just what's needed for search params */
+	
 	if (param->fp_format_printf_str)
 		gather_all = true;
 
-	/* If a regular expression is presented, make the initial decision */
+	
 	if (param->fp_pattern != NULL) {
 		char *fname = strrchr(path, '/');
 
@@ -5769,7 +5769,7 @@ int cb_find_init(char *path, int p, int *dp,
 			goto decided;
 	}
 
-	/* See if we can check the file type from the dirent. */
+	
 	if (de != NULL && de->d_type != DT_UNKNOWN) {
 		if (param->fp_type != 0) {
 			checked_type = 1;
@@ -5822,10 +5822,10 @@ int cb_find_init(char *path, int p, int *dp,
 			ret = cb_get_dirstripe(path, &d, param);
 			if (ret != 0) {
 				if (errno == ENODATA) {
-					/* Fill in struct for unstriped dir */
+					
 					ret = 0;
 					param->fp_lmv_md->lum_magic = LMV_MAGIC_V1;
-					/* Use 0 until we find actual offset */
+					
 					param->fp_lmv_md->lum_stripe_offset = 0;
 					param->fp_lmv_md->lum_stripe_count = 0;
 					param->fp_lmv_md->lum_hash_type = 0;
@@ -5947,7 +5947,7 @@ int cb_find_init(char *path, int p, int *dp,
 		}
 	}
 
-	/* Check the file permissions from the stat info */
+	
 	if (param->fp_perm_sign) {
 		decision = check_file_permissions(param, lmd->lmd_stx.stx_mode);
 		if (decision == -1)
@@ -5968,12 +5968,12 @@ int cb_find_init(char *path, int p, int *dp,
 		}
 	}
 
-	/* Prepare odb. */
+	
 	if (param->fp_obd_uuid || param->fp_mdt_uuid) {
 		if (lustre_fs && param->fp_got_uuids &&
 		    param->fp_dev != makedev(lmd->lmd_stx.stx_dev_major,
 					     lmd->lmd_stx.stx_dev_minor)) {
-			/* A lustre/lustre mount point is crossed. */
+			
 			param->fp_got_uuids = 0;
 			param->fp_obds_printed = 0;
 			param->fp_mdt_index = OBD_NOT_FOUND;
@@ -5989,7 +5989,7 @@ int cb_find_init(char *path, int p, int *dp,
 			param->fp_dev = makedev(lmd->lmd_stx.stx_dev_major,
 						lmd->lmd_stx.stx_dev_minor);
 		} else if (!lustre_fs && param->fp_got_uuids) {
-			/* A lustre/non-lustre mount point is crossed. */
+			
 			param->fp_got_uuids = 0;
 			param->fp_mdt_index = OBD_NOT_FOUND;
 			param->fp_obd_index = OBD_NOT_FOUND;
@@ -6028,7 +6028,7 @@ int cb_find_init(char *path, int p, int *dp,
 			goto decided;
 	}
 
-	/* If an OBD UUID is specified but none matches, skip this file. */
+	
 	if ((param->fp_obd_uuid && param->fp_obd_index == OBD_NOT_FOUND) ||
 	    (param->fp_mdt_uuid && param->fp_mdt_index == OBD_NOT_FOUND))
 		goto decided;
@@ -6081,7 +6081,7 @@ obd_matches:
 		}
 	}
 
-	/* Retrieve project id from file/dir */
+	
 	if (param->fp_check_projid || gather_all) {
 		ret = get_projid(path, &fd, lmd->lmd_stx.stx_mode, &projid);
 		if (ret) {
@@ -6123,7 +6123,7 @@ obd_matches:
 			goto decided;
 	}
 
-	/* Check the time on mds. */
+	
 	decision = 1;
 	if (param->fp_atime || param->fp_mtime || param->fp_ctime) {
 		int for_mds;
@@ -6244,7 +6244,7 @@ obd_matches:
 		}
 
 		convert_lmd_statx(param->fp_lmd, &st, true);
-		/* Check the time on osc. */
+		
 		decision = find_time_check(param, 0);
 		if (decision == -1)
 			goto decided;
@@ -6278,7 +6278,7 @@ obd_matches:
 			goto decided;
 	}
 
-	if (param->fp_check_blocks) { /* convert st_blocks to bytes */
+	if (param->fp_check_blocks) { 
 		decision = find_value_cmp(lmd->lmd_stx.stx_blocks * 512,
 					  param->fp_blocks,
 					  param->fp_blocks_sign,
@@ -6301,7 +6301,7 @@ print:
 
 decided:
 	ret = 0;
-	/* Do not get down anymore? */
+	
 	if (param->fp_depth == param->fp_max_depth) {
 		ret = 1;
 		goto out;
@@ -6355,7 +6355,7 @@ static int cb_migrate_mdt_init(char *path, int p, int *dp,
 	data.ioc_inlbuf2 = (char *)lmu;
 	data.ioc_inllen2 = lmv_user_md_size(lmu->lum_stripe_count,
 					    lmu->lum_magic);
-	/* reach bottom? */
+	
 	if (param->fp_depth == param->fp_max_depth)
 		data.ioc_type = MDS_MIGRATE_NSONLY;
 	ret = llapi_ioctl_pack(&data, &rawbuf, sizeof(raw));
@@ -6399,7 +6399,7 @@ migrate:
 	}
 
 out:
-	/* Do not get down anymore? */
+	
 	if (param->fp_depth == param->fp_max_depth)
 		ret = 1;
 	else
@@ -6429,7 +6429,7 @@ out:
 	return ret;
 }
 
-/* dir migration finished, shrink its stripes */
+
 static int cb_migrate_mdt_fini(char *path, int p, int *dp, void *data,
 			       struct dirent64 *de)
 {
@@ -6506,14 +6506,14 @@ static int validate_printf_esc(char *c)
 	char *valid_esc = "nt\\";
 
 	if (*c == '\0') {
-		 /* backslash at end of string */
+		 
 		llapi_err_noerrno(LLAPI_MSG_WARN,
 			"warning: '\\' at end of -printf format string\n");
 		return 0;
 	}
 
 	if (!strchr(valid_esc, *c))
-		/* Invalid escape character */
+		
 		llapi_err_noerrno(LLAPI_MSG_WARN,
 			"warning: unrecognized escape: '\\%c'\n", *c);
 
@@ -6543,12 +6543,12 @@ static int validate_printf_fmt(char *c)
 		return 0;
 	}
 
-	/* GNU find supports formats such as "%----10s" */
+	
 	while (curr == '-')
 		curr = *(++c);
 
 	if (isdigit(curr)) {
-		/* skip width format specifier */
+		
 		while (isdigit(*c))
 			c++;
 	}
@@ -6557,12 +6557,12 @@ static int validate_printf_fmt(char *c)
 	next = *(c + 1);
 
 	if ((next == '\0') || (next == '%') || (next == '\\'))
-		/* Treat as single char format directive */
+		
 		goto check_single;
 
-	/* Check format directives with multiple characters */
+	
 	if (strchr(valid_fmt_double, curr)) {
-		/* For now, only valid formats are followed by '@' char */
+		
 		if (next != '@')
 			llapi_err_noerrno(LLAPI_MSG_WARN,
 				"warning: unrecognized format directive: '%%%c%c'\n",
@@ -6570,7 +6570,7 @@ static int validate_printf_fmt(char *c)
 		return 2;
 	}
 
-	/* Lustre formats always start with 'L' */
+	
 	if (curr == 'L') {
 		if (!strchr(valid_fmt_lustre, next))
 			llapi_err_noerrno(LLAPI_MSG_WARN,
@@ -6654,7 +6654,7 @@ static int cb_get_mdt_index(char *path, int p, int *dp, void *data,
 
 	if (d != -1) {
 		ret = llapi_file_fget_mdtidx(d, &mdtidx);
-	} else /* if (p != -1) */ {
+	} else  {
 		int fd;
 
 		fd = open(path, O_RDONLY | O_NOCTTY);
@@ -6697,7 +6697,7 @@ static int cb_get_mdt_index(char *path, int p, int *dp, void *data,
 			     path, mdtidx);
 
 out:
-	/* Do not go down anymore? */
+	
 	if (param->fp_depth == param->fp_max_depth)
 		return 1;
 
@@ -6751,7 +6751,7 @@ static int cb_getstripe(char *path, int p, int *dp, void *data,
 			close(fd);
 			return ret;
 		}
-		/* clear O_NONBLOCK for non-PIPEs */
+		
 		if (!S_ISFIFO(st.st_mode))
 			fcntl(fd, F_SETFL, fcntl(fd, F_GETFL) & ~O_NONBLOCK);
 		ret = cb_get_dirstripe(path, &fd, param);
@@ -6761,7 +6761,7 @@ static int cb_getstripe(char *path, int p, int *dp, void *data,
 		return 0;
 	} else if (d == -1) {
 		if (!param->fp_no_follow && de && de->d_type == DT_LNK) {
-			/* open the target of symlink as a file */
+			
 			fd = open(path, O_RDONLY);
 			if (fd == -1)
 				return 0;
@@ -6850,7 +6850,7 @@ dump:
 		llapi_lov_dump_user_lmm(param, path, d != -1 ? LDF_IS_DIR : 0);
 
 out:
-	/* Do not get down anymore? */
+	
 	if (param->fp_depth == param->fp_max_depth)
 		return 1;
 
@@ -7006,9 +7006,9 @@ int llapi_target_iterate(int type_num, char **obd_type,
 				goto free_path;
 			}
 
-			/* skip /fs/lustre/'obd_type'/ */
+			
 			obd_name += strlen(obd_type[i]) + 12;
-			/* chop off after obd_name */
+			
 			ptr = strrchr(obd_name, '/');
 			if (ptr)
 				*ptr = '\0';
@@ -7039,7 +7039,7 @@ static void do_target_check(char *obd_type_name, char *obd_name,
 	struct check_target_filter *filter = args;
 
 	if (filter != NULL) {
-		/* check NIDs if obd type is mgc */
+		
 		if (strcmp(obd_type_name, "mgc") == 0) {
 			char *delimiter = filter->nid;
 			char *nidstr = filter->nid;
@@ -7057,7 +7057,7 @@ static void do_target_check(char *obd_type_name, char *obd_name,
 			if (!found)
 				return;
 		}
-		/* check instance for other types of device (osc/mdc) */
+		
 		else if (strstr(obd_name, filter->instance) == NULL)
 			return;
 	}
@@ -7107,13 +7107,13 @@ out:
 
 #undef MAX_STRING_SIZE
 
-/* Is this a lustre fs? */
+
 int llapi_is_lustre_mnttype(const char *type)
 {
 	return strcmp(type, "lustre") == 0 || strcmp(type, "lustre_tgt") == 0;
 }
 
-/* Is this a lustre client fs? */
+
 int llapi_is_lustre_mnt(struct mntent *mnt)
 {
 	return (llapi_is_lustre_mnttype(mnt->mnt_type) &&

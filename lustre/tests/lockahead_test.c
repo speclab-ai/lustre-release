@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright 2016 Cray Inc. All rights reserved.
@@ -52,24 +52,24 @@
 			(unsigned long long)time(NULL));		\
 	} while (0)
 
-/* Name of file/directory. Will be set once and will not change. */
+
 static char mainpath[PATH_MAX];
-/* Path to same file/directory on second mount */
+
 static char mainpath2[PATH_MAX];
 static char *mainfile;
 
-static char fsmountdir[PATH_MAX];	/* Lustre mountpoint */
-static char *lustre_dir;		/* Test directory inside Lustre */
-static char *lustre_dir2;		/* Same dir but on second mountpoint */
-static int single_test;			/* Number of a single test to execute*/
+static char fsmountdir[PATH_MAX];	
+static char *lustre_dir;		
+static char *lustre_dir2;		
+static int single_test;			
 
-/* Cleanup our test file. */
+
 static void cleanup(void)
 {
 	unlink(mainpath);
 }
 
-/* Trivial helper for one advice */
+
 static void setup_ladvise_lockahead(struct llapi_lu_ladvise *advice, int mode,
 			     int flags, size_t start, size_t end, bool async)
 {
@@ -85,7 +85,7 @@ static void setup_ladvise_lockahead(struct llapi_lu_ladvise *advice, int mode,
 	advice->lla_value4 = 0;
 }
 
-/* Test valid single lock ahead request */
+
 static int test10(void)
 {
 	struct llapi_lu_ladvise advice;
@@ -102,7 +102,7 @@ static int test10(void)
 	setup_ladvise_lockahead(&advice, MODE_WRITE_USER, 0, 0,
 				  write_size - 1, true);
 
-	/* Manually set the result so we can verify it's being modified */
+	
 	advice.lla_lockahead_result = 345678;
 
 	rc = llapi_ladvise(fd, 0, count, &advice);
@@ -123,7 +123,7 @@ static int test10(void)
 	return 0;
 }
 
-/* Get lock, wait until lock is taken */
+
 static int test11(void)
 {
 	struct llapi_lu_ladvise advice;
@@ -142,7 +142,7 @@ static int test11(void)
 	setup_ladvise_lockahead(&advice, MODE_WRITE_USER, 0, 0,
 				  write_size - 1, true);
 
-	/* Manually set the result so we can verify it's being modified */
+	
 	advice.lla_lockahead_result = 345678;
 
 	rc = llapi_ladvise(fd, 0, count, &advice);
@@ -154,9 +154,9 @@ static int test11(void)
 
 	enqueue_requests++;
 
-	/* Ask again until we get the lock (status 1). */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice.lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd, 0, count, &advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -172,7 +172,7 @@ static int test11(void)
 		"unexpected extent result: %d",
 		advice.lla_lockahead_result);
 
-	/* Again. This time it is always there. */
+	
 	for (i = 0; i < 100; i++) {
 		advice.lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd, 0, count, &advice);
@@ -193,7 +193,7 @@ static int test11(void)
 	return enqueue_requests;
 }
 
-/* Test with several times the same extent */
+
 static int test12(void)
 {
 	struct llapi_lu_ladvise *advice;
@@ -230,9 +230,9 @@ static int test12(void)
 	 */
 	expected_lock_count = 1;
 
-	/* Ask again until we get the locks. */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice[count-1].lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd, 0, count, advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -257,7 +257,7 @@ static int test12(void)
 	return expected_lock_count;
 }
 
-/* Grow a lock forward */
+
 static int test13(void)
 {
 	struct llapi_lu_ladvise *advice = NULL;
@@ -295,9 +295,9 @@ static int test13(void)
 		expected_lock_count++;
 	}
 
-	/* Ask again until we get the lock. */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice[0].lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd, 0, count, advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -323,7 +323,7 @@ static int test13(void)
 	return expected_lock_count;
 }
 
-/* Grow a lock backward */
+
 static int test14(void)
 {
 	struct llapi_lu_ladvise *advice = NULL;
@@ -364,9 +364,9 @@ static int test14(void)
 		expected_lock_count++;
 	}
 
-	/* Ask again until we get the lock. */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice[0].lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd, 0, count, advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -392,7 +392,7 @@ static int test14(void)
 	return expected_lock_count;
 }
 
-/* Request many locks at 10MiB intervals */
+
 static int test15(void)
 {
 	struct llapi_lu_ladvise *advice;
@@ -432,9 +432,9 @@ static int test15(void)
 		expected_lock_count++;
 	}
 
-	/* Ask again until we get the lock. */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice[0].lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd, 0, count, advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -460,13 +460,13 @@ static int test15(void)
 
 	close(fd);
 
-	/* have to map expected return to range of valid values, 0-255 */
+	
 	expected_lock_count = expected_lock_count/100;
 
 	return expected_lock_count;
 }
 
-/* Use lockahead to verify behavior of ladvise locknoexpand */
+
 static int test16(void)
 {
 	struct llapi_lu_ladvise *advice;
@@ -487,7 +487,7 @@ static int test16(void)
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	advice_noexpand = malloc(sizeof(struct llapi_lu_ladvise));
 
-	/* First ask for a read lock, which will conflict with the write */
+	
 	setup_ladvise_lockahead(advice, MODE_READ_USER, 0, start, end, false);
 	advice[0].lla_lockahead_result = 345678;
 	rc = llapi_ladvise(fd, 0, count, advice);
@@ -497,7 +497,7 @@ static int test16(void)
 		"unexpected extent result for extent: %d",
 		advice[0].lla_lockahead_result);
 
-	/* Use an async request to verify we got the read lock we asked for */
+	
 	setup_ladvise_lockahead(advice, MODE_READ_USER, 0, start, end, true);
 	advice[0].lla_lockahead_result = 345678;
 	rc = llapi_ladvise(fd, 0, count, advice);
@@ -507,7 +507,7 @@ static int test16(void)
 		"unexpected extent result for extent: %d",
 		advice[0].lla_lockahead_result);
 
-	/* Set noexpand */
+	
 	advice_noexpand[0].lla_advice = LU_LADVISE_LOCKNOEXPAND;
 	advice_noexpand[0].lla_peradvice_flags = 0;
 	rc = llapi_ladvise(fd, 0, 1, advice_noexpand);
@@ -515,12 +515,12 @@ static int test16(void)
 	ASSERTF(rc == 0, "cannot lockahead '%s' : %s",
 		mainpath, strerror(errno));
 
-	/* This write should generate a lock on exactly "write_size" bytes */
+	
 	memset(buf, 0xaa, write_size);
 	rc = write(fd, buf, write_size);
 	ASSERTF(rc == sizeof(buf), "write failed for '%s': %s",
 		mainpath, strerror(errno));
-	/* Write should create one LDLM lock */
+	
 	expected_lock_count++;
 
 	setup_ladvise_lockahead(advice, MODE_WRITE_USER, 0, start, end, true);
@@ -535,20 +535,20 @@ static int test16(void)
 		"unexpected extent result for extent: %d",
 		advice[0].lla_lockahead_result);
 
-	/* Now, disable locknoexpand and try writing again. */
+	
 	advice_noexpand[0].lla_peradvice_flags = LF_UNSET;
 	rc = llapi_ladvise(fd, 0, 1, advice_noexpand);
 
-	/* This write should get an expanded lock */
+	
 	memset(buf, 0xaa, write_size);
 	rc = write(fd, buf, write_size);
 	ASSERTF(rc == sizeof(buf), "write failed for '%s': %s",
 		mainpath, strerror(errno));
-	/* Write should create one LDLM lock */
+	
 	expected_lock_count++;
 
-	/* Verify it didn't get a lock on just the bytes it wrote.*/
-	usleep(100000); /* 0.1 second, plenty of time to get the lock */
+	
+	usleep(100000); 
 
 	start = start + write_size;
 	end = end + write_size;
@@ -594,7 +594,7 @@ static int test17(void)
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	advice_noexpand = malloc(sizeof(struct llapi_lu_ladvise));
 
-	/* First ask for a read lock, which will conflict with the write */
+	
 	setup_ladvise_lockahead(advice, MODE_READ_USER, 0, start, end, false);
 	advice[0].lla_lockahead_result = 345678;
 	rc = llapi_ladvise(fd, 0, count, advice);
@@ -604,7 +604,7 @@ static int test17(void)
 		"unexpected extent result for extent: %d",
 		advice[0].lla_lockahead_result);
 
-	/* Use an async request to verify we got the read lock we asked for */
+	
 	setup_ladvise_lockahead(advice, MODE_READ_USER, 0, start, end, true);
 	advice[0].lla_lockahead_result = 345678;
 	rc = llapi_ladvise(fd, 0, count, advice);
@@ -614,7 +614,7 @@ static int test17(void)
 		"unexpected extent result for extent: %d",
 		advice[0].lla_lockahead_result);
 
-	/* Set noexpand */
+	
 	advice_noexpand[0].lla_advice = LU_LADVISE_LOCKNOEXPAND;
 	advice_noexpand[0].lla_peradvice_flags = 0;
 	rc = llapi_ladvise(fd, 0, 1, advice_noexpand);
@@ -622,12 +622,12 @@ static int test17(void)
 	ASSERTF(rc == 0, "cannot lockahead '%s' : %s",
 		mainpath, strerror(errno));
 
-	/* This write should generate a lock on exactly "write_size" bytes */
+	
 	memset(buf, 0xaa, write_size);
 	rc = write(fd, buf, write_size);
 	ASSERTF(rc == sizeof(buf), "write failed for '%s': %s",
 		mainpath, strerror(errno));
-	/* Write should create one LDLM lock */
+	
 	expected_lock_count++;
 
 	setup_ladvise_lockahead(advice, MODE_WRITE_USER, 0, start, end, true);
@@ -642,20 +642,20 @@ static int test17(void)
 		"unexpected extent result for extent: %d",
 		advice[0].lla_lockahead_result);
 
-	/* Now, disable locknoexpand and try writing again. */
+	
 	advice_noexpand[0].lla_peradvice_flags = LF_UNSET;
 	rc = llapi_ladvise(fd, 0, 1, advice_noexpand);
 
-	/* This write should get an expanded lock */
+	
 	memset(buf, 0xaa, write_size);
 	rc = write(fd, buf, write_size);
 	ASSERTF(rc == sizeof(buf), "write failed for '%s': %s",
 		mainpath, strerror(errno));
-	/* Write should create one LDLM lock */
+	
 	expected_lock_count++;
 
-	/* Verify it didn't get a lock on just the bytes it wrote.*/
-	usleep(100000); /* 0.1 second, plenty of time to get the lock */
+	
+	usleep(100000); 
 
 	start = start + write_size;
 	end = end + write_size;
@@ -678,7 +678,7 @@ static int test17(void)
 	return expected_lock_count;
 }
 
-/* Test overlapping requests */
+
 static int test18(void)
 {
 	struct llapi_lu_ladvise *advice;
@@ -694,7 +694,7 @@ static int test18(void)
 
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 
-	/* Overlapping locks - Should only end up with 1 */
+	
 	for (i = 0; i < 10; i++) {
 		__u64 start = i;
 		__u64 end = start + 4096;
@@ -714,9 +714,9 @@ static int test18(void)
 	}
 	expected_lock_count = 1;
 
-	/* Ask again until we get the lock. */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice[0].lla_lockahead_result = 456789;
 		setup_ladvise_lockahead(advice, MODE_WRITE_USER, 0, 0, 4096,
 					true);
@@ -739,7 +739,7 @@ static int test18(void)
 	return expected_lock_count;
 }
 
-/* Test that normal request blocks lock ahead requests */
+
 static int test19(void)
 {
 	struct llapi_lu_ladvise *advice;
@@ -767,7 +767,7 @@ static int test19(void)
 
 	expected_lock_count = 1;
 
-	/* These should all be blocked. */
+	
 	for (i = 0; i < 10; i++) {
 		__u64 start = i * 4096;
 		__u64 end = start + 4096;
@@ -793,7 +793,7 @@ static int test19(void)
 	return expected_lock_count;
 }
 
-/* Test sync requests, and matching with async requests */
+
 static int test20(void)
 {
 	struct llapi_lu_ladvise advice;
@@ -809,11 +809,11 @@ static int test20(void)
 	ASSERTF(fd >= 0, "open failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Async request */
+	
 	setup_ladvise_lockahead(&advice, MODE_WRITE_USER, 0, 0,
 				write_size - 1, true);
 
-	/* Manually set the result so we can verify it's being modified */
+	
 	advice.lla_lockahead_result = 345678;
 
 	rc = llapi_ladvise(fd, 0, count, &advice);
@@ -823,9 +823,9 @@ static int test20(void)
 		"unexpected extent result: %d",
 		advice.lla_lockahead_result);
 
-	/* Ask again until we get the lock (status 1). */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice.lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd, 0, count, &advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -849,12 +849,12 @@ static int test20(void)
 	rc = llapi_ladvise(fd, 0, count, &advice);
 	ASSERTF(rc == 0, "cannot lockahead '%s': %s",
 		mainpath, strerror(errno));
-	/* Sync requests cannot give detailed results */
+	
 	ASSERTF(advice.lla_lockahead_result == 0,
 		"unexpected extent result: %d",
 		advice.lla_lockahead_result);
 
-	/* Use an async request to test original lock is still present */
+	
 	setup_ladvise_lockahead(&advice, MODE_WRITE_USER, 0, 0,
 				write_size - 1, true);
 
@@ -876,7 +876,7 @@ static int test20(void)
 	return expected_lock_count;
 }
 
-/* Test sync requests, and conflict with async requests */
+
 static int test21(void)
 {
 	struct llapi_lu_ladvise advice;
@@ -892,11 +892,11 @@ static int test21(void)
 	ASSERTF(fd >= 0, "open failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Async request */
+	
 	setup_ladvise_lockahead(&advice, MODE_WRITE_USER, 0, 0,
 				write_size - 1, true);
 
-	/* Manually set the result so we can verify it's being modified */
+	
 	advice.lla_lockahead_result = 345678;
 
 	rc = llapi_ladvise(fd, 0, count, &advice);
@@ -906,9 +906,9 @@ static int test21(void)
 		"unexpected extent result: %d",
 		advice.lla_lockahead_result);
 
-	/* Ask again until we get the lock (status 1). */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice.lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd, 0, count, &advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -932,12 +932,12 @@ static int test21(void)
 	rc = llapi_ladvise(fd, 0, count, &advice);
 	ASSERTF(rc == 0, "cannot lockahead '%s': %s",
 		mainpath, strerror(errno));
-	/* Sync requests cannot give detailed results */
+	
 	ASSERTF(advice.lla_lockahead_result == 0,
 		"unexpected extent result: %d",
 		advice.lla_lockahead_result);
 
-	/* Use an async request to test new lock is there */
+	
 	setup_ladvise_lockahead(&advice, MODE_WRITE_USER, 0, 0,
 				write_size*2 - 1, true);
 
@@ -959,7 +959,7 @@ static int test21(void)
 	return expected_lock_count;
 }
 
-/* Test various valid and invalid inputs */
+
 static int test22(void)
 {
 	struct llapi_lu_ladvise *advice;
@@ -973,7 +973,7 @@ static int test22(void)
 	ASSERTF(fd >= 0, "open failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* A valid async request first */
+	
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	start = 0;
 	end = 1024*1024;
@@ -983,7 +983,7 @@ static int test22(void)
 		mainpath, strerror(errno));
 	free(advice);
 
-	/* Valid request sync request */
+	
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	start = 0;
 	end = 1024*1024;
@@ -993,7 +993,7 @@ static int test22(void)
 		mainpath, strerror(errno));
 	free(advice);
 
-	/* No actual block */
+	
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	start = 0;
 	end = 0;
@@ -1004,7 +1004,7 @@ static int test22(void)
 		rc, strerror(errno));
 	free(advice);
 
-	/* end before start */
+	
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	start = 1024 * 1024;
 	end = 0;
@@ -1015,7 +1015,7 @@ static int test22(void)
 		rc, strerror(errno));
 	free(advice);
 
-	/* bogus lock mode - 0x65464 */
+	
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	start = 0;
 	end = 1024 * 1024;
@@ -1026,7 +1026,7 @@ static int test22(void)
 		rc, strerror(errno));
 	free(advice);
 
-	/* bogus flags, 0x80 */
+	
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	start = 0;
 	end = 1024 * 1024;
@@ -1038,7 +1038,7 @@ static int test22(void)
 		0x80, rc, strerror(errno));
 	free(advice);
 
-	/* bogus flags, 0xff - CEF_MASK */
+	
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	end = 1024 * 1024;
 	setup_ladvise_lockahead(advice, MODE_WRITE_USER, 0xff, start, end,
@@ -1049,7 +1049,7 @@ static int test22(void)
 		0xff, rc, strerror(errno));
 	free(advice);
 
-	/* bogus flags, 0xffffffff */
+	
 	advice = malloc(sizeof(struct llapi_lu_ladvise)*count);
 	end = 1024 * 1024;
 	setup_ladvise_lockahead(advice, MODE_WRITE_USER, 0xffffffff, start,
@@ -1081,7 +1081,7 @@ static int test23(void)
 	struct stat sb;
 	struct stat sb2;
 	int fd;
-	/* On second mount */
+	
 	int fd2;
 	int rc;
 	int i;
@@ -1090,16 +1090,16 @@ static int test23(void)
 	ASSERTF(fd >= 0, "open failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* mainpath2 is a different Lustre mount */
+	
 	fd2 = open(mainpath2, O_RDWR, 0600);
 	ASSERTF(fd2 >= 0, "open failed for '%s': %s",
 		mainpath2, strerror(errno));
 
-	/* Lock + write MiB 1 from second client */
+	
 	setup_ladvise_lockahead(&advice, MODE_WRITE_USER, 0, 0,
 				write_size - 1, true);
 
-	/* Manually set the result so we can verify it's being modified */
+	
 	advice.lla_lockahead_result = 345678;
 
 	rc = llapi_ladvise(fd2, 0, count, &advice);
@@ -1109,9 +1109,9 @@ static int test23(void)
 		"unexpected extent result: %d",
 		advice.lla_lockahead_result);
 
-	/* Ask again until we get the lock (status 1). */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice.lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd2, 0, count, &advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -1129,11 +1129,11 @@ static int test23(void)
 	ASSERTF(rc == sizeof(buf), "write failed for '%s': %s",
 		mainpath2, strerror(errno));
 
-	/* Lock (but don't write) MiB 2 from second client */
+	
 	setup_ladvise_lockahead(&advice, MODE_WRITE_USER, 0, write_size,
 				2*write_size - 1, true);
 
-	/* Manually set the result so we can verify it's being modified */
+	
 	advice.lla_lockahead_result = 345678;
 
 	rc = llapi_ladvise(fd2, 0, count, &advice);
@@ -1143,9 +1143,9 @@ static int test23(void)
 		"unexpected extent result: %d",
 		advice.lla_lockahead_result);
 
-	/* Ask again until we get the lock (status 1). */
+	
 	for (i = 1; i < 100; i++) {
-		usleep(100000); /* 0.1 second */
+		usleep(100000); 
 		advice.lla_lockahead_result = 456789;
 		rc = llapi_ladvise(fd2, 0, count, &advice);
 		ASSERTF(rc == 0, "cannot lockahead '%s': %s",
@@ -1247,7 +1247,7 @@ int main(int argc, char *argv[])
 	 */
 	setvbuf(stdout, NULL, _IOLBF, 0);
 
-	/* Create a test filename and reuse it. Remove possibly old files. */
+	
 	rc = snprintf(mainpath, sizeof(mainpath), "%s/%s", lustre_dir,
 		      mainfile);
 	ASSERTF(rc > 0 && rc < sizeof(mainpath), "invalid name for mainpath");
@@ -1276,7 +1276,7 @@ int main(int argc, char *argv[])
 		PERFORM(test20);
 		PERFORM(test21);
 		PERFORM(test22);
-		/* Some tests require a second mount point */
+		
 		if (lustre_dir2)
 			PERFORM(test23);
 		/* When running all the test cases, we can't use the return

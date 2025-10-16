@@ -1,11 +1,7 @@
-# Administration utilities Makefile
-
 AM_CFLAGS  := -fPIC -D_GNU_SOURCE \
 	      -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DLUSTRE_UTILS=1 $(UTILS_CFLAGS)
 AM_LDFLAGS := $(UTILS_LDFLAGS)
-
 if UTILS
-
 if GSS
 SUBDIRS = . gss
 GSSSRC = gss/err_util.c gss/err_util.h
@@ -21,19 +17,15 @@ else
 GSSSRC =
 GSSLIB =
 endif
-
-# mount only finds helpers in /sbin
 rootsbin_PROGRAMS = mount.lustre
 bin_SCRIPTS   = llstat llobdstat lljobstat plot-llstat
 bin_PROGRAMS  = lfs
 sbin_SCRIPTS  = ldlm_debug_upcall
 sbin_PROGRAMS = lctl l_getidentity llverdev llverfs lustre_rsync \
 		ll_decode_linkea llsom_sync l_foreign_symlink
-
 if TESTS
 sbin_PROGRAMS += wirecheck wiretest
-endif # TESTS
-
+endif
 if SERVER
 sbin_PROGRAMS += mkfs.lustre tunefs.lustre lr_reader lshowmount \
 		 ll_decode_filter_fid llog_reader l_tunedisk \
@@ -42,24 +34,20 @@ endif
 if LIBPTHREAD
 sbin_PROGRAMS += lhsmtool_posix
 endif
-
 if SELINUX
 if GETSEPOL
 sbin_PROGRAMS += l_getsepol
 endif
 endif
-endif # UTILS
-
+endif
 lib_LIBRARIES =
 noinst_LIBRARIES =
 if LDISKFS_ENABLED
 libiam_a_SOURCES = libiam.c
 lib_LIBRARIES += libiam.a
 endif
-
 pkglib_LTLIBRARIES =
 lib_LTLIBRARIES = liblustreapi.la
-
 lctl_SOURCES = lctl.c debug.c lustre_cfg.c lustre_param.c
 lctl_SOURCES += lctl_thread.c lctl_thread.h obd.c obdctl.h portals.c
 if SERVER
@@ -68,23 +56,18 @@ endif
 lctl_CFLAGS := $(AM_CFLAGS) $(LIBNL3_CFLAGS) -I $(top_builddir)/lnet/utils
 lctl_LDADD := liblustreapi.la $(PTHREAD_LIBS) $(LIBNL3_LIBS) -lyaml
 lctl_LDADD += $(top_builddir)/lnet/utils/lnetconfig/liblnetconfig.la
-
 lfs_SOURCES = lfs.c lfs_project.c lfs_project.h callvpe.c callvpe.h
 lfs_CFLAGS := -fPIC $(AM_CFLAGS) -I $(top_builddir)/lnet/utils
 lfs_LDADD := liblustreapi.la -lz
 lfs_LDADD += $(top_builddir)/lnet/utils/lnetconfig/liblnetconfig.la
 lfs_DEPENDENCIES := liblustreapi.la
-
 lustre_rsync_SOURCES = lustre_rsync.c lustre_rsync.h callvpe.c callvpe.h
 lustre_rsync_LDADD :=  liblustreapi.la $(PTHREAD_LIBS)
 lustre_rsync_DEPENDENCIES := liblustreapi.la
-
 llsom_sync_LDADD := liblustreapi.la
 llsom_sync_DEPENDENCIES := liblustreapi.la
-
 lshowmount_SOURCES = lshowmount.c nidlist.c nidlist.h
 lshowmount_LDADD :=  liblustreapi.la
-
 if EXT2FS_DEVEL
 EXT2FSLIB = -lext2fs
 E2PLIB = -le2p
@@ -92,9 +75,7 @@ else
 E2PLIB =
 EXT2FSLIB =
 endif
-
 llverfs_LDADD := $(EXT2FSLIB) $(E2PLIB)
-
 liblustreapi_la_SOURCES = libhsm_scanner.c \
 			  libhsm_scanner.h \
 			  liblustreapi.c \
@@ -128,10 +109,8 @@ liblustreapi_la_LDFLAGS = $(LIBREADLINE) -version-info 1:0:0 \
 liblustreapi_la_LIBADD = $(top_builddir)/libcfs/libcfs/libcfs.la \
 			 $(top_builddir)/lnet/utils/lnetconfig/liblnetconfig.la \
 			 $(LIBNL3_LIBS) -lpthread
-
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = lustre.pc
-
 if UTILS
 LIB_TARGETS =
 if PLUGINS
@@ -145,7 +124,6 @@ if SERVER
 LIB_TARGETS += mount_osd_wbcfs.so
 endif
 endif
-
 install-exec-hook:
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(libdir)
@@ -160,18 +138,14 @@ install-exec-hook:
 	if [ "$(SERVER)" = "yes" ]; then \
 		ln -sf $(DESTDIR)$(sbindir)/mount.lustre $(DESTDIR)$(sbindir)/mount.lustre_tgt; \
 	fi
-endif # UTILS
-
+endif
 llog_reader_SOURCES = llog_reader.c
 llog_reader_LDADD := liblustreapi.la
 llog_reader_DEPENDENCIES := liblustreapi.la
-
 check_iam_SOURCES = check_iam.c
 check_iam_LDADD := liblustreapi.la
 check_iam_DEPENDENCIES := liblustreapi.la
-
 lr_reader_SOURCES = lr_reader.c
-
 ofd_access_log_reader_SOURCES = \
 	lstddef.h \
 	ofd_access_batch.c \
@@ -179,9 +153,7 @@ ofd_access_log_reader_SOURCES = \
 	ofd_access_log_reader.c
 ofd_access_log_reader_LDADD := -lpthread liblustreapi.la
 ofd_access_log_reader_DEPENDENCIES := liblustreapi.la
-
 if UTILS
-
 PLUGIN_LIB =
 if PLUGINS
 MNTMODLDFLAGS := -rdynamic
@@ -189,14 +161,11 @@ MNTMODLIBS := -ldl
 MNTMODCFLAGS := -DPLUGIN_DIR=\"${pkglibdir}\"
 else
 MNTMODLIBS :=
-endif # PLUGINS
-
+endif
 if ZFS_ENABLED
 noinst_LIBRARIES += libmount_utils_zfs.a
-
 libmount_utils_zfs_a_SOURCES = libmount_utils_zfs.c
 libmount_utils_zfs_a_CPPFLAGS := -DHAVE_IOCTL_IN_UNISTD_H $(ZFS_LIBZFS_INCLUDE)
-
 if PLUGINS
 lib_LTLIBRARIES += libmount_utils_zfs.la
 libmount_utils_zfs.la : libmount_utils_zfs.a
@@ -208,15 +177,12 @@ else
 MNTMODLDFLAGS := $(ZFS_LIBZFS_LDFLAGS)
 MNTMODLIBS += $(ZFS_LIBZFS_LIBS)
 PLUGIN_LIB += libmount_utils_zfs.a
-endif # PLUGINS
-endif # ZFS_ENABLED
-
+endif
+endif
 if LDISKFS_ENABLED
 noinst_LIBRARIES += libmount_utils_ldiskfs.a
-
 libmount_utils_ldiskfs_a_SOURCES = libmount_utils_ldiskfs.c
 libmount_utils_ldiskfs_a_CPPFLAGS :=
-
 if PLUGINS
 lib_LTLIBRARIES += libmount_utils_ldiskfs.la
 libmount_utils_ldiskfs.la : libmount_utils_ldiskfs.a
@@ -227,15 +193,12 @@ libmount_utils_ldiskfs.la : libmount_utils_ldiskfs.a
 else
 MNTMODLIBS += -lext2fs
 PLUGIN_LIB += libmount_utils_ldiskfs.a
-endif # PLUGINS
-endif # LDISKFS_ENABLED
-
+endif
+endif
 if SERVER
 noinst_LIBRARIES += libmount_utils_wbcfs.a
-
 libmount_utils_wbcfs_a_SOURCES = libmount_utils_wbcfs.c
 libmount_utils_wbcfs_a_CPPFLAGS :=
-
 if PLUGINS
 lib_LTLIBRARIES += libmount_utils_wbcfs.la
 libmount_utils_wbcfs.la : libmount_utils_wbcfs.a
@@ -245,9 +208,8 @@ libmount_utils_wbcfs.la : libmount_utils_wbcfs.a
 			 $(MNTMODLIBS)
 else
 PLUGIN_LIB += libmount_utils_wbcfs.a
-endif # PLUGINS
-endif # SERVER
-
+endif
+endif
 mount_lustre_SOURCES = mount_lustre.c mount_utils.c mount_utils.h $(GSSSRC) \
 			lustre_param.c
 mount_lustre_CPPFLAGS := ${MNTMODCFLAGS}
@@ -255,49 +217,36 @@ mount_lustre_LDFLAGS  := ${MNTMODLDFLAGS}
 mount_lustre_LDADD    := $(SELINUX) $(LDLIBMOUNT) $(PLUGIN_LIB) $(GSSLIB)
 mount_lustre_LDADD    += $(top_builddir)/libcfs/libcfs/libcfs.la $(MNTMODLIBS)
 mount_lustre_LDADD    += liblustreapi.la
-
 mkfs_lustre_SOURCES = mkfs_lustre.c mount_utils.c mount_utils.h $(GSSSRC)
 mkfs_lustre_CPPFLAGS := -UTUNEFS ${MNTMODCFLAGS}
 mkfs_lustre_LDFLAGS  := ${MNTMODLDFLAGS}
 mkfs_lustre_LDADD    := $(mount_lustre_LDADD)
-
 tunefs_lustre_SOURCES = mkfs_lustre.c mount_utils.c mount_utils.h $(GSSSRC)
 tunefs_lustre_CPPFLAGS := -DTUNEFS ${MNTMODCFLAGS}
 tunefs_lustre_LDFLAGS  := ${MNTMODLDFLAGS}
 tunefs_lustre_LDADD    := $(mkfs_lustre_LDADD)
-
 l_tunedisk_SOURCES = l_tunedisk.c mount_utils.c mount_utils.h $(GSSSRC)
 l_tunedisk_CPPFLAGS := ${MNTMODCFLAGS}
 l_tunedisk_LDFLAGS  := ${MNTMODLDFLAGS}
 l_tunedisk_LDADD    := $(mount_lustre_LDADD)
-
 l_foreign_symlink_SOURCES = l_foreign_symlink.c
 l_foreign_symlink_LDADD := $(top_builddir)/libcfs/libcfs/libcfs.la
 l_foreign_symlink_DEPENDENCIES := $(top_builddir)/libcfs/libcfs/libcfs.la
-
 l_getidentity_SOURCES = l_getidentity.c
 l_getidentity_LDADD := $(top_builddir)/libcfs/libcfs/libcfs.la
 l_getidentity_LDFLAGS = -ldl
 l_getidentity_DEPENDENCIES := $(top_builddir)/libcfs/libcfs/libcfs.la
-
 lhsmtool_posix_SOURCES = lhsmtool_posix.c pid_file.c pid_file.h
 lhsmtool_posix_LDADD := liblustreapi.la $(PTHREAD_LIBS) \
 		$(top_builddir)/lnet/utils/lnetconfig/liblnetconfig.la
-
 l_getsepol_SOURCES = l_getsepol.c
 l_getsepol_LDADD := liblustreapi.la -lcrypto $(SELINUX)
 l_getsepol_DEPENDENCIES := liblustreapi.la
-
 wirecheck_SOURCES = wirecheck.c
 wirecheck_CPPFLAGS := -DCC="\"$(CC)\""
-
 wiretest_SOURCES = wiretest.c
-
-endif # UTILS
-
+endif
 EXTRA_DIST = llstat llobdstat lljobstat plot-llstat ldlm_debug_upcall liblustreapi.map
-
-# NOTE: this should only be run on i386.
 newwiretest: wirehdr.c wirecheck
 	cp wirehdr.c wiretest.c
 	LANG=C ./wirecheck >> wiretest.c

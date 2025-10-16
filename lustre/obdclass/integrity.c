@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2018, DataDirect Networks Storage.
@@ -168,7 +168,7 @@ obd_t10_cksum2type(enum cksum_types cksum_type)
 
 static const char *obd_t10_cksum_name(enum obd_t10_cksum_type index)
 {
-	/* Need to skip "crc32", "adler", "crc32c", "reserved" */
+	
 	return cksum_name[3 + index];
 }
 
@@ -236,7 +236,7 @@ out:
 		       obd_t10_cksum_speeds[index]);
 	}
 }
-#endif /* CONFIG_CRC_T10DIF */
+#endif 
 
 int obd_t10_cksum_speed(const char *obd_name,
 			enum cksum_types cksum_type)
@@ -254,8 +254,8 @@ int obd_t10_cksum_speed(const char *obd_name,
 	}
 
 	return obd_t10_cksum_speeds[index];
-#else /* !CONFIG_CRC_T10DIF */
+#else 
 	return 0;
-#endif /* !CONFIG_CRC_T10DIF */
+#endif 
 }
 EXPORT_SYMBOL(obd_t10_cksum_speed);

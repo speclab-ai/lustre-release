@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright 2020, DataDirect Networks Storage.
  *
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: John L. Hammond <jhammond@whamcloud.com>
  *
@@ -49,7 +49,7 @@
 #include "ofd_access_batch.h"
 #include "lstddef.h"
 
-/* TODO fsname filter */
+
 
 FILE *debug_file;
 FILE *trace_file;
@@ -64,7 +64,7 @@ enum {
 
 struct alr_dev {
 	char *alr_name;
-	int (*alr_io)(int /* epoll_fd */, struct alr_dev * /* this */, unsigned int /* mask */);
+	int (*alr_io)(int , struct alr_dev * , unsigned int );
 	void (*alr_destroy)(struct alr_dev *);
 	int alr_fd;
 };
@@ -79,9 +79,9 @@ struct alr_log {
 };
 
 static unsigned int alr_log_count;
-static struct alr_log *alr_log[1 << 20]; /* 20 == MINORBITS */
-static int oal_version; /* FIXME ... major version, minor version */
-static __u32 alr_filter = 0xffffffff; /* no filter by default */
+static struct alr_log *alr_log[1 << 20]; 
+static int oal_version; 
+static __u32 alr_filter = 0xffffffff; 
 static unsigned int oal_log_major;
 static unsigned int oal_log_minor_max;
 static struct alr_batch *alr_batch;
@@ -220,7 +220,7 @@ static void alr_log_destroy(struct alr_dev *ad)
 	alr_log_count--;
 }
 
-/* Add an access log (identified by path) to the epoll set. */
+
 static int alr_log_add(int epoll_fd, const char *path)
 {
 	struct alr_log **pal, *al = NULL;
@@ -233,11 +233,11 @@ static int alr_log_add(int epoll_fd, const char *path)
 	fd = open(path, O_RDONLY|O_NONBLOCK|O_CLOEXEC);
 	if (fd < 0) {
 		ERROR("cannot open device '%s': %s\n", path, strerror(errno));
-		rc = (errno == ENOENT ? 0 : -1); /* Possible race. */
+		rc = (errno == ENOENT ? 0 : -1); 
 		goto out;
 	}
 
-	/* Revalidate rdev in case of race. */
+	
 	rc = fstat(fd, &st);
 	if (rc < 0) {
 		ERROR("cannot stat '%s': %s\n", path, strerror(errno));
@@ -255,7 +255,7 @@ static int alr_log_add(int epoll_fd, const char *path)
 	}
 
 	if (*pal != NULL)
-		goto out; /* We already have this device. */
+		goto out; 
 
 	struct lustre_access_log_info_v1 lali;
 
@@ -484,7 +484,7 @@ static int alr_scan(int epoll_fd)
 		}
 
 		if (*pal != NULL)
-			continue; /* We already have this device. */
+			continue; 
 
 		snprintf(path, sizeof(path), "%s/%s", dir_path, d->d_name);
 
@@ -588,7 +588,7 @@ out:
 	return (rc < 0) ? ALR_EXIT_FAILURE : ALR_OK;
 }
 
-/* batch file (stdout) poll callback: detect remote pipe close and exit. */
+
 static int alr_batch_file_io(int epoll_fd, struct alr_dev *ad, unsigned int mask)
 {
 	TRACE("%s\n", __func__);
@@ -795,7 +795,7 @@ int main(int argc, char *argv[])
 	if (epoll_fd < 0)
 		FATAL("cannot create epoll set: %s\n", strerror(errno));
 
-	/* Setup signal FD and add to epoll set. */
+	
 	sigset_t signal_mask;
 	sigemptyset(&signal_mask);
 	sigaddset(&signal_mask, SIGINT);
@@ -817,7 +817,7 @@ int main(int argc, char *argv[])
 
 	signal_fd = -1;
 
-	/* Setup batch timer FD and add to epoll set. */
+	
 	struct timespec now;
 	rc = clock_gettime(CLOCK_REALTIME, &now);
 	if (rc < 0)
@@ -853,7 +853,7 @@ int main(int argc, char *argv[])
 		FATAL("cannot duplicate batch file descriptor: %s\n",
 		      strerror(errno));
 
-	/* We pass events = 0 since we only care about EPOLLHUP. */
+	
 	alr_batch_file_hup = alr_dev_create(epoll_fd, batch_fd, "batch_file", 0,
 					&alr_batch_file_io, NULL);
 	if (alr_batch_file_hup == NULL)
@@ -861,7 +861,7 @@ int main(int argc, char *argv[])
 
 	batch_fd = -1;
 
-	/* Open control device. */
+	
 	int ctl_fd = open(ctl_path, O_RDONLY|O_NONBLOCK|O_CLOEXEC);
 	if (ctl_fd < 0) {
 		/* If no OSTs are mounted then the ofd module may not
@@ -877,21 +877,21 @@ int main(int argc, char *argv[])
 		FATAL("cannot open '%s': %s\n", ctl_path, strerror(errno));
 	}
 
-	/* Get and print interface version. */
+	
 	oal_version = ioctl(ctl_fd, LUSTRE_ACCESS_LOG_IOCTL_VERSION);
 	if (oal_version < 0)
 		FATAL("cannot get ofd access log interface version: %s\n", strerror(errno));
 
 	DEBUG_D(oal_version);
 
-	/* Get and print device major used for access log devices. */
+	
 	oal_log_major = ioctl(ctl_fd, LUSTRE_ACCESS_LOG_IOCTL_MAJOR);
 	if (oal_log_major < 0)
 		FATAL("cannot get ofd access log major: %s\n", strerror(errno));
 
 	DEBUG_D(oal_log_major);
 
-	/* Add control device to epoll set. */
+	
 	alr_ctl = alr_dev_create(epoll_fd, ctl_fd, "control", EPOLLIN,
 				&alr_ctl_io, NULL);
 	if (alr_ctl == NULL)
@@ -906,7 +906,7 @@ int main(int argc, char *argv[])
 
 		ev_count = epoll_wait(epoll_fd, ev, ARRAY_SIZE(ev), timeout);
 		if (ev_count < 0) {
-			if (errno == EINTR) /* Signal or timeout. */
+			if (errno == EINTR) 
 				continue;
 
 			ERROR("cannot wait on epoll set: %s\n", strerror(errno));

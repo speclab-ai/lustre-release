@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,10 +8,10 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
-/* Intramodule declarations for ptlrpc. */
+
 
 #ifndef PTLRPC_INTERNAL_H
 #define PTLRPC_INTERNAL_H
@@ -37,7 +37,7 @@ extern struct ptlrpc_nrs_pol_conf nrs_conf_crrn;
 extern struct ptlrpc_nrs_pol_conf nrs_conf_orr;
 extern struct ptlrpc_nrs_pol_conf nrs_conf_trr;
 extern struct ptlrpc_nrs_pol_conf nrs_conf_tbf;
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 /**
  * \addtogoup nrs
@@ -51,10 +51,10 @@ extern struct mutex pinger_mutex;
 extern lnet_handler_t ptlrpc_handler;
 extern struct percpu_ref ptlrpc_pending;
 
-/* ptlrpcd.c */
+
 int ptlrpcd_start(struct ptlrpcd_ctl *pc);
 
-/* client.c */
+
 void ptlrpc_at_adj_net_latency(struct ptlrpc_request *req,
 			       timeout_t service_timeout);
 struct ptlrpc_bulk_desc *ptlrpc_new_bulk(unsigned npages, unsigned max_brw,
@@ -78,7 +78,7 @@ __u64 ptlrpc_known_replied_xid(struct obd_import *imp);
 void ptlrpc_add_unreplied(struct ptlrpc_request *req);
 void ptlrpc_reqset_free(struct kref *kerf);
 
-/* events.c */
+
 int ptlrpc_init_portals(void);
 void ptlrpc_exit_portals(void);
 
@@ -106,7 +106,7 @@ void ptlrpc_lprocfs_rpc_sent(struct ptlrpc_request *req, long amount);
 void ptlrpc_lprocfs_do_request_stat (struct ptlrpc_request *req,
                                      long q_usec, long work_usec);
 
-/* NRS */
+
 
 /**
  * NRS core object.
@@ -240,21 +240,21 @@ struct ptlrpc_nrs_policy *nrs_request_policy(struct ptlrpc_nrs_request *nrq)
  sizeof(NRS_LPROCFS_QUANTUM_NAME_REG __stringify(LPROCFS_NRS_QUANTUM_MAX) " "  \
         NRS_LPROCFS_QUANTUM_NAME_HP __stringify(LPROCFS_NRS_QUANTUM_MAX))
 
-/* recovd_thread.c */
+
 
 int ptlrpc_expire_one_request(struct ptlrpc_request *req, int async_unlink);
 
-/* pers.c */
+
 void ptlrpc_fill_bulk_md(struct lnet_md *md, struct ptlrpc_bulk_desc *desc,
 			 int mdcnt);
 
-/* pack_generic.c */
+
 struct ptlrpc_reply_state *
 lustre_get_emerg_rs(struct ptlrpc_service_part *svcpt);
 void lustre_put_emerg_rs(struct ptlrpc_reply_state *rs);
-void lustre_msg_early_size_init(void); /* just for init */
+void lustre_msg_early_size_init(void); 
 
-/* pinger.c */
+
 int ptlrpc_start_pinger(void);
 int ptlrpc_stop_pinger(void);
 void ptlrpc_pinger_sending_on_import(struct obd_import *imp);
@@ -262,27 +262,27 @@ void ptlrpc_pinger_commit_expected(struct obd_import *imp);
 void ptlrpc_pinger_wake_up(void);
 int ping_evictor_wake(struct obd_export *exp);
 
-/* sec_null.c */
+
 int  sptlrpc_null_init(void);
 void sptlrpc_null_fini(void);
 
-/* sec_plain.c */
+
 int  sptlrpc_plain_init(void);
 void sptlrpc_plain_fini(void);
 
-/* lproc_ptlrpc.c */
+
 int  ptlrpc_lproc_init(void);
 void ptlrpc_lproc_fini(void);
 
-/* sec_lproc.c */
+
 int  sptlrpc_lproc_init(void);
 void sptlrpc_lproc_fini(void);
 
-/* sec_gc.c */
+
 int sptlrpc_gc_init(void);
 void sptlrpc_gc_fini(void);
 
-/* sec_config.c */
+
 void sptlrpc_conf_choose_flavor(enum lustre_sec_part from,
 				enum lustre_sec_part to,
 				struct obd_uuid *target,
@@ -291,11 +291,11 @@ void sptlrpc_conf_choose_flavor(enum lustre_sec_part from,
 int  sptlrpc_conf_init(void);
 void sptlrpc_conf_fini(void);
 
-/* sec.c */
+
 int  sptlrpc_init(void);
 void sptlrpc_fini(void);
 
-/* layout.c */
+
 __u32 __req_capsule_offset(const struct req_capsule *pill,
 			   const struct req_msg_field *field,
 			   enum req_location loc);
@@ -310,9 +310,9 @@ int tgt_mod_init(void);
 void tgt_mod_exit(void);
 int nodemap_mod_init(void);
 void nodemap_mod_exit(void);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
-/** initialise ptlrpc common fields */
+
 static inline void ptlrpc_req_comm_init(struct ptlrpc_request *req)
 {
 	spin_lock_init(&req->rq_lock);
@@ -322,7 +322,7 @@ static inline void ptlrpc_req_comm_init(struct ptlrpc_request *req)
 	INIT_LIST_HEAD(&req->rq_replay_list);
 }
 
-/** initialise client side ptlrpc request */
+
 static inline void ptlrpc_cli_req_init(struct ptlrpc_request *req)
 {
 	struct ptlrpc_cli_req *cr = &req->rq_cli;
@@ -340,7 +340,7 @@ static inline void ptlrpc_cli_req_init(struct ptlrpc_request *req)
 	init_waitqueue_head(&cr->cr_set_waitq);
 }
 
-/** initialise server side ptlrpc request */
+
 static inline void ptlrpc_srv_req_init(struct ptlrpc_request *req)
 {
 	struct ptlrpc_srv_req *sr = &req->rq_srv;
@@ -391,4 +391,4 @@ static inline void do_pack_body(struct ptlrpc_request *req)
 	b->mbo_capability = ll_capability_u32(current_cap());
 }
 
-#endif /* PTLRPC_INTERNAL_H */
+#endif 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_page for OSC layer.
  *
@@ -94,18 +94,18 @@ static int osc_page_print(const struct lu_env *env,
 			  "4< %d %d %d %lu %c | %c %c %c %c > "
 			  "5< %c %c %c %c | %d %c | %d %c %c>\n",
 			  opg, osc_index(opg),
-			  /* 1 */
+			  
 			  oap->oap_cmd,
 			  list_empty_marker(&oap->oap_pending_item),
 			  list_empty_marker(&oap->oap_rpc_item),
-			  /* 2 */
+			  
 			  oap->oap_obj_off, oap->oap_page_off, oap->oap_count,
 			  oap->oap_async_flags, oap->oap_brw_flags,
 			  cli, obj,
-			  /* 3 */
+			  
 			  opg->ops_transfer_pinned,
 			  opg->ops_srvlock,
-			  /* 4 */
+			  
 			  cli->cl_r_in_flight, cli->cl_w_in_flight,
 			  cli->cl_max_rpcs_in_flight,
 			  cli->cl_avail_grant,
@@ -114,7 +114,7 @@ static int osc_page_print(const struct lu_env *env,
 			  list_empty_marker(&cli->cl_loi_hp_ready_list),
 			  list_empty_marker(&cli->cl_loi_write_list),
 			  list_empty_marker(&cli->cl_loi_read_list),
-			  /* 5 */
+			  
 			  list_empty_marker(&obj->oo_ready_item),
 			  list_empty_marker(&obj->oo_hp_ready_item),
 			  list_empty_marker(&obj->oo_write_item),
@@ -179,7 +179,7 @@ static void osc_page_clip(const struct lu_env *env,
 	CDEBUG(D_CACHE, "from %d, to %d\n", from, to);
 
 	opg->ops_from = from;
-	/* argument @to is exclusive, but @ops_to is inclusive */
+	
 	opg->ops_to   = to - 1;
 	oap->oap_async_flags |= ASYNC_COUNT_STABLE;
 }
@@ -241,7 +241,7 @@ int osc_page_init(const struct lu_env *env, struct cl_object *obj,
 				  &osc_transient_page_ops);
 	} else if (cl_page->cp_type == CPT_CACHEABLE) {
 		cl_page_slice_add(cl_page, &opg->ops_cl, obj, &osc_page_ops);
-		/* reserve an LRU space for this page */
+		
 		result = osc_lru_alloc(env, osc_cli(osc), opg);
 		if (result == 0) {
 			result = radix_tree_preload(GFP_NOFS);
@@ -313,7 +313,7 @@ void osc_page_submit(const struct lu_env *env, struct osc_page *opg,
 	}
 }
 
-/* --------------- LRU page management ------------------ */
+
 
 /* OSC is a natural place to manage LRU pages as applications are specialized
  * to write OSC by OSC. Ideally, if one OSC is used more frequently it should
@@ -370,7 +370,7 @@ static int osc_cache_too_much(struct client_obd *cli)
 		time64_t duration = ktime_get_real_seconds();
 		long timediff;
 
-		/* knock out pages by duration of no IO activity */
+		
 		duration -= cli->cl_lru_last_used;
 		/*
 		 * The difference shouldn't be more than 70 years
@@ -559,7 +559,7 @@ static inline bool lru_page_busy(struct client_obd *cli, struct cl_page *page)
 	if (cli->cl_cache->ccc_unstable_check) {
 		struct page *vmpage = cl_page_vmpage(page);
 
-		/* vmpage have two known users: cl_page and VM page cache */
+		
 		if ((page_count(vmpage) - folio_mapcount_page(vmpage)) > 2)
 			return true;
 	}
@@ -612,7 +612,7 @@ osc_normal_lru_check(const struct lu_env *env, struct client_obd *cli,
 			 * lock contention.
 			 */
 			__osc_lru_del(cli, opg);
-			opg->ops_in_lru = 0; /* will be discarded */
+			opg->ops_in_lru = 0; 
 
 			cl_page_get(clpage);
 			return SK_ACTION_WILL_FREE;
@@ -639,7 +639,7 @@ osc_unevict_lru_check(const struct lu_env *env, struct client_obd *cli,
 		    !lru_page_unevictable(clpage)) {
 			LASSERT(opg->ops_vm_locked == 1);
 			__osc_lru_del(cli, opg);
-			opg->ops_in_lru = 0; /* will be discarded */
+			opg->ops_in_lru = 0; 
 
 			cl_page_get(clpage);
 			return SK_ACTION_UNEVICT_DEL;
@@ -806,7 +806,7 @@ static long osc_lru_list_shrink(const struct lu_env *env,
 		    action != SK_ACTION_UNEVICT_DEL)
 			continue;
 
-		/* Don't discard and free the page with cl_lru_list held */
+		
 		pvec[index++] = page;
 		if (unlikely(index == OTI_PVEC_SIZE)) {
 			spin_unlock(&cli->cl_lru_list_lock);
@@ -1039,7 +1039,7 @@ static int osc_lru_alloc(const struct lu_env *env, struct client_obd *cli,
 
 	ENTRY;
 
-	if (cli->cl_cache == NULL) /* shall not be in LRU */
+	if (cli->cl_cache == NULL) 
 		RETURN(0);
 
 	if (oio->oi_lru_reserved > 0) {
@@ -1049,13 +1049,13 @@ static int osc_lru_alloc(const struct lu_env *env, struct client_obd *cli,
 
 	LASSERT(atomic_long_read(cli->cl_lru_left) >= 0);
 	while (!atomic_long_add_unless(cli->cl_lru_left, -1, 0)) {
-		/* run out of LRU spaces, try to drop some by itself */
+		
 		rc = osc_lru_reclaim(cli, 1);
 		if (rc < 0)
 			break;
 		if (rc > 0)
 			continue;
-		/* IO issued by readahead, don't try hard */
+		
 		if (oio->oi_is_readahead) {
 			if (atomic_long_read(cli->cl_lru_left) > 0)
 				continue;
@@ -1168,7 +1168,7 @@ long osc_unevict_cache_shrink(const struct lu_env *env, struct client_obd *cli)
 
 #if defined(HAVE_NR_UNSTABLE_NFS) && !defined(HAVE_NODE_NR_WRITEBACK)
 
-/* NR_UNSTABLE_NFS is still in enum zone_stat_item  */
+
 /**
  * Atomic operations are expensive. We accumulate the accounting for the
  * same page zone to get better performance.
@@ -1212,7 +1212,7 @@ static inline void unstable_page_accounting(struct ptlrpc_bulk_desc *desc,
 #else
 
 #if defined(HAVE_NR_UNSTABLE_NFS) && !defined(HAVE_NR_UNSTABLE_NFS_DEPRECATED)
-/* NR_UNSTABLE_NFS is moved into enum node_stat_item and not deprecated. */
+
 #define __NR_WRITEBACK	NR_UNSTABLE_NFS
 #else
 /*
@@ -1222,7 +1222,7 @@ static inline void unstable_page_accounting(struct ptlrpc_bulk_desc *desc,
 #define __NR_WRITEBACK	NR_WRITEBACK
 #endif
 
-/* TODO: add WB_WRITEBACK accounting. */
+
 static inline void unstable_page_accounting(struct ptlrpc_bulk_desc *desc,
 					    int factor)
 {
@@ -1321,7 +1321,7 @@ void osc_inc_unstable_pages(struct ptlrpc_request *req)
 	struct client_obd       *cli  = &req->rq_import->imp_obd->u.cli;
 	long			 page_count;
 
-	/* No unstable page tracking */
+	
 	if (cli->cl_cache == NULL || !cli->cl_cache->ccc_unstable_check)
 		return;
 
@@ -1361,7 +1361,7 @@ bool osc_over_unstable_soft_limit(struct client_obd *cli)
 {
 	long unstable_nr, osc_unstable_count;
 
-	/* Can't check cli->cl_unstable_count, therefore, no soft limit */
+	
 	if (cli->cl_cache == NULL || !cli->cl_cache->ccc_unstable_check)
 		return false;
 
@@ -1511,4 +1511,4 @@ out:
 	return shrank;
 }
 
-/** @} osc */
+

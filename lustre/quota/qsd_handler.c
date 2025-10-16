@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -20,7 +20,7 @@
  */
 static inline int qsd_request_enter(struct lquota_entry *lqe)
 {
-	/* is there already a quota request in flight? */
+	
 	if (lqe->lqe_pending_req != 0) {
 		LQUOTA_DEBUG(lqe, "already a request in flight");
 		return -EBUSY;
@@ -73,15 +73,15 @@ static int qsd_ready(struct lquota_entry *lqe, struct lustre_handle *lockh)
 	ENTRY;
 
 	read_lock(&qsd->qsd_lock);
-	/* is the qsd about to shut down? */
+	
 	if (qsd->qsd_stopping) {
 		read_unlock(&qsd->qsd_lock);
 		LQUOTA_DEBUG(lqe, "dropping quota req since qsd is stopping");
-		/* Target is about to shut down, client will retry */
+		
 		RETURN(-EINPROGRESS);
 	}
 
-	/* is the connection to the quota master ready? */
+	
 	if (qsd->qsd_exp_valid)
 		imp = class_exp2cliimp(qsd->qsd_exp);
 	if (imp == NULL || imp->imp_invalid) {
@@ -117,7 +117,7 @@ static int qsd_ready(struct lquota_entry *lqe, struct lustre_handle *lockh)
 	if (lock == NULL)
 		RETURN(-ENOLCK);
 
-	/* return remote lock handle to be packed in quota request */
+	
 	lustre_handle_copy(lockh, &lock->l_remote_handle);
 	ldlm_lock_put(lock);
 
@@ -151,9 +151,9 @@ static bool qsd_calc_adjust(struct lquota_entry *lqe, struct quota_body *qbody)
 		qbody->qb_flags = 0;
 
 	if (!lqe->lqe_enforced) {
-		/* quota not enforced any more for this ID */
+		
 		if (granted != 0) {
-			/* release all quota space unconditionally */
+			
 			LQUOTA_DEBUG(lqe, "not enforced, releasing all space");
 			if (qbody != NULL) {
 				qbody->qb_count = granted;
@@ -200,7 +200,7 @@ static bool qsd_calc_adjust(struct lquota_entry *lqe, struct quota_body *qbody)
 		}
 
 		if (lqe->lqe_usage > lqe->lqe_granted) {
-			/* quota overrun, report usage */
+			
 			LQUOTA_DEBUG(lqe, "overrun, reporting usage");
 			if (qbody != NULL) {
 				qbody->qb_usage = lqe->lqe_usage;
@@ -230,15 +230,15 @@ static bool qsd_calc_adjust(struct lquota_entry *lqe, struct quota_body *qbody)
 		RETURN(true);
 	}
 
-	/* 2. release spare quota space? */
+	
 	if (granted > usage + lqe->lqe_qunit) {
-		/* pre-release quota space */
+		
 		if (qbody == NULL)
 			RETURN(true);
 		qbody->qb_count = granted - usage;
-		/* if usage == 0, release all granted space */
+		
 		if (usage) {
-			/* try to keep one qunit of quota space */
+			
 			qbody->qb_count -= lqe->lqe_qunit;
 			/* but don't release less than qtune to avoid releasing
 			 * space too often */
@@ -249,7 +249,7 @@ static bool qsd_calc_adjust(struct lquota_entry *lqe, struct quota_body *qbody)
 		RETURN(true);
 	}
 
-	/* 3. Any quota overrun? */
+	
 	if (lqe->lqe_usage > lqe->lqe_granted) {
 		/* we overconsumed quota space, we report usage in request so
 		 * that master can adjust it unconditionally */
@@ -260,7 +260,7 @@ static bool qsd_calc_adjust(struct lquota_entry *lqe, struct quota_body *qbody)
 		qbody->qb_flags = QUOTA_DQACQ_FL_REPORT;
 	}
 
-	/* 4. Time to pre-acquire? */
+	
 	if (!lqe->lqe_edquot && !lqe->lqe_nopreacq && usage > 0 &&
 	    lqe->lqe_qunit != 0 && granted < usage + lqe->lqe_qtune) {
 		/* To pre-acquire quota space, we report how much spare quota
@@ -318,7 +318,7 @@ static void qsd_req_completion(const struct lu_env *env,
 	if (rc) {
 		LQUOTA_ERROR(lqe, "failed to refill environmnent %d", rc);
 		lqe_write_lock(lqe);
-		/* can't afford to adjust quota space with no suitable lu_env */
+		
 		GOTO(out_noadjust, rc);
 	}
 	qti = qsd_info(env);
@@ -332,13 +332,13 @@ static void qsd_req_completion(const struct lu_env *env,
 	if (ret != 0 && ret != -EDQUOT && ret != -EINPROGRESS) {
 		if (ret != -ETIMEDOUT && ret != -ENOTCONN &&
 		   ret != -ESHUTDOWN && ret != -EAGAIN)
-			/* print errors only if return code is unexpected */
+			
 			LQUOTA_ERROR(lqe, "DQACQ failed with %d, flags:0x%x",
 				     ret, reqbody->qb_flags);
 		GOTO(out, ret);
 	}
 
-	/* Set the lqe_lockh */
+	
 	if (lustre_handle_is_used(lockh) &&
 	    !lustre_handle_equal(lockh, &lqe->lqe_lockh))
 		lustre_handle_copy(&lqe->lqe_lockh, lockh);
@@ -386,7 +386,7 @@ static void qsd_req_completion(const struct lu_env *env,
 		lqe_write_lock(lqe);
 	}
 
-	/* extract information from lvb */
+	
 	if (ret == 0 && lvb != NULL) {
 		if (lvb->lvb_id_qunit != 0)
 			qsd_set_qunit(lqe, lvb->lvb_id_qunit);
@@ -410,7 +410,7 @@ out_noadjust:
 	qsd_request_exit(lqe);
 	lqe_write_unlock(lqe);
 
-	/* release reference on per-ID lock */
+	
 	if (lustre_handle_is_used(lockh))
 		ldlm_lock_decref(lockh, qsd_id_einfo.ei_mode);
 
@@ -445,17 +445,17 @@ static int qsd_acquire_local(struct lquota_entry *lqe, __u64 space)
 	ENTRY;
 
 	if (!lqe->lqe_enforced)
-		/* not enforced any more, we are good */
+		
 		RETURN(-ESRCH);
 
 	lqe_write_lock(lqe);
-	/* use latest usage */
+	
 	usage = lqe->lqe_usage;
-	/* take pending write into account */
+	
 	usage += lqe->lqe_pending_write;
 
 	if (space + usage <= lqe->lqe_granted - lqe->lqe_pending_rel) {
-		/* Yay! we got enough space */
+		
 		lqe->lqe_pending_write += space;
 		lqe->lqe_waiting_write -= space;
 		rc = 0;
@@ -505,7 +505,7 @@ static inline bool qsd_calc_acquire(struct lquota_entry *lqe,
 		granted = lqe->lqe_usage;
 	}
 
-	/* acquire as much as needed, but not more */
+	
 	if (usage > granted) {
 		qbody->qb_count  = usage - granted;
 		qbody->qb_flags |= QUOTA_DQACQ_FL_ACQ;
@@ -547,21 +547,21 @@ static int qsd_acquire_remote(const struct lu_env *env,
 
 	lqe_write_lock(lqe);
 
-	/* is quota really enforced for this id? */
+	
 	if (!lqe->lqe_enforced) {
 		lqe_write_unlock(lqe);
 		LQUOTA_DEBUG(lqe, "quota not enforced any more");
 		RETURN(0);
 	}
 
-	/* fill qb_count & qb_flags */
+	
 	if (!qsd_calc_acquire(lqe, qbody)) {
 		lqe_write_unlock(lqe);
 		LQUOTA_DEBUG(lqe, "No acquire required");
 		RETURN(0);
 	}
 
-	/* check whether an acquire request completed recently */
+	
 	if (lqe->lqe_acq_rc != 0 &&
 	    lqe->lqe_acq_time > ktime_get_seconds() - 1) {
 		lqe_write_unlock(lqe);
@@ -569,7 +569,7 @@ static int qsd_acquire_remote(const struct lu_env *env,
 		RETURN(lqe->lqe_acq_rc);
 	}
 
-	/* only 1 quota request in flight for a given ID is allowed */
+	
 	rc = qsd_request_enter(lqe);
 	if (rc) {
 		lqe_write_unlock(lqe);
@@ -579,14 +579,14 @@ static int qsd_acquire_remote(const struct lu_env *env,
 	lustre_handle_copy(&qti->qti_lockh, &lqe->lqe_lockh);
 	lqe_write_unlock(lqe);
 
-	/* hold a refcount until completion */
+	
 	lqe_getref(lqe);
 
-	/* fill other quota body fields */
+	
 	qbody->qb_fid = qqi->qqi_fid;
 	qbody->qb_id  = lqe->lqe_id;
 
-	/* check whether we already own a valid lock for this ID */
+	
 	rc = qsd_id_lock_match(&qti->qti_lockh, &qbody->qb_lockh);
 	if (rc) {
 		struct lquota_lvb *lvb;
@@ -598,12 +598,12 @@ static int qsd_acquire_remote(const struct lu_env *env,
 					   &qti->qti_lockh, NULL, lqe, rc);
 			RETURN(rc);
 		}
-		/* no lock found, should use intent */
+		
 		rc = qsd_intent_lock(env, qsd->qsd_exp, qbody, true,
 				     IT_QUOTA_DQACQ, qsd_req_completion,
 				     qqi, lvb, (void *)lqe);
 	} else {
-		/* lock found, should use regular dqacq */
+		
 		rc = qsd_send_dqacq(env, qsd->qsd_exp, qbody, true,
 				    qsd_req_completion, qqi, &qti->qti_lockh,
 				    lqe);
@@ -645,12 +645,12 @@ again:
 			break;
 		}
 
-		/* refresh disk usage */
+		
 		rc = qsd_refresh_usage(env, lqe);
 		if (rc)
 			break;
 
-		/* try to consume local quota space first */
+		
 		rc = qsd_acquire_local(lqe, space);
 		if (rc != -EAGAIN)
 			/* rc == 0, Wouhou! enough local quota space
@@ -672,12 +672,12 @@ again:
 		if (count > 0)
 			schedule_timeout_interruptible(cfs_time_seconds(1));
 
-		/* need to acquire more quota space from master */
+		
 		rc = qsd_acquire_remote(env, lqe);
 	}
 
 	if (rc == -EBUSY)
-		/* already a request in flight, continue waiting */
+		
 		RETURN(false);
 	*ret = rc;
 	RETURN(true);
@@ -714,12 +714,12 @@ static int qsd_op_begin0(const struct lu_env *env, struct qsd_qtype_info *qqi,
 
 	ENTRY;
 	if (qid->lqi_qentry != NULL) {
-		/* we already had to deal with this id for this transaction */
+		
 		lqe = qid->lqi_qentry;
 		if (!lqe->lqe_enforced)
 			RETURN(0);
 	} else {
-		/* look up lquota entry associated with qid */
+		
 		lqe = lqe_locate(env, qqi->qqi_site, &qid->lqi_id);
 		if (IS_ERR(lqe))
 			RETURN(PTR_ERR(lqe));
@@ -728,7 +728,7 @@ static int qsd_op_begin0(const struct lu_env *env, struct qsd_qtype_info *qqi,
 			RETURN(0);
 		}
 		qid->lqi_qentry = lqe;
-		/* lqe will be released in qsd_op_end() */
+		
 	}
 
 	LQUOTA_DEBUG(lqe, "op_begin space: %lld", space);
@@ -816,7 +816,7 @@ out_flags:
 			usage += lqe->lqe_usage;
 
 			qtype_flag = lquota_over_fl(qqi->qqi_qtype);
-			/* if we should notify client to start sync write */
+			
 			if (usage >= lqe->lqe_granted - lqe->lqe_pending_rel)
 				*local_flags |= qtype_flag;
 			else
@@ -864,7 +864,7 @@ int qsd_op_begin(const struct lu_env *env, struct qsd_instance *qsd,
 	bool	found = false;
 	ENTRY;
 
-	/* fast path, ignore quota enforcement request for root owned files */
+	
 	if (qi->lqi_id.qid_uid == 0)
 		return 0;
 
@@ -874,7 +874,7 @@ int qsd_op_begin(const struct lu_env *env, struct qsd_instance *qsd,
 	if (qsd->qsd_dev->dd_rdonly)
 		RETURN(0);
 
-	/* We don't enforce quota until the qsd_instance is started */
+	
 	read_lock(&qsd->qsd_lock);
 	if (!qsd->qsd_started) {
 		read_unlock(&qsd->qsd_lock);
@@ -882,7 +882,7 @@ int qsd_op_begin(const struct lu_env *env, struct qsd_instance *qsd,
 	}
 	read_unlock(&qsd->qsd_lock);
 
-	/* ignore block quota on MDTs, ignore inode quota on OSTs */
+	
 	if ((!qsd->qsd_is_md && !qi->lqi_is_blk) ||
 	    (qsd->qsd_is_md && qi->lqi_is_blk))
 		RETURN(0);
@@ -901,7 +901,7 @@ int qsd_op_begin(const struct lu_env *env, struct qsd_instance *qsd,
 
 	LASSERTF(trans->lqt_id_cnt <= QUOTA_MAX_TRANSIDS, "id_cnt=%d\n",
 		 trans->lqt_id_cnt);
-	/* check whether we already allocated a slot for this id */
+	
 	for (i = 0; i < trans->lqt_id_cnt; i++) {
 		if (qid_equal(qi, &trans->lqt_ids[i])) {
 			found = true;
@@ -916,7 +916,7 @@ int qsd_op_begin(const struct lu_env *env, struct qsd_instance *qsd,
 			RETURN(-EINVAL);
 		}
 
-		/* fill new slot */
+		
 		trans->lqt_ids[i].lqi_id     = qi->lqi_id;
 		trans->lqt_ids[i].lqi_type   = qi->lqi_type;
 		trans->lqt_ids[i].lqi_is_blk = qi->lqi_is_blk;
@@ -930,7 +930,7 @@ int qsd_op_begin(const struct lu_env *env, struct qsd_instance *qsd,
 			trans->lqt_ids[i].lqi_truncated_space = -qi->lqi_space;
 	}
 
-	/* manage quota enforcement for this ID */
+	
 	rc = qsd_op_begin0(env, qsd->qsd_type_array[qi->lqi_type],
 			   &trans->lqt_ids[i], qi->lqi_space, local_flags);
 	RETURN(rc);
@@ -977,14 +977,14 @@ int qsd_adjust(const struct lu_env *env, struct lquota_entry *lqe)
 
 	lqe_write_lock(lqe);
 
-	/* fill qb_count & qb_flags */
+	
 	if (!qsd_calc_adjust(lqe, qbody)) {
 		lqe_write_unlock(lqe);
 		LQUOTA_DEBUG(lqe, "no adjustment required");
 		RETURN(0);
 	}
 
-	/* only 1 quota request in flight for a given ID is allowed */
+	
 	rc = qsd_request_enter(lqe);
 	if (rc) {
 		/* already a request in flight, space adjustment will be run
@@ -998,36 +998,36 @@ int qsd_adjust(const struct lu_env *env, struct lquota_entry *lqe)
 	lustre_handle_copy(&qti->qti_lockh, &lqe->lqe_lockh);
 	lqe_write_unlock(lqe);
 
-	/* hold a refcount until completion */
+	
 	lqe_getref(lqe);
 
-	/* fill other quota body fields */
+	
 	qbody->qb_fid = qqi->qqi_fid;
 	qbody->qb_id  = lqe->lqe_id;
 
 	if (req_is_acq(qbody->qb_flags) || req_is_preacq(qbody->qb_flags)) {
-		/* check whether we own a valid lock for this ID */
+		
 		rc = qsd_id_lock_match(&qti->qti_lockh, &qbody->qb_lockh);
 		if (rc) {
 			memset(&qti->qti_lockh, 0, sizeof(qti->qti_lockh));
 			if (req_is_preacq(qbody->qb_flags)) {
 				if (req_has_rep(qbody->qb_flags))
-					/* still want to report usage */
+					
 					qbody->qb_flags = QUOTA_DQACQ_FL_REPORT;
 				else
-					/* no pre-acquire if no per-ID lock */
+					
 					GOTO(out, rc = -ENOLCK);
 			} else {
-				/* no lock found, should use intent */
+				
 				intent = true;
 			}
 		} else if (req_is_acq(qbody->qb_flags) &&
 			   qbody->qb_count == 0) {
-			/* found cached lock, no need to acquire */
+			
 			GOTO(out, rc = 0);
 		}
 	} else {
-		/* release and report don't need a per-ID lock */
+		
 		memset(&qti->qti_lockh, 0, sizeof(qti->qti_lockh));
 	}
 
@@ -1081,7 +1081,7 @@ static void qsd_op_end0(const struct lu_env *env, struct qsd_qtype_info *qqi,
 		RETURN_EXIT;
 	qid->lqi_qentry = NULL;
 
-	/* refresh cached usage if a suitable environment is passed */
+	
 	if (env != NULL)
 		qsd_refresh_usage(env, lqe);
 
@@ -1103,7 +1103,7 @@ static void qsd_op_end0(const struct lu_env *env, struct qsd_qtype_info *qqi,
 	lqe_write_unlock(lqe);
 
 	if (adjust) {
-		/* pre-acquire/release quota space is needed */
+		
 		if (env != NULL)
 			qsd_adjust(env, lqe);
 		else
@@ -1120,7 +1120,7 @@ static void qsd_op_end0(const struct lu_env *env, struct qsd_qtype_info *qqi,
 	    env && qid->lqi_truncated_space > 1048576) {
 		__u32 seconds;
 
-		/* one second per gigabyte */
+		
 		seconds = qid->lqi_truncated_space >> 20;
 		if (seconds > 120)
 			seconds = 120;
@@ -1160,7 +1160,7 @@ void qsd_op_end(const struct lu_env *env, struct qsd_instance *qsd,
 	if (qsd->qsd_dev->dd_rdonly)
 		RETURN_EXIT;
 
-	/* We don't enforce quota until the qsd_instance is started */
+	
 	read_lock(&qsd->qsd_lock);
 	if (!qsd->qsd_started) {
 		read_unlock(&qsd->qsd_lock);
@@ -1208,10 +1208,10 @@ int qsd_transfer(const struct lu_env *env, struct qsd_instance *qsd,
 
 	qi->lqi_type = qtype;
 
-	/* inode accounting */
+	
 	qi->lqi_is_blk = false;
 
-	/* one more inode for the new owner ... */
+	
 	qi->lqi_id.qid_uid = new_id;
 	qi->lqi_space = 1;
 	rc = qsd_op_begin(env, qsd, trans, qi, NULL);
@@ -1220,20 +1220,20 @@ int qsd_transfer(const struct lu_env *env, struct qsd_instance *qsd,
 	if (rc)
 		return rc;
 
-	/* and one less inode for the current id */
+	
 	qi->lqi_id.qid_uid = orig_id;
 	qi->lqi_space = -1;
-	/* can't get EDQUOT when reducing usage */
+	
 	rc = qsd_op_begin(env, qsd, trans, qi, NULL);
 	if (rc == -EINPROGRESS)
 		rc = 0;
 	if (rc)
 		return rc;
 
-	/* block accounting */
+	
 	qi->lqi_is_blk = true;
 
-	/* more blocks for the new owner ... */
+	
 	qi->lqi_id.qid_uid = new_id;
 	qi->lqi_space = bspace;
 	rc = qsd_op_begin(env, qsd, trans, qi, NULL);
@@ -1242,11 +1242,11 @@ int qsd_transfer(const struct lu_env *env, struct qsd_instance *qsd,
 	if (rc)
 		return rc;
 
-	/* and finally less blocks for the current owner */
+	
 	qi->lqi_id.qid_uid = orig_id;
 	qi->lqi_space = -bspace;
 	rc = qsd_op_begin(env, qsd, trans, qi, NULL);
-	/* can't get EDQUOT when reducing usage */
+	
 	if (rc == -EINPROGRESS)
 		rc = 0;
 	return rc;
@@ -1278,7 +1278,7 @@ void qsd_op_adjust(const struct lu_env *env, struct qsd_instance *qsd,
 	if (unlikely(qsd == NULL))
 		RETURN_EXIT;
 
-	/* We don't enforce quota until the qsd_instance is started */
+	
 	read_lock(&qsd->qsd_lock);
 	if (!qsd->qsd_started) {
 		read_unlock(&qsd->qsd_lock);
@@ -1356,7 +1356,7 @@ int qsd_reserve_or_free_quota(const struct lu_env *env,
 	if (is_free)
 		qi->lqi_space *= -1;
 
-	/* We don't enforce quota until the qsd_instance is started */
+	
 	read_lock(&qsd->qsd_lock);
 	if (!qsd->qsd_started) {
 		read_unlock(&qsd->qsd_lock);
@@ -1387,7 +1387,7 @@ int qsd_reserve_or_free_quota(const struct lu_env *env,
 	} else {
 		long long qspace = qi->lqi_space;
 
-		/* the acquired quota will add to lqi_space in qsd_op_begin0 */
+		
 		qi->lqi_space = 0;
 		rc = qsd_op_begin0(env, qsd->qsd_type_array[qi->lqi_type], qi,
 				   qspace, NULL);

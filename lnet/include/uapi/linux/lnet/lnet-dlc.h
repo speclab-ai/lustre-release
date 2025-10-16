@@ -1,8 +1,8 @@
-/* SPDX-License-Identifier: LGPL-2.1+ WITH Linux-syscall-note */
 
-/* Copyright (c) 2014, 2017, Intel Corporation. */
 
-/* Author: Amir Shehata <amir.shehata@intel.com> */
+
+
+
 
 #ifndef __UAPI_LNET_DLC_H_
 #define __UAPI_LNET_DLC_H_
@@ -158,7 +158,7 @@ struct lnet_ioctl_net_config {
 #define LNET_SMALL_BUF_IDX	1
 #define LNET_LARGE_BUF_IDX	2
 
-/* # different router buffer pools */
+
 #define LNET_NRBPOOLS		(LNET_LARGE_BUF_IDX + 1)
 
 struct lnet_ioctl_pool_cfg {
@@ -446,4 +446,4 @@ struct lnet_ioctl_construct_udsp_info {
 	lnet_nid_t cud_pref_rtr_nid[LNET_MAX_SHOW_NUM_NID];
 };
 
-#endif /* _LNET_DLC_H_ */
+#endif 

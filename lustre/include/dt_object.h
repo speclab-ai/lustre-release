@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __LUSTRE_DT_OBJECT_H
@@ -56,14 +56,14 @@ struct dt_device_param {
 	unsigned int	 ddp_max_ea_size;
 	unsigned int	 ddp_mount_type;
 	unsigned long long ddp_maxbytes;
-	/* per-inode space consumption */
+	
 	short		 ddp_inodespace;
-	/* maximum number of blocks in an extent */
+	
 	unsigned int	 ddp_max_extent_blks;
-	/* per-extent insertion overhead used by client for grant calculation */
+	
 	unsigned int	 ddp_extent_tax;
-	unsigned int	 ddp_brw_size; /* optimal RPC size */
-	/* T10PI checksum type, zero if not supported */
+	unsigned int	 ddp_brw_size; 
+	
 	enum cksum_types ddp_t10_cksum_type;
 	bool		 ddp_has_lseek_data_hole;
 };
@@ -322,28 +322,28 @@ struct dt_device_operations {
 };
 
 struct dt_index_features {
-	/* required feature flags from enum dt_index_flags */
+	
 	__u32 dif_flags;
-	/* minimal required key size */
+	
 	size_t dif_keysize_min;
-	/* maximal required key size, 0 if no limit */
+	
 	size_t dif_keysize_max;
-	/* minimal required record size */
+	
 	size_t dif_recsize_min;
-	/* maximal required record size, 0 if no limit */
+	
 	size_t dif_recsize_max;
-	/* pointer size for record */
+	
 	size_t dif_ptrsize;
 };
 
 enum dt_index_flags {
-	/* index supports variable sized keys */
+	
 	DT_IND_VARKEY = BIT(0),
-	/* index supports variable sized records */
+	
 	DT_IND_VARREC = BIT(1),
-	/* index can be modified */
+	
 	DT_IND_UPDATE = BIT(2),
-	/* index supports records with non-unique (duplicate) keys */
+	
 	DT_IND_NONUNQ = BIT(3),
 	/*
 	 * index support fixed-size keys sorted with natural numerical way
@@ -352,7 +352,7 @@ enum dt_index_flags {
 	DT_IND_RANGE = BIT(4),
 };
 
-/* for dt_read_lock() and dt_write_lock() object lock rule */
+
 enum dt_object_role {
 	DT_SRC_PARENT,
 	DT_SRC_CHILD,
@@ -372,16 +372,16 @@ extern const struct dt_index_features dt_lfsck_layout_orphan_features;
 extern const struct dt_index_features dt_lfsck_layout_dangling_features;
 extern const struct dt_index_features dt_lfsck_namespace_features;
 
-/* index features supported by the accounting objects */
+
 extern const struct dt_index_features dt_acct_features;
 
-/* index features supported by the quota global indexes */
+
 extern const struct dt_index_features dt_quota_glb_features;
 
-/* index features supported by the quota slave indexes */
+
 extern const struct dt_index_features dt_quota_slv_features;
 
-/* index features supported by the nodemap index */
+
 extern const struct dt_index_features dt_nodemap_features;
 
 /*
@@ -397,9 +397,9 @@ struct dt_allocation_hint {
 	int			dah_append_stripe_count;
 	int			dah_acl_len;
 	unsigned int		dah_can_block:1,
-				/* implicit default LMV inherit is enabled? */
+				
 				dah_dmv_imp_inherit:1,
-				/* eadata is default LMV sent from client  */
+				
 				dah_eadata_is_dmv:1;
 };
 
@@ -409,11 +409,11 @@ struct dt_allocation_hint {
 enum dt_format_type {
 	DFT_REGULAR,
 	DFT_DIR,
-	/** for mknod */
+	
 	DFT_NODE,
-	/** for special index */
+	
 	DFT_INDEX,
-	/** for symbolic link */
+	
 	DFT_SYM,
 };
 
@@ -421,7 +421,7 @@ enum dt_format_type {
  * object format specifier.
  */
 struct dt_object_format {
-	/* type for dt object */
+	
 	enum dt_format_type dof_type;
 	union {
 		struct dof_regular {
@@ -1111,10 +1111,10 @@ enum dt_bufs_type {
 	DT_BUFS_TYPE_LOCAL	= 0x0004,
 };
 
-/* supplementary error hint */
+
 enum dt_fallocate_error_t {
 	DT_FALLOC_ERR_NONE       = 0x0000,
-	DT_FALLOC_ERR_NEED_ZERO  = 0x0001, /* need to fill zero by brw */
+	DT_FALLOC_ERR_NEED_ZERO  = 0x0001, 
 };
 
 /*
@@ -1498,13 +1498,13 @@ struct dt_body_operations {
 			    loff_t offset, int whence);
 };
 
-/* Incomplete type of index record. */
+
 struct dt_rec;
 
-/* Incomplete type of index key. */
+
 struct dt_key;
 
-/* Incomplete type of dt iterator. */
+
 struct dt_it;
 
 /*
@@ -1834,16 +1834,16 @@ enum dt_otable_it_valid {
 };
 
 enum dt_otable_it_flags {
-	/* Exit when fail. */
+	
 	DOIF_FAILOUT	= 0x0001,
 
-	/* Reset iteration position to the device beginning. */
+	
 	DOIF_RESET	= 0x0002,
 
-	/* There is up layer component uses the iteration. */
+	
 	DOIF_OUTUSED	= 0x0004,
 
-	/* Check only without repairing. */
+	
 	DOIF_DRYRUN	= 0x0008,
 };
 
@@ -1864,7 +1864,7 @@ struct dt_device {
 	struct lu_device                   dd_lu_dev;
 	const struct dt_device_operations *dd_ops;
 
-	/* OSD specific fields */
+	
 	struct lu_client_seq		  *dd_cl_seq;
 
 	/*
@@ -1876,7 +1876,7 @@ struct dt_device {
 	unsigned int			   dd_record_fid_accessed:1,
 					   dd_rdonly:1;
 
-	/* sysfs and debugfs handling */
+	
 	struct dentry			  *dd_debugfs_entry;
 
 	const struct attribute		 **dd_def_attrs;
@@ -1905,7 +1905,7 @@ struct dt_object {
 	const struct dt_body_operations   *do_body_ops;
 	const struct dt_index_operations  *do_index_ops;
 
-	/* OSD specific fields */
+	
 	struct rw_semaphore		   dd_sem;
 	struct lu_env			  *dd_owner;
 };
@@ -1914,15 +1914,15 @@ struct dt_object {
  * In-core representation of per-device local object OID storage
  */
 struct local_oid_storage {
-	/* all initialized llog systems on this node linked by this */
+	
 	struct list_head  los_list;
 
-	/* how many handle's reference this los has */
+	
 	atomic_t	  los_refcount;
 	struct dt_device *los_dev;
 	struct dt_object *los_obj;
 
-	/* data used to generate new fids */
+	
 	struct mutex	  los_id_lock;
 	__u64		  los_seq;
 	__u32		  los_last_oid;
@@ -2029,7 +2029,7 @@ static inline struct dt_thread_info *dt_info(const struct lu_env *env)
  *      No RPC request should be issued inside transaction.
  */
 struct thandle {
-	/** the dt device on which the transactions are executed */
+	
 	struct dt_device *th_dev;
 
 	/* point to the top thandle, XXX this is a bit hacky right now,
@@ -2041,25 +2041,25 @@ struct thandle {
 	 */
 	struct thandle	*th_top;
 
-	/* reserved quota for this handle */
+	
 	struct lquota_id_info	th_reserved_quota;
 
-	/* last operation result in this transaction. value used in recovery */
+	
 	__s32             th_result;
 
-	/** whether we need sync commit */
+	
 	unsigned int		th_sync:1,
-	/* local transation, no need to inform other layers */
+	
 				th_local:1,
-	/* Do we wait the transaction to be submitted (send to remote target) */
+	
 				th_wait_submit:1,
-	/* complex transaction to track updates on all targets including OSTs */
+	
 				th_complex:1,
-	/* whether ignore quota */
+	
 				th_ignore_quota:1,
-	/* whether restart transaction */
+	
 				th_restart_tran:1,
-	/* enforce project quota for root */
+	
 				th_ignore_root_proj_quota:1;
 };
 
@@ -2281,7 +2281,7 @@ static inline int dt_trans_start(const struct lu_env *env,
 	return d->dd_ops->dt_trans_start(env, d, th);
 }
 
-/* for this transaction hooks shouldn't be called */
+
 static inline int dt_trans_start_local(const struct lu_env *env,
 				       struct dt_device *d, struct thandle *th)
 {
@@ -2424,7 +2424,7 @@ static inline void dt_write_lock(const struct lu_env *env,
 	LASSERT(dt->dd_owner == NULL);
 	info->dti_w_locks++;
 
-	/* TODO: Cleanup usage of const */
+	
 	dt->dd_owner = (struct lu_env *)env;
 }
 
@@ -3127,4 +3127,4 @@ int dt_tunables_init(struct dt_device *dt, struct obd_type *type,
 		     const char *name, struct ldebugfs_vars *list);
 void dt_tunables_fini(struct dt_device *dt);
 
-#endif /* __LUSTRE_DT_OBJECT_H */
+#endif 

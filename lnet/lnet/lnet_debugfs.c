@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  *
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #define DEBUG_SUBSYSTEM S_LNET
 
@@ -17,7 +17,7 @@
 /* NB: max allowed LNET_CPT_BITS is 8 on 64-bit system and 2 on 32-bit system
  */
 #define LNET_PROC_CPT_BITS	(LNET_CPT_BITS + 1)
-/* change version, 16 bits or 8 bits */
+
 #define LNET_PROC_VER_BITS		\
 	clamp_t(int, LNET_LOFFT_BITS / 4, 8, 16)
 
@@ -29,9 +29,9 @@
 				 LNET_PROC_CPT_BITS -	 \
 				 LNET_PROC_VER_BITS -	 \
 				 LNET_PROC_HASH_BITS - 1)
-/* bits for hash index + position */
+
 #define LNET_PROC_HPOS_BITS	(LNET_PROC_HASH_BITS + LNET_PROC_HOFF_BITS)
-/* bits for peer hash table + hash version */
+
 #define LNET_PROC_VPOS_BITS	(LNET_PROC_HPOS_BITS + LNET_PROC_VER_BITS)
 
 #define LNET_PROC_CPT_MASK	((1ULL << LNET_PROC_CPT_BITS) - 1)
@@ -151,14 +151,14 @@ static int proc_lnet_stats(const struct ctl_table *table,
 	size_t nob = *lenp;
 	loff_t pos = *ppos;
 	int len;
-	char tmpstr[256]; /* 7 %u and 4 u64 */
+	char tmpstr[256]; 
 
 	if (write) {
 		lnet_counters_reset();
 		return 0;
 	}
 
-	/* read */
+	
 
 	LIBCFS_ALLOC(ctrs, sizeof(*ctrs));
 	if (ctrs == NULL)
@@ -233,7 +233,7 @@ proc_lnet_routes(const struct ctl_table *table, int write,
 	if (tmpstr == NULL)
 		return -ENOMEM;
 
-	s = tmpstr; /* points to current position in tmpstr[] */
+	s = tmpstr; 
 
 	if (*ppos == 0) {
 		s += scnprintf(s, tmpstr + tmpsiz - s, ln_routing2str());
@@ -312,11 +312,11 @@ proc_lnet_routes(const struct ctl_table *table, int write,
 		lnet_net_unlock(0);
 	}
 
-	len = s - tmpstr;     /* how many bytes was written */
+	len = s - tmpstr;     
 
-	if (len > *lenp) {    /* linux-supplied buffer is too small */
+	if (len > *lenp) {    
 		rc = -EINVAL;
-	} else if (len > 0) { /* wrote something */
+	} else if (len > 0) { 
 		if (copy_to_user(buffer, tmpstr, len))
 			rc = -EFAULT;
 		else {
@@ -357,7 +357,7 @@ proc_lnet_routers(const struct ctl_table *table, int write,
 	if (tmpstr == NULL)
 		return -ENOMEM;
 
-	s = tmpstr; /* points to current position in tmpstr[] */
+	s = tmpstr; 
 
 	if (*ppos == 0) {
 		s += scnprintf(s, tmpstr + tmpsiz - s,
@@ -415,11 +415,11 @@ proc_lnet_routers(const struct ctl_table *table, int write,
 		lnet_net_unlock(0);
 	}
 
-	len = s - tmpstr;     /* how many bytes was written */
+	len = s - tmpstr;     
 
-	if (len > *lenp) {    /* linux-supplied buffer is too small */
+	if (len > *lenp) {    
 		rc = -EINVAL;
-	} else if (len > 0) { /* wrote something */
+	} else if (len > 0) { 
 		if (copy_to_user(buffer, tmpstr, len))
 			rc = -EFAULT;
 		else {
@@ -489,7 +489,7 @@ proc_lnet_peers(const struct ctl_table *table, int write,
 	if (tmpstr == NULL)
 		return -ENOMEM;
 
-	s = tmpstr; /* points to current position in tmpstr[] */
+	s = tmpstr; 
 
 	if (*ppos == 0) {
 		s += scnprintf(s, tmpstr + tmpsiz - s,
@@ -584,7 +584,7 @@ proc_lnet_peers(const struct ctl_table *table, int write,
 				       mintxcr, txqnob);
 			LASSERT(tmpstr + tmpsiz - s > 0);
 
-		} else { /* peer is NULL */
+		} else { 
 			lnet_net_unlock(cpt);
 		}
 
@@ -597,11 +597,11 @@ proc_lnet_peers(const struct ctl_table *table, int write,
 		}
 	}
 
-	len = s - tmpstr;     /* how many bytes was written */
+	len = s - tmpstr;     
 
-	if (len > *lenp) {    /* linux-supplied buffer is too small */
+	if (len > *lenp) {    
 		rc = -EINVAL;
-	} else if (len > 0) { /* wrote something */
+	} else if (len > 0) { 
 		if (copy_to_user(buffer, tmpstr, len))
 			rc = -EFAULT;
 		else
@@ -632,13 +632,13 @@ static int proc_lnet_buffers(const struct ctl_table *table,
 
 	LASSERT(!write);
 
-	/* (4 %d) * 4 * LNET_CPT_NUMBER */
+	
 	tmpsiz = 64 * (LNET_NRBPOOLS + 1) * LNET_CPT_NUMBER;
 	LIBCFS_ALLOC(tmpstr, tmpsiz);
 	if (tmpstr == NULL)
 		return -ENOMEM;
 
-	s = tmpstr; /* points to current position in tmpstr[] */
+	s = tmpstr; 
 
 	s += scnprintf(s, tmpstr + tmpsiz - s,
 		       "%5s %5s %7s %7s\n",
@@ -646,7 +646,7 @@ static int proc_lnet_buffers(const struct ctl_table *table,
 	LASSERT(tmpstr + tmpsiz - s > 0);
 
 	if (the_lnet.ln_rtrpools == NULL)
-		goto out; /* I'm not a router */
+		goto out; 
 
 	for (idx = 0; idx < LNET_NRBPOOLS; idx++) {
 		struct lnet_rtrbufpool *rbp;
@@ -691,7 +691,7 @@ proc_lnet_nis(const struct ctl_table *table, int write,
 		return 0;
 
 	if (write) {
-		/* Just reset the min stat. */
+		
 		struct lnet_ni	*ni;
 		struct lnet_net	*net;
 
@@ -730,7 +730,7 @@ proc_lnet_nis(const struct ctl_table *table, int write,
 	if (tmpstr == NULL)
 		return -ENOMEM;
 
-	s = tmpstr; /* points to current position in tmpstr[] */
+	s = tmpstr; 
 
 	if (*ppos == 0) {
 		s += scnprintf(s, tmpstr + tmpsiz - s,
@@ -760,7 +760,7 @@ proc_lnet_nis(const struct ctl_table *table, int write,
 			stat = (lnet_ni_get_status(ni) ==
 				LNET_NI_STATUS_UP) ? "up" : "down";
 
-			/* @lo forever alive */
+			
 			if (ni->ni_net->net_lnd->lnd_type == LOLND) {
 				last_alive = 0;
 				stat = "up";
@@ -798,11 +798,11 @@ proc_lnet_nis(const struct ctl_table *table, int write,
 		lnet_net_unlock(0);
 	}
 
-	len = s - tmpstr;     /* how many bytes was written */
+	len = s - tmpstr;     
 
-	if (len > *lenp) {    /* linux-supplied buffer is too small */
+	if (len > *lenp) {    
 		rc = -EINVAL;
-	} else if (len > 0) { /* wrote something */
+	} else if (len > 0) { 
 		if (copy_to_user(buffer, tmpstr, len))
 			rc = -EFAULT;
 		else

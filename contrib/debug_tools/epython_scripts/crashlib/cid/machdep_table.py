@@ -60,17 +60,6 @@ class MachDepInfo:
 
         for line in exec_crash_command('help -m').splitlines():
             # crash> help -m
-            #               flags: 30400209 (KSYMS_START|MACHDEP_BT_TEXT|VM_2_6_11|VMEMMAP|FRAMESIZE_DEBUG|FRAMEPOINTER)
-            #              kvbase: ffff880000000000
-            #   identity_map_base: ffff880000000000
-            #            pagesize: 4096
-            #           pageshift: 12
-            #            pagemask: fffffffffffff000
-            #          pageoffset: fff
-            #           stacksize: 8192
-            #                  hz: 250
-            #                 mhz: 2599
-            #             memsize: 68694994944 (0xffe8a7000)
             #  ...
             #
             # Only use the first value after the field name and

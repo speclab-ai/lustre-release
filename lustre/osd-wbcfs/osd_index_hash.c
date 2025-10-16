@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2024-2025, Amazon and/or its affiliates. All rights reserved.
@@ -87,7 +87,7 @@ static struct dt_it *osd_hash_index_it_init(const struct lu_env *env,
 	if (!it)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	/* FIXME: race between concurrent iterating and deleting */
+	
 	it->hit_cursor = &hind->hi_list;
 	it->hit_obj = obj;
 
@@ -135,7 +135,7 @@ static int osd_hash_index_it_get(const struct lu_env *env, struct dt_it *di,
 	RETURN(rc);
 }
 
-/* TODO: remove and make fp optional. */
+
 static void osd_hash_index_it_put(const struct lu_env *env, struct dt_it *di)
 {
 }
@@ -200,7 +200,7 @@ static int osd_hash_index_it_rec(const struct lu_env *env,
 	ENTRY;
 
 	hind = &MEMFS_I(obj->oo_inode)->mei_hash_index;
-	/* FIXME: use RCU to avoid concurrent operations on the list. */
+	
 	entry = container_of(it->hit_cursor, struct hash_index_entry,
 			     he_list_item);
 	reclen = entry->he_len - sizeof(*entry) - entry->he_keylen;
@@ -266,7 +266,7 @@ static int osd_hash_index_it_load(const struct lu_env *env,
 		RETURN(rc);
 	}
 
-	/* TODO: A linear scan is not efficient, will use Maple Tree instead. */
+	
 	list_for_each_entry(entry, &hind->hi_list, he_list_item) {
 		if (entry->he_offset == hash) {
 			it->hit_cursor = &entry->he_list_item;

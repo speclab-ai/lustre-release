@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2014, Intel Corporation.
@@ -18,7 +18,7 @@
 #include "qsd_internal.h"
 
 static LIST_HEAD(qfs_list);
-/* protect the qfs_list */
+
 static DEFINE_SPINLOCK(qfs_list_lock);
 
 /*
@@ -76,7 +76,7 @@ struct qsd_fsinfo *qsd_get_fsinfo(char *name, bool create)
 		new->qfs_ref = 1;
 	}
 
-	/* search in the fsinfo list */
+	
 	spin_lock(&qfs_list_lock);
 	list_for_each_entry(qfs, &qfs_list, qfs_link) {
 		if (!strcmp(qfs->qfs_name, name)) {
@@ -85,10 +85,10 @@ struct qsd_fsinfo *qsd_get_fsinfo(char *name, bool create)
 		}
 	}
 
-	qfs = NULL; /* not found */
+	qfs = NULL; 
 
 	if (new) {
-		/* not found, but we were asked to create a new one */
+		
 		list_add_tail(&new->qfs_link, &qfs_list);
 		qfs = new;
 		new = NULL;
@@ -123,7 +123,7 @@ int qsd_config(char *valstr, char *fsname, int pool)
 
 	mutex_lock(&qfs->qfs_mutex);
 	if (qfs->qfs_enabled[pool - LQUOTA_FIRST_RES] == enabled)
-		/* no change required */
+		
 		GOTO(out, rc = 0);
 
 	if ((qfs->qfs_enabled[pool - LQUOTA_FIRST_RES] & enabled) != enabled)
@@ -132,7 +132,7 @@ int qsd_config(char *valstr, char *fsname, int pool)
 	old_enabled = qfs->qfs_enabled[pool - LQUOTA_FIRST_RES];
 	qfs->qfs_enabled[pool - LQUOTA_FIRST_RES] = enabled;
 
-	/* trigger reintegration for all qsd */
+	
 	if (reint) {
 		struct qsd_instance	*qsd;
 		struct qsd_qtype_info	*qqi;

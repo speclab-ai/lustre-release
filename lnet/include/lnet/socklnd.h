@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #ifndef __LNET_LNET_SOCKLND_H__
 #define __LNET_LNET_SOCKLND_H__
@@ -13,50 +13,50 @@
 #include <uapi/linux/lnet/socklnd.h>
 
 struct ksock_hello_msg {
-	__u32			kshm_magic;	/* LNET_PROTO_MAGIC */
-	__u32			kshm_version;	/* KSOCK_PROTO_V* */
-	struct lnet_nid		kshm_src_nid;	/* sender's nid */
-	struct lnet_nid		kshm_dst_nid;	/* destination nid */
-	lnet_pid_t		kshm_src_pid;	/* sender's pid */
-	lnet_pid_t		kshm_dst_pid;	/* destination pid */
-	__u64			kshm_src_incarnation; /* sender's incarnation */
-	__u64			kshm_dst_incarnation; /* destination's incarnation */
-	__u32			kshm_ctype;	/* SOCKLND_CONN_* */
-	__u32			kshm_nips;	/* always sent as zero */
-	__u32			kshm_ips[];	/* deprecated */
+	__u32			kshm_magic;	
+	__u32			kshm_version;	
+	struct lnet_nid		kshm_src_nid;	
+	struct lnet_nid		kshm_dst_nid;	
+	lnet_pid_t		kshm_src_pid;	
+	lnet_pid_t		kshm_dst_pid;	
+	__u64			kshm_src_incarnation; 
+	__u64			kshm_dst_incarnation; 
+	__u32			kshm_ctype;	
+	__u32			kshm_nips;	
+	__u32			kshm_ips[];	
 } __packed;
 
 struct ksock_hello_msg_nid4 {
-	__u32			kshm_magic;	/* LNET_PROTO_MAGIC */
-	__u32			kshm_version;	/* KSOCK_PROTO_V* */
-	lnet_nid_t		kshm_src_nid;	/* sender's nid */
-	lnet_nid_t		kshm_dst_nid;	/* destination nid */
-	lnet_pid_t		kshm_src_pid;	/* sender's pid */
-	lnet_pid_t		kshm_dst_pid;	/* destination pid */
-	__u64			kshm_src_incarnation; /* sender's incarnation */
-	__u64			kshm_dst_incarnation; /* destination's incarnation */
-	__u32			kshm_ctype;	/* SOCKLND_CONN_* */
-	__u32			kshm_nips;	/* sent as zero */
-	__u32			kshm_ips[];	/* deprecated */
+	__u32			kshm_magic;	
+	__u32			kshm_version;	
+	lnet_nid_t		kshm_src_nid;	
+	lnet_nid_t		kshm_dst_nid;	
+	lnet_pid_t		kshm_src_pid;	
+	lnet_pid_t		kshm_dst_pid;	
+	__u64			kshm_src_incarnation; 
+	__u64			kshm_dst_incarnation; 
+	__u32			kshm_ctype;	
+	__u32			kshm_nips;	
+	__u32			kshm_ips[];	
 } __packed;
 
 struct ksock_msg_hdr {
-	__u32			ksh_type;	/* type of socklnd message */
-	__u32			ksh_csum;	/* checksum if != 0 */
+	__u32			ksh_type;	
+	__u32			ksh_csum;	
 	__u64			ksh_zc_cookies[2]; /* Zero-Copy request/ACK
 						    * cookie
 						    */
 } __packed;
 
-#define KSOCK_MSG_NOOP		0xc0		/* empty */
-#define KSOCK_MSG_LNET		0xc1		/* lnet msg */
+#define KSOCK_MSG_NOOP		0xc0		
+#define KSOCK_MSG_LNET		0xc1		
 
 struct ksock_msg {
 	struct ksock_msg_hdr	ksm_kh;
 	union {
-		/* case ksm_kh.ksh_type == KSOCK_MSG_NOOP */
-		/* - nothing */
-		/* case ksm_kh.ksh_type == KSOCK_MSG_LNET */
+		
+		
+		
 		struct lnet_hdr_nid4 lnetmsg_nid4;
 		/* case ksm_kh.ksh_type == KSOCK_MSG_LNET &&
 		 *      kshm_version >= KSOCK_PROTO_V4

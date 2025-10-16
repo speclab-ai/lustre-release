@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Alex Zhuravlev <bzzz@whamcloud.com>
  * Author: Mike Pershin <tappro@whamcloud.com>
@@ -127,7 +127,7 @@ static int osd_stats_init(struct osd_device *osd)
 	osd_symlink_brw_stats(osd);
 #endif
 
-	/* These fields are not supported for ZFS */
+	
 	osd->od_brw_stats.bs_props[BRW_R_DISCONT_BLOCKS / 2].bsp_name = NULL;
 	osd->od_brw_stats.bs_props[BRW_R_DIO_FRAGS / 2].bsp_name = NULL;
 
@@ -387,7 +387,7 @@ static struct ldebugfs_vars ldebugfs_osd_obd_vars[] = {
 	{ 0 }
 };
 
-KOBJ_ATTRIBUTE_GROUPS(zfs); /* creates zfs_groups from zfs_attrs */
+KOBJ_ATTRIBUTE_GROUPS(zfs); 
 
 int osd_procfs_init(struct osd_device *osd, const char *name)
 {
@@ -404,7 +404,7 @@ int osd_procfs_init(struct osd_device *osd, const char *name)
 	LASSERT(type);
 	LASSERT(name);
 
-	/* put reference taken by class_search_type */
+	
 	kobject_put(&type->typ_kobj);
 
 	osd->od_dt_dev.dd_ktype.default_groups = KOBJ_ATTR_GROUPS(zfs);

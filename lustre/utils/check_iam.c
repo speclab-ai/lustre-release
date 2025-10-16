@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  *
  * User-level tool to check iam files sanity.
@@ -24,7 +24,7 @@
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) ((sizeof(a)) / (sizeof((a)[0])))
-#endif /* !ARRAY_SIZE */
+#endif 
 
 struct record_cb {
 	int (*key)(const void *key, size_t size);
@@ -363,7 +363,7 @@ static int check_index(char *buf, struct iam_params *params)
 		return -1;
 	}
 
-	 /* count - 1, because limit is entry itself */
+	 
 	if (check_entries(index->entries,
 			  params->blocksize - offsetof(struct iam_index_head,
 						       entries),
@@ -424,7 +424,7 @@ static int check_root(void *buf, size_t size, struct iam_params *params)
 	idle_blocks = buf + params->root_gap + sizeof(*limit);
 	params->idle_blocks = __le32_to_cpu(*idle_blocks);
 
-	params->node_info[0].referenced = 1; //self referance
+	params->node_info[0].referenced = 1; 
 	params->node_info[0].node_type = ROOT_NODE;
 
 	if (params->idle_blocks >= params->blocks_count) {
@@ -496,7 +496,7 @@ static int check_root(void *buf, size_t size, struct iam_params *params)
 			__le16_to_cpu(limit->count),
 			__le16_to_cpu(limit->limit));
 
-	/* count - 1, because limit is entry itself */
+	
 	entries_off = params->root_gap + root_entry_size;
 	if (check_entries(buf + entries_off, size - entries_off,
 			  min - 1, params, INDEX_NODE)) {
@@ -646,12 +646,12 @@ static int print_oid(const void *buf, size_t size)
 static int print_lfsck_namespace(const void *buf, size_t size)
 {
 	static const char * const fl2str[] = {
-		"CHECK_LINKEA",		/* LNTF_CHECK_LINKEA */
-		"CHECK_ORPHAN",		/* LNTF_CHECK_PARENT */
-		"CHECK_ORPHAN",		/* LNTF_CHECK_ORPHAN */
-		"UNCERTAIN_LMV",	/* LNTF_UNCERTAIN_LMV */
-		"RECHECK_NAME_HASH",	/* LNTF_RECHECK_NAME_HASH */
-		"CHECK_AGENT_ENTRY",	/* LNTF_CHECK_AGENT_ENTRY */
+		"CHECK_LINKEA",		
+		"CHECK_ORPHAN",		
+		"CHECK_ORPHAN",		
+		"UNCERTAIN_LMV",	
+		"RECHECK_NAME_HASH",	
+		"CHECK_AGENT_ENTRY",	
 	};
 	const __u8 *flags = buf;
 	bool first = true;
@@ -940,7 +940,7 @@ int main(int argc, char **argv)
 	memset(params.node_info, 0,
 	       params.blocks_count * sizeof(struct node_info));
 
-	/* Read root block */
+	
 	if (read(fd, buf, params.blocksize) < params.blocksize) {
 		fprintf(stderr, "Can't read root block\n");
 		params.rc = -1;
@@ -955,7 +955,7 @@ int main(int argc, char **argv)
 
 	params.current_block++;
 
-	/* Read all another blocks */
+	
 	while (read(fd, buf, params.blocksize)) {
 		rc = check_block(buf, &params);
 		if (rc) {

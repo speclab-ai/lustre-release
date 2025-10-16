@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Generic string manipulation functions.
  *
@@ -37,7 +37,7 @@ int vscnprintf(char *buf, size_t bufsz, const char *format, va_list args)
 	return (bufsz > ret) ? ret : bufsz - 1;
 }
 
-/* __printf from linux kernel */
+
 #ifndef __printf
 #define __printf(a, b)		__attribute__((__format__(printf, a, b)))
 #endif

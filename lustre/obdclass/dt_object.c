@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Dt Object.
  * Generic functions from dt_object.h
@@ -21,14 +21,14 @@
 #include <linux/list.h>
 #include <obd_class.h>
 #include <dt_object.h>
-/* fid_be_to_cpu() */
+
 #include <lustre_fid.h>
 #include <lustre_nodemap.h>
 #include <lustre_quota.h>
 #include <lustre_lfsck.h>
 #include <uapi/linux/lustre/lustre_disk.h>
 
-/* context key constructor/destructor: dt_global_key_init, dt_global_key_fini */
+
 LU_KEY_INIT(dt_global, struct dt_thread_info);
 LU_KEY_FINI(dt_global, struct dt_thread_info);
 
@@ -207,7 +207,7 @@ enum dt_format_type dt_mode_to_dft(__u32 mode)
 		break;
 	default:
 		LASSERTF(0, "invalid mode %o\n", mode);
-		result = 0; /* Just for satisfying compiler. */
+		result = 0; 
 		break;
 	}
 	return result;
@@ -313,7 +313,7 @@ out:
 }
 EXPORT_SYMBOL(dt_find_or_create);
 
-/* dt class init function. */
+
 int dt_global_init(void)
 {
 	int result;
@@ -462,7 +462,7 @@ void dt_data_version_set(const struct lu_env *env, struct dt_object *o,
 	CDEBUG(D_INODE, DFID": set new data version -> %llu\n",
 	       PFID(lu_object_fid(&o->do_lu)), version);
 
-	/* version should never be set to zero */
+	
 	LASSERT(version);
 	vbuf.lb_buf = &version;
 	vbuf.lb_len = sizeof(version);
@@ -480,7 +480,7 @@ EXPORT_SYMBOL(dt_declare_data_version_del);
 void dt_data_version_del(const struct lu_env *env, struct dt_object *o,
 			 struct thandle *th)
 {
-	/* file doesn't need explicit data version anymore */
+	
 	CDEBUG(D_INODE, DFID": remove explicit data version\n",
 	       PFID(lu_object_fid(&o->do_lu)));
 	dt_xattr_del(env, o, XATTR_NAME_DATAVER, th);
@@ -520,7 +520,7 @@ dt_obj_version_t dt_data_version_init(const struct lu_env *env,
 stop:
 	dt_trans_stop(env, dt, th);
 out:
-	/* Ignore failure but report the error */
+	
 	if (rc)
 		CDEBUG(D_INODE, "can't init data version for "DFID": rc = %d\n",
 		       PFID(lu_object_fid(&o->do_lu)), rc);
@@ -545,7 +545,7 @@ dt_obj_version_t dt_data_version_get(const struct lu_env *env,
 	if (rc == sizeof(version))
 		return version;
 
-	/* data version EA wasn't set yet on the object, initialize it now */
+	
 	if (rc == -ENODATA)
 		return dt_data_version_init(env, o);
 
@@ -555,17 +555,17 @@ dt_obj_version_t dt_data_version_get(const struct lu_env *env,
 }
 EXPORT_SYMBOL(dt_data_version_get);
 
-/* list of all supported index types */
 
-/* directories */
+
+
 const struct dt_index_features dt_directory_features;
 EXPORT_SYMBOL(dt_directory_features);
 
-/* scrub iterator */
+
 const struct dt_index_features dt_otable_features;
 EXPORT_SYMBOL(dt_otable_features);
 
-/* lfsck layout orphan */
+
 const struct dt_index_features dt_lfsck_layout_orphan_features = {
 	.dif_flags		= 0,
 	.dif_keysize_min	= sizeof(struct lu_fid),
@@ -576,7 +576,7 @@ const struct dt_index_features dt_lfsck_layout_orphan_features = {
 };
 EXPORT_SYMBOL(dt_lfsck_layout_orphan_features);
 
-/* lfsck layout dangling */
+
 const struct dt_index_features dt_lfsck_layout_dangling_features = {
 	.dif_flags		= DT_IND_UPDATE,
 	.dif_keysize_min	= sizeof(struct lfsck_layout_dangling_key),
@@ -587,7 +587,7 @@ const struct dt_index_features dt_lfsck_layout_dangling_features = {
 };
 EXPORT_SYMBOL(dt_lfsck_layout_dangling_features);
 
-/* lfsck namespace */
+
 const struct dt_index_features dt_lfsck_namespace_features = {
 	.dif_flags		= DT_IND_UPDATE,
 	.dif_keysize_min	= sizeof(struct lu_fid),
@@ -598,48 +598,48 @@ const struct dt_index_features dt_lfsck_namespace_features = {
 };
 EXPORT_SYMBOL(dt_lfsck_namespace_features);
 
-/* accounting indexes */
+
 const struct dt_index_features dt_acct_features = {
 	.dif_flags		= DT_IND_UPDATE,
-	.dif_keysize_min	= sizeof(__u64), /* 64-bit uid/gid */
-	.dif_keysize_max	= sizeof(__u64), /* 64-bit uid/gid */
-	.dif_recsize_min	= sizeof(struct lquota_acct_rec), /* 16 bytes */
-	.dif_recsize_max	= sizeof(struct lquota_acct_rec), /* 16 bytes */
+	.dif_keysize_min	= sizeof(__u64), 
+	.dif_keysize_max	= sizeof(__u64), 
+	.dif_recsize_min	= sizeof(struct lquota_acct_rec), 
+	.dif_recsize_max	= sizeof(struct lquota_acct_rec), 
 	.dif_ptrsize		= 4
 };
 EXPORT_SYMBOL(dt_acct_features);
 
-/* global quota files */
+
 const struct dt_index_features dt_quota_glb_features = {
 	.dif_flags		= DT_IND_UPDATE,
-	/* a different key would have to be used for per-directory quota */
-	.dif_keysize_min	= sizeof(__u64), /* 64-bit uid/gid */
-	.dif_keysize_max	= sizeof(__u64), /* 64-bit uid/gid */
-	.dif_recsize_min	= sizeof(struct lquota_glb_rec), /* 32 bytes */
-	.dif_recsize_max	= sizeof(struct lquota_glb_rec), /* 32 bytes */
+	
+	.dif_keysize_min	= sizeof(__u64), 
+	.dif_keysize_max	= sizeof(__u64), 
+	.dif_recsize_min	= sizeof(struct lquota_glb_rec), 
+	.dif_recsize_max	= sizeof(struct lquota_glb_rec), 
 	.dif_ptrsize		= 4
 };
 EXPORT_SYMBOL(dt_quota_glb_features);
 
-/* slave quota files */
+
 const struct dt_index_features dt_quota_slv_features = {
 	.dif_flags		= DT_IND_UPDATE,
-	/* a different key would have to be used for per-directory quota */
-	.dif_keysize_min	= sizeof(__u64), /* 64-bit uid/gid */
-	.dif_keysize_max	= sizeof(__u64), /* 64-bit uid/gid */
-	.dif_recsize_min	= sizeof(struct lquota_slv_rec), /* 8 bytes */
-	.dif_recsize_max	= sizeof(struct lquota_slv_rec), /* 8 bytes */
+	
+	.dif_keysize_min	= sizeof(__u64), 
+	.dif_keysize_max	= sizeof(__u64), 
+	.dif_recsize_min	= sizeof(struct lquota_slv_rec), 
+	.dif_recsize_max	= sizeof(struct lquota_slv_rec), 
 	.dif_ptrsize		= 4
 };
 EXPORT_SYMBOL(dt_quota_slv_features);
 
-/* nodemap files, nodemap_rec size asserted in nodemap_storage.c */
+
 const struct dt_index_features dt_nodemap_features = {
 	.dif_flags		= DT_IND_UPDATE,
-	.dif_keysize_min	= sizeof(__u64), /* 64-bit nodemap/record id */
-	.dif_keysize_max	= sizeof(__u64), /* 64-bit nodemap/record id */
-	.dif_recsize_min	= sizeof(union nodemap_rec), /* 32 bytes */
-	.dif_recsize_max	= sizeof(union nodemap_rec), /* 32 bytes */
+	.dif_keysize_min	= sizeof(__u64), 
+	.dif_keysize_max	= sizeof(__u64), 
+	.dif_recsize_min	= sizeof(union nodemap_rec), 
+	.dif_recsize_max	= sizeof(union nodemap_rec), 
 	.dif_ptrsize		= 4
 };
 EXPORT_SYMBOL(dt_nodemap_features);
@@ -652,15 +652,15 @@ static inline const struct dt_index_features *dt_index_feat_select(__u64 seq,
 								   __u32 mode)
 {
 	if (seq == FID_SEQ_QUOTA_GLB) {
-		/* global quota index */
+		
 		if (!S_ISREG(mode))
-			/* global quota index should be a regular file */
+			
 			return ERR_PTR(-ENOENT);
 		return &dt_quota_glb_features;
 	} else if (seq == FID_SEQ_QUOTA) {
-		/* quota slave index */
+		
 		if (!S_ISREG(mode))
-			/* slave index should be a regular file */
+			
 			return ERR_PTR(-ENOENT);
 		return &dt_quota_slv_features;
 	} else if (seq == FID_SEQ_LAYOUT_RBTREE){
@@ -669,7 +669,7 @@ static inline const struct dt_index_features *dt_index_feat_select(__u64 seq,
 		/* object is part of the namespace, verify that it is a
 		 * directory */
 		if (!S_ISDIR(mode))
-			/* sorry, we can only deal with directory */
+			
 			return ERR_PTR(-ENOTDIR);
 		return &dt_directory_features;
 	}
@@ -709,18 +709,18 @@ static int dt_index_page_build(const struct lu_env *env, struct dt_object *obj,
 	if (bytes < LIP_HDR_SIZE)
 		return -EINVAL;
 
-	/* initialize the header of the new container */
+	
 	memset(lip, 0, LIP_HDR_SIZE);
 	lip->lip_magic = LIP_MAGIC;
 	bytes -= LIP_HDR_SIZE;
 
-	/* client wants to the 64-bit hash value associated with each record */
+	
 	if (!(ii->ii_flags & II_FL_NOHASH))
 		hashsize = sizeof(hash);
 
 	entry = lip->lip_entries;
 	do {
-		/* fetch 64-bit hash value */
+		
 		hash = iops->store(env, it);
 		ii->ii_hash_end = hash;
 
@@ -743,7 +743,7 @@ static int dt_index_page_build(const struct lu_env *env, struct dt_object *obj,
 			}
 		}
 
-		/* and finally the record */
+		
 		if (ii->ii_flags & II_FL_VARREC)
 			recsize = iops->rec_size(env, it, attr);
 		else
@@ -767,7 +767,7 @@ static int dt_index_page_build(const struct lu_env *env, struct dt_object *obj,
 				key = iops->key(env, it);
 				memcpy(entry + hashsize, key, keysize);
 			}
-			/* hash/key/record successfully copied! */
+			
 			lip->lip_nr++;
 			if (unlikely(lip->lip_nr == 1 && ii->ii_count == 0))
 				ii->ii_hash_start = hash;
@@ -777,7 +777,7 @@ static int dt_index_page_build(const struct lu_env *env, struct dt_object *obj,
 			GOTO(out, rc);
 		}
 
-		/* move on to the next record */
+		
 		do {
 			rc = iops->next(env, it);
 		} while (rc == -ESTALE);
@@ -786,16 +786,16 @@ static int dt_index_page_build(const struct lu_env *env, struct dt_object *obj,
 	GOTO(out, rc);
 out:
 	if (rc >= 0 && lip->lip_nr > 0)
-		/* one more container */
+		
 		ii->ii_count++;
 	if (rc > 0)
-		/* no more entries */
+		
 		ii->ii_hash_end = II_END_OFF;
 	return rc;
 }
 
 
-/* for dt_index*/
+
 void *rdpg_page_get(const struct lu_rdpg *rdpg, unsigned int index)
 {
 	if (rdpg->rp_npages) {
@@ -849,7 +849,7 @@ int dt_index_walk(const struct lu_env *env, struct dt_object *obj,
 	if (bytes == 0)
 		RETURN(-EFAULT);
 
-	/* Iterate through index and fill containers from @rdpg */
+	
 	iops = &obj->do_index_ops->dio_it;
 	LASSERT(iops != NULL);
 	it = iops->init(env, obj, rdpg->rp_attrs);
@@ -892,17 +892,17 @@ int dt_index_walk(const struct lu_env *env, struct dt_object *obj,
 		int		 i;
 
 		lp = addr = rdpg_page_get(rdpg, pageidx);
-		/* fill lu pages */
+		
 		for (i = 0; i < LU_PAGE_COUNT; i++, lp++, bytes-=LU_PAGE_SIZE) {
 			rc = filler(env, obj, lp,
 				    min_t(size_t, bytes, LU_PAGE_SIZE),
 				    iops, it, rdpg->rp_attrs, arg);
 			if (rc < 0)
 				break;
-			/* one more lu_page */
+			
 			nlupgs++;
 			if (rc > 0)
-				/* end of index */
+				
 				break;
 		}
 		rdpg_page_put(rdpg, pageidx, addr);
@@ -952,27 +952,27 @@ int dt_index_read(const struct lu_env *env, struct dt_device *dev,
 	    !fid_is_norm(&ii->ii_fid))
 		RETURN(-EOPNOTSUPP);
 
-	/* lookup index object subject to the transfer */
+	
 	obj = dt_locate(env, dev, &ii->ii_fid);
 	if (IS_ERR(obj))
 		RETURN(PTR_ERR(obj));
 	if (dt_object_exists(obj) == 0)
 		GOTO(out, rc = -ENOENT);
 
-	/* fetch index features associated with index object */
+	
 	feat = dt_index_feat_select(fid_seq(&ii->ii_fid),
 				    lu_object_attr(&obj->do_lu));
 	if (IS_ERR(feat))
 		GOTO(out, rc = PTR_ERR(feat));
 
-	/* load index feature if not done already */
+	
 	if (obj->do_index_ops == NULL) {
 		rc = obj->do_ops->do_index_try(env, obj, feat);
 		if (rc)
 			GOTO(out, rc);
 	}
 
-	/* fill ii_flags with supported index features */
+	
 	ii->ii_flags &= (II_FL_NOHASH | II_FL_NOKEY | II_FL_VARKEY |
 			 II_FL_VARREC);
 
@@ -983,22 +983,22 @@ int dt_index_read(const struct lu_env *env, struct dt_device *dev,
 		ii->ii_recsize = feat->dif_recsize_max;
 
 	if (feat->dif_flags & DT_IND_NONUNQ)
-		/* key isn't necessarily unique */
+		
 		ii->ii_flags |= II_FL_NONUNQ;
 
 	if (!fid_is_layout_rbtree(&ii->ii_fid)) {
 		dt_read_lock(env, obj, 0);
-		/* fetch object version before walking the index */
+		
 		ii->ii_version = dt_version_get(env, obj);
 	}
 
-	/* walk the index and fill lu_idxpages with key/record pairs */
+	
 	rc = dt_index_walk(env, obj, rdpg, dt_index_page_build, ii);
 	if (!fid_is_layout_rbtree(&ii->ii_fid))
 		dt_read_unlock(env, obj);
 
 	if (rc == 0) {
-		/* index is empty */
+		
 		LASSERT(ii->ii_count == 0);
 		ii->ii_hash_end = II_END_OFF;
 	}
@@ -1044,7 +1044,7 @@ void dt_index_page_adjust(struct page **pages, const u32 npages,
 		lp = kaddr;
 		remain_nlupgs = LU_PAGE_COUNT - nlupgs_mod;
 
-		/* initialize the header for the remain lu_pages */
+		
 		for (i = 0, lp += nlupgs_mod; i < remain_nlupgs; i++, lp++) {
 			lip = &lp->lp_idx;
 			memset(lip, 0, LIP_HDR_SIZE);

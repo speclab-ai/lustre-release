@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Internal interfaces of LOV layer.
  *
@@ -62,7 +62,7 @@ enum lov_device_flags {
  * Upper half.
  */
 
-/* Data-on-MDT array item in lov_device::ld_md_tgts[] */
+
 struct lovdom_device {
 	struct cl_device	*ldm_mdc;
 	int			 ldm_idx;
@@ -74,16 +74,16 @@ struct lov_device {
 	 */
 	struct cl_device          ld_cl;
 	struct lov_obd           *ld_lov;
-	/* size of lov_device::ld_target[] array */
+	
 	__u32                     ld_target_nr;
 	struct lovsub_device    **ld_target;
 	__u32                     ld_flags;
 
-	/* Data-on-MDT devices */
+	
 	__u32			  ld_md_tgts_nr;
 	struct lovdom_device	 *ld_md_tgts;
 	struct obd_device	 *ld_lmv;
-	/* LU site for subdevices */
+	
 	struct lu_site		  ld_site;
 };
 
@@ -91,10 +91,10 @@ struct lov_device {
  * Layout type.
  */
 enum lov_layout_type {
-	LLT_EMPTY,	/* empty file without body (mknod + truncate) */
-	LLT_RELEASED,	/* file with no objects (data in HSM) */
-	LLT_COMP,	/* support composite layout */
-	LLT_FOREIGN,	/* foreign layout */
+	LLT_EMPTY,	
+	LLT_RELEASED,	
+	LLT_COMP,	
+	LLT_FOREIGN,	
 	LLT_NR
 };
 
@@ -207,18 +207,18 @@ struct lov_layout_entry {
 
 struct lov_mirror_entry {
 	unsigned short	lre_mirror_id;
-	unsigned short	lre_stale:1,	/* set if any components is stale */
-			/* set if one of components in this mirror is valid */
+	unsigned short	lre_stale:1,	
+			
 			lre_valid:1,
-			lre_foreign:1;	/* set if it is a foreign component */
-	int		lre_preference;	/* overall preference of this mirror */
+			lre_foreign:1;	
+	int		lre_preference;	
 
-	unsigned short	lre_start;	/* idx(lo_entries) start idx (mirror) */
-	unsigned short	lre_end;	/* end index of this mirror */
+	unsigned short	lre_start;	
+	unsigned short	lre_end;	
 };
 
 enum lov_object_flags {
-	/* Layout is invalid, set when layout lock is lost */
+	
 	LO_LAYOUT_INVALID	= 0x1,
 	LO_NEED_INODE_LOCK	= 0x2,
 };
@@ -286,7 +286,7 @@ struct lov_object {
 			 * is inaccessible.
 			 */
 			int             lo_preferred_mirror;
-			/* For FLR: Number of (valid) mirrors. */
+			
 			unsigned int lo_mirror_count;
 			struct lov_mirror_entry *lo_mirrors;
 			/* Current entry count of lo_entries, include
@@ -296,7 +296,7 @@ struct lov_object {
 			struct lov_layout_entry *lo_entries;
 		} composite;
 	} u;
-	/* Thread that acquired lov_object::lo_type_guard in exclusive mode. */
+	
 	struct task_struct            *lo_owner;
 };
 
@@ -384,9 +384,9 @@ lov_layout_entry_index(struct lov_object *lov, struct lov_layout_entry *entry)
 	return index;
 }
 
-/* State lov_lock keeps for each sub-lock. */
+
 struct lov_lock_sub {
-	/* sub-lock itself */
+	
 	struct cl_lock		sub_lock;
 	/* Set if the sublock has ever been enqueued, meaning it may
 	 * hold resources of underlying layers
@@ -396,16 +396,16 @@ struct lov_lock_sub {
 	int			sub_index;
 };
 
-/* lov-specific lock state. */
+
 struct lov_lock {
 	struct cl_lock_slice	lls_cl;
-	/* Number of sub-locks in this lock */
+	
 	int			lls_nr;
-	/* sublock array */
+	
 	struct lov_lock_sub	lls_sub[];
 };
 
-/* Bottom half. */
+
 struct lovsub_device {
 	struct cl_device   acid_cl;
 	struct cl_device  *acid_next;
@@ -418,7 +418,7 @@ struct lovsub_object {
 	int                     lso_index;
 };
 
-/* Describe the environment settings for sublocks. */
+
 struct lov_sublock_env {
 	const struct lu_env *lse_env;
 	struct cl_io        *lse_io;
@@ -432,9 +432,9 @@ struct lov_thread_info {
 	struct cl_page_list     lti_plist;
 };
 
-/* State that lov_io maintains for every sub-io. */
+
 struct lov_io_sub {
-	/* Linkage into a list (hanging off lov_io::lis_subios) */
+	
 	struct list_head	sub_list;
 	/* Linkage into a list (hanging off lov_io::lis_active) of all
 	 * sub-io's active for the current IO iteration.
@@ -446,16 +446,16 @@ struct lov_io_sub {
 	 * throughput.
 	 */
 	struct cl_io		sub_io;
-	/* environment, in which sub-io executes. */
+	
 	struct lu_env		*sub_env;
-	/* environment's refcheck. (cl_env_get()) */
+	
 	__u16			sub_refcheck;
 };
 
-/* IO state private for LOV. */
+
 #define LIS_CACHE_ENTRY_NONE	-ENOENT
 struct lov_io {
-	/* super-class */
+	
 	struct cl_io_slice lis_cl;
 
 	/* FLR: index to lo_mirrors. Valid only if lov_is_flr() returns true.
@@ -470,10 +470,10 @@ struct lov_io {
 	 */
 	int			lis_mirror_layout_gen;
 
-	/* fields below this will be initialized in lov_io_init(). */
+	
 	unsigned int lis_preserved;
 
-	/* Pointer to obj slice. Duplicate of lov_io::lis_cl::cis_object. */
+	
 	struct lov_object *lis_object;
 	/*
 	 * Original end-of-io position for this IO, set by the upper layer as
@@ -501,7 +501,7 @@ struct lov_io {
 	loff_t			lis_endpos;
 	int			lis_nr_subios;
 
-	/* the index of ls_single_subio in ls_subios array */
+	
 	int			lis_single_subio_index;
 	struct lov_io_sub	lis_single_subio;
 
@@ -509,9 +509,9 @@ struct lov_io {
 	 * of [lis_pos, lis_endpos).
 	 */
 	struct list_head	lis_active;
-	/* All sub-io's created in this lov_io. */
+	
 	struct list_head	lis_subios;
-	/* Cached results from stripe & offset calculations for page init */
+	
 	int			lis_cached_entry;
 	int			lis_cached_stripe;
 	loff_t			lis_cached_off;
@@ -595,7 +595,7 @@ static inline struct lu_extent *lov_io_extent(struct lov_io *io, int i)
 	return &lov_lse(io->lis_object, i)->lsme_extent;
 }
 
-/* For layout entries within @ext. */
+
 #define lov_foreach_io_layout(ind, lio, ext)				\
 	for (ind = lov_io_layout_at(lio, (ext)->e_start);		\
 	     ind >= 0 &&						\
@@ -733,7 +733,7 @@ static inline struct lov_thread_info *lov_env_info(const struct lu_env *env)
 	return info;
 }
 
-/* lov_pack.c */
+
 int lov_getstripe(const struct lu_env *env, struct lov_object *obj,
 		  struct lov_stripe_md *lsm, struct lov_user_md __user *lump,
 		  size_t size);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 1999, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -29,7 +29,7 @@
 #ifdef HAVE_SERVER_SUPPORT
 # include <dt_object.h>
 # include <md_object.h>
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 #include <uapi/linux/lustre/lustre_ioctl.h>
 #include "llog_internal.h"
 #include <lustre_ioctl_old.h>
@@ -38,7 +38,7 @@ static __u64 obd_max_alloc;
 
 static DEFINE_SPINLOCK(obd_updatemax_lock);
 
-/* The following are visible and mutable through /proc/sys/lustre/. */
+
 unsigned int obd_debug_peer_on_timeout;
 EXPORT_SYMBOL(obd_debug_peer_on_timeout);
 unsigned int obd_dump_on_timeout;
@@ -51,9 +51,9 @@ unsigned long obd_max_dirty_pages;
 EXPORT_SYMBOL(obd_max_dirty_pages);
 atomic_long_t obd_dirty_pages;
 EXPORT_SYMBOL(obd_dirty_pages);
-unsigned int obd_timeout = OBD_TIMEOUT_DEFAULT;   /* seconds */
+unsigned int obd_timeout = OBD_TIMEOUT_DEFAULT;   
 EXPORT_SYMBOL(obd_timeout);
-unsigned int ldlm_timeout = LDLM_TIMEOUT_DEFAULT; /* seconds */
+unsigned int ldlm_timeout = LDLM_TIMEOUT_DEFAULT; 
 EXPORT_SYMBOL(ldlm_timeout);
 unsigned int ping_interval = (OBD_TIMEOUT_DEFAULT > 4) ?
 			     (OBD_TIMEOUT_DEFAULT / 4) : 1;
@@ -62,18 +62,18 @@ unsigned int obd_timeout_set;
 EXPORT_SYMBOL(obd_timeout_set);
 unsigned int ldlm_timeout_set;
 EXPORT_SYMBOL(ldlm_timeout_set);
-/* bulk transfer timeout, give up after 100s by default */
-unsigned int bulk_timeout = 100; /* seconds */
+
+unsigned int bulk_timeout = 100; 
 EXPORT_SYMBOL(bulk_timeout);
 
-/* Adaptive timeout defs here instead of ptlrpc module for /proc/sys/ access */
+
 unsigned int at_min = 5;
 EXPORT_SYMBOL(at_min);
 unsigned int at_max = 600;
 EXPORT_SYMBOL(at_max);
 unsigned int at_history = 600;
 EXPORT_SYMBOL(at_history);
-/* Multiple of at_max when service is thought unhealthy and may be STONITH'd */
+
 unsigned int at_unhealthy_factor = 3;
 EXPORT_SYMBOL(at_unhealthy_factor);
 int at_early_margin = 5;
@@ -87,7 +87,7 @@ EXPORT_SYMBOL(obd_memory);
 static int obdclass_oom_handler(struct notifier_block *self,
 				unsigned long notused, void *nfreed)
 {
-	/* in bytes */
+	
 	pr_info("obd_memory max: %llu, obd_memory current: %llu\n",
 		obd_memory_max(), obd_memory_sum());
 
@@ -229,7 +229,7 @@ static int obd_ioctl_is_invalid(struct obd_ioctl_data *data)
 	return 0;
 }
 
-/* buffer MUST be at least the size of obd_ioctl_hdr */
+
 int obd_ioctl_getdata(struct obd_ioctl_data **datap, int *len, void __user *arg)
 {
 	struct obd_ioctl_hdr hdr;
@@ -373,7 +373,7 @@ out_lcfg:
 	}
 #endif
 	case OBD_IOC_NAME2DEV: {
-		/* Resolve device name, does not change current selected dev */
+		
 		int dev;
 
 		dev = class_resolve_dev_name(data->ioc_inllen1,
@@ -388,7 +388,7 @@ out_lcfg:
 	}
 
 	case OBD_IOC_UUID2DEV: {
-		/* Resolve device uuid, does not change current selected dev */
+		
 		struct obd_uuid uuid;
 		int dev;
 
@@ -496,20 +496,20 @@ out_lcfg:
 out:
 	OBD_FREE_LARGE(data, len);
 	RETURN(rc);
-} /* class_handle_ioctl */
+} 
 
-/* to control /dev/obd */
+
 static long obd_class_ioctl(struct file *filp, unsigned int cmd,
 			    unsigned long arg)
 {
 	int err = 0;
 
 	ENTRY;
-	/* Allow non-root access for some limited ioctls */
+	
 	if (!capable(CAP_SYS_ADMIN))
 		RETURN(-EACCES);
 
-	if ((cmd & 0xffffff00) == ((int)'T') << 8) /* ignore all tty ioctls */
+	if ((cmd & 0xffffff00) == ((int)'T') << 8) 
 		RETURN(-ENOTTY);
 
 	err = class_handle_ioctl(cmd, (void __user *)arg);
@@ -517,13 +517,13 @@ static long obd_class_ioctl(struct file *filp, unsigned int cmd,
 	RETURN(err);
 }
 
-/* declare character device */
+
 static const struct file_operations obd_psdev_fops = {
 	.owner		= THIS_MODULE,
-	.unlocked_ioctl	= obd_class_ioctl,	/* unlocked_ioctl */
+	.unlocked_ioctl	= obd_class_ioctl,	
 };
 
-/* modules setup */
+
 static struct miscdevice obd_psdev = {
 	.minor	= MISC_DYNAMIC_MINOR,
 	.name	= OBD_DEV_NAME,
@@ -629,7 +629,7 @@ static int __init obd_init_checks(void)
 	if (ret)
 		RETURN(ret);
 
-	/* invalid string */
+	
 	if (test_string_to_size_err("256B34", 256, "B", -EINVAL)) {
 		CERROR("string_helpers: format should be number then units\n");
 		ret = -EINVAL;
@@ -679,7 +679,7 @@ static int __init obd_init_checks(void)
 	if (ret)
 		RETURN(ret);
 
-	/* memparse unit handling */
+	
 	ret = 0;
 	ret = ret ?: test_string_to_size_one("0B", 0, "B");
 	ret = ret ?: test_string_to_size_one("512B", 512, "B");
@@ -697,7 +697,7 @@ static int __init obd_init_checks(void)
 	if (ret)
 		RETURN(ret);
 
-	/* percent_memparse unit handling */
+	
 	ret = 0;
 	ret = ret ?: test_string_to_size_total("0B", 0, 1, "B");
 	ret = ret ?: test_string_to_size_total("512B", 512, 512, "B");
@@ -740,7 +740,7 @@ static int __init obd_init_checks(void)
 		ret = -EINVAL;
 	}
 
-	/* string helper values */
+	
 	ret = ret ?: test_string_to_size_one("16", 16777216, "MiB");
 	ret = ret ?: test_string_to_size_one("8.39MB", 8390000, "MiB");
 	ret = ret ?: test_string_to_size_one("8.00MiB", 8388608, "MiB");
@@ -750,7 +750,7 @@ static int __init obd_init_checks(void)
 	if (ret)
 		RETURN(ret);
 
-	/* huge values */
+	
 	ret = ret ?: test_string_to_size_one("0.4TB", 400000000000ULL, "TiB");
 	ret = ret ?: test_string_to_size_one("12.5TiB", 13743895347200ULL,
 					     "TiB");
@@ -764,7 +764,7 @@ static int __init obd_init_checks(void)
 	if (ret)
 		RETURN(ret);
 
-	/* huge values should overflow */
+	
 	if (test_string_to_size_err("1000EiB", 0, "EiB", -EOVERFLOW)) {
 		CERROR("string_helpers: failed to detect binary overflow\n");
 		ret = -EINVAL;
@@ -861,13 +861,13 @@ static int __init obdclass_init(void)
 	err = lu_ucred_global_init();
 	if (err != 0)
 		goto cleanup_dt_global;
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 	/* simulate a late OOM situation now to require all
 	 * alloc'ed/initialized resources to be freed
 	 */
 	if (CFS_FAIL_CHECK(OBD_FAIL_OBDCLASS_MODULE_LOAD)) {
-		/* force error to ensure module will be unloaded/cleaned */
+		
 		err = -ENOMEM;
 		goto cleanup_all;
 	}
@@ -881,7 +881,7 @@ cleanup_dt_global:
 	dt_global_fini();
 
 cleanup_cfs_hash:
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 	cfs_hash_fini();
 cleanup_obd_pool:
 	obd_pool_fini();
@@ -956,7 +956,7 @@ static void __exit obdclass_exit(void)
 #ifdef HAVE_SERVER_SUPPORT
 	lu_ucred_global_fini();
 	dt_global_fini();
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 	cfs_hash_fini();
 	obd_pool_fini();
 	llog_info_fini();
@@ -968,7 +968,7 @@ static void __exit obdclass_exit(void)
 	class_procfs_clean();
 
 	class_handle_cleanup();
-	class_del_uuid(NULL); /* Delete all UUIDs. */
+	class_del_uuid(NULL); 
 	obd_zombie_impexp_stop();
 	libcfs_kkuc_fini();
 
@@ -976,7 +976,7 @@ static void __exit obdclass_exit(void)
 	memory_max = obd_memory_max();
 
 	percpu_counter_destroy(&obd_memory);
-	/* the below message is checked in test-framework.sh check_mem_leak() */
+	
 	CDEBUG((memory_leaked) ? D_ERROR : D_INFO,
 	       "obd_memory max: %llu, leaked: %llu\n",
 	       memory_max, memory_leaked);
@@ -1070,7 +1070,7 @@ void obd_heat_add(struct obd_heat_instance *instance,
 }
 EXPORT_SYMBOL(obd_heat_add);
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Class Driver");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

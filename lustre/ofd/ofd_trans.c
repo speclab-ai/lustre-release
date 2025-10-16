@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file provides functions for OBD Filter Device (OFD) transaction
  * management.
@@ -56,7 +56,7 @@ struct thandle *ofd_trans_create(const struct lu_env *env,
 	if (info->fti_exp != NULL) {
 		struct lu_nodemap *nodemap;
 
-		/* export can require sync operations */
+		
 		th->th_sync |= info->fti_exp->exp_need_sync;
 
 		nodemap = nodemap_get_from_exp(info->fti_exp);
@@ -89,7 +89,7 @@ struct thandle *ofd_trans_create(const struct lu_env *env,
 int ofd_trans_start(const struct lu_env *env, struct ofd_device *ofd,
 		    struct ofd_object *obj, struct thandle *th)
 {
-	/* version change is required for this object */
+	
 	if (obj != NULL)
 		tgt_vbr_obj_set(env, ofd_object_child(obj));
 

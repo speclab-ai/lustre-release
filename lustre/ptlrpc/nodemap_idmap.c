@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2013, Trustees of Indiana University
@@ -128,11 +128,11 @@ struct lu_idmap *idmap_insert(enum nodemap_id_type id_type,
 		}
 	}
 
-	/* Already exists */
+	
 	if (fwd_found && bck_found)
 		RETURN(ERR_PTR(-EEXIST));
 
-	/* Insert a new idmap */
+	
 	if (!fwd_found && !bck_found) {
 		CDEBUG(D_INFO, "Insert a new idmap %d:%d\n",
 		       idmap->id_client, idmap->id_fs);
@@ -143,7 +143,7 @@ struct lu_idmap *idmap_insert(enum nodemap_id_type id_type,
 		RETURN(NULL);
 	}
 
-	/* Only id_client or id_fs is matched */
+	
 	RETURN(fwd_found ? fwd_cur : bck_cur);
 }
 

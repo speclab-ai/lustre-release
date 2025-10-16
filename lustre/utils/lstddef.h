@@ -310,6 +310,6 @@ static inline loff_t copy_file_range(int fd_in, loff_t *off_in, int fd_out,
 	return syscall(__NR_copy_file_range, fd_in, off_in, fd_out,
 		       off_out, len, flags);
 }
-#endif /* !HAVE_COPY_FILE_RANGE */
+#endif 
 
-#endif /* !_LSTDDEF_H */
+#endif 

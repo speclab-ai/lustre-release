@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * llcrypt.h: declarations for per-file encryption
@@ -32,7 +32,7 @@
 
 #define LL_CRYPTO_BLOCK_SIZE		16
 
-/* Extracts the second-to-last ciphertext block; see explanation below */
+
 #define LLCRYPT_FNAME_DIGEST(name, len)				\
 	((name) + round_down((len) - LL_CRYPTO_BLOCK_SIZE - 1,	\
 			     LL_CRYPTO_BLOCK_SIZE))
@@ -59,7 +59,7 @@ struct llcrypt_name {
 #define lname_name(p)		((p)->disk_name.name)
 #define lname_len(p)		((p)->disk_name.len)
 
-/* Maximum value for the third parameter of llcrypt_operations.set_context(). */
+
 #define LLCRYPT_SET_CONTEXT_MAX_SIZE	40
 #define LLCRYPT_DIGESTED_CHAR_OLD	'_'
 #define LLCRYPT_DIGESTED_CHAR		'+'
@@ -83,16 +83,16 @@ struct llcrypt_operations {
 	unsigned int max_namelen;
 };
 
-/* Decryption work */
+
 struct llcrypt_ctx {
 	union {
 		struct {
 			struct bio *bio;
 			struct work_struct work;
 		};
-		struct list_head free_list;	/* Free list */
+		struct list_head free_list;	
 	};
-	u8 flags;				/* Flags */
+	u8 flags;				
 };
 
 extern bool llcrypt_has_encryption_key(const struct inode *inode);
@@ -120,7 +120,7 @@ static inline void llcrypt_handle_d_move(struct dentry *dentry)
 	dentry->d_flags &= ~DCACHE_ENCRYPTED_NAME;
 }
 
-/* crypto.c */
+
 extern int __init llcrypt_init(void);
 extern void __exit llcrypt_exit(void);
 extern void llcrypt_enqueue_decrypt_work(struct work_struct *);
@@ -164,7 +164,7 @@ static inline struct page *llcrypt_pagecache_page(struct page *bounce_page)
 
 extern void llcrypt_free_bounce_page(struct page *bounce_page);
 
-/* policy.c */
+
 extern int llcrypt_ioctl_set_policy(struct file *, const void __user *);
 extern int llcrypt_ioctl_get_policy(struct file *, void __user *);
 extern int llcrypt_ioctl_get_policy_ex(struct file *, void __user *);
@@ -172,7 +172,7 @@ extern int llcrypt_has_permitted_context(struct inode *, struct inode *);
 extern int llcrypt_inherit_context(struct inode *, struct inode *,
 					void *, bool);
 extern bool llcrypt_policy_has_filename_enc(struct inode *inode);
-/* keyring.c */
+
 extern void llcrypt_sb_free(struct lustre_sb_info *lsi);
 extern int llcrypt_ioctl_add_key(struct file *filp, void __user *arg);
 extern int llcrypt_ioctl_remove_key(struct file *filp, void __user *arg);
@@ -180,13 +180,13 @@ extern int llcrypt_ioctl_remove_key_all_users(struct file *filp,
 					      void __user *arg);
 extern int llcrypt_ioctl_get_key_status(struct file *filp, void __user *arg);
 
-/* keysetup.c */
+
 extern int llcrypt_get_encryption_info(struct inode *);
 extern void llcrypt_put_encryption_info(struct inode *);
 extern void llcrypt_free_inode(struct inode *);
 extern int llcrypt_drop_inode(struct inode *inode);
 
-/* fname.c */
+
 extern int llcrypt_setup_filename(struct inode *, const struct qstr *,
 				int lookup, struct llcrypt_name *);
 
@@ -269,7 +269,7 @@ static inline bool llcrypt_match_name(const struct llcrypt_name *fname,
 	return !memcmp(de_name, fname->disk_name.name, fname->disk_name.len);
 }
 
-/* hooks.c */
+
 extern int llcrypt_file_open(struct inode *inode, struct file *filp);
 extern int __llcrypt_prepare_link(struct inode *inode, struct inode *dir,
 				  struct dentry *dentry);
@@ -297,7 +297,7 @@ static inline void llcrypt_set_ops(struct super_block *sb,
 	if (lsi)
 		lsi->lsi_cop = lsi_cop;
 }
-#else  /* !CONFIG_LL_ENCRYPTION */
+#else  
 
 struct llcrypt_operations;
 #define llcrypt_init()         0
@@ -320,7 +320,7 @@ static inline void llcrypt_handle_d_move(struct dentry *dentry)
 {
 }
 
-/* crypto.c */
+
 static inline void llcrypt_enqueue_decrypt_work(struct work_struct *work)
 {
 }
@@ -389,7 +389,7 @@ static inline void llcrypt_free_bounce_page(struct page *bounce_page)
 {
 }
 
-/* policy.c */
+
 static inline int llcrypt_ioctl_set_policy(struct file *filp,
 					   const void __user *arg)
 {
@@ -424,7 +424,7 @@ static inline bool llcrypt_policy_has_filename_enc(struct inode *inode)
 	return false;
 }
 
-/* keyring.c */
+
 static inline void llcrypt_sb_free(struct lustre_sb_info *lsi)
 {
 }
@@ -451,7 +451,7 @@ static inline int llcrypt_ioctl_get_key_status(struct file *filp,
 	return -EOPNOTSUPP;
 }
 
-/* keysetup.c */
+
 static inline int llcrypt_get_encryption_info(struct inode *inode)
 {
 	return -EOPNOTSUPP;
@@ -471,7 +471,7 @@ static inline int llcrypt_drop_inode(struct inode *inode)
 	return 0;
 }
 
- /* fname.c */
+ 
 static inline int llcrypt_setup_filename(struct inode *dir,
 					 const struct qstr *iname,
 					 int lookup, struct llcrypt_name *fname)
@@ -514,13 +514,13 @@ static inline int llcrypt_fname_disk_to_usr(struct inode *inode,
 static inline bool llcrypt_match_name(const struct llcrypt_name *fname,
 				      const u8 *de_name, u32 de_name_len)
 {
-	/* Encryption support disabled; use standard comparison */
+	
 	if (de_name_len != fname->disk_name.len)
 		return false;
 	return !memcmp(de_name, fname->disk_name.name, fname->disk_name.len);
 }
 
-/* hooks.c */
+
 
 static inline int llcrypt_file_open(struct inode *inode, struct file *filp)
 {
@@ -575,7 +575,7 @@ static inline void llcrypt_set_ops(struct super_block *sb,
 {
 }
 
-#endif	/* !CONFIG_LL_ENCRYPTION */
+#endif	
 
 /**
  * llcrypt_require_key - require an inode's encryption key
@@ -786,7 +786,7 @@ static inline int llcrypt_encrypt_symlink(struct inode *inode,
 	return 0;
 }
 
-/* If *pagep is a bounce page, free it and set *pagep to the pagecache page */
+
 static inline void llcrypt_finalize_bounce_page(struct page **pagep)
 {
 	struct page *page = *pagep;
@@ -797,4 +797,4 @@ static inline void llcrypt_finalize_bounce_page(struct page **pagep)
 	}
 }
 
-#endif	/* _LINUX_LLCRYPT_H */
+#endif	

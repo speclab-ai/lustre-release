@@ -105,8 +105,6 @@ def run():
 		total_recv_count_after = 0
 		nid_num = 0
 		for nid in agent_nids:
-			#print({nid_num: getStatNID(before_stats_main, main_nids, nid_num, 'send_count')})
-			#print({nid_num: getStatNID(after_stats_main, main_nids, nid_num, 'send_count')})
 			recv_count_before[nid_num] = getNetStatNID(before_stats_agent, agent_nids, nid_num, 'recv_count')
 			total_recv_count_before += recv_count_before[nid_num]
 			recv_count_after[nid_num] = getNetStatNID(after_stats_agent, agent_nids, nid_num, 'recv_count')

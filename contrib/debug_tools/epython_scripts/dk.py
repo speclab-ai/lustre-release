@@ -18,7 +18,6 @@ description_short = 'Dump and sort the Lustre dk logs.'
 
 def do_shell_cmd(cmd):
     return "done"
-    #return os.popen(cmd).read()
 
 # ---------------------------------------------------------------------------
 # pfn: 2582e8c, physaddr: 2582e8c000, vaddr: ffff002582e8c000

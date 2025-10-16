@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2023-2025, Amazon and/or its affiliates. All rights reserved.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Yehuda Yitschak <yehuday@amazon.com>
  * Author: Yonatan Nachum <ynachum@amazon.com>
@@ -34,8 +34,8 @@
 #define EFALND_MAJOR_SHIFT	8
 
 #define KEFA_IFNAME_SIZE		256
-#define EFALND_CREDITS_MIN		8	/* Min # of peer_ni credits */
-#define EFALND_CREDITS_MAX		255	/* Max # of peer_ni credits */
+#define EFALND_CREDITS_MIN		8	
+#define EFALND_CREDITS_MAX		255	
 
 #define KEFA_THREAD_SHIFT		16
 #define KEFA_THREAD_ID(cpt, tid)	((cpt) << KEFA_THREAD_SHIFT | (tid))
@@ -48,17 +48,17 @@
 #define EFALND_MSG_PAGES		(EFALND_MSG_SIZE_ALIGNED / PAGE_SIZE)
 #define EFALND_RX_MSGS(q)		(2 * (q)->rq_depth)
 
-/* max # of fragments supported. + 1 for unaligned case */
+
 #define EFALND_MAX_TX_FRAGS		(LNET_MAX_IOV + 1)
 
-/* Max # of TXs each NI can allocate. */
+
 #define EFALND_MAX_NI_TX_POOL		2048
 
-/* default values in case no tunable was set */
+
 #define EFALND_MIN_SCHED_THRS		2
 #define EFALND_MAX_SCHED_THRS		4
 
- /* Used only for small NIDs */
+ 
 #define EFALND_CM_STATIC_QKEY		(0x1111)
 
 #define EFALND_NO_RDMA_THRESH		EFALND_MSG_SIZE
@@ -88,7 +88,7 @@
 #define EFALND_NID_GID_OFFSET		4
 #define EFALND_NID_GID_SIZE		12
 
-/* Define EFALND_CD so that we can easily add D_CONSOLE in test envs */
+
 #define EFALND_CD (D_NET)
 
 #define EFALND_FIELD_AVAIL(type, fld, sz) (offsetof(type, fld) < (sz))
@@ -119,13 +119,13 @@ struct kefa_remote_qp {
 };
 
 struct kefa_peer_ni {
-	struct kref refcount;             /* number of connections */
-	u32 remote_nid_addr;              /* address of EFA NID */
+	struct kref refcount;             
+	u32 remote_nid_addr;              
 	union ib_gid gid;
 	struct kefa_remote_qp cm_qp;
 	struct rhash_head linkage;
-	rwlock_t peer_ni_lock;            /* protects kefa_peer_ni data */
-	struct rcu_head rcu_read;         /* protects nid_gid_map lifetime */
+	rwlock_t peer_ni_lock;            
+	struct rcu_head rcu_read;         
 };
 
 static const struct rhashtable_params peer_ni_params = {
@@ -136,50 +136,50 @@ static const struct rhashtable_params peer_ni_params = {
 
 struct kefa_tunables {
 	int *kefa_rnr_retry_count;
-	/* # threads on each CPT */
+	
 	int *kefa_nscheds;
 	char **kefa_ipif_name;
 };
 
-/* global singelton EFA data */
+
 struct kefa_data {
-	enum efalnd_init_state init_state;	/* init state of global data */
-	struct list_head efa_ni_list;		/* list of EFA NIs */
-	struct kefa_sched **scheds;		/* global schedulers */
-	struct kefa_cm_deamon **cm_daemons;	/* Connection manager daemons */
+	enum efalnd_init_state init_state;	
+	struct list_head efa_ni_list;		
+	struct kefa_sched **scheds;		
+	struct kefa_cm_deamon **cm_daemons;	
 	struct rhashtable peer_ni;
 	atomic_t peer_ni_count;
-	atomic_t nthreads;			/* # live threads */
-	bool shutdown;				/* signal shutdown to threads */
+	atomic_t nthreads;			
+	bool shutdown;				
 };
 
 struct kefa_obj_pool {
 	struct kefa_ni *efa_ni;
 	void *obj_arr;
 	struct list_head free_obj;
-	struct list_head free_pend_obj;	/* Objects pending to be freed */
-	atomic_t pending_work;		/* Pending list have objects on */
-	spinlock_t lock;		/* multithread lock */
+	struct list_head free_pend_obj;	
+	atomic_t pending_work;		
+	spinlock_t lock;		
 	u32 pool_size;
 	int cpt;
 };
 
 struct kefa_rx {
 	struct list_head list_node;
-	struct kefa_qp *qp;		/* owner QP */
-	struct kefa_msg *msg;		/* message buffer (host vaddr) */
-	struct ib_recv_wr wrq;		/* receive work item... */
-	struct ib_sge sge;		/* ...and its memory */
-	int rx_nob;			/* # bytes received (-1 while posted) */
+	struct kefa_qp *qp;		
+	struct kefa_msg *msg;		
+	struct ib_recv_wr wrq;		
+	struct ib_sge sge;		
+	int rx_nob;			
 };
 
 struct kefa_qp {
 	struct kefa_dev *efa_dev;
 	struct kefa_cq *cq;
 	struct ib_qp *ib_qp;
-	struct kefa_rx *rx_msgs;	/* RX buffers posted to RQ */
-	struct list_head posted_rx;	/* list of posted RX */
-	struct list_head free_rx;	/* list of free RX */
+	struct kefa_rx *rx_msgs;	
+	struct list_head posted_rx;	
+	struct list_head free_rx;	
 	spinlock_t rq_lock;
 	u32 rq_depth;
 	u32 rq_space;
@@ -188,8 +188,8 @@ struct kefa_qp {
 
 struct kefa_cq {
 	struct ib_cq *ib_cq;
-	struct kefa_dev *efa_dev;	/* owner device */
-	struct list_head sched_node;	/* node on scheduler */
+	struct kefa_dev *efa_dev;	
+	struct list_head sched_node;	
 	int cpt;
 };
 
@@ -208,68 +208,68 @@ struct kefa_fmr {
 	struct ib_send_wr inv_wr;
 };
 
-/* EFA device information */
+
 struct kefa_dev {
 	struct ib_device *ib_dev;
 	char ifname[KEFA_IFNAME_SIZE];
-	struct kefa_ni *efa_ni;	/* The EFA NI associated with the device */
+	struct kefa_ni *efa_ni;	
 	union ib_gid gid;
-	struct ib_pd *pd;		/* PD */
+	struct ib_pd *pd;		
 
 	struct kefa_obj_pool fmr_pool;
 
-	struct kefa_qp *qps;		/* QP set */
+	struct kefa_qp *qps;		
 	atomic_t local_qpn;
 
-	struct kefa_cq *cqs;		/* CQ set */
+	struct kefa_cq *cqs;		
 
-	struct kefa_qp *cm_qp;		/* Connection establishment QP */
+	struct kefa_qp *cm_qp;		
 	struct kefa_cq *cm_cq;
 
-	__be32 ifip;			/* Eth interface IP */
+	__be32 ifip;			
 	u32 nqps;
 	u32 ncqs;
-	int cpt;			/* CPU partition of the device */
+	int cpt;			
 };
 
-/* transmit message */
+
 struct kefa_tx {
-	struct list_head list_node;	/* node on pool/conn list */
-	struct kefa_obj_pool *tx_pool;	/* pool I'm from */
-	struct kefa_conn *conn;		/* connection for TX */
-	struct lnet_msg *lntmsg[2]; /* lnet msgs to finalize on completion */
-	struct kefa_msg *msg;		/* message buffer (host vaddr) */
-	dma_addr_t msgaddr;		/* message buffer (I/O addr) */
-	struct ib_srd_rdma_wr wrq;	/* send work item... */
-	struct ib_sge sge;		/* ...and its memory */
-	u32 lkey;			/* lkey of sge buffers */
-	enum lnet_msg_hstatus hstatus;	/* health status of tx */
-	int status;			/* overall status */
-	int nfrags;			/* # of mapped buffer fragments */
-	struct scatterlist *frags;	/* mapped buffer fragments */
-	struct kefa_rdma_desc rdma_desc;/* rdma descriptor to read/write */
+	struct list_head list_node;	
+	struct kefa_obj_pool *tx_pool;	
+	struct kefa_conn *conn;		
+	struct lnet_msg *lntmsg[2]; 
+	struct kefa_msg *msg;		
+	dma_addr_t msgaddr;		
+	struct ib_srd_rdma_wr wrq;	
+	struct ib_sge sge;		
+	u32 lkey;			
+	enum lnet_msg_hstatus hstatus;	
+	int status;			
+	int nfrags;			
+	struct scatterlist *frags;	
+	struct kefa_rdma_desc rdma_desc;
 	enum dma_data_direction dmadir;
-	atomic_t ref_cnt;		/* track sends and completions */
+	atomic_t ref_cnt;		
 	atomic_t waiting_resp;
 	struct kefa_fmr *fmr;
-	atomic64_t send_time;		/* send time of send in seconds */
+	atomic64_t send_time;		
 
 	u8 type;
-	bool send_sync;		/* send ctrl message after RDMA completes */
-	u64 cookie;		/* opaque completion cookie for sync message */
+	bool send_sync;		
+	u64 cookie;		
 };
 
-/* Per Lnet network data */
+
 struct kefa_ni {
-	struct list_head lnd_node;	/* node in LND NI list */
-	struct list_head cm_node;	/* node in connection manager daemon */
-	struct kefa_dev *efa_dev;	/* underlying IB device */
-	struct lnet_ni *lnet_ni;	/* LNet interface */
-	u64 ni_epoch;			/* my epoch */
+	struct list_head lnd_node;	
+	struct list_head cm_node;	
+	struct kefa_dev *efa_dev;	
+	struct lnet_ni *lnet_ni;	
+	u64 ni_epoch;			
 	struct kefa_obj_pool tx_pool;
 	DECLARE_HASHTABLE(conns, EFALND_CONN_HASH_BITS);
 	rwlock_t conn_lock;
-	struct kefa_peer_ni *self_peer_ni;	/* Only valid for small NID NI*/
+	struct kefa_peer_ni *self_peer_ni;	
 };
 
 enum kefa_conn_state {
@@ -291,33 +291,33 @@ enum kefa_conn_type {
 struct kefa_conn {
 	spinlock_t lock;
 	enum kefa_conn_state state;
-	struct list_head active_tx;	/* LRU list of active kefa_tx */
-	struct list_head pend_tx;	/* list of pending kefa_tx */
+	struct list_head active_tx;	
+	struct list_head pend_tx;	
 
-	/* Fields that can be changed not under connection lock */
+	
 	struct ib_ah *ah;
-	u64 remote_epoch;		/*The epoch of the remote connection */
+	u64 remote_epoch;		
 	u8 proto_ver;
 	u32 nqps;
 	struct kefa_remote_qp *data_qps;
 	atomic_t last_qp_idx;
 	struct lnet_nid remote_nid;
-	time64_t last_use_time;	/* last time the conn was used in seconds */
-	struct hlist_node ni_node;	/* node on kefa_ni hashmap */
+	time64_t last_use_time;	
+	struct hlist_node ni_node;	
 	struct kefa_ni *efa_ni;
 
-	/* Low frequency fields */
-	struct list_head abort_tx;	/* Only CM iterates this list */
+	
+	struct list_head abort_tx;	
 	enum kefa_conn_type type;
 	struct lnet_nid local_nid;
-	struct kefa_peer_ni *peer_ni; /* my peer NI - only valid for small NID*/
+	struct kefa_peer_ni *peer_ni; 
 	u64 remote_caps;
 	u64 requests;
 };
 
 struct kefa_cm_deamon {
-	struct mutex ni_list_lock;	/* multithread lock */
-	struct list_head efa_ni_list;	/* list of EFA NIs */
+	struct mutex ni_list_lock;	
+	struct list_head efa_ni_list;	
 	wait_queue_head_t waitq;
 	bool active;
 	int iter;
@@ -325,12 +325,12 @@ struct kefa_cm_deamon {
 };
 
 struct kefa_sched {
-	spinlock_t lock;		/* multithread lock */
-	struct list_head pend_cqs;	/* CQs to poll */
+	spinlock_t lock;		
+	struct list_head pend_cqs;	
 	wait_queue_head_t waitq;
-	int nthreads;			/* # of poll threads */
-	int nthreads_max;		/* max # of threads */
-	int cpt;			/* CPT id */
+	int nthreads;			
+	int nthreads_max;		
+	int cpt;			
 };
 
 static inline u16
@@ -413,7 +413,7 @@ s16 kefalnd_errno_to_efa_status(int status);
 void kefalnd_tx_done(struct kefa_tx *tx);
 void kefalnd_abort_tx(struct kefa_tx *tx, enum lnet_msg_hstatus hstatus,
 		      int status);
-/* Should be used only on TXs that we don't expect to get any completions for */
+
 void kefalnd_force_cancel_tx(struct kefa_tx *tx, enum lnet_msg_hstatus hstatus,
 			     int status);
 void kefalnd_init_tx_protocol_msg(struct kefa_tx *tx, struct kefa_conn *conn,

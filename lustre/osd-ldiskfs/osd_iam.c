@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Top-level entry points into iam module
  *
@@ -414,7 +414,7 @@ static int iam_leaf_load(struct iam_path *path)
 	descr = iam_path_descr(path);
 	block = path->ip_frame->leaf;
 	if (block == 0) {
-		/* XXX bug 11027 */
+		
 		pr_err("wrong leaf: %lu %d [%p %p %p]\n",
 		       (unsigned long)path->ip_frame->leaf,
 		       dx_get_count(dx_node_get_entries(path, path->ip_frame)),
@@ -528,7 +528,7 @@ static int iam_txn_add(handle_t *handle,
 	return result;
 }
 
-/* iterator interface */
+
 static enum iam_it_state it_state(const struct iam_iterator *it)
 {
 	return it->ii_state;
@@ -737,7 +737,7 @@ void iam_insert_key(struct iam_path *path, struct iam_frame *frame,
 	assert_corr(count < dx_get_limit(entries));
 	assert_corr(frame->at < iam_entry_shift(path, entries, count));
 	assert_inv(dx_node_check(path, frame));
-	/* Prevent memory corruption outside of buffer_head */
+	
 	BUG_ON(count >= dx_get_limit(entries));
 	BUG_ON((char *)iam_entry_shift(path, entries, count + 1) >
 	       (frame->bh->b_data + frame->bh->b_size));
@@ -876,13 +876,13 @@ static int iam_check_full_path(struct iam_path *path, int search)
 
 	for (bottom = path->ip_frames, i = 0;
 	     i < DX_MAX_TREE_HEIGHT && bottom->bh != NULL; ++bottom, ++i) {
-		; /* find last filled in frame */
+		; 
 	}
 
-	/* Lock frames, bottom to top.  */
+	
 	for (scan = bottom - 1; scan >= path->ip_frames; --scan)
 		iam_lock_bh(scan->bh);
-	/* Check them top to bottom.  */
+	
 	result = 0;
 	for (scan = path->ip_frames; scan < bottom; ++scan) {
 		struct iam_entry *pos;
@@ -908,7 +908,7 @@ static int iam_check_full_path(struct iam_path *path, int search)
 		}
 	}
 
-	/* Unlock top to bottom.  */
+	
 	for (scan = path->ip_frames; scan < bottom; ++scan)
 		iam_unlock_bh(scan->bh);
 	DX_DEVAL(iam_lock_stats.dls_bh_full_again += !!result);
@@ -1013,7 +1013,7 @@ static int __iam_it_get(struct iam_iterator *it, int index)
 		}
 		result |= collision;
 	}
-	/* See iam_it_get_exact() for explanation.  */
+	
 	assert_corr(result != -ENOENT);
 	return result;
 }
@@ -1132,7 +1132,7 @@ void iam_it_dup(struct iam_iterator *dst, const struct iam_iterator *src)
 {
 	dst->ii_flags = src->ii_flags;
 	dst->ii_state = src->ii_state;
-	/* XXX not yet. iam_path_dup(&dst->ii_path, &src->ii_path); */
+	
 	/*
 	 * XXX: duplicate lock.
 	 */
@@ -1216,7 +1216,7 @@ static int iam_htree_advance(struct inode *dir, __u32 hash,
 	}
 
 	if (compat) {
-		/* Htree hash magic.  */
+		
 
 		/*
 		 * If the hash is 1, then continue only if the next page has a
@@ -1247,7 +1247,7 @@ static int iam_htree_advance(struct inode *dir, __u32 hash,
 		err = iam_path_descr(path)->id_ops->
 			id_node_read(path->ip_container, idx, NULL, &bh);
 		if (err != 0)
-			return err; /* Failure */
+			return err; 
 		++p;
 		brelse(p->bh);
 		assert_corr(p->bh != bh);
@@ -1292,7 +1292,7 @@ int iam_index_next(struct iam_container *c, struct iam_path *path)
 	struct dynlock_handle *lh[DX_MAX_TREE_HEIGHT] = { NULL, };
 	int result;
 
-	/* Locking for iam_index_next()... is to be described.  */
+	
 
 	cursor = path->ip_frame->leaf;
 
@@ -1374,7 +1374,7 @@ int iam_it_next(struct iam_iterator *it)
 
 	do_corr(struct iam_ikey *ik_orig);
 
-	/* assert_corr(it->ii_flags&IAM_IT_MOVE); */
+	
 	assert_corr(it_state(it) == IAM_IT_ATTACHED ||
 		    it_state(it) == IAM_IT_SKEWED);
 
@@ -1391,12 +1391,12 @@ int iam_it_next(struct iam_iterator *it)
 		it->ii_state = IAM_IT_ATTACHED;
 	} else {
 		if (!iam_leaf_at_end(leaf))
-			/* advance within leaf node */
+			
 			iam_leaf_next(leaf);
-		/* multiple iterations may be necessary due to empty leaves. */
+		
 		while (result == 0 && iam_leaf_at_end(leaf)) {
 			do_corr(schedule());
-			/* advance index portion of the path */
+			
 			result = iam_index_next(iam_it_container(it), path);
 			assert_corr(iam_leaf_is_locked(leaf));
 			if (result == 1) {
@@ -1414,7 +1414,7 @@ int iam_it_next(struct iam_iterator *it)
 				} else
 					result = -ENOMEM;
 			} else if (result == 0)
-				/* end of container reached */
+				
 				result = 1;
 			if (result != 0)
 				iam_it_put(it);
@@ -1606,7 +1606,7 @@ iam_new_node(handle_t *h, struct iam_container *c, iam_ptr_t *b, int *e)
 	mutex_unlock(&c->ic_idle_mutex);
 
 got:
-	/* get write access for the found buffer head */
+	
 	*e = osd_ldiskfs_journal_get_write_access(h, inode->i_sb, bh,
 						  LDISKFS_JTR_NONE);
 	if (*e != 0) {
@@ -1614,7 +1614,7 @@ got:
 		bh = NULL;
 		ldiskfs_std_error(inode->i_sb, *e);
 	} else {
-		/* Clear the reused node as new node does. */
+		
 		memset(bh->b_data, 0, inode->i_sb->s_blocksize);
 		set_buffer_uptodate(bh);
 	}
@@ -1688,7 +1688,7 @@ static int iam_new_leaf(handle_t *handle, struct iam_leaf *leaf)
 			old_leaf = leaf->il_bh;
 			iam_leaf_split(leaf, &new_leaf, blknr);
 			if (old_leaf != leaf->il_bh) {
-				/* Switched to the new leaf.  */
+				
 				iam_leaf_unlock(leaf);
 				leaf->il_lock = lh;
 				path->ip_frame->leaf = blknr;
@@ -1769,8 +1769,8 @@ static int iam_shift_entries(struct iam_path *path,
 int split_index_node(handle_t *handle, struct iam_path *path,
 		     struct dynlock_handle **lh)
 {
-	struct iam_entry *entries;   /* old block contents */
-	struct iam_entry *entries2;  /* new block contents */
+	struct iam_entry *entries;   
+	struct iam_entry *entries2;  
 	struct iam_frame *frame, *safe;
 	struct buffer_head *bh_new[DX_MAX_TREE_HEIGHT] = {NULL};
 	u32 newblock[DX_MAX_TREE_HEIGHT] = {0};
@@ -1809,7 +1809,7 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 	dxtrace(printk("using %u of %u node entries\n",
 		       dx_get_count(entries), dx_get_limit(entries)));
 
-	/* What levels need split? */
+	
 	for (nr_splet = 0; frame >= path->ip_frames &&
 	     dx_get_count(frame->entries) == dx_get_limit(frame->entries);
 	     --frame, ++nr_splet) {
@@ -1826,7 +1826,7 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 
 	safe = frame;
 
-	/* Lock all nodes, bottom to top.  */
+	
 	for (frame = path->ip_frame, i = nr_splet; i >= 0; --i, --frame) {
 		do_corr(schedule());
 		lock[i] = iam_lock_htree(path->ip_container, frame->curidx,
@@ -1843,7 +1843,7 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 	err = iam_check_full_path(path, 1);
 	if (err)
 		goto cleanup;
-	/* And check that the same number of nodes is to be split.  */
+	
 	for (i = 0, frame = path->ip_frame; frame >= path->ip_frames &&
 	     dx_get_count(frame->entries) == dx_get_limit(frame->entries);
 	     --frame, ++i) {
@@ -1854,7 +1854,7 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 		goto cleanup;
 	}
 
-	/* Go back down, allocate blocks, lock them, and add to transaction */
+	
 	for (frame = safe + 1, i = 0; i < nr_splet; ++i, ++frame) {
 		bh_new[i] = iam_new_node(handle, path->ip_container,
 					 &newblock[i], &err);
@@ -1879,7 +1879,7 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 		if (err)
 			goto journal_error;
 	}
-	/* Add "safe" node to transaction too */
+	
 	if (safe + 1 != path->ip_frames) {
 		do_corr(schedule());
 		err = osd_ldiskfs_journal_get_write_access(handle,
@@ -1890,7 +1890,7 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 			goto journal_error;
 	}
 
-	/* Go through nodes once more, inserting pointers */
+	
 	for (frame = safe + 1, i = 0; i < nr_splet; ++i, ++frame) {
 		unsigned int count;
 		int idx;
@@ -1928,7 +1928,7 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 			       count * iam_entry_size(path));
 			dx_set_limit(entries2, dx_node_limit(path));
 
-			/* Set up root */
+			
 			iam_lock_bh(frame->bh);
 			next = descr->id_ops->id_root_inc(path->ip_container,
 							  path, frame);
@@ -1936,11 +1936,11 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 			iam_unlock_bh(frame->bh);
 
 			do_corr(schedule());
-			/* Shift frames in the path */
+			
 			memmove(frames + 2, frames + 1,
 				(sizeof(path->ip_frames)) -
 				 2 * sizeof(frames[0]));
-			/* Add new access path frame */
+			
 			frames[1].at = iam_entry_shift(path, entries2, idx);
 			frames[1].entries = entries = entries2;
 			frames[1].bh = bh2;
@@ -1948,19 +1948,19 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 			++path->ip_frame;
 			++frame;
 			assert_inv(dx_node_check(path, frame));
-			bh_new[0] = NULL; /* buffer head is "consumed" */
+			bh_new[0] = NULL; 
 			err = ldiskfs_handle_dirty_metadata(handle, NULL, bh2);
 			if (err)
 				goto journal_error;
 			do_corr(schedule());
 		} else {
-			/* splitting non-root index node. */
+			
 			struct iam_frame *parent = frame - 1;
 
 			do_corr(schedule());
 			count = iam_shift_entries(path, frame, count,
 						entries, entries2, newblock[i]);
-			/* Which index block gets the new entry? */
+			
 			if (idx >= count) {
 				int d = dx_index_is_compat(path) ? 0 : +1;
 
@@ -2005,7 +2005,7 @@ int split_index_node(handle_t *handle, struct iam_path *path,
 	*lh = lock[nr_splet];
 	lock[nr_splet] = NULL;
 	if (nr_splet > 0) {
-		/* Log ->i_size modification. */
+		
 		err = ldiskfs_mark_inode_dirty(handle, dir);
 		if (err)
 			goto journal_error;
@@ -2056,7 +2056,7 @@ static int iam_add_rec(handle_t *handle, struct iam_iterator *it,
 					do_corr(schedule());
 					err = iam_it_get_exact(it, k);
 					if (err == -ENOENT)
-						err = 1; /* repeat split */
+						err = 1; 
 					else if (err == 0)
 						err = -EEXIST;
 				}
@@ -2223,7 +2223,7 @@ iam_install_idle_blocks(handle_t *h, struct iam_path *p, struct buffer_head *bh,
 	head->iih_magic = cpu_to_le16(IAM_IDLE_HEADER_MAGIC);
 	head->iih_count = 0;
 	head->iih_next = *idle_blocks;
-	/* The bh already get_write_accessed. */
+	
 	rc = iam_txn_dirty(h, p, bh);
 	if (rc != 0)
 		return rc;
@@ -2237,7 +2237,7 @@ iam_install_idle_blocks(handle_t *h, struct iam_path *p, struct buffer_head *bh,
 	iam_unlock_bh(c->ic_root_bh);
 	rc = iam_txn_dirty(h, p, c->ic_root_bh);
 	if (rc == 0) {
-		/* NOT release old before new assigned. */
+		
 		get_bh(bh);
 		c->ic_idle_bh = bh;
 		brelse(old);
@@ -2272,7 +2272,7 @@ static void iam_recycle_leaf(handle_t *h, struct iam_path *p,
 	idle_blocks = (__u32 *)(c->ic_root_bh->b_data +
 				c->ic_descr->id_root_gap +
 				sizeof(struct dx_countlimit));
-	/* It is the first idle block. */
+	
 	if (c->ic_idle_bh == NULL) {
 		rc = iam_install_idle_blocks(h, p, bh, idle_blocks, blk);
 		goto unlock;
@@ -2280,13 +2280,13 @@ static void iam_recycle_leaf(handle_t *h, struct iam_path *p,
 
 	head = (struct iam_idle_head *)(c->ic_idle_bh->b_data);
 	count = le16_to_cpu(head->iih_count);
-	/* Current ic_idle_bh is full, to be replaced by the leaf. */
+	
 	if (count == iam_idle_blocks_limit(inode)) {
 		rc = iam_install_idle_blocks(h, p, bh, idle_blocks, blk);
 		goto unlock;
 	}
 
-	/* Just add to ic_idle_bh. */
+	
 	rc = iam_txn_add(h, p, c->ic_idle_bh);
 	if (rc != 0)
 		goto unlock;
@@ -2327,7 +2327,7 @@ int iam_it_rec_delete(handle_t *h, struct iam_iterator *it)
 	assert_inv(iam_path_check(path));
 
 	result = iam_txn_add(h, path, leaf->il_bh);
-	/* no compaction for now. */
+	
 	if (result == 0) {
 		iam_rec_del(leaf, it->ii_flags&IAM_IT_MOVE);
 		result = iam_txn_dirty(h, path, leaf->il_bh);
@@ -2391,9 +2391,9 @@ int iam_it_load(struct iam_iterator *it, iam_pos_t pos)
 	return iam_it_iget(it, (struct iam_ikey *)&pos);
 }
 
-/***********************************************************************/
-/* invariants                                                          */
-/***********************************************************************/
+
+
+
 static inline int ptr_inside(void *base, size_t size, void *ptr)
 {
 	return (base <= ptr) && (ptr < base + size);
@@ -2415,7 +2415,7 @@ int iam_lookup(struct iam_container *c, const struct iam_key *k,
 
 	result = iam_it_get_exact(&it, k);
 	if (result == 0)
-		/* record with required key found, copy it into user buffer */
+		
 		iam_reccpy(&it.ii_path.ip_leaf, r);
 	iam_it_put(&it);
 	iam_it_fini(&it);

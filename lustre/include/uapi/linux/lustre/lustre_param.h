@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * User-settable parameter keys
  *
@@ -25,7 +25,7 @@
  * @{
  */
 
-/****************** User-settable parameter keys *********************/
+
 /* e.g.
  *	tunefs.lustre --param="failover.node=192.168.0.13@tcp0" /dev/sda
  *	lctl conf_param testfs-OST0000 failover.node=3@elan,192.168.0.3@tcp0
@@ -38,30 +38,30 @@
 /* System global or special params not handled in obd's proc
  * See mgs_write_log_sys()
  */
-#define PARAM_TIMEOUT              "timeout="          /* global */
-#define PARAM_LDLM_TIMEOUT         "ldlm_timeout="     /* global */
-#define PARAM_AT_MIN               "at_min="           /* global */
-#define PARAM_AT_MAX               "at_max="           /* global */
-#define PARAM_AT_EXTRA             "at_extra="         /* global */
-#define PARAM_AT_EARLY_MARGIN      "at_early_margin="  /* global */
-#define PARAM_AT_HISTORY           "at_history="       /* global */
-#define PARAM_JOBID_VAR		   "jobid_var="	       /* global */
-#define PARAM_MGSNODE              "mgsnode="          /* only at mounttime */
-#define PARAM_FAILNODE             "failover.node="    /* add failover nid */
-#define PARAM_FAILMODE             "failover.mode="    /* initial mount only */
-#define PARAM_ACTIVE               "active="           /* activate/deactivate */
-#define PARAM_NETWORK              "network="          /* bind on nid */
-#define PARAM_ID_UPCALL		   "identity_upcall="  /* identity upcall */
-#define PARAM_ROOTSQUASH	   "root_squash="      /* root squash */
-#define PARAM_NOSQUASHNIDS	   "nosquash_nids="    /* no squash nids */
-#define PARAM_AUTODEGRADE	   "autodegrade="      /* autodegrade OST's */
+#define PARAM_TIMEOUT              "timeout="          
+#define PARAM_LDLM_TIMEOUT         "ldlm_timeout="     
+#define PARAM_AT_MIN               "at_min="           
+#define PARAM_AT_MAX               "at_max="           
+#define PARAM_AT_EXTRA             "at_extra="         
+#define PARAM_AT_EARLY_MARGIN      "at_early_margin="  
+#define PARAM_AT_HISTORY           "at_history="       
+#define PARAM_JOBID_VAR		   "jobid_var="	       
+#define PARAM_MGSNODE              "mgsnode="          
+#define PARAM_FAILNODE             "failover.node="    
+#define PARAM_FAILMODE             "failover.mode="    
+#define PARAM_ACTIVE               "active="           
+#define PARAM_NETWORK              "network="          
+#define PARAM_ID_UPCALL		   "identity_upcall="  
+#define PARAM_ROOTSQUASH	   "root_squash="      
+#define PARAM_NOSQUASHNIDS	   "nosquash_nids="    
+#define PARAM_AUTODEGRADE	   "autodegrade="      
 
-/* compound parameters */
-#define PARAM_TBFRULES          "nrs_tbf_rule="	/* start|change|stop tbf rule */
-#define PARAM_PCC		"pcc="		/* add|del|clear pcc datasets */
-#define PARAM_WBC		"wbc="		/* Metadata writeback cache */
 
-/* Prefixes for parameters handled by obd's proc methods (XXX_process_config) */
+#define PARAM_TBFRULES          "nrs_tbf_rule="	
+#define PARAM_PCC		"pcc="		
+#define PARAM_WBC		"wbc="		
+
+
 #define PARAM_OST		"ost."
 #define PARAM_OSD		"osd."
 #define PARAM_OSC		"osc."
@@ -73,15 +73,15 @@
 #define PARAM_LOV		"lov."
 #define PARAM_LOD		"lod."
 #define PARAM_OSP		"osp."
-#define PARAM_SYS		"sys."		/* global */
+#define PARAM_SYS		"sys."		
 #define PARAM_SRPC		"srpc."
 #define PARAM_SRPC_FLVR		"srpc.flavor."
 #define PARAM_SRPC_UDESC	"srpc.udesc.cli2mdt"
 #define PARAM_SEC		"security."
-#define PARAM_QUOTA		"quota."	/* global */
+#define PARAM_QUOTA		"quota."	
 
 #define LDD_PARAM_LEN		4096
 
-/** @} param */
 
-#endif /* _UAPI_LUSTRE_PARAM_H */
+
+#endif 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright  2008 Sun Microsystems, Inc. All rights reserved
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file handles creation, lookup, and removal of pools themselves, as
  * well as adding and removing targets to pools.
@@ -88,7 +88,7 @@ int lu_tgt_pool_extend(struct lu_tgt_pool *op, unsigned int min_count)
 	if (new == NULL)
 		return -ENOMEM;
 
-	/* copy old array to new one */
+	
 	memcpy(new, op->op_array, op->op_size);
 	OBD_FREE(op->op_array, op->op_size);
 	op->op_array = new;
@@ -121,7 +121,7 @@ int lu_tgt_pool_add_lock(struct lu_tgt_pool *op, __u32 idx,
 	if (lock)
 		down_write(&op->op_rw_sem);
 
-	/* search ost in pool array */
+	
 	for (i = 0; i < op->op_count; i++) {
 		if (op->op_array[i] == idx)
 			GOTO(out, rc = -EEXIST);
@@ -131,7 +131,7 @@ int lu_tgt_pool_add_lock(struct lu_tgt_pool *op, __u32 idx,
 	if (rc)
 		GOTO(out, rc);
 
-	/* ost not found we add it */
+	
 	op->op_array[op->op_count] = idx;
 	op->op_count++;
 	EXIT;

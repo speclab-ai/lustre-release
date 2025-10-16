@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2016, Intel Corporation.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Niu Yawei <niu@whamcloud.com>
  */
@@ -19,7 +19,7 @@
 #ifdef CONFIG_PROC_FS
 
 enum js_info_flags {
-	JS_EXPIRED,		/* job is timed out and schedule for removal */
+	JS_EXPIRED,		
 };
 
 #define JOB_CLEANUP_BATCH 1024
@@ -50,19 +50,19 @@ enum js_info_flags {
  */
 
 struct job_stat {
-	struct rb_node		js_idnode;	/* js_jobid sorted node */
-	struct rb_node		js_posnode;	/* pos sorted node */
-	struct list_head	js_lru;		/* on ojs_lru, with ojs_lock */
-	unsigned long		js_flags;	/* JS_* flags */
-	struct llist_node	js_deleted;	/* on ojs_deleted w/ojs_lock */
-	u64			js_pos_id;	/* pos for job stats seq file */
-	struct kref		js_refcount;	/* num users of this struct */
-	char			js_jobid[LUSTRE_JOBID_SIZE]; /* job name + NUL*/
-	ktime_t			js_time_init;	/* time of initial stat*/
-	ktime_t			js_time_latest;	/* time of most recent stat*/
-	struct lprocfs_stats	*js_stats;	/* per-job statistics */
-	struct obd_job_stats	*js_jobstats;	/* for accessing ojs_lock */
-	struct rcu_head		js_rcu;		/* RCU head for job_reclaim_rcu*/
+	struct rb_node		js_idnode;	
+	struct rb_node		js_posnode;	
+	struct list_head	js_lru;		
+	unsigned long		js_flags;	
+	struct llist_node	js_deleted;	
+	u64			js_pos_id;	
+	struct kref		js_refcount;	
+	char			js_jobid[LUSTRE_JOBID_SIZE]; 
+	ktime_t			js_time_init;	
+	ktime_t			js_time_latest;	
+	struct lprocfs_stats	*js_stats;	
+	struct obd_job_stats	*js_jobstats;	
+	struct rcu_head		js_rcu;		
 };
 
 static void job_reclaim_rcu(struct rcu_head *head)
@@ -87,7 +87,7 @@ static void job_purge_locked(struct obd_job_stats *stats, unsigned int sched)
 	if (!entry)
 		return;
 
-	/* ojs_rwsem lock is needed to project rbtree re-balance on erase */
+	
 	llist_for_each_entry_safe(job, n, entry, js_deleted) {
 		rb_erase(&job->js_posnode, &stats->ojs_postree);
 		rb_erase(&job->js_idnode, &stats->ojs_idtree);
@@ -154,14 +154,14 @@ static void lprocfs_job_cleanup(struct obd_job_stats *stats, bool clear)
 	unsigned int sched = JOB_CLEANUP_BATCH;
 
 	if (unlikely(clear)) {
-		/* user request or shutdown: block until safe to clear */
+		
 		do {
 			wait_on_bit(&stats->ojs_flags, OJS_CLEANING,
 				    TASK_UNINTERRUPTIBLE);
 		} while (test_and_set_bit(OJS_CLEANING, &stats->ojs_flags));
 		sched = UINT_MAX;
 	} else {
-		/* ojs_cleanup_interval of zero means never clean up stats */
+		
 		if (ktime_to_ns(cleanup_interval) == 0)
 			return;
 
@@ -169,7 +169,7 @@ static void lprocfs_job_cleanup(struct obd_job_stats *stats, bool clear)
 						cleanup_interval)))
 			return;
 
-		/* skip if clean is in progress */
+		
 		if (test_and_set_bit(OJS_CLEANING, &stats->ojs_flags))
 			return;
 	}
@@ -180,15 +180,15 @@ static void lprocfs_job_cleanup(struct obd_job_stats *stats, bool clear)
 	else
 		oldest = ktime_add(now, cleanup_interval);
 
-	/* remove all jobs older oldest */
+	
 	rcu_read_lock();
 	list_for_each_entry_rcu(job, &stats->ojs_lru, js_lru) {
 		if (!ktime_before(job->js_time_latest, oldest))
 			break;
-		/* only put jobs that have not expired */
+		
 		if (test_and_set_bit(JS_EXPIRED, &job->js_flags))
 			continue;
-		job_putref(job); /* drop ref to initiate removal */
+		job_putref(job); 
 	}
 	rcu_read_unlock();
 	stats->ojs_cleanup_last = ktime_get_real();
@@ -222,7 +222,7 @@ static struct job_stat *job_alloc(char *jobid, struct obd_job_stats *jobs)
 	RB_CLEAR_NODE(&job->js_idnode);
 	INIT_LIST_HEAD(&job->js_lru);
 	clear_bit(JS_EXPIRED, &job->js_flags);
-	/* open code init_llist_node */
+	
 	job->js_deleted.next = &job->js_deleted;
 	kref_init(&job->js_refcount);
 	if (atomic64_inc_return(&jobs->ojs_jobs) == 1)
@@ -239,7 +239,7 @@ static inline int cmp_key_jobid(const void *_key, const struct rb_node *node)
 	return strcmp(key, job->js_jobid);
 }
 
-/* return the next job in pos_id order or NULL*/
+
 static struct job_stat *job_get_next_pos(struct job_stat *job)
 {
 	struct rb_node *next = rb_next(&job->js_posnode);
@@ -251,7 +251,7 @@ static struct job_stat *job_get_next_pos(struct job_stat *job)
 		if (kref_get_unless_zero(&next_job->js_refcount))
 			return next_job;
 
-		/* 'next_job' is going away, try again */
+		
 		if (next)
 			next = rb_next(next);
 	}
@@ -259,7 +259,7 @@ static struct job_stat *job_get_next_pos(struct job_stat *job)
 	return NULL;
 }
 
-/* find and add a ref to a job with pos_id <= pos or NULL */
+
 static struct job_stat *job_find_first_pos(struct obd_job_stats *stats, u64 pos)
 {
 	struct rb_node *node = stats->ojs_postree.rb_node;
@@ -286,7 +286,7 @@ static struct job_stat *job_find_first_pos(struct obd_job_stats *stats, u64 pos)
 	return NULL;
 }
 
-/* find and add a ref to a job, returns NULL if the job is being deleted */
+
 static struct job_stat *job_find(struct obd_job_stats *stats,
 				 const char *key)
 {
@@ -332,7 +332,7 @@ static struct job_stat *job_insert(struct obd_job_stats *stats,
 			return ERR_PTR(-EAGAIN);
 		if (kref_get_unless_zero(&existing_job->js_refcount))
 			return existing_job;
-		/* entry is being deleted */
+		
 		return ERR_PTR(-EAGAIN);
 	}
 	kref_get(&job->js_refcount);
@@ -355,13 +355,13 @@ static inline int cmp_node_pos(struct rb_node *left, const struct rb_node *node)
 static inline void _next_pos_id(struct obd_job_stats *stats,
 				struct job_stat *job)
 {
-	/* avoid pos clash with 'SEQ_START_TOKEN' */
+	
 	do {
 		job->js_pos_id = atomic64_inc_return(&stats->ojs_next_pos);
 	} while (job->js_pos_id < 2);
 }
 
-/* insert a job into the rbtree, return NULL if added otherwise existing job */
+
 static void job_insert_pos(struct obd_job_stats *stats, struct job_stat *job)
 {
 	struct rb_node *node;
@@ -386,7 +386,7 @@ int lprocfs_job_stats_log(struct obd_device *obd, char *jobid,
 
 	LASSERT(stats);
 
-	/* do not add jobs while shutting down */
+	
 	if (test_bit(OJS_FINI, &stats->ojs_flags))
 		RETURN(0);
 
@@ -396,7 +396,7 @@ int lprocfs_job_stats_log(struct obd_device *obd, char *jobid,
 	if (jobid == NULL || strlen(jobid) == 0)
 		RETURN(0);
 
-	/* unterminated jobid should be handled in lustre_msg_get_jobid() */
+	
 	if (strlen(jobid) >= LUSTRE_JOBID_SIZE) {
 		CERROR("%s: invalid jobid size %lu, expect %d\n", obd->obd_name,
 		       (unsigned long)strlen(jobid) + 1, LUSTRE_JOBID_SIZE);
@@ -423,9 +423,9 @@ try_insert:
 		up_write(&stats->ojs_rwsem);
 		goto try_insert;
 	}
-	/* on collision drop the old job and proceed with the existing job */
+	
 	if (existing_job) {
-		job_putref(job); /* duplicate job, remove */
+		job_putref(job); 
 		job = existing_job;
 		up_write(&stats->ojs_rwsem);
 		goto found;
@@ -449,7 +449,7 @@ found:
 	}
 	lprocfs_counter_add(job->js_stats, event, amount);
 
-	/* drop the extra ref from find | insert */
+	
 	job_putref(job);
 
 	RETURN(0);
@@ -476,7 +476,7 @@ void lprocfs_job_stats_fini(struct obd_device *obd)
 						     &stats->ojs_idtree,
 						     js_idnode) {
 			if (kref_read(&job->js_refcount) > 0) {
-				job_putref(job); /* drop ref */
+				job_putref(job); 
 				purge = true;
 			}
 		}
@@ -485,7 +485,7 @@ void lprocfs_job_stats_fini(struct obd_device *obd)
 						     &stats->ojs_postree,
 						     js_posnode) {
 			if (kref_read(&job->js_refcount) > 0) {
-				job_putref(job); /* drop ref */
+				job_putref(job); 
 				purge = true;
 			}
 		}
@@ -615,12 +615,12 @@ static int lprocfs_jobstats_seq_show(struct seq_file *p, void *v)
 			joblen += 3;
 		} else {
 			escaped[joblen] = *c;
-			/* if jobid has ':', it should be quoted too */
+			
 			if (*c == ':')
 				quote = "\"";
 		}
 	}
-	/* '@' is reserved in YAML, so it cannot start a bare string. */
+	
 	if (escaped[0] == '@')
 		quote = "\"";
 
@@ -654,7 +654,7 @@ static int lprocfs_jobstats_seq_show(struct seq_file *p, void *v)
 				   ret.lc_count ? ret.lc_sumsquare : 0);
 		}
 
-		/* show obd_histogram */
+		
 		hist = s->ls_cnt_header[i].lc_hist;
 		if (hist != NULL) {
 			bool first = true;
@@ -710,7 +710,7 @@ static int lprocfs_jobstats_seq_open(struct inode *inode, struct file *file)
 		return rc;
 
 	stats = pde_data(inode);
-	/* wait for any active cleaning to finish */
+	
 	set_bit(OJS_HEADER, &stats->ojs_flags);
 	seq = file->private_data;
 	seq->private = stats;
@@ -724,7 +724,7 @@ static ssize_t lprocfs_jobstats_seq_write(struct file *file,
 {
 	struct seq_file *seq = file->private_data;
 	struct obd_job_stats *stats = seq->private;
-	char jobid[4 * LUSTRE_JOBID_SIZE]; /* all escaped chars, plus ""\n\0 */
+	char jobid[4 * LUSTRE_JOBID_SIZE]; 
 	char *p1, *p2, *last;
 	unsigned int c;
 	struct job_stat *job;
@@ -740,11 +740,11 @@ static ssize_t lprocfs_jobstats_seq_write(struct file *file,
 	jobid[len] = 0;
 	last = jobid + len - 1;
 
-	/* Trim '\n' if any */
+	
 	if (*last == '\n')
 		*(last--) = 0;
 
-	/* decode escaped chars if jobid is a quoted string */
+	
 	if (jobid[0] == '"' && *last == '"') {
 		last--;
 
@@ -778,8 +778,8 @@ static ssize_t lprocfs_jobstats_seq_write(struct file *file,
 	up_read(&stats->ojs_rwsem);
 	if (!job)
 		return -EINVAL;
-	job_putref(job); /* drop ref from job_find() */
-	job_putref(job); /* drop ref to initiate removal */
+	job_putref(job); 
+	job_putref(job); 
 
 	return len;
 }
@@ -831,7 +831,7 @@ int lprocfs_job_stats_init(struct obd_device *obd, int cntr_num,
 	if (init_fn == NULL)
 		RETURN(-EINVAL);
 
-	/* Currently needs to be a target due to the use of obt_jobstats. */
+	
 	if (strcmp(obd->obd_type->typ_name, LUSTRE_MDT_NAME) != 0 &&
 	    strcmp(obd->obd_type->typ_name, LUSTRE_OST_NAME) != 0) {
 		CERROR("%s: invalid device type %s for job stats: rc = %d\n",
@@ -851,7 +851,7 @@ int lprocfs_job_stats_init(struct obd_device *obd, int cntr_num,
 	/* Store 1/2 the actual interval, since we use that the most, and
 	 * it is easier to work with.
 	 */
-	stats->ojs_cleanup_interval = ktime_set(600 / 2, 0); /* default 10 min*/
+	stats->ojs_cleanup_interval = ktime_set(600 / 2, 0); 
 	stats->ojs_cleanup_last = ktime_get_real();
 	stats->ojs_cntr_num = cntr_num;
 	stats->ojs_cntr_init_fn = init_fn;
@@ -866,7 +866,7 @@ int lprocfs_job_stats_init(struct obd_device *obd, int cntr_num,
 	RETURN(0);
 }
 EXPORT_SYMBOL(lprocfs_job_stats_init);
-#endif /* CONFIG_PROC_FS*/
+#endif 
 
 ssize_t job_cleanup_interval_show(struct kobject *kobj, struct attribute *attr,
 				  char *buf)

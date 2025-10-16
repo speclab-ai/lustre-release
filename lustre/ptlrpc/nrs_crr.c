@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
@@ -211,7 +211,7 @@ static int nrs_crrn_ctl(struct ptlrpc_nrs_policy *policy,
 	default:
 		RETURN(-EINVAL);
 
-	/* Read Round Robin quantum size of a policy instance. */
+	
 	case NRS_CTL_CRRN_RD_QUANTUM: {
 		struct nrs_crrn_net	*net = policy->pol_private;
 
@@ -219,7 +219,7 @@ static int nrs_crrn_ctl(struct ptlrpc_nrs_policy *policy,
 		}
 		break;
 
-	/* Write Round Robin quantum size of a policy instance. */
+	
 	case NRS_CTL_CRRN_WR_QUANTUM: {
 		struct nrs_crrn_net	*net = policy->pol_private;
 
@@ -291,7 +291,7 @@ static int nrs_crrn_res_get(struct ptlrpc_nrs_policy *policy,
 						&cli->cc_rhead,
 						nrs_crrn_hash_params);
 	if (tmp) {
-		/* insertion failed */
+		
 		OBD_FREE_PTR(cli);
 		if (IS_ERR(tmp))
 			return PTR_ERR(tmp);
@@ -315,7 +315,7 @@ static void nrs_crrn_res_put(struct ptlrpc_nrs_policy *policy,
 {
 	struct nrs_crrn_client *cli;
 
-	/* Do nothing for freeing parent, nrs_crrn_net resources */
+	
 	if (res->res_parent == NULL)
 		return;
 
@@ -368,10 +368,10 @@ struct ptlrpc_nrs_request *nrs_crrn_req_get(struct ptlrpc_nrs_policy *policy,
 		       "%llu\n", NRS_POL_NAME_CRRN,
 		       libcfs_idstr(&req->rq_peer), nrq->nr_u.crr.cr_round);
 
-		/* Peek at the next request to be served */
+		
 		node = binheap_root(net->cn_binheap);
 
-		/* No more requests */
+		
 		if (unlikely(node == NULL)) {
 			net->cn_round++;
 		} else {
@@ -446,11 +446,11 @@ static int nrs_crrn_req_add(struct ptlrpc_nrs_policy *policy,
 		if (cli->cc_active == 0 && cli->cc_quantum > 0)
 			cli->cc_round++;
 
-		/* A new scheduling round has commenced */
+		
 		if (cli->cc_round < net->cn_round)
 			cli->cc_round = net->cn_round;
 
-		/* I was not the last client through here */
+		
 		if (cli->cc_sequence < net->cn_sequence)
 			cli->cc_sequence = ++net->cn_sequence;
 		/*
@@ -504,10 +504,10 @@ static void nrs_crrn_req_del(struct ptlrpc_nrs_policy *policy,
 	 * to adjust round numbers.
 	 */
 	if (unlikely(is_root)) {
-		/* Peek at the next request to be served */
+		
 		struct binheap_node *node = binheap_root(net->cn_binheap);
 
-		/* No more requests */
+		
 		if (unlikely(node == NULL)) {
 			net->cn_round++;
 		} else {
@@ -538,7 +538,7 @@ static void nrs_crrn_req_stop(struct ptlrpc_nrs_policy *policy,
 	       libcfs_idstr(&req->rq_peer), nrq->nr_u.crr.cr_round);
 }
 
-/* debugfs interface */
+
 
 /*
  * Retrieves the value of the Round Robin quantum (i.e. the maximum batch size)
@@ -644,7 +644,7 @@ ptlrpc_lprocfs_nrs_crrn_quantum_seq_write(struct file *file,
 	char			    *val;
 	long			     quantum_reg;
 	long			     quantum_hp;
-	/* lprocfs_find_named_value() modifies its argument, so keep a copy */
+	
 	size_t			     count_copy;
 	int			     rc = 0;
 	int			     rc2 = 0;
@@ -659,7 +659,7 @@ ptlrpc_lprocfs_nrs_crrn_quantum_seq_write(struct file *file,
 
 	count_copy = count;
 
-	/* Check if the regular quantum value has been specified */
+	
 	val = lprocfs_find_named_value(kernbuf, NRS_LPROCFS_QUANTUM_NAME_REG,
 				       &count_copy);
 	if (val != kernbuf) {
@@ -672,7 +672,7 @@ ptlrpc_lprocfs_nrs_crrn_quantum_seq_write(struct file *file,
 
 	count_copy = count;
 
-	/* Check if the high priority quantum value has been specified */
+	
 	val = lprocfs_find_named_value(kernbuf, NRS_LPROCFS_QUANTUM_NAME_HP,
 				       &count_copy);
 	if (val != kernbuf) {
@@ -770,7 +770,7 @@ static int nrs_crrn_lprocfs_init(struct ptlrpc_service *svc)
 	return 0;
 }
 
-/* CRR-N policy operations */
+
 static const struct ptlrpc_nrs_pol_ops nrs_crrn_ops = {
 	.op_policy_start	= nrs_crrn_start,
 	.op_policy_stop		= nrs_crrn_stop,
@@ -784,7 +784,7 @@ static const struct ptlrpc_nrs_pol_ops nrs_crrn_ops = {
 	.op_lprocfs_init	= nrs_crrn_lprocfs_init,
 };
 
-/* CRR-N policy configuration */
+
 struct ptlrpc_nrs_pol_conf nrs_conf_crrn = {
 	.nc_name		= NRS_POL_NAME_CRRN,
 	.nc_ops			= &nrs_crrn_ops,

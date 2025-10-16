@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Generic infrastructure for managing a collection of logs.
  * These logs are used for:
@@ -48,19 +48,19 @@ enum llog_open_param {
 struct plain_handle_data {
 	struct list_head	phd_entry;
 	struct llog_handle	*phd_cat_handle;
-	/* cookie of this log in its cat */
+	
 	struct llog_cookie	phd_cookie;
 };
 
 struct cat_handle_data {
 	struct list_head	chd_head;
-	struct llog_handle     *chd_current_log;/* currently open log */
-	struct llog_handle     *chd_next_log;	/* llog to be used next */
+	struct llog_handle     *chd_current_log;
+	struct llog_handle     *chd_next_log;	
 };
 
 struct llog_handle;
 
-/* llog.c  -  general API */
+
 int llog_init_handle(const struct lu_env *env, struct llog_handle *handle,
 		     int flags, struct obd_uuid *uuid);
 int llog_copy_handler(const struct lu_env *env, struct llog_handle *llh,
@@ -92,17 +92,17 @@ int llog_read_header(const struct lu_env *env, struct llog_handle *handle,
 __u64 llog_size(const struct lu_env *env, struct llog_handle *llh);
 int llog_retain(const struct lu_env *env, struct llog_handle *log);
 
-/* llog_process flags */
+
 #define LLOG_FLAG_NODEAMON 0x0001
 
-/* llog read mode, LLOG_READ_MODE_RAW will process llog canceled records */
+
 enum llog_read_mode {
 	LLOG_READ_MODE_NORMAL	= 0x0000,
 	LLOG_READ_MODE_RAW	= 0x0001,
 };
 
 
-/* llog_cat.c - catalog api */
+
 struct llog_process_data {
 	/**
 	 * Any useful data needed while processing catalog. This is
@@ -168,7 +168,7 @@ int llog_cat_modify_rec(const struct lu_env *env, struct llog_handle *cathandle,
 			struct llog_logid *lid, struct llog_rec_hdr *hdr,
 			struct llog_cookie *cookie);
 int llog_cat_set_first_idx(struct llog_handle *cathandle, int newidx);
-/* llog_obd.c */
+
 int llog_setup(const struct lu_env *env, struct obd_device *obd,
 	       struct obd_llog_group *olg, int index,
 	       struct obd_device *disk_obd, const struct llog_operations *op);
@@ -176,7 +176,7 @@ int __llog_ctxt_put(const struct lu_env *env, struct llog_ctxt *ctxt);
 int llog_cleanup(const struct lu_env *env, struct llog_ctxt *ctx);
 int llog_sync(struct llog_ctxt *ctxt, struct obd_export *exp, int flags);
 
-/* llog_ioctl.c */
+
 struct obd_ioctl_data;
 int llog_print_cb(const struct lu_env *env, struct llog_handle *handle,
 		  struct llog_rec_hdr *rec, void *data);
@@ -195,7 +195,7 @@ struct llog_print_data {
 	bool			lprd_raw;
 };
 
-/* llog_net.c */
+
 int llog_initiator_connect(struct llog_ctxt *ctxt);
 
 struct llog_operations {
@@ -270,12 +270,12 @@ struct llog_operations {
 		       struct thandle *th);
 };
 
-/* In-memory descriptor for a log object or log catalog */
+
 struct llog_handle {
 	struct rw_semaphore	 lgh_lock;
-	spinlock_t		 lgh_hdr_lock; /* protect lgh_hdr data */
-	struct llog_logid	 lgh_id; /* id of this log */
-	struct llog_log_hdr	*lgh_hdr; /* may be vmalloc'd */
+	spinlock_t		 lgh_hdr_lock; 
+	struct llog_logid	 lgh_id; 
+	struct llog_log_hdr	*lgh_hdr; 
 	size_t			lgh_hdr_size;
 	struct dt_object	*lgh_obj;
 	/* For a Catalog, is the last/newest used index for a plain slot.
@@ -285,7 +285,7 @@ struct llog_handle {
 	 */
 	int			 lgh_last_idx;
 	struct rw_semaphore	 lgh_last_sem;
-	__u64			 lgh_cur_offset; /* used for test only */
+	__u64			 lgh_cur_offset; 
 	struct llog_ctxt	*lgh_ctxt;
 	union {
 		struct plain_handle_data	 phd;
@@ -301,7 +301,7 @@ struct llog_handle {
 	unsigned long		lgh_timestamp;
 };
 
-/* llog_osd.c */
+
 extern const struct llog_operations llog_osd_ops;
 extern const struct llog_operations llog_common_cat_ops;
 int llog_osd_get_cat_list(const struct lu_env *env, struct dt_device *d,
@@ -320,21 +320,21 @@ int llog_osd_put_cat_list(const struct lu_env *env, struct dt_device *d,
 #define LLOG_CTXT_FLAG_NORMAL_FID	 0x00000004
 
 struct llog_ctxt {
-	int			 loc_idx; /* my index the obd array of ctxt's */
-	struct obd_device	*loc_obd; /* points back to the containing obd*/
-	struct obd_llog_group	*loc_olg; /* group containing that ctxt */
-	struct obd_export	*loc_exp; /* parent "disk" export (e.g. MDS) */
-	/* to use in RPC's: can be backward pointing import */
+	int			 loc_idx; 
+	struct obd_device	*loc_obd; 
+	struct obd_llog_group	*loc_olg; 
+	struct obd_export	*loc_exp; 
+	
 	struct obd_import	*loc_imp;
 	const struct llog_operations  *loc_logops;
 	struct llog_handle	*loc_handle;
-	struct mutex		 loc_mutex; /* protect loc_imp */
+	struct mutex		 loc_mutex; 
 	atomic_t		 loc_refcount;
-	long			 loc_flags; /* flags, see above defines */
+	long			 loc_flags; 
 	struct dt_object	*loc_dir;
 	struct local_oid_storage *loc_los_nameless;
 	struct local_oid_storage *loc_los_named;
-	/* llog chunk/llog record size, can not be bigger than loc_chunk_size */
+	
 	__u32			 loc_chunk_size;
 };
 
@@ -573,7 +573,7 @@ enum {
 	LLOG_HEADER_IDX = 0,
 };
 
-/* llog.c */
+
 int llog_exist(struct llog_handle *loghandle);
 int llog_declare_create(const struct lu_env *env,
 			struct llog_handle *loghandle, struct thandle *th);
@@ -611,6 +611,6 @@ int llog_write_cookie(const struct lu_env *env, struct llog_handle *loghandle,
 int llog_write(const struct lu_env *env, struct llog_handle *loghandle,
 	       struct llog_rec_hdr *rec, int idx);
 
-/** @} log */
+
 
 #endif

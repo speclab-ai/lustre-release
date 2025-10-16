@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd module parameters
  */
@@ -70,7 +70,7 @@ module_param(wq_max_active, uint, 0444);
 MODULE_PARM_DESC(wq_max_active,
 		 "Max work queue work items active per CPU. Default is 512. Valid values 0 to 512.");
 
-/* Common LND network tunables. */
+
 static int credits = 512;
 module_param(credits, int, 0444);
 MODULE_PARM_DESC(credits, "Number of concurrent sends on network");
@@ -160,7 +160,7 @@ int kfilnd_tunables_setup(struct lnet_lnd_tunables *lnd_tunables, bool set,
 			       traffic_class);
 	}
 
-	/* Treat kfilnd_tunables set to zero as uninitialized. */
+	
 	if (kfilnd_tunables->lnd_prov_major_version == 0 &&
 		kfilnd_tunables->lnd_prov_major_version == 0) {
 		kfilnd_tunables->lnd_prov_major_version = prov_major_version;

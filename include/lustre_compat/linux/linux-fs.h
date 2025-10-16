@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Basic library routines.
  */
@@ -64,4 +64,4 @@ static inline void mapping_clear_exiting(struct address_space *mapping)
 #endif
 }
 
-#endif /* __LIBCFS_LINUX_CFS_FS_H__ */
+#endif 

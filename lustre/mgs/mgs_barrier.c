@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Fan, Yong <fan.yong@intel.com>
  */
@@ -46,7 +46,7 @@ static int mgs_barrier_gl_interpret_reply(const struct lu_env *env,
 
 	if (rc) {
 		if (rc == -ENODEV || rc == -EINVAL) {
-			/* The lock is useless, cancel it. */
+			
 			ldlm_lock_cancel(ca->ca_lock);
 			rc = 0;
 		}
@@ -135,7 +135,7 @@ again:
 		work->gl_lock = NULL;
 	}
 
-	/* It is not big issue to alloc more work item than needed. */
+	
 	for (i = 0; i < fsdb->fsdb_mdt_count; i++) {
 		OBD_ALLOC_PTR(work);
 		if (!work)
@@ -162,7 +162,7 @@ again:
 				break;
 
 			unlock_res(res);
-			/* The granted locks are more than the MDTs count. */
+			
 			goto again;
 		}
 
@@ -171,7 +171,7 @@ again:
 	}
 	unlock_res(res);
 
-	/* The MDTs count may be more than the granted locks. */
+	
 	list_for_each_entry_safe_reverse(work, tmp, &gl_list, gl_list) {
 		if (work->gl_lock)
 			break;
@@ -764,7 +764,7 @@ int mgs_iocontrol_barrier(const struct lu_env *env,
 		     strnlen(bc->bc_name, sizeof(bc->bc_name)) > 8))
 		RETURN(-EINVAL);
 
-	/* NOT allow barrier operations during recovery. */
+	
 	if (unlikely(test_bit(OBDF_RECOVERING, mgs->mgs_obd->obd_flags)))
 		RETURN(-EBUSY);
 

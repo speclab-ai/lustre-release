@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre public user-space interface definitions.
  */
@@ -16,20 +16,20 @@
 #ifndef _LUSTRE_USER_H
 #define _LUSTRE_USER_H
 
-/* lustreuser */
+
 #ifndef __KERNEL__
 # define __USE_ISOC99	1
 # include <stdbool.h>
-# include <stdio.h> /* snprintf() */
-# include <stdlib.h> /* abs() */
+# include <stdio.h> 
+# include <stdlib.h> 
 # include <errno.h>
 # include <sys/stat.h>
 
 # define __USE_GNU      1
 # define __USE_XOPEN2K8  1
-# define FILEID_LUSTRE 0x97 /* for name_to_handle_at() (and llapi_fd2fid()) */
+# define FILEID_LUSTRE 0x97 
 # define U32_MAX	UINT32_MAX
-#endif /* !__KERNEL__ */
+#endif 
 
 #include <linux/fs.h>
 #include <linux/limits.h>
@@ -57,9 +57,9 @@ extern "C" {
 #define LL_MAXQUOTAS 3
 #undef INITQFNAMES
 #define INITQFNAMES { \
-	"user",		/* USRQUOTA */ \
-	"group",	/* GRPQUOTA */ \
-	"project",	/* PRJQUOTA */ \
+	"user",		 \
+	"group",	 \
+	"project",	 \
 	"undefined", \
 }
 #ifndef USRQUOTA
@@ -91,7 +91,7 @@ typedef struct stat     lstat_t;
 
 #ifndef DECLARE_FLEX_ARRAY
 #ifdef __cplusplus
-/* sizeof(struct{}) is 1 in C++, not 0, can't use C version of the macro. */
+
 #define DECLARE_FLEX_ARRAY(T, member) T member[0]
 #else
 /**
@@ -110,7 +110,7 @@ typedef struct stat     lstat_t;
 		TYPE NAME[];		       \
 	}
 #endif
-#endif /* DECLARE_FLEX_ARRAY */
+#endif 
 
 #ifndef STATX_BASIC_STATS
 /*
@@ -167,36 +167,36 @@ struct statx_timestamp {
  * co. can be emulated in userspace.
  */
 struct statx {
-	/* 0x00 */
-	__u32	stx_mask;	/* What results were written [uncond] */
-	__u32	stx_blksize;	/* Preferred general I/O size [uncond] */
-	__u64	stx_attributes;	/* Flags information about the file [uncond] */
-	/* 0x10 */
-	__u32	stx_nlink;	/* Number of hard links */
-	__u32	stx_uid;	/* User ID of owner */
-	__u32	stx_gid;	/* Group ID of owner */
-	__u16	stx_mode;	/* File mode */
+	
+	__u32	stx_mask;	
+	__u32	stx_blksize;	
+	__u64	stx_attributes;	
+	
+	__u32	stx_nlink;	
+	__u32	stx_uid;	
+	__u32	stx_gid;	
+	__u16	stx_mode;	
 	__u16	__spare0[1];
-	/* 0x20 */
-	__u64	stx_ino;	/* Inode number */
-	__u64	stx_size;	/* File size */
-	__u64	stx_blocks;	/* Number of 512-byte blocks allocated */
+	
+	__u64	stx_ino;	
+	__u64	stx_size;	
+	__u64	stx_blocks;	
 	__u64	stx_attributes_mask; /* Mask for what's supported in
 				      * stx_attributes
 				      */
-	/* 0x40 */
-	struct statx_timestamp	stx_atime;	/* Last access time */
-	struct statx_timestamp	stx_btime;	/* File creation time */
-	struct statx_timestamp	stx_ctime;	/* Last attribute change time */
-	struct statx_timestamp	stx_mtime;	/* Last data modification time */
-	/* 0x80 */
-	__u32	stx_rdev_major;	/* Device ID of special file [if bdev/cdev] */
+	
+	struct statx_timestamp	stx_atime;	
+	struct statx_timestamp	stx_btime;	
+	struct statx_timestamp	stx_ctime;	
+	struct statx_timestamp	stx_mtime;	
+	
+	__u32	stx_rdev_major;	
 	__u32	stx_rdev_minor;
-	__u32	stx_dev_major;	/* ID of device containing file [uncond] */
+	__u32	stx_dev_major;	
 	__u32	stx_dev_minor;
-	/* 0x90 */
-	__u64	__spare2[14];	/* Spare space for future expansion */
-	/* 0x100 */
+	
+	__u64	__spare2[14];	
+	
 };
 
 /*
@@ -207,21 +207,21 @@ struct statx {
  * These bits should be set in the mask argument of statx() to request
  * particular items when calling statx().
  */
-#define STATX_TYPE		0x00000001U	/* Want/got stx_mode & S_IFMT */
-#define STATX_MODE		0x00000002U	/* Want/got stx_mode & ~S_IFMT */
-#define STATX_NLINK		0x00000004U	/* Want/got stx_nlink */
-#define STATX_UID		0x00000008U	/* Want/got stx_uid */
-#define STATX_GID		0x00000010U	/* Want/got stx_gid */
-#define STATX_ATIME		0x00000020U	/* Want/got stx_atime */
-#define STATX_MTIME		0x00000040U	/* Want/got stx_mtime */
-#define STATX_CTIME		0x00000080U	/* Want/got stx_ctime */
-#define STATX_INO		0x00000100U	/* Want/got stx_ino */
-#define STATX_SIZE		0x00000200U	/* Want/got stx_size */
-#define STATX_BLOCKS		0x00000400U	/* Want/got stx_blocks */
-#define STATX_BASIC_STATS	0x000007ffU	/* The stuff in the normal stat struct */
-#define STATX_BTIME		0x00000800U	/* Want/got stx_btime */
-#define STATX_ALL		0x00000fffU	/* All currently supported flags */
-#define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
+#define STATX_TYPE		0x00000001U	
+#define STATX_MODE		0x00000002U	
+#define STATX_NLINK		0x00000004U	
+#define STATX_UID		0x00000008U	
+#define STATX_GID		0x00000010U	
+#define STATX_ATIME		0x00000020U	
+#define STATX_MTIME		0x00000040U	
+#define STATX_CTIME		0x00000080U	
+#define STATX_INO		0x00000100U	
+#define STATX_SIZE		0x00000200U	
+#define STATX_BLOCKS		0x00000400U	
+#define STATX_BASIC_STATS	0x000007ffU	
+#define STATX_BTIME		0x00000800U	
+#define STATX_ALL		0x00000fffU	
+#define STATX__RESERVED		0x80000000U	
 
 /*
  * Attributes to be found in stx_attributes and masked in stx_attributes_mask.
@@ -234,46 +234,46 @@ struct statx {
  * semantically.  Where possible, the numerical value is picked to correspond
  * also.
  */
-#define STATX_ATTR_COMPRESSED		0x00000004 /* [I] File is compressed by the fs */
-#define STATX_ATTR_IMMUTABLE		0x00000010 /* [I] File is marked immutable */
-#define STATX_ATTR_APPEND		0x00000020 /* [I] File is append-only */
-#define STATX_ATTR_NODUMP		0x00000040 /* [I] File is not to be dumped */
-#define STATX_ATTR_ENCRYPTED		0x00000800 /* [I] File requires key to decrypt in fs */
+#define STATX_ATTR_COMPRESSED		0x00000004 
+#define STATX_ATTR_IMMUTABLE		0x00000010 
+#define STATX_ATTR_APPEND		0x00000020 
+#define STATX_ATTR_NODUMP		0x00000040 
+#define STATX_ATTR_ENCRYPTED		0x00000800 
 
-#define STATX_ATTR_AUTOMOUNT		0x00001000 /* Dir: Automount trigger */
-/* Update attrs_array in lustreapi.h if new attributes are added. */
+#define STATX_ATTR_AUTOMOUNT		0x00001000 
 
-#define AT_STATX_SYNC_TYPE	0x6000	/* Type of synchronisation required from statx() */
-#define AT_STATX_SYNC_AS_STAT	0x0000	/* - Do whatever stat() does */
-#define AT_STATX_FORCE_SYNC	0x2000	/* - Force the attributes to be sync'd with the server */
-#define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
 
-#endif /* STATX_BASIC_STATS */
+#define AT_STATX_SYNC_TYPE	0x6000	
+#define AT_STATX_SYNC_AS_STAT	0x0000	
+#define AT_STATX_FORCE_SYNC	0x2000	
+#define AT_STATX_DONT_SYNC	0x4000	
+
+#endif 
 
 typedef struct statx lstatx_t;
 
 #define LUSTRE_EOF 0xffffffffffffffffULL
 
-/* for statfs() */
+
 #define LL_SUPER_MAGIC 0x0BD00BD0
 
 #define LL_IOC_GETVERSION		_IOR('f', 3, long)
-#define FSFILT_IOC_GETVERSION		LL_IOC_GETVERSION /* backward compat */
+#define FSFILT_IOC_GETVERSION		LL_IOC_GETVERSION 
 #define LL_IOC_RESIZE_FS		_IOW('f', 16, __u64)
 
-/* FIEMAP flags supported by Lustre */
+
 #define LUSTRE_FIEMAP_FLAGS_COMPAT (FIEMAP_FLAG_SYNC | FIEMAP_FLAG_DEVICE_ORDER)
 
 enum obd_statfs_state {
-	OS_STATFS_DEGRADED	= 0x00000001, /**< RAID degraded/rebuilding */
-	OS_STATFS_READONLY	= 0x00000002, /**< filesystem is read-only */
-	OS_STATFS_NOCREATE	= 0x00000004, /**< no object creation */
-	OS_STATFS_UNUSED1	= 0x00000008, /**< obsolete 1.6, was EROFS=30 */
-	OS_STATFS_UNUSED2	= 0x00000010, /**< obsolete 1.6, was EROFS=30 */
-	OS_STATFS_ENOSPC	= 0x00000020, /**< not enough free space */
-	OS_STATFS_ENOINO	= 0x00000040, /**< not enough inodes */
-	OS_STATFS_SUM		= 0x00000100, /**< aggregated for all tagrets */
-	OS_STATFS_NONROT	= 0x00000200, /**< non-rotational device */
+	OS_STATFS_DEGRADED	= 0x00000001, 
+	OS_STATFS_READONLY	= 0x00000002, 
+	OS_STATFS_NOCREATE	= 0x00000004, 
+	OS_STATFS_UNUSED1	= 0x00000008, 
+	OS_STATFS_UNUSED2	= 0x00000010, 
+	OS_STATFS_ENOSPC	= 0x00000020, 
+	OS_STATFS_ENOINO	= 0x00000040, 
+	OS_STATFS_SUM		= 0x00000100, 
+	OS_STATFS_NONROT	= 0x00000200, 
 	OS_STATFS_DOWNGRADE	= OS_STATFS_DEGRADED | OS_STATFS_READONLY |
 				  OS_STATFS_NOCREATE | OS_STATFS_ENOSPC |
 				  OS_STATFS_ENOINO,
@@ -309,8 +309,8 @@ struct obd_statfs_state_name *obd_statfs_state_name_find(__u32 state)
 	  { .osn_state = OS_STATFS_UNUSED2,  .osn_name = '?', .osn_err = true },
 	  { .osn_state = OS_STATFS_ENOSPC,   .osn_name = 'S', .osn_err = true },
 	  { .osn_state = OS_STATFS_ENOINO,   .osn_name = 'I', .osn_err = true },
-	  { .osn_state = OS_STATFS_SUM,      .osn_name = 'a', /* aggregate */ },
-	  { .osn_state = OS_STATFS_NONROT,   .osn_name = 'f', /* flash */     },
+	  { .osn_state = OS_STATFS_SUM,      .osn_name = 'a',  },
+	  { .osn_state = OS_STATFS_NONROT,   .osn_name = 'f',      },
 	  { .osn_state = 0, }
 	};
 	int i;
@@ -326,26 +326,26 @@ struct obd_statfs_state_name *obd_statfs_state_name_find(__u32 state)
 #define OS_STATFS_NOPRECREATE OS_STATFS_NOCREATE
 #endif
 
-/** filesystem statistics/attributes for target device */
+
 struct obd_statfs {
-	__u64		os_type;	/* EXT4_SUPER_MAGIC, UBERBLOCK_MAGIC */
-	__u64		os_blocks;	/* total size in #os_bsize blocks */
-	__u64		os_bfree;	/* number of unused blocks */
-	__u64		os_bavail;	/* blocks available for allocation */
-	__u64		os_files;	/* total number of objects */
-	__u64		os_ffree;	/* # objects that could be created */
-	__u8		os_fsid[40];	/* identifier for filesystem */
-	__u32		os_bsize;	/* block size in bytes for os_blocks */
-	__u32		os_namelen;	/* maximum length of filename in bytes*/
-	__u64		os_maxbytes;	/* maximum object size in bytes */
-	__u32		os_state;       /**< obd_statfs_state OS_STATFS_* */
-	__u32		os_fprecreated;	/* objs available now to the caller */
+	__u64		os_type;	
+	__u64		os_blocks;	
+	__u64		os_bfree;	
+	__u64		os_bavail;	
+	__u64		os_files;	
+	__u64		os_ffree;	
+	__u8		os_fsid[40];	
+	__u32		os_bsize;	
+	__u32		os_namelen;	
+	__u64		os_maxbytes;	
+	__u32		os_state;       
+	__u32		os_fprecreated;	
 					/* used in QoS code to find preferred
 					 * OSTs
 					 */
-	__u32           os_granted;	/* space granted for MDS */
-	__u32           os_spare3;	/* Unused padding fields.  Remember */
-	__u32           os_spare4;	/* to fix lustre_swab_obd_statfs() */
+	__u32           os_granted;	
+	__u32           os_spare3;	
+	__u32           os_spare4;	
 	__u32           os_spare5;
 	__u32           os_spare6;
 	__u32           os_spare7;
@@ -367,7 +367,7 @@ struct lu_fid {
 	* has only a single object we can still enumerate 2^64 objects.
 	**/
 	__u64 f_seq;
-	/* FID number within sequence. */
+	
 	__u32 f_oid;
 	/**
 	 * FID version, used to distinguish different versions (in the sense
@@ -382,7 +382,7 @@ static inline bool fid_is_zero(const struct lu_fid *fid)
 	return fid->f_seq == 0 && fid->f_oid == 0;
 }
 
-/* The data name_to_handle_at() places in a struct file_handle (at f_handle) */
+
 struct lustre_file_handle {
 	struct lu_fid lfh_child;
 	struct lu_fid lfh_parent;
@@ -427,22 +427,22 @@ struct ost_layout {
  * and ensures that the components are correctly marked stale on the MDT.
  */
 struct filter_fid_18_23 {
-	struct lu_fid		ff_parent;	/* stripe_idx in f_ver */
+	struct lu_fid		ff_parent;	
 	__u64			ff_objid;
 	__u64			ff_seq;
 };
 
 struct filter_fid_24_29 {
-	struct lu_fid		ff_parent;	/* stripe_idx in f_ver */
+	struct lu_fid		ff_parent;	
 };
 
 struct filter_fid_210 {
-	struct lu_fid		ff_parent;	/* stripe_idx in f_ver */
+	struct lu_fid		ff_parent;	
 	struct ost_layout	ff_layout;
 };
 
 struct filter_fid {
-	struct lu_fid		ff_parent;	/* stripe_idx in f_ver */
+	struct lu_fid		ff_parent;	
 	struct ost_layout	ff_layout;
 	__u32			ff_layout_version;
 	__u32			ff_range; /* range of layout version that
@@ -458,14 +458,14 @@ struct lu_fid;
 
 enum lma_compat {
 	LMAC_HSM	 = 0x00000001,
-/*	LMAC_SOM	 = 0x00000002, obsolete since 2.8.0 */
-	LMAC_NOT_IN_OI	 = 0x00000004, /* the object does NOT need OI mapping */
+
+	LMAC_NOT_IN_OI	 = 0x00000004, 
 	LMAC_FID_ON_OST  = 0x00000008, /* For OST-object, its OI mapping is
 					* under /O/<seq>/d<x>.
 					*/
-	LMAC_STRIPE_INFO = 0x00000010, /* stripe info in the LMA EA. */
-	LMAC_COMP_INFO	 = 0x00000020, /* Component info in the LMA EA. */
-	LMAC_IDX_BACKUP  = 0x00000040, /* Has index backup. */
+	LMAC_STRIPE_INFO = 0x00000010, 
+	LMAC_COMP_INFO	 = 0x00000020, 
+	LMAC_IDX_BACKUP  = 0x00000040, 
 };
 
 /**
@@ -474,14 +474,14 @@ enum lma_compat {
  * This information is stored in lustre_mdt_attrs::lma_incompat.
  */
 enum lma_incompat {
-	LMAI_RELEASED		= 0x00000001, /* file is released */
-	LMAI_AGENT		= 0x00000002, /* agent inode */
+	LMAI_RELEASED		= 0x00000001, 
+	LMAI_AGENT		= 0x00000002, 
 	LMAI_REMOTE_PARENT	= 0x00000004, /* the parent of the object
 					       * is on the remote T
 					       */
-	LMAI_STRIPED		= 0x00000008, /* striped directory inode */
-	LMAI_ORPHAN		= 0x00000010, /* inode is orphan */
-	LMAI_ENCRYPT		= 0x00000020, /* inode is encrypted */
+	LMAI_STRIPED		= 0x00000008, 
+	LMAI_ORPHAN		= 0x00000010, 
+	LMAI_ENCRYPT		= 0x00000020, 
 	LMA_INCOMPAT_SUPP	= (LMAI_AGENT | LMAI_REMOTE_PARENT |
 				   LMAI_STRIPED | LMAI_ORPHAN | LMAI_ENCRYPT)
 };
@@ -504,7 +504,7 @@ struct lustre_mdt_attrs {
 	 * LMA_INCOMPAT_SUPP.
 	 */
 	__u32   lma_incompat;
-	/** FID of this inode */
+	
 	struct lu_fid  lma_self_fid;
 };
 
@@ -540,9 +540,9 @@ struct lustre_ost_attrs {
 #define LMA_OLD_SIZE (sizeof(struct lustre_mdt_attrs) + 5 * sizeof(__u64))
 
 enum lustre_som_flags {
-	/* Unknow or no SoM data, must get size from OSTs. */
+	
 	SOM_FL_UNKNOWN	= 0x0000,
-	/* Known strictly correct, FLR or DoM file (SoM guaranteed). */
+	
 	SOM_FL_STRICT	= 0x0001,
 	/* Known stale - was right at some point in the past, but it is
 	 * known (or likely) to be incorrect now (e.g. opened for write).
@@ -592,7 +592,7 @@ struct ll_futimes_3 {
  */
 #define LUSTRE_MIRROR_COUNT_MAX		16
 
-/* Lease types for use as arg and return of LL_IOC_{GET,SET}_LEASE ioctl. */
+
 enum ll_lease_mode {
 	LL_LEASE_RDLCK	= 0x01,
 	LL_LEASE_WRLCK	= 0x02,
@@ -635,8 +635,8 @@ struct ll_ioc_lease_id {
  * *STRIPE* - set/get lov_user_md
  * *INFO    - set/get lov_user_mds_data
  */
-/*	lustre_ioctl.h			101-150 */
-/* ioctl codes 128-143 are reserved for fsverity */
+
+
 #define LL_IOC_GETFLAGS			_IOR('f', 151, long)
 #define LL_IOC_SETFLAGS			_IOW('f', 152, long)
 #define LL_IOC_CLRFLAGS			_IOW('f', 153, long)
@@ -659,7 +659,7 @@ struct ll_ioc_lease_id {
 #define LL_IOC_GET_MDTIDX		_IOR('f', 175, int)
 #define LL_IOC_FUTIMES_3		_IOWR('f', 176, struct ll_futimes_3)
 #define LL_IOC_FLR_SET_MIRROR		_IOW('f', 177, long)
-/*	lustre_ioctl.h			177-210 */
+
 #define LL_IOC_HSM_STATE_GET		_IOR('f', 211, struct hsm_user_state)
 #define LL_IOC_HSM_STATE_SET		_IOW('f', 212, struct hsm_state_set)
 #define LL_IOC_HSM_CT_START		_IOW('f', 213, struct lustre_kernelcomm)
@@ -672,7 +672,7 @@ struct ll_ioc_lease_id {
 						struct lustre_swap_layouts)
 #define LL_IOC_HSM_ACTION		_IOR('f', 220, \
 						struct hsm_current_action)
-/*	lustre_ioctl.h			221-233 */
+
 #define LL_IOC_LMV_SETSTRIPE		_IOWR('f', 240, struct lmv_user_md)
 #define LL_IOC_LMV_GETSTRIPE		_IOWR('f', 241, struct lmv_user_md)
 #define LL_IOC_REMOVE_ENTRY		_IOWR('f', 242, __u64)
@@ -703,10 +703,10 @@ struct ll_ioc_lease_id {
  * Structure for FS_IOC_FSGETXATTR and FS_IOC_FSSETXATTR.
  */
 struct fsxattr {
-	__u32		fsx_xflags;     /* xflags field value (get/set) */
-	__u32		fsx_extsize;    /* extsize field value (get/set)*/
-	__u32		fsx_nextents;   /* nextents field value (get)   */
-	__u32		fsx_projid;     /* project identifier (get/set) */
+	__u32		fsx_xflags;     
+	__u32		fsx_extsize;    
+	__u32		fsx_nextents;   
+	__u32		fsx_projid;     
 	unsigned char	fsx_pad[12];
 };
 #define FS_IOC_FSGETXATTR		_IOR('X', 31, struct fsxattr)
@@ -734,7 +734,7 @@ struct fsxattr {
 #define IOC_MDC_GETFILEINFO	IOC_MDC_GETFILEINFO_V1
 #define LL_IOC_MDC_GETINFO	LL_IOC_MDC_GETINFO_V1
 
-#define MAX_OBD_NAME 128 /* If this changes, a NEW ioctl must be added */
+#define MAX_OBD_NAME 128 
 
 /* Define O_LOV_DELAY_CREATE to be a mask that is not useful for regular
  * files, but are unlikely to be used in practice and are not harmful if
@@ -745,7 +745,7 @@ struct fsxattr {
  * the older 0100000000 flag.  This is already removed upstream.  LU-812.
  */
 #ifndef FASYNC
-#define FASYNC			00020000   /* fcntl, for BSD compatibility */
+#define FASYNC			00020000   
 #endif
 /* This is Lustre-specific flag that defines O_LOV_DELAY_CREATE. There is no
  * clash anywhere with these value and can be used safely
@@ -760,22 +760,22 @@ enum ll_file_flags {
 	LL_FILE_IGNORE_LOCK     = 0x00000001,
 	LL_FILE_GROUP_LOCKED    = 0x00000002,
 	LL_FILE_READAHEA        = 0x00000004,
-	LL_FILE_LOCKED_DIRECTIO = 0x00000008, /* client-side locks with dio */
-	LL_FILE_FLOCK_WARNING   = 0x00000020, /* warned about disabled flock */
+	LL_FILE_LOCKED_DIRECTIO = 0x00000008, 
+	LL_FILE_FLOCK_WARNING   = 0x00000020, 
 };
 
 #define LOV_USER_MAGIC_V1	0x0BD10BD0
 #define LOV_USER_MAGIC		LOV_USER_MAGIC_V1
 #define LOV_USER_MAGIC_JOIN_V1	0x0BD20BD0
 #define LOV_USER_MAGIC_V3	0x0BD30BD0
-/* 0x0BD40BD0 is occupied by LOV_MAGIC_MIGRATE */
-#define LOV_USER_MAGIC_SPECIFIC 0x0BD50BD0	/* for specific OSTs */
+
+#define LOV_USER_MAGIC_SPECIFIC 0x0BD50BD0	
 #define LOV_USER_MAGIC_COMP_V1	0x0BD60BD0
 #define LOV_USER_MAGIC_FOREIGN	0x0BD70BD0
 #define LOV_USER_MAGIC_SEL	0x0BD80BD0
 
-#define LMV_USER_MAGIC		0x0CD30CD0    /* default lmv magic */
-#define LMV_USER_MAGIC_V0	0x0CD20CD0    /* old default lmv magic*/
+#define LMV_USER_MAGIC		0x0CD30CD0    
+#define LMV_USER_MAGIC_V0	0x0CD20CD0    
 #define LMV_USER_MAGIC_SPECIFIC	0x0CD40CD0
 
 enum lov_pattern {
@@ -788,13 +788,13 @@ enum lov_pattern {
 	LOV_PATTERN_FOREIGN =		0x400,
 	LOV_PATTERN_COMPRESS =		0x800,
 
-	/* combine exclusive patterns as a bad pattern */
+	
 	LOV_PATTERN_BAD =		(LOV_PATTERN_RAID1 | LOV_PATTERN_MDT |
 					 LOV_PATTERN_FOREIGN),
 
 	LOV_PATTERN_F_MASK =		0xffff0000,
-	LOV_PATTERN_F_HOLE =		0x40000000, /* hole in LOV EA objects */
-	LOV_PATTERN_F_RELEASED =	0x80000000, /* HSM released file */
+	LOV_PATTERN_F_HOLE =		0x40000000, 
+	LOV_PATTERN_F_RELEASED =	0x80000000, 
 	LOV_PATTERN_DEFAULT =		0xffffffff
 };
 
@@ -823,13 +823,13 @@ static inline bool lov_pattern_supported_normal_comp(enum lov_pattern pattern)
 
 #define LOV_MAXPOOLNAME 15
 #define LOV_POOLNAMEF "%.15s"
-/* The poolname "ignore" is used to force a component creation without pool */
+
 #define LOV_POOL_IGNORE "ignore"
 /* The poolname "inherit" is used to force a component to inherit the pool from
  * parent or root directory
  */
 #define LOV_POOL_INHERIT "inherit"
-/* The poolname "none" is deprecated in 2.15 (same behavior as "inherit") */
+
 #define LOV_POOL_NONE "none"
 
 static inline bool lov_pool_is_ignored(const char *pool)
@@ -848,7 +848,7 @@ static inline bool lov_pool_is_reserved(const char *pool)
 	return lov_pool_is_ignored(pool) || lov_pool_is_inherited(pool);
 }
 
-#define LOV_MIN_STRIPE_BITS 16   /* maximum PAGE_SIZE (ia64), power of 2 */
+#define LOV_MIN_STRIPE_BITS 16   
 #define LOV_MIN_STRIPE_SIZE (1 << LOV_MIN_STRIPE_BITS)
 #define LOV_MAX_STRIPE_COUNT_OLD 160
 /* This calculation is crafted so that input of 4096 will result in 160
@@ -861,41 +861,41 @@ static inline bool lov_pool_is_reserved(const char *pool)
  *
  * (max buffer size - lov+rpc header) / sizeof(struct lov_ost_data_v1)
  */
-#define LOV_MAX_STRIPE_COUNT 2000  /* ~((12 * 4096 - 256) / 24) */
+#define LOV_MAX_STRIPE_COUNT 2000  
 
-/* max and min values are used to check range of overstripe count */
-#define LOV_ALL_STRIPES       0xffff /* only valid for directories */
-#define LOV_ALL_STRIPES_WIDE  0xffe0 /* LLAPI_OVERSTRIPE_COUNT_MAX */
-#define LOV_V1_INSANE_STRIPE_INDEX (LOV_ALL_STRIPES_WIDE - 1) /* max index */
-#define LOV_V1_INSANE_STRIPE_COUNT LOV_V1_INSANE_STRIPE_INDEX /* deprecated */
+
+#define LOV_ALL_STRIPES       0xffff 
+#define LOV_ALL_STRIPES_WIDE  0xffe0 
+#define LOV_V1_INSANE_STRIPE_INDEX (LOV_ALL_STRIPES_WIDE - 1) 
+#define LOV_V1_INSANE_STRIPE_COUNT LOV_V1_INSANE_STRIPE_INDEX 
 
 #define XATTR_LUSTRE_PREFIX	"lustre."
 #define XATTR_LUSTRE_PIN	XATTR_LUSTRE_PREFIX"pin"
 #define XATTR_LUSTRE_LOV	XATTR_LUSTRE_PREFIX"lov"
 
-/* Please update if XATTR_LUSTRE_LOV".set" groks more flags in the future */
+
 #define allowed_lustre_lov(att) (strcmp((att), XATTR_LUSTRE_LOV".add") == 0 || \
 			strcmp((att), XATTR_LUSTRE_LOV".set") == 0 || \
 			strcmp((att), XATTR_LUSTRE_LOV".set.flags") == 0 || \
 			strcmp((att), XATTR_LUSTRE_LOV".del") == 0)
 
 #define lov_user_ost_data lov_user_ost_data_v1
-struct lov_user_ost_data_v1 {     /* per-stripe data structure */
-	struct ost_id l_ost_oi;   /* OST object ID */
+struct lov_user_ost_data_v1 {     
+	struct ost_id l_ost_oi;   
 	union {
-		__u32 l_ost_type; /* type of data stored in OST object */
-		__u32 l_ost_gen;  /* generation of this OST index */
+		__u32 l_ost_type; 
+		__u32 l_ost_gen;  
 	};
-	__u32 l_ost_idx;          /* OST index in LOV */
+	__u32 l_ost_idx;          
 } __attribute__((packed));
 
 #define lov_user_md lov_user_md_v1
-struct lov_user_md_v1 {           /* LOV EA user data (host-endian) */
-	__u32 lmm_magic;          /* magic number = LOV_USER_MAGIC_V1 */
-	__u32 lmm_pattern;        /* LOV_PATTERN_RAID0, LOV_PATTERN_RAID1 */
-	struct ost_id lmm_oi;     /* MDT parent inode id/seq (id/0 for 1.x) */
-	__u32 lmm_stripe_size;    /* size of stripe in bytes */
-	__u16 lmm_stripe_count;   /* num stripes in use for this object */
+struct lov_user_md_v1 {           
+	__u32 lmm_magic;          
+	__u32 lmm_pattern;        
+	struct ost_id lmm_oi;     
+	__u32 lmm_stripe_size;    
+	__u16 lmm_stripe_count;   
 	union {
 		__u16 lmm_stripe_offset;  /* starting stripe offset in
 					   * lmm_objects, use when writing
@@ -904,15 +904,15 @@ struct lov_user_md_v1 {           /* LOV EA user data (host-endian) */
 					   * used when reading
 					   */
 	};
-	struct lov_user_ost_data_v1 lmm_objects[]; /* per-stripe data */
+	struct lov_user_ost_data_v1 lmm_objects[]; 
 } __attribute__((packed, __may_alias__));
 
-struct lov_user_md_v3 {           /* LOV EA user data (host-endian) */
-	__u32 lmm_magic;          /* magic number = LOV_USER_MAGIC_V3 */
-	__u32 lmm_pattern;        /* LOV_PATTERN_RAID0, LOV_PATTERN_RAID1 */
-	struct ost_id lmm_oi;     /* MDT parent inode id/seq (id/0 for 1.x) */
-	__u32 lmm_stripe_size;    /* size of stripe in bytes */
-	__u16 lmm_stripe_count;   /* num stripes in use for this object */
+struct lov_user_md_v3 {           
+	__u32 lmm_magic;          
+	__u32 lmm_pattern;        
+	struct ost_id lmm_oi;     
+	__u32 lmm_stripe_size;    
+	__u16 lmm_stripe_count;   
 	union {
 		__u16 lmm_stripe_offset;  /* starting stripe offset in
 					   * lmm_objects, use when writing
@@ -921,15 +921,15 @@ struct lov_user_md_v3 {           /* LOV EA user data (host-endian) */
 					   * used when reading
 					   */
 	};
-	char  lmm_pool_name[LOV_MAXPOOLNAME + 1]; /* pool name */
-	struct lov_user_ost_data_v1 lmm_objects[]; /* per-stripe data */
+	char  lmm_pool_name[LOV_MAXPOOLNAME + 1]; 
+	struct lov_user_ost_data_v1 lmm_objects[]; 
 } __attribute__((packed, __may_alias__));
 
 struct lov_foreign_md {
-	__u32 lfm_magic;	/* magic number = LOV_MAGIC_FOREIGN */
-	__u32 lfm_length;	/* length of lfm_value */
-	__u32 lfm_type;		/* type, see LU_FOREIGN_TYPE_ */
-	__u32 lfm_flags;	/* flags, type specific */
+	__u32 lfm_magic;	
+	__u32 lfm_length;	
+	__u32 lfm_type;		
+	__u32 lfm_flags;	
 	char lfm_value[];
 } __attribute__((packed));
 
@@ -966,16 +966,16 @@ static inline bool lu_extent_is_whole(struct lu_extent *e)
 }
 
 enum lov_comp_md_entry_flags {
-	LCME_FL_STALE	  = 0x00000001,	/* FLR: stale data */
-	LCME_FL_PREF_RD	  = 0x00000002,	/* FLR: preferred for reading */
-	LCME_FL_PREF_WR	  = 0x00000004,	/* FLR: preferred for writing */
+	LCME_FL_STALE	  = 0x00000001,	
+	LCME_FL_PREF_RD	  = 0x00000002,	
+	LCME_FL_PREF_WR	  = 0x00000004,	
 	LCME_FL_PREF_RW	  = LCME_FL_PREF_RD | LCME_FL_PREF_WR,
-	LCME_FL_OFFLINE	  = 0x00000008,	/* Not used */
-	LCME_FL_INIT	  = 0x00000010,	/* instantiated */
-	LCME_FL_NOSYNC	  = 0x00000020,	/* FLR: no sync for the mirror */
-	LCME_FL_EXTENSION = 0x00000040,	/* extension comp, never init */
-	LCME_FL_PARITY    = 0x00000080,	/* EC: a parity code component */
-	LCME_FL_COMPRESS  = 0x00000100, /* the component should be compressed */
+	LCME_FL_OFFLINE	  = 0x00000008,	
+	LCME_FL_INIT	  = 0x00000010,	
+	LCME_FL_NOSYNC	  = 0x00000020,	
+	LCME_FL_EXTENSION = 0x00000040,	
+	LCME_FL_PARITY    = 0x00000080,	
+	LCME_FL_COMPRESS  = 0x00000100, 
 	LCME_FL_PARTIAL   = 0x00000200, /* some chunks in the component are
 					 * uncompressed
 					 */
@@ -991,18 +991,18 @@ enum lov_comp_md_entry_flags {
 				 LCME_FL_PREF_RW | LCME_FL_NOSYNC | \
 				 LCME_FL_EXTENSION | LCME_FL_PARITY)
 
-/* The component flags can be set by users at creation/modification time. */
+
 #define LCME_USER_COMP_FLAGS	(LCME_FL_PREF_RW | LCME_FL_NOSYNC | \
 				 LCME_FL_EXTENSION | LCME_FL_PARITY)
 
-/* The mirror flags can be set by users at creation time. */
+
 #define LCME_USER_MIRROR_FLAGS	(LCME_FL_PREF_RW | LCME_FL_NOCOMPR)
 
-/* The allowed flags obtained from the client at component creation time. */
+
 #define LCME_CL_COMP_FLAGS	(LCME_USER_MIRROR_FLAGS | LCME_FL_EXTENSION | \
 				 LCME_FL_PARITY)
 
-/* The mirror flags sent by client */
+
 #define LCME_MIRROR_FLAGS	(LCME_FL_NOSYNC)
 
 /* These flags have meaning when set in a default layout and will be inherited
@@ -1023,21 +1023,21 @@ enum lcme_id {
 	LCME_ID_NOT_ID	= LCME_FL_NEG
 };
 
-/* layout version equals to lcme_id, except some bits have special meanings */
+
 enum layout_version_flags {
 	/* layout version reaches the high water mark to be increased to
 	 * circularly reuse the smallest value
 	 */
 	LU_LAYOUT_HIGEN		= 0x40000000,
-	/* the highest bit is used to mark if the file is being resynced */
+	
 	LU_LAYOUT_RESYNC	= 0x80000000,
 };
 
 #define LCME_ID_MASK	LCME_ID_MAX
 
 struct lov_comp_md_entry_v1 {
-	__u32			lcme_id;        /* unique id of component */
-	__u32			lcme_flags;     /* LCME_FL_XXX */
+	__u32			lcme_id;        
+	__u32			lcme_flags;     
 	/* file extent for component. If it's an EC code component, its flags
 	 * contains LCME_FL_PARITY, and its extent covers the same extent of
 	 * its corresponding data component.
@@ -1046,17 +1046,17 @@ struct lov_comp_md_entry_v1 {
 	__u32			lcme_offset;    /* offset of component blob,
 						 * start from v_comp_md_v1
 						 */
-	__u32			lcme_size;      /* size of component blob */
+	__u32			lcme_size;      
 	__u32			lcme_layout_gen;
-	__u64			lcme_timestamp;	/* snapshot time if applicable*/
+	__u64			lcme_timestamp;	
 	__u8			lcme_dstripe_count;	/* data stripe count,
 							 * k value in EC
 							 */
 	__u8			lcme_cstripe_count;	/* code stripe count,
 							 * p value in EC
 							 */
-	__u8			lcme_compr_type;	/* compress type */
-	__u8			lcme_compr_lvl:4;	/* compress level */
+	__u8			lcme_compr_type;	
+	__u8			lcme_compr_lvl:4;	
 	__u8			lcme_compr_chunk_log_bits:4;
 				     /* chunk_size = 2^(16+chunk_log_bits)
 				      * i.e. power-of-two multiple of 64KiB
@@ -1065,7 +1065,7 @@ struct lov_comp_md_entry_v1 {
 
 #define SEQ_ID_MAX		0x0000FFFF
 #define SEQ_ID_MASK		SEQ_ID_MAX
-/* bit 30:16 of lcme_id is used to store mirror id */
+
 #define MIRROR_ID_MASK		0x7FFF0000
 #define MIRROR_ID_NEG		0x8000
 #define MIRROR_ID_SHIFT		16
@@ -1084,7 +1084,7 @@ static inline __u16 mirror_id_of(__u32 id)
  * on-disk data for lcm_flags. Valid if lcm_magic is LOV_MAGIC_COMP_V1.
  */
 enum lov_comp_md_flags {
-	/* the least 4 bits are used by FLR to record file state */
+	
 	LCM_FL_NONE		= 0x0,
 	LCM_FL_RDONLY		= 0x1,
 	LCM_FL_WRITE_PENDING	= 0x2,
@@ -1094,8 +1094,8 @@ enum lov_comp_md_flags {
 };
 
 struct lov_comp_md_v1 {
-	__u32	lcm_magic;      /* LOV_USER_MAGIC_COMP_V1 */
-	__u32	lcm_size;       /* overall size including this struct */
+	__u32	lcm_magic;      
+	__u32	lcm_size;       
 	__u32	lcm_layout_gen;
 	__u16	lcm_flags;
 	__u16	lcm_entry_count;
@@ -1103,7 +1103,7 @@ struct lov_comp_md_v1 {
 	 * so that non-flr files will have value 0 meaning 1 mirror.
 	 */
 	__u16	lcm_mirror_count;
-	/* code components count, non-EC file contains 0 ec_count */
+	
 	__u8	lcm_ec_count;
 	__u8	lcm_padding3[1];
 	__u16	lcm_padding1[2];
@@ -1134,17 +1134,17 @@ static inline __u32 lov_foreign_md_size(__u32 length)
  */
 #define lov_user_mds_data lov_user_mds_data_v2
 struct lov_user_mds_data_v1 {
-	lstat_t lmd_st;                 /* MDS stat struct */
-	struct lov_user_md_v1 lmd_lmm;  /* LOV EA V1 user data */
+	lstat_t lmd_st;                 
+	struct lov_user_md_v1 lmd_lmm;  
 } __attribute__((packed));
 
 struct lov_user_mds_data_v2 {
-	struct lu_fid lmd_fid;		/* Lustre FID */
-	lstatx_t lmd_stx;		/* MDS statx struct */
-	__u64 lmd_flags;		/* MDS stat flags */
-	__u32 lmd_lmmsize;		/* LOV EA size */
-	__u32 lmd_padding;		/* unused */
-	struct lov_user_md_v1 lmd_lmm;	/* LOV EA user data */
+	struct lu_fid lmd_fid;		
+	lstatx_t lmd_stx;		
+	__u64 lmd_flags;		
+	__u32 lmd_lmmsize;		
+	__u32 lmd_padding;		
+	struct lov_user_md_v1 lmd_lmm;	
 } __attribute__((packed));
 
 struct lmv_user_mds_data {
@@ -1154,11 +1154,11 @@ struct lmv_user_mds_data {
 } __attribute__((packed, __may_alias__));
 
 enum lmv_hash_type {
-	LMV_HASH_TYPE_UNKNOWN	= 0,	/* 0 is reserved for testing purpose */
-	LMV_HASH_TYPE_ALL_CHARS = 1,	/* simple sum of characters */
-	LMV_HASH_TYPE_FNV_1A_64 = 2,	/* reasonable non-cryptographic hash */
-	LMV_HASH_TYPE_CRUSH	= 3,	/* double-hash to optimize migration */
-	LMV_HASH_TYPE_CRUSH2	= 4,	/* CRUSH with small fixes, LU-15692 */
+	LMV_HASH_TYPE_UNKNOWN	= 0,	
+	LMV_HASH_TYPE_ALL_CHARS = 1,	
+	LMV_HASH_TYPE_FNV_1A_64 = 2,	
+	LMV_HASH_TYPE_CRUSH	= 3,	
+	LMV_HASH_TYPE_CRUSH2	= 4,	
 	LMV_HASH_TYPE_MAX,
 	LMV_HASH_TYPE_DEFAULT	= LMV_HASH_TYPE_FNV_1A_64
 };
@@ -1185,10 +1185,10 @@ static inline bool lmv_is_known_hash_type(__u32 type)
 	       (type & LMV_HASH_TYPE_MASK) < LMV_HASH_TYPE_MAX;
 }
 
-/* This flag indicates that overstriping (>1 stripe per MDT) is desired */
+
 #define LMV_HASH_FLAG_OVERSTRIPED	0x01000000
-/* fixed layout, such directories won't split automatically */
-/* NB, update LMV_HASH_FLAG_KNOWN when adding new flag */
+
+
 #define LMV_HASH_FLAG_FIXED		0x02000000
 #define LMV_HASH_FLAG_MERGE		0x04000000
 #define LMV_HASH_FLAG_SPLIT		0x08000000
@@ -1217,21 +1217,21 @@ static inline bool lmv_is_sane_hash_type(__u32 type)
 	       type == (LMV_HASH_TYPE_UNKNOWN | LMV_HASH_FLAG_BAD_TYPE);
 }
 
-/* both SPLIT and MIGRATION are set for directory split */
+
 static inline bool lmv_hash_is_splitting(__u32 hash)
 {
 	return (hash & LMV_HASH_FLAG_LAYOUT_CHANGE) ==
 	       (LMV_HASH_FLAG_SPLIT | LMV_HASH_FLAG_MIGRATION);
 }
 
-/* both MERGE and MIGRATION are set for directory merge */
+
 static inline bool lmv_hash_is_merging(__u32 hash)
 {
 	return (hash & LMV_HASH_FLAG_LAYOUT_CHANGE) ==
 	       (LMV_HASH_FLAG_MERGE | LMV_HASH_FLAG_MIGRATION);
 }
 
-/* only MIGRATION is set for directory migration */
+
 static inline bool lmv_hash_is_migrating(__u32 hash)
 {
 	return (hash & LMV_HASH_FLAG_LAYOUT_CHANGE) == LMV_HASH_FLAG_MIGRATION;
@@ -1258,17 +1258,17 @@ struct lustre_foreign_type {
  **/
 enum lustre_foreign_types {
 	LU_FOREIGN_TYPE_NONE	= 0,
-	/* HSM copytool lhsm_posix */
+	
 	LU_FOREIGN_TYPE_POSIX	= 1,
-	/* Used for PCC-RW. PCCRW components are local to a single archive. */
+	
 	LU_FOREIGN_TYPE_PCCRW	= 2,
-	/* Used for PCC-RO. PCCRO components may be shared between archives. */
+	
 	LU_FOREIGN_TYPE_PCCRO	= 3,
-	/* Used for S3 */
+	
 	LU_FOREIGN_TYPE_S3	= 4,
-	/* Used for DAOS */
+	
 	LU_FOREIGN_TYPE_SYMLINK = 0xda05,
-	/* must be the max/last one */
+	
 	LU_FOREIGN_TYPE_UNKNOWN	= 0xffffffff,
 };
 
@@ -1278,22 +1278,22 @@ extern struct lustre_foreign_type lu_foreign_types[];
  * When specified or returned as the value for stripe count, all
  * available MDTs will be used.
  */
-#define LMV_OVERSTRIPE_COUNT_MIN    ((__s16)0xffff) /* -1 */
-#define LMV_OVERSTRIPE_COUNT_MAX    ((__s16)0xfffb) /* -5 */
+#define LMV_OVERSTRIPE_COUNT_MIN    ((__s16)0xffff) 
+#define LMV_OVERSTRIPE_COUNT_MAX    ((__s16)0xfffb) 
 
 /* Got this according to how get LOV_MAX_STRIPE_COUNT, see above,
  * (max buffer size - lmv+rpc header) / sizeof(struct lmv_user_mds_data)
  */
-#define LMV_MAX_STRIPE_COUNT 2000  /* ((12 * 4096 - 256) / 24) */
-#define LMV_MAX_STRIPES_PER_MDT 5 /* (RS_MAX_LOCKS - 4) / 2 */
+#define LMV_MAX_STRIPE_COUNT 2000  
+#define LMV_MAX_STRIPES_PER_MDT 5 
 #define lmv_user_md lmv_user_md_v1
 struct lmv_user_md_v1 {
-	__u32	lum_magic;	   /* must be the first field */
-	__u32	lum_stripe_count;  /* dirstripe count */
-	__u32	lum_stripe_offset; /* MDT idx for default dirstripe */
-	__u32	lum_hash_type;     /* Dir stripe policy */
-	__u32	lum_type;	   /* LMV type: default */
-	__u8	lum_max_inherit;   /* inherit depth of default LMV */
+	__u32	lum_magic;	   
+	__u32	lum_stripe_count;  
+	__u32	lum_stripe_offset; 
+	__u32	lum_hash_type;     
+	__u32	lum_type;	   
+	__u8	lum_max_inherit;   
 	__u8	lum_max_inherit_rr;	/* inherit depth of default LMV to
 					 * round-robin mkdir
 					 */
@@ -1321,7 +1321,7 @@ static inline __u32 lmv_foreign_to_md_stripes(__u32 size)
  */
 enum lmv_type {
 	LMV_TYPE_DEFAULT = 0x0000,
-	/* fetch raw default LMV set on directory inode */
+	
 	LMV_TYPE_RAW	 = 0x0001,
 };
 
@@ -1329,36 +1329,36 @@ enum lmv_type {
  * LMV_INHERIT_UNLIMITED or > LMV_INHERIT_MAX.
  */
 enum {
-	/* for historical reason, 0 means unlimited inheritance */
+	
 	LMV_INHERIT_UNLIMITED		= 0,
-	/* unlimited lum_max_inherit by default for plain stripe (0 or 1) */
+	
 	LMV_INHERIT_DEFAULT_PLAIN	= LMV_INHERIT_UNLIMITED,
-	/* not inherit any more */
+	
 	LMV_INHERIT_END			= 1,
-	/* for overstriped dirs, the default limit is 1 level of inheritance */
+	
 	LMV_INHERIT_DEFAULT_OVERSTRIPED	= 2,
-	/* for multiple stripes, the default limit is 2 levels of inheritance*/
+	
 	LMV_INHERIT_DEFAULT_STRIPED	= 3,
-	/* max inherit depth */
+	
 	LMV_INHERIT_MAX			= 250,
-	/* [251, 254] are reserved */
-	/* not set, or when inherit depth goes beyond end,  */
+	
+	
 	LMV_INHERIT_NONE		= 255,
 };
 
 enum {
-	/* not set, or when inherit_rr depth goes beyond end,  */
+	
 	LMV_INHERIT_RR_NONE		= 0,
-	/* disable lum_max_inherit_rr by default */
+	
 	LMV_INHERIT_RR_DEFAULT		= LMV_INHERIT_RR_NONE,
-	/* not inherit any more */
+	
 	LMV_INHERIT_RR_END		= 1,
-	/* default inherit_rr of ROOT */
+	
 	LMV_INHERIT_RR_ROOT		= 3,
-	/* max inherit depth */
+	
 	LMV_INHERIT_RR_MAX		= 250,
-	/* [251, 254] are reserved */
-	/* unlimited inheritance */
+	
+	
 	LMV_INHERIT_RR_UNLIMITED	= 255,
 };
 
@@ -1378,8 +1378,8 @@ struct ll_recreate_obj {
 };
 
 struct ll_fid {
-	__u64 id;         /* holds object id */
-	__u32 generation; /* holds object generation */
+	__u64 id;         
+	__u32 generation; 
 	__u32 f_type;     /* holds object type or stripe idx when passing it to
 			   * OST for saving into EA.
 			   */
@@ -1407,7 +1407,7 @@ static inline void obd_str2uuid(struct obd_uuid *uuid, const char *tmp)
 	uuid->uuid[sizeof(uuid->uuid) - 1] = '\0';
 }
 
-/* For printf's only, make sure uuid is terminated */
+
 static inline const char *obd_uuid2str(const struct obd_uuid *uuid)
 {
 	if (uuid == NULL)
@@ -1461,43 +1461,43 @@ static inline void obd_uuid2fsname(char *buf, char *uuid, int buflen)
 #define RFID(fid) (unsigned long long *)&((fid)->f_seq), &((fid)->f_oid), &((fid)->f_ver)
 #define PLOGID(logid) (unsigned long long)(logid)->lgl_oi.oi.oi_seq, (__u32)(logid)->lgl_oi.oi.oi_id, 0
 
-/********* Quotas **********/
 
-/* From linux/fs/quota/quota.c */
+
+
 static inline __u64 toqb(__kernel_size_t space)
 {
 	return (space + QIF_DQBLKSIZE - 1) >> QIF_DQBLKSIZE_BITS;
 }
 
-#define Q_QUOTACHECK	0x800100 /* deprecated as of 2.4 */
-#define Q_INITQUOTA	0x800101 /* deprecated as of 2.4  */
-#define Q_GETOINFO	0x800102 /* get obd quota info */
-#define Q_GETOQUOTA	0x800103 /* get obd quotas */
-#define Q_FINVALIDATE	0x800104 /* deprecated as of 2.4 */
+#define Q_QUOTACHECK	0x800100 
+#define Q_INITQUOTA	0x800101 
+#define Q_GETOINFO	0x800102 
+#define Q_GETOQUOTA	0x800103 
+#define Q_FINVALIDATE	0x800104 
 
-/* these must be explicitly translated into linux Q_* in ll_dir_ioctl */
-#define LUSTRE_Q_QUOTAON    0x800002     /* deprecated as of 2.4 */
-#define LUSTRE_Q_QUOTAOFF   0x800003     /* deprecated as of 2.4 */
-#define LUSTRE_Q_GETINFO    0x800005     /* get information about quota files */
-#define LUSTRE_Q_SETINFO    0x800006     /* set information about quota files */
-#define LUSTRE_Q_GETQUOTA   0x800007     /* get user quota structure */
-#define LUSTRE_Q_SETQUOTA   0x800008     /* set user quota structure */
-/* lustre-specific control commands */
-#define LUSTRE_Q_INVALIDATE  0x80000b     /* deprecated as of 2.4 */
-#define LUSTRE_Q_FINVALIDATE 0x80000c     /* deprecated as of 2.4 */
-#define LUSTRE_Q_GETDEFAULT  0x80000d     /* get default quota */
-#define LUSTRE_Q_SETDEFAULT  0x80000e     /* set default quota */
-#define LUSTRE_Q_GETQUOTAPOOL	0x80000f  /* get user pool quota */
-#define LUSTRE_Q_SETQUOTAPOOL	0x800010  /* set user pool quota */
-#define LUSTRE_Q_GETINFOPOOL	0x800011  /* get pool quota info */
-#define LUSTRE_Q_SETINFOPOOL	0x800012  /* set pool quota info */
-#define LUSTRE_Q_GETDEFAULT_POOL	0x800013  /* get default pool quota*/
-#define LUSTRE_Q_SETDEFAULT_POOL	0x800014  /* set default pool quota */
-#define LUSTRE_Q_DELETEQID	0x800015  /* delete quota ID */
-#define LUSTRE_Q_RESETQID	0x800016  /* reset quota ID */
-#define LUSTRE_Q_ITERQUOTA	0x800017  /* iterate quota information */
-#define LUSTRE_Q_ITEROQUOTA	0x800018  /* iterate obd quota information */
-#define LUSTRE_Q_GETALLQUOTA	0x800019  /* get all quota information */
+
+#define LUSTRE_Q_QUOTAON    0x800002     
+#define LUSTRE_Q_QUOTAOFF   0x800003     
+#define LUSTRE_Q_GETINFO    0x800005     
+#define LUSTRE_Q_SETINFO    0x800006     
+#define LUSTRE_Q_GETQUOTA   0x800007     
+#define LUSTRE_Q_SETQUOTA   0x800008     
+
+#define LUSTRE_Q_INVALIDATE  0x80000b     
+#define LUSTRE_Q_FINVALIDATE 0x80000c     
+#define LUSTRE_Q_GETDEFAULT  0x80000d     
+#define LUSTRE_Q_SETDEFAULT  0x80000e     
+#define LUSTRE_Q_GETQUOTAPOOL	0x80000f  
+#define LUSTRE_Q_SETQUOTAPOOL	0x800010  
+#define LUSTRE_Q_GETINFOPOOL	0x800011  
+#define LUSTRE_Q_SETINFOPOOL	0x800012  
+#define LUSTRE_Q_GETDEFAULT_POOL	0x800013  
+#define LUSTRE_Q_SETDEFAULT_POOL	0x800014  
+#define LUSTRE_Q_DELETEQID	0x800015  
+#define LUSTRE_Q_RESETQID	0x800016  
+#define LUSTRE_Q_ITERQUOTA	0x800017  
+#define LUSTRE_Q_ITEROQUOTA	0x800018  
+#define LUSTRE_Q_GETALLQUOTA	0x800019  
 /* In the current Lustre implementation, the grace time is either the time
  * or the timestamp to be used after some quota ID exceeds the soft limt,
  * 48 bits should be enough, its high 16 bits can be used as quota flags.
@@ -1515,7 +1515,7 @@ static inline __u64 toqb(__kernel_size_t space)
 #define NOTIFY_GRACE		"notify"
 #define NOTIFY_GRACE_TIME	LQUOTA_GRACE_MASK
 
-/* different quota flags */
+
 
 /* the default quota flag, the corresponding quota ID will use the default
  * quota setting, the hardlimit and softlimit of its quota record in the global
@@ -1535,7 +1535,7 @@ static inline __u64 toqb(__kernel_size_t space)
 	 cmd == LUSTRE_Q_SETDEFAULT_POOL ||	\
 	 cmd == LUSTRE_Q_GETDEFAULT_POOL)
 
-#define ALLQUOTA 255       /* set all quota */
+#define ALLQUOTA 255       
 static inline const char *qtype_name(int qtype)
 {
 	switch (qtype) {
@@ -1551,7 +1551,7 @@ static inline const char *qtype_name(int qtype)
 
 #define IDENTITY_DOWNCALL_MAGIC 0x6d6dd629
 
-/* permission */
+
 #define N_PERMS_MAX      64
 
 struct perm_downcall_data {
@@ -1572,7 +1572,7 @@ struct identity_downcall_data {
 };
 
 #if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
-/* old interface struct is deprecated in 2.14 */
+
 #define SEPOL_DOWNCALL_MAGIC_OLD 0x8b8bb842
 struct sepol_downcall_data_old {
 	__u32		sdd_magic;
@@ -1605,9 +1605,9 @@ struct sepol_downcall_data {
 #define QIF_ALL         (QIF_LIMITS | QIF_USAGE | QIF_TIMES)
 #endif
 
-#endif /* !__KERNEL__ */
+#endif 
 
-/* these are not defined in the kernel */
+
 #ifndef QIF_BSOFTLIMIT
 #define QIF_BSOFTLIMIT	1024
 #define QIF_BHARDLIMIT	QIF_BLIMITS
@@ -1628,7 +1628,7 @@ enum lustre_quota_version {
 	LUSTRE_QUOTA_V2 = 1
 };
 
-/* XXX: same as if_dqinfo struct in kernel */
+
 struct obd_dqinfo {
 	__u64 dqi_bgrace;
 	__u64 dqi_igrace;
@@ -1636,11 +1636,11 @@ struct obd_dqinfo {
 	__u32 dqi_valid;
 };
 
-/* XXX: same as if_dqblk struct in kernel, plus one padding */
+
 struct obd_dqblk {
-	__u64 dqb_bhardlimit;	/* kbytes unit */
-	__u64 dqb_bsoftlimit;	/* kbytes unit */
-	__u64 dqb_curspace;	/* bytes unit */
+	__u64 dqb_bhardlimit;	
+	__u64 dqb_bsoftlimit;	
+	__u64 dqb_curspace;	
 	__u64 dqb_ihardlimit;
 	__u64 dqb_isoftlimit;
 	__u64 dqb_curinodes;
@@ -1678,14 +1678,14 @@ struct if_quotactl {
 #define qc_allquota_qid_end	qc_dqblk.dqb_btime
 #define qc_allquota_mark	qc_dqblk.dqb_itime
 
-/* swap layout flags */
+
 #define SWAP_LAYOUTS_CHECK_DV1		(1 << 0)
 #define SWAP_LAYOUTS_CHECK_DV2		(1 << 1)
 #define SWAP_LAYOUTS_KEEP_MTIME		(1 << 2)
 #define SWAP_LAYOUTS_KEEP_ATIME		(1 << 3)
 #define SWAP_LAYOUTS_CLOSE		(1 << 4)
 
-/* Skip the UID/GID check before a swap layout for a release (server only) */
+
 #define SWAP_LAYOUTS_MDS_RELEASE	(1 << 31)
 
 struct lustre_swap_layouts {
@@ -1696,33 +1696,33 @@ struct lustre_swap_layouts {
 	__u64	sl_dv2;
 };
 
-/** Bit-mask of valid attributes */
+
 /* The LA_* flags are written to disk as part of the ChangeLog records
  * so they are part of the on-disk and network protocol, and cannot be changed.
  * Only the first 12 bits are currently saved.
  */
 enum la_valid {
-	LA_ATIME	= 1 << 0,	/* 0x00001 */
-	LA_MTIME	= 1 << 1,	/* 0x00002 */
-	LA_CTIME	= 1 << 2,	/* 0x00004 */
-	LA_SIZE		= 1 << 3,	/* 0x00008 */
-	LA_MODE		= 1 << 4,	/* 0x00010 */
-	LA_UID		= 1 << 5,	/* 0x00020 */
-	LA_GID		= 1 << 6,	/* 0x00040 */
-	LA_BLOCKS	= 1 << 7,	/* 0x00080 */
-	LA_TYPE		= 1 << 8,	/* 0x00100 */
-	LA_FLAGS	= 1 << 9,	/* 0x00200 */
-	LA_NLINK	= 1 << 10,	/* 0x00400 */
-	LA_RDEV		= 1 << 11,	/* 0x00800 */
-	LA_BLKSIZE	= 1 << 12,	/* 0x01000 */
-	LA_KILL_SUID	= 1 << 13,	/* 0x02000 */
-	LA_KILL_SGID	= 1 << 14,	/* 0x04000 */
-	LA_PROJID	= 1 << 15,	/* 0x08000 */
-	LA_LAYOUT_VERSION = 1 << 16,	/* 0x10000 */
-	LA_LSIZE	= 1 << 17,	/* 0x20000 */
-	LA_LBLOCKS	= 1 << 18,	/* 0x40000 */
-	LA_BTIME	= 1 << 19,	/* 0x80000 */
-	LA_DIRENT_CNT	= 1 << 20,     /* 0x100000 */
+	LA_ATIME	= 1 << 0,	
+	LA_MTIME	= 1 << 1,	
+	LA_CTIME	= 1 << 2,	
+	LA_SIZE		= 1 << 3,	
+	LA_MODE		= 1 << 4,	
+	LA_UID		= 1 << 5,	
+	LA_GID		= 1 << 6,	
+	LA_BLOCKS	= 1 << 7,	
+	LA_TYPE		= 1 << 8,	
+	LA_FLAGS	= 1 << 9,	
+	LA_NLINK	= 1 << 10,	
+	LA_RDEV		= 1 << 11,	
+	LA_BLKSIZE	= 1 << 12,	
+	LA_KILL_SUID	= 1 << 13,	
+	LA_KILL_SGID	= 1 << 14,	
+	LA_PROJID	= 1 << 15,	
+	LA_LAYOUT_VERSION = 1 << 16,	
+	LA_LSIZE	= 1 << 17,	
+	LA_LBLOCKS	= 1 << 18,	
+	LA_BTIME	= 1 << 19,	
+	LA_DIRENT_CNT	= 1 << 20,     
 	/**
 	 * Attributes must be transmitted to OST objects
 	 */
@@ -1738,8 +1738,8 @@ enum mds_open_flags {
 	 */
 	MDS_FMODE_EXEC		=	          00000004,
 	MDS_OPEN_CREATED	=	          00000010,
-/*	MDS_OPEN_CROSS		=	          00000020, obsolete in 2.12, internal use only */
-	/* open for execution via execve */
+
+	
 	MDS_FMODE_EXECUTE	=	          00000020,
 	MDS_OPEN_CREAT		=	          00000100,
 	MDS_OPEN_EXCL		=	          00000200,
@@ -1752,31 +1752,31 @@ enum mds_open_flags {
 	MDS_OPEN_LARGEFILE	=	          00100000,
 	MDS_OPEN_DIRECTORY	=	          00200000,
 	MDS_OPEN_NOFOLLOW	=	          00400000,
-/*	MDS_FMODE_EPOCH		=	          01000000, obsolete in 2.8.0 */
-/*	MDS_FMODE_TRUNC		=	          02000000, obsolete in 2.8.0 */
-/*	MDS_FMODE_SOM		=	          04000000, obsolete in 2.8.0 */
-	MDS_OPEN_BY_FID		=	         040000000, /* open_by_fid for known object */
-	MDS_OPEN_DELAY_CREATE	=	        0100000000, /* delay initial object create */
-	MDS_OPEN_OWNEROVERRIDE	=	        0200000000, /* NFSD rw-reopen ro file for owner */
-/*	MDS_OPEN_JOIN_FILE	=	        0400000000, obsolete in 1.4 */
-/*	FMODE_NONOTIFY		=	        0400000000, from OPEN_FMODE() */
-	MDS_OPEN_LOCK		=	       04000000000, /* This requires open lock */
-	MDS_OPEN_HAS_EA		=	      010000000000, /* specify obj create pattern */
-	MDS_OPEN_HAS_OBJS	=	      020000000000, /* Just set EA, the obj exist */
-	MDS_OPEN_NORESTORE	=	  0100000000000ULL, /* Dont restore file at open */
-	/* New stripe needed (restripe or hsm restore) */
+
+
+
+	MDS_OPEN_BY_FID		=	         040000000, 
+	MDS_OPEN_DELAY_CREATE	=	        0100000000, 
+	MDS_OPEN_OWNEROVERRIDE	=	        0200000000, 
+
+
+	MDS_OPEN_LOCK		=	       04000000000, 
+	MDS_OPEN_HAS_EA		=	      010000000000, 
+	MDS_OPEN_HAS_OBJS	=	      020000000000, 
+	MDS_OPEN_NORESTORE	=	  0100000000000ULL, 
+	
 	MDS_OPEN_NEWSTRIPE	=	  0200000000000ULL,
-	MDS_OPEN_VOLATILE	=	  0400000000000ULL, /* File is volatile = created linked */
-	/* Open file and grant lease delegaion, success if not being opened with conflict mode */
+	MDS_OPEN_VOLATILE	=	  0400000000000ULL, 
+	
 	MDS_OPEN_LEASE		=	 01000000000000ULL,
-	MDS_OPEN_RELEASE	=	 02000000000000ULL, /* Open file for HSM release */
-	MDS_OPEN_RESYNC		=	 04000000000000ULL, /* FLR: file resync */
-	/* PCC: auto RW-PCC cache attach for newly created file */
+	MDS_OPEN_RELEASE	=	 02000000000000ULL, 
+	MDS_OPEN_RESYNC		=	 04000000000000ULL, 
+	
 	MDS_OPEN_PCC		=	010000000000000ULL,
-	MDS_OP_WITH_FID		=	020000000000000ULL, /* operation carried out by FID */
-	/* open fetches default LMV, or mkdir with default LMV */
+	MDS_OP_WITH_FID		=	020000000000000ULL, 
+	
 	MDS_OPEN_DEFAULT_LMV	=	040000000000000ULL,
-	/* lustre internal open flags, should not be set from user space */
+	
 	MDS_OPEN_FL_INTERNAL	=	(MDS_OPEN_HAS_EA | MDS_OPEN_HAS_OBJS |
 					 MDS_OPEN_OWNEROVERRIDE | MDS_OPEN_PCC |
 					 MDS_OPEN_BY_FID | MDS_OPEN_LEASE |
@@ -1785,39 +1785,39 @@ enum mds_open_flags {
 					 MDS_OPEN_DEFAULT_LMV),
 };
 
-/* mkdir fetches LMV, reuse bit of MDS_OPEN_RESYNC */
+
 #define MDS_MKDIR_LMV	MDS_OPEN_RESYNC
 
-/********* Changelogs **********/
-/** Changelog record types */
+
+
 enum changelog_rec_type {
 	CL_NONE     = -1,
 	CL_MARK     = 0,
-	CL_CREATE   = 1,  /* namespace */
-	CL_MKDIR    = 2,  /* namespace */
-	CL_HARDLINK = 3,  /* namespace */
-	CL_SOFTLINK = 4,  /* namespace */
-	CL_MKNOD    = 5,  /* namespace */
-	CL_UNLINK   = 6,  /* namespace */
-	CL_RMDIR    = 7,  /* namespace */
-	CL_RENAME   = 8,  /* namespace */
-	CL_EXT      = 9,  /* namespace extended record (2nd half of rename) */
-	CL_OPEN     = 10, /* not currently used */
-	CL_CLOSE    = 11, /* may be written to log only with mtime change */
-	CL_LAYOUT   = 12, /* file layout/striping modified */
+	CL_CREATE   = 1,  
+	CL_MKDIR    = 2,  
+	CL_HARDLINK = 3,  
+	CL_SOFTLINK = 4,  
+	CL_MKNOD    = 5,  
+	CL_UNLINK   = 6,  
+	CL_RMDIR    = 7,  
+	CL_RENAME   = 8,  
+	CL_EXT      = 9,  
+	CL_OPEN     = 10, 
+	CL_CLOSE    = 11, 
+	CL_LAYOUT   = 12, 
 	CL_TRUNC    = 13,
 	CL_SETATTR  = 14,
 	CL_SETXATTR = 15,
-	CL_XATTR    = CL_SETXATTR, /* Deprecated name */
-	CL_HSM      = 16, /* HSM specific events, see flags */
-	CL_MTIME    = 17, /* Precedence: setattr > mtime > ctime > atime */
+	CL_XATTR    = CL_SETXATTR, 
+	CL_HSM      = 16, 
+	CL_MTIME    = 17, 
 	CL_CTIME    = 18,
 	CL_ATIME    = 19,
 	CL_MIGRATE  = 20,
-	CL_FLRW     = 21, /* FLR: file was firstly written */
-	CL_RESYNC   = 22, /* FLR: file was resync-ed */
+	CL_FLRW     = 21, 
+	CL_RESYNC   = 22, 
 	CL_GETXATTR = 23,
-	CL_DN_OPEN  = 24, /* denied open */
+	CL_DN_OPEN  = 24, 
 	CL_LAST,
 };
 
@@ -1835,7 +1835,7 @@ static inline const char *changelog_type2str(int type)
 	return NULL;
 }
 
-/* 12 bits of per-record data can be stored in the bottom of the flags */
+
 #define CLF_FLAGSHIFT   12
 enum changelog_rec_flags {
 	CLF_VERSION	= 0x1000,
@@ -1849,12 +1849,12 @@ enum changelog_rec_flags {
 };
 
 
-/* Anything under the flagmask may be per-type (if desired) */
-/* Flags for unlink */
-#define CLF_UNLINK_LAST       0x0001 /* Unlink of last hardlink */
-#define CLF_UNLINK_HSM_EXISTS 0x0002 /* File has something in HSM */
-				     /* HSM cleaning needed */
-/* Flags for rename */
+
+
+#define CLF_UNLINK_LAST       0x0001 
+#define CLF_UNLINK_HSM_EXISTS 0x0002 
+				     
+
 #define CLF_RENAME_LAST		0x0001 /* rename unlink last hardlink
 					* of target
 					*/
@@ -1862,19 +1862,19 @@ enum changelog_rec_flags {
 					* has an archive in backend
 					*/
 
-/* Flags for HSM */
+
 /* 12b used (from high weight to low weight):
  * 2b for flags
  * 3b for event
  * 7b for error code
  */
-#define CLF_HSM_ERR_L        0 /* HSM return code, 7 bits */
+#define CLF_HSM_ERR_L        0 
 #define CLF_HSM_ERR_H        6
-#define CLF_HSM_EVENT_L      7 /* HSM event, 3 bits, see enum hsm_event */
+#define CLF_HSM_EVENT_L      7 
 #define CLF_HSM_EVENT_H      9
-#define CLF_HSM_FLAG_L      10 /* HSM flags, 2 bits, 1 used, 1 spare */
+#define CLF_HSM_FLAG_L      10 
 #define CLF_HSM_FLAG_H      11
-#define CLF_HSM_SPARE_L     12 /* 4 spare bits */
+#define CLF_HSM_SPARE_L     12 
 #define CLF_HSM_SPARE_H     15
 #define CLF_HSM_LAST        15
 
@@ -1888,9 +1888,9 @@ enum changelog_rec_flags {
 #define CLF_HSM_MAXERROR     0x7E
 #define CLF_HSM_ERROVERFLOW  0x7F
 
-#define CLF_HSM_DIRTY        1 /* file is dirty after HSM request end */
+#define CLF_HSM_DIRTY        1 
 
-/* 3 bits field => 8 values allowed */
+
 enum hsm_event {
 	HE_ARCHIVE      = 0,
 	HE_RESTORE      = 1,
@@ -1935,7 +1935,7 @@ static inline int hsm_get_cl_error(enum changelog_rec_flags clf_flags)
 static inline int hsm_set_cl_error(enum changelog_rec_flags *clf_flags,
 				   int error)
 {
-	/* In case a negative error is given */
+	
 	error = abs(error);
 
 	if (error > CLF_HSM_MAXERROR)
@@ -1953,7 +1953,7 @@ enum changelog_rec_extra_flags {
 	CLFE_NID	= 0x0002,
 	CLFE_OPEN	= 0x0004,
 	CLFE_XATTR	= 0x0008,
-	/* NID is in network-byte-order and may be large. */
+	
 	CLFE_NID_BE	= 0x0010,
 
 	CLFE_SUPPORTED	= CLFE_UIDGID | CLFE_NID | CLFE_OPEN | CLFE_XATTR |
@@ -1965,13 +1965,13 @@ enum changelog_send_flag {
 	 * the end of records and wait for new records to be generated.
 	 */
 	CHANGELOG_FLAG_FOLLOW		= 0x01,
-	/* Deprecated since Lustre 2.10 */
+	
 	CHANGELOG_FLAG_BLOCK		= 0x02,
-	/* Pack jobid into the changelog records if available. */
+	
 	CHANGELOG_FLAG_JOBID		= 0x04,
-	/* Pack additional flag bits into the changelog record */
+	
 	CHANGELOG_FLAG_EXTRA_FLAGS	= 0x08,
-	/* Request NIDs to be packed in large big-endian format */
+	
 	CHANGELOG_FLAG_NID_BE		= 0x10,
 };
 
@@ -1979,7 +1979,7 @@ enum changelog_send_flag {
 				  changelog_rec_offset(CLF_SUPPORTED, \
 						       CLFE_SUPPORTED), 8)
 
-/* 31 usable bytes string + null terminator. */
+
 #define LUSTRE_JOBID_SIZE	32
 
 /* This is the minimal changelog record. It can contain extensions
@@ -1991,41 +1991,41 @@ enum changelog_send_flag {
  */
 struct changelog_rec {
 	__u16			cr_namelen;
-	__u16			cr_flags; /**< \a changelog_rec_flags */
-	__u32			cr_type;  /**< \a changelog_rec_type */
-	__u64			cr_index; /**< changelog record number */
-	__u64			cr_prev;  /**< last index for this target fid */
+	__u16			cr_flags; 
+	__u32			cr_type;  
+	__u64			cr_index; 
+	__u64			cr_prev;  
 	__u64			cr_time;
 	union {
-		struct lu_fid	cr_tfid;        /**< target fid */
-		__u32		cr_markerflags; /**< CL_MARK flags */
+		struct lu_fid	cr_tfid;        
+		__u32		cr_markerflags; 
 	};
-	struct lu_fid		cr_pfid;        /**< parent fid */
+	struct lu_fid		cr_pfid;        
 } __attribute__ ((packed));
 
-/* Changelog extension for RENAME. */
+
 struct changelog_ext_rename {
-	struct lu_fid		cr_sfid;     /**< source fid, or zero */
-	struct lu_fid		cr_spfid;    /**< source parent fid, or zero */
+	struct lu_fid		cr_sfid;     
+	struct lu_fid		cr_spfid;    
 };
 
-/* Changelog extension to include JOBID. */
+
 struct changelog_ext_jobid {
-	char	cr_jobid[LUSTRE_JOBID_SIZE];	/**< zero-terminated string. */
+	char	cr_jobid[LUSTRE_JOBID_SIZE];	
 };
 
-/* Changelog extension to include additional flags. */
+
 struct changelog_ext_extra_flags {
-	__u64 cr_extra_flags; /* Additional CLFE_* flags */
+	__u64 cr_extra_flags; 
 };
 
-/* Changelog extra extension to include UID/GID. */
+
 struct changelog_ext_uidgid {
 	__u64	cr_uid;
 	__u64	cr_gid;
 };
 
-/* Changelog extra extension to include NID. */
+
 struct changelog_ext_nid {
 	/* If CLFE_NID_BE is not set cr_nid is of the lnet_nid_t type.
 	 * With CLFE_NID_BE set then all this data is struct lnet_nid
@@ -2035,14 +2035,14 @@ struct changelog_ext_nid {
 	__u32 padding;
 };
 
-/* Changelog extra extension to include low 32 bits of MDS_OPEN_* flags. */
+
 struct changelog_ext_openmode {
-	__u32 cr_openflags; /* enum mds_open_flags */
+	__u32 cr_openflags; 
 };
 
-/* Changelog extra extension to include xattr */
+
 struct changelog_ext_xattr {
-	char cr_xattr[XATTR_NAME_MAX + 1]; /**< zero-terminated string. */
+	char cr_xattr[XATTR_NAME_MAX + 1]; 
 };
 
 static inline struct changelog_ext_extra_flags *changelog_rec_extra_flags(
@@ -2105,7 +2105,7 @@ struct changelog_ext_rename *changelog_rec_rename(const struct changelog_rec *re
 								 CLFE_INVALID));
 }
 
-/* The jobid follows the rename extension, if present */
+
 static inline
 struct changelog_ext_jobid *changelog_rec_jobid(const struct changelog_rec *rec)
 {
@@ -2117,7 +2117,7 @@ struct changelog_ext_jobid *changelog_rec_jobid(const struct changelog_rec *rec)
 								 CLFE_INVALID));
 }
 
-/* The additional flags follow the rename and jobid extensions, if present */
+
 static inline
 struct changelog_ext_extra_flags *changelog_rec_extra_flags(
 	const struct changelog_rec *rec)
@@ -2130,7 +2130,7 @@ struct changelog_ext_extra_flags *changelog_rec_extra_flags(
 								 CLFE_INVALID));
 }
 
-/* The uid/gid is the first extra extension */
+
 static inline
 struct changelog_ext_uidgid *changelog_rec_uidgid(
 	const struct changelog_rec *rec)
@@ -2144,7 +2144,7 @@ struct changelog_ext_uidgid *changelog_rec_uidgid(
 								 CLFE_INVALID));
 }
 
-/* The nid is the second extra extension */
+
 static inline
 struct changelog_ext_nid *changelog_rec_nid(const struct changelog_rec *rec)
 {
@@ -2162,7 +2162,7 @@ struct changelog_ext_nid *changelog_rec_nid(const struct changelog_rec *rec)
 					    changelog_rec_offset(crf, cref));
 }
 
-/* The OPEN mode is the third extra extension */
+
 static inline
 struct changelog_ext_openmode *changelog_rec_openmode(
 	const struct changelog_rec *rec)
@@ -2182,7 +2182,7 @@ struct changelog_ext_openmode *changelog_rec_openmode(
 					       changelog_rec_offset(crf, cref));
 }
 
-/* The xattr name is the fourth extra extension */
+
 static inline
 struct changelog_ext_xattr *changelog_rec_xattr(
 	const struct changelog_rec *rec)
@@ -2201,7 +2201,7 @@ struct changelog_ext_xattr *changelog_rec_xattr(
 					      changelog_rec_offset(crf, cref));
 }
 
-/* The name follows the rename, jobid  and extra flags extns, if present */
+
 static inline char *changelog_rec_name(const struct changelog_rec *rec)
 {
 	enum changelog_rec_extra_flags cref = CLFE_INVALID;
@@ -2218,7 +2218,7 @@ static inline char *changelog_rec_name(const struct changelog_rec *rec)
 static inline char *changelog_rec_sname(const struct changelog_rec *rec)
 {
 	char *str = changelog_rec_name(rec);
-	char *end = str + NAME_MAX; /* NB: NAME_MAX use in CR_MAXSIZE */
+	char *end = str + NAME_MAX; 
 
 	while (*str != '\0' && str <= end)
 		str++;
@@ -2233,22 +2233,22 @@ inline __kernel_size_t changelog_rec_snamelen(const struct changelog_rec *rec)
 }
 
 enum changelog_message_type {
-	CL_RECORD = 10, /* message is a changelog_rec */
-	CL_EOF    = 11, /* at end of current changelog */
+	CL_RECORD = 10, 
+	CL_EOF    = 11, 
 };
 
-/********* Misc **********/
+
 
 struct ioc_data_version {
 	__u64	idv_version;
-	__u32	idv_layout_version; /* FLR: layout version for OST objects */
-	__u32	idv_flags;	/* enum ioc_data_version_flags */
+	__u32	idv_layout_version; 
+	__u32	idv_flags;	
 };
 
 enum ioc_data_version_flags {
-	LL_DV_RD_FLUSH	= (1 << 0), /* Flush dirty pages from clients */
-	LL_DV_WR_FLUSH	= (1 << 1), /* Flush all caching pages from clients */
-	LL_DV_SZ_UPDATE	= (1 << 2), /* Update the file size on the client */
+	LL_DV_RD_FLUSH	= (1 << 0), 
+	LL_DV_WR_FLUSH	= (1 << 1), 
+	LL_DV_SZ_UPDATE	= (1 << 2), 
 };
 
 #ifndef offsetof
@@ -2259,16 +2259,16 @@ enum ioc_data_version_flags {
 #define dot_fscrypt_name ".fscrypt"
 
 
-/********* HSM **********/
+
 
 #define UUID_MAX	40
 
 struct lov_hsm_base {
-	/* HSM archive ID */
+	
 	__u64	lhb_archive_id;
-	/* Data version associated with the last archiving, if any. */
+	
 	__u64	lhb_archive_ver;
-	/* Identifier within HSM backend */
+	
 	char	lhb_uuid[UUID_MAX];
 };
 
@@ -2276,16 +2276,16 @@ struct lov_hsm_base {
  * HSM layout is a kind of FOREIGN layout.
  */
 struct lov_hsm_md {
-	/* LOV_MAGIC_FOREIGN */
+	
 	__u32			lhm_magic;
 	/* To make HSM layout compatible with lov_foreign_md, this @length
 	 * includes everything after @lhm_flags: sizeof(lhm_archive_id) +
 	 * sizeof(lhm_archive_ver) + lenght of lhm_archive_uuid.
 	 */
 	__u32			lhm_length;
-	/* HSM type, see LU_FOREIGN_TYPE_(POSIX, S3, PCCRW, PCCRO}. */
+	
 	__u32			lhm_type;
-	/* HSM flags, see enum hsm_states */
+	
 	__u32			lhm_flags;
 	/*
 	 * Data structure members above are compatible with @lov_foreign_md.
@@ -2326,10 +2326,10 @@ enum hsm_states {
 	HS_PCCRO	= 0x00000100,
 };
 
-/* HSM user-setable flags. */
+
 #define HSM_USER_MASK   (HS_NORELEASE | HS_NOARCHIVE | HS_DIRTY)
 
-/* Other HSM flags. */
+
 #define HSM_STATUS_MASK (HS_EXISTS | HS_LOST | HS_RELEASED | HS_ARCHIVED | \
 			 HS_PCCRW | HS_PCCRO)
 
@@ -2371,10 +2371,10 @@ struct hsm_extent {
  * current HSM flags and in-progress action.
  */
 struct hsm_user_state {
-	/** Current HSM states, from enum hsm_states. */
+	
 	__u32			hus_states;
 	__u32			hus_archive_id;
-	/**  The current undergoing action, if there is one */
+	
 	__u32			hus_in_progress_state;
 	__u32			hus_in_progress_action;
 	struct hsm_extent	hus_in_progress_location;
@@ -2392,23 +2392,23 @@ struct hsm_state_set_ioc {
  * it is retuned to user space and send over the wire
  */
 struct hsm_current_action {
-	/**  The current undergoing action, if there is one */
-	/* state is one of hsm_progress_states */
+	
+	
 	__u32			hca_state;
-	/* action is one of hsm_user_action */
+	
 	__u32			hca_action;
 	struct hsm_extent	hca_location;
 };
 
-/***** HSM user requests ******/
-/* User-generated (lfs/ioctl) request types */
+
+
 enum hsm_user_action {
-	HUA_NONE    =  1, /* no action (noop) */
-	HUA_ARCHIVE = 10, /* copy to hsm */
-	HUA_RESTORE = 11, /* prestage */
-	HUA_RELEASE = 12, /* drop ost objects */
-	HUA_REMOVE  = 13, /* remove from archive */
-	HUA_CANCEL  = 14  /* cancel a request */
+	HUA_NONE    =  1, 
+	HUA_ARCHIVE = 10, 
+	HUA_RESTORE = 11, 
+	HUA_RELEASE = 12, 
+	HUA_REMOVE  = 13, 
+	HUA_CANCEL  = 14  
 };
 
 static inline const char *hsm_user_action2name(enum hsm_user_action  a)
@@ -2428,7 +2428,7 @@ static inline const char *hsm_user_action2name(enum hsm_user_action  a)
  * List of hr_flags (bit field)
  */
 #define HSM_FORCE_ACTION 0x0001
-/* used by CT, cannot be set by user */
+
 #define HSM_GHOST_COPY   0x0002
 
 /*
@@ -2441,10 +2441,10 @@ static inline const char *hsm_user_action2name(enum hsm_user_action  a)
  * Contains all the fixed part of struct hsm_user_request.
  */
 struct hsm_request {
-	__u32 hr_action;	/* enum hsm_user_action */
-	__u32 hr_archive_id;	/* archive id, used only with HUA_ARCHIVE */
-	__u64 hr_flags;		/* request flags */
-	__u32 hr_itemcount;	/* item count in hur_user_item vector */
+	__u32 hr_action;	
+	__u32 hr_archive_id;	
+	__u64 hr_flags;		
+	__u32 hr_itemcount;	
 	__u32 hr_data_len;
 };
 
@@ -2461,7 +2461,7 @@ struct hsm_user_request {
 	 */
 } __attribute__((packed));
 
-/** Return pointer to data field in a hsm user request */
+
 static inline void *hur_data(struct hsm_user_request *hur)
 {
 	return &(hur->hur_user_item[hur->hur_request.hr_itemcount]);
@@ -2478,7 +2478,7 @@ static inline __kernel_size_t hur_len(struct hsm_user_request *hur)
 {
 	__u64	size;
 
-	/* can't overflow a __u64 since hr_itemcount is only __u32 */
+	
 	size = offsetof(struct hsm_user_request, hur_user_item[0]) +
 		(__u64)hur->hur_request.hr_itemcount *
 		sizeof(hur->hur_user_item[0]) + hur->hur_request.hr_data_len;
@@ -2489,16 +2489,16 @@ static inline __kernel_size_t hur_len(struct hsm_user_request *hur)
 	return size;
 }
 
-/****** HSM RPCs to copytool *****/
-/* Message types the copytool may receive */
+
+
 enum hsm_message_type {
-	HMT_ACTION_LIST = 100, /* message is a hsm_action_list */
+	HMT_ACTION_LIST = 100, 
 };
 
-/* Actions the copytool may be instructed to take for a given action_item */
+
 enum hsm_copytool_action {
-	HSMA_NONE    = 10, /* no action */
-	HSMA_ARCHIVE = 20, /* arbitrary offset */
+	HSMA_NONE    = 10, 
+	HSMA_ARCHIVE = 20, 
 	HSMA_RESTORE = 21,
 	HSMA_REMOVE  = 22,
 	HSMA_CANCEL  = 23
@@ -2516,16 +2516,16 @@ static inline const char *hsm_copytool_action2name(enum hsm_copytool_action  a)
 	}
 }
 
-/* Copytool item action description */
+
 struct hsm_action_item {
-	__u32      hai_len;     /* valid size of this struct */
-	__u32      hai_action;  /* hsm_copytool_action, but use known size */
-	struct lu_fid hai_fid;     /* Lustre FID to operate on */
-	struct lu_fid hai_dfid;    /* fid used for data access */
-	struct hsm_extent hai_extent;  /* byte range to operate on */
-	__u64      hai_cookie;  /* action cookie from coordinator */
-	__u64      hai_gid;     /* grouplock id */
-	char       hai_data[];  /* variable length */
+	__u32      hai_len;     
+	__u32      hai_action;  
+	struct lu_fid hai_fid;     
+	struct lu_fid hai_dfid;    
+	struct hsm_extent hai_extent;  
+	__u64      hai_cookie;  
+	__u64      hai_gid;     
+	char       hai_data[];  
 } __attribute__((packed));
 
 /**
@@ -2558,23 +2558,23 @@ static inline char *hai_dump_data_field(const struct hsm_action_item *hai,
 	return buffer;
 }
 
-/* Copytool action list */
+
 #define HAL_VERSION 1
-#define HAL_MAXSIZE LNET_MTU /* bytes, used in userspace only */
+#define HAL_MAXSIZE LNET_MTU 
 struct hsm_action_list {
 	__u32 hal_version;
-	__u32 hal_count;       /* number of hai's to follow */
-	__u64 hal_compound_id; /* returned by coordinator, ignored */
+	__u32 hal_count;       
+	__u64 hal_compound_id; 
 	__u64 hal_flags;
-	__u32 hal_archive_id; /* which archive backend */
+	__u32 hal_archive_id; 
 	__u32 padding1;
-	char  hal_fsname[];   /* null-terminated */
+	char  hal_fsname[];   
 	/* struct hsm_action_item[hal_count] follows, aligned on 8-byte
 	 * boundaries. See i_zero
 	 */
 } __attribute__((packed));
 
-/* Return pointer to first hai in action list */
+
 static inline struct hsm_action_item *hai_first(struct hsm_action_list *hal)
 {
 	__kernel_size_t offset = __ALIGN_KERNEL(strlen(hal->hal_fsname) + 1, 8);
@@ -2582,7 +2582,7 @@ static inline struct hsm_action_item *hai_first(struct hsm_action_list *hal)
 	return (struct hsm_action_item *)(hal->hal_fsname + offset);
 }
 
-/* Return pointer to next hai */
+
 static inline struct hsm_action_item *hai_next(struct hsm_action_item *hai)
 {
 	__kernel_size_t offset = __ALIGN_KERNEL(hai->hai_len, 8);
@@ -2590,7 +2590,7 @@ static inline struct hsm_action_item *hai_next(struct hsm_action_item *hai)
 	return (struct hsm_action_item *)((char *)hai + offset);
 }
 
-/* Return size of an hsm_action_list */
+
 static inline __kernel_size_t hal_size(struct hsm_action_list *hal)
 {
 	__u32 i;
@@ -2620,7 +2620,7 @@ struct hsm_user_import {
 	__u32		hui_archive_id;
 };
 
-/* Copytool progress reporting */
+
 #define HP_FLAG_COMPLETED 0x01
 #define HP_FLAG_RETRY     0x02
 
@@ -2629,14 +2629,14 @@ struct hsm_progress {
 	__u64			hp_cookie;
 	struct hsm_extent	hp_extent;
 	__u16			hp_flags;
-	__u16			hp_errval; /* positive val */
+	__u16			hp_errval; 
 	__u32			padding;
 };
 
 struct hsm_copy {
 	__u64			hc_data_version;
 	__u16			hc_flags;
-	__u16			hc_errval; /* positive val */
+	__u16			hc_errval; 
 	__u32			padding;
 	struct hsm_action_item	hc_hai;
 };
@@ -2647,7 +2647,7 @@ enum lu_ladvise_type {
 	LU_LADVISE_DONTNEED	= 2,
 	LU_LADVISE_LOCKNOEXPAND = 3,
 	LU_LADVISE_LOCKAHEAD	= 4,
-	/* Ahead operations for open|create|stat|read|write. */
+	
 	LU_LADVISE_AHEAD	= 5,
 	LU_LADVISE_MAX
 };
@@ -2665,18 +2665,18 @@ enum lu_ladvise_type {
  * may need info which is only used locally.
  */
 struct llapi_lu_ladvise {
-	__u16 lla_advice;	/* advice type */
-	__u16 lla_value1;	/* values for different advice types */
+	__u16 lla_advice;	
+	__u16 lla_value1;	
 	__u32 lla_value2;
-	__u64 lla_start;	/* first byte of extent for advice */
-	__u64 lla_end;		/* last byte of extent for advice */
+	__u64 lla_start;	
+	__u64 lla_end;		
 	__u32 lla_value3;
 	__u32 lla_value4;
 };
 
 struct llapi_lu_ladvise2 {
-	__u16	lla_advice;	/* advice type */
-	__u16	lla_value1;	/* values for different advice types */
+	__u16	lla_advice;	
+	__u16	lla_value1;	
 	__u32	lla_value2;
 	__u64	lla_start;
 	__u64	lla_end;
@@ -2691,7 +2691,7 @@ struct llapi_lu_ladvise2 {
 	};
 };
 
-/* I/O call sequences in a batch access. */
+
 enum lu_access_flags {
 	ACCESS_FL_NONE	= 0x0,
 	ACCESS_FL_STAT	= 0x01,
@@ -2716,7 +2716,7 @@ enum lu_ahead_mode {
 	 * irregular file name format.
 	 */
 	LU_AH_NAME_ARRAY	= 2,
-	/* Prefetching in readdir() order under a directory. */
+	
 	LU_AH_NAME_READDIR	= 3,
 	LU_AH_MODE_MAX,
 };
@@ -2732,11 +2732,11 @@ enum ladvise_flag {
 };
 
 #define LADVISE_MAGIC 0x1ADF1CE0
-/* Masks of valid flags for each advice */
+
 #define LF_LOCKNOEXPAND_MASK LF_UNSET
-/* Flags valid for all advices not explicitly specified */
+
 #define LF_DEFAULT_MASK LF_ASYNC
-/* All flags */
+
 #define LF_MASK (LF_ASYNC | LF_UNSET)
 
 #define lla_lockahead_mode   lla_value1
@@ -2748,18 +2748,18 @@ enum ladvise_flag {
  * only used locally.
  */
 struct llapi_ladvise_hdr {
-	__u32			lah_magic;	/* LADVISE_MAGIC */
-	__u32			lah_count;	/* number of advices */
-	__u64			lah_flags;	/* from enum ladvise_flag */
-	__u32			lah_value1;	/* unused */
-	__u32			lah_value2;	/* unused */
-	__u64			lah_value3;	/* unused */
-	struct llapi_lu_ladvise	lah_advise[];	/* advices in this header */
+	__u32			lah_magic;	
+	__u32			lah_count;	
+	__u64			lah_flags;	
+	__u32			lah_value1;	
+	__u32			lah_value2;	
+	__u64			lah_value3;	
+	struct llapi_lu_ladvise	lah_advise[];	
 };
 
 #define LAH_COUNT_MAX	(1024)
 
-/* Shared key */
+
 enum sk_crypt_alg {
 	SK_CRYPT_EMPTY		= 0,
 	SK_CRYPT_AES256_CTR	= 1,
@@ -2875,7 +2875,7 @@ enum hsmtool_type {
 	 * Places only one FID per directory. See ct_path_archive() below.
 	 */
 	HSMTOOL_POSIX_V1	= 1,
-	/* v2 using (OID & 0xffff)^(SEQ & 0xffff)/FID. */
+	
 	HSMTOOL_POSIX_V2	= 2,
 	HSMTOOL_DEFAULT		= HSMTOOL_POSIX_V2,
 };
@@ -2905,27 +2905,27 @@ static inline enum hsmtool_type hsmtool_string2type(const char *str)
 }
 
 struct lu_pcc_attach {
-	__u32 pcca_type; /* PCC type */
-	__u32 pcca_id; /* Attach ID */
+	__u32 pcca_type; 
+	__u32 pcca_id; 
 };
 
 enum lu_pcc_detach_flags {
-	/* Detach only, keep the PCC copy */
+	
 	PCC_DETACH_FL_NONE		= 0x0,
-	/* Remove the cached file after detach */
+	
 	PCC_DETACH_FL_UNCACHE		= 0x01,
-	/* Known the file was once used as PCC-RW */
+	
 	PCC_DETACH_FL_KNOWN_READWRITE	= 0x02,
-	/* Known the file was once used as PCC-RO */
+	
 	PCC_DETACH_FL_KNOWN_READONLY	= 0x04,
-	/* Indicate PCC cached copy is removed */
+	
 	PCC_DETACH_FL_CACHE_REMOVED	= 0x08,
-	/* Indicate the file is being attached */
+	
 	PCC_DETACH_FL_ATTACHING		= 0x10,
 };
 
 struct lu_pcc_detach_fid {
-	/* fid of the file to detach */
+	
 	struct lu_fid	pccd_fid;
 	__u32		pccd_flags;
 };
@@ -2936,25 +2936,25 @@ struct lu_pcc_detach {
 
 enum lu_pcc_state_flags {
 	PCC_STATE_FL_NONE		= 0x0,
-	/* The inode attr is cached locally */
+	
 	PCC_STATE_FL_ATTR_VALID		= 0x01,
-	/* The file is being attached into PCC */
+	
 	PCC_STATE_FL_ATTACHING		= 0x02,
-	/* The PCC copy is unlinked */
+	
 	PCC_STATE_FL_UNLINKED		= 0x04,
 };
 
 struct lu_pcc_state {
-	__u32	pccs_type;		/* OUT: enum lu_pcc_type */
-	__u32	pccs_open_count;	/* OUT: user count */
-	__u32	pccs_flags;		/* OUT: enum lu_pcc_state_flags */
-	__u32	pccs_namelen;		/* IN: file name len */
-	char	pccs_path[PATH_MAX];	/* IN|OUT: file name or path buffer */
+	__u32	pccs_type;		
+	__u32	pccs_open_count;	
+	__u32	pccs_flags;		
+	__u32	pccs_namelen;		
+	char	pccs_path[PATH_MAX];	
 };
 
 enum lu_pcc_cleanup_flags {
 	PCC_CLEANUP_FL_NONE		= 0x0,
-	/* Remove the PCC backend but retain the data on the cache */
+	
 	PCC_CLEANUP_FL_KEEP_DATA	= 0x1,
 };
 
@@ -2966,7 +2966,7 @@ enum lu_project_type {
 };
 
 struct lu_project {
-	__u32	project_type; /* enum lu_project_type */
+	__u32	project_type; 
 	__u32	project_id;
 	__u32	project_xflags;
 	__u32	project_reserved;
@@ -2975,7 +2975,7 @@ struct lu_project {
 
 struct fid_array {
 	__u32 fa_nr;
-	/* make header's size equal lu_fid */
+	
 	__u32 fa_padding0;
 	__u64 fa_padding1;
 	struct lu_fid fa_fids[];
@@ -3006,9 +3006,9 @@ struct ll_foreign_symlink_upcall_item {
 		struct {
 			size_t size;
 			union {
-				/* internal storage of constant string */
+				
 				char *string;
-				/* upcall stores constant string in a raw */
+				
 				DECLARE_FLEX_ARRAY(char, bytestring);
 			};
 		};
@@ -3032,6 +3032,6 @@ struct ll_foreign_symlink_upcall_item {
 }
 #endif
 
-/** @} lustreuser */
 
-#endif /* _LUSTRE_USER_H */
+
+#endif 

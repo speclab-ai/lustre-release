@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2020, Whamcloud.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 #include <stdio.h>
 #include <unistd.h>
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 		free(groups);
 	}
 
-	/* lookup information about switch_user provided */
+	
 	switch_pwd = getpwnam(user_to_euid);
 	if (!switch_pwd) {
 		if (errno) {

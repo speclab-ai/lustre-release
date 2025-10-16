@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_device and cl_device_type for LOVSUB layer.
  *
@@ -119,5 +119,5 @@ struct lu_device_type lovsub_device_type = {
 };
 
 
-/** @} lov */
+
 

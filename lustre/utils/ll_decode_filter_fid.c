@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/ll_decode_filter_fid.c
  *
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
 	int i;
 
 	for (i = 1; i < argc; i++) {
-		char buf[1024]; /* allow xattr that may be larger */
+		char buf[1024]; 
 		struct filter_fid *ff = (void *)buf;
 		static int printed;
 		int size;
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 				       argv[i],
 				       PFID(&loa->loa_lma.lma_self_fid),
 				       (unsigned long long)loa->loa_parent_fid.f_seq,
-				       loa->loa_parent_fid.f_oid, 0, /* ver */
+				       loa->loa_parent_fid.f_oid, 0, 
 				       loa->loa_parent_fid.f_stripe_idx &
 							PFID_STRIPE_COUNT_MASK,
 				       loa->loa_stripe_size,
@@ -150,14 +150,14 @@ int main(int argc, char *argv[])
 
 		printf("parent="DFID" stripe=%u",
 		       (unsigned long long)__le64_to_cpu(ff->ff_parent.f_seq),
-		       __le32_to_cpu(ff->ff_parent.f_oid), 0, /* ver */
-		       /* this is stripe_nr actually */
+		       __le32_to_cpu(ff->ff_parent.f_oid), 0, 
+		       
 		       __le32_to_cpu(ff->ff_parent.f_stripe_idx));
 
 		if (size >= sizeof(struct filter_fid_210)) {
 			struct ost_layout *ol = &ff->ff_layout;
 
-			/* new filter_fid, support PFL */
+			
 			printf(" stripe_size=%u stripe_count=%u",
 			       __le32_to_cpu(ol->ol_stripe_size),
 			       __le32_to_cpu(ol->ol_stripe_count));

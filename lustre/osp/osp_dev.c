@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Alex Zhuravlev <alexey.zhuravlev@intel.com>
  * Author: Mikhail Pershin <mike.pershin@intel.com>
@@ -61,7 +61,7 @@
 
 #include "osp_internal.h"
 
-/* Slab for OSP object allocation */
+
 struct kmem_cache *osp_object_kmem;
 
 static struct lu_kmem_descr osp_caches[] = {
@@ -157,13 +157,13 @@ static struct dt_object
 	attr->la_valid = LA_MODE;
 	attr->la_mode = S_IFREG | 0644;
 	dof.dof_type = DFT_REGULAR;
-	/* Find or create the local object by osi_fid. */
+	
 	dto = dt_find_or_create(env, osp->opd_storage, &osi->osi_fid,
 				&dof, attr);
 	if (IS_ERR(dto))
 		RETURN(dto);
 
-	/* Get attributes of the local object. */
+	
 	rc = dt_attr_get(env, dto, attr);
 	if (rc) {
 		CERROR("%s: can't be initialized: rc = %d\n",
@@ -246,7 +246,7 @@ static int osp_init_last_objid(const struct lu_env *env, struct osp_device *osp)
 	osp_objid_buf_prep(&osi->osi_lb, &osi->osi_off, &osp->opd_last_id,
 			   osp->opd_index);
 
-	/* object will be released in device cleanup path */
+	
 	if (osi->osi_attr.la_size >= (osi->osi_off + osi->osi_lb.lb_len)) {
 		rc = dt_record_read(env, dto, &osi->osi_lb, &osi->osi_off);
 		if (rc != 0 && rc != -EFAULT)
@@ -257,7 +257,7 @@ static int osp_init_last_objid(const struct lu_env *env, struct osp_device *osp)
 		fid->f_oid = osp->opd_last_id;
 	}
 
-	if (rc == -EFAULT) { /* fresh LAST_ID */
+	if (rc == -EFAULT) { 
 		osp->opd_last_id = 0;
 		fid->f_oid = 0;
 		rc = osp_write_local_file(env, osp, dto, &osi->osi_lb,
@@ -268,7 +268,7 @@ static int osp_init_last_objid(const struct lu_env *env, struct osp_device *osp)
 	osp->opd_last_used_oid_file = dto;
 	RETURN(0);
 out:
-	/* object will be released in device cleanup path */
+	
 	CERROR("%s: can't initialize lov_objid: rc = %d\n",
 	       osp->opd_obd->obd_name, rc);
 	dt_object_put(env, dto);
@@ -306,7 +306,7 @@ static int osp_init_last_seq(const struct lu_env *env, struct osp_device *osp)
 	osp_objseq_buf_prep(&osi->osi_lb, &osi->osi_off, &fid->f_seq,
 			   osp->opd_index);
 
-	/* object will be released in device cleanup path */
+	
 	if (osi->osi_attr.la_size >= (osi->osi_off + osi->osi_lb.lb_len)) {
 		rc = dt_record_read(env, dto, &osi->osi_lb, &osi->osi_off);
 		if (rc != 0 && rc != -EFAULT)
@@ -316,7 +316,7 @@ static int osp_init_last_seq(const struct lu_env *env, struct osp_device *osp)
 						  osp->opd_index);
 	}
 
-	if (rc == -EFAULT) { /* fresh OSP */
+	if (rc == -EFAULT) { 
 		fid->f_seq = 0;
 		rc = osp_write_local_file(env, osp, dto, &osi->osi_lb,
 					  osi->osi_off);
@@ -326,7 +326,7 @@ static int osp_init_last_seq(const struct lu_env *env, struct osp_device *osp)
 	osp->opd_last_used_seq_file = dto;
 	RETURN(0);
 out:
-	/* object will be released in device cleanup path */
+	
 	CERROR("%s: can't initialize lov_seq: rc = %d\n",
 	       osp->opd_obd->obd_name, rc);
 	dt_object_put(env, dto);
@@ -419,7 +419,7 @@ out:
  */
 static void osp_last_used_fini(const struct lu_env *env, struct osp_device *osp)
 {
-	/* release last_used file */
+	
 	if (osp->opd_last_used_oid_file != NULL) {
 		dt_object_put(env, osp->opd_last_used_oid_file);
 		osp->opd_last_used_oid_file = NULL;
@@ -470,7 +470,7 @@ static int osp_disconnect(struct osp_device *d)
 	 * never added.) */
 	(void)ptlrpc_pinger_del_import(imp);
 
-	/* Send disconnect on healthy import, do force disconnect otherwise */
+	
 	spin_lock(&imp->imp_lock);
 	imp->imp_obd->obd_force |= imp->imp_state != LUSTRE_IMP_FULL;
 	spin_unlock(&imp->imp_lock);
@@ -524,7 +524,7 @@ static int osp_update_init(struct osp_device *osp)
 		osp->opd_update = NULL;
 		RETURN(rc);
 	}
-	/* start thread handling sending updates to the remote MDT */
+	
 	task = kthread_create(osp_send_update_thread, osp,
 			      "osp_up%u-%u", osp->opd_index, osp->opd_group);
 	if (IS_ERR(task)) {
@@ -573,12 +573,12 @@ static void osp_update_fini(const struct lu_env *env, struct osp_device *osp)
 	wait_event_idle(imp->imp_recovery_waitq,
 			(atomic_read(&imp->imp_inval_count) == 0));
 
-	/* Remove the left osp thandle from the list */
+	
 	list_for_each_entry_safe(our, tmp, &ou->ou_list, our_list) {
 		list_del_init(&our->our_list);
 		LASSERT(our->our_th != NULL);
 		osp_trans_callback(env, our->our_th, -EIO);
-		/* our will be destroyed in osp_thandle_put() */
+		
 		osp_thandle_put(env, our->our_th);
 	}
 
@@ -621,13 +621,13 @@ static int osp_shutdown(const struct lu_env *env, struct osp_device *d)
 	osp_statfs_fini(d);
 
 	if (!d->opd_connect_mdt) {
-		/* stop sync thread */
+		
 		osp_sync_fini(d);
 
-		/* stop precreate thread */
+		
 		osp_precreate_fini(d);
 
-		/* release last_used file */
+		
 		osp_last_used_fini(env, d);
 	}
 
@@ -751,7 +751,7 @@ static int osp_fid_alloc(const struct lu_env *env, struct lu_device *d,
 
 	ENTRY;
 
-	/* Sigh, fid client is not ready yet */
+	
 	if (!osp->opd_obd->u.cli.cl_seq)
 		RETURN(-ENOTCONN);
 
@@ -801,7 +801,7 @@ static int osp_statfs(const struct lu_env *env, struct dt_device *dev,
 	if (unlikely(d->opd_imp_active == 0))
 		RETURN(-ENOTCONN);
 
-	/* return recently updated data */
+	
 	*sfs = d->opd_statfs;
 	if (info) {
 		info->os_reserved_mb_low = d->opd_reserved_mb_low;
@@ -855,7 +855,7 @@ static int osp_sync(const struct lu_env *env, struct dt_device *dev)
 
 	ENTRY;
 
-	/* No Sync between MDTs yet. */
+	
 	if (d->opd_connect_mdt)
 		RETURN(0);
 
@@ -875,7 +875,7 @@ static int osp_sync(const struct lu_env *env, struct dt_device *dev)
 	CDEBUG(D_OTHER, "%s: async updates %d\n", d->opd_obd->obd_name,
 	       atomic_read(&d->opd_async_updates_count));
 
-	/* make sure the connection is fine */
+	
 	rc = wait_event_idle_timeout(
 		d->opd_sync_barrier_waitq,
 		atomic_read(&d->opd_async_updates_count) == 0,
@@ -894,7 +894,7 @@ static int osp_sync(const struct lu_env *env, struct dt_device *dev)
 
 	while (atomic64_read(&d->opd_sync_processed_recs) < old + recs) {
 		__u64 last = atomic64_read(&d->opd_sync_processed_recs);
-		/* make sure the connection is fine */
+		
 		wait_event_idle_timeout(
 			d->opd_sync_barrier_waitq,
 			atomic64_read(&d->opd_sync_processed_recs)
@@ -910,17 +910,17 @@ static int osp_sync(const struct lu_env *env, struct dt_device *dev)
 			continue;
 		}
 
-		/* no changes and expired, something is wrong */
+		
 		GOTO(out, rc = -ETIMEDOUT);
 	}
 
-	/* block new processing (barrier>0 - few callers are possible */
+	
 	atomic_inc(&d->opd_sync_barrier);
 
 	CDEBUG(D_CACHE, "%s: %u in flight\n", d->opd_obd->obd_name,
 	       atomic_read(&d->opd_sync_rpcs_in_flight));
 
-	/* wait till all-in-flight are replied, so executed by the target */
+	
 	/* XXX: this is used by LFSCK at the moment, which doesn't require
 	 *	all the changes to be committed, but in general it'd be
 	 *	better to wait till commit */
@@ -936,16 +936,16 @@ static int osp_sync(const struct lu_env *env, struct dt_device *dev)
 			break;
 
 		if (atomic_read(&d->opd_sync_rpcs_in_flight) != old) {
-			/* some progress have been made */
+			
 			continue;
 		}
 
-		/* no changes and expired, something is wrong */
+		
 		GOTO(out, rc = -ETIMEDOUT);
 	}
 
 out:
-	/* resume normal processing (barrier=0) */
+	
 	atomic_dec(&d->opd_sync_barrier);
 	osp_sync_check_for_work(d);
 
@@ -1102,7 +1102,7 @@ static int osp_init0(const struct lu_env *env, struct osp_device *osp,
 	}
 
 	if (strncmp(tgt, "-osc", 4) == 0) {
-		/* Old OSC name fsname-OSTXXXX-osc */
+		
 		for (tgt--; tgt > src && *tgt != '-'; tgt--)
 			;
 		if (tgt == src) {
@@ -1129,7 +1129,7 @@ static int osp_init0(const struct lu_env *env, struct osp_device *osp,
 		osp->opd_group = 0;
 		idx = tgt - src;
 	} else {
-		/* New OSC name fsname-OSTXXXX-osc-MDTXXXX */
+		
 		if (strncmp(tgt, "-MDT", 4) != 0 &&
 		    strncmp(tgt, "-OST", 4) != 0) {
 			CERROR("%s: invalid target name %s: rc = %d\n",
@@ -1168,7 +1168,7 @@ static int osp_init0(const struct lu_env *env, struct osp_device *osp,
 		osp->opd_index = idx;
 		idx = tgt - src - 12;
 	}
-	/* check the fsname length, and after this everything else will fit */
+	
 	if (idx > MTI_NAME_MAXLEN) {
 		CERROR("%s: fsname too long in '%s': rc = %d\n",
 		       osp->opd_obd->obd_name, src, -EINVAL);
@@ -1179,11 +1179,11 @@ static int osp_init0(const struct lu_env *env, struct osp_device *osp,
 	if (osdname == NULL)
 		RETURN(-ENOMEM);
 
-	memcpy(osdname, src, idx); /* copy just the fsname part */
+	memcpy(osdname, src, idx); 
 	osdname[idx] = '\0';
 
 	mdt = strstr(mdt, "-MDT");
-	if (mdt == NULL) /* 1.8 configs don't have "-MDT0000" at the end */
+	if (mdt == NULL) 
 		strcat(osdname, "-MDT0000");
 	else
 		strcat(osdname, mdt);
@@ -1271,10 +1271,10 @@ static int osp_init0(const struct lu_env *env, struct osp_device *osp,
 
 out:
 	if (!osp->opd_connect_mdt)
-		/* stop sync thread */
+		
 		osp_sync_fini(osp);
 out_precreat:
-	/* stop precreate thread */
+	
 	if (!osp->opd_connect_mdt)
 		osp_precreate_fini(osp);
 	else
@@ -1385,7 +1385,7 @@ static struct lu_device *osp_device_fini(const struct lu_env *env,
 	}
 
 	if (osp->opd_storage_exp) {
-		/* wait for the commit callbacks to complete */
+		
 		wait_event(osp->opd_sync_waitq,
 			  atomic_read(&osp->opd_commits_registered) == 0);
 		obd_disconnect(osp->opd_storage_exp);
@@ -1462,7 +1462,7 @@ static int osp_obd_connect(const struct lu_env *env, struct obd_export **exp,
 	*exp = osp->opd_exp;
 
 	osp->opd_obd->u.cli.cl_seq->lcs_exp = class_export_get(osp->opd_exp);
-	/* precreate thread can be waiting for us to initialize fld client */
+	
 	wake_up(&osp->opd_pre_waitq);
 
 	RETURN(rc);
@@ -1493,7 +1493,7 @@ static int osp_obd_disconnect(struct obd_export *exp)
 		RETURN(rc);
 	}
 
-	/* destroy the device */
+	
 	class_manual_cleanup(obd);
 
 	RETURN(rc);
@@ -1549,7 +1549,7 @@ static int osp_obd_statfs(const struct lu_env *env, struct obd_export *exp,
 	ptlrpc_at_set_req_timeout(req);
 
 	if (flags & OBD_STATFS_NODELAY) {
-		/* procfs requests not want stat in wait for avoid deadlock */
+		
 		req->rq_no_resend = 1;
 		req->rq_no_delay = 1;
 	}
@@ -1812,7 +1812,7 @@ static int osp_obd_set_info_async(const struct lu_env *env,
 	RETURN(0);
 }
 
-/* context key constructor/destructor: mdt_key_init, mdt_key_fini */
+
 LU_KEY_INIT_FINI(osp, struct osp_thread_info);
 
 static void osp_key_exit(const struct lu_context *ctx,
@@ -1907,11 +1907,11 @@ static int __init osp_init(void)
 		return rc;
 	}
 
-	/* create "osc" entry for compatibility purposes */
+	
 	sym = class_add_symlinks(LUSTRE_OSC_NAME, true);
 	if (IS_ERR(sym)) {
 		rc = PTR_ERR(sym);
-		/* does real "osc" already exist ? */
+		
 		if (rc == -EEXIST)
 			rc = 0;
 	}
@@ -1933,10 +1933,10 @@ static void __exit osp_exit(void)
 	 * then we are responsible for freeing this obd_type
 	 */
 	if (sym) {
-		/* final put if we manage this obd type */
+		
 		if (sym->typ_sym_filter)
 			kobject_put(&sym->typ_kobj);
-		/* put reference taken by class_search_type */
+		
 		kobject_put(&sym->typ_kobj);
 	}
 
@@ -1945,7 +1945,7 @@ static void __exit osp_exit(void)
 	lu_kmem_fini(osp_caches);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre OSD Storage Proxy ("LUSTRE_OSP_NAME")");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

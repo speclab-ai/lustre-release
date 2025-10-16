@@ -21,7 +21,7 @@
  * which case the wait status ($?) will be 134.
 */
 
-int mmap_mode;		/* -m flag */
+int mmap_mode;		
 
 static void usage(void)
 {

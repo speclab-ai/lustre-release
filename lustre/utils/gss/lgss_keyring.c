@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/gss/lgss_keyring.c
  *
@@ -56,14 +56,14 @@ struct lgss_nego_data {
 	uint32_t	lnd_lsvc;
 	char		*lnd_uuid;
 
-	gss_OID		lnd_mech;		/* mech OID */
-	gss_name_t	lnd_svc_name;		/* service name */
-	unsigned int	lnd_req_flags;		/* request flags */
-	gss_cred_id_t	lnd_cred;		/* credential */
-	gss_ctx_id_t	lnd_ctx;		/* session context */
-	gss_buffer_desc	lnd_rmt_ctx;		/* remote handle of context */
-	gss_buffer_desc	lnd_ctx_token;		/* context token for kernel */
-	uint32_t	lnd_seq_win;		/* sequence window */
+	gss_OID		lnd_mech;		
+	gss_name_t	lnd_svc_name;		
+	unsigned int	lnd_req_flags;		
+	gss_cred_id_t	lnd_cred;		
+	gss_ctx_id_t	lnd_ctx;		
+	gss_buffer_desc	lnd_rmt_ctx;		
+	gss_buffer_desc	lnd_ctx_token;		
+	uint32_t	lnd_seq_win;		
 
 	int		lnd_rpc_err;
 	int		lnd_gss_err;
@@ -73,11 +73,11 @@ struct lgss_nego_data {
  * context creation response
  */
 struct lgss_init_res {
-	gss_buffer_desc gr_ctx;         /* context handle */
-	unsigned int    gr_major;       /* major status */
-	unsigned int    gr_minor;       /* minor status */
-	unsigned int    gr_win;         /* sequence window */
-	gss_buffer_desc gr_token;       /* token */
+	gss_buffer_desc gr_ctx;         
+	unsigned int    gr_major;       
+	unsigned int    gr_minor;       
+	unsigned int    gr_win;         
+	gss_buffer_desc gr_token;       
 };
 
 struct keyring_upcall_param {
@@ -147,7 +147,7 @@ static int gss_do_ioctl(struct lgssd_ioctl_param *param, __s64 *status)
 	glob_t path;
 	int rc;
 
-	/* switch to root in order to proceed to ioctls */
+	
 	if (param->uid && switch_identity(0)) {
 		rc = -EACCES;
 		goto out_params;
@@ -180,7 +180,7 @@ static int gss_do_ioctl(struct lgssd_ioctl_param *param, __s64 *status)
 out_params:
 	cfs_free_param_data(&path);
 
-	/* switch back to user */
+	
 	if (param->uid && switch_identity(param->uid))
 		rc = -EACCES;
 
@@ -219,7 +219,7 @@ static int do_nego_rpc(struct lgss_nego_data *lnd,
 	param.send_token = (char *) gss_token->value;
 
 	if (req_fd[0] == -1 && reply_fd[0] == -1) {
-		/* we can do the ioctl directly */
+		
 		param.reply_buf_size = sizeof(outbuf);
 		param.reply_buf = outbuf;
 
@@ -231,22 +231,22 @@ static int do_nego_rpc(struct lgss_nego_data *lnd,
 		 * so we cannot do the ioctl ourselves: delegate to
 		 * parent process running directly on host */
 
-		/* send ioctl buffer to parent */
+		
 		rc = send_to(req_fd[1], &param, sizeof(param));
 		if (rc != 0)
 			return rc;
-		/* send gss token to parent */
+		
 		rc = send_to(req_fd[1], gss_token->value, gss_token->length);
 		if (rc != 0)
 			return rc;
 
-		/* read ioctl status from parent */
+		
 		rc = receive_from(reply_fd[0], &status, sizeof(status));
 		if (rc != 0)
 			return rc;
 
 		if (status == 0) {
-			/* read reply buffer from parent */
+			
 			rc = receive_from(reply_fd[0], outbuf, sizeof(outbuf));
 			if (rc != 0)
 				return rc;
@@ -367,7 +367,7 @@ static int lgssc_negotiation(struct lgss_nego_data *lnd, int req_fd[2],
 
 	logmsg(LL_TRACE, "start gss negotiation\n");
 
-	/* GSS context establishment loop. */
+	
 	memset(&gr, 0, sizeof(gr));
 	recv_tokenp = GSS_C_NO_BUFFER;
 
@@ -378,13 +378,13 @@ static int lgssc_negotiation(struct lgss_nego_data *lnd, int req_fd[2],
 						lnd->lnd_svc_name,
 						lnd->lnd_mech,
 						lnd->lnd_req_flags,
-						0,            /* time req */
-						NULL,         /* channel */
+						0,            
+						NULL,         
 						recv_tokenp,
-						NULL,         /* used mech */
+						NULL,         
 						&send_token,
 						&ret_flags,
-						NULL);        /* time rec */
+						NULL);        
 
 		logmsg_gss(LL_TRACE, lnd->lnd_mech, maj_stat, min_stat,
 			   "gss_init_sec_context");
@@ -452,7 +452,7 @@ static int lgssc_negotiation(struct lgss_nego_data *lnd, int req_fd[2],
 		}
 	}
 
-	/* End context negotiation loop. */
+	
 	if (!lnd->lnd_established) {
 		if (gr.gr_token.length != 0)
 			gss_release_buffer(&min_stat, &gr.gr_token);
@@ -590,7 +590,7 @@ static int error_kernel_key(key_serial_t keyid, int rpc_error, int gss_error,
 	WRITE_BYTES(&p, end, gss_error);
 
 	rc = do_keyctl_update("revok", keyid, buf, p - buf);
-	/* no matter if revoking key was successful or not, always try unlink */
+	
 	rc2 = keyctl_unlink(keyid, inst_keyring);
 	if (rc2) {
 		logmsg(LL_ERR, "unlink key %08x from %d: %s\n",
@@ -1014,7 +1014,7 @@ int main(int argc, char *argv[])
 
 	logmsg(LL_TRACE, "start parsing parameters\n");
 
-	/* one possible option before upcall parameters: -R REALM */
+	
 	while ((opt = getopt_long(argc, argv, "R:", long_opts, NULL)) != EOF) {
 		switch (opt) {
 		case 'R':
@@ -1028,7 +1028,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (lgss_client_realm) {
-		/* shift args to meet expected upcall parameters */
+		
 		argc -= optind - 1;
 		argv += optind - 1;
 	}
@@ -1128,7 +1128,7 @@ int main(int argc, char *argv[])
 	cred->lc_svc_type = uparam.kup_svc_type;
 	cred->lc_self_nid = uparam.kup_selfnid;
 
-	/* Is caller in different namespace? */
+	
 	/* If passed caller's pid is 0, it means we have to stick
 	 * with current namespace.
 	 */
@@ -1149,7 +1149,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (!cred->lc_root_flags) {
-		/* switch to user id for creds handling */
+		
 		rc = switch_identity(uparam.kup_uid);
 		if (rc)
 			return rc;
@@ -1162,7 +1162,7 @@ int main(int argc, char *argv[])
 	if (other_ns) {
 		logmsg(LL_TRACE, "caller's namespace is different\n");
 
-		/* use pipes to pass info between child and parent processes */
+		
 		if (pipe(req_fd) == -1) {
 			logmsg(LL_ERR, "key %08x: pipe failed: %s\n",
 			       keyid, strerror(errno));
@@ -1185,9 +1185,9 @@ int main(int argc, char *argv[])
 			/* child process: carry out credentials preparation
 			 * in caller's namespace */
 
-			close(req_fd[0]); /* close unsed read end */
+			close(req_fd[0]); 
 			req_fd[0] = -1;
-			close(reply_fd[1]); /* close unsed write end */
+			close(reply_fd[1]); 
 			reply_fd[1] = -1;
 
 			if (associate_with_ns(path) != 0) {
@@ -1221,9 +1221,9 @@ int main(int argc, char *argv[])
 			/* parent process: exchange info with child carrying out
 			 * credentials preparation */
 
-			close(req_fd[1]); /* close unsed write end */
+			close(req_fd[1]); 
 			req_fd[1] = -1;
-			close(reply_fd[0]); /* close unsed read end */
+			close(reply_fd[0]); 
 			reply_fd[0] = -1;
 
 			/* get status of credentials preparation
@@ -1254,7 +1254,7 @@ int main(int argc, char *argv[])
 				void *gss_token = NULL;
 				__s64 status;
 
-				/* get ioctl buffer from child */
+				
 				rc = receive_from(req_fd[0], &param,
 						  sizeof(param));
 				if (rc != 0)
@@ -1264,7 +1264,7 @@ int main(int argc, char *argv[])
 				if (gss_token == NULL)
 					goto out_pipe;
 
-				/* get gss token from child */
+				
 				rc = receive_from(req_fd[0], gss_token,
 						  param.send_token_size);
 				if (rc != 0)
@@ -1282,12 +1282,12 @@ int main(int argc, char *argv[])
 				if (rc != 0)
 					goto out_token;
 
-				/* send ioctl status to child */
+				
 				rc = send_to(reply_fd[1], &status,
 					     sizeof(status));
 				if (rc != 0)
 					goto out_token;
-				/* send reply buffer to child */
+				
 				rc = send_to(reply_fd[1], outbuf,
 					     sizeof(outbuf));
 				if (rc != 0)

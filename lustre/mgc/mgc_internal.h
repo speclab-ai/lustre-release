@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _MGC_INTERNAL_H
@@ -86,11 +86,11 @@ int mgc_process_config_server(const struct lu_env *env, struct lu_device *lu,
 int mgc_barrier_glimpse_ast(struct ldlm_lock *lock, void *data);
 int mgc_get_local_copy(struct obd_device *mgc, struct super_block *sb,
 		       struct config_llog_data *cld);
-#else /* HAVE_SERVER_SUPPORT */
+#else 
 #define mgc_barrier_glimpse_ast NULL
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
-/* Not sure where this should go... */
+
 /* This is the timeout value for MGS_CONNECT request plus a ping interval, such
  * that we can have a chance to try the secondary MGS if any.
  */
@@ -106,4 +106,4 @@ enum {
 	CONFIG_READ_NRPAGES      = 4
 };
 
-#endif  /* _MGC_INTERNAL_H */
+#endif  

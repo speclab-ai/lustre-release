@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 extern int ldlm_srv_namespace_nr;
@@ -62,7 +62,7 @@ static inline struct mutex *ldlm_namespace_lock(enum ldlm_side client)
 		&ldlm_srv_namespace_lock : &ldlm_cli_namespace_lock;
 }
 
-/* ns_bref is the number of resources in this namespace */
+
 static inline int ldlm_ns_empty(struct ldlm_namespace *ns)
 {
 	return atomic_read(&ns->ns_bref) == 0;
@@ -74,7 +74,7 @@ void ldlm_namespace_move_to_inactive_locked(struct ldlm_namespace *l,
 					    enum ldlm_side);
 struct ldlm_namespace *ldlm_namespace_first_locked(enum ldlm_side);
 
-/* ldlm_request.c */
+
 int ldlm_cancel_lru(struct ldlm_namespace *ns, int min,
 		    enum ldlm_cancel_flags cancel_flags,
 		    enum ldlm_lru_flags lru_flags);
@@ -83,7 +83,7 @@ int ldlm_cancel_lru_local(struct ldlm_namespace *ns,
 			  enum ldlm_cancel_flags cancel_flags,
 			  enum ldlm_lru_flags lru_flags);
 extern unsigned int ldlm_enqueue_min;
-/* ldlm_resource.c */
+
 extern struct kmem_cache *ldlm_resource_slab;
 extern struct kmem_cache *ldlm_lock_slab;
 extern struct kmem_cache *ldlm_inodebits_slab;
@@ -94,7 +94,7 @@ void ldlm_resource_insert_lock_after(struct ldlm_lock *original,
 void ldlm_resource_insert_lock_before(struct ldlm_lock *original,
 				      struct ldlm_lock *new);
 
-/* ldlm_lock.c */
+
 
 typedef enum {
 	LDLM_WORK_BL_AST,
@@ -150,7 +150,7 @@ int ldlm_export_cancel_blocked_locks(struct obd_export *exp);
 int ldlm_export_cancel_locks(struct obd_export *exp);
 void ldlm_grant_lock_with_skiplist(struct ldlm_lock *lock);
 
-/* ldlm_lockd.c */
+
 int ldlm_bl_to_thread_lock(struct ldlm_namespace *ns, struct ldlm_lock_desc *ld,
 			   struct ldlm_lock *lock);
 int ldlm_bl_to_thread_list(struct ldlm_namespace *ns,
@@ -165,12 +165,12 @@ void ldlm_handle_bl_callback(struct ldlm_namespace *ns,
 void ldlm_bl_desc2lock(const struct ldlm_lock_desc *ld, struct ldlm_lock *lock);
 
 #ifdef HAVE_SERVER_SUPPORT
-/* ldlm_plain.c */
+
 int ldlm_process_plain_lock(struct ldlm_lock *lock, __u64 *flags,
 			    enum ldlm_process_intention intention,
 			    enum ldlm_error *err, struct list_head *work_list);
 
-/* ldlm_inodebits.c */
+
 int ldlm_process_inodebits_lock(struct ldlm_lock *lock, __u64 *flags,
 				enum ldlm_process_intention intention,
 				enum ldlm_error *err,
@@ -180,7 +180,7 @@ int ldlm_reprocess_inodebits_queue(struct ldlm_resource *res,
 				   struct list_head *work_list,
 				   enum ldlm_process_intention intention,
 				   enum mds_ibits_locks hint);
-/* ldlm_extent.c */
+
 int ldlm_process_extent_lock(struct ldlm_lock *lock, __u64 *flags,
 			     enum ldlm_process_intention intention,
 			     enum ldlm_error *err, struct list_head *work_list);
@@ -197,7 +197,7 @@ void ldlm_inodebits_add_lock(struct ldlm_resource *res, struct list_head *head,
 			     struct ldlm_lock *lock, bool tail);
 void ldlm_inodebits_unlink_lock(struct ldlm_lock *lock);
 
-/* ldlm_flock.c */
+
 int ldlm_process_flock_lock(struct ldlm_lock *req, __u64 *flags,
 			    enum ldlm_process_intention intention,
 			    enum ldlm_error *err, struct list_head *work_list);
@@ -207,7 +207,7 @@ void ldlm_flock_add_lock(struct ldlm_resource *req, struct list_head *head,
 			 struct ldlm_lock *lock);
 void ldlm_flock_unlink_lock(struct ldlm_lock *lock);
 
-/* l_lock.c */
+
 void l_check_ns_lock(struct ldlm_namespace *ns);
 void l_check_no_ns_lock(struct ldlm_namespace *ns);
 
@@ -251,7 +251,7 @@ enum ldlm_policy_res {
 									   \
 		return LDLM_POOL_SYSFS_PRINT_##type(tmp);		   \
 	}								   \
-	struct __##var##__dummy_read { ; } /* semicolon catcher */
+	struct __##var##__dummy_read { ; } 
 
 #define LDLM_POOL_SYSFS_WRITER_STORE(var, type)				   \
 	static ssize_t var##_store(struct kobject *kobj,		   \
@@ -275,7 +275,7 @@ enum ldlm_policy_res {
 									   \
 		return count;						   \
 	}								   \
-	struct __##var##__dummy_write {; } /* semicolon catcher */
+	struct __##var##__dummy_write {; } 
 
 #define LDLM_POOL_SYSFS_READER_NOLOCK_SHOW(var, type)			   \
 	static ssize_t var##_show(struct kobject *kobj,			   \
@@ -287,7 +287,7 @@ enum ldlm_policy_res {
 									   \
 		return LDLM_POOL_SYSFS_PRINT_##type(pl->pl_##var);	   \
 	}								   \
-	struct __##var##__dummy_read {; } /* semicolon catcher */
+	struct __##var##__dummy_read {; } 
 
 #define LDLM_POOL_SYSFS_WRITER_NOLOCK_STORE(var, type)			   \
 	static ssize_t var##_store(struct kobject *kobj,		   \
@@ -309,7 +309,7 @@ enum ldlm_policy_res {
 									   \
 		return count;						   \
 	}								   \
-	struct __##var##__dummy_write {; } /* semicolon catcher */
+	struct __##var##__dummy_write {; } 
 
 static inline void
 ldlm_add_var(struct ldebugfs_vars *vars, struct dentry *debugfs_entry,
@@ -378,7 +378,7 @@ void ldlm_flock_policy_wire_to_local(const union ldlm_wire_policy_data *wpolicy,
 void ldlm_flock_policy_local_to_wire(const union ldlm_policy_data *lpolicy,
 				     union ldlm_wire_policy_data *wpolicy);
 
-/* ldlm_reclaim.c */
+
 #ifdef HAVE_SERVER_SUPPORT
 extern u64 ldlm_reclaim_threshold;
 extern u64 ldlm_lock_limit;
@@ -399,5 +399,5 @@ static inline bool ldlm_res_eq(const struct ldlm_res_id *res0,
 	return memcmp(res0, res1, sizeof(*res0)) == 0;
 }
 
-/* exports for testing */
+
 struct ldlm_lock *ldlm_lock_new_testing(struct ldlm_resource *resource);

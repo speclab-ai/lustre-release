@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 		{ .name = "authreq", .has_arg = required_argument, .val = 'r'},
 		{ .name = NULL, } };
 
-	/* init gss logger for foreground (stderr) or background (syslog) */
+	
 	initerr(NULL, LL_MAX, isatty(STDOUT_FILENO));
 
 	while ((opt = getopt_long(argc, argv, "c:dr:",
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
 	req_len = strlen(auth_req);
 
 socket:
-	/* Send auth request to lsvcgssd via a socket. */
+	
 	local_socket = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (local_socket == -1) {
 		printerr(LL_ERR, "cannot create socket: %d\n", -errno);

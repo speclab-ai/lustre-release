@@ -1,4 +1,4 @@
-// SPDX License Identifier: GPL-2.0
+
 /* Basic framework for Lustre llapi tests.
  * All tests return 0 on success and non-zero on error.
  * The program will run all tests unless a list of tests to skip is provided.
@@ -22,7 +22,7 @@
 #include "llapi_test_utils.h"
 
 static bool run_list_provided;
-char fsmountdir[PATH_MAX];      /* Lustre mountpoint */
+char fsmountdir[PATH_MAX];      
 
 static void print_test_desc(int test_num, const char *test_desc,
 			    const char *status)
@@ -58,7 +58,7 @@ static int test(void (*test_fn)(), const char *test_desc, bool test_skip,
 	} else if (pid > 0) {
 		int status = 0;
 
-		/* Non-zero value indicates failure. */
+		
 		wait(&status);
 		if (status == 0) {
 			strncpy(status_buf, "pass", sizeof(status_buf));
@@ -84,7 +84,7 @@ static int test(void (*test_fn)(), const char *test_desc, bool test_skip,
 	return rc;
 }
 
-/* 'str_tests' are the tests to be skipped, such as "1,3,4,..." */
+
 void set_tests_to_skip(const char *str_tests, struct test_tbl_entry *tst_tbl)
 {
 	const char *ptr = str_tests;
@@ -116,7 +116,7 @@ void set_tests_to_skip(const char *str_tests, struct test_tbl_entry *tst_tbl)
 	}
 }
 
-/* 'str_tests' are the tests to be run, such as "5,6,7,..." */
+
 void set_tests_to_run(const char *str_tests, struct test_tbl_entry *tst_tbl)
 {
 	struct test_tbl_entry *tst;

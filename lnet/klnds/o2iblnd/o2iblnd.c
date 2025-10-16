@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Author: Eric Barton <eric@bartonsoftware.com>
  */
@@ -31,7 +31,7 @@ kiblnd_cksum(void *ptr, int nob)
 	while (nob-- > 0)
 		sum = ((sum << 1) | (sum >> 31)) + *c++;
 
-	/* ensure I don't return 0 (== no checksum) */
+	
 	return (sum == 0) ? 1 : sum;
 }
 
@@ -162,9 +162,9 @@ void kiblnd_pack_msg(struct lnet_ni *ni, struct kib_msg *msg, int version,
 	 */
 	msg->ibm_magic    = IBLND_MSG_MAGIC;
 	msg->ibm_version  = version;
-	/*   ibm_type */
+	
 	msg->ibm_credits  = credits;
-	/*   ibm_nob */
+	
 	msg->ibm_cksum    = 0;
 	msg->ibm_srcnid   = lnet_nid_to_nid4(&ni->ni_nid);
 	msg->ibm_srcstamp = net->ibn_incarnation;
@@ -172,7 +172,7 @@ void kiblnd_pack_msg(struct lnet_ni *ni, struct kib_msg *msg, int version,
 	msg->ibm_dststamp = dststamp;
 
 	if (*kiblnd_tunables.kib_cksum) {
-		/* NB ibm_cksum zero while computing cksum */
+		
 		msg->ibm_cksum = kiblnd_cksum(msg, msg->ibm_nob);
 	}
 }
@@ -185,7 +185,7 @@ int kiblnd_unpack_msg(struct kib_msg *msg, int nob)
 	int msg_nob;
 	bool flip;
 
-	/* 6 bytes are enough to have received magic + version */
+	
 	if (nob < 6) {
 		CERROR("Short message: %d\n", nob);
 		return -EPROTO;
@@ -232,7 +232,7 @@ int kiblnd_unpack_msg(struct kib_msg *msg, int nob)
 	msg->ibm_cksum = msg_cksum;
 
 	if (flip) {
-		/* leave magic unflipped as a clue to peer_ni endianness */
+		
 		msg->ibm_version = version;
 		BUILD_BUG_ON(sizeof(msg->ibm_type) != 1);
 		BUILD_BUG_ON(sizeof(msg->ibm_credits) != 1);
@@ -313,7 +313,7 @@ kiblnd_create_peer(struct lnet_ni *ni, struct kib_peer_ni **peerp,
 	peer_ni->ibp_last_alive = 0;
 	peer_ni->ibp_max_frags = IBLND_MAX_RDMA_FRAGS;
 	peer_ni->ibp_queue_depth = ni->ni_net->net_tunables.lct_peer_tx_credits;
-	peer_ni->ibp_queue_depth_mod = 0;	/* try to use the default */
+	peer_ni->ibp_queue_depth_mod = 0;	
 	kref_init(&peer_ni->ibp_kref);
 	atomic_set(&peer_ni->ibp_nconns, 0);
 
@@ -324,10 +324,10 @@ kiblnd_create_peer(struct lnet_ni *ni, struct kib_peer_ni **peerp,
 
 	write_lock_irqsave(&kiblnd_data.kib_global_lock, flags);
 
-	/* always called with a ref on ni, which prevents ni being shutdown */
+	
 	LASSERT(net->ibn_shutdown == 0);
 
-	/* npeers only grows with the global lock held */
+	
 	atomic_inc(&net->ibn_npeers);
 
 	write_unlock_irqrestore(&kiblnd_data.kib_global_lock, flags);
@@ -397,7 +397,7 @@ kiblnd_unlink_peer_locked(struct kib_peer_ni *peer_ni)
 
 	LASSERT(kiblnd_peer_active(peer_ni));
 	hlist_del_init(&peer_ni->ibp_list);
-	/* lose peerlist's ref */
+	
 	kiblnd_peer_decref(peer_ni);
 }
 
@@ -537,7 +537,7 @@ kiblnd_del_peer_locked(struct kib_peer_ni *peer_ni)
 		list_for_each_entry_safe(conn, cnxt, &peer_ni->ibp_conns,
 					 ibc_list)
 			kiblnd_close_conn_locked(conn, 0);
-		/* NB closing peer_ni's last conn unlinked it. */
+		
 	}
 	/* NB peer_ni now unlinked; might even be freed if the peer_ni table
 	 * had the last ref on it.
@@ -587,7 +587,7 @@ kiblnd_del_peer(struct lnet_ni *ni, struct lnet_nid *nid)
 			}
 
 			kiblnd_del_peer_locked(peer_ni);
-			rc = 0;		/* matched something */
+			rc = 0;		
 		}
 	}
 
@@ -633,7 +633,7 @@ kiblnd_get_conn_by_idx(struct lnet_ni *ni, int index)
 static void
 kiblnd_setup_mtu_locked(struct rdma_cm_id *cmid)
 {
-	/* XXX There is no path record for iWARP, set by netdev->change_mtu? */
+	
 	if (cmid->route.path_rec == NULL)
 		return;
 
@@ -709,11 +709,11 @@ static unsigned int kiblnd_send_wrs(struct kib_conn *conn)
 	int ret;
 	int multiplier = 1 + conn->ibc_max_frags;
 
-	/* FastReg needs two extra WRs for map and invalidate */
+	
 	if (IS_FAST_REG_DEV(conn->ibc_hdev->ibh_dev))
 		multiplier += 2;
 
-	/* account for a maximum of ibc_queue_depth in-flight transfers */
+	
 	ret = multiplier * conn->ibc_queue_depth;
 
 	if (ret > conn->ibc_hdev->ibh_max_qp_wr) {
@@ -725,7 +725,7 @@ static unsigned int kiblnd_send_wrs(struct kib_conn *conn)
 			conn->ibc_hdev->ibh_max_qp_wr / multiplier;
 	}
 
-	/* don't go beyond the maximum the device can handle */
+	
 	return min(ret, conn->ibc_hdev->ibh_max_qp_wr);
 }
 
@@ -782,8 +782,8 @@ kiblnd_create_conn(struct kib_peer_ni *peer_ni, struct rdma_cm_id *cmid,
 
 	conn->ibc_state = IBLND_CONN_INIT;
 	conn->ibc_version = version;
-	conn->ibc_peer = peer_ni;		/* I take the caller's ref */
-	cmid->context = conn;			/* for future CM callbacks */
+	conn->ibc_peer = peer_ni;		
+	cmid->context = conn;			
 	conn->ibc_cmid = cmid;
 	conn->ibc_max_frags = peer_ni->ibp_max_frags;
 	conn->ibc_queue_depth = peer_ni->ibp_queue_depth;
@@ -816,7 +816,7 @@ kiblnd_create_conn(struct kib_peer_ni *peer_ni, struct rdma_cm_id *cmid,
 	}
 
 	if (dev->ibd_hdev->ibh_ibdev != cmid->device) {
-		/* wakeup failover thread and teardown connection */
+		
 		if (kiblnd_dev_can_failover(dev)) {
 			list_add_tail(&dev->ibd_fail_list,
 				      &kiblnd_data.kib_failed_devs);
@@ -931,17 +931,17 @@ kiblnd_create_conn(struct kib_peer_ni *peer_ni, struct rdma_cm_id *cmid,
 
 	kiblnd_map_rx_descs(conn);
 
-	/* 1 ref for caller and each rxmsg */
+	
 	atomic_set(&conn->ibc_refcount, 1 + IBLND_RX_MSGS(conn));
 	conn->ibc_nrx = IBLND_RX_MSGS(conn);
 
-	/* post receives */
+	
 	for (i = 0; i < IBLND_RX_MSGS(conn); i++) {
 		rc = kiblnd_post_rx(&conn->ibc_rxs[i], IBLND_POSTRX_NO_CREDIT);
 		if (rc != 0) {
 			CERROR("Can't post rxmsg: %d\n", rc);
 
-			/* Make posted receives complete */
+			
 			kiblnd_abort_receives(conn);
 
 			/* correct # of posted buffers
@@ -958,7 +958,7 @@ kiblnd_create_conn(struct kib_peer_ni *peer_ni, struct rdma_cm_id *cmid,
 			rdma_destroy_qp(conn->ibc_cmid);
 			conn->ibc_cmid = NULL;
 
-			/* Drop my own and unused rxbuffer refcounts */
+			
 			while (i++ <= IBLND_RX_MSGS(conn))
 				kiblnd_conn_decref(conn);
 
@@ -966,12 +966,12 @@ kiblnd_create_conn(struct kib_peer_ni *peer_ni, struct rdma_cm_id *cmid,
 		}
 	}
 
-	/* Init successful! */
+	
 	LASSERT(state == IBLND_CONN_ACTIVE_CONNECT ||
 		state == IBLND_CONN_PASSIVE_WAIT);
 	conn->ibc_state = state;
 
-	/* 1 more conn */
+	
 	atomic_inc(&peer_ni->ibp_nconns);
 	atomic_inc(&net->ibn_nconns);
 	return conn;
@@ -1002,11 +1002,11 @@ kiblnd_destroy_conn(struct kib_conn *conn)
 
 	switch (conn->ibc_state) {
 	default:
-		/* conn must be completely disengaged from the network */
+		
 		LBUG();
 
 	case IBLND_CONN_DISCONNECTED:
-		/* connvars should have been freed already */
+		
 		LASSERT(conn->ibc_connvars == NULL);
 		break;
 
@@ -1014,7 +1014,7 @@ kiblnd_destroy_conn(struct kib_conn *conn)
 		break;
 	}
 
-	/* conn->ibc_cmid might be destroyed by CM already */
+	
 	if (cmid != NULL && cmid->qp != NULL)
 		rdma_destroy_qp(cmid);
 
@@ -1034,7 +1034,7 @@ kiblnd_destroy_conn(struct kib_conn *conn)
 	if (conn->ibc_hdev != NULL)
 		kiblnd_hdev_decref(conn->ibc_hdev);
 
-	/* See CAVEAT EMPTOR above in kiblnd_create_conn */
+	
 	if (conn->ibc_state != IBLND_CONN_INIT) {
 		struct kib_net *net = peer_ni->ibp_ni->ni_data;
 
@@ -1133,7 +1133,7 @@ kiblnd_close_matching_conns(struct lnet_ni *ni, struct lnet_nid *nid)
 
 	write_unlock_irqrestore(&kiblnd_data.kib_global_lock, flags);
 
-	/* wildcards always succeed */
+	
 	if (LNET_NID_IS_ANY(nid))
 		return 0;
 
@@ -1181,7 +1181,7 @@ kiblnd_ctl(struct lnet_ni *ni, unsigned int cmd, void *arg)
 
 		data->ioc_nid = lnet_nid_to_nid4(&conn->ibc_peer->ibp_nid);
 		if (conn->ibc_cmid->route.path_rec == NULL)
-			data->ioc_u32[0] = 0; /* iWarp has no path MTU */
+			data->ioc_u32[0] = 0; 
 		else
 			data->ioc_u32[0] =
 			ib_mtu_enum_to_int(conn->ibc_cmid->route.path_rec->mtu);
@@ -1206,7 +1206,7 @@ kiblnd_tun_defaults(struct lnet_lnd_tunables *tunables,
 {
 	int rc;
 
-	/* sync to latest module settings */
+	
 	rc = kiblnd_tunables_setup(tunables, cmn);
 	if (rc < 0)
 		return 0;
@@ -1342,7 +1342,7 @@ kiblnd_nl_set(int cmd, struct nlattr *attr, int type, void *data)
 		tunables->lnd_tun_u.lnd_o2ib.lnd_ntx = nla_get_s64(attr);
 		break;
 	case LNET_NET_O2IBLND_TUNABLES_ATTR_LND_TIMEOUT:
-		/* Ignore */
+		
 		break;
 	case LNET_NET_O2IBLND_TUNABLES_ATTR_CONNS_PER_PEER:
 		num = nla_get_s64(attr);
@@ -1355,7 +1355,7 @@ kiblnd_nl_set(int cmd, struct nlattr *attr, int type, void *data)
 		num = nla_get_s64(attr);
 		tunables->lnd_tun_u.lnd_o2ib.lnd_tos = num;
 		fallthrough;
-	/* map_on_demand is always 1 so ignore any MAP_ON_DEMAND ATTR */
+	
 	case LNET_NET_O2IBLND_TUNABLES_ATTR_MAP_ON_DEMAND:
 		fallthrough;
 	default:
@@ -1421,7 +1421,7 @@ kiblnd_unmap_rx_descs(struct kib_conn *conn)
 	for (i = 0; i < IBLND_RX_MSGS(conn); i++) {
 		rx = &conn->ibc_rxs[i];
 
-		LASSERT(rx->rx_nob >= 0); /* not posted */
+		LASSERT(rx->rx_nob >= 0); 
 
 		kiblnd_dma_unmap_single(conn->ibc_hdev->ibh_ibdev,
 					KIBLND_UNMAP_ADDR(rx, rx_msgunmap,
@@ -1540,10 +1540,10 @@ kiblnd_map_tx_pool(struct kib_tx_pool *tpo)
 
 	dev = net->ibn_dev;
 
-	/* pre-mapped messages are not bigger than 1 page */
+	
 	BUILD_BUG_ON(IBLND_MSG_SIZE > PAGE_SIZE);
 
-	/* No fancy arithmetic when we do the buffer calculations */
+	
 	BUILD_BUG_ON(PAGE_SIZE % IBLND_MSG_SIZE != 0);
 
 	tpo->tpo_hdev = kiblnd_current_hdev(dev);
@@ -1585,7 +1585,7 @@ kiblnd_destroy_fmr_pool(struct kib_fmr_pool *fpo)
 	if (fpo->fpo_is_fmr && fpo->fmr.fpo_fmr_pool) {
 		ib_destroy_fmr_pool(fpo->fmr.fpo_fmr_pool);
 	} else
-#endif /* HAVE_OFED_FMR_POOL_API */
+#endif 
 	{
 		struct kib_fast_reg_descriptor *frd, *tmp;
 		int i = 0;
@@ -1669,7 +1669,7 @@ static int kiblnd_alloc_fmr_pool(struct kib_fmr_poolset *fps,
 
 	return rc;
 }
-#endif /* HAVE_OFED_FMR_POOL_API */
+#endif 
 
 static int kiblnd_alloc_freg_pool(struct kib_fmr_poolset *fps,
 				  struct kib_fmr_pool *fpo,
@@ -1737,7 +1737,7 @@ static int kiblnd_alloc_freg_pool(struct kib_fmr_poolset *fps,
 			goto out_middle;
 		}
 
-		/* indicate that the local invalidate needs to be generated */
+		
 		frd->frd_valid = false;
 
 		list_add_tail(&frd->frd_list, &fpo->fast_reg.fpo_pool_list);
@@ -1787,7 +1787,7 @@ static int kiblnd_create_fmr_pool(struct kib_fmr_poolset *fps,
 	if (dev->ibd_dev_caps & IBLND_DEV_CAPS_FMR_ENABLED)
 		rc = kiblnd_alloc_fmr_pool(fps, fpo);
 	else
-#endif /* HAVE_OFED_FMR_POOL_API */
+#endif 
 		rc = kiblnd_alloc_freg_pool(fps, fpo, dev->ibd_dev_caps);
 	if (rc)
 		goto out_fpo;
@@ -1809,7 +1809,7 @@ kiblnd_fail_fmr_poolset(struct kib_fmr_poolset *fps, struct list_head *zombies)
 {
 	struct kib_fmr_pool *fpo;
 
-	if (fps->fps_net == NULL) /* intialized? */
+	if (fps->fps_net == NULL) 
 		return;
 
 	spin_lock(&fps->fps_lock);
@@ -1830,8 +1830,8 @@ kiblnd_fail_fmr_poolset(struct kib_fmr_poolset *fps, struct list_head *zombies)
 static void
 kiblnd_fini_fmr_poolset(struct kib_fmr_poolset *fps)
 {
-	if (fps->fps_net != NULL) { /* initialized? */
-		/* added spinlock to protect poolset */
+	if (fps->fps_net != NULL) { 
+		
 		spin_lock(&fps->fps_lock);
 		kiblnd_destroy_fmr_pool_list(&fps->fps_failed_pool_list);
 		kiblnd_destroy_fmr_pool_list(&fps->fps_pool_list);
@@ -1870,7 +1870,7 @@ kiblnd_init_fmr_poolset(struct kib_fmr_poolset *fps, int cpt, int ncpts,
 static int
 kiblnd_fmr_pool_is_idle(struct kib_fmr_pool *fpo, time64_t now)
 {
-	if (fpo->fpo_map_count != 0) /* still in use */
+	if (fpo->fpo_map_count != 0) 
 		return 0;
 	if (fpo->fpo_failed)
 		return 1;
@@ -1928,7 +1928,7 @@ kiblnd_fmr_pool_unmap(struct kib_fmr *fmr, int status)
 			LASSERT(!rc);
 		}
 	} else
-#endif /* HAVE_OFED_FMR_POOL_API */
+#endif 
 	{
 		struct kib_fast_reg_descriptor *frd = fmr->fmr_frd;
 
@@ -1944,10 +1944,10 @@ kiblnd_fmr_pool_unmap(struct kib_fmr *fmr, int status)
 	fmr->fmr_pool = NULL;
 
 	spin_lock(&fps->fps_lock);
-	fpo->fpo_map_count--;	/* decref the pool */
+	fpo->fpo_map_count--;	
 
 	list_for_each_entry_safe(fpo, tmp, &fps->fps_pool_list, fpo_list) {
-		/* the first pool is persistent */
+		
 		if (fps->fps_pool_list.next == &fpo->fpo_list)
 			continue;
 
@@ -2008,7 +2008,7 @@ again:
 				return 0;
 			}
 		} else
-#endif /* HAVE_OFED_FMR_POOL_API */
+#endif 
 		{
 			if (!list_empty(&fpo->fast_reg.fpo_pool_list)) {
 				struct kib_fast_reg_descriptor *frd;
@@ -2045,7 +2045,7 @@ again:
 					inv_wr->wr.wr_id  = IBLND_WID_MR;
 					inv_wr->wr.ex.invalidate_rkey = key;
 
-					/* Bump the key */
+					
 					key = ib_inc_rkey(key);
 					ib_update_fast_reg_key(mr, key);
 				}
@@ -2057,7 +2057,7 @@ again:
 #else
 				n = ib_map_mr_sg(mr, tx->tx_frags,
 						 rd->rd_nfrags, PAGE_SIZE);
-#endif /* HAVE_OFED_IB_MAP_MR_SG_5ARGS */
+#endif 
 				if (unlikely(n != rd->rd_nfrags)) {
 					CERROR("Failed to map mr %d/%d elements\n",
 					       n, rd->rd_nfrags);
@@ -2075,7 +2075,7 @@ again:
 				wr->key = is_rx ? mr->rkey : mr->lkey;
 				wr->access = (IB_ACCESS_LOCAL_WRITE |
 					      IB_ACCESS_REMOTE_WRITE);
-#else /* HAVE_OFED_IB_MAP_MR_SG */
+#else 
 				if (!tx_pages_mapped) {
 					npages = kiblnd_map_tx_pages(tx, rd);
 					tx_pages_mapped = true;
@@ -2085,7 +2085,7 @@ again:
 				memcpy(frpl->page_list, pages,
 				       sizeof(*pages) * npages);
 
-				/* Prepare FastReg WR */
+				
 				wr = &frd->frd_fastreg_wr;
 				memset(wr, 0, sizeof(*wr));
 
@@ -2102,7 +2102,7 @@ again:
 				wr->wr.wr.fast_reg.access_flags =
 					(IB_ACCESS_LOCAL_WRITE |
 					 IB_ACCESS_REMOTE_WRITE);
-#endif /* HAVE_OFED_IB_MAP_MR_SG */
+#endif 
 
 				fmr->fmr_key  = is_rx ? mr->rkey : mr->lkey;
 				fmr->fmr_frd  = frd;
@@ -2121,7 +2121,7 @@ again:
 			return rc;
 		}
 
-		/* EAGAIN and ... */
+		
 		if (version != fps->fps_version) {
 			spin_unlock(&fps->fps_lock);
 			goto again;
@@ -2138,7 +2138,7 @@ again:
 	}
 
 	if (ktime_get_seconds() < fps->fps_next_retry) {
-		/* someone failed recently */
+		
 		spin_unlock(&fps->fps_lock);
 		return -EAGAIN;
 	}
@@ -2203,7 +2203,7 @@ kiblnd_fail_poolset(struct kib_poolset *ps, struct list_head *zombies)
 {
 	struct kib_pool *po;
 
-	if (ps->ps_net == NULL) /* intialized? */
+	if (ps->ps_net == NULL) 
 		return;
 
 	spin_lock(&ps->ps_lock);
@@ -2222,8 +2222,8 @@ kiblnd_fail_poolset(struct kib_poolset *ps, struct list_head *zombies)
 static void
 kiblnd_fini_poolset(struct kib_poolset *ps)
 {
-	if (ps->ps_net != NULL) { /* initialized? */
-		/* added spinlock to protect poolset */
+	if (ps->ps_net != NULL) { 
+		
 		spin_lock(&ps->ps_lock);
 		kiblnd_destroy_pool_list(&ps->ps_failed_pool_list);
 		kiblnd_destroy_pool_list(&ps->ps_pool_list);
@@ -2270,7 +2270,7 @@ kiblnd_init_poolset(struct kib_poolset *ps, int cpt,
 static int
 kiblnd_pool_is_idle(struct kib_pool *pool, time64_t now)
 {
-	if (pool->po_allocated != 0) /* still in use */
+	if (pool->po_allocated != 0) 
 		return 0;
 	if (pool->po_failed)
 		return 1;
@@ -2295,7 +2295,7 @@ kiblnd_pool_free_node(struct kib_pool *pool, struct list_head *node)
 	pool->po_allocated--;
 
 	list_for_each_entry_safe(pool, tmp, &ps->ps_pool_list, po_list) {
-		/* the first pool is persistent */
+		
 		if (ps->ps_pool_list.next == &pool->po_list)
 			continue;
 
@@ -2331,16 +2331,16 @@ again:
 		list_del(node);
 
 		if (ps->ps_node_init != NULL) {
-			/* still hold the lock */
+			
 			ps->ps_node_init(pool, node);
 		}
 		spin_unlock(&ps->ps_lock);
 		return node;
 	}
 
-	/* no available tx pool and ... */
+	
 	if (ps->ps_increasing) {
-		/* another thread is allocating a new pool */
+		
 		spin_unlock(&ps->ps_lock);
 		trips++;
 		CDEBUG(D_NET,
@@ -2355,7 +2355,7 @@ again:
 	}
 
 	if (ktime_get_seconds() < ps->ps_next_retry) {
-		/* someone failed recently */
+		
 		spin_unlock(&ps->ps_lock);
 		return NULL;
 	}
@@ -2411,7 +2411,7 @@ kiblnd_destroy_tx_pool(struct kib_pool *pool)
 		CFS_FREE_PTR_ARRAY(tx->tx_wrq,
 				   IBLND_MAX_RDMA_FRAGS);
 		if (tx->tx_sge != NULL) {
-			/* +1 is for the lnet header/message itself */
+			
 			CFS_FREE_PTR_ARRAY(tx->tx_sge,
 					   (IBLND_MAX_RDMA_FRAGS *
 					   wrq_sge + 1));
@@ -2501,7 +2501,7 @@ kiblnd_create_tx_pool(struct kib_poolset *ps, int size, struct kib_pool **pp_po)
 		if (tx->tx_wrq == NULL)
 			break;
 
-		/* +1 is for the lnet header/message itself */
+		
 		LIBCFS_CPT_ALLOC(tx->tx_sge, lnet_cpt_table(), ps->ps_cpt,
 				 (IBLND_MAX_RDMA_FRAGS * wrq_sge + 1) *
 				 sizeof(*tx->tx_sge));
@@ -2688,7 +2688,7 @@ kiblnd_set_ni_fatal_on(struct kib_hca_dev *hdev, int val)
 	bool update_ping_buf = false;
 	struct lnet_ni *ni = NULL;
 
-	/* for health check */
+	
 	list_for_each_entry(net, &hdev->ibh_dev->ibd_nets, ibn_list) {
 		ni = net->ibn_ni;
 		if (val)
@@ -2777,7 +2777,7 @@ kiblnd_hdev_get_attr(struct kib_hca_dev *hdev)
 	hdev->ibh_mr_size = dev_attr->max_mr_size;
 	hdev->ibh_max_qp_wr = dev_attr->max_qp_wr;
 
-	/* Setup device Memory Registration capabilities */
+	
 #ifdef HAVE_OFED_FMR_POOL_API
 #ifdef HAVE_OFED_IB_DEVICE_OPS
 	if (hdev->ibh_ibdev->ops.alloc_fmr &&
@@ -2793,7 +2793,7 @@ kiblnd_hdev_get_attr(struct kib_hca_dev *hdev)
 		LCONSOLE_INFO("Using FMR for registration\n");
 		hdev->ibh_dev->ibd_dev_caps |= IBLND_DEV_CAPS_FMR_ENABLED;
 	} else
-#endif /* HAVE_OFED_FMR_POOL_API */
+#endif 
 	if (dev_attr->device_cap_flags & IB_DEVICE_MEM_MGT_EXTENSIONS) {
 		LCONSOLE_INFO("Using FastReg for registration\n");
 		hdev->ibh_dev->ibd_dev_caps |= IBLND_DEV_CAPS_FASTREG_ENABLED;
@@ -2845,7 +2845,7 @@ kiblnd_hdev_destroy(struct kib_hca_dev *hdev)
 static int
 kiblnd_dummy_callback(struct rdma_cm_id *cmid, struct rdma_cm_event *event)
 {
-	/* DUMMY */
+	
 	return 0;
 }
 
@@ -2857,9 +2857,9 @@ kiblnd_dev_need_failover(struct kib_dev *dev, struct net *ns)
 	struct sockaddr dstaddr;
 	int rc;
 
-	if (dev->ibd_hdev == NULL || /* initializing */
-	    dev->ibd_hdev->ibh_cmid == NULL || /* listener is dead */
-	    *kiblnd_tunables.kib_dev_failover > 1) /* debugging */
+	if (dev->ibd_hdev == NULL || 
+	    dev->ibd_hdev->ibh_cmid == NULL || 
+	    *kiblnd_tunables.kib_dev_failover > 1) 
 		return 1;
 
 	/* XXX: it's UGLY, but I don't have better way to find
@@ -2893,7 +2893,7 @@ kiblnd_dev_need_failover(struct kib_dev *dev, struct net *ns)
 		return rc;
 	}
 
-	rc = dev->ibd_hdev->ibh_ibdev != cmid->device; /* true for failover */
+	rc = dev->ibd_hdev->ibh_ibdev != cmid->device; 
 	rdma_destroy_id(cmid);
 	return rc;
 }
@@ -2975,7 +2975,7 @@ kiblnd_dev_failover(struct kib_dev *dev, struct net *ns)
 	if (rc < 0)
 		return rc;
 
-	/* Bind to failover device or port */
+	
 	rc = rdma_bind_addr(cmid, (struct sockaddr *)&addr);
 	if (rc != 0 || cmid->device == NULL) {
 		CERROR("Failed to bind %s:%pISc to device(%p): %d\n",
@@ -3033,7 +3033,7 @@ kiblnd_dev_failover(struct kib_dev *dev, struct net *ns)
 	write_lock_irqsave(&kiblnd_data.kib_global_lock, flags);
 
 	old = dev->ibd_hdev;
-	dev->ibd_hdev = hdev;	/* take over the refcount */
+	dev->ibd_hdev = hdev;	
 	hdev = old;
 
 	list_for_each_entry(net, &dev->ibd_nets, ibn_list) {
@@ -3365,7 +3365,7 @@ kiblnd_base_shutdown(void)
 		LASSERT(list_empty(&kiblnd_data.kib_reconn_list));
 		LASSERT(list_empty(&kiblnd_data.kib_reconn_wait));
 
-		/* flag threads to terminate; wake and wait for them to die */
+		
 		kiblnd_data.kib_shutdown = 1;
 
 		/* NB: we really want to stop scheduler threads net by net
@@ -3422,10 +3422,10 @@ kiblnd_shutdown(struct lnet_ni *ni)
 		LBUG();
 
 	case IBLND_INIT_ALL:
-		/* nuke all existing peers within this net */
+		
 		kiblnd_del_peer(ni, &LNET_ANY_NID);
 
-		/* Wait for all peer_ni state to clean up */
+		
 		wait_var_event_warning(&net->ibn_npeers,
 				       atomic_read(&net->ibn_npeers) == 0,
 				       "%s: waiting for %d peers to disconnect\n",
@@ -3482,7 +3482,7 @@ kiblnd_base_startup(struct net *ns)
 	if (!try_module_get(THIS_MODULE))
 		goto failed;
 
-	memset(&kiblnd_data, 0, sizeof(kiblnd_data)); /* zero pointers, flags etc */
+	memset(&kiblnd_data, 0, sizeof(kiblnd_data)); 
 
 	rwlock_init(&kiblnd_data.kib_global_lock);
 
@@ -3528,9 +3528,9 @@ kiblnd_base_startup(struct net *ns)
 
 	kiblnd_data.kib_error_qpa.qp_state = IB_QPS_ERR;
 
-	/* lists/ptrs/locks initialised */
+	
 	kiblnd_data.kib_init = IBLND_INIT_DATA;
-	/*****************************************************/
+	
 
 	rc = kiblnd_thread_start(kiblnd_connd, NULL, "kiblnd_connd");
 	if (rc != 0) {
@@ -3552,9 +3552,9 @@ kiblnd_base_startup(struct net *ns)
 #if IS_ENABLED(CONFIG_IPV6)
 	register_inet6addr_notifier(&kiblnd_inet6addr_notifier_block);
 #endif
-	/* flag everything initialised */
+	
 	kiblnd_data.kib_init = IBLND_INIT_ALL;
-	/*****************************************************/
+	
 
 	return 0;
 
@@ -3581,7 +3581,7 @@ kiblnd_start_schedulers(struct kib_sched_info *sched)
 		}
 	} else {
 		LASSERT(sched->ibs_nthreads <= sched->ibs_nthreads_max);
-		/* increase one thread if there is new interface */
+		
 		nthrs = (sched->ibs_nthreads < sched->ibs_nthreads_max);
 	}
 
@@ -3676,7 +3676,7 @@ kiblnd_startup(struct lnet_ni *ni)
 	 * IP to be treated as an unique 'struct ni' interface.
 	 */
 	if (ni->ni_interface != NULL) {
-		/* Use the IPoIB interface specified in 'networks=' */
+		
 		ifname = ni->ni_interface;
 	} else {
 		ifname = *kiblnd_tunables.kib_default_ipif;
@@ -3731,7 +3731,7 @@ kiblnd_startup(struct lnet_ni *ni)
 
 	ibdev = kiblnd_dev_search(ifname);
 	newdev = ibdev == NULL;
-	/* hmm...create kib_dev even for alias */
+	
 	if (ibdev == NULL || strcmp(&ibdev->ibd_ifname[0], ifname) != 0) {
 		LIBCFS_ALLOC(ibdev, sizeof(*ibdev));
 		if (!ibdev) {
@@ -3745,10 +3745,10 @@ kiblnd_startup(struct lnet_ni *ni)
 		memcpy(&ibdev->ibd_addr, &addr, sizeof(addr));
 
 		INIT_LIST_HEAD(&ibdev->ibd_nets);
-		INIT_LIST_HEAD(&ibdev->ibd_list); /* not yet in kib_devs */
+		INIT_LIST_HEAD(&ibdev->ibd_list); 
 		INIT_LIST_HEAD(&ibdev->ibd_fail_list);
 
-		/* initialize the device */
+		
 		rc = kiblnd_dev_failover(ibdev, ni->ni_net_ns);
 		if (rc) {
 			CERROR("ko2iblnd: Can't initialize device: rc = %d\n",
@@ -3780,7 +3780,7 @@ kiblnd_startup(struct lnet_ni *ni)
 	write_lock_irqsave(&kiblnd_data.kib_global_lock, flags);
 	ibdev->ibd_nnets++;
 	list_add_tail(&net->ibn_list, &ibdev->ibd_nets);
-	/* for health check */
+	
 	if (ibdev->ibd_hdev->ibh_state == IBLND_DEV_PORT_DOWN)
 		kiblnd_set_ni_fatal_on(ibdev->ibd_hdev, 1);
 
@@ -3912,8 +3912,8 @@ static void ko2inlnd_assert_wire_constants(void)
 	BUILD_BUG_ON((int)offsetof(struct kib_completion_msg, ibcm_status) != 8);
 	BUILD_BUG_ON((int)sizeof(((struct kib_completion_msg *)0)->ibcm_status) != 4);
 
-	/* Checks for struct kib_msg */
-	//BUILD_BUG_ON((int)sizeof(struct kib_msg) != 12);
+	
+	
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_magic) != 0);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_magic) != 4);
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_version) != 4);
@@ -3935,7 +3935,7 @@ static void ko2inlnd_assert_wire_constants(void)
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_dststamp) != 40);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_dststamp) != 8);
 
-	/* Connparams */
+	
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.connparams.ibcp_queue_depth) != 48);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.connparams.ibcp_queue_depth) != 2);
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.connparams.ibcp_max_frags) != 50);
@@ -3943,19 +3943,19 @@ static void ko2inlnd_assert_wire_constants(void)
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.connparams.ibcp_max_msg_size) != 52);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.connparams.ibcp_max_msg_size) != 4);
 
-	/* Immediate message */
+	
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.immediate.ibim_hdr) != 48);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.immediate.ibim_hdr) != 72);
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.immediate.ibim_payload) != 120);
 	BUILD_BUG_ON((int)sizeof(*((struct kib_msg *)0)->ibm_u.immediate.ibim_payload) != 1);
 
-	/* PUT req message */
+	
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.putreq.ibprm_hdr) != 48);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.putreq.ibprm_hdr) != 72);
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.putreq.ibprm_cookie) != 120);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.putreq.ibprm_cookie) != 8);
 
-	/* Put ACK */
+	
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.putack.ibpam_src_cookie) != 48);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.putack.ibpam_src_cookie) != 8);
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.putack.ibpam_dst_cookie) != 56);
@@ -3963,7 +3963,7 @@ static void ko2inlnd_assert_wire_constants(void)
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.putack.ibpam_rd) != 64);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.putack.ibpam_rd) != 8);
 
-	/* GET message */
+	
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.get.ibgm_hdr) != 48);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.get.ibgm_hdr) != 72);
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.get.ibgm_cookie) != 120);
@@ -3971,13 +3971,13 @@ static void ko2inlnd_assert_wire_constants(void)
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.get.ibgm_rd) != 128);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.get.ibgm_rd) != 8);
 
-	/* Completion message */
+	
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.completion.ibcm_cookie) != 48);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.completion.ibcm_cookie) != 8);
 	BUILD_BUG_ON((int)offsetof(struct kib_msg, ibm_u.completion.ibcm_status) != 56);
 	BUILD_BUG_ON((int)sizeof(((struct kib_msg *)0)->ibm_u.completion.ibcm_status) != 4);
 
-	/* Sanity checks */
+	
 	BUILD_BUG_ON(sizeof(struct kib_msg) > IBLND_MSG_SIZE);
 	BUILD_BUG_ON(offsetof(struct kib_msg,
 		     ibm_u.get.ibgm_rd.rd_frags[IBLND_MAX_RDMA_FRAGS]) >
@@ -4017,7 +4017,7 @@ static int __init ko2iblnd_init(void)
 #define OFED_VERSION " (in-kernel)"
 #endif
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("OpenIB gen2 LNet Network Driver");
 MODULE_VERSION("2.8.0" OFED_VERSION);
 MODULE_LICENSE("GPL");

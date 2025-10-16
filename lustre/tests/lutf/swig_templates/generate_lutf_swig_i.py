@@ -11,7 +11,6 @@ for c in contents:
 	if "%}" in c:
 		break
 
-#typemap_path = sys.argv[1] + '/lustre/tests/lutf/swig_templates/typemap.template'
 typemap_path = os.path.join(sys.argv[1], 'typemap.template')
 i_typemap = open(typemap_path)
 l_typemap = i_typemap.readlines()

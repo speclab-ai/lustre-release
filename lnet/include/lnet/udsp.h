@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  *
@@ -7,7 +7,7 @@
  * Copyright (c) 2018-2020 Data Direct Networks.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Author: Amir Shehata
  */
@@ -130,4 +130,4 @@ int lnet_udsp_demarshal_add(void *bulk, __u32 bulk_size);
 void lnet_udsp_get_construct_info(struct lnet_ioctl_construct_udsp_info *info,
 				  struct lnet_nid *nid);
 
-#endif /* UDSP_H */
+#endif 

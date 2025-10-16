@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,13 +8,13 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Nathan Rutman <nathan@clusterfs.com>
  */
 
 #define DEBUG_SUBSYSTEM S_MGC
-#define D_MGC D_CONFIG /*|D_WARNING*/
+#define D_MGC D_CONFIG 
 
 #include <linux/module.h>
 #include <linux/kthread.h>
@@ -90,7 +90,7 @@ static int mgc_fs_setup(const struct lu_env *env, struct obd_device *obd,
 	if (rc)
 		RETURN(rc);
 
-	/* Setup the configs dir */
+	
 	fid.f_seq = FID_SEQ_LOCAL_NAME;
 	fid.f_oid = 1;
 	fid.f_ver = 0;
@@ -127,7 +127,7 @@ static int mgc_fs_setup(const struct lu_env *env, struct obd_device *obd,
 	 */
 	class_incref(obd, "mgc_fs", obd);
 
-	/* We hold the cl_mgc_mutex until mgc_fs_clear() is called */
+	
 	EXIT;
 out_llog:
 	if (rc) {
@@ -146,7 +146,7 @@ out_mutex:
 	return rc;
 }
 
-/* Unconfigure the MGC from fetching config logs to the local device */
+
 static int mgc_fs_clear(const struct lu_env *env, struct obd_device *obd)
 {
 	struct client_obd *cli = &obd->u.cli;
@@ -169,7 +169,7 @@ static int mgc_fs_clear(const struct lu_env *env, struct obd_device *obd)
 	RETURN(0);
 }
 
-/* Send target_reg message to MGS */
+
 static int mgc_target_register(struct obd_export *exp,
 			       struct mgs_target_info *mti)
 {
@@ -208,18 +208,18 @@ static int mgc_target_register(struct obd_export *exp,
 	}
 
 	if (nidlist) {
-		if (mti->mti_nid_count <= avail) { /* inline buffer */
+		if (mti->mti_nid_count <= avail) { 
 			req_capsule_set_size(&req->rq_pill,
 					     &RMF_MGS_TARGET_NIDLIST,
 					     RCL_CLIENT,
 					     sizeof(*mtn) + nidlist_size);
-		} else { /* use bulk for big NID lists */
+		} else { 
 			pages = DIV_ROUND_UP((sizeof(*mti) & ~PAGE_MASK) +
 					     nidlist_size, PAGE_SIZE);
 		}
 	} else if (large_nids) {
 		if (mti->mti_nid_count > avail) {
-			/* can't fit, send all we can */
+			
 			CDEBUG(D_MGC, "can fit only %u NIDs from %u\n",
 			       avail, mti->mti_nid_count);
 			mti->mti_nid_count = avail;
@@ -274,7 +274,7 @@ static int mgc_target_register(struct obd_export *exp,
 
 	ptlrpc_request_set_replen(req);
 	CDEBUG(D_MGC, "register %s\n", mti->mti_svname);
-	/* Limit how long we will wait for the enqueue to complete */
+	
 	req->rq_delay_limit_ns = ktime_set(MGC_TARGET_REG_LIMIT, 0);
 
 	/* if the target needs to regenerate the config log in MGS, it's better
@@ -351,7 +351,7 @@ static int mgc_nid_notify(struct obd_export *exp,
 	avail = bufsize / MTN_NIDSTR_SIZE;
 
 	if (mti->mti_nid_count > avail) {
-		/* inline buffer should fit NIDs on single network, but still */
+		
 		CWARN("%s: too many NIDs for buffer: %u > %d\n",
 		      mti->mti_svname, mti->mti_nid_count, avail);
 		mti->mti_nid_count = avail;
@@ -400,7 +400,7 @@ int mgc_set_info_async_server(const struct lu_env *env,
 	int rc = -EINVAL;
 
 	ENTRY;
-	/* FIXME move this to mgc_process_config */
+	
 	if (KEY_IS(KEY_REGISTER_TARGET)) {
 		size_t mti_len = offsetof(struct mgs_target_info, mti_nidlist);
 		struct mgs_target_info *mti = val;
@@ -470,7 +470,7 @@ int mgc_process_nodemap_log(struct obd_device *obd,
 	ENTRY;
 	mgc_conn = class_exp2cliimp(cld->cld_mgcexp)->imp_connection;
 
-	/* don't need to get local config */
+	
 	if (LNetIsPeerLocal(&mgc_conn->c_peer.nid))
 		GOTO(out, rc = 0);
 
@@ -511,7 +511,7 @@ again:
 	if (rc)
 		GOTO(out, rc);
 
-	/* pack request */
+	
 	body = req_capsule_client_get(&req->rq_pill, &RMF_MGS_CONFIG_BODY);
 	LASSERT(body);
 	LASSERT(sizeof(body->mcb_name) > strlen(cld->cld_logname));
@@ -524,7 +524,7 @@ again:
 	body->mcb_units  = nrpages;
 	body->mcb_nm_cur_pass = nodemap_cur_pass;
 
-	/* allocate bulk transfer descriptor */
+	
 	desc = ptlrpc_prep_bulk_imp(req, nrpages, 1,
 				    PTLRPC_BULK_PUT_SINK,
 				    MGS_BULK_PORTAL,
@@ -556,8 +556,8 @@ again:
 	if (ealen > nrpages << PAGE_SHIFT)
 		GOTO(out, rc = -EINVAL);
 
-	if (ealen == 0) { /* no logs transferred */
-		/* config changed since first read RPC */
+	if (ealen == 0) { 
+		
 		if (config_read_offset == 0) {
 			CDEBUG(D_INFO, "nodemap config changed in transit, retrying\n");
 			GOTO(out, rc = -EAGAIN);
@@ -610,7 +610,7 @@ out:
 		goto again;
 
 	if (new_config) {
-		/* recent_nodemap cannot be used after set_active/dealloc */
+		
 		if (rc == 0)
 			nodemap_config_set_active_mgc(new_config);
 		else
@@ -637,7 +637,7 @@ int mgc_process_config_server(const struct lu_env *env, struct lu_device *lu,
 	ENTRY;
 	switch (lcfg->lcfg_command) {
 	case LCFG_LOV_ADD_OBD: {
-		/* Overloading this cfg command: register a new target */
+		
 		struct mgs_target_info *mti;
 
 		if (LUSTRE_CFG_BUFLEN(lcfg, 1) !=
@@ -651,7 +651,7 @@ int mgc_process_config_server(const struct lu_env *env, struct lu_device *lu,
 		break;
 	}
 	case LCFG_LOV_DEL_OBD:
-		/* Unregister has no meaning at the moment. */
+		
 		CERROR("lov_del_obd unimplemented\n");
 		rc = -EINVAL;
 		break;
@@ -675,7 +675,7 @@ int mgc_barrier_glimpse_ast(struct ldlm_lock *lock, void *data)
 	RETURN(rc);
 }
 
-/* Copy a remote log locally */
+
 static int mgc_llog_local_copy(const struct lu_env *env,
 			       struct llog_ctxt *rctxt,
 			       struct llog_ctxt *lctxt, char *logname)
@@ -699,10 +699,10 @@ static int mgc_llog_local_copy(const struct lu_env *env,
 		RETURN(-ENOMEM);
 	sprintf(temp_log, "%sT", logname);
 
-	/* check current local llog is valid */
+	
 	rc = llog_validate(env, lctxt, logname);
 	if (!rc) {
-		/* copy current local llog to temp_log */
+		
 		rc = llog_backup(env, obd, lctxt, lctxt, logname, temp_log);
 		if (rc < 0)
 			CWARN("%s: can't backup local config %s: rc = %d\n",
@@ -719,7 +719,7 @@ static int mgc_llog_local_copy(const struct lu_env *env,
 	if (rc == -ENOSPC || rc == -EROFS)
 		GOTO(out_free, rc);
 
-	/* build new local llog */
+	
 	rc = llog_backup(env, obd, rctxt, lctxt, logname, logname);
 	if (rc == -ENOENT) {
 		CDEBUG_LIMIT(strstr(logname, "sptlrpc") ? D_MGC : D_WARNING,
@@ -727,7 +727,7 @@ static int mgc_llog_local_copy(const struct lu_env *env,
 			     obd->obd_name, logname);
 		llog_erase(env, lctxt, NULL, logname);
 	} else if (rc < 0) {
-		/* error during backup, get local one back from the copy */
+		
 		CWARN("%s: failed to copy new config %s: rc = %d\n",
 		       obd->obd_name, logname, rc);
 		llog_backup(env, obd, lctxt, lctxt, temp_log, logname);
@@ -749,7 +749,7 @@ int mgc_process_server_cfg_log(struct lu_env *env, struct llog_ctxt **ctxt,
 	struct dt_object *configs_dir = cli->cl_mgc_configs_dir;
 	int rc = mgslock ? 0 : -EIO;
 
-	/* requeue might happen in nowhere state */
+	
 	if (!lctxt)
 		RETURN(rc);
 	if (!configs_dir ||
@@ -759,7 +759,7 @@ int mgc_process_server_cfg_log(struct lu_env *env, struct llog_ctxt **ctxt,
 	if (lsi->lsi_dt_dev->dd_rdonly) {
 		rc = -EROFS;
 	} else if (mgslock) {
-		/* Only try to copy log if we have the MGS lock. */
+		
 		CDEBUG(D_INFO, "%s: copy local log %s\n", mgc->obd_name,
 		       cld->cld_logname);
 
@@ -856,7 +856,7 @@ int mgc_get_local_copy(struct obd_device *mgc, struct super_block *sb,
 		CDEBUG(D_MGC, "%s: can't save local copy of '%s': rc = %d.\n",
 		       mgc->obd_name, cld->cld_logname, rc);
 
-	/* release lock */
+	
 	if (lustre_handle_is_used(&lockh))
 		ldlm_lock_decref_and_cancel(&lockh, LCK_CR);
 	else

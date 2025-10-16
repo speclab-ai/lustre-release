@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Fan, Yong <fan.yong@intel.com>
  */
@@ -64,12 +64,12 @@ static int lfsck_bookmark_load(const struct lu_env *env,
 			       "%s: invalid lfsck_bookmark magic %#x != %#x\n",
 			       lfsck_lfsck2name(lfsck), bm->lb_magic,
 			       LFSCK_BOOKMARK_MAGIC);
-			/* Process it as new lfsck_bookmark. */
+			
 			rc = -ENODATA;
 		}
 	} else {
 		if (rc == -EFAULT && pos == 0)
-			/* return -ENODATA for empty lfsck_bookmark. */
+			
 			rc = -ENODATA;
 		else
 			CDEBUG(D_LFSCK,

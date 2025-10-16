@@ -1,9 +1,3 @@
-# SPDX-License-Identifier: GPL-2.0
-
-#
-# This file is part of Lustre, http://www.lustre.org/
-#
-
 MODULES := lov
 lov-objs := lov_dev.o \
 	lov_ea.o \
@@ -20,7 +14,5 @@ lov-objs := lov_dev.o \
 	lovsub_dev.o \
 	lovsub_object.o \
 	lproc_lov.o
-
 EXTRA_DIST = $(lov-objs:.o=.c) lov_internal.h lov_cl_internal.h
-
 @INCLUDE_RULES@

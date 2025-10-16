@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_lock for OSC layer.
  *
@@ -18,7 +18,7 @@
 
 #define DEBUG_SUBSYSTEM S_OSC
 
-/* fid_build_reg_res_name() */
+
 #include <lustre_fid.h>
 #include <lustre_osc.h>
 
@@ -168,7 +168,7 @@ void osc_lock_lvb_update(const struct lu_env *env,
 		ldlm_lock_allow_match_locked(dlmlock);
 	}
 
-	/* The size should not be less than the kms */
+	
 	if (attr->cat_size < oinfo->loi_kms)
 		attr->cat_size = oinfo->loi_kms;
 
@@ -211,7 +211,7 @@ static void osc_lock_granted(const struct lu_env *env, struct osc_lock *oscl,
 		oscl->ols_hold = 1;
 	}
 
-	/* Lock must have been granted. */
+	
 	lock_res_and_lock(dlmlock);
 	if (ldlm_is_granted(dlmlock)) {
 		struct ldlm_extent *ext = &dlmlock->l_policy_data.l_extent;
@@ -224,7 +224,7 @@ static void osc_lock_granted(const struct lu_env *env, struct osc_lock *oscl,
 		descr->cld_end   = ext->end >> PAGE_SHIFT;
 		descr->cld_gid   = ext->gid;
 
-		/* no lvb update for matched lock */
+		
 		if (!(dlmlock->l_flags & LDLM_FL_LVB_CACHED)) {
 			LASSERT(oscl->ols_flags & LDLM_FL_LVB_READY);
 			LASSERT(osc == dlmlock->l_ast_data);
@@ -255,7 +255,7 @@ static int osc_lock_upcall(void *cookie, struct lustre_handle *lockh,
 	ENTRY;
 
 	env = cl_env_percpu_get();
-	/* should never happen, similar to osc_ldlm_blocking_ast(). */
+	
 	LASSERT(!IS_ERR(env));
 
 	rc = ldlm_error2errno(errcode);
@@ -271,12 +271,12 @@ static int osc_lock_upcall(void *cookie, struct lustre_handle *lockh,
 	if (rc == 0)
 		osc_lock_granted(env, oscl, lockh);
 
-	/* Error handling, some errors are tolerable. */
+	
 	if (oscl->ols_glimpse && rc == -ENAVAIL) {
 		LASSERT(oscl->ols_flags & LDLM_FL_LVB_READY);
 		osc_lock_lvb_update(env, cl2osc(slice->cls_obj),
 				    NULL, &oscl->ols_lvb);
-		/* Hide the error. */
+		
 		rc = 0;
 	} else if (rc < 0 && oscl->ols_flags & LDLM_FL_NDELAY) {
 		rc = -EAGAIN;
@@ -341,7 +341,7 @@ static int osc_lock_flush(struct osc_object *obj, pgoff_t start, pgoff_t end,
 	if (IS_ERR(env))
 		RETURN(PTR_ERR(env));
 
-	/* For blocking AST, it only needs to check conflict read extents. */
+	
 	rc = osc_ldlm_hp_handle(env, obj, start, end, true);
 	if (rc < 0)
 		CERROR("%s: HP read check failed: rc = %d\n",
@@ -413,19 +413,19 @@ static int osc_dlm_blocking_ast0(const struct lu_env *env,
 		struct cl_attr *attr = &osc_env_info(env)->oti_attr;
 		__u64 old_kms;
 
-		/* Destroy pages covered by the extent of the DLM lock */
+		
 		result = osc_lock_flush(cl2osc(obj),
 					extent->start >> PAGE_SHIFT,
 					extent->end >> PAGE_SHIFT,
 					mode, discard);
 
-		/* losing a lock, update kms */
+		
 		lock_res_and_lock(dlmlock);
 		/* clearing l_ast_data after flushing data,
 		 * to let glimpse ast find the lock and the object */
 		dlmlock->l_ast_data = NULL;
 		cl_object_attr_lock(obj);
-		/* Must get the value under the lock to avoid race. */
+		
 		old_kms = cl2osc(obj)->oo_oinfo->loi_kms;
 		/* Update the kms. Need to loop all granted locks.
 		 * Not a problem for the client */
@@ -695,7 +695,7 @@ unsigned long osc_ldlm_weigh_ast(struct ldlm_lock *dlmlock)
 	 */
 	env = cl_env_get(&refcheck);
 	if (IS_ERR(env))
-		/* Mostly because lack of memory, do not eliminate this lock */
+		
 		RETURN(1);
 
 	LASSERT(dlmlock->l_resource->lr_type == LDLM_EXTENT ||
@@ -758,7 +758,7 @@ static void osc_lock_build_einfo(const struct lu_env *env,
 	einfo->ei_cb_bl  = osc_ldlm_blocking_ast;
 	einfo->ei_cb_cp  = ldlm_completion_ast;
 	einfo->ei_cb_gl  = osc_ldlm_glimpse_ast;
-	einfo->ei_cbdata = osc; /* value to be put into ->l_ast_data */
+	einfo->ei_cbdata = osc; 
 }
 
 /**
@@ -878,7 +878,7 @@ restart:
 		    descr->cld_end   < need->cld_start)
 			continue;
 
-		/* We're not supposed to give up group lock */
+		
 		if (descr->cld_mode == CLM_GROUP)
 			break;
 
@@ -886,12 +886,12 @@ restart:
 		    osc_lock_compatible(oscl, tmp_oscl))
 			continue;
 
-		/* wait for conflicting lock to be canceled */
+		
 		cl_sync_io_init(waiter, 1);
 		oscl->ols_owner = waiter;
 
 		spin_lock(&tmp_oscl->ols_lock);
-		/* add oscl into tmp's ols_waiting list */
+		
 		list_add_tail(&oscl->ols_wait_entry,
 			      &tmp_oscl->ols_waiting_list);
 		spin_unlock(&tmp_oscl->ols_lock);
@@ -966,7 +966,7 @@ static int osc_lock_enqueue(const struct lu_env *env,
 	/* For glimpse and/or speculative locks, do not wait for reply from
 	 * server on LDLM request */
 	if (oscl->ols_glimpse || oscl->ols_speculative) {
-		/* Speculative and glimpse locks do not have an anchor */
+		
 		LASSERT(equi(oscl->ols_speculative, anchor == NULL));
 		async = true;
 		GOTO(enqueue_base, 0);
@@ -1007,7 +1007,7 @@ enqueue_base:
 	osc_lock_build_policy(env, lock, policy);
 	if (oscl->ols_speculative) {
 		oscl->ols_einfo.ei_cbdata = NULL;
-		/* hold a reference for callback */
+		
 		cl_object_get(osc2cl(osc));
 		upcall = osc_lock_upcall_speculative;
 		cookie = osc;
@@ -1035,7 +1035,7 @@ enqueue_base:
 	} else if (oscl->ols_speculative) {
 		cl_object_put(env, osc2cl(osc));
 		if (oscl->ols_glimpse) {
-			/* hide error for AGL request */
+			
 			result = 0;
 		}
 	}
@@ -1072,7 +1072,7 @@ static void osc_lock_detach(const struct lu_env *env, struct osc_lock *olck)
 
 	olck->ols_dlmlock = NULL;
 
-	/* release a reference taken in osc_lock_upcall(). */
+	
 	LASSERT(olck->ols_has_ref);
 	ldlm_lock_put(dlmlock);
 	olck->ols_has_ref = 0;
@@ -1174,7 +1174,7 @@ void osc_lock_set_writer(const struct lu_env *env, const struct cl_io *io,
 	     (descr->cld_start <= io_start && descr->cld_end >= io_end))) {
 		struct osc_io *oio = osc_env_io(env);
 
-		/* There must be only one lock to match the write region */
+		
 		LASSERT(oio->oi_write_osclock == NULL);
 		oio->oi_write_osclock = oscl;
 	}
@@ -1235,7 +1235,7 @@ int osc_lock_init(const struct lu_env *env,
 	cl_lock_slice_add(lock, &oscl->ols_cl, obj, &osc_lock_ops);
 
 	if (!(enqflags & CEF_MUST))
-		/* try to convert this lock to a lockless lock */
+		
 		osc_lock_to_lockless(env, oscl, (enqflags & CEF_NEVER));
 
 	if (io->ci_type == CIT_WRITE || cl_io_is_mkwrite(io))
@@ -1297,11 +1297,11 @@ again:
 			      obj, &lockh, match_flags);
 	if (mode != 0) {
 		lock = ldlm_handle2lock(&lockh);
-		/* RACE: the lock is cancelled so let's try again */
+		
 		if (unlikely(lock == NULL))
 			goto again;
 	}
 
 	RETURN(lock);
 }
-/** @} osc */
+

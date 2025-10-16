@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: LGPL-2.1+ */
+
 
 /*
  * Copyright (c) 2015, James Simmons <jsimmons@infradead.org>
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef LIB_LND_CONFIG_API_H
@@ -31,4 +31,4 @@ lustre_yaml_extract_lnd_tunables(struct cYAML *tree,
 				 __u32 net_type,
 				 struct lnet_lnd_tunables *tun);
 
-#endif /* LIB_LND_CONFIG_API_H */
+#endif 

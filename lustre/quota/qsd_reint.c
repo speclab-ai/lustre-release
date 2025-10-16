@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -99,7 +99,7 @@ static int qsd_reint_entries(const struct lu_env *env,
 	CDEBUG(D_QUOTA, "%s: processing %d pages for %s index\n",
 	       qsd->qsd_svname, npages, global ? "global" : "slave");
 
-	/* sanity check on the record size */
+	
 	if ((global && ii->ii_recsize != sizeof(struct lquota_glb_rec)) ||
 	    (!global && ii->ii_recsize != sizeof(struct lquota_slv_rec))) {
 		CERROR("%s: invalid record size (%d) for %s index\n",
@@ -116,7 +116,7 @@ static int qsd_reint_entries(const struct lu_env *env,
 
 		for (j = 0; j < LU_PAGE_COUNT; j++) {
 			if (need_swab)
-				/* swab header */
+				
 				lustre_swab_lip_header(&lip->lp_idx);
 
 			if (lip->lp_idx.lip_magic != LIP_MAGIC) {
@@ -137,13 +137,13 @@ static int qsd_reint_entries(const struct lu_env *env,
 				char *entry;
 
 				entry = lip->lp_idx.lip_entries + k * size;
-				memcpy(qid, entry, ii->ii_keysize); /* key */
-				entry += ii->ii_keysize;            /* value */
+				memcpy(qid, entry, ii->ii_keysize); 
+				entry += ii->ii_keysize;            
 
 				if (need_swab) {
 					int offset = 0;
 
-					/* swab key */
+					
 					__swab64s(&qid->qid_uid);
 					/* quota records only include 64-bit
 					 * fields */
@@ -185,11 +185,11 @@ static int qsd_reint_index(const struct lu_env *env, struct qsd_qtype_info *qqi,
 
 	fid = global ? &qqi->qqi_fid : &qqi->qqi_slv_fid;
 
-	/* let's do a 1MB bulk */
+	
 	npages = min_t(unsigned int, OFD_MAX_BRW_SIZE, 1 << 20);
 	npages /= PAGE_SIZE;
 
-	/* allocate pages for bulk index read */
+	
 	OBD_ALLOC_PTR_ARRAY(pages, npages);
 	if (pages == NULL)
 		GOTO(out, rc = -ENOMEM);
@@ -202,7 +202,7 @@ static int qsd_reint_index(const struct lu_env *env, struct qsd_qtype_info *qqi,
 	qqi->qqi_last_version_update_time = ktime_get_seconds();
 
 repeat:
-	/* initialize index_info request with FID of global index */
+	
 	memset(ii, 0, sizeof(*ii));
 	memcpy(&ii->ii_fid, fid, sizeof(*fid));
 	ii->ii_magic = IDX_INFO_MAGIC;
@@ -210,7 +210,7 @@ repeat:
 	ii->ii_count = npages * LU_PAGE_COUNT;
 	ii->ii_hash_start = start_hash;
 
-	/* send bulk request to quota master to read global index */
+	
 	rc = qsd_fetch_index(env, qsd->qsd_exp, ii, npages, pages, &need_swab);
 	if (rc) {
 		CWARN("%s: failed to fetch index for "DFID". %d\n",
@@ -218,7 +218,7 @@ repeat:
 		GOTO(out, rc);
 	}
 
-	/* various sanity checks */
+	
 	if (ii->ii_magic != IDX_INFO_MAGIC) {
 		CERROR("%s: invalid magic in index transfer %x != %x\n",
 		       qsd->qsd_svname, ii->ii_magic, IDX_INFO_MAGIC);
@@ -245,7 +245,7 @@ repeat:
 	       PFID(fid), global ? "global" : "slave", ii->ii_count);
 
 	if (start_hash == 0)
-		/* record version associated with the first bulk transfer */
+		
 		ver = ii->ii_version;
 
 	pg_cnt = (ii->ii_count + (LU_PAGE_COUNT) - 1);
@@ -273,7 +273,7 @@ out:
 		OBD_FREE_PTR_ARRAY(pages, npages);
 	}
 
-	/* Update index version */
+	
 	if (rc == 0) {
 		rc = qsd_write_version(env, qqi, ver, global);
 		if (rc)
@@ -327,7 +327,7 @@ static int qsd_reconciliation(const struct lu_env *env,
 			GOTO(out, rc = PTR_ERR(key));
 		}
 
-		/* skip the root user/group */
+		
 		if (*((__u64 *)key) == 0)
 			goto next;
 
@@ -363,7 +363,7 @@ next:
 			      "\n", qsd->qsd_svname, rc, PFID(&qqi->qqi_fid));
 	} while (rc == 0);
 
-	/* reach the end */
+	
 	if (rc > 0)
 		rc = 0;
 out:
@@ -425,13 +425,13 @@ static int qsd_reint_main(void *_args)
 
 	complete(args->qra_started);
 
-	/* wait for the connection to master established */
+	
 	while (({set_current_state(TASK_IDLE);
 		 !qsd_connected(qsd) && !kthread_should_stop(); }))
 		schedule();
 	__set_current_state(TASK_RUNNING);
 
-	/* Step 1: enqueue global index lock */
+	
 	if (kthread_should_stop())
 		GOTO(out_env_init, rc = 0);
 
@@ -441,15 +441,15 @@ static int qsd_reint_main(void *_args)
 	memset(&qti->qti_lvb, 0, sizeof(qti->qti_lvb));
 
 	read_lock(&qsd->qsd_lock);
-	/* check whether we already own a global quota lock for this type */
+	
 	if (lustre_handle_is_used(&qqi->qqi_lockh) &&
 	    ldlm_lock_addref_try(&qqi->qqi_lockh, qsd_glb_einfo.ei_mode) == 0) {
 		read_unlock(&qsd->qsd_lock);
-		/* force refresh of global & slave index copy */
+		
 		qti->qti_lvb.lvb_glb_ver = ~0ULL;
 		qti->qti_slv_ver = ~0ULL;
 	} else {
-		/* no valid lock found, let's enqueue a new one */
+		
 		read_unlock(&qsd->qsd_lock);
 
 		memset(&qti->qti_body, 0, sizeof(qti->qti_body));
@@ -468,7 +468,7 @@ static int qsd_reint_main(void *_args)
 		       qti->qti_slv_ver, qqi->qqi_slv_ver);
 	}
 
-	/* Step 2: reintegrate global index */
+	
 	if (kthread_should_stop())
 		GOTO(out_lock, rc = 0);
 
@@ -485,7 +485,7 @@ static int qsd_reint_main(void *_args)
 		qsd_bump_version(qqi, qqi->qqi_glb_ver, true);
 	}
 
-	/* Step 3: reintegrate slave index */
+	
 	if (kthread_should_stop())
 		GOTO(out_lock, rc = 0);
 
@@ -500,7 +500,7 @@ static int qsd_reint_main(void *_args)
 		qsd_bump_version(qqi, qqi->qqi_slv_ver, false);
 	}
 
-	/* wait for the qsd instance started (target recovery done) */
+	
 	while (({set_current_state(TASK_IDLE);
 		 !qsd_started(qsd) && !kthread_should_stop(); }))
 		schedule();
@@ -509,7 +509,7 @@ static int qsd_reint_main(void *_args)
 	if (kthread_should_stop())
 		GOTO(out_lock, rc = 0);
 
-	/* Step 4: start reconciliation for each enforced ID */
+	
 	rc = qsd_reconciliation(env, qqi);
 	if (rc)
 		CWARN("%s: reconciliation for "DFID" failed with %d\n",
@@ -567,7 +567,7 @@ static bool qqi_reint_delayed(struct qsd_qtype_info *qqi)
 	bool			 delay = false;
 	ENTRY;
 
-	/* any pending quota adjust? */
+	
 	spin_lock(&qsd->qsd_adjust_lock);
 	list_for_each_entry_safe(lqe, n, &qsd->qsd_adjust_list, lqe_link) {
 		if (lqe2qqi(lqe) == qqi) {
@@ -577,7 +577,7 @@ static bool qqi_reint_delayed(struct qsd_qtype_info *qqi)
 	}
 	spin_unlock(&qsd->qsd_adjust_lock);
 
-	/* any pending quota request? */
+	
 	cfs_hash_for_each_safe(qqi->qqi_site->lqs_hash, qsd_entry_iter_cb,
 			       &dqacq);
 	if (dqacq) {
@@ -586,10 +586,10 @@ static bool qqi_reint_delayed(struct qsd_qtype_info *qqi)
 		GOTO(out, delay = true);
 	}
 
-	/* any pending updates? */
+	
 	write_lock(&qsd->qsd_lock);
 
-	/* check if the reintegration has already started or finished */
+	
 	if ((qqi->qqi_glb_uptodate && qqi->qqi_slv_uptodate) ||
 	     qqi->qqi_reint || qsd->qsd_stopping || qsd->qsd_updating)
 		GOTO(out_lock, delay = true);
@@ -628,19 +628,19 @@ int qsd_start_reint_thread(struct qsd_qtype_info *qqi)
 	int			 rc;
 	ENTRY;
 
-	/* do not try to start a new thread as this can lead to a deadlock */
+	
 	if (current->flags & (PF_MEMALLOC | PF_KSWAPD))
 		RETURN(0);
 
 	if (qsd->qsd_dev->dd_rdonly)
 		RETURN(0);
 
-	/* don't bother to do reintegration when quota isn't enabled */
+	
 	if (!qsd_type_enabled(qsd, qqi->qqi_qtype))
 		RETURN(0);
 
 	if (qqi->qqi_acct_failed)
-		/* no space accounting support, can't enable enforcement */
+		
 		RETURN(0);
 
 	if (qqi_reint_delayed(qqi))
@@ -652,7 +652,7 @@ int qsd_start_reint_thread(struct qsd_qtype_info *qqi)
 
 	args->qra_started = &started;
 	args->qra_qqi = qqi;
-	/* initialize environment */
+	
 	rc = lu_env_init(&args->qra_env, LCT_DT_THREAD);
 	if (rc)
 		GOTO(out_args, rc);

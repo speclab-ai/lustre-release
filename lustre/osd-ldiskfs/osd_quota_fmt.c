@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2016, Intel Corporation.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre administrative quota format.
  * from linux/fs/quota_v2.c
@@ -54,7 +54,7 @@ static ssize_t quota_read_blk(const struct lu_env *env,
 	ret = sb->s_op->quota_read(sb, type, buf, LUSTRE_DQBLKSIZE,
 				   blk << LUSTRE_DQBLKSIZE_BITS);
 
-	/* Reading past EOF just returns a block of zeros */
+	
 	if (ret == -EBADR)
 		ret = 0;
 
@@ -97,7 +97,7 @@ static loff_t find_block_dqentry(const struct lu_env *env,
 		for (i = 0; i < LUSTRE_DQSTRINBLK &&
 			    le32_to_cpu(ddquot[i].dqb_id) != dqid; i++)
 			continue;
-	} else { /* ID 0 as a bit more complicated searching... */
+	} else { 
 		for (i = 0; i < LUSTRE_DQSTRINBLK; i++)
 			if (!le32_to_cpu(ddquot[i].dqb_id) &&
 			    memcmp((char *)&emptydquot, (char *)&ddquot[i],
@@ -156,7 +156,7 @@ loff_t find_tree_dqentry(const struct lu_env *env,
 	}
 	ret = 0;
 	blk = le32_to_cpu(ref[GETIDINDEX(dqid, depth)]);
-	if (!blk)               /* No reference? */
+	if (!blk)               
 		GOTO(out_buf, ret);
 
 	if (depth < LUSTRE_DQTREEDEPTH - 1)
@@ -195,7 +195,7 @@ int walk_block_dqentry(const struct lu_env *env, struct osd_object *obj,
 	loff_t ret = 0;
 
 	ENTRY;
-	/* check if the leaf block has been processed before */
+	
 	list_for_each_entry(leaf, &it->oiq_list, oql_link) {
 		if (leaf->oql_blk == blk)
 			RETURN(1);
@@ -220,7 +220,7 @@ int walk_block_dqentry(const struct lu_env *env, struct osd_object *obj,
 	ddquot = (struct lustre_disk_dqblk_v2 *)GETENTRIES(buf);
 	LASSERT(index < LUSTRE_DQSTRINBLK);
 	for (i = index; i < LUSTRE_DQSTRINBLK; i++) {
-		/* skip empty entry */
+		
 		if (!memcmp((char *)&emptydquot,
 			    (char *)&ddquot[i], dqblk_sz))
 			continue;
@@ -272,7 +272,7 @@ int walk_tree_dqentry(const struct lu_env *env, struct osd_object *obj,
 
 	for (; index <= 0xff; index++) {
 		blk = le32_to_cpu(ref[index]);
-		if (!blk)       /* No reference */
+		if (!blk)       
 			continue;
 
 		if (depth < LUSTRE_DQTREEDEPTH - 1)

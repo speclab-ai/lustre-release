@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /*
  * Implementation of HKDF ("HMAC-based Extract-and-Expand Key Derivation
  * Function"), aka RFC 5869.  See also the original paper (Krawczyk 2010):
@@ -46,7 +46,7 @@
  * there's no way to persist a random salt per master key from kernel mode.
  */
 
-/* HKDF-Extract (RFC 5869 section 2.2), unsalted */
+
 static int hkdf_extract(struct crypto_shash *hmac_tfm, const u8 *ikm,
 			unsigned int ikmlen, u8 prk[HKDF_HASHLEN])
 {
@@ -177,7 +177,7 @@ int llcrypt_hkdf_expand(struct llcrypt_hkdf *hkdf, u8 context,
 	err = 0;
 out:
 	if (unlikely(err))
-		memzero_explicit(okm, okmlen); /* so caller doesn't need to */
+		memzero_explicit(okm, okmlen); 
 	shash_desc_zero(desc);
 	return err;
 }

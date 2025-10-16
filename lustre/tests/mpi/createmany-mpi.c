@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <stdio.h>
@@ -27,7 +27,7 @@ void usage(char *prog)
 	printf("       %s {-o|-m|-l<tgt>} filenamefmt start count\n", prog);
 }
 
-/* Print process rank, loop count, message, and exit (i.e. a fatal error) */
+
 int rprintf(int rank, int loop, const char *fmt, ...)
 {
 	va_list ap;

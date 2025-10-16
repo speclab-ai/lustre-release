@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Eric Mei <ericm@clusterfs.com>
  */
@@ -54,14 +54,14 @@ void sptlrpc_gc_del_sec(struct ptlrpc_sec *sec)
 	if (list_empty(&sec->ps_gc_list))
 		return;
 
-	/* signal before list_del to make iteration in gc thread safe */
+	
 	atomic_inc(&sec_gc_wait_del);
 
 	spin_lock(&sec_gc_list_lock);
 	list_del_init(&sec->ps_gc_list);
 	spin_unlock(&sec_gc_list_lock);
 
-	/* barrier */
+	
 	mutex_lock(&sec_gc_mutex);
 	mutex_unlock(&sec_gc_mutex);
 
@@ -160,7 +160,7 @@ again:
 	}
 	mutex_unlock(&sec_gc_mutex);
 
-	/* check ctx list again before sleep */
+	
 	sec_process_ctx_list();
 	schedule_delayed_work(&sec_gc_work, cfs_time_seconds(SEC_GC_INTERVAL));
 }

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2020 Intel Corporation.
@@ -41,7 +41,7 @@ static int foreign_symlink_alloc_and_copy_prefix(struct ll_sb_info *sbi,
 
 	ENTRY;
 
-	/* allocate enough for "/<prefix>/<suffix>'\0'" */
+	
 	prefix_size = sbi->ll_foreign_symlink_prefix_size - 1;
 	full_size = suffix_size + prefix_size + 3;
 	if (full_size > PATH_MAX) {
@@ -120,7 +120,7 @@ static int ll_foreign_symlink_upcall_parse(struct ll_sb_info *sbi,
 			items_size += foreign_symlink_items[i].len;
 			break;
 		case EOB_TYPE:
-			/* should be the last item */
+			
 			break;
 		default:
 			CERROR("%s: unexpected type '%u' found in items\n",
@@ -134,7 +134,7 @@ static int ll_foreign_symlink_upcall_parse(struct ll_sb_info *sbi,
 	if (suffix_pos < 0)
 		GOTO(failed, rc = suffix_pos);
 
-	/* rescan foreign_symlink_items[] to create faked symlink dest path */
+	
 	i = 0;
 	while (foreign_symlink_items[i].type != EOB_TYPE) {
 		if (foreign_symlink_items[i].type == STRING_TYPE) {
@@ -188,7 +188,7 @@ static int ll_foreign_symlink_parse(struct ll_sb_info *sbi,
 	if (!test_bit(LL_SBI_FOREIGN_SYMLINK_UPCALL, sbi->ll_flags))
 		rc = ll_foreign_symlink_default_parse(sbi, inode, lfm,
 						      destname);
-	else /* upcall is available */
+	else 
 		rc = ll_foreign_symlink_upcall_parse(sbi, inode, lfm,
 						     destname);
 	return rc;
@@ -212,7 +212,7 @@ static int ll_foreign_readlink_internal(struct inode *inode, char **symname)
 	if (S_ISREG(inode->i_mode)) {
 		struct cl_object *obj = lli->lli_clob;
 		struct cl_layout cl = {
-			.cl_buf.lb_len = 0, /* to get real size */
+			.cl_buf.lb_len = 0, 
 		};
 		struct lu_env *env;
 		u16 refcheck;
@@ -226,7 +226,7 @@ static int ll_foreign_readlink_internal(struct inode *inode, char **symname)
 		env = cl_env_get(&refcheck);
 		if (IS_ERR(env))
 			RETURN(PTR_ERR(env));
-		/* get layout size */
+		
 		rc = cl_object_layout_get(env, obj, &cl);
 		if (rc <= 0) {
 			CERROR("%s: inode "DFID": error trying to get layout size : %d\n",
@@ -243,7 +243,7 @@ static int ll_foreign_readlink_internal(struct inode *inode, char **symname)
 		}
 		cl.cl_buf.lb_len = rc;
 		cl.cl_buf.lb_buf = lfm;
-		/* get layout */
+		
 		rc = cl_object_layout_get(env, obj, &cl);
 		if (rc <= 0) {
 			CERROR("%s: inode "DFID": error trying to get layout : %d\n",
@@ -279,7 +279,7 @@ static int ll_foreign_readlink_internal(struct inode *inode, char **symname)
 		GOTO(failed, rc = -EINVAL);
 	}
 
-	/* XXX no assert nor double check of magic, length and type ? */
+	
 
 	rc = ll_foreign_symlink_parse(sbi, inode, lfm, &destname);
 
@@ -375,7 +375,7 @@ static const char *ll_foreign_get_link(struct dentry *dentry,
 	RETURN(rc ? ERR_PTR(rc) : symname);
 }
 
-# else /* !HAVE_IOP_GET_LINK */
+# else 
 static const char *ll_foreign_follow_link(struct dentry *dentry,
 					    void **cookie)
 {
@@ -397,7 +397,7 @@ static const char *ll_foreign_follow_link(struct dentry *dentry,
 	RETURN(symname);
 }
 
-#endif /* HAVE_SYMLINK_OPS_USE_NAMEIDATA, HAVE_IOP_GET_LINK */
+#endif 
 
 /*
  * Should only be called for already in-use/cache foreign dir inode
@@ -494,9 +494,9 @@ ssize_t foreign_symlink_prefix_store(struct kobject *kobj,
 	if (!has_same_mount_namespace(sbi))
 		return -EINVAL;
 
-	/* XXX strip buffer of any CR/LF,space,... ?? */
+	
 
-	/* check buffer looks like a valid absolute path */
+	
 	if (*buffer != '/') {
 		CERROR("foreign symlink prefix must be an absolute path\n");
 		return -EINVAL;
@@ -557,9 +557,9 @@ ssize_t foreign_symlink_upcall_store(struct kobject *kobj,
 	if (!has_same_mount_namespace(sbi))
 		return -EINVAL;
 
-	/* XXX strip buffer of any CR/LF,space,... ?? */
+	
 
-	/* check buffer looks like a valid absolute path */
+	
 	if (*buffer != '/' && strcmp(buffer, "none")) {
 		CERROR("foreign symlink upcall must be an absolute path\n");
 		return -EINVAL;
@@ -600,7 +600,7 @@ ssize_t foreign_symlink_upcall_store(struct kobject *kobj,
 	if (strcmp(new, "none")) {
 		char *argv[] = {
 			  [0] = new,
-			  /* sbi sysfs object name */
+			  
 			  [1] = (char *)sbi->ll_kset.kobj.name,
 			  [2] = NULL
 		};
@@ -656,13 +656,13 @@ ssize_t foreign_symlink_upcall_info_store(struct kobject *kobj,
 		RETURN(-EINVAL);
 	}
 
-	/* evaluate number of items provided */
+	
 	while (remaining > 0) {
 		item = (struct ll_foreign_symlink_upcall_item *)
 				&buffer[count - remaining];
 		switch (item->type) {
 		case STRING_TYPE: {
-			/* a constant string following */
+			
 			if (item->size >= remaining -
 			    offsetof(struct ll_foreign_symlink_upcall_item,
 				     bytestring) - sizeof(item->type)) {
@@ -683,7 +683,7 @@ ssize_t foreign_symlink_upcall_info_store(struct kobject *kobj,
 			memcpy(items[nb_items].string,
 			       item->bytestring, item->size);
 			items[nb_items].size = item->size;
-			/* string items to fit on __u32 boundary */
+			
 			remaining = remaining - STRING_ITEM_SZ(item->size);
 			break;
 		}
@@ -719,7 +719,7 @@ ssize_t foreign_symlink_upcall_info_store(struct kobject *kobj,
 			GOTO(failed, rc = -EINVAL);
 		}
 	}
-	/* valid format has been provided by foreign symlink user upcall */
+	
 	OBD_ALLOC_LARGE(new_items, nb_items *
 			sizeof(struct ll_foreign_symlink_upcall_item));
 	if (new_items == NULL) {
@@ -740,7 +740,7 @@ ssize_t foreign_symlink_upcall_info_store(struct kobject *kobj,
 	set_bit(LL_SBI_FOREIGN_SYMLINK_UPCALL, sbi->ll_flags);
 	up_write(&sbi->ll_foreign_symlink_sem);
 
-	/* free old_items */
+	
 	if (old_items != NULL) {
 		for (i = 0 ; i < old_nb_items; i++)
 			if (old_items[i].type == STRING_TYPE)
@@ -752,7 +752,7 @@ ssize_t foreign_symlink_upcall_info_store(struct kobject *kobj,
 	}
 
 failed:
-	/* clean items[] and free any strings */
+	
 	if (rc != 0) {
 		for (i = 0; i < nb_items; i++) {
 			switch (items[i].type) {
@@ -780,7 +780,7 @@ failed:
 	RETURN(rc == 0 ? count : rc);
 }
 
-/* foreign fake-symlink version of ll_getattr() */
+
 #if defined(HAVE_USER_NAMESPACE_ARG)
 static int ll_foreign_symlink_getattr(struct mnt_idmap *map,
 				      const struct path *path,
@@ -816,7 +816,7 @@ struct inode_operations ll_foreign_file_symlink_inode_operations = {
 	.get_link	= ll_foreign_get_link,
 #else
 	.follow_link	= ll_foreign_follow_link,
-	/* .put_link method required since need to release symlink copy buf */
+	
 	.put_link	= ll_foreign_put_link,
 #endif
 	.getattr	= ll_foreign_symlink_getattr,

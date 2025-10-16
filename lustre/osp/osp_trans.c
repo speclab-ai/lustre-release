@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
@@ -63,16 +63,16 @@ struct osp_update_args {
  * Call back for each update request.
  */
 struct osp_update_callback {
-	/* list in the osp_update_request::our_cb_items */
+	
 	struct list_head		 ouc_list;
 
-	/* The target of the async update request. */
+	
 	struct osp_object		*ouc_obj;
 
-	/* The data used by or_interpreter. */
+	
 	void				*ouc_data;
 
-	/* The interpreter function called after the async request handled. */
+	
 	osp_update_interpreter_t	ouc_interpreter;
 };
 
@@ -369,7 +369,7 @@ int osp_prep_update_req(const struct lu_env *env, struct obd_import *imp,
 					struct osp_update_request_sub,
 					ours_list);
 
-		/* Let's check if it can be packed inline */
+		
 		if (object_update_request_size(ours->ours_req) +
 		    sizeof(struct out_update_header) <
 				OUT_UPDATE_MAX_INLINE_SIZE) {
@@ -399,7 +399,7 @@ int osp_prep_update_req(const struct lu_env *env, struct obd_import *imp,
 	list_for_each_entry(ours, &our->our_req_list, ours_list) {
 		oub->oub_size = ours->ours_req_size;
 		oub++;
-		/* First *and* last might be partial pages, hence +1 */
+		
 		page_count += DIV_ROUND_UP(ours->ours_req_size, PAGE_SIZE) + 1;
 	}
 
@@ -411,7 +411,7 @@ int osp_prep_update_req(const struct lu_env *env, struct obd_import *imp,
 	if (desc == NULL)
 		GOTO(out_req, rc = -ENOMEM);
 
-	/* NB req now owns desc and will free it when it gets freed */
+	
 	list_for_each_entry(ours, &our->our_req_list, ours_list) {
 		desc->bd_frag_ops->add_iov_frag(desc, ours->ours_req,
 						ours->ours_req_size);
@@ -514,7 +514,7 @@ static void osp_trans_stop_cb(const struct lu_env *env,
 	struct dt_txn_commit_cb	*dcb;
 	struct dt_txn_commit_cb	*tmp;
 
-	/* call per-transaction stop callbacks if any */
+	
 	list_for_each_entry_safe(dcb, tmp, &oth->ot_stop_dcb_list,
 				 dcb_linkage) {
 		LASSERTF(dcb->dcb_magic == TRANS_COMMIT_CB_MAGIC,
@@ -631,7 +631,7 @@ static int osp_update_interpret(const struct lu_env *env,
 		obd_put_request_slot(&osp->opd_obd->u.cli);
 	}
 
-	/* Unpack the results from the reply message. */
+	
 	if (req->rq_repmsg != NULL && req->rq_replied) {
 		reply = req_capsule_server_sized_get(&req->rq_pill,
 						     &RMF_OUT_UPDATE_REPLY,
@@ -862,7 +862,7 @@ again:
 	rc = out_update_pack(env, object_update, &max_update_size, op,
 			     lu_object_fid(osp2lu_obj(obj)), count, lens, bufs,
 			     repsize);
-	/* The queue is full. */
+	
 	if (rc == -E2BIG) {
 		osp->opd_async_requests = NULL;
 		mutex_unlock(&osp->opd_async_requests_mutex);
@@ -998,7 +998,7 @@ static void osp_trans_commit_cb(struct osp_thandle *oth, int result)
 	struct dt_txn_commit_cb *tmp;
 
 	LASSERT(atomic_read(&oth->ot_refcount) > 0);
-	/* call per-transaction callbacks if any */
+	
 	list_for_each_entry_safe(dcb, tmp, &oth->ot_commit_dcb_list,
 				 dcb_linkage) {
 		LASSERTF(dcb->dcb_magic == TRANS_COMMIT_CB_MAGIC,
@@ -1034,7 +1034,7 @@ static void osp_request_commit_cb(struct ptlrpc_request *req)
 	CDEBUG(D_HA, "trans no %llu committed transno %llu\n",
 	       req->rq_transno, last_committed_transno);
 
-	/* If the transaction is not really committed, mark result = 1 */
+	
 	if (req->rq_transno != 0 &&
 	    (req->rq_transno > last_committed_transno) && result == 0)
 		result = 1;
@@ -1128,7 +1128,7 @@ static int osp_send_update_req(const struct lu_env *env,
 	/* set env to NULL, in case the interrupt cb and current function
 	 * are in different thread */
 	args->oaua_update_env = NULL;
-	osp_thandle_get(oth); /* hold for update interpret */
+	osp_thandle_get(oth); 
 	req->rq_interpret_reply = osp_update_interpret;
 	if (!oth->ot_super.th_wait_submit && !oth->ot_super.th_sync) {
 		if (!osp->opd_imp_active || !osp->opd_imp_connected) {
@@ -1156,7 +1156,7 @@ static int osp_send_update_req(const struct lu_env *env,
 		ptlrpcd_add_req(req);
 		req = NULL;
 	} else {
-		osp_thandle_get(oth); /* hold for commit callback */
+		osp_thandle_get(oth); 
 		req->rq_commit_cb = osp_request_commit_cb;
 		req->rq_cb_data = &oth->ot_super;
 		args->oaua_flow_control = false;
@@ -1284,7 +1284,7 @@ int osp_check_and_set_rpc_version(struct osp_thandle *oth,
 		return -ESTALE;
 	}
 
-	/* Assign the version and add it to the sending list */
+	
 	osp_thandle_get(oth);
 	oth->ot_our->our_version = ou->ou_version++;
 	oth->ot_our->our_generation = ou->ou_generation;
@@ -1329,7 +1329,7 @@ osp_get_next_request(struct osp_updates *ou, struct osp_update_request **ourp)
 		CDEBUG(D_HA, "ou %p version %llu rpc_version %llu\n",
 		       ou, our->our_version, ou->ou_rpc_version);
 		spin_lock(&our->our_list_lock);
-		/* Find next osp_update_request in the list */
+		
 		if (our->our_version == ou->ou_rpc_version &&
 		    our->our_req_ready) {
 			list_del_init(&our->our_list);
@@ -1380,7 +1380,7 @@ void osp_invalidate_request(struct osp_device *osp)
 	}
 
 	spin_lock(&ou->ou_lock);
-	/* invalidate all of request in the sending list */
+	
 	list_for_each_entry_safe(our, tmp, &ou->ou_list, our_list) {
 		spin_lock(&our->our_list_lock);
 		if (our->our_req_ready) {
@@ -1409,7 +1409,7 @@ void osp_invalidate_request(struct osp_device *osp)
 	ou->ou_generation++;
 	spin_unlock(&ou->ou_lock);
 
-	/* invalidate all of request in the sending list */
+	
 	list_for_each_entry_safe(our, tmp, &list, our_list) {
 		spin_lock(&our->our_list_lock);
 		list_del_init(&our->our_list);
@@ -1471,7 +1471,7 @@ int osp_send_update_thread(void *arg)
 			rc = osp_send_update_req(env, osp, our);
 		}
 
-		/* Update the rpc version */
+		
 		spin_lock(&ou->ou_lock);
 		if (our->our_version == ou->ou_rpc_version)
 			ou->ou_rpc_version++;
@@ -1484,7 +1484,7 @@ int osp_send_update_thread(void *arg)
 		if (rc < 0)
 			osp_invalidate_request(osp);
 
-		/* Balanced for thandle_get in osp_check_and_set_rpc_version */
+		
 		osp_thandle_put(env, our->our_th);
 	}
 
@@ -1519,7 +1519,7 @@ int osp_trans_start(const struct lu_env *env, struct dt_device *dt,
 	}
 	if (oth->ot_super.th_sync)
 		oth->ot_our->our_flags |= UPDATE_FL_SYNC;
-	/* For remote thandle, if there are local thandle, start it here*/
+	
 	if (is_only_remote_trans(th) && oth->ot_storage_th != NULL)
 		return dt_trans_start(env, oth->ot_storage_th->th_dev,
 				      oth->ot_storage_th);
@@ -1584,7 +1584,7 @@ int osp_trans_stop(const struct lu_env *env, struct dt_device *dt,
 	LASSERT(our->our_req_ready == 0);
 	spin_lock(&our->our_list_lock);
 	if (likely(!list_empty(&our->our_list))) {
-		/* notify sending thread */
+		
 		our->our_req_ready = 1;
 		wake_up(&osp->opd_update->ou_waitq);
 		spin_unlock(&our->our_list_lock);

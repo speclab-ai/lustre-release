@@ -114,7 +114,6 @@ class FlagSet:
         if self._sorted_values:
             return
         self._sorted_values = sorted(self.value_to_str.keys())
-#        self._sorted_strs = sorted(self.str_to_value.keys())
 
 
     def flagsToStringList(self, flagint):
@@ -148,7 +147,6 @@ def join_flaglist(fl, sep = "|", empty = "0"):
 
 # I'm trying to follow the convention of
 
-#   assertEquals(expectedvalue, function_under_test(args))
 
 # I didn't discover that (on some unittest page) until I was halfway
 # through, so I may not have gotten them all the right order.
@@ -233,7 +231,6 @@ if __name__ == '__main__':
             self.assertEqual(2, self.fs.BAZ_shift)
 
             self.fs._EnsureSorted()
-#            self.assertEqual(self.fs._sorted_strs, ["BAR", "BAZ", "FOO"])
             self.assertEqual(self.fs._sorted_values, [1, 2, 4])
 
         def test_add_simple_flag_with_value(self):

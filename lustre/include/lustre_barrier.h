@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
@@ -20,4 +20,4 @@ int barrier_handler(struct dt_device *key, struct ptlrpc_request *req);
 int barrier_register(struct dt_device *key, struct dt_device *next);
 void barrier_deregister(struct dt_device *key);
 
-#endif /* _LUSTRE_BARRIER_H */
+#endif 

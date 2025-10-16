@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2025, Amazon and/or its affiliates. All rights reserved.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Simple OBD device mock test for LU-18826.
  *
@@ -48,25 +48,25 @@ static void setup_test_context(struct test_ctx *ctx)
 	ctx->cli->cl_max_mod_rpcs_in_flight = 0;
 	ctx->cli->cl_mod_rpcs_in_flight = 0;
 
-	/* Initialize cl_mod_rpcs_hist */
+	
 	spin_lock_init(&ctx->cli->cl_mod_rpcs_hist.oh_lock);
 	for (i = 0; i < OBD_HIST_MAX; i++)
 		ctx->cli->cl_mod_rpcs_hist.oh_buckets[i] = 0;
 
-	/* Initialize bitmap */
+	
 	OBD_ALLOC(ctx->cli->cl_mod_tag_bitmap,
 		  BITS_TO_LONGS(OBD_MAX_RIF_MAX) * sizeof(long));
 
-	/* Set up import and obd structures */
+	
 	ctx->imp->imp_obd = ctx->obd;
 	ctx->cli->cl_import = ctx->imp;
 	snprintf(ctx->obd->obd_name, sizeof(ctx->obd->obd_name), "mock_obd");
 
-	/* Save current state */
+	
 	ctx->old_flags = current->flags;
 	ctx->old_set_child_tid = current->set_child_tid;
 
-	/* Set set_child_tid to NULL for testing */
+	
 	current->set_child_tid = NULL;
 }
 
@@ -78,7 +78,7 @@ static void cleanup_test_context(struct test_ctx *ctx)
 	OBD_FREE_PTR(ctx->imp);
 	OBD_FREE_PTR(ctx->cli);
 
-	/* Restore original state */
+	
 	current->flags = ctx->old_flags;
 	current->set_child_tid = ctx->old_set_child_tid;
 }
@@ -93,13 +93,13 @@ static void test_kthread_flags(void)
 
 	setup_test_context(&ctx);
 
-	/* Set kthread flags */
+	
 	current->flags = PF_KTHREAD|PF_MEMALLOC|PF_NOFREEZE|PF_FORKNOEXEC;
 
 	pr_info("Test 1: Current flags: 0x%x\n", current->flags);
 	pr_info("Test 1: set_child_tid: %p\n", current->set_child_tid);
 
-	/* Simulate cl_mod_rpcs_in_flight > cl_max_mod_rpcs_in_flight */
+	
 	test_and_set_bit(0, ctx.cli->cl_mod_tag_bitmap);
 	test_and_set_bit(1, ctx.cli->cl_mod_tag_bitmap);
 	ctx.cli->cl_mod_rpcs_in_flight = 1;
@@ -125,7 +125,7 @@ static void test_non_mem_alloc_flags(void)
 
 	setup_test_context(&ctx);
 
-	/* Set minimal flags */
+	
 	current->flags = PF_KTHREAD|PF_NOFREEZE|PF_FORKNOEXEC;
 
 	pr_info("Test 2: Current flags: 0x%x\n", current->flags);
@@ -143,7 +143,7 @@ static void test_non_mem_alloc_flags(void)
 
 static int __init obd_mod_rpcs_test_init(void)
 {
-	/* Run test cases */
+	
 	test_kthread_flags();
 	test_non_mem_alloc_flags();
 	return 0;

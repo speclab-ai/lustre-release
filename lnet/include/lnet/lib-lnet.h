@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Top level include for library side routines
  */
@@ -14,7 +14,7 @@
 #ifndef __LNET_LIB_LNET_H__
 #define __LNET_LIB_LNET_H__
 
-/* LNET has 0xeXXX */
+
 #define CFS_FAIL_PTLRPC_OST_BULK_CB2	0xe000
 #define CFS_FAIL_MATCH_MD_NID		0xe001
 #define CFS_FAIL_DELAY_MSG_FORWARD	0xe002
@@ -36,40 +36,40 @@
 
 #include "lock.h"
 
-extern struct lnet the_lnet;			/* THE network */
+extern struct lnet the_lnet;			
 
 #if (BITS_PER_LONG == 32)
-/* 2 CPTs, allowing more CPTs might make us under memory pressure */
+
 # define LNET_CPT_MAX_BITS     1
 
-#else /* 64-bit system */
+#else 
 /*
  * 256 CPTs for thousands of CPUs, allowing more CPTs might make us
  * under risk of consuming all lh_cookie.
  */
 # define LNET_CPT_MAX_BITS     8
-#endif /* BITS_PER_LONG == 32 */
+#endif 
 
-/* max allowed CPT number */
+
 #define LNET_CPT_MAX		(1 << LNET_CPT_MAX_BITS)
 
 #define LNET_CPT_NUMBER		(the_lnet.ln_cpt_number)
 #define LNET_CPT_BITS		(the_lnet.ln_cpt_bits)
 #define LNET_CPT_MASK		((1ULL << LNET_CPT_BITS) - 1)
 
-/** exclusive lock */
+
 #define LNET_LOCK_EX		CFS_PERCPT_LOCK_EX
 
-/* need both kernel and user-land acceptor */
+
 #define LNET_ACCEPTOR_MIN_RESERVED_PORT	512
 #define LNET_ACCEPTOR_MAX_RESERVED_PORT	1023
 
-/* default timeout and credits */
+
 #define DEFAULT_PEER_TIMEOUT    180
 #define DEFAULT_PEER_CREDITS    8
 #define DEFAULT_CREDITS         256
 
-/* default number of connections per peer */
+
 #define DEFAULT_CONNS_PER_PEER  0
 
 #ifdef HAVE_KERN_SOCK_GETNAME_2ARGS
@@ -102,9 +102,9 @@ extern struct lnet the_lnet;			/* THE network */
 
 #ifndef fallthrough
 # if defined(__GNUC__) && __GNUC__ >= 7
-#  define fallthrough  __attribute__((fallthrough)) /* fallthrough */
+#  define fallthrough  __attribute__((fallthrough)) 
 # else
-#  define fallthrough do {} while (0)  /* fallthrough */
+#  define fallthrough do {} while (0)  
 # endif
 #endif
 
@@ -210,7 +210,7 @@ lnet_net_lock_current(void)
 #define MAX_PORTALS	64
 
 #define LNET_SMALL_MD_SIZE   offsetof(struct lnet_libmd, md_kiov[1])
-extern struct kmem_cache *lnet_mes_cachep;	 /* MEs kmem_cache */
+extern struct kmem_cache *lnet_mes_cachep;	 
 extern struct kmem_cache *lnet_small_mds_cachep; /* <= LNET_SMALL_MD_SIZE bytes
 						  * MDs kmem_cache */
 extern struct kmem_cache *lnet_udsp_cachep;
@@ -323,8 +323,8 @@ void lnet_res_lh_initialize(struct lnet_res_container *rec,
 static inline void
 lnet_res_lh_invalidate(struct lnet_libhandle *lh)
 {
-	/* ALWAYS called with resource lock held */
-	/* NB: cookie is still useful, don't reset it */
+	
+	
 	list_del(&lh->lh_hash_chain);
 }
 
@@ -337,7 +337,7 @@ lnet_md2handle(struct lnet_handle_md *handle, struct lnet_libmd *md)
 static inline struct lnet_libmd *
 lnet_handle2md(struct lnet_handle_md *handle)
 {
-	/* ALWAYS called with resource lock held */
+	
 	struct lnet_libhandle *lh;
 	int		 cpt;
 
@@ -353,7 +353,7 @@ lnet_handle2md(struct lnet_handle_md *handle)
 static inline struct lnet_libmd *
 lnet_wire_handle2md(struct lnet_handle_wire *wh)
 {
-	/* ALWAYS called with resource lock held */
+	
 	struct lnet_libhandle *lh;
 	int		 cpt;
 
@@ -711,8 +711,8 @@ int lnet_discover_nid_metadata(struct lnet_processid *id,
 
 struct list_head **lnet_create_array_of_queues(void);
 
-/* portals functions */
-/* portals attributes */
+
+
 static inline int
 lnet_ptl_is_lazy(struct lnet_portal *ptl)
 {
@@ -743,7 +743,7 @@ lnet_ptl_unsetopt(struct lnet_portal *ptl, int opt)
 	ptl->ptl_options &= ~opt;
 }
 
-/* match-table functions */
+
 struct list_head *lnet_mt_match_head(struct lnet_match_table *mtable,
 			       struct lnet_processid *id, __u64 mbits);
 struct lnet_match_table *lnet_mt_of_attach(unsigned int index,
@@ -753,17 +753,17 @@ struct lnet_match_table *lnet_mt_of_attach(unsigned int index,
 int lnet_mt_match_md(struct lnet_match_table *mtable,
 		     struct lnet_match_info *info, struct lnet_msg *msg);
 
-/* portals match/attach functions */
+
 void lnet_ptl_attach_md(struct lnet_me *me, struct lnet_libmd *md,
 			struct list_head *matches, struct list_head *drops);
 void lnet_ptl_detach_md(struct lnet_me *me, struct lnet_libmd *md);
 int lnet_ptl_match_md(struct lnet_match_info *info, struct lnet_msg *msg);
 
-/* initialized and finalize portals */
+
 int lnet_portals_create(void);
 void lnet_portals_destroy(void);
 
-/* message functions */
+
 int lnet_parse(struct lnet_ni *ni, struct lnet_hdr *hdr,
 	       struct lnet_nid *fromnid, void *private, int rdma_req);
 int lnet_parse_local(struct lnet_ni *ni, struct lnet_msg *msg);
@@ -803,9 +803,9 @@ char *lnet_health_error2str(enum lnet_msg_hstatus hstatus);
 char *lnet_msgtyp2str(int type);
 int lnet_fail_nid(struct lnet_nid *nid, unsigned int threshold);
 
-/** \addtogroup lnet_fault_simulation @{ */
 
-/* See struct lnet_fault_attr for a description of these fields */
+
+
 struct lnet_fault_large_attr {
 	struct lnet_nid			fa_src;
 	struct lnet_nid			fa_dst;
@@ -861,7 +861,7 @@ void lnet_delay_rule_reset(void);
 void lnet_delay_rule_check(void);
 bool lnet_delay_rule_match_locked(struct lnet_hdr *hdr, struct lnet_msg *msg);
 
-/** @} lnet_fault_simulation */
+
 
 void lnet_counters_get_common(struct lnet_counters_common *common);
 int lnet_counters_get(struct lnet_counters *counters);
@@ -1131,7 +1131,7 @@ lnet_peer_needs_push(struct lnet_peer *lp)
 		return true;
 	if (lp->lp_state & LNET_PEER_NO_DISCOVERY)
 		return false;
-	/* if discovery is not enabled then no need to push */
+	
 	if (lnet_peer_discovery_disabled)
 		return false;
 	if (lp->lp_node_seqno < atomic_read(&the_lnet.ln_ping_target_seqno))
@@ -1155,7 +1155,7 @@ lnet_get_next_recovery_ping(unsigned int ping_count, time64_t now)
 {
 	unsigned int interval;
 
-	/* lnet_max_recovery_interval <= 2^lnet_max_recovery_ping_count */
+	
 	if (ping_count > lnet_max_recovery_ping_count)
 		interval = lnet_max_recovery_ping_interval;
 	else
@@ -1261,7 +1261,7 @@ lnet_dec_healthv_locked(atomic_t *healthv)
 static inline void
 lnet_dec_lpni_healthv_locked(struct lnet_peer_ni *lpni)
 {
-	 /* only adjust the net health if the lpni health value changed */
+	 
 	if (lnet_dec_healthv_locked(&lpni->lpni_healthv))
 		lnet_update_peer_net_healthv(lpni);
 }
@@ -1276,7 +1276,7 @@ lnet_inc_healthv(atomic_t *healthv)
 static inline void
 lnet_inc_lpni_healthv_locked(struct lnet_peer_ni *lpni)
 {
-	 /* only adjust the net health if the lpni health value changed */
+	 
 	if (lnet_inc_healthv(&lpni->lpni_healthv))
 		lnet_update_peer_net_healthv(lpni);
 }

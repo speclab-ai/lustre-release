@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BSD-2-Clause
+
 /**********************************************************************
  * Copyright(c) 2011-2015 Intel Corporation All rights reserved.
  *
@@ -30,11 +30,11 @@
 
 #include <linux/limits.h>
 #include <linux/module.h>
-#include <linux/string.h>	/* for memset */
+#include <linux/string.h>	
 
 #include "erasure_code.h"
 
-/* Global GF(256) tables */
+
 static const unsigned char gff_base[] = {
 	0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1d, 0x3a,
 	0x74, 0xe8, 0xcd, 0x87, 0x13, 0x26, 0x4c, 0x98, 0x2d, 0x5a,
@@ -130,12 +130,12 @@ void gf_gen_cauchy1_matrix(unsigned char *a, int m, int k)
 	int i, j;
 	unsigned char *p;
 
-	/* Identity matrix in high position */
+	
 	memset(a, 0, k * m);
 	for (i = 0; i < k; i++)
 		a[k * i + i] = 1;
 
-	/* For the rest choose 1/(i + j) | i != j */
+	
 	p = &a[k * k];
 	for (i = k; i < m; i++)
 		for (j = 0; j < k; j++)
@@ -149,26 +149,26 @@ int gf_invert_matrix(unsigned char *in_mat, unsigned char *out_mat, const int n)
 	int i, j, k;
 	unsigned char temp;
 
-	/* Set out_mat[] to the identity matrix */
-	for (i = 0; i < n * n; i++)	/* memset(out_mat, 0, n*n) */
+	
+	for (i = 0; i < n * n; i++)	
 		out_mat[i] = 0;
 
 	for (i = 0; i < n; i++)
 		out_mat[i * n + i] = 1;
 
-	/* Inverse */
+	
 	for (i = 0; i < n; i++) {
-		/* Check for 0 in pivot element */
+		
 		if (in_mat[i * n + i] == 0) {
-			/* Find a row with non-zero in current column and swap */
+			
 			for (j = i + 1; j < n; j++)
 				if (in_mat[j * n + i])
 					break;
 
-			if (j == n)	/* Couldn't find means it's singular */
+			if (j == n)	
 				return -1;
 
-			for (k = 0; k < n; k++) {	/* Swap rows i,j */
+			for (k = 0; k < n; k++) {	
 				temp = in_mat[i * n + k];
 				in_mat[i * n + k] = in_mat[j * n + k];
 				in_mat[j * n + k] = temp;
@@ -179,8 +179,8 @@ int gf_invert_matrix(unsigned char *in_mat, unsigned char *out_mat, const int n)
 			}
 		}
 
-		temp = gf_inv(in_mat[i * n + i]);	/* 1/pivot */
-		for (j = 0; j < n; j++) {	/* Scale row i by 1/pivot */
+		temp = gf_inv(in_mat[i * n + i]);	
+		for (j = 0; j < n; j++) {	
 			in_mat[i * n + j] = gf_mul(in_mat[i * n + j], temp);
 			out_mat[i * n + j] = gf_mul(out_mat[i * n + j], temp);
 		}
@@ -231,10 +231,10 @@ void gf_vect_mul_init(unsigned char c, unsigned char *tbl)
 	t[0] = v4;
 	t[1] = v8 ^ v4;
 
-	c17 = (c8 << 1) ^ ((c8 & 0x80) ? 0x1d : 0);	//Mult by GF{2}
-	c18 = (c17 << 1) ^ ((c17 & 0x80) ? 0x1d : 0);	//Mult by GF{2}
-	c20 = (c18 << 1) ^ ((c18 & 0x80) ? 0x1d : 0);	//Mult by GF{2}
-	c24 = (c20 << 1) ^ ((c20 & 0x80) ? 0x1d : 0);	//Mult by GF{2}
+	c17 = (c8 << 1) ^ ((c8 & 0x80) ? 0x1d : 0);	
+	c18 = (c17 << 1) ^ ((c17 & 0x80) ? 0x1d : 0);	
+	c20 = (c18 << 1) ^ ((c18 & 0x80) ? 0x1d : 0);	
+	c24 = (c20 << 1) ^ ((c20 & 0x80) ? 0x1d : 0);	
 
 	v10 = c17 * 0x0100010001000100ull;
 	v20 = c18 * 0x0101000001010000ull;
@@ -245,7 +245,7 @@ void gf_vect_mul_init(unsigned char c, unsigned char *tbl)
 	t[2] = v40;
 	t[3] = v80 ^ v40;
 
-#else /* 32-bit or other */
+#else 
 	unsigned char c3, c5, c6, c7, c9, c10, c11, c12, c13, c14, c15;
 	unsigned char c17, c18, c19, c20, c21, c22, c23, c24, c25, c26;
 	unsigned char c27, c28, c29, c30, c31;
@@ -280,14 +280,14 @@ void gf_vect_mul_init(unsigned char c, unsigned char *tbl)
 	tbl[14] = c14;
 	tbl[15] = c15;
 
-	c17 = (c8 << 1) ^ ((c8 & 0x80) ? 0x1d : 0);	/* Mult by GF{2} */
-	c18 = (c17 << 1) ^ ((c17 & 0x80) ? 0x1d : 0);	/* Mult by GF{2} */
+	c17 = (c8 << 1) ^ ((c8 & 0x80) ? 0x1d : 0);	
+	c18 = (c17 << 1) ^ ((c17 & 0x80) ? 0x1d : 0);	
 	c19 = c18 ^ c17;
-	c20 = (c18 << 1) ^ ((c18 & 0x80) ? 0x1d : 0);	/* Mult by GF{2} */
+	c20 = (c18 << 1) ^ ((c18 & 0x80) ? 0x1d : 0);	
 	c21 = c20 ^ c17;
 	c22 = c20 ^ c18;
 	c23 = c20 ^ c19;
-	c24 = (c20 << 1) ^ ((c20 & 0x80) ? 0x1d : 0);	/* Mult by GF{2} */
+	c24 = (c20 << 1) ^ ((c20 & 0x80) ? 0x1d : 0);	
 	c25 = c24 ^ c17;
 	c26 = c24 ^ c18;
 	c27 = c24 ^ c19;
@@ -313,7 +313,7 @@ void gf_vect_mul_init(unsigned char c, unsigned char *tbl)
 	tbl[30] = c30;
 	tbl[31] = c31;
 
-#endif /* BITS_PER_LONG == 64 */
+#endif 
 }
 
 void ec_encode_data(int len, int srcs, int dests, unsigned char *v,

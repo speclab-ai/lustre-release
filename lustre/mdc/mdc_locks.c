@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_MDC
@@ -84,7 +84,7 @@ int it_open_error(int phase, struct lookup_intent *it)
 }
 EXPORT_SYMBOL(it_open_error);
 
-/* this must be called on a lockh that is known to have a referenced lock */
+
 int mdc_set_lock_data(struct obd_export *exp, const struct lustre_handle *lockh,
 		      void *data, enum mds_ibits_locks *bits)
 {
@@ -134,7 +134,7 @@ enum ldlm_mode mdc_lock_match(struct obd_export *exp, __u64 flags,
 
 	ENTRY;
 	fid_build_reg_res_name(fid, &res_id);
-	/* LU-4405: Clear bits not supported by server */
+	
 	policy->l_inodebits.bits &= exp_connect_ibits(exp);
 	rc = ldlm_lock_match(class_exp2obd(exp)->obd_namespace, flags,
 			     &res_id, type, policy, mode, match_flags, lockh);
@@ -182,7 +182,7 @@ int mdc_null_inode(struct obd_export *exp,
 
 static inline void mdc_clear_replay_flag(struct ptlrpc_request *req, int rc)
 {
-	/* Don't hold error requests for replay. */
+	
 	if (req->rq_replay) {
 		spin_lock(&req->rq_lock);
 		req->rq_replay = 0;
@@ -259,10 +259,10 @@ mdc_intent_open_pack(struct obd_export *exp, struct lookup_intent *it,
 
 	it->it_create_mode = (it->it_create_mode & ~S_IFMT) | S_IFREG;
 
-	/* XXX: openlock is not cancelled for cross-refs. */
-	/* If inode is known, cancel conflicting OPEN locks. */
+	
+	
 	if (fid_is_sane(&op_data->op_fid2)) {
-		if (it->it_open_flags & MDS_OPEN_LEASE) { /* try to get lease */
+		if (it->it_open_flags & MDS_OPEN_LEASE) { 
 			if (it->it_open_flags & MDS_FMODE_WRITE)
 				mode = LCK_EX;
 			else
@@ -283,7 +283,7 @@ mdc_intent_open_pack(struct obd_export *exp, struct lookup_intent *it,
 						   MDS_INODELOCK_OPEN);
 	}
 
-	/* If CREATE, cancel parent's UPDATE lock. */
+	
 	if (it->it_op & IT_CREAT)
 		mode = LCK_EX;
 	else
@@ -302,7 +302,7 @@ mdc_intent_open_pack(struct obd_export *exp, struct lookup_intent *it,
 	req_capsule_set_size(&req->rq_pill, &RMF_NAME, RCL_CLIENT,
 			     op_data->op_namelen + 1);
 	if (cl_is_lov_delay_create(it->it_open_flags)) {
-		/* open(O_LOV_DELAY_CREATE) won't pack lmm */
+		
 		LASSERT(lmmsize == 0);
 		req_capsule_set_size(&req->rq_pill, &RMF_EADATA, RCL_CLIENT, 0);
 	} else {
@@ -320,7 +320,7 @@ mdc_intent_open_pack(struct obd_export *exp, struct lookup_intent *it,
 	req_capsule_set_size(&req->rq_pill, &RMF_FILE_ENCCTX, RCL_CLIENT,
 			     op_data->op_file_encctx_size);
 
-	/* get SELinux policy info if any */
+	
 	sepol = sptlrpc_sepol_get(req);
 	if (IS_ERR(sepol))
 		GOTO(err_free_rq, rc = PTR_ERR(sepol));
@@ -336,11 +336,11 @@ mdc_intent_open_pack(struct obd_export *exp, struct lookup_intent *it,
 	req->rq_replay = req->rq_import->imp_replayable;
 	spin_unlock(&req->rq_lock);
 
-	/* pack the intent */
+	
 	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
 	lit->opc = (__u64)it->it_op;
 
-	/* pack the intended request */
+	
 	mdc_open_pack(&req->rq_pill, op_data, it->it_create_mode, 0,
 		      it->it_open_flags, lmm, lmmsize, sepol);
 
@@ -391,10 +391,10 @@ mdc_intent_open_pack(struct obd_export *exp, struct lookup_intent *it,
 			     sizeof(struct lmv_user_md));
 	ptlrpc_request_set_replen(req);
 
-	/* Get real repbuf allocated size as rounded up power of 2 */
+	
 	repsize = size_roundup_power2(req->rq_replen +
 				      lustre_msg_early_size);
-	/* Estimate free space for DoM files in repbuf */
+	
 	repsize_estimate = repsize - (req->rq_replen -
 			   mdt_md_capsule_size +
 			   sizeof(struct lov_comp_md_v1) +
@@ -450,7 +450,7 @@ mdc_intent_create_pack(struct obd_export *exp, struct lookup_intent *it,
 	ENTRY;
 
 	if (fid_is_sane(&op_data->op_fid1))
-		/* cancel parent's UPDATE lock. */
+		
 		count = mdc_resource_cancel_unused(exp, &op_data->op_fid1,
 						   &cancels, LCK_EX,
 						   MDS_INODELOCK_UPDATE);
@@ -474,7 +474,7 @@ mdc_intent_create_pack(struct obd_export *exp, struct lookup_intent *it,
 	req_capsule_set_size(&req->rq_pill, &RMF_FILE_ENCCTX, RCL_CLIENT,
 			     op_data->op_file_encctx_size);
 
-	/* get SELinux policy info if any */
+	
 	sepol = sptlrpc_sepol_get(req);
 	if (IS_ERR(sepol)) {
 		ldlm_lock_list_put(&cancels, l_bl_ast, count);
@@ -487,11 +487,11 @@ mdc_intent_create_pack(struct obd_export *exp, struct lookup_intent *it,
 	if (rc < 0)
 		GOTO(err_put_sepol, rc);
 
-	/* Pack the intent */
+	
 	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
 	lit->opc = (__u64)it->it_op;
 
-	/* Pack the intent request. */
+	
 	mdc_create_pack(&req->rq_pill, op_data, op_data->op_data,
 			op_data->op_data_size, it->it_create_mode,
 			op_data->op_fsuid, op_data->op_fsgid,
@@ -539,7 +539,7 @@ mdc_intent_getxattr_pack(struct obd_export *exp, struct lookup_intent *it,
 	if (req == NULL)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	/* get SELinux policy info if any */
+	
 	sepol = sptlrpc_sepol_get(req);
 	if (IS_ERR(sepol))
 		GOTO(err_free_rq, rc = PTR_ERR(sepol));
@@ -551,7 +551,7 @@ mdc_intent_getxattr_pack(struct obd_export *exp, struct lookup_intent *it,
 	if (rc)
 		GOTO(err_put_sepol, rc);
 
-	/* pack the intent */
+	
 	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
 	lit->opc = IT_GETXATTR;
 	/* Message below is checked in sanity-selinux test_20d
@@ -574,11 +574,11 @@ mdc_intent_getxattr_pack(struct obd_export *exp, struct lookup_intent *it,
 					 exp->exp_connect_data.ocd_max_easize);
 #endif
 
-	/* pack the intended request */
+	
 	mdc_pack_body(&req->rq_pill, &op_data->op_fid1, op_data->op_valid,
 		      ea_vals_buf_size, -1, 0, op_data->op_projid);
 
-	/* get SELinux policy info if any */
+	
 	mdc_file_sepol_pack(&req->rq_pill, sepol);
 	sptlrpc_sepol_put(sepol);
 
@@ -624,7 +624,7 @@ mdc_intent_getattr_pack(struct obd_export *exp, struct lookup_intent *it,
 	if (req == NULL)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	/* send name of security xattr to get upon intent */
+	
 	if (it->it_op & (IT_LOOKUP | IT_GETATTR) &&
 	    req_capsule_has_field(&req->rq_pill, &RMF_FILE_SECCTX_NAME,
 				  RCL_CLIENT) &&
@@ -645,7 +645,7 @@ mdc_intent_getattr_pack(struct obd_export *exp, struct lookup_intent *it,
 		RETURN(ERR_PTR(rc));
 	}
 
-	/* pack the intent */
+	
 	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
 	lit->opc = (__u64)it->it_op;
 
@@ -654,7 +654,7 @@ mdc_intent_getattr_pack(struct obd_export *exp, struct lookup_intent *it,
 	else
 		easize = obd->u.cli.cl_max_mds_easize;
 
-	/* pack the intended request */
+	
 	mdc_getattr_pack(&req->rq_pill, valid, it->it_open_flags, op_data,
 			 easize);
 
@@ -723,11 +723,11 @@ static struct ptlrpc_request *mdc_intent_layout_pack(struct obd_export *exp,
 		RETURN(ERR_PTR(rc));
 	}
 
-	/* pack the intent */
+	
 	lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
 	lit->opc = (__u64)it->it_op;
 
-	/* pack the layout intent request */
+	
 	layout = req_capsule_client_get(&req->rq_pill, &RMF_LAYOUT_INTENT);
 	LASSERT(op_data->op_data != NULL);
 	LASSERT(op_data->op_data_size == sizeof(*layout));
@@ -789,11 +789,11 @@ int mdc_finish_enqueue(struct obd_export *exp,
 		einfo->ei_mode = 0;
 		memset(lockh, 0, sizeof(*lockh));
 		rc = 0;
-	} else { /* rc = 0 */
+	} else { 
 		lock = ldlm_handle2lock(lockh);
 		LASSERT(lock != NULL);
 
-		/* If server returned a different lock mode, fix up variables */
+		
 		if (lock->l_req_mode != einfo->ei_mode) {
 			ldlm_lock_addref(lockh, lock->l_req_mode);
 			ldlm_lock_decref(lockh, einfo->ei_mode);
@@ -803,7 +803,7 @@ int mdc_finish_enqueue(struct obd_export *exp,
 	}
 
 	lockrep = req_capsule_server_get(pill, &RMF_DLM_REP);
-	LASSERT(lockrep != NULL); /* checked by ldlm_cli_enqueue() */
+	LASSERT(lockrep != NULL); 
 
 	it->it_disposition = (int)lockrep->lock_policy_res1;
 	it->it_status = (int)lockrep->lock_policy_res2;
@@ -832,7 +832,7 @@ int mdc_finish_enqueue(struct obd_export *exp,
 	DEBUG_REQ(D_RPCTRACE, req, "op=%x disposition=%x, status=%d",
 		  it->it_op, it->it_disposition, it->it_status);
 
-	/* We know what to expect, so we do any byte flipping required here */
+	
 	if (it_has_reply_body(it)) {
 		body = req_capsule_server_get(pill, &RMF_MDT_BODY);
 		if (body == NULL) {
@@ -873,7 +873,7 @@ int mdc_finish_enqueue(struct obd_export *exp,
 			if (eadata == NULL)
 				RETURN(-EPROTO);
 
-			/* save LVB data and length if for layout lock */
+			
 			lvb_data = eadata;
 			lvb_len = body->mbo_eadatasize;
 
@@ -942,7 +942,7 @@ int mdc_finish_enqueue(struct obd_export *exp,
 
 		memcpy(lmm, lvb_data, lvb_len);
 
-		/* install lvb_data */
+		
 		lock_res_and_lock(lock);
 		if (lock->l_lvb_data == NULL) {
 			lock->l_lvb_type = LVB_T_LAYOUT;
@@ -968,7 +968,7 @@ int mdc_finish_enqueue(struct obd_export *exp,
 		LDLM_DEBUG(lock, "DoM lock is returned by: %s, size: %llu",
 			   ldlm_it2str(it->it_op), body->mbo_dom_size);
 
-		/* l_ost_lvb is only in the LDLM_IBITS union **/
+		
 		LASSERT(lock->l_resource->lr_type == LDLM_IBITS);
 		lock_res_and_lock(lock);
 		mdc_body2lvb(body, &lock->l_ost_lvb);
@@ -1051,7 +1051,7 @@ static int mdc_enqueue_base(struct obd_export *exp,
 resend:
 	flags = saved_flags;
 	if (it == NULL) {
-		/* The only way right now is FLOCK. */
+		
 		LASSERTF(einfo->ei_type == LDLM_FLOCK, "lock type %d\n",
 			 einfo->ei_type);
 		res_id.name[3] = LDLM_FLOCK;
@@ -1217,7 +1217,7 @@ static int mdc_enqueue_async_interpret(const struct lu_env *env,
 	if (rc == -ENOLCK)
 		ldlm_lock_put(lock);
 
-	/* we expect failed_lock_cleanup() to destroy lock */
+	
 	if (rc != 0)
 		LASSERT(list_empty(&lock->l_res_link));
 
@@ -1321,22 +1321,22 @@ static int mdc_finish_intent_lock(struct obd_export *exp,
 		    it_disposition(it, DISP_OPEN_CREATE) &&
 		    !it_open_error(DISP_OPEN_CREATE, it)) {
 			it_set_disposition(it, DISP_ENQ_CREATE_REF);
-			/* balanced in ll_create_node */
+			
 			ptlrpc_request_addref(request);
 		}
 		if (!it_disposition(it, DISP_ENQ_OPEN_REF) &&
 		    it_disposition(it, DISP_OPEN_OPEN) &&
 		    !it_open_error(DISP_OPEN_OPEN, it)) {
 			it_set_disposition(it, DISP_ENQ_OPEN_REF);
-			/* balanced in ll_file_open */
+			
 			ptlrpc_request_addref(request);
-			/* eviction in middle of open RPC processing b=11546 */
+			
 			CFS_FAIL_TIMEOUT(OBD_FAIL_MDC_ENQUEUE_PAUSE,
 					 obd_timeout);
 		}
 
 		if (it->it_op & IT_CREAT) {
-			/* XXX this belongs in ll_create_it */
+			
 		} else if (it->it_op == IT_OPEN) {
 			LASSERT(!it_disposition(it, DISP_OPEN_CREATE));
 		} else {
@@ -1361,7 +1361,7 @@ static int mdc_finish_intent_lock(struct obd_export *exp,
 
 			body = req_capsule_server_get(&request->rq_pill,
 						      &RMF_MDT_BODY);
-			/* mdc_enqueue checked */
+			
 			LASSERT(body != NULL);
 			LASSERTF(fid_res_name_eq(&body->mbo_fid1,
 						 &lock->l_resource->lr_name),
@@ -1506,7 +1506,7 @@ int mdc_intent_lock(struct obd_export *exp, struct md_op_data *op_data,
 	       it->it_open_flags);
 
 	lockh.cookie = 0;
-	/* MDS_FID_OP is not a revalidate case */
+	
 	if (fid_is_sane(&op_data->op_fid2) &&
 	    (it->it_op & (IT_LOOKUP | IT_GETATTR | IT_READDIR)) &&
 	    !(op_data->op_bias & MDS_FID_OP)) {
@@ -1523,7 +1523,7 @@ int mdc_intent_lock(struct obd_export *exp, struct md_op_data *op_data,
 			RETURN(rc);
 	}
 
-	/* For case if upper layer did not alloc fid, do it now. */
+	
 	if (!fid_is_sane(&op_data->op_fid2) && it->it_op & IT_CREAT) {
 		rc = mdc_fid_alloc(NULL, exp, &op_data->op_fid2, op_data);
 		if (rc < 0) {

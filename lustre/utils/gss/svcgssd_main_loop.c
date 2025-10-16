@@ -43,7 +43,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
-/* For nanosleep() */
+
 #include <time.h>
 #include <sys/mman.h>
 
@@ -53,7 +53,7 @@
 #include "err_util.h"
 #include "sk_utils.h"
 
-/* max allowed time for prime testing: 400 ms */
+
 #define MAX_ALLOWED_TIME_FOR_PRIME 400000
 int *sk_dh_checks;
 
@@ -79,7 +79,7 @@ void svcgssd_run(void)
 		}
 
 #if !defined(HAVE_OPENSSL_EVP_PKEY) && OPENSSL_VERSION_NUMBER >= 0x1010103fL
-		/* child will run asynchronously, parent will not wait for it */
+		
 		*sk_dh_checks =
 			sk_speedtest_dh_valid(MAX_ALLOWED_TIME_FOR_PRIME,
 					      &child);
@@ -91,7 +91,7 @@ void svcgssd_run(void)
 			printerr(LL_WARN,
 				 "will use default number of rounds for prime testing\n");
 		if (child == 0)
-			/* job done for child */
+			
 			exit(EXIT_SUCCESS);
 #else
 		*sk_dh_checks = 0;

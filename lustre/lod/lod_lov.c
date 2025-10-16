@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright  2009 Sun Microsystems, Inc. All rights reserved
@@ -209,7 +209,7 @@ int lod_add_device(const struct lu_env *env, struct lod_device *lod,
 	}
 	connected = true;
 
-	/* Allocate ost descriptor and fill it */
+	
 	OBD_ALLOC_PTR(tgt_desc);
 	if (!tgt_desc)
 		GOTO(out_cleanup, rc = -ENOMEM);
@@ -390,13 +390,13 @@ int lod_del_device(const struct lu_env *env, struct lod_device *lod,
 	lod_getref(ltd);
 	mutex_lock(&ltd->ltd_mutex);
 	tgt = LTD_TGT(ltd, idx);
-	/* check that the index is allocated in the bitmap */
+	
 	if (!test_bit(idx, ltd->ltd_tgt_bitmap) || !tgt) {
 		CERROR("%s: device %d is not set up\n", obd->obd_name, idx);
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* check that the UUID matches */
+	
 	if (!obd_uuid_equals(&uuid, &tgt->ltd_uuid)) {
 		CERROR("%s: LOD target UUID %s at index %d does not match %s\n",
 		       obd->obd_name, obd_uuid2str(&tgt->ltd_uuid), idx, osp);
@@ -589,7 +589,7 @@ int lod_fill_mirrors(struct lod_object *lo)
 		int j;
 
 		pref = 0;
-		/* calculate component preference over all used OSTs */
+		
 		for (j = 0; init && j < lod_comp->llc_stripes_allocated; j++) {
 			__u32 idx = lod_comp->llc_ost_indices[j];
 			struct lod_tgt_desc *ltd;
@@ -618,7 +618,7 @@ int lod_fill_mirrors(struct lod_object *lo)
 		}
 
 		if (mirror_id_of(lod_comp->llc_id) == mirror_id) {
-			/* Currently HSM mirror does not support PFL. */
+			
 			if (lo->ldo_mirrors[mirror_idx].lme_hsm)
 				RETURN(-EINVAL);
 			lo->ldo_mirrors[mirror_idx].lme_stale |= stale;
@@ -632,7 +632,7 @@ int lod_fill_mirrors(struct lod_object *lo)
 		    !lo->ldo_mirrors[mirror_idx].lme_stale)
 			found_preferred = true;
 
-		/* new mirror */
+		
 		++mirror_idx;
 		if (mirror_idx >= lo->ldo_mirror_count)
 			RETURN(-EINVAL);
@@ -721,7 +721,7 @@ static int lod_gen_component_ea(const struct lu_env *env,
 	if (is_dir && lod_comp->llc_ostlist.op_count)
 		magic = LOV_MAGIC_SPECIFIC;
 
-	if (lod_comp->llc_pattern == 0) /* default striping */
+	if (lod_comp->llc_pattern == 0) 
 		lod_comp->llc_pattern = LOV_PATTERN_RAID0;
 
 	lmm->lmm_magic = cpu_to_le32(magic);
@@ -774,7 +774,7 @@ static int lod_gen_component_ea(const struct lu_env *env,
 	    lod_comp->llc_pattern & LOV_PATTERN_F_RELEASED)
 		GOTO(done, rc = 0);
 
-	/* generate ost_idx of this component stripe */
+	
 	for (i = 0; i < stripe_count; i++) {
 		struct dt_object *object;
 		__u32 ost_idx = (__u32)-1UL;
@@ -782,7 +782,7 @@ static int lod_gen_component_ea(const struct lu_env *env,
 
 		if (lod_comp->llc_stripe && lod_comp->llc_stripe[i]) {
 			object = lod_comp->llc_stripe[i];
-			/* instantiated component */
+			
 			info->lti_fid = *lu_object_fid(&object->do_lu);
 
 			if (CFS_FAIL_CHECK(OBD_FAIL_LFSCK_MULTIPLE_REF) &&
@@ -811,7 +811,7 @@ static int lod_gen_component_ea(const struct lu_env *env,
 			}
 		} else if (lod_comp->llc_ostlist.op_array &&
 			   lod_comp->llc_ostlist.op_count) {
-			/* user specified ost list */
+			
 			ost_idx = lod_comp->llc_ostlist.op_array[i];
 		}
 		/*
@@ -820,7 +820,7 @@ static int lod_gen_component_ea(const struct lu_env *env,
 		 */
 		objs[i].l_ost_idx = cpu_to_le32(ost_idx);
 
-		/* simulation of broken LOVEA */
+		
 		if (CFS_FAIL_CHECK(OBD_FAIL_LOV_INVALID_OSTIDX) &&
 		    comp_idx == 0 && i == 0 && lo->ldo_mirror_count > 1) {
 			objs[i].l_ost_idx = cpu_to_le32(0xffffffff);
@@ -912,7 +912,7 @@ int lod_generate_lovea(const struct lu_env *env, struct lod_object *lo,
 
 		lfm = (struct lov_foreign_md *)lmm;
 		memcpy(lfm, lo->ldo_foreign_lov, lo->ldo_foreign_lov_size);
-		/* need to store little-endian */
+		
 		if (cpu_to_le32(LOV_MAGIC_FOREIGN) != LOV_MAGIC_FOREIGN) {
 			__swab32s(&lfm->lfm_magic);
 			__swab32s(&lfm->lfm_length);
@@ -955,7 +955,7 @@ int lod_generate_lovea(const struct lu_env *env, struct lod_object *lo,
 		LASSERT(ergo(!is_dir, lod_comp->llc_id != LCME_ID_INVAL));
 		lcme->lcme_id = cpu_to_le32(lod_comp->llc_id);
 
-		/* component could be un-inistantiated */
+		
 		lcme->lcme_flags = cpu_to_le32(lod_comp->llc_flags);
 		if (lod_comp->llc_flags & LCME_FL_NOSYNC)
 			lcme->lcme_timestamp =
@@ -1026,7 +1026,7 @@ int lod_get_ea(const struct lu_env *env, struct lod_object *lo,
 	LASSERT(info);
 
 	if (unlikely(info->lti_ea_buf.lb_buf == NULL)) {
-		/* just to enter in allocation block below */
+		
 		rc = -ERANGE;
 	} else {
 repeat:
@@ -1034,12 +1034,12 @@ repeat:
 		rc = dt_xattr_get(env, next, &info->lti_buf, name);
 	}
 
-	/* if object is not striped or inaccessible */
+	
 	if (rc == -ENODATA || rc == -ENOENT)
 		RETURN(0);
 
 	if (rc == -ERANGE) {
-		/* EA doesn't fit, reallocate new buffer */
+		
 		rc = dt_xattr_get(env, next, &LU_BUF_NULL, name);
 		if (rc == -ENODATA || rc == -ENOENT)
 			RETURN(0);
@@ -1048,7 +1048,7 @@ repeat:
 
 		LASSERT(rc > 0);
 		if (rc <= info->lti_ea_store_size) {
-			/* sometimes LOVEA can shrink in parallel */
+			
 			LASSERT(count++ < 10);
 			goto repeat;
 		}
@@ -1310,7 +1310,7 @@ int lod_parse_striping(const struct lu_env *env, struct lod_object *lo,
 			GOTO(out, rc = -EINVAL);
 		}
 
-		/* just cache foreign LOV EA raw */
+		
 		rc = lod_alloc_foreign_lov(lo, length);
 		if (rc)
 			GOTO(out, rc);
@@ -1373,7 +1373,7 @@ int lod_parse_striping(const struct lu_env *env, struct lod_object *lo,
 			if (lvf & LVF_ALL_STALE) {
 				if (mirror_id_of(lod_comp->llc_id) ==
 				    mirror_id) {
-					/* remaining comps in the mirror */
+					
 					stale |= lod_comp->llc_flags &
 						 LCME_FL_STALE;
 				} else {
@@ -1387,7 +1387,7 @@ int lod_parse_striping(const struct lu_env *env, struct lod_object *lo,
 					mirror_id =
 						mirror_id_of(lod_comp->llc_id);
 
-					/* the first comp of the new mirror */
+					
 					stale = lod_comp->llc_flags &
 						LCME_FL_STALE;
 				}
@@ -1498,7 +1498,7 @@ int lod_parse_striping(const struct lu_env *env, struct lod_object *lo,
 			}
 		}
 
-		/* skip un-instantiated component object initialization */
+		
 		if (!lod_comp_inited(lod_comp))
 			continue;
 
@@ -1511,7 +1511,7 @@ int lod_parse_striping(const struct lu_env *env, struct lod_object *lo,
 	}
 
 	if (lo->ldo_is_composite && (lvf & LVF_ALL_STALE)) {
-		/* check the last mirror stale-ness */
+		
 		if (stale)
 			stale_mirrors++;
 
@@ -1552,7 +1552,7 @@ static bool lod_striping_loaded(struct lod_object *lo)
 		if (lo->ldo_dir_stripe_loaded)
 			return true;
 
-		/* Never load LMV stripe for slaves of striped dir */
+		
 		if (lo->ldo_dir_slave_stripe)
 			return true;
 	}
@@ -1724,7 +1724,7 @@ static int lod_verify_v1v3(struct lod_device *d, const struct lu_buf *buf,
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* the user uses "0" for default stripe pattern normally. */
+	
 	if (!is_from_disk && lum->lmm_pattern == LOV_PATTERN_NONE)
 		lum->lmm_pattern = cpu_to_le32(LOV_PATTERN_RAID0);
 
@@ -1751,14 +1751,14 @@ static int lod_verify_v1v3(struct lod_device *d, const struct lu_buf *buf,
 	stripe_offset = le16_to_cpu(lum->lmm_stripe_offset);
 	if (!is_from_disk && stripe_offset != LOV_OFFSET_DEFAULT &&
 	    !(lov_pattern(le32_to_cpu(lum->lmm_pattern)) & LOV_PATTERN_MDT)) {
-		/* if offset is not within valid range [0, osts_size) */
+		
 		if (stripe_offset >= d->lod_ost_descs.ltd_tgts_size) {
 			CDEBUG(D_LAYOUT, "stripe offset %u >= bitmap size %u\n",
 			       stripe_offset, d->lod_ost_descs.ltd_tgts_size);
 			GOTO(out, rc = -EINVAL);
 		}
 
-		/* if lmm_stripe_offset is *not* in bitmap */
+		
 		if (!test_bit(stripe_offset, d->lod_ost_bitmap)) {
 			CDEBUG(D_LAYOUT, "stripe offset %u not in bitmap\n",
 			       stripe_offset);
@@ -1850,7 +1850,7 @@ static int lod_erase_dom_stripe(struct lov_comp_md_v1 *comp_v1,
 	dom_off = le32_to_cpu(dom_ent->lcme_offset);
 	dom_size = le32_to_cpu(dom_ent->lcme_size);
 
-	/* all entries offsets are shifted by entry size at least */
+	
 	shift = sizeof(*dom_ent);
 	for_each_comp_entry_v1(comp_v1, ent) {
 		off = le32_to_cpu(ent->lcme_offset);
@@ -1866,7 +1866,7 @@ static int lod_erase_dom_stripe(struct lov_comp_md_v1 *comp_v1,
 			src = (void *)(ent + 1);
 			size = (unsigned long)((void *)comp_v1 + dom_off - src);
 			memmove(dst, src, size);
-			/* take 'off' from just moved entry */
+			
 			off = le32_to_cpu(ent->lcme_offset);
 			/* second memmove is blob tail after 'off' up to
 			 * component end
@@ -1884,7 +1884,7 @@ static int lod_erase_dom_stripe(struct lov_comp_md_v1 *comp_v1,
 	}
 	comp_v1->lcm_size = cpu_to_le32(comp_size - shift);
 
-	/* notify a caller to re-check entry */
+	
 	return -ERESTART;
 }
 
@@ -1894,13 +1894,13 @@ void lod_dom_stripesize_recalc(struct lod_device *d)
 	__u32 max_size = d->lod_dom_stripesize_max_kb;
 	__u32 def_size = d->lod_dom_stripesize_cur_kb;
 
-	/* use maximum allowed value if free space is above threshold */
+	
 	if (d->lod_lsfs_free_mb >= threshold_mb) {
 		def_size = max_size;
 	} else if (!d->lod_lsfs_free_mb || max_size <= LOD_DOM_MIN_SIZE_KB) {
 		def_size = 0;
 	} else {
-		/* recalc threshold like it would be with def_size as max */
+		
 		threshold_mb = mult_frac(threshold_mb, def_size, max_size);
 		if (d->lod_lsfs_free_mb < threshold_mb)
 			def_size = rounddown(def_size / 2, LOD_DOM_MIN_SIZE_KB);
@@ -1921,7 +1921,7 @@ static __u32 lod_dom_stripesize_limit(const struct lu_env *env,
 {
 	int rc;
 
-	/* set bfree as fraction of total space */
+	
 	if (CFS_FAIL_CHECK(OBD_FAIL_MDS_STATFS_SPOOF)) {
 		spin_lock(&d->lod_lsfs_lock);
 		d->lod_lsfs_free_mb = mult_frac(d->lod_lsfs_total_mb,
@@ -1945,7 +1945,7 @@ static __u32 lod_dom_stripesize_limit(const struct lu_env *env,
 			       lod2obd(d)->obd_name, rc);
 			GOTO(out, rc);
 		}
-		/* udpate local OSD cached statfs data */
+		
 		spin_lock(&d->lod_lsfs_lock);
 		d->lod_lsfs_total_mb = (sfs.os_blocks * sfs.os_bsize) >> 20;
 		d->lod_lsfs_free_mb = (sfs.os_bfree * sfs.os_bsize) >> 20;
@@ -1976,7 +1976,7 @@ static int lod_dom_stripesize_choose(const struct lu_env *env,
 	dom_mid = mirror_id_of(le32_to_cpu(dom_ent->lcme_id));
 	max_stripe_size = lod_dom_stripesize_limit(env, d);
 
-	/* Check stripe size againts current per-MDT limit */
+	
 	if (stripe_size <= max_stripe_size)
 		return 0;
 
@@ -2024,7 +2024,7 @@ static int lod_dom_stripesize_choose(const struct lu_env *env,
 
 		rc = lod_erase_dom_stripe(comp_v1, dom_ent);
 	} else {
-		/* Update DoM extent end finally */
+		
 		dom_ext->e_end = cpu_to_le64(max_stripe_size);
 	}
 
@@ -2090,11 +2090,11 @@ int lod_verify_striping(const struct lu_env *env, struct lod_device *d,
 			       buf->lb_len, lov_foreign_size_le(lfm));
 			RETURN(-EINVAL);
 		}
-		/* Don't do anything with foreign layouts */
+		
 		RETURN(0);
 	}
 
-	/* normal LOV/layout cases */
+	
 
 	if (buf->lb_len < sizeof(*lum)) {
 		CDEBUG(D_LAYOUT, "buf len %zu too small for lov_user_md\n",
@@ -2110,7 +2110,7 @@ int lod_verify_striping(const struct lu_env *env, struct lod_device *d,
 	case LOV_USER_MAGIC_SPECIFIC:
 		if (lov_pattern(le32_to_cpu(lum->lmm_pattern)) &
 		    LOV_PATTERN_MDT) {
-			/* DoM must use composite layout */
+			
 			CDEBUG(D_LAYOUT, "DoM without composite layout\n");
 			RETURN(-EINVAL);
 		}
@@ -2124,7 +2124,7 @@ int lod_verify_striping(const struct lu_env *env, struct lod_device *d,
 		RETURN(-EINVAL);
 	}
 
-	/* magic == LOV_USER_MAGIC_COMP_V1 */
+	
 	comp_v1 = buf->lb_buf;
 	if (buf->lb_len < le32_to_cpu(comp_v1->lcm_size)) {
 		CDEBUG(D_LAYOUT, "buf len %zu is less than %u\n",
@@ -2141,7 +2141,7 @@ recheck:
 
 	if (S_ISREG(lod2lu_obj(lo)->lo_header->loh_attr) &&
 	    lo->ldo_comp_cnt > 0) {
-		/* could be called from lustre.lov.add */
+		
 		__u32 cnt = lo->ldo_comp_cnt;
 
 		ext = &lo->ldo_comp_entries[cnt - 1].llc_extent;
@@ -2168,7 +2168,7 @@ recheck:
 		}
 
 		if (is_from_disk) {
-			/* lcme_id contains valid value */
+			
 			if (le32_to_cpu(ent->lcme_id) == 0 ||
 			    le32_to_cpu(ent->lcme_id) > LCME_ID_MAX) {
 				CDEBUG(D_LAYOUT, "invalid id %u\n",
@@ -2180,7 +2180,7 @@ recheck:
 				mirror_id = mirror_id_of(
 						le32_to_cpu(ent->lcme_id));
 
-				/* first component must start with 0 */
+				
 				if (mirror_id != prev_mid &&
 				    le64_to_cpu(ext->e_start) != 0) {
 					CDEBUG(D_LAYOUT,
@@ -2198,7 +2198,7 @@ recheck:
 			prev_end = 0;
 		}
 
-		/* the next must be adjacent with the previous one */
+		
 		if (le64_to_cpu(ext->e_start) != prev_end) {
 			CDEBUG(D_LAYOUT,
 			       "invalid start actual:%llu, expect:%llu\n",
@@ -2229,7 +2229,7 @@ recheck:
 				RETURN(-EINVAL);
 			}
 
-			/* Current HSM component must cover [0, EOF]. */
+			
 			if (le64_to_cpu(ext->e_start) > 0) {
 				CDEBUG(D_LAYOUT, "Invalid HSM component with %llu extent start\n",
 				       le64_to_cpu(ext->e_start));
@@ -2268,10 +2268,10 @@ recheck:
 			continue;
 		}
 
-		/* Check DoM entry is always the first one */
+		
 		if (lov_pattern(le32_to_cpu(lum->lmm_pattern)) &
 		    LOV_PATTERN_MDT) {
-			/* DoM component must be the first in a mirror */
+			
 			if (le64_to_cpu(ext->e_start) > 0) {
 				CDEBUG(D_LAYOUT, "invalid DoM component "
 				       "with %llu extent start\n",
@@ -2288,10 +2288,10 @@ recheck:
 				       stripe_size, prev_end);
 				RETURN(-EINVAL);
 			}
-			/* Check and adjust stripe size by per-MDT limit */
+			
 			rc = lod_dom_stripesize_choose(env, d, comp_v1, ent,
 						       stripe_size);
-			/* DoM entry was removed, re-check layout from start */
+			
 			if (rc == -ERESTART)
 				goto recheck;
 			else if (rc)
@@ -2299,7 +2299,7 @@ recheck:
 
 			if (le16_to_cpu(lum->lmm_stripe_count) == 1)
 				lum->lmm_stripe_count = 0;
-			/* Any stripe count is forbidden on DoM component */
+			
 			if (lum->lmm_stripe_count > 0) {
 				CDEBUG(D_LAYOUT,
 				       "invalid DoM layout stripe count %u, must be 0\n",
@@ -2307,7 +2307,7 @@ recheck:
 				RETURN(-EINVAL);
 			}
 
-			/* Any pool is forbidden on DoM component */
+			
 			if (lum->lmm_magic == LOV_USER_MAGIC_V3) {
 				struct lov_user_md_v3 *v3 = (void *)lum;
 
@@ -2328,7 +2328,7 @@ recheck:
 		if (prev_end == LUSTRE_EOF || ext->e_start == prev_end)
 			continue;
 
-		/* extent end must be aligned with the stripe_size */
+		
 		stripe_size = le32_to_cpu(lum->lmm_stripe_size);
 		if (stripe_size && prev_end % stripe_size) {
 			CDEBUG(D_LAYOUT, "stripe size isn't aligned, "
@@ -2338,7 +2338,7 @@ recheck:
 		}
 	}
 
-	/* make sure that the mirror_count is telling the truth */
+	
 	if (mirror_count != le16_to_cpu(comp_v1->lcm_mirror_count) + 1)
 		RETURN(-EINVAL);
 
@@ -2394,7 +2394,7 @@ void lod_fix_desc_stripe_count(__u32 *val)
  */
 void lod_fix_desc_pattern(__u32 *val)
 {
-	/* from lov_setstripe */
+	
 	if ((*val != 0) && !lov_pattern_supported_normal_comp(*val)) {
 		LCONSOLE_WARN("lod: Unknown stripe pattern: %#x\n", *val);
 		*val = 0;
@@ -2411,7 +2411,7 @@ void lod_fix_lmv_desc_pattern(__u32 *val)
 
 void lod_fix_desc_qos_maxage(__u32 *val)
 {
-	/* fix qos_maxage */
+	
 	if (*val == 0)
 		*val = LOV_DESC_QOS_MAXAGE_DEFAULT;
 }
@@ -2487,12 +2487,12 @@ int lod_pools_init(struct lod_device *lod, struct lustre_cfg *lcfg)
 	desc->ld_active_tgt_count = 0;
 	lod->lod_ost_descs.ltd_lov_desc = *desc;
 
-	/* NB: config doesn't contain lmv_desc, alter it via sysfs. */
+	
 	lod_fix_lmv_desc(&lod->lod_mdt_descs.ltd_lmv_desc);
 
 	lod->lod_sp_me = LUSTRE_SP_CLI;
 
-	/* Set up OST pool environment */
+	
 	lod->lod_pool_count = 0;
 	rc = lod_pool_hash_init(&lod->lod_pools_hash_body);
 	if (rc)
@@ -2543,7 +2543,7 @@ int lod_pools_fini(struct lod_device *lod)
 	ENTRY;
 
 	list_for_each_entry_safe(pool, tmp, &lod->lod_pool_list, pool_list) {
-		/* free pool structs */
+		
 		CDEBUG(D_INFO, "delete pool %p\n", pool);
 		/* In the function below, .hs_keycmp resolves to
 		 * pool_hashkey_keycmp() */

@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
-/* for O_DIRECT */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -24,10 +24,10 @@
 
 #define BUFFERSIZE 4096
 
-/* This flag controls termination of the main loop. */
+
 volatile sig_atomic_t keep_going = 1;
 
-/* The signal handler just clears the flag and re-enables itself. */
+
 static void catch_alarm(int sig)
 {
 	keep_going = 0;
@@ -52,10 +52,10 @@ int main(int argc, char **argv)
 	file = argv[1];
 	test_time = atoi(argv[2]);
 
-	/* Establish a handler for SIGALRM signals. */
+	
 	signal(SIGALRM, catch_alarm);
 
-	/* Set an alarm to go off in a little while. */
+	
 	alarm(test_time);
 
 	fd = open(file, O_RDWR | O_TRUNC | O_CREAT | O_SYNC | O_LARGEFILE,

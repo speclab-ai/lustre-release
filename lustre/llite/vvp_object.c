@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * cl_object implementation for VVP layer.
  *
@@ -24,7 +24,7 @@
 #include "llite_internal.h"
 #include "vvp_internal.h"
 
-/* Object operations.*/
+
 int vvp_object_invariant(const struct cl_object *obj)
 {
 	struct inode		*inode	= vvp_object_inode(obj);
@@ -73,8 +73,8 @@ static int vvp_attr_get(const struct lu_env *env, struct cl_object *obj,
 	attr->cat_uid = from_kuid(&init_user_ns, inode->i_uid);
 	attr->cat_gid = from_kgid(&init_user_ns, inode->i_gid);
 	attr->cat_projid = ll_i2info(inode)->lli_projid;
-	/* KMS is not known by this layer */
-	return 0; /* layers below have to fill in the rest */
+	
+	return 0; 
 }
 
 static int vvp_attr_update(const struct lu_env *env, struct cl_object *obj,
@@ -146,7 +146,7 @@ static int vvp_prune(const struct lu_env *env, struct cl_object *obj)
 	}
 
 	if (ll_get_inode_lock_owner(inode) != current)
-		/* ask LOV get inode lock then lo_type_guard */
+		
 		RETURN(-EAGAIN);
 
 	LASSERTF(inode_is_locked(inode), DFID ":inode %p lli_flags %#lx\n",
@@ -204,7 +204,7 @@ static void vvp_req_attr_set(const struct lu_env *env, struct cl_object *obj,
 	if (CFS_FAIL_CHECK(OBD_FAIL_LFSCK_INVALID_PFID))
 		oa->o_parent_oid++;
 
-	/* Store ProjID any way for server-side TBF schedule. */
+	
 	oa->o_projid = lli->lli_projid;
 	lli_jobinfo_cpy(lli, &attr->cra_jobinfo);
 }

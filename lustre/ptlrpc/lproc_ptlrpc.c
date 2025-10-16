@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -40,8 +40,8 @@ static struct ll_rpc_opcode {
 	{ OST_OPEN,         "ost_open" },
 	{ OST_CLOSE,        "ost_close" },
 	{ OST_STATFS,       "ost_statfs" },
-	{ 14,                NULL },    /* formerly OST_SAN_READ */
-	{ 15,                NULL },    /* formerly OST_SAN_WRITE */
+	{ 14,                NULL },    
+	{ 15,                NULL },    
 	{ OST_SYNC,         "ost_sync" },
 	{ OST_SET_INFO,     "ost_set_info" },
 	{ OST_QUOTACHECK,   "ost_quotacheck" },
@@ -97,16 +97,16 @@ static struct ll_rpc_opcode {
 	{ MGS_SET_INFO,     "mgs_set_info" },
 	{ MGS_CONFIG_READ,  "mgs_config_read" },
 	{ OBD_PING,			 "obd_ping" },
-	{ 401, /* was OBD_LOG_CANCEL */ "llog_cancel" },
-	{ 402, /* was OBD_QC_CALLBACK */ "obd_quota_callback" },
+	{ 401,  "llog_cancel" },
+	{ 402,  "obd_quota_callback" },
 	{ OBD_IDX_READ, "dt_index_read" },
 	{ LLOG_ORIGIN_HANDLE_CREATE, "llog_origin_handle_open" },
 	{ LLOG_ORIGIN_HANDLE_NEXT_BLOCK, "llog_origin_handle_next_block" },
 	{ LLOG_ORIGIN_HANDLE_READ_HEADER, "llog_origin_handle_read_header" },
-	{ 504, /*LLOG_ORIGIN_HANDLE_WRITE_REC*/"llog_origin_handle_write_rec" },
-	{ 505, /* was LLOG_ORIGIN_HANDLE_CLOSE */ "llog_origin_handle_close" },
-	{ 506, /* was LLOG_ORIGIN_CONNECT */ "llog_origin_connect" },
-	{ 507, /* was LLOG_CATINFO */ "llog_catinfo" },
+	{ 504, "llog_origin_handle_write_rec" },
+	{ 505,  "llog_origin_handle_close" },
+	{ 506,  "llog_origin_connect" },
+	{ 507,  "llog_catinfo" },
 	{ LLOG_ORIGIN_HANDLE_PREV_BLOCK, "llog_origin_handle_prev_block" },
 	{ LLOG_ORIGIN_HANDLE_DESTROY,    "llog_origin_handle_destroy" },
 	{ QUOTA_DQACQ,      "quota_acquire" },
@@ -150,14 +150,14 @@ const char *ll_opcode2str(__u32 opcode)
 	static char unknown_opcode[32];
 	__u32 offset = opcode_offset(opcode);
 
-	/* Handle invalid opcodes gracefully */
+	
 	if (offset == -1 || offset >= LUSTRE_MAX_OPCODES) {
 		snprintf(unknown_opcode, sizeof(unknown_opcode),
 			 "unknown-opcode-%u", opcode);
 		return unknown_opcode;
 	}
 
-	/* Verify the opcode table is correct */
+	
 	if (ll_rpc_opcode_table[offset].opcode != opcode) {
 		/* This should not happen unless there's a bug in the
 		 * opcode_offset() function or the opcode table.
@@ -167,7 +167,7 @@ const char *ll_opcode2str(__u32 opcode)
 		return unknown_opcode;
 	}
 
-	/* If the opname is NULL, return a string with the opcode number */
+	
 	if (ll_rpc_opcode_table[offset].opname == NULL) {
 		snprintf(unknown_opcode, sizeof(unknown_opcode),
 			 "unnamed-opcode-%u", opcode);
@@ -313,7 +313,7 @@ static ssize_t req_buffer_history_max_store(struct kobject *kobj,
 	bufpages = (roundup_pow_of_two(svc->srv_buf_size) + PAGE_SIZE - 1) >>
 							PAGE_SHIFT;
 	limit = cfs_totalram_pages() / (2 * bufpages);
-	/* do not allow history to consume more than half max number of rqbds */
+	
 	if ((svc->srv_nrqbds_max == 0 && val > limit) ||
 	    (svc->srv_nrqbds_max != 0 && val > svc->srv_nrqbds_max / 2))
 		return -ERANGE;
@@ -797,7 +797,7 @@ out:
 
 LDEBUGFS_SEQ_FOPS(ptlrpc_lprocfs_nrs_policies);
 
-/** @} nrs */
+
 
 struct ptlrpc_srh_iterator {
 	int			srhi_idx;
@@ -833,7 +833,7 @@ ptlrpc_lprocfs_svc_req_history_seek(struct ptlrpc_service_part *svcpt,
 			 seq, srhi->srhi_seq, svcpt->scp_hist_seq_culled);
 		e = &srhi->srhi_req->rq_history_list;
 	} else {
-		/* search from start */
+		
 		e = svcpt->scp_hist_reqs.next;
 	}
 
@@ -862,23 +862,23 @@ ptlrpc_lprocfs_svc_req_history_seek(struct ptlrpc_service_part *svcpt,
  * increase timestamp which can correctly indicate the next position.
  */
 
-/* convert seq_file pos to cpt */
+
 #define PTLRPC_REQ_POS2CPT(svc, pos)			\
 	((svc)->srv_cpt_bits == 0 ? 0 :			\
 	 (__u64)(pos) >> (64 - (svc)->srv_cpt_bits))
 
-/* make up seq_file pos from cpt */
+
 #define PTLRPC_REQ_CPT2POS(svc, cpt)			\
 	((svc)->srv_cpt_bits == 0 ? 0 :			\
 	 (__u64)(cpt) << (64 - (svc)->srv_cpt_bits))
 
-/* convert sequence to position */
+
 #define PTLRPC_REQ_SEQ2POS(svc, seq)			\
 	((svc)->srv_cpt_bits == 0 ? (seq) :		\
 	 ((__u64)(seq) >> (svc)->srv_cpt_bits) |		\
 	 ((__u64)(seq) << (64 - (svc)->srv_cpt_bits)))
 
-/* convert position to sequence */
+
 #define PTLRPC_REQ_POS2SEQ(svc, pos)			\
 	((svc)->srv_cpt_bits == 0 ? (pos) :		\
 	 ((__u64)(pos) << (svc)->srv_cpt_bits) |	\
@@ -894,7 +894,7 @@ ptlrpc_lprocfs_svc_req_history_start(struct seq_file *s, loff_t *pos)
 	int rc;
 	int i;
 
-	if (sizeof(loff_t) != sizeof(__u64)) { /* can't support */
+	if (sizeof(loff_t) != sizeof(__u64)) { 
 		CWARN("Failed to read request history because size of loff_t "
 		      "%d can't match size of u64\n", (int)sizeof(loff_t));
 		return NULL;
@@ -910,9 +910,9 @@ ptlrpc_lprocfs_svc_req_history_start(struct seq_file *s, loff_t *pos)
 	cpt = PTLRPC_REQ_POS2CPT(svc, *pos);
 
 	ptlrpc_service_for_each_part(svcpt, i, svc) {
-		if (i < cpt) /* skip */
+		if (i < cpt) 
 			continue;
-		if (i > cpt) /* make up the lowest position for this CPT */
+		if (i > cpt) 
 			*pos = PTLRPC_REQ_CPT2POS(svc, i);
 
 		mutex_lock(&svcpt->scp_mutex);
@@ -954,10 +954,10 @@ ptlrpc_lprocfs_svc_req_history_next(struct seq_file *s,
 	for (i = srhi->srhi_idx; i < svc->srv_ncpts; i++) {
 		svcpt = svc->srv_parts[i];
 
-		if (i > srhi->srhi_idx) { /* reset iterator for a new CPT */
+		if (i > srhi->srhi_idx) { 
 			srhi->srhi_req = NULL;
 			seq = srhi->srhi_seq = 0;
-		} else { /* the next sequence */
+		} else { 
 			seq = srhi->srhi_seq + (1 << svc->srv_cpt_bits);
 		}
 
@@ -978,7 +978,7 @@ ptlrpc_lprocfs_svc_req_history_next(struct seq_file *s,
 	return NULL;
 }
 
-/* common ost/mdt so_req_printer */
+
 void target_print_req(void *seq_file, struct ptlrpc_request *req)
 {
 	/* Called holding srv_lock with irqs disabled.
@@ -1002,7 +1002,7 @@ void target_print_req(void *seq_file, struct ptlrpc_request *req)
 		 */
 		fallthrough;
 	case RQ_PHASE_COMPLETE:
-		/* been handled by mds_handle(), reply state may be volatile */
+		
 		seq_printf(sf, "opc %d\n", lustre_msg_get_opc(req->rq_reqmsg));
 		break;
 	default:
@@ -1094,7 +1094,7 @@ ptlrpc_lprocfs_svc_req_history_open(struct inode *inode, struct file *file)
 	return 0;
 }
 
-/* See also lprocfs_rd_timeouts */
+
 static int ptlrpc_lprocfs_timeouts_seq_show(struct seq_file *m, void *n)
 {
 	struct ptlrpc_service *svc = m->private;
@@ -1171,7 +1171,7 @@ static struct attribute *ptlrpc_svc_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(ptlrpc_svc); /* creates ptlrpc_svc_groups */
+KOBJ_ATTRIBUTE_GROUPS(ptlrpc_svc); 
 
 static void ptlrpc_sysfs_svc_release(struct kobject *kobj)
 {
@@ -1189,7 +1189,7 @@ static struct kobj_type ptlrpc_svc_ktype = {
 
 void ptlrpc_sysfs_unregister_service(struct ptlrpc_service *svc)
 {
-	/* Let's see if we had a chance at initialization first */
+	
 	if (svc->srv_kobj.kset) {
 		kobject_put(&svc->srv_kobj);
 		wait_for_completion(&svc->srv_kobj_unregister);
@@ -1342,7 +1342,7 @@ ssize_t ping_show(struct kobject *kobj, struct attribute *attr,
 }
 EXPORT_SYMBOL(ping_show);
 
-/* kept for older verison of tools. */
+
 ssize_t ping_store(struct kobject *kobj, struct attribute *attr,
 		   const char *buffer, size_t count)
 {
@@ -1381,7 +1381,7 @@ ldebugfs_import_seq_write(struct file *file, const char __user *buffer,
 
 	kbuf[count] = 0;
 
-	/* only support connection=uuid::instance now */
+	
 	if (strncmp(prefix, kbuf, prefix_len) != 0)
 		GOTO(out, rc = -EINVAL);
 
@@ -1400,7 +1400,7 @@ ldebugfs_import_seq_write(struct file *file, const char __user *buffer,
 
 			*ptr = 0;
 			do_reconn = 0;
-			ptr += 2; /* Skip :: */
+			ptr += 2; 
 			rc = kstrtouint(ptr, 10, &inst);
 			if (rc) {
 				CERROR("config: wrong instance # %s\n", ptr);

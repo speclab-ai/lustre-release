@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Lai Siyao <lsy@clusterfs.com>
  * Author: Fan Yong <fanyong@clusterfs.com>
@@ -21,16 +21,16 @@
 
 #include <linux/module.h>
 #include <uapi/linux/lnet/nidstr.h>
-/* LUSTRE_VERSION_CODE */
+
 #include <uapi/linux/lustre/lustre_ver.h>
 /*
  * struct OBD_{ALLOC,FREE}*()
  * MDT_FAIL_CHECK
  */
 #include <obd_support.h>
-/* struct obd_export */
+
 #include <lustre_export.h>
-/* struct obd_device */
+
 #include <obd.h>
 #include <obd_cksum.h>
 #include <obd_class.h>
@@ -96,7 +96,7 @@ static int mdt_rename_stats_seq_show(struct seq_file *seq, void *v)
 	struct mdt_device *mdt = seq->private;
 	struct rename_stats *rename_stats = &mdt->mdt_rename_stats;
 
-	/* this sampling races with updates */
+	
 	seq_puts(seq, "rename_stats:\n");
 	lprocfs_stats_header(seq, ktime_get_real(), rename_stats->rs_init, 15,
 			     ":", false, "- ");
@@ -161,7 +161,7 @@ void mdt_rename_counter_tally(struct mdt_thread_info *info,
 		return;
 	}
 
-	if (msi) /* parallel rename type */
+	if (msi) 
 		mdt_counter_incr(req, msi, ktime_delta);
 
 	if (src == tgt) {
@@ -388,7 +388,7 @@ again:
 		}
 
 		if (param->idd_ngroups) {
-			rc = param->idd_ngroups; /* save idd_ngroups */
+			rc = param->idd_ngroups; 
 			OBD_FREE(param, size);
 			size = offsetof(struct identity_downcall_data,
 					idd_groups[rc]);
@@ -660,14 +660,14 @@ static ssize_t enable_cap_mask_store(struct kobject *kobj,
 	if (rc == -EINVAL) {
 		u64 cap = libcfs_cap2num(mdt->mdt_enable_cap_mask);
 
-		/* the "allmask" is filtered by allowed_mask below */
+		
 		rc = cfs_str2mask(buffer, libcfs_cap2str, &cap, 0, ~0ULL, 0);
 		val = cap;
 	}
 	if (rc)
 		return rc;
 
-	/* All of the capabilities that we currently allow/check */
+	
 	if (unlikely(cap_isclear(allowed_cap))) {
 		allowed_cap = CAP_FS_SET;
 		cap_raise(allowed_cap, CAP_SYS_RESOURCE);
@@ -1015,7 +1015,7 @@ static const char *dom_open_lock_modes[NUM_DOM_LOCK_ON_OPEN_MODES] = {
 	[ALWAYS_DOM_LOCK_ON_OPEN] = "always",
 };
 
-/* This must be longer than the longest string above */
+
 #define DOM_LOCK_MODES_MAXLEN 16
 
 /**
@@ -1072,7 +1072,7 @@ static ssize_t dom_lock_store(struct kobject *kobj, struct attribute *attr,
 		return -EINVAL;
 
 	for (i = 0 ; i < NUM_DOM_LOCK_ON_OPEN_MODES; i++) {
-		/* buffer might have '\n' but using strlen() avoids it */
+		
 		if (strncmp(buffer, dom_open_lock_modes[i],
 			    strlen(dom_open_lock_modes[i])) == 0) {
 			val = i;
@@ -1080,7 +1080,7 @@ static ssize_t dom_lock_store(struct kobject *kobj, struct attribute *attr,
 		}
 	}
 
-	/* Legacy numeric codes */
+	
 	if (val == -1) {
 		rc = kstrtoint(buffer, 0, &val);
 		if (rc)
@@ -1324,21 +1324,21 @@ static ssize_t job_xattr_store(struct kobject *kobj, struct attribute *attr,
 	char *p;
 
 
-	/* writing "none" turns this off by leaving the name empty */
+	
 	if (!strncmp(buffer, "none", 4) ||
 	    !strncmp(buffer, "NONE", 4)) {
 		memset(mdt->mdt_job_xattr, 0, sizeof(mdt->mdt_job_xattr));
 		return count;
 	}
 
-	/* account for stripping \n before rejecting name for being too long */
+	
 	if (count > XATTR_JOB_MAX_LEN - 1 &&
 	    buffer[XATTR_JOB_MAX_LEN - 1] != '\n')
 		return -EINVAL;
 
 	strncpy(name, buffer, XATTR_JOB_MAX_LEN - 1);
 
-	/* reject if not in namespace.name format */
+	
 	p = strchr(name, '.');
 	if (p == NULL)
 		return -EINVAL;
@@ -1357,17 +1357,17 @@ static ssize_t job_xattr_store(struct kobject *kobj, struct attribute *attr,
 		}
 	}
 
-	/* trusted.job is only valid name in trusted namespace */
+	
 	if (!strncmp(name, "trusted.job", 12)) {
 		strncpy(mdt->mdt_job_xattr, name, XATTR_JOB_MAX_LEN);
 		return count;
 	}
 
-	/* only other valid namespace is user */
+	
 	if (strncmp(name, XATTR_USER_PREFIX, sizeof(XATTR_USER_PREFIX) - 1))
 		return -EINVAL;
 
-	/* ensure that a name was specified */
+	
 	if (name[sizeof(XATTR_USER_PREFIX) - 1] == '\0')
 		return -EINVAL;
 
@@ -1377,7 +1377,7 @@ static ssize_t job_xattr_store(struct kobject *kobj, struct attribute *attr,
 }
 
 LDEBUGFS_SEQ_FOPS_RO_TYPE(mdt, hash);
-/* belongs to export directory */
+
 LDEBUGFS_SEQ_FOPS_RW_TYPE(mdt, nid_stats_clear);
 
 LUSTRE_ATTR(checksum_dump, 0644, dt_checksum_dump_show, dt_checksum_dump_store);
@@ -1401,7 +1401,7 @@ LUSTRE_RO_ATTR(num_exports);
 LUSTRE_RW_ATTR(grant_check_threshold);
 LUSTRE_RO_ATTR(eviction_count);
 
-/* per-device at parameters */
+
 LUSTRE_OBD_UINT_PARAM_ATTR(at_min);
 LUSTRE_OBD_UINT_PARAM_ATTR(at_max);
 LUSTRE_OBD_UINT_PARAM_ATTR(at_history);
@@ -1474,7 +1474,7 @@ static struct attribute *mdt_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(mdt); /* creates mdt_groups from mdt_attrs */
+KOBJ_ATTRIBUTE_GROUPS(mdt); 
 
 LDEBUGFS_SEQ_FOPS_RO_TYPE(mdt, recovery_status);
 LDEBUGFS_SEQ_FOPS_RO_TYPE(mdt, recovery_stale_clients);
@@ -1596,8 +1596,8 @@ void mdt_stats_counter_init(struct lprocfs_stats *stats, unsigned int offset,
 			    enum lprocfs_counter_config cntr_umask)
 {
 	int array_size = ARRAY_SIZE(mdt_stats);
-	int oidx; /* obd_md_stats index */
-	int midx; /* mdt_stats index */
+	int oidx; 
+	int midx; 
 
 	LASSERT(stats && stats->ls_num >= offset + array_size);
 
@@ -1668,7 +1668,7 @@ int mdt_tunables_init(struct mdt_device *mdt, const char *name)
 	if (rc)
 		return rc;
 
-	/* add additional MDT md_stats after the default ones */
+	
 	mdt_stats_counter_init(obd->obd_md_stats, LPROC_MD_LAST_OPC,
 			       LPROCFS_CNTR_HISTOGRAM);
 	rc = lprocfs_job_stats_init(obd, ARRAY_SIZE(mdt_stats),

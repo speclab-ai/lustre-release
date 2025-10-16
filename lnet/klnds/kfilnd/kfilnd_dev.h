@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd device implementation.
  */
@@ -15,7 +15,7 @@
 
 #include "kfilnd.h"
 
-/* TODO: Module parameters? */
+
 #define KFILND_CURRENT_HASH_BITS 7
 #define KFILND_MAX_HASH_BITS 12
 
@@ -25,4 +25,4 @@ struct kfilnd_dev *kfilnd_dev_alloc(struct lnet_ni *ni, const char *node);
 void kfilnd_dev_reset_stats(struct kfilnd_dev *dev);
 u32 kfilnd_dev_get_session_key(struct kfilnd_dev *dev);
 
-#endif /* _KFILND_DEV_ */
+#endif 

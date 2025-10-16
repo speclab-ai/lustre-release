@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (C) 2013 DataDirect Networks, Inc.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Network Request Scheduler (NRS) Token Bucket Filter(TBF) policy
  */
@@ -61,52 +61,52 @@ struct nrs_tbf_key {
 	enum nrs_tbf_flag	tk_flags;
 	struct lnet_nid		tk_nid;
 	__u32			tk_opcode;
-	struct tbf_id		tk_id;	/* UID and GID */
+	struct tbf_id		tk_id;	
 	char			tk_jobid[LUSTRE_JOBID_SIZE];
 };
 
 struct nrs_tbf_client {
-	/** Resource object for policy instance. */
+	
 	struct ptlrpc_nrs_resource	 tc_res;
-	/** Node in the hash table. */
+	
 	struct rhash_head		 tc_rhash;
 	struct hlist_node		 tc_hnode;
-	/** Key of the TBF cli. */
+	
 	struct nrs_tbf_key		 tc_key;
-	/** Reference number of the client. */
+	
 	refcount_t			 tc_ref;
-	/** Lock to protect rule and linkage. */
+	
 	spinlock_t			 tc_rule_lock;
-	/** Linkage to rule. */
+	
 	struct list_head	         tc_linkage;
-	/** Pointer to rule. */
+	
 	struct nrs_tbf_rule		*tc_rule;
-	/** Generation of the rule matched. */
+	
 	__u64				 tc_rule_generation;
-	/** Limit of RPC rate. */
+	
 	__u64				 tc_rpc_rate;
-	/** Time to wait for next token. */
+	
 	__u64				 tc_nsecs;
-	/** RPC token number. */
+	
 	__u64				 tc_ntoken;
-	/** Token bucket depth. */
+	
 	__u64				 tc_depth;
-	/** Time check-point. */
+	
 	__u64				 tc_check_time;
-	/** Deadline of a class */
+	
 	__u64				 tc_deadline;
 	/**
 	 * Time residue: the remainder of elapsed time
 	 * divided by nsecs when dequeue a request.
 	 */
 	__u64				 tc_nsecs_resid;
-	/** List of queued requests. */
+	
 	struct list_head		 tc_list;
-	/** Node in binary heap. */
+	
 	struct binheap_node		 tc_node;
-	/** Whether the client is in heap. */
+	
 	bool				 tc_in_heap;
-	/** Sequence of the newest rule. */
+	
 	__u32				 tc_rule_sequence;
 	/**
 	 * Linkage into LRU list. Protected bucket lock of
@@ -133,48 +133,48 @@ enum nrs_rule_flags {
 };
 
 struct nrs_tbf_rule {
-	/** Name of the rule. */
+	
 	char				 tr_name[MAX_TBF_NAME];
-	/** Head belongs to. */
+	
 	struct nrs_tbf_head		*tr_head;
-	/** Likage to head. */
+	
 	struct list_head		 tr_linkage;
-	/** Nid list of the rule. */
+	
 	struct list_head		 tr_nids;
-	/** Nid list string of the rule.*/
+	
 	char				*tr_nids_str;
-	/** Jobid list of the rule. */
+	
 	struct list_head		 tr_jobids;
-	/** Jobid list string of the rule.*/
+	
 	char				*tr_jobids_str;
-	/** uid/gid list of the rule. */
+	
 	struct list_head		tr_ids;
-	/** uid/gid list string of the rule. */
+	
 	char				*tr_ids_str;
-	/** Opcode bitmap of the rule. */
+	
 	unsigned long			*tr_opcodes;
 	u32				tr_opcodes_cnt;
-	/** Opcode list string of the rule.*/
+	
 	char				*tr_opcodes_str;
-	/** Condition list of the rule.*/
+	
 	struct list_head		tr_conds;
-	/** Generic condition string of the rule. */
+	
 	char				*tr_conds_str;
-	/** RPC/s limit. */
+	
 	__u64				 tr_rpc_rate;
-	/** Time to wait for next token. */
+	
 	u64				 tr_nsecs_per_rpc;
-	/** Token bucket depth. */
+	
 	__u64				 tr_depth;
-	/** Lock to protect the list of clients. */
+	
 	spinlock_t			 tr_rule_lock;
-	/** List of client. */
+	
 	struct list_head		 tr_cli_list;
-	/** Flags of the rule. */
+	
 	enum nrs_rule_flags		 tr_flags;
-	/** Usage Reference count taken on the rule. */
+	
 	struct kref			 tr_ref;
-	/** Generation of the rule. */
+	
 	__u64				 tr_generation;
 };
 
@@ -370,5 +370,5 @@ struct nrs_tbf_req {
  */
 #define NRS_CTL_TBF_RD_TYPE_FLAG PTLRPC_NRS_CTL_POL_SPEC_03
 
-/** @} tbf */
+
 #endif

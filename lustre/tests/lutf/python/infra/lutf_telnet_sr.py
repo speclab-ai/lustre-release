@@ -72,9 +72,7 @@ class TNH(telnetsrvlib.TelnetHandler):
 					try:
 						line = self.raw_input(self.PROMPT)
 						logging.debug(line)
-						#self.write(line)
 						encoding = getattr(sys.stdin, "encoding", None)
-						#logging.debug(encoding)
 						if encoding and not isinstance(line, str):
 							line = line.decode(encoding)
 					except EOFError:
@@ -97,7 +95,6 @@ class TNH(telnetsrvlib.TelnetHandler):
 					self.more = 0
 		logging.debug("Exiting handler")
 	def raw_input(self, prompt=""):
-		#self.write(prompt)
 		return self.readline()
 	def cmdECHO(self, params):
 		""" [<arg> ...]
@@ -121,7 +118,6 @@ class TNH(telnetsrvlib.TelnetHandler):
 		self.PROMPT = "lutf>>> "
 		self.old_stdout = sys.stdout
 		sys.stdout = self
-		#logging.debug("cmdINTERACT complete")
 
 	def cmdSHUTDOWN(self, params):
 		"""
@@ -133,20 +129,15 @@ class TNH(telnetsrvlib.TelnetHandler):
 		self.writeline("Goodbye")
 
 #class TNS1(socketserver.TCPServer):
-#	allow_reuse_address = True
 
 #class TNH1(telnetsrvlib.TelnetHandler):
 #	def __init__(self, request, client_address, server):
-#		print "calling TNH1.constructore"
-#		telnetsrvlib.TelnetHandler.__init__(self, request, client_address, server)
 #	def cmdECHO(self, params):
 #		""" [<arg> ...]
 #		Echo parameters
 #		Echo command line parameters back to user, one per line.
 #		"""
-#		self.writeline("Parameters:")
 #		for item in params:
-#			self.writeline("\t%s" % item)
 
 class LutfTelnetServer:
 	def __init__(self, telnet_port):

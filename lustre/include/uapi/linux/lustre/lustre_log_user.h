@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Userspace-usable portion of Generic infrastructure for managing
  * a collection of logs.
@@ -58,4 +58,4 @@ static inline __u64 logid_id(struct llog_logid *log_id)
 	return log_id->lgl_oi.oi.oi_id;
 }
 
-#endif /* ifndef _LUSTRE_LOG_USER_H */
+#endif 

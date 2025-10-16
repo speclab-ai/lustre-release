@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Debug messages and assertions
  */
@@ -37,7 +37,7 @@ extern char *libcfs_debug_file_path;
 
 struct task_struct;
 
-/* Convert a text string to a bitmask */
+
 int cfs_str2mask(const char *str, const char *(*bit2str)(int bit),
 		 u64 *oldmask, u64 minmask, u64 allmask, u64 defmask);
 int cfs_mask2str(char *str, int size, u64 mask, const char *(*bit2str)(int),
@@ -46,7 +46,7 @@ int cfs_mask2str(char *str, int size, u64 mask, const char *(*bit2str)(int),
 int libcfs_debug_mask2str(char *str, int size, int mask, int is_subsys);
 int libcfs_debug_str2mask(int *mask, const char *str, int is_subsys);
 
-/* Has there been an LBUG? */
+
 extern unsigned int libcfs_catastrophe;
 extern unsigned int libcfs_panic_on_lbug;
 extern bool libcfs_debug_raw_pointers;
@@ -60,8 +60,8 @@ void set_debug_raw_pointers(bool value);
 # define DEBUG_SUBSYSTEM S_UNDEFINED
 #endif
 
-#define CDEBUG_DEFAULT_MAX_DELAY (cfs_time_seconds(600))         /* jiffies */
-#define CDEBUG_DEFAULT_MIN_DELAY ((cfs_time_seconds(1) + 1) / 2) /* jiffies */
+#define CDEBUG_DEFAULT_MAX_DELAY (cfs_time_seconds(600))         
+#define CDEBUG_DEFAULT_MIN_DELAY ((cfs_time_seconds(1) + 1) / 2) 
 #define CDEBUG_DEFAULT_BACKOFF   2
 struct cfs_debug_limit_state {
 	unsigned long	cdls_next;
@@ -153,7 +153,7 @@ do {									\
 	__CDEBUG_WITH_LOC(__FILE__, __func__, __LINE__,			\
 			  mask, &cdls, format, ## __VA_ARGS__);		\
 } while (0)
-# else /* !CDEBUG_ENABLED */
+# else 
 static inline int cfs_cdebug_show(unsigned int mask, unsigned int subsystem)
 {
 	return 0;
@@ -163,7 +163,7 @@ static inline int cfs_cdebug_show(unsigned int mask, unsigned int subsystem)
 #  define CDEBUG_LIMIT_LOC(file, func, line, mask, format, ...) (void)(0)
 #  define CDEBUG_SLOW(delay, mask, format, ...) (void)(0)
 #  warning "CDEBUG IS DISABLED. THIS SHOULD NEVER BE DONE FOR PRODUCTION!"
-# endif /* CDEBUG_ENABLED */
+# endif 
 
 /*
  * Lustre Error Checksum: calculates checksum
@@ -192,7 +192,7 @@ void libcfs_debug_msg(struct libcfs_debug_msg_data *msgdata,
 		      const char *format1, ...)
 	__printf(2, 3);
 
-/* other external symbols that tracefile provides: */
+
 int cfs_trace_copyout_string(char __user *usr_buffer, int usr_buffer_nob,
 			     const char *knl_buffer, char *append);
 
@@ -238,7 +238,7 @@ do {									      \
 									      \
 	return rc;							      \
 } while (0)
-# else /* BITS_PER_LONG == 32 */
+# else 
 /* We need an on-stack variable, because we cannot case a 32-bit pointer
  * directly to (long long) without generating a complier warning/error, yet
  * casting directly to (long) will truncate 64-bit return values. The log
@@ -256,12 +256,12 @@ do {									      \
 	return rc;							      \
 } while (0)
 
-# endif /* BITS_PER_LONG > 32 */
+# endif 
 
 # define ENTRY	CDEBUG(D_TRACE, "Process entered\n")
 # define EXIT	CDEBUG(D_TRACE, "Process leaving\n")
 
-#else /* !CDEBUG_ENTRY_EXIT */
+#else 
 
 # define GOTO(label, rc)						\
 	do {								\
@@ -273,7 +273,7 @@ do {									      \
 # define ENTRY	do { } while (0)
 # define EXIT	do { } while (0)
 
-#endif /* CDEBUG_ENTRY_EXIT */
+#endif 
 
 #define RETURN_EXIT							\
 do {									\
@@ -300,4 +300,4 @@ static inline void cfs_tty_write_msg(const char *msg)
 	tty_kref_put(tty);
 }
 
-#endif	/* __LIBCFS_DEBUG_H__ */
+#endif	

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Sequence Manager
  *
@@ -28,7 +28,7 @@
 
 #include "fid_internal.h"
 
-/* Assigns client to sequence controller node. */
+
 int seq_server_set_cli(const struct lu_env *env, struct lu_server_seq *seq,
 		       struct lu_client_seq *cli)
 {
@@ -111,7 +111,7 @@ static int __seq_server_alloc_super(struct lu_server_seq *seq,
 		range_alloc(out, space, seq->lss_width);
 	}
 
-	rc = seq_store_update(env, seq, out, 1 /* sync */);
+	rc = seq_store_update(env, seq, out, 1 );
 
 	LCONSOLE_INFO("%s: super-sequence allocation rc = %d " DRANGE"\n",
 		      seq->lss_name, rc, PRANGE(out));
@@ -158,7 +158,7 @@ int seq_server_alloc_spec(struct lu_server_seq *seq,
 	mutex_lock(&seq->lss_mutex);
 	if (spec->lsr_start >= space->lsr_start) {
 		space->lsr_start = spec->lsr_end;
-		rc = seq_store_update(env, seq, spec, 1 /* sync */);
+		rc = seq_store_update(env, seq, spec, 1 );
 
 		LCONSOLE_INFO("%s: "DRANGE" sequences allocated: rc = %d \n",
 			      seq->lss_name, PRANGE(spec), rc);
@@ -209,26 +209,26 @@ static int range_alloc_set(const struct lu_env *env,
 	if (lu_seq_range_is_zero(loset))
 		__seq_set_init(env, seq);
 
-	if (CFS_FAIL_CHECK(OBD_FAIL_SEQ_ALLOC)) /* exhaust set */
+	if (CFS_FAIL_CHECK(OBD_FAIL_SEQ_ALLOC)) 
 		loset->lsr_start = loset->lsr_end;
 
 	if (lu_seq_range_is_exhausted(loset)) {
-		/* reached high water mark. */
+		
 		struct lu_device *dev = seq->lss_site->ss_lu->ls_top_dev;
 		int obd_num_clients = dev->ld_obd->obd_num_exports;
 		__u64 set_sz;
 
-		/* calculate new seq width based on number of clients */
+		
 		set_sz = max(seq->lss_set_width,
 			     obd_num_clients * seq->lss_width);
 		set_sz = min(lu_seq_range_space(space), set_sz);
 
-		/* Switch to hiwater range now */
+		
 		*loset = *hiset;
-		/* allocate new hiwater range */
+		
 		range_alloc(hiset, space, set_sz);
 
-		/* update ondisk seq with new *space */
+		
 		rc = seq_store_update(env, seq, NULL, seq->lss_need_sync);
 	}
 
@@ -263,7 +263,7 @@ int seq_server_check_and_alloc_super(const struct lu_env *env,
 
 	ENTRY;
 
-	/* Check if available space ends and allocate new super seq */
+	
 	if (lu_seq_range_is_exhausted(space)) {
 		if (!seq->lss_cli) {
 			CERROR("%s: No sequence controller is attached.\n",
@@ -279,13 +279,13 @@ int seq_server_check_and_alloc_super(const struct lu_env *env,
 			RETURN(rc);
 		}
 
-		/* Saving new range to allocation space. */
+		
 		*space = seq->lss_cli->lcs_space;
 		LASSERT(lu_seq_range_is_sane(space));
 		if (!seq->lss_cli->lcs_srv) {
 			struct lu_server_fld *fld;
 
-			/* Insert it to the local FLDB */
+			
 			fld = seq->lss_site->ss_server_fld;
 			mutex_lock(&fld->lsf_lock);
 			rc = fld_insert_entry(env, fld, space);
@@ -469,10 +469,10 @@ TGT_SEQ_HDL(HAS_REPLY,	SEQ_QUERY,	seq_handler),
 };
 EXPORT_SYMBOL(seq_handlers);
 
-/* context key constructor/destructor: seq_key_init, seq_key_fini */
+
 LU_KEY_INIT_FINI(seq, struct seq_thread_info);
 
-/* context key: seq_thread_key */
+
 LU_CONTEXT_KEY_DEFINE(seq, LCT_MD_THREAD | LCT_DT_THREAD);
 
 static void seq_server_debugfs_fini(struct lu_server_seq *seq)
@@ -539,11 +539,11 @@ int seq_server_init(const struct lu_env *env, struct lu_server_seq *seq,
 	rc = seq_store_init(seq, env, dev);
 	if (rc)
 		GOTO(out, rc);
-	/* Request backing store for saved sequence info. */
+	
 	rc = seq_store_read(seq, env);
 	if (rc == -ENODATA) {
 
-		/* Nothing is read, init by default value. */
+		
 		seq->lss_space = is_srv ?
 			LUSTRE_SEQ_ZERO_RANGE :
 			LUSTRE_SEQ_SPACE_RANGE;

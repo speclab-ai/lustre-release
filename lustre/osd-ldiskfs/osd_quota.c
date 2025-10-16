@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Johann Lombardi <johann@whamcloud.com>
  * Author: Niu Yawei <niu@whamcloud.com>
@@ -178,7 +178,7 @@ static struct dt_it *osd_it_acct_init(const struct lu_env *env,
 	it->oiq_obj = obj;
 	INIT_LIST_HEAD(&it->oiq_list);
 
-	/* LUSTRE_DQTREEOFF is the initial offset where the tree can be found */
+	
 	it->oiq_blk[0] = LUSTRE_DQTREEOFF;
 
 	/*
@@ -239,14 +239,14 @@ static int osd_it_acct_get(const struct lu_env *env, struct dt_it *di,
 
 	offset = find_tree_dqentry(env, it->oiq_obj, type, dqid,
 				   LUSTRE_DQTREEOFF, 0, it);
-	if (offset > 0) { /* Found */
+	if (offset > 0) { 
 		RETURN(+1);
-	} else if (offset < 0) { /* Error */
+	} else if (offset < 0) { 
 		QUOTA_IT_READ_ERROR(it, (int)offset);
 		RETURN((int)offset);
 	}
 
-	/* The @key is not found, move to the first valid entry */
+	
 	rc = walk_tree_dqentry(env, it->oiq_obj, type, it->oiq_blk[0], 0,
 			       0, it);
 	if (rc == 0)
@@ -308,7 +308,7 @@ static int osd_it_acct_next(const struct lu_env *env, struct dt_it *di)
 	depth = LUSTRE_DQTREEDEPTH;
 	index = it->oiq_index[depth];
 	if (++index < LUSTRE_DQSTRINBLK) {
-		/* Search for the next valid entry from current index */
+		
 		rc = walk_block_dqentry(env, it->oiq_obj, type,
 					it->oiq_blk[depth], index, it);
 		if (rc < 0) {
@@ -571,7 +571,7 @@ int osd_declare_qid(const struct lu_env *env, struct osd_thandle *oh,
 	}
 
 	if (!found) {
-		/* we need to account for credits for this new ID */
+		
 		if (i >= OSD_MAX_UGID_CNT) {
 			rc = -EOVERFLOW;
 			CERROR("%s: too many qids %u > %u on "DFID": rc = %d\n",
@@ -608,10 +608,10 @@ int osd_declare_qid(const struct lu_env *env, struct osd_thandle *oh,
 	}
 
 	if (unlikely(qsd == NULL))
-		/* quota slave instance hasn't been allocated yet */
+		
 		RETURN(0);
 
-	/* check quota */
+	
 	if (enforce)
 		rc = qsd_op_begin(env, qsd, oh->ot_quota_trans, qi,
 				  local_flags);
@@ -643,18 +643,18 @@ int osd_declare_inode_qid(const struct lu_env *env, qid_t uid, qid_t gid,
 {
 	struct osd_thread_info *info = osd_oti_get(env);
 	struct lquota_id_info *qi = &info->oti_qi;
-	int rcu, rcg, rcp = 0; /* user & group & project rc */
+	int rcu, rcg, rcp = 0; 
 	struct thandle *th = &oh->ot_super;
 	enum osd_quota_local_flags tmp_flags;
 	bool force = !!(osd_qid_declare_flags & OSD_QID_FORCE) ||
 			th->th_ignore_quota;
 	ENTRY;
 
-	/* very fast path for special files like llog */
+	
 	if (uid == 0 && gid == 0 && projid == 0)
 		return 0;
 
-	/* let's start with user quota */
+	
 	qi->lqi_id.qid_uid = uid;
 	qi->lqi_type = USRQUOTA;
 	qi->lqi_space = space;
@@ -662,7 +662,7 @@ int osd_declare_inode_qid(const struct lu_env *env, qid_t uid, qid_t gid,
 	rcu = osd_declare_qid(env, oh, qi, obj, true, local_flags);
 
 	if (force && (rcu == -EDQUOT || rcu == -EINPROGRESS))
-		/* ignore EDQUOT & EINPROGRESS when changes are done by root */
+		
 		rcu = 0;
 
 	/*
@@ -674,20 +674,20 @@ int osd_declare_inode_qid(const struct lu_env *env, qid_t uid, qid_t gid,
 	if (rcu && (rcu != -EDQUOT || local_flags == NULL))
 		RETURN(rcu);
 
-	/* and now group quota */
+	
 	qi->lqi_id.qid_gid = gid;
 	qi->lqi_type = GRPQUOTA;
 	rcg = osd_declare_qid(env, oh, qi, obj, true, local_flags);
 
 	if (force && (rcg == -EDQUOT || rcg == -EINPROGRESS))
-		/* as before, ignore EDQUOT & EINPROGRESS for root */
+		
 		rcg = 0;
 
 #ifdef HAVE_PROJECT_QUOTA
 	if (rcg && (rcg != -EDQUOT || local_flags == NULL))
 		RETURN(rcg);
 
-	/* and now project quota */
+	
 	qi->lqi_id.qid_projid = projid;
 	qi->lqi_ignore_root_proj_quota = th->th_ignore_root_proj_quota;
 	qi->lqi_type = PRJQUOTA;
@@ -711,7 +711,7 @@ int osd_declare_inode_qid(const struct lu_env *env, qid_t uid, qid_t gid,
 	if (force && (rcp == -EDQUOT || rcp == -EINPROGRESS)) {
 		CDEBUG(D_QUOTA, "forced to ignore quota flags = %#x\n",
 		       local_flags ? *local_flags : -1);
-		/* as before, ignore EDQUOT & EINPROGRESS for root */
+		
 		rcp = 0;
 	}
 #endif

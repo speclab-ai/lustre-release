@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2017, DataDirect Networks Storage.
  * Copyright (c) 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lfs_project.c
  *
@@ -79,7 +79,7 @@ static int project_get_fsxattr(const char *pathname, struct fsxattr *fsx,
 		goto out;
 	}
 
-	/* currently, only file and dir supported */
+	
 	if (!S_ISREG(st->st_mode) && !S_ISDIR(st->st_mode))
 		goto new_api;
 
@@ -140,7 +140,7 @@ project_check_one(const char *pathname, struct project_handle_control *phc)
 	if (ret < 0)
 		return ret;
 
-	/* use top directory's project ID if not specified */
+	
 	if (!phc->assign_projid) {
 		phc->assign_projid = true;
 		phc->projid = fsx.fsx_projid;
@@ -290,7 +290,7 @@ lfs_project_handle_dir(struct list_head *head, const char *pathname,
 	}
 
 	while ((ent = readdir(dir)) != NULL) {
-		/* skip "." and ".." */
+		
 		if (strcmp(ent->d_name, ".") == 0 ||
 		    strcmp(ent->d_name, "..") == 0)
 			continue;
@@ -340,12 +340,12 @@ static int lfs_project_iterate(const char *pathname,
 		return ret;
 	}
 
-	/* list opeation will skip top directory in default */
+	
 	if (!S_ISDIR(st.st_mode) || phc->dironly ||
 	    project_list_one != func)
 		ret = func(pathname, phc);
 
-	/* dironly first, recursive will be ignored */
+	
 	if (!S_ISDIR(st.st_mode) || phc->dironly || ret)
 		return ret;
 

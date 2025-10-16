@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_page for LOV layer.
  *
@@ -57,7 +57,7 @@ int lov_dio_pages_init_composite(const struct lu_env *env,
 	LASSERT(rc == 0);
 
 	if (entry < 0 || !lsm_entry_inited(loo->lo_lsm, entry)) {
-		/* non-existing layout component */
+		
 		lov_dio_pages_init_empty(env, obj, cdp, index);
 		RETURN(0);
 	}
@@ -125,7 +125,7 @@ int lov_page_init_composite(const struct lu_env *env, struct cl_object *obj,
 		if (!lov_io_layout_at_confirm(lio, entry, offset))
 			return -ENODATA;
 		stripe = lio->lis_cached_stripe;
-		/* Offset can never go backwards in an i/o, so this is valid */
+		
 		suboff = lio->lis_cached_suboff + offset - lio->lis_cached_off;
 	} else {
 		entry = lov_io_layout_at(lio, offset);
@@ -143,7 +143,7 @@ int lov_page_init_composite(const struct lu_env *env, struct cl_object *obj,
 	}
 
 	if (entry < 0 || !lsm_entry_inited(loo->lo_lsm, entry)) {
-		/* non-existing layout component */
+		
 		lov_page_init_empty(env, obj, page, index);
 		RETURN(0);
 	}
@@ -218,4 +218,4 @@ int lov_page_init_foreign(const struct lu_env *env, struct cl_object *obj,
 	RETURN(-ENODATA);
 }
 
-/** @} lov */
+

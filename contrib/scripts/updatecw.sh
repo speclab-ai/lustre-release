@@ -1,32 +1,18 @@
 #!/bin/bash
-# Adds Intel copyright notices to files modified by Intel.
-# Does not add copyright notices to files that are missing them.
-#
-# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
-# Copyright (c) 2012, 2014, Intel Corporation.
-#
 TMP=${TMP:-/tmp}
 TMPFILE=$(mktemp $TMP/updatecopy.XXXXXX)
 EXCFILE=$(mktemp $TMP/excludecopy.XXXXXX)
 THISYEAR=$(date +%Y)
 DIRS=${*:-"build ldiskfs libcfs lnet lustre lustre-iokit snmp"}
-
-#Old copyright messages we might need to find
 OLDCOPY1="Copyright.*"
 OLDCOPY2="Use is subject to license terms."
-#The current copyright
 INTCOPY=${INTCOPY:-"Copyright.*Intel Corporation"}
-
-#Emails we assume ownership of
 AUTH_WHAM=${AUTH_WHAM:-".*@whamcloud.com"}
 AUTH_INT=${AUTH_INT:-".*@intel.com"}
 AUTHOR=${AUTHOR:-$AUTH_INT|$AUTH_WHAM}
-
-START=${START:-"2010-06-01"}	# Post Oracle date
+START=${START:-"2010-06-01"}
 ECHOE=${ECHOE:-"echo -e"}
 [ "$($ECHOE foo)" = "-e foo" ] && ECHOE=echo
-
-#Commits to exclude (whitespace, copyright, prefix, revert, delete only, etc)
 cat << EXCLUDE_END > $EXCFILE
 003df3c38fe74a092f75569793edd6ec5a387d5c
 01def2b635ff0b7bacde158d9124334c42cd5d2b
@@ -193,39 +179,27 @@ bcb737a19433e3e32df6a826f29d15a3666f54d8
 e5eaaff6e378b8c95d0a809f4dd3b4817d9fd492
 EXCLUDE_END
 [ -n "$EXCLUDE" ] && echo "$EXCLUDE" >> $EXCFILE
-
 HASHFILE=$TMP/hash_list
 > $TMP/hash_list
 git ls-files $DIRS | while read FILE; do
-	FILE=$FILE # just so FILE shows up in "sh -vx" output
+	FILE=$FILE
 	case "$FILE" in
 	*/list.h)
-		# file is copied from upstream kernel
 		continue ;;
 	*/liblustreapi.h)
-		# file just includes lustreapi.h, copyrights are in there
 		continue ;;
 	*/*.patch|*/*.series)
-		# patches can't add copyrights easily
 		continue ;;
 	*/lustre_dlm_flags.h)
-		# file is automatically generated
 		continue ;;
 	*/.gitignore)
 		continue ;;
 	*/LCOPYING)
-		# just a copy of the LGPL, don't claim copyright
 		continue ;;
 	esac
-
 	OLDCOPY=$(egrep "$INTCOPY" $FILE | tail -n1)
-	# Skip files that already have a copyright for this year
 	[ -n "$(egrep -e $THISYEAR <<<"$OLDCOPY")" ] && continue
-
 	ADDCOPY=false
-	# Pick only files that have changed since $START
-	# %ai author dates holds has bad data, use %ci instead
-	# Exclude revert commits and the patch being reverted.
 	git log --follow --since=$START --pretty=format:"%ci %ae %H" $FILE |
 		grep -v -f $EXCFILE | egrep -e "$AUTHOR" |
 		while read YYYY TTTT TZZZ AUTHOR HASH; do
@@ -239,10 +213,7 @@ git ls-files $DIRS | while read FILE; do
 			echo "$YYYY $TTTT $TZZZ $AUTHOR $HASH"
 		done > $TMPFILE.2
 	grep -v -f $EXCFILE $TMPFILE.2 > $TMPFILE
-
-	# Skip files not modified by $AUTHOR
 	[ -s "$TMPFILE" ] || continue
-
 	if [ -z "$(egrep -e "$OLDCOPY1" $FILE)" ]; then
 		case $FILE in
 		*.[ch])
@@ -252,52 +223,28 @@ git ls-files $DIRS | while read FILE; do
 			continue ;;
 		esac
 	fi
-
 	if [ -z "$(grep "$INTCOPY" <<<"$OLDCOPY")" ]; then
 		ADDCOPY=true
 		OLDCOPY="$(egrep "$OLDCOPY1|$OLDCOPY2" $FILE| tail -n1| tr / .)"
 	fi
-
-	# Get commit dates
 	NEWYEAR=$(head -1 $TMPFILE | cut -d- -f 1)
 	OLDYEAR=$(tail -1 $TMPFILE | cut -d- -f 1)
-
 	if [ "$NEWYEAR" -lt "$OLDYEAR" ]; then
 		echo "$FILE: ** YEAR INVERSION: INSPECT  **"
 		continue;
 	fi
-
 	[ $NEWYEAR == $OLDYEAR ] && YEAR="$NEWYEAR" || YEAR="$OLDYEAR, $NEWYEAR"
-	# The man page comment .\" needs to be escaped, and the '\' reinforced
-	COMMENT=$(sed -e 's/^\( *[\*#\.\"\\]*\) *[A-Z(].*/\1/' -e 's/\\/\\\\/' \
+	COMMENT=$(sed -e 's/^\( *[\*
 		  <<<"$OLDCOPY")
 	NEWCOPY=$(sed -e"s/^/$COMMENT /" -e"s/\.\*/ (c) $YEAR, /" -e's/\.*$//' \
 		  <<<"$INTCOPY").
-
-	# '.\"' as a COMMENT in a man page isn't escaped correctly
-	#case "$FILE" in
-	#*/*.[1-9])
-	#	echo "$FILE: *** EDIT MANUALLY ***"
-	#	continue ;;
-	#esac
-
-	# If copyright is unchanged (excluding whitespace), we're done
 	[ "$OLDCOPY" == "$NEWCOPY" ] && continue
-
-	# Log all changes this year, to help find "noisy" patches
 	awk '/'$THISYEAR'-/ { print $5 }' $TMPFILE | cut -c1-12 >> $HASHFILE
-
 	[ ! -w $FILE ] && echo "$FILE: *** can't write, EDIT MANUALLY ***" &&
 		continue
-
 	if $ADDCOPY; then
 		echo "$FILE: $NEWCOPY (newly added) ** INSPECT **"
-		# Add a new copyright line after the existing copyright.
-		# Using a temporary file is ugly, but I couldn't get
-		# newlines into the substitution pattern for some reason,
-		# and this is not a performance-critical process.
 		$ECHOE "${COMMENT}\n${NEWCOPY}" > $TMPFILE
-		# The man page comment .\" (currently .") needs '\' added back
 		sed -e "/$OLDCOPY/r $TMPFILE" \
 		    -e 's/^\."/.\\"/' $FILE > $FILE.tmp
 	else
@@ -307,19 +254,15 @@ git ls-files $DIRS | while read FILE; do
 			INSPECT=""
 		fi
 		echo "$FILE: $NEWCOPY $INSPECT"
-		# Replace the old copyright line with a new copyright
-		# The man page comment .\" (currently .") needs '\' added back
 		sed -e "s/.*$INTCOPY.*/$NEWCOPY/" \
 		    -e 's/^\."/.\\"/' $FILE > $FILE.tmp
 	fi
 	[ -s $FILE.tmp ] && cp $FILE.tmp $FILE && rm -f $FILE.tmp
-#exit
 done
 if [ -s $HASHFILE ]; then
 	echo "commits causing the most changes"
 	sort $HASHFILE | uniq -c | sort -nr | head -30 | while read CNT HASH; do
 		echo $CNT $(git show --oneline --no-patch $HASH)
 	done
-
 fi
 rm -f $TMPFILE $TMPFILE.2

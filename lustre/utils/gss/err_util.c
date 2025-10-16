@@ -57,12 +57,12 @@ void printerr(int priority, char *format, ...)
 	int buf_used, buf_available;
 	char *buf;
 
-	/* Don't bother formatting a message we're never going to print! */
+	
 	if (priority > verbosity)
 		return;
 
 	buf_used = strlen(message_buf);
-	/* subtract 4 to leave room for "...\n" if necessary */
+	
 	buf_available = sizeof(message_buf) - buf_used - 4;
 	buf = message_buf + buf_used;
 
@@ -77,7 +77,7 @@ void printerr(int priority, char *format, ...)
 	if (ret < 0)
 		goto printit;
 	if (ret >= buf_available) {
-		/* Indicate we're truncating */
+		
 		strcat(message_buf, "...\n");
 		goto printit;
 	}
@@ -91,7 +91,7 @@ printit:
 	} else {
 		syslog(LOG_ERR, "%s", message_buf);
 	}
-	/* reset the buffer */
+	
 	memset(message_buf, 0, sizeof(message_buf));
 }
 

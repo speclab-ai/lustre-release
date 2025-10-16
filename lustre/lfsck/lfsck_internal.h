@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Shared definitions and declarations for the LFSCK.
  *
@@ -29,59 +29,59 @@
 #define LFSCK_CHECKPOINT_INTERVAL	60
 
 enum lfsck_flags {
-	/* Finish the first cycle scanning. */
+	
 	LF_SCANNED_ONCE		= 0x00000001ULL,
 
-	/* There is some namespace inconsistency. */
+	
 	LF_INCONSISTENT		= 0x00000002ULL,
 
-	/* The device is upgraded from 1.8 format. */
+	
 	LF_UPGRADE		= 0x00000004ULL,
 
-	/* Server restarted during LFSCK may miss to process obj check/repair */
+	
 	LF_INCOMPLETE		= 0x00000008ULL,
 
-	/* The LAST_ID (file) crashed. */
+	
 	LF_CRASHED_LASTID	= 0x00000010ULL,
 };
 
 struct lfsck_position {
-	/* low layer object table-based iteration position. */
+	
 	__u64	lp_oit_cookie;
 
-	/* parent FID for directory traversal. */
+	
 	struct lu_fid lp_dir_parent;
 
-	/* namespace-based directory traversal position. */
+	
 	__u64	lp_dir_cookie;
 };
 
 struct lfsck_bookmark {
-	/* Magic number to detect that this struct contains valid data. */
+	
 	__u32	lb_magic;
 
-	/* For compatible with old versions. */
+	
 	__u16	lb_version;
 
-	/* See 'enum lfsck_param_flags' */
+	
 	__u16	lb_param;
 
-	/* How many items can be scanned at most per second. */
+	
 	__u32	lb_speed_limit;
 
-	/* The windows size for async requests pipeline. */
+	
 	__u16	lb_async_windows;
 
-	/* For 64-bits aligned. */
+	
 	__u16	lb_padding;
 
-	/* The FID for .lustre/lost+found/MDTxxxx */
+	
 	struct lu_fid	lb_lpf_fid;
 
-	/* The FID for the last MDT-object created by the LFSCK repairing. */
+	
 	struct lu_fid	lb_last_fid;
 
-	/* For future using. */
+	
 	__u64	lb_reserved[2];
 };
 
@@ -106,121 +106,121 @@ enum lfsck_namespace_inconsistency_type {
 };
 
 struct lfsck_namespace {
-	/* Magic number to detect that this struct contains valid data. */
+	
 	__u32	ln_magic;
 
-	/* See 'enum lfsck_status'. */
+	
 	__u32	ln_status;
 
-	/* See 'enum lfsck_flags'. */
+	
 	__u32	ln_flags;
 
-	/* How many completed LFSCK runs on the device. */
+	
 	__u32	ln_success_count;
 
-	/*  How long the LFSCK phase1 has run in seconds. */
+	
 	time64_t ln_run_time_phase1;
 
-	/*  How long the LFSCK phase2 has run in seconds. */
+	
 	time64_t ln_run_time_phase2;
 
-	/* Time for the last LFSCK completed in seconds since epoch. */
+	
 	time64_t ln_time_last_complete;
 
-	/* Time for the latest LFSCK ran in seconds since epoch. */
+	
 	time64_t ln_time_latest_start;
 
-	/* Time for the last LFSCK checkpoint in seconds since epoch. */
+	
 	time64_t ln_time_last_checkpoint;
 
-	/* Position for the latest LFSCK started from. */
+	
 	struct lfsck_position	ln_pos_latest_start;
 
-	/* Position for the last LFSCK checkpoint. */
+	
 	struct lfsck_position	ln_pos_last_checkpoint;
 
-	/* Position for the first should be updated object. */
+	
 	struct lfsck_position	ln_pos_first_inconsistent;
 
-	/* How many items (including dir) have been checked. */
+	
 	__u64	ln_items_checked;
 
-	/* How many items have been repaired. */
+	
 	__u64	ln_items_repaired;
 
-	/* How many items failed to be processed. */
+	
 	__u64	ln_items_failed;
 
-	/* How many directories have been traversed. */
+	
 	__u64	ln_dirs_checked;
 
-	/* How many objects have been double scanned. */
+	
 	__u64	ln_objs_checked_phase2;
 
-	/* How many objects have been reparied during double scan. */
+	
 	__u64	ln_objs_repaired_phase2;
 
-	/* How many objects failed to be processed during double scan. */
+	
 	__u64	ln_objs_failed_phase2;
 
-	/* How many objects with nlink fixed. */
+	
 	__u64	ln_objs_nlink_repaired;
 
-	/* The latest object has been processed (failed) during double scan. */
+	
 	struct lu_fid	ln_fid_latest_scanned_phase2;
 
-	/* How many FID-in-dirent entries have been repaired. */
+	
 	__u64	ln_dirent_repaired;
 
-	/* How many linkEA entries have been repaired. */
+	
 	__u64	ln_linkea_repaired;
 
-	/* How many multiple-linked objects have been checked. */
+	
 	__u64	ln_mul_linked_checked;
 
-	/* How many multiple-linked objects have been repaired. */
+	
 	__u64	ln_mul_linked_repaired;
 
-	/* How many undefined inconsistency found in phase2. */
+	
 	__u64	ln_unknown_inconsistency;
 
-	/* How many unmatched pairs have been repaired. */
+	
 	__u64	ln_unmatched_pairs_repaired;
 
-	/* How many dangling name entries have been found/repaired. */
+	
 	__u64	ln_dangling_repaired;
 
-	/* How many multiple referenced name entries have been found/repaired */
+	
 	__u64	ln_mul_ref_repaired;
 
-	/* How many name entries with bad file type have been repaired. */
+	
 	__u64	ln_bad_type_repaired;
 
-	/* How many lost name entries have been re-inserted. */
+	
 	__u64	ln_lost_dirent_repaired;
 
-	/* How many objects under /lost+found have been scanned. */
+	
 	__u64	ln_local_lpf_scanned;
 
-	/* How many obj under lost+found moved to namespace visible directory */
+	
 	__u64	ln_local_lpf_moved;
 
-	/* How many objects under /lost+found have been skipped. */
+	
 	__u64	ln_local_lpf_skipped;
 
-	/* How many objects under /lost+found failed to be processed. */
+	
 	__u64	ln_local_lpf_failed;
 
-	/* How many striped directories (master) have been scanned. */
+	
 	__u64	ln_striped_dirs_scanned;
 
-	/* How many striped directories (master) have been repaired. */
+	
 	__u64	ln_striped_dirs_repaired;
 
-	/* How many striped directories (master) failed verification. */
+	
 	__u64	ln_striped_dirs_failed;
 
-	/* How many striped directories (master) has been disabled. */
+	
 	__u64	ln_striped_dirs_disabled;
 
 	/* How many striped directory's (master) have been skipped
@@ -228,13 +228,13 @@ struct lfsck_namespace {
 	 */
 	__u64	ln_striped_dirs_skipped;
 
-	/* How many striped directory's shards (slave) have been scanned. */
+	
 	__u64	ln_striped_shards_scanned;
 
-	/* How many striped directory's shards (slave) have been repaired. */
+	
 	__u64	ln_striped_shards_repaired;
 
-	/* How many striped directory's shards (slave) failed verification. */
+	
 	__u64	ln_striped_shards_failed;
 
 	/* How many striped directory's shards (slave) have been skipped
@@ -253,19 +253,19 @@ struct lfsck_namespace {
 	 */
 	__u32	ln_bitmap_size;
 
-	/* For further using. 256-bytes aligned now. */
+	
 	__u32	ln_reserved_1;
 
-	/* Time for the latest LFSCK scan in seconds from the beginning. */
+	
 	time64_t ln_time_latest_reset;
 
-	/* How many linkEA overflow timestamp have been cleared. */
+	
 	__u64	ln_linkea_overflow_cleared;
 
-	/* How many agent entries have been repaired. */
+	
 	__u64	ln_agent_entries_repaired;
 
-	/* For further using. 256-bytes aligned now. */
+	
 	__u64   ln_reserved[11];
 };
 
@@ -281,52 +281,52 @@ enum lfsck_layout_inconsistency_type {
 };
 
 struct lfsck_layout {
-	/* Magic number to detect that this struct contains valid data. */
+	
 	__u32	ll_magic;
 
-	/* See 'enum lfsck_status'. */
+	
 	__u32	ll_status;
 
-	/* See 'enum lfsck_flags'. */
+	
 	__u32	ll_flags;
 
-	/* How many completed LFSCK runs on the device. */
+	
 	__u32	ll_success_count;
 
-	/*  How long the LFSCK phase1 has run in seconds. */
+	
 	time64_t ll_run_time_phase1;
 
-	/*  How long the LFSCK phase2 has run in seconds. */
+	
 	time64_t ll_run_time_phase2;
 
-	/* Time for the last LFSCK completed in seconds since epoch. */
+	
 	time64_t ll_time_last_complete;
 
-	/* Time for the latest LFSCK ran in seconds since epoch. */
+	
 	time64_t ll_time_latest_start;
 
-	/* Time for the last LFSCK checkpoint in seconds since epoch. */
+	
 	time64_t ll_time_last_checkpoint;
 
-	/* Position for the latest LFSCK started from. */
+	
 	__u64	ll_pos_latest_start;
 
-	/* Position for the last LFSCK checkpoint. */
+	
 	__u64	ll_pos_last_checkpoint;
 
-	/* Position for first obj to be fixed/failed to be checked in phase1. */
+	
 	__u64	ll_pos_first_inconsistent;
 
-	/* How many objects have been checked. */
+	
 	__u64	ll_objs_checked_phase1;
 
-	/* How many objects failed to be processed. */
+	
 	__u64	ll_objs_failed_phase1;
 
-	/* How many objects have been double scanned. */
+	
 	__u64	ll_objs_checked_phase2;
 
-	/* How many objects failed to be processed during double scan. */
+	
 	__u64	ll_objs_failed_phase2;
 
 	/* kinds of inconsistency have been or to be repaired.
@@ -339,19 +339,19 @@ struct lfsck_layout {
 	 */
 	__u64	ll_objs_skipped;
 
-	/* The size of ll_ost_bitmap with nbits. */
+	
 	__u32	ll_bitmap_size;
 
-	/* For further using. 256-bytes aligned now. */
+	
 	__u32	ll_reserved_1;
 
-	/* The latest object has been processed (failed) during double scan. */
+	
 	struct lfsck_layout_dangling_key ll_lldk_latest_scanned_phase2;
 
-	/* For further using */
+	
 	u64	ll_reserved_2[7];
 
-	/* OST target bitmap to record OSTs that contain non-verified OST-obj */
+	
 	__u8	ll_ost_bitmap[];
 };
 
@@ -468,23 +468,23 @@ struct lfsck_tgt_desc_idx {
 };
 
 struct lfsck_tgt_descs {
-	/* list of known TGTs */
+	
 	struct lfsck_tgt_desc_idx	*ltd_tgts_idx[TGT_PTRS];
 
-	/* bitmap of TGTs available */
+	
 	unsigned long			*ltd_tgts_bitmap;
 	u32				 ltd_tgts_mask_len;
 
-	/* for lfsck_tgt_desc::ltd_xxx_list */
+	
 	spinlock_t			 ltd_lock;
 
-	/* for tgts table accessing and changes */
+	
 	struct rw_semaphore		 ltd_rw_sem;
 
-	/* Temporary list for orphan targets. */
+	
 	struct list_head		 ltd_orphan;
 
-	/* number of registered TGTs */
+	
 	__u32				 ltd_tgtnr;
 };
 
@@ -514,7 +514,7 @@ static inline void lfsck_assign_tgt(struct lfsck_tgt_descs *ltd,
 }
 
 #define LFSCK_STF_BITS	4
-/* If want to adjust the LFSCK_STF_COUNT, please change LFSCK_STF_BITS. */
+
 #define LFSCK_STF_COUNT	(1 << LFSCK_STF_BITS)
 
 struct lfsck_sub_trace_obj {
@@ -523,10 +523,10 @@ struct lfsck_sub_trace_obj {
 };
 
 struct lfsck_component {
-	/* into lfsck_instance::li_list_(scan,double_scan,idle} */
+	
 	struct list_head	 lc_link;
 
-	/* into lfsck_instance::li_list_dir */
+	
 	struct list_head	 lc_link_dir;
 
 	struct rw_semaphore	 lc_sem;
@@ -542,18 +542,18 @@ struct lfsck_component {
 	void			*lc_data;
 	struct lu_fid		 lc_fid_latest_scanned_phase2;
 
-	/* The time for last checkpoint, seconds */
+	
 	time64_t		 lc_time_last_checkpoint;
 
-	/* The time for next checkpoint, seconds */
+	
 	time64_t		 lc_time_next_checkpoint;
 
 	__u32			 lc_file_size;
 
-	/* How many objects have been checked since last checkpoint. */
+	
 	__u32			 lc_new_checked;
 
-	/* How many objects have been scanned since last sleep. */
+	
 	__u32			 lc_new_scanned;
 
 	__u16			 lc_type;
@@ -584,7 +584,7 @@ enum lfsck_slave_lmv_flags {
 struct lfsck_slave_lmv_rec {
 	struct lu_fid	lslr_fid;
 	__u32		lslr_stripe_count;
-	__u32		lslr_index; /* the index in name or in slave lmv */
+	__u32		lslr_index; 
 	__u32		lslr_hash_type;
 	__u32		lslr_flags;
 };
@@ -606,7 +606,7 @@ struct lfsck_lmv {
 					 ll_failed:1,
 					 ll_ignore:1,
 					 ll_counted:1;
-	struct lfsck_slave_lmv_rec	*ll_lslr; /* may be vmalloc'd */
+	struct lfsck_slave_lmv_rec	*ll_lslr; 
 };
 
 /* If the namespace LFSCK finds that the master MDT-object of a striped
@@ -629,17 +629,17 @@ struct lfsck_rec_lmv_save {
 	struct lmv_mds_md_v1	lrls_lmv;
 };
 
-/* Allow lfsck_record_lmv() to be called recursively at most three times. */
+
 #define LFSCK_REC_LMV_MAX_DEPTH 3
 
 struct lfsck_instance {
 	struct mutex		  li_mutex;
 	spinlock_t		  li_lock;
 
-	/* Link into the lfsck_instance_list. */
+	
 	struct list_head	  li_link;
 
-	/* For the components in (first) scanning via otable-based iteration. */
+	
 	struct list_head	  li_list_scan;
 
 	/* For the components in scanning via directory traversal. Because
@@ -648,23 +648,23 @@ struct lfsck_instance {
 	 */
 	struct list_head	  li_list_dir;
 
-	/* For the components in double scanning. */
+	
 	struct list_head	  li_list_double_scan;
 
-	/* For the components those are not scanning now. */
+	
 	struct list_head	  li_list_idle;
 
-	/* For the lfsck_lmv_unit to be handled. */
+	
 	struct list_head	  li_list_lmv;
 
 	refcount_t		  li_ref;
 	atomic_t		  li_double_scan_count;
 	struct task_struct	 *li_task;
 
-	/* The time for last checkpoint, seconds */
+	
 	time64_t		  li_time_last_checkpoint;
 
-	/* The time for next checkpoint, seconds */
+	
 	time64_t		  li_time_next_checkpoint;
 
 	lfsck_out_notify	  li_out_notify;
@@ -674,8 +674,8 @@ struct lfsck_instance {
 	struct obd_device	 *li_obd;
 	struct ldlm_namespace	 *li_namespace;
 	struct local_oid_storage *li_los;
-	struct lu_fid		  li_local_root_fid;  /* backend root "/" */
-	struct lu_fid		  li_global_root_fid; /* /ROOT */
+	struct lu_fid		  li_local_root_fid;  
+	struct lu_fid		  li_global_root_fid; 
 	struct dt_object	 *li_lfsck_dir;
 	struct dt_object	 *li_bookmark_obj;
 	struct dt_object	 *li_lpf_obj;
@@ -688,54 +688,54 @@ struct lfsck_instance {
 
 	struct lfsck_lmv	 *li_lmv;
 
-	/* Obj for otable-based iteration */
+	
 	struct dt_object	 *li_obj_oit;
 
-	/* Obj for directory traversal */
+	
 	struct dt_object	 *li_obj_dir;
 
-	/* It for otable-based iteration */
+	
 	struct dt_it		 *li_di_oit;
 
-	/* It for directory traversal */
+	
 	struct dt_it		 *li_di_dir;
 
-	/* Description of OST */
+	
 	struct lfsck_tgt_descs	  li_ost_descs;
 
-	/* Description of MDT */
+	
 	struct lfsck_tgt_descs	  li_mdt_descs;
 
-	/* namespace-based directory traversal position. */
+	
 	__u64			  li_cookie_dir;
 
-	/* Arguments for low layer otable-based iteration. */
+	
 	__u32			  li_args_oit;
 
-	/* Arugments for namespace-based directory traversal. */
+	
 	__u32			  li_args_dir;
 
-	/* Schedule for every N objects. */
+	
 	__u32			  li_sleep_rate;
 
-	/* Sleep N jiffies for each schedule. */
+	
 	__u32			  li_sleep_jif;
 
-	/* How many objects have been scanned since last sleep. */
+	
 	__u32			  li_new_scanned;
 
-	/* The status when the LFSCK stopped or paused. */
+	
 	__u32			  li_status;
 
-	/* The flags when the lFSCK stopped or paused. */
+	
 	__u32			  li_flags;
 
-	unsigned int		  li_oit_over:1, /* oit is finished. */
-				  li_drop_dryrun:1, /* Ever dryrun, not now. */
-				  li_master:1, /* Master instance or not. */
+	unsigned int		  li_oit_over:1, 
+				  li_drop_dryrun:1, 
+				  li_master:1, 
 				  li_current_oit_processed:1,
 				  li_start_unplug:1,
-				  li_master_ready:1; /* master engine is ready */
+				  li_master_ready:1; 
 	struct lfsck_rec_lmv_save li_rec_lmv_save[LFSCK_REC_LMV_MAX_DEPTH];
 };
 
@@ -784,7 +784,7 @@ struct lfsck_layout_req {
 	struct dt_object		*llr_child;
 	__u32				 llr_comp_id;
 	__u32				 llr_ost_idx;
-	__u32				 llr_lov_idx; /* offset in LOV EA */
+	__u32				 llr_lov_idx; 
 };
 
 struct lfsck_assistant_operations {
@@ -815,22 +815,22 @@ struct lfsck_assistant_data {
 	spinlock_t				 lad_lock;
 	struct list_head			 lad_req_list;
 
-	/* list for the ost targets involve LFSCK. */
+	
 	struct list_head			 lad_ost_list;
 
-	/* list for the ost targets in phase1 scanning. */
+	
 	struct list_head			 lad_ost_phase1_list;
 
-	/* list for the ost targets in phase2 scanning. */
+	
 	struct list_head			 lad_ost_phase2_list;
 
-	/* list for the mdt targets involve LFSCK. */
+	
 	struct list_head			 lad_mdt_list;
 
-	/* list for the mdt targets in phase1 scanning. */
+	
 	struct list_head			 lad_mdt_phase1_list;
 
-	/* list for the mdt targets in phase2 scanning. */
+	
 	struct list_head			 lad_mdt_phase2_list;
 
 	const char				*lad_name;
@@ -882,7 +882,7 @@ struct lfsck_thread_info {
 	struct ost_id		lti_oi;
 	struct lustre_ost_attrs lti_loa;
 	struct dt_object_format lti_dof;
-	/* There will be '\0' at the end of the name. */
+	
 	char		lti_key[sizeof(struct lu_dirent) + NAME_MAX + 1];
 	char			lti_tmpbuf[LFSCK_TMPBUF_LEN];
 	char			lti_tmpbuf2[LFSCK_TMPBUF_LEN];
@@ -909,7 +909,7 @@ struct lfsck_thread_info {
 	struct lfsck_layout_dangling_key lti_lldk;
 };
 
-/* lfsck_lib.c */
+
 int lfsck_fid_alloc(const struct lu_env *env, struct lfsck_instance *lfsck,
 		    struct lu_fid *fid, bool locked);
 int lfsck_ibits_lock(const struct lu_env *env, struct lfsck_instance *lfsck,
@@ -989,7 +989,7 @@ int lfsck_load_sub_trace_files(const struct lu_env *env,
 			       const char *prefix, bool reset);
 void lfsck_tgt_free(struct kref *kref);
 
-/* lfsck_engine.c */
+
 int lfsck_unpack_ent(struct lu_dirent *ent, __u64 *cookie, __u16 *type);
 void lfsck_close_dir(const struct lu_env *env,
 		     struct lfsck_instance *lfsck, int result);
@@ -998,7 +998,7 @@ int lfsck_open_dir(const struct lu_env *env,
 int lfsck_master_engine(void *args);
 int lfsck_assistant_engine(void *args);
 
-/* lfsck_bookmark.c */
+
 void lfsck_bookmark_cpu_to_le(struct lfsck_bookmark *des,
 			      struct lfsck_bookmark *src);
 int lfsck_bookmark_store(const struct lu_env *env,
@@ -1008,7 +1008,7 @@ int lfsck_bookmark_setup(const struct lu_env *env,
 int lfsck_set_param(const struct lu_env *env, struct lfsck_instance *lfsck,
 		    struct lfsck_start *start, bool reset);
 
-/* lfsck_namespace.c */
+
 int lfsck_namespace_trace_update(const struct lu_env *env,
 				 struct lfsck_component *com,
 				 const struct lu_fid *fid,
@@ -1045,7 +1045,7 @@ int lfsck_update_name_entry(const struct lu_env *env,
 int lfsck_namespace_setup(const struct lu_env *env,
 			  struct lfsck_instance *lfsck);
 
-/* lfsck_striped_dir.c */
+
 void lfsck_lmv_put(const struct lu_env *env, struct lfsck_lmv *llmv);
 int lfsck_read_stripe_lmv(const struct lu_env *env,
 			  struct lfsck_instance *lfsck,
@@ -1088,7 +1088,7 @@ int lfsck_namespace_handle_striped_master(const struct lu_env *env,
 					  struct lfsck_component *com,
 					  struct lfsck_namespace_req *lnr);
 
-/* lfsck_layout.c */
+
 int lfsck_layout_setup(const struct lu_env *env, struct lfsck_instance *lfsck);
 
 extern const char dot[];
@@ -1551,7 +1551,7 @@ static inline bool lfsck_should_stop(struct lfsck_instance *lfsck)
 	return kthread_should_stop() || !lfsck->li_task;
 }
 
-/* ret 1 if lfsck should stop, 0 otherwise */
+
 #define LFSCK_FAIL_TIMEOUT(lfsck, id, timeout)				\
 ({									\
 	int rc = 0;							\
@@ -1564,4 +1564,4 @@ static inline bool lfsck_should_stop(struct lfsck_instance *lfsck)
 	}								\
 	rc;								\
 })
-#endif /* _LFSCK_INTERNAL_H */
+#endif 

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -10,7 +10,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Define ost_id  associated functions
  *
@@ -58,7 +58,7 @@ static inline void lmm_oi_cpu_to_le(struct ost_id *dst_oi,
 	dst_oi->oi.oi_seq = __cpu_to_le64(src_oi->oi.oi_seq);
 }
 
-/* extract OST sequence (group) from a wire ost_id (id/seq) pair */
+
 static inline __u64 ostid_seq(const struct ost_id *ostid)
 {
 	if (fid_seq_is_mdt0(ostid->oi.oi_seq))
@@ -73,7 +73,7 @@ static inline __u64 ostid_seq(const struct ost_id *ostid)
 	return fid_seq(&ostid->oi_fid);
 }
 
-/* extract OST objid from a wire ost_id (id/seq) pair */
+
 static inline __u64 ostid_id(const struct ost_id *ostid)
 {
 	if (fid_seq_is_mdt0(ostid->oi.oi_seq))
@@ -202,9 +202,9 @@ static inline int ostid_to_fid(struct lu_fid *fid, const struct ost_id *ostid,
 			return -EBADF;
 
 		fid->f_seq = fid_idif_seq(oid, ost_idx);
-		/* truncate to 32 bits by assignment */
+		
 		fid->f_oid = oid;
-		/* in theory, not currently used */
+		
 		fid->f_ver = oid >> 48;
 	} else if (!fid_seq_is_default(seq)) {
 		/* This is either an IDIF object, which identifies objects
@@ -220,4 +220,4 @@ static inline int ostid_to_fid(struct lu_fid *fid, const struct ost_id *ostid,
 
 	return 0;
 }
-#endif /* _UAPI_LUSTRE_OSTID_H_ */
+#endif 

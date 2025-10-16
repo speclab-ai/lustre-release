@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * The implementation of the wait_bit*() and related waiting APIs:
@@ -72,4 +72,4 @@ void __init wait_bit_init(void)
 	for (i = 0; i < WAIT_TABLE_SIZE; i++)
 		init_waitqueue_head(bit_wait_table + i);
 }
-#endif /* ! HAVE_WAIT_VAR_EVENT */
+#endif 

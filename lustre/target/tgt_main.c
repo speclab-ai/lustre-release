@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -18,7 +18,7 @@
 #include "tgt_internal.h"
 #include "../ptlrpc/ptlrpc_internal.h"
 
-/* This must be longer than the longest string below */
+
 #define SYNC_STATES_MAXLEN 16
 static const char * const sync_lock_cancel_states[] = {
 	[SYNC_LOCK_CANCEL_NEVER]	= "never",
@@ -88,7 +88,7 @@ static ssize_t sync_lock_cancel_store(struct kobject *kobj,
 		}
 	}
 
-	/* Legacy numeric codes */
+	
 	if (val == -1) {
 		int rc = kstrtoint(buffer, 0, &val);
 		if (rc)
@@ -207,7 +207,7 @@ static ssize_t tgt_fmd_seconds_store(struct kobject *kobj,
 	if (rc)
 		return rc;
 
-	if (val < 1 || val > 65536) /* ~ 18 hour max */
+	if (val < 1 || val > 65536) 
 		return -EINVAL;
 
 	lut->lut_fmd_max_age = val;
@@ -286,7 +286,7 @@ void tgt_mask_cksum_types(struct lu_target *lut, enum cksum_types *cksum_types)
 	server_t10_types = lut->lut_cksum_types_supported & OBD_CKSUM_T10_ALL;
 	tgt_t10_cksum_type = lut->lut_dt_conf.ddp_t10_cksum_type;
 
-	/* Quick exit if no T10-PI support on client */
+	
 	if (!client_t10_types)
 		return;
 
@@ -391,7 +391,7 @@ void tgt_discard_slc_lock(struct lu_target *lut, struct ldlm_lock *lock)
 {
 	spin_lock(&lut->lut_slc_locks_guard);
 	lock_res_and_lock(lock);
-	/* may race with tgt_cancel_slc_locks() */
+	
 	if (lock->l_transno != 0) {
 		LASSERT(!list_empty(&lock->l_slc_link));
 		LASSERT((lock->l_flags & LDLM_FL_CBPENDING));
@@ -427,12 +427,12 @@ void tgt_cancel_slc_locks(struct lu_target *lut, __u64 transno)
 			unlock_res_and_lock(lock);
 			continue;
 		}
-		/* ouch, another operation is using it after it's saved */
+		
 		if (lock->l_readers != 0 || lock->l_writers != 0) {
 			unlock_res_and_lock(lock);
 			continue;
 		}
-		/* set CBPENDING so that this lock won't be used again */
+		
 		(lock->l_flags |= LDLM_FL_CBPENDING);
 		lock->l_transno = 0;
 		list_move(&lock->l_slc_link, &list);
@@ -478,12 +478,12 @@ int tgt_init(const struct lu_env *env, struct lu_target *lut,
 	obt->obt_jobstats.ojs_cntr_num = 0;
 	obt->obt_lut = lut;
 
-	/* set request handler slice and parameters */
+	
 	lut->lut_slice = slice;
 	lut->lut_reply_fail_id = reply_fail_id;
 	lut->lut_request_fail_id = request_fail_id;
 
-	/* sptlrcp variables init */
+	
 	rwlock_init(&lut->lut_sptlrpc_lock);
 	sptlrpc_rule_set_init(&lut->lut_sptlrpc_rset);
 
@@ -497,28 +497,28 @@ int tgt_init(const struct lu_env *env, struct lu_target *lut,
 	spin_lock_init(&lut->lut_slc_locks_guard);
 	INIT_LIST_HEAD(&lut->lut_slc_locks);
 
-	/* last_rcvd initialization is needed by replayable targets only */
+	
 	if (!obd->obd_replayable)
 		RETURN(0);
 
-	/* initialize grant and statfs data in target */
+	
 	dt_conf_get(env, lut->lut_bottom, &lut->lut_dt_conf);
 
-	/* statfs data */
+	
 	spin_lock_init(&tgd->tgd_osfs_lock);
 	tgd->tgd_osfs_age = ktime_get_seconds() - 1000;
 	tgd->tgd_osfs_unstable = 0;
 	tgd->tgd_statfs_inflight = 0;
 	tgd->tgd_osfs_inflight = 0;
 
-	/* grant data */
+	
 	spin_lock_init(&tgd->tgd_grant_lock);
 	tgd->tgd_tot_dirty = 0;
 	tgd->tgd_tot_granted = 0;
 	tgd->tgd_tot_pending = 0;
 	tgd->tgd_grant_compat_disable = 0;
 
-	/* populate cached statfs data */
+	
 	osfs = &tgt_th_info(env)->tti_u.osfs;
 	rc = tgt_statfs_internal(env, lut, osfs, 0, NULL);
 	if (rc != 0) {
@@ -560,7 +560,7 @@ int tgt_init(const struct lu_env *env, struct lu_target *lut,
 	if (rc < 0)
 		GOTO(out_put, rc);
 
-	/* prepare transactions callbacks */
+	
 	lut->lut_txn_cb.dtc_txn_start = tgt_txn_start_cb;
 	lut->lut_txn_cb.dtc_txn_stop = tgt_txn_stop_cb;
 	lut->lut_txn_cb.dtc_cookie = lut;
@@ -575,7 +575,7 @@ int tgt_init(const struct lu_env *env, struct lu_target *lut,
 
 	atomic_set(&lut->lut_sync_count, 0);
 
-	/* reply_data is supported by MDT targets only for now */
+	
 	if (strncmp(obd->obd_type->typ_name, LUSTRE_MDT_NAME, 3) != 0)
 		RETURN(0);
 
@@ -710,7 +710,7 @@ static struct lu_kmem_descr tgt_caches[] = {
 };
 
 
-/* context key constructor/destructor: tg_key_init, tg_key_fini */
+
 static void *tgt_key_init(const struct lu_context *ctx,
 				  struct lu_context_key *key)
 {
@@ -739,7 +739,7 @@ static void tgt_key_fini(const struct lu_context *ctx,
 	OBD_SLAB_FREE_PTR(info, tgt_thread_kmem);
 }
 
-/* context key: tg_thread_key */
+
 struct lu_context_key tgt_thread_key = {
 	.lct_tags = LCT_MD_THREAD | LCT_DT_THREAD,
 	.lct_init = tgt_key_init,
@@ -787,7 +787,7 @@ static void tgt_ses_key_exit(const struct lu_context *ctx,
 	tsi->tsi_batch_idx = 0;
 }
 
-/* context key: tgt_session_key */
+
 struct lu_context_key tgt_session_key = {
 	.lct_tags = LCT_SERVER_SESSION,
 	.lct_init = tgt_ses_key_init,

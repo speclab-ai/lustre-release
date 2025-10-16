@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
+
 /*
  * Copyright (C) 2015, Trustees of Indiana University
  *
@@ -33,7 +33,7 @@
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) ((sizeof(a)) / (sizeof((a)[0])))
-#endif /* !ARRAY_SIZE */
+#endif 
 
 /* LL_CRYPTO_MAX_NAME value must match value of
  * CRYPTO_MAX_ALG_NAME in include/linux/crypto.h
@@ -121,7 +121,7 @@ static inline const BIGNUM *DH_get0_p(const DH *dh)
 #define FIPS_mode()	0
 #endif
 
-/* Some limits and defaults */
+
 #define SK_CONF_VERSION 1
 #define SK_MSG_VERSION 1
 #define SK_GENERATOR 2
@@ -131,12 +131,12 @@ static inline const BIGNUM *DH_get0_p(const DH *dh)
 #define SK_NONCE_SIZE 4
 #define MAX_MGSNIDS 16
 
-/* ASCII-encoded key format constants */
+
 #define SK_ASCII_HEADER "Lustre SSK v1.0\n"
 #define SK_ASCII_HEADER_LEN (sizeof(SK_ASCII_HEADER) - 1)
 
 enum sk_ctx_init_buffers {
-	/* Initiator netstring buffer ordering */
+	
 	SK_INIT_VERSION	= 0,
 	SK_INIT_RANDOM	= 1,
 	SK_INIT_P	= 2,
@@ -147,7 +147,7 @@ enum sk_ctx_init_buffers {
 	SK_INIT_HMAC	= 7,
 	SK_INIT_BUFFERS = 8,
 
-	/* Responder netstring buffer ordering */
+	
 	SK_RESP_VERSION	= 0,
 	SK_RESP_RANDOM	= 1,
 	SK_RESP_PUB_KEY	= 2,
@@ -155,7 +155,7 @@ enum sk_ctx_init_buffers {
 	SK_RESP_BUFFERS	= 4,
 };
 
-/* String consisting of "lustre:fsname:nodemap_hash" */
+
 #define SK_DESCRIPTION_SIZE (9 + MTI_NAME_MAXLEN + LUSTRE_NODEMAP_NAME_LENGTH)
 
 enum sk_key_type {
@@ -168,37 +168,37 @@ enum sk_key_type {
 /* This is the packed structure format of key files that are distributed.
  * The on disk format should be store in big-endian. */
 struct sk_keyfile_config {
-	/* File format version */
+	
 	uint32_t	skc_version;
-	/* HMAC algorithm used for message integrity */
+	
 	uint16_t	skc_hmac_alg;
-	/* Crypt algorithm used for privacy mode */
+	
 	uint16_t	skc_crypt_alg;
 	/* Number of seconds that a context is valid after it is created from
 	 * this keyfile */
 	uint32_t	skc_expire;
-	/* Length of shared key in skc_shared_key */
+	
 	uint32_t	skc_shared_keylen;
-	/* Length of the prime used in the DHKE */
+	
 	uint32_t	skc_prime_bits;
-	/* Key type */
+	
 	uint8_t		skc_type;
 	/* Array of MGS NIDs to load key's for.  This is for the client since
 	 * the upcall only knows the target name which is MGC<IP>@<NET>
 	 * Only needed when mounting with mgssec */
 	lnet_nid_t	skc_mgsnids[MAX_MGSNIDS];
-	/* File system name for this key.  It can be unused for MGS only keys */
+	
 	char		skc_fsname[MTI_NAME_MAXLEN + 1];
 	/* Nodemap name for this key.  Used by the server side to verify the
 	 * client is in the correct nodemap */
 	char		skc_nodemap[LUSTRE_NODEMAP_NAME_LENGTH + 1];
-	/* Shared key */
+	
 	unsigned char	skc_shared_key[SK_MAX_KEYLEN_BYTES];
-	/* Prime (p) for DHKE */
+	
 	unsigned char	skc_p[SK_MAX_P_BYTES];
 } __attribute__((packed));
 
-/* Format passed to the kernel from userspace */
+
 struct sk_kernel_ctx {
 	uint32_t	skc_version;
 	char		skc_hmac_alg[LL_CRYPTO_MAX_NAME];
@@ -221,7 +221,7 @@ struct sk_kernel_ctx {
 					       0),			\
 		OSSL_PARAM_END						\
 	}
-#else /* !HAVE_OPENSSL_EVP_PKEY */
+#else 
 #define EVP_PKEY DH
 #define EVP_PKEY_free(dh) DH_free(dh)
 struct dh_ssk_ctx { uint32_t bits; uint32_t gen; };
@@ -251,7 +251,7 @@ struct dh_ssk_ctx { uint32_t bits; uint32_t gen; };
 #define EVP_MAC_free(mac) {}
 #endif
 
-/* Structure used in context initiation to hold all necessary data */
+
 struct sk_cred {
 	uint32_t		 sc_flags;
 	gss_buffer_desc		 sc_p;
@@ -264,7 +264,7 @@ struct sk_cred {
 	EVP_PKEY *sc_params;
 };
 
-/* Names match up with openssl enc and dgst commands */
+
 /* When adding new alg types, make sure first occurrence's name
  * matches cht_name in hash_types array.
  */
@@ -464,5 +464,5 @@ int sk_decode_netstring(gss_buffer_desc *bufs, int numbufs,
 int sk_encode_netstring(gss_buffer_desc *bufs, int numbufs,
 			gss_buffer_desc *ns);
 
-#endif /* HAVE_OPENSSL_SSK */
-#endif /* SK_UTILS_H */
+#endif 
+#endif 

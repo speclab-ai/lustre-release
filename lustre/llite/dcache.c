@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <linux/fs.h>
@@ -31,7 +31,7 @@ static void free_dentry_data(struct rcu_head *head)
 	OBD_FREE_PTR(lld);
 }
 
-/* should NOT be called with the dcache lock, see fs/dcache.c */
+
 static void ll_release(struct dentry *de)
 {
 	struct ll_dentry_data *lld;
@@ -39,7 +39,7 @@ static void ll_release(struct dentry *de)
 	ENTRY;
 	LASSERT(de != NULL);
 	lld = ll_d2d(de);
-	if (lld == NULL) /* NFS copies the de->d_op methods (bug 4655) */
+	if (lld == NULL) 
 		RETURN_EXIT;
 
 	de->d_fsdata = NULL;
@@ -88,11 +88,11 @@ static int ll_dcompare(const struct dentry *dentry,
 	       encode_fn_qstr(*name), dentry, dentry->d_flags,
 	       d_count(dentry));
 
-	/* mountpoint is always valid */
+	
 	if (d_mountpoint((struct dentry *)dentry))
 		RETURN(0);
 
-	/* ensure exclusion against parallel lookup of the same name */
+	
 	if (d_in_lookup((struct dentry *)dentry))
 		return 0;
 
@@ -177,11 +177,11 @@ void ll_intent_release(struct lookup_intent *it)
 
 	CDEBUG(D_INFO, "intent %p released\n", it);
 	ll_intent_drop_lock(it);
-	/* We are still holding extra reference on a request, need to free it */
+	
 	if (it_disposition(it, DISP_ENQ_OPEN_REF))
-		ptlrpc_req_put(it->it_request); /* ll_file_open */
+		ptlrpc_req_put(it->it_request); 
 
-	if (it_disposition(it, DISP_ENQ_CREATE_REF)) /* create rec */
+	if (it_disposition(it, DISP_ENQ_CREATE_REF)) 
 		ptlrpc_req_put(it->it_request);
 
 	it->it_disposition = 0;
@@ -189,7 +189,7 @@ void ll_intent_release(struct lookup_intent *it)
 	EXIT;
 }
 
-/* mark aliases invalid and prune unused aliases */
+
 void ll_prune_aliases(struct inode *inode)
 {
 	struct dentry *dentry;
@@ -258,7 +258,7 @@ void ll_lookup_finish_locks(struct lookup_intent *it, struct dentry *dentry)
 		ll_set_lock_data(sbi->ll_md_exp, inode, it, NULL);
 	}
 
-	/* drop lookup or getattr locks immediately */
+	
 	if (it->it_op == IT_LOOKUP || it->it_op == IT_GETATTR)
 		ll_intent_drop_lock(it);
 }
@@ -294,7 +294,7 @@ static int ll_revalidate_dentry(
 		return 1;
 	}
 
-	/* Symlink - always valid as long as the dentry was found */
+	
 	/* only special case is to prevent ELOOP error from VFS during open
 	 * of a foreign symlink file/dir with O_NOFOLLOW, like it happens for
 	 * real symlinks. This will allow to open foreign symlink file/dir

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2011, 2012 Commissariat a l'energie atomique et aux energies
@@ -20,7 +20,7 @@
 #include <lustre_errno.h>
 #include "mdt_internal.h"
 
-/* Max allocation to satisfy single HSM RPC. */
+
 #define MDT_HSM_ALLOC_MAX (1 << 20)
 
 #define MDT_HSM_ALLOC(ptr, size)			\
@@ -48,10 +48,10 @@ int mdt_hsm_attr_set(struct mdt_thread_info *info, struct mdt_object *obj,
 	attrs = (struct hsm_attrs *)info->mti_xattr_buf;
 	BUILD_BUG_ON(sizeof(info->mti_xattr_buf) < sizeof(*attrs));
 
-	/* pack HSM attributes */
+	
 	lustre_hsm2buf(info->mti_xattr_buf, mh);
 
-	/* update HSM attributes */
+	
 	buf->lb_buf = attrs;
 	buf->lb_len = sizeof(*attrs);
 	rc = mo_xattr_set(info->mti_env, next, buf, XATTR_NAME_HSM, 0);
@@ -147,12 +147,12 @@ int mdt_hsm_ct_register(struct tgt_session_info *tsi)
 	archives_size = req_capsule_get_size(tsi->tsi_pill,
 					     &RMF_MDS_HSM_ARCHIVE, RCL_CLIENT);
 
-	/* compatibility check for the old clients */
+	
 	if (!exp_connect_archive_id_array(exp)) {
 		if (archives_size != sizeof(*archives))
 			GOTO(out, rc = err_serious(-EPROTO));
 
-		/* XXX: directly include this function here? */
+		
 		rc = mdt_hsm_agent_register_mask(info,
 						 &tsi->tsi_exp->exp_client_uuid,
 						 *archives);
@@ -189,7 +189,7 @@ int mdt_hsm_ct_unregister(struct tgt_session_info *tsi)
 	if (!mdt_hsm_is_admin(info))
 		GOTO(out, rc = -EPERM);
 
-	/* XXX: directly include this function here? */
+	
 	rc = mdt_hsm_agent_unregister(info, &tsi->tsi_exp->exp_client_uuid);
 out:
 	mdt_thread_info_fini(info);
@@ -217,7 +217,7 @@ int mdt_hsm_state_get(struct tgt_session_info *tsi)
 	if (info->mti_body == NULL || obj == NULL)
 		GOTO(out, rc = -EPROTO);
 
-	/* Only valid if client is remote */
+	
 	rc = mdt_init_ucred(info, (struct mdt_body *)info->mti_body);
 	if (rc < 0)
 		GOTO(out, rc = err_serious(rc));
@@ -237,7 +237,7 @@ int mdt_hsm_state_get(struct tgt_session_info *tsi)
 	if (hus == NULL)
 		GOTO(out_unlock, rc = -EPROTO);
 
-	/* Current HSM flags */
+	
 	hus->hus_states = ma->ma_hsm.mh_flags;
 	hus->hus_archive_id = ma->ma_hsm.mh_arch_id;
 
@@ -276,7 +276,7 @@ int mdt_hsm_state_set(struct tgt_session_info *tsi)
 	if (info->mti_body == NULL || obj == NULL || hss == NULL)
 		GOTO(out, rc = -EPROTO);
 
-	/* Only valid if client is remote */
+	
 	rc = mdt_init_ucred(info, (struct mdt_body *)info->mti_body);
 	if (rc < 0)
 		GOTO(out, rc = err_serious(rc));
@@ -289,7 +289,7 @@ int mdt_hsm_state_set(struct tgt_session_info *tsi)
 	if (rc < 0)
 		GOTO(out_ucred, rc);
 
-	/* Detect out-of range masks */
+	
 	if ((hss->hss_setmask | hss->hss_clearmask) & ~HSM_FLAGS_MASK) {
 		CDEBUG(D_HSM, "Incompatible masks provided (set %#llx"
 		       ", clear %#llx) vs supported set (%#x).\n",
@@ -307,20 +307,20 @@ int mdt_hsm_state_set(struct tgt_session_info *tsi)
 		GOTO(out_unlock, rc = -EPERM);
 	}
 
-	/* Read current HSM info */
+	
 	ma->ma_valid = 0;
 	ma->ma_need = MA_HSM;
 	rc = mdt_attr_get_complex(info, obj, ma);
 	if (rc)
 		GOTO(out_unlock, rc);
 
-	/* Change HSM flags depending on provided masks */
+	
 	if (hss->hss_valid & HSS_SETMASK)
 		ma->ma_hsm.mh_flags |= hss->hss_setmask;
 	if (hss->hss_valid & HSS_CLEARMASK)
 		ma->ma_hsm.mh_flags &= ~hss->hss_clearmask;
 
-	/* Change archive_id if provided. */
+	
 	if (hss->hss_valid & HSS_ARCHIVE_ID) {
 		struct ptlrpc_request *req = mdt_info_req(info);
 		struct obd_export *exp = req->rq_export;
@@ -360,7 +360,7 @@ int mdt_hsm_state_set(struct tgt_session_info *tsi)
 		GOTO(out_unlock, rc = -EINVAL);
 	}
 
-	/* Save the modified flags */
+	
 	rc = mdt_hsm_attr_set(info, obj, &ma->ma_hsm);
 	if (rc)
 		GOTO(out_unlock, rc);
@@ -393,7 +393,7 @@ int mdt_hsm_data_version(struct tgt_session_info *tsi)
 	if (info->mti_body == NULL || obj == NULL)
 		GOTO(out, rc = -EPROTO);
 
-	/* Only valid if client is remote */
+	
 	rc = mdt_init_ucred(info, (struct mdt_body *)info->mti_body);
 	if (rc < 0)
 		GOTO(out, rc = err_serious(rc));
@@ -404,7 +404,7 @@ int mdt_hsm_data_version(struct tgt_session_info *tsi)
 	if (rc < 0)
 		GOTO(out_ucred, rc);
 
-	/* Read current HSM info */
+	
 	ma->ma_valid = 0;
 	ma->ma_need = MA_HSM;
 	rc = mdt_attr_get_complex(info, obj, ma);
@@ -423,7 +423,7 @@ int mdt_hsm_data_version(struct tgt_session_info *tsi)
 
 	ma->ma_hsm.mh_arch_ver = info->mti_body->mbo_version;
 
-	/* Save the data version */
+	
 	rc = mdt_hsm_attr_set(info, obj, &ma->ma_hsm);
 	if (rc)
 		GOTO(out_unlock, rc);
@@ -449,8 +449,8 @@ int mdt_hsm_action(struct tgt_session_info *tsi)
 {
 	struct mdt_thread_info *info;
 	struct hsm_current_action *hca;
-	enum hsm_copytool_action action; /* HSMA_* */
-	enum agent_req_status status; /* ARS_* */
+	enum hsm_copytool_action action; 
+	enum agent_req_status status; 
 	struct hsm_extent extent;
 	int rc;
 	ENTRY;
@@ -464,7 +464,7 @@ int mdt_hsm_action(struct tgt_session_info *tsi)
 		RETURN(-EPROTO);
 
 	info = tsi2mdt_info(tsi);
-	/* Only valid if client is remote */
+	
 	rc = mdt_init_ucred(info, (struct mdt_body *)info->mti_body);
 	if (rc < 0)
 		GOTO(out, rc = err_serious(rc));
@@ -520,7 +520,7 @@ out:
 	return rc;
 }
 
-/* Return true if a FID is present in an action list. */
+
 static bool is_fid_in_hal(struct hsm_action_list *hal, const struct lu_fid *fid)
 {
 	struct hsm_action_item *hai;
@@ -566,7 +566,7 @@ int mdt_hsm_request(struct tgt_session_info *tsi)
 	if (tsi->tsi_mdt_body == NULL || hr == NULL || hui == NULL || data == NULL)
 		RETURN(-EPROTO);
 
-	/* Sanity check. Nothing to do with an empty list */
+	
 	if (hr->hr_itemcount == 0)
 		RETURN(0);
 
@@ -580,7 +580,7 @@ int mdt_hsm_request(struct tgt_session_info *tsi)
 		RETURN(-EPROTO);
 
 	info = tsi2mdt_info(tsi);
-	/* Only valid if client is remote */
+	
 	rc = mdt_init_ucred(info, (struct mdt_body *)info->mti_body);
 	if (rc)
 		GOTO(out, rc);
@@ -589,12 +589,12 @@ int mdt_hsm_request(struct tgt_session_info *tsi)
 		GOTO(out_ucred, rc = -EACCES);
 
 	switch (hr->hr_action) {
-	/* code to be removed in hsm1_merge and final patch */
+	
 	case HUA_RELEASE:
 		CERROR("Release action is not working in hsm1_coord\n");
 		GOTO(out_ucred, rc = -EINVAL);
 		break;
-	/* end of code to be removed */
+	
 	case HUA_ARCHIVE:
 		action = HSMA_ARCHIVE;
 		break;
@@ -612,7 +612,7 @@ int mdt_hsm_request(struct tgt_session_info *tsi)
 		GOTO(out_ucred, rc = -EINVAL);
 	}
 
-	hal_size = sizeof(*hal) + round_up(MTI_NAME_MAXLEN, 8) /* fsname */ +
+	hal_size = sizeof(*hal) + round_up(MTI_NAME_MAXLEN, 8)  +
 		   (sizeof(*hai) + round_up(hr->hr_data_len, 8)) *
 		   hr->hr_itemcount;
 

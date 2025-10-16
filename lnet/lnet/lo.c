@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #define DEBUG_SUBSYSTEM S_LNET
 #include <lnet/lib-lnet.h>
@@ -28,7 +28,7 @@ lolnd_recv(struct lnet_ni *ni, void *private, struct lnet_msg *lntmsg,
 {
 	struct lnet_msg *sendmsg = private;
 
-	if (lntmsg) {			/* not discarding */
+	if (lntmsg) {			
 		lnet_copy_kiov2kiov(niov, kiov, offset,
 				    sendmsg->msg_niov,
 				    sendmsg->msg_kiov,

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,12 +6,12 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #if HAVE_CONFIG_H
 #  include "config.h"
-#endif /* HAVE_CONFIG_H */
+#endif 
 
 #include <inttypes.h>
 #include <limits.h>
@@ -82,7 +82,7 @@ int run_command(char *cmd, int cmdsz)
 	}
 	strcat(cmd, " 2>&1");
 
-	/* Can't use popen because we need the rv of the command */
+	
 	rc = system(cmd);
 	if (rc && (fd >= 0)) {
 		char buf[128];
@@ -130,11 +130,11 @@ int append_param(char *buf, char *key, char *val, char sep)
 	if (key)
 		ptr = strstr(buf, key);
 
-	/* key doesn't exist yet, so just add it */
+	
 	if (!ptr)
 		return add_param(buf, key, val);
 
-	/* check extra new val + sep can fit */
+	
 	if (bufsize <= buflen + vallen + 1) {
 		fprintf(stderr, "%s: params are too long:\n%s +%s=%s\n",
 			progname, buf, key, val);
@@ -142,10 +142,10 @@ int append_param(char *buf, char *key, char *val, char sep)
 	}
 
 	next = strchrnul(ptr, ' ');
-	/* shift all after 'next' further at vallen + sep */
+	
 	memmove(next + vallen + 1, next, strlen(next) + 1);
 
-	/* fill gap with sep + new values */
+	
 	*next = sep;
 	memcpy(next + 1, val, vallen);
 
@@ -181,14 +181,14 @@ static int compare_lustre_sources(const char *src1, const char *src2)
 {
 	const char *fs1, *fs2;
 
-	/* Find filesystem part after ":/" */
+	
 	fs1 = strstr(src1, ":/");
 	fs2 = strstr(src2, ":/");
 
-	/* If both have ":/" pattern, compare filesystem names */
+	
 	if (fs1 && fs2) {
-		src1 = fs1 + 2; /* skip ":/" */
-		src2 = fs2 + 2; /* skip ":/" */
+		src1 = fs1 + 2; 
+		src2 = fs2 + 2; 
 	}
 
 	return strcmp(src1, src2) == 0;
@@ -251,7 +251,7 @@ int update_utab_entry(struct mount_opts *mop)
 		return -ENOMEM;
 
 	rc = mnt_update_set_fs(upd, mop->mo_nomtab ? MS_REMOUNT : 0, NULL, fs);
-	if (rc == 1) /* update is unnecessary */
+	if (rc == 1) 
 		rc = 0;
 	if (rc) {
 		fprintf(stderr,
@@ -273,7 +273,7 @@ int update_mtab_entry(char *spec, char *mtpt, char *type, char *opts,
 	struct mntent mnt;
 	int rc = 0;
 
-	/* Don't update mtab if it is linked to any file in /proc direcotry.*/
+	
 	if (mtab_is_proc(MOUNTED))
 		return 0;
 
@@ -370,14 +370,14 @@ void trim_mountfsoptions(char *s)
 }
 
 #ifdef HAVE_SERVER_SUPPORT
-/* Setup a file in the first unused loop_device */
+
 int loop_setup(struct mkfs_opts *mop)
 {
 	char loop_base[20];
 	char l_device[64];
 	int i, ret = 0;
 
-	/* Figure out the loop device names */
+	
 	if (!access("/dev/loop0", F_OK | R_OK) ||
 	    !access("/dev/loop-control", F_OK | R_OK)) {
 		strcpy(loop_base, "/dev/loop\0");
@@ -388,7 +388,7 @@ int loop_setup(struct mkfs_opts *mop)
 		return EACCES;
 	}
 
-	/* Find unused loop device */
+	
 	for (i = 0; i < MAX_LOOP_DEVICES; i++) {
 		char cmd[PATH_MAX];
 		int cmdsz = sizeof(cmd);
@@ -399,7 +399,7 @@ int loop_setup(struct mkfs_opts *mop)
 				progname);
 			return EACCES;
 		}
-		/* find or allocate a free loop device to use */
+		
 		i = ioctl(ret, LOOP_CTL_GET_FREE);
 		close(ret);
 		if (i < 0) {
@@ -412,9 +412,9 @@ int loop_setup(struct mkfs_opts *mop)
 		snprintf(cmd, cmdsz, "losetup %s > /dev/null 2>&1", l_device);
 		ret = system(cmd);
 
-		/* losetup gets 1 (ret=256) for non-set-up device */
+		
 		if (ret) {
-			/* Set up a loopback device to our file */
+			
 			snprintf(cmd, cmdsz, "losetup %s %s", l_device,
 				 mop->mo_device);
 			ret = run_command(cmd, cmdsz);
@@ -501,7 +501,7 @@ int loop_format(struct mkfs_opts *mop)
 		snprintf(_fname, sizeof(_fname), "%s_%s", prefix, #func); \
 		sym->func = (typeof(sym->func))dlsym(sym->dl_handle, _fname); \
 	} while (0)
-#endif /* PLUGIN_DIR */
+#endif 
 
 /**
  * load_backfs_module() - Load plugin for a given mount_type
@@ -527,7 +527,7 @@ struct module_backfs_ops *load_backfs_module(enum ldd_mount_type mount_type)
 	strncpy(fsname, mt_type(mount_type), sizeof(fsname));
 	name = fsname + sizeof("osd-") - 1;
 
-	/* change osd- to osd_ */
+	
 	fsname[sizeof("osd-") - 2] = '_';
 
 	snprintf(filename, sizeof(filename), PLUGIN_DIR"/mount_%s.so", fsname);
@@ -550,7 +550,7 @@ struct module_backfs_ops *load_backfs_module(enum ldd_mount_type mount_type)
 		}
 	}
 
-	/* Do not clutter up console with missing types */
+	
 	if (!handle)
 		return NULL;
 
@@ -561,7 +561,7 @@ struct module_backfs_ops *load_backfs_module(enum ldd_mount_type mount_type)
 	}
 
 	ops->dl_handle = handle;
-	dlerror(); /* Clear any existing error */
+	dlerror(); 
 
 	DLSYM(name, ops, init);
 	DLSYM(name, ops, fini);
@@ -587,7 +587,7 @@ struct module_backfs_ops *load_backfs_module(enum ldd_mount_type mount_type)
 		return NULL;
 	}
 
-	/* optional methods */
+	
 	DLSYM(name, ops, fix_mountopts);
 #else
 	switch (mount_type) {
@@ -595,12 +595,12 @@ struct module_backfs_ops *load_backfs_module(enum ldd_mount_type mount_type)
 	case LDD_MT_LDISKFS:
 		ops = &ldiskfs_ops;
 		break;
-#endif /* HAVE_LDISKFS_OSD */
+#endif 
 #ifdef HAVE_ZFS_OSD
 	case LDD_MT_ZFS:
 		ops = &zfs_ops;
 		break;
-#endif /* HAVE_ZFS_OSD */
+#endif 
 	case LDD_MT_WBCFS:
 		ops = &wbcfs_ops;
 		break;
@@ -638,7 +638,7 @@ bool backfs_mount_type_loaded(enum ldd_mount_type mt)
 	return true;
 }
 
-/* Return true if backfs_ops has operations for the given mount_type. */
+
 static bool backfs_mount_type_okay(enum ldd_mount_type mt)
 {
 	if (!backfs_mount_type_loaded(mt)) {
@@ -651,7 +651,7 @@ static bool backfs_mount_type_okay(enum ldd_mount_type mt)
 	return true;
 }
 
-/* Write the server config files */
+
 int osd_write_ldd(struct mkfs_opts *mop)
 {
 	struct lustre_disk_data *ldd = &mop->mo_ldd;
@@ -665,7 +665,7 @@ int osd_write_ldd(struct mkfs_opts *mop)
 	return ret;
 }
 
-/* Read the server config files */
+
 int osd_read_ldd(char *dev, struct lustre_disk_data *ldd)
 {
 	int ret;
@@ -678,7 +678,7 @@ int osd_read_ldd(char *dev, struct lustre_disk_data *ldd)
 	return ret;
 }
 
-/* Erase param from the server config files */
+
 int osd_erase_ldd(struct mkfs_opts *mop, char *param)
 {
 	struct lustre_disk_data *ldd = &mop->mo_ldd;
@@ -692,7 +692,7 @@ int osd_erase_ldd(struct mkfs_opts *mop, char *param)
 	return ret;
 }
 
-/* Print ldd_params */
+
 void osd_print_ldd_params(struct mkfs_opts *mop)
 {
 	struct lustre_disk_data *ldd = &mop->mo_ldd;
@@ -701,7 +701,7 @@ void osd_print_ldd_params(struct mkfs_opts *mop)
 		backfs_ops[ldd->ldd_mount_type]->print_ldd_params(mop);
 }
 
-/* Was this device formatted for Lustre */
+
 int osd_is_lustre(char *dev, unsigned int *mount_type)
 {
 	int i;
@@ -720,7 +720,7 @@ int osd_is_lustre(char *dev, unsigned int *mount_type)
 	return 0;
 }
 
-/* Build fs according to type */
+
 int osd_make_lustre(struct mkfs_opts *mop)
 {
 	struct lustre_disk_data *ldd = &mop->mo_ldd;
@@ -802,7 +802,7 @@ int osd_label_read(struct mkfs_opts *mop)
 	return ret;
 }
 
-/* Rename filesystem fsname */
+
 int osd_rename_fsname(struct mkfs_opts *mop, const char *oldname)
 {
 	struct lustre_disk_data *ldd = &mop->mo_ldd;
@@ -817,7 +817,7 @@ int osd_rename_fsname(struct mkfs_opts *mop, const char *oldname)
 	return ret;
 }
 
-/* Reset mountdata */
+
 int osd_mountdata_reset(struct mkfs_opts *mop, char *mountdata_arg)
 {
 	struct lustre_disk_data ldd;
@@ -870,7 +870,7 @@ int osd_mountdata_reset(struct mkfs_opts *mop, char *mountdata_arg)
 	return ret;
 }
 
-/* Enable quota accounting */
+
 int osd_enable_quota(struct mkfs_opts *mop)
 {
 	struct lustre_disk_data *ldd = &mop->mo_ldd;
@@ -932,12 +932,12 @@ __u64 get_device_size(char *device)
 	}
 
 #ifdef BLKGETSIZE64
-	/* size in bytes. bz5831 */
+	
 	ret = ioctl(fd, BLKGETSIZE64, (void *)&size);
 #else
 	{
 		__u32 lsize = 0;
-		/* size in blocks */
+		
 		ret = ioctl(fd, BLKGETSIZE, (void *)&lsize);
 		size = (__u64)lsize * 512;
 	}
@@ -950,7 +950,7 @@ __u64 get_device_size(char *device)
 	}
 
 	vprint("device size = %juMB\n", (uintmax_t)(size >> 20));
-	/* return value in KB */
+	
 	return size >> 10;
 }
 #endif
@@ -1000,7 +1000,7 @@ int file_create(char *path, __u64 size)
 	return 0;
 }
 
-/* Get rid of symbolic hostnames for tcp, since kernel can't do lookups */
+
 char *convert_hostnames(char *buf, bool mount)
 {
 	char *converted, *c, *end, sep;
@@ -1016,7 +1016,7 @@ char *convert_hostnames(char *buf, bool mount)
 		return NULL;
 	}
 
-	/* end is different between mount and mkfs case */
+	
 	if (mount) {
 		end = strchr(buf, '/');
 		if (!end) {
@@ -1030,7 +1030,7 @@ char *convert_hostnames(char *buf, bool mount)
 	}
 
 	c = converted;
-	/* parse all NIDs */
+	
 	while ((left > 0) && (delimiter < end)) {
 		int rc;
 
@@ -1048,7 +1048,7 @@ char *convert_hostnames(char *buf, bool mount)
 				progname, buf, strerror(rc));
 			goto out_free;
 		}
-		*delimiter = sep;      /* back to original string */
+		*delimiter = sep;      
 
 		if (LNET_NID_IS_ANY(&nid)) {
 			fprintf(stderr, "%s: Cannot resolve hostname '%s'.\n",
@@ -1085,7 +1085,7 @@ char *convert_fsname(char *devname)
 	start = strstr(devname, ":/");
 	if (!start)
 		goto out_bad_name;
-	start += 2; /* skip ":/" */
+	start += 2; 
 
 	end = strchr(start, '/');
 	if (!end)
@@ -1170,7 +1170,7 @@ int lustre_rename_fsname(struct mkfs_opts *mop, const char *mntpt,
 		if (ret < 0)
 			ret = errno;
 		else
-			/* short read */
+			
 			ret = EINTR;
 		fprintf(stderr, "Unable to read %s: %s\n",
 			filepnm, strerror(ret));
@@ -1187,7 +1187,7 @@ int lustre_rename_fsname(struct mkfs_opts *mop, const char *mntpt,
 		return ret;
 	}
 
-	/* replace fsname in lr_server_data::lsd_uuid. */
+	
 	if (old_namelen > new_namelen)
 		memmove(lsd.lsd_uuid + new_namelen,
 			lsd.lsd_uuid + old_namelen,
@@ -1202,7 +1202,7 @@ int lustre_rename_fsname(struct mkfs_opts *mop, const char *mntpt,
 		if (ret < 0)
 			ret = errno;
 		else
-			 /* short writes */
+			 
 			ret = EINTR;
 		fprintf(stderr, "Unable to write %s: %s\n",
 			filepnm, strerror(ret));
@@ -1299,7 +1299,7 @@ out:
 
 	return ret;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 #ifdef HAVE_GSS
 #ifdef HAVE_OPENSSL_SSK
@@ -1321,7 +1321,7 @@ int load_shared_keys(struct mount_opts *mop, bool client)
 	char *path = mop->mo_skpath;
 	int rc;
 
-	/* init logging */
+	
 	sk_init_logging(NULL, 1, 1);
 
 	rc = stat(path, &sbuf);
@@ -1331,7 +1331,7 @@ int load_shared_keys(struct mount_opts *mop, bool client)
 		return -errno;
 	}
 
-	/* Load individual keys or a directory of them */
+	
 	if (S_ISREG(sbuf.st_mode)) {
 		return sk_load_keyfile(path, client);
 	} else if (!S_ISDIR(sbuf.st_mode)) {
@@ -1386,5 +1386,5 @@ int load_shared_keys(struct mount_opts *mop, bool client)
 
 	return rc;
 }
-#endif /* HAVE_OPENSSL_SSK */
-#endif /* HAVE_GSS */
+#endif 
+#endif 

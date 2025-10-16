@@ -173,4 +173,4 @@ out_err:
 	printerr(2, "DEBUG: serialize_spkm3_ctx: failed\n");
 	return -1;
 }
-#endif /* HAVE_SPKM3_H */
+#endif 

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2025-2026, DDN/Whamcloud, Inc.
@@ -33,7 +33,7 @@ struct osd_object {
 	struct inode		*oo_inode;
 	struct rw_semaphore	 oo_guard;
 
-	/* the i_flags in LMA */
+	
 	__u32			 oo_lma_flags;
 	__u32			 oo_destroyed:1;
 
@@ -41,11 +41,11 @@ struct osd_object {
 };
 
 struct osd_device {
-	/* Super-class */
+	
 	struct dt_device	 od_dt_dev;
-	/* Information about underlying memory file system */
+	
 	struct vfsmount		*od_mnt;
-	/* Service name associated with the OSD device. */
+	
 	char			 od_svname[MAX_OBD_NAME];
 	char			 od_mntdev[MAX_OBD_NAME];
 	int			 od_index;
@@ -87,13 +87,13 @@ struct osd_it_dirent {
 struct osd_it {
 	struct osd_object	*oit_obj;
 	struct file		 oit_file;
-	/* How many entries have been read-cached from storage */
+	
 	int			 oit_rd_dirent;
-	/* Current entry is being iterated by caller */
+	
 	int			 oit_it_dirent;
-	/* Current processing entry */
+	
 	struct osd_it_dirent	*oit_dirent;
-	/* Buffer to hold entries, size == OSD_IT_BUFSIZE */
+	
 	void			*oit_buf;
 };
 
@@ -107,14 +107,14 @@ extern struct work_struct flush_fput;
 	__f = alloc_file_pseudo(inode, mnt, name, flags, fops);		\
 	__descriptors_cnt = atomic_inc_return(&descriptors_cnt);	\
 	if (unlikely(__descriptors_cnt >= wbcfs_flush_descriptors_cnt)) {\
-		/* drop here to skip queue_work */			\
+					\
 		atomic_set(&descriptors_cnt, 0);			\
 		queue_work(system_long_wq, &flush_fput);		\
 	}								\
 	__f;								\
 })
 
-/* Slab to allocate osd_it */
+
 extern struct kmem_cache *osd_it_cachep;
 
 struct osd_hash_it {
@@ -259,4 +259,4 @@ static inline __u32 lu_fid_build_gen(const struct lu_fid *fid)
 int osd_procfs_init(struct osd_device *osd, const char *name);
 void osd_procfs_fini(struct osd_device *osd);
 
-#endif /* _OSD_INTERNAL_H */
+#endif 

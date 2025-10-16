@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_device, cl_req for MDC layer.
  *
@@ -47,7 +47,7 @@ static void mdc_lock_build_einfo(const struct lu_env *env,
 	einfo->ei_cb_bl = mdc_ldlm_blocking_ast;
 	einfo->ei_cb_cp = ldlm_completion_ast;
 	einfo->ei_cb_gl = mdc_ldlm_glimpse_ast;
-	einfo->ei_cbdata = osc; /* value to be put into ->l_ast_data */
+	einfo->ei_cbdata = osc; 
 	einfo->ei_req_slot = 1;
 }
 
@@ -150,7 +150,7 @@ static struct ldlm_lock *mdc_dlmlock_at_pgoff(const struct lu_env *env,
 		match_flags |= LDLM_MATCH_UNREF;
 
 again:
-	/* Next, search for already existing extent locks that will cover us */
+	
 	/* If we're trying to read, we also search for an existing PW lock.  The
 	 * VFS and page cache already protect us locally, so lots of readers/
 	 * writers can share a single PW lock. */
@@ -159,7 +159,7 @@ again:
 				  obj, match_flags, &lockh);
 	if (mode != 0) {
 		lock = ldlm_handle2lock(&lockh);
-		/* RACE: the lock is cancelled so let's try again */
+		
 		if (unlikely(lock == NULL))
 			goto again;
 	}
@@ -186,14 +186,14 @@ static bool mdc_check_and_discard_cb(const struct lu_env *env, struct cl_io *io,
 			struct ldlm_lock *tmp;
 			struct cl_page *page = ops->ops_cl.cpl_page;
 
-			/* refresh non-overlapped index */
+			
 			tmp = mdc_dlmlock_at_pgoff(env, osc, index,
 					OSC_DAP_FL_TEST_LOCK | OSC_DAP_FL_AST);
 			if (tmp != NULL) {
 				info->oti_fn_index = CL_PAGE_EOF;
 				ldlm_lock_put(tmp);
 			} else if (cl_page_own(env, io, page) == 0) {
-				/* discard the page */
+				
 				cl_page_discard(env, io, page);
 				cl_page_disown(env, io, page);
 			} else {
@@ -264,7 +264,7 @@ static int mdc_lock_flush(const struct lu_env *env, struct osc_object *obj,
 			result = 0;
 	}
 
-	/* Avoid lock matching with CLM_WRITE, there can be no other locks */
+	
 	rc = mdc_lock_discard_pages(env, obj, start, end,
 				    mode == CLM_WRITE || discard);
 	if (result == 0 && rc < 0)
@@ -327,13 +327,13 @@ static int mdc_dlm_canceling(const struct lu_env *env,
 	if (obj != NULL) {
 		struct cl_attr *attr = &osc_env_info(env)->oti_attr;
 
-		/* Destroy pages covered by the extent of the DLM lock */
+		
 		result = mdc_lock_flush(env, cl2osc(obj), 0,
 					CL_PAGE_EOF, mode, discard);
 		/* Losing a lock, set KMS to 0.
 		 * NB: assumed that DOM lock covers whole data on MDT.
 		 */
-		/* losing a lock, update kms */
+		
 		lock_res_and_lock(dlmlock);
 		dlmlock->l_ast_data = NULL;
 		cl_object_attr_lock(obj);
@@ -416,7 +416,7 @@ void mdc_lock_lvb_update(const struct lu_env *env, struct osc_object *osc,
 
 	if (lvb == NULL) {
 		LASSERT(dlmlock != NULL);
-		/* l_ost_lvb is only in the LDLM_IBITS union **/
+		
 		LASSERT(dlmlock->l_resource->lr_type == LDLM_IBITS);
 		lvb = &dlmlock->l_ost_lvb;
 	}
@@ -437,7 +437,7 @@ void mdc_lock_lvb_update(const struct lu_env *env, struct osc_object *osc,
 		ldlm_lock_allow_match_locked(dlmlock);
 	}
 
-	/* The size should not be less than the kms */
+	
 	if (attr->cat_size < oinfo->loi_kms)
 		attr->cat_size = oinfo->loi_kms;
 
@@ -481,7 +481,7 @@ static void mdc_lock_granted(const struct lu_env *env, struct osc_lock *oscl,
 		oscl->ols_hold = 1;
 	}
 
-	/* Lock must have been granted. */
+	
 	lock_res_and_lock(dlmlock);
 	if (ldlm_is_granted(dlmlock)) {
 		struct cl_lock_descr *descr = &oscl->ols_cl.cls_lock->cll_descr;
@@ -492,7 +492,7 @@ static void mdc_lock_granted(const struct lu_env *env, struct osc_lock *oscl,
 		descr->cld_start = 0;
 		descr->cld_end = CL_PAGE_EOF;
 
-		/* no lvb update for matched lock */
+		
 		if (!(dlmlock->l_flags & LDLM_FL_LVB_CACHED)) {
 			LASSERT(oscl->ols_flags & LDLM_FL_LVB_READY);
 			LASSERT(osc == dlmlock->l_ast_data);
@@ -523,7 +523,7 @@ static int mdc_lock_upcall(void *cookie, struct lustre_handle *lockh,
 	ENTRY;
 
 	env = cl_env_percpu_get();
-	/* should never happen, similar to osc_ldlm_blocking_ast(). */
+	
 	LASSERT(!IS_ERR(env));
 
 	rc = ldlm_error2errno(errcode);
@@ -540,12 +540,12 @@ static int mdc_lock_upcall(void *cookie, struct lustre_handle *lockh,
 	if (rc == 0)
 		mdc_lock_granted(env, oscl, lockh);
 
-	/* Error handling, some errors are tolerable. */
+	
 	if (oscl->ols_glimpse && rc == -ENAVAIL) {
 		LASSERT(oscl->ols_flags & LDLM_FL_LVB_READY);
 		mdc_lock_lvb_update(env, cl2osc(slice->cls_obj),
 				    NULL, &oscl->ols_lvb);
-		/* Hide the error. */
+		
 		rc = 0;
 	}
 
@@ -556,12 +556,12 @@ static int mdc_lock_upcall(void *cookie, struct lustre_handle *lockh,
 	RETURN(rc);
 }
 
-/* This is needed only for old servers (before 2.14) support */
+
 int mdc_fill_lvb(struct req_capsule *pill, struct ost_lvb *lvb)
 {
 	struct mdt_body *body;
 
-	/* get LVB data from mdt_body otherwise */
+	
 	body = req_capsule_server_get(pill, &RMF_MDT_BODY);
 	if (!body)
 		RETURN(-EPROTO);
@@ -584,7 +584,7 @@ static int mdc_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
 
 	ENTRY;
 
-	/* needed only for glimpse from an old server (< 2.14) */
+	
 	if (glimpse && !exp_connect_dom_lvb(exp) && errcode >= 0)
 		rc = mdc_fill_lvb(&req->rq_pill, &ols->ols_lvb);
 
@@ -604,7 +604,7 @@ static int mdc_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
 	} else if (errcode == ELDLM_OK) {
 		struct ldlm_lock *lock;
 
-		/* Callers have references, should be valid always */
+		
 		lock = ldlm_handle2lock(lockh);
 
 		/* At this point ols_lvb must be filled with correct LVB either
@@ -621,10 +621,10 @@ static int mdc_enqueue_fini(struct obd_export *exp, struct ptlrpc_request *req,
 		*flags |= LDLM_FL_LVB_READY;
 	}
 
-	/* Call the update callback. */
+	
 	rc = (*upcall)(cookie, lockh, rc < 0 ? rc : errcode);
 
-	/* release the reference taken in ldlm_cli_enqueue() */
+	
 	if (errcode == ELDLM_LOCK_MATCHED)
 		errcode = ELDLM_OK;
 	if (errcode == ELDLM_OK && lustre_handle_is_used(lockh))
@@ -664,17 +664,17 @@ static int mdc_enqueue_interpret(const struct lu_env *env,
 	 */
 	ldlm_lock_addref(lockh, mode);
 
-	/* Let cl_lock_state_wait fail with -ERESTARTSYS to unuse sublocks. */
+	
 	CFS_FAIL_TIMEOUT(OBD_FAIL_LDLM_ENQUEUE_HANG, 2);
 
-	/* Let CP AST to grant the lock first. */
+	
 	CFS_FAIL_TIMEOUT(OBD_FAIL_OSC_CP_ENQ_RACE, 1);
 
-	/* Complete obtaining the lock procedure. */
+	
 	rc = ldlm_cli_enqueue_fini(aa->oa_exp, &req->rq_pill, &einfo, 1,
 				   aa->oa_flags, aa->oa_lvb, aa->oa_lvb ?
 				   sizeof(*aa->oa_lvb) : 0, lockh, rc, true);
-	/* Complete mdc stuff. */
+	
 	rc = mdc_enqueue_fini(aa->oa_exp, req, aa->oa_upcall, aa->oa_cookie,
 			      lockh, mode, aa->oa_flags, rc);
 
@@ -739,7 +739,7 @@ static int mdc_enqueue_send(const struct lu_env *env, struct obd_export *exp,
 		if (mdc_set_dom_lock_data(matched, einfo->ei_cbdata)) {
 			*flags |= LDLM_FL_LVB_READY;
 
-			/* We already have a lock, and it's referenced. */
+			
 			(*upcall)(cookie, &lockh, ELDLM_LOCK_MATCHED);
 
 			ldlm_lock_decref(&lockh, mode);
@@ -753,13 +753,13 @@ static int mdc_enqueue_send(const struct lu_env *env, struct obd_export *exp,
 	if (*flags & (LDLM_FL_TEST_LOCK | LDLM_FL_MATCH_LOCK))
 		RETURN(-ENOLCK);
 
-	/* Glimpse is intent on old server */
+	
 	req = ptlrpc_request_alloc(class_exp2cliimp(exp), compat_glimpse ?
 				   &RQF_LDLM_INTENT : &RQF_LDLM_ENQUEUE);
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	/* For WRITE lock cancel other locks on resource early if any */
+	
 	if (einfo->ei_mode & LCK_PW)
 		count = mdc_resource_cancel_unused_res(exp, res_id, &cancels,
 						       einfo->ei_mode,
@@ -774,12 +774,12 @@ static int mdc_enqueue_send(const struct lu_env *env, struct obd_export *exp,
 	}
 
 	if (compat_glimpse) {
-		/* pack the glimpse intent */
+		
 		lit = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
 		lit->opc = IT_GLIMPSE;
 	}
 
-	/* users of mdc_enqueue() can pass this flag for ldlm_lock_match() */
+	
 	*flags &= ~LDLM_FL_BLOCK_GRANTED;
 
 	if (compat_glimpse) {
@@ -862,7 +862,7 @@ static int mdc_lock_enqueue(const struct lu_env *env,
 	if (oscl->ols_state == OLS_GRANTED)
 		RETURN(0);
 
-	/* Lockahead is not supported on MDT yet */
+	
 	if (oscl->ols_flags & LDLM_FL_NO_EXPANSION) {
 		result = -EOPNOTSUPP;
 		RETURN(result);
@@ -950,7 +950,7 @@ static int mdc_lock_init(const struct lu_env *env, struct cl_object *obj,
 
 	ENTRY;
 
-	/* Ignore AGL for Data-on-MDT, stat returns size data */
+	
 	if ((enqflags & CEF_SPECULATIVE) != 0)
 		RETURN(0);
 
@@ -1010,7 +1010,7 @@ static int mdc_get_lock_handle(const struct lu_env *env, struct osc_object *osc,
 {
 	struct ldlm_lock *lock;
 
-	/* find DOM lock protecting object */
+	
 	lock = mdc_dlmlock_at_pgoff(env, osc, index,
 				    OSC_DAP_FL_TEST_LOCK |
 				    OSC_DAP_FL_CANCELING);
@@ -1052,9 +1052,9 @@ static int mdc_io_setattr_start(const struct lu_env *env,
 	enum op_xvalid ia_xvalid = io->u.ci_setattr.sa_xvalid;
 	int rc = 0;
 
-	/* silently ignore non-truncate setattr for Data-on-MDT object */
+	
 	if (cl_io_is_trunc(io)) {
-		/* truncate cache dirty pages first */
+		
 		rc = osc_cache_truncate_start(env, cl2osc(obj), size,
 					      &oio->oi_trunc);
 	} else if (cl_io_is_fallocate(io) &&
@@ -1250,7 +1250,7 @@ mdc_data_version_interpret(const struct lu_env *env, struct ptlrpc_request *req,
 	if (body == NULL)
 		GOTO(out, rc = -EPROTO);
 
-	/* Prepare OBDO from mdt_body for CLIO */
+	
 	oio->oi_oa.o_valid = body->mbo_valid;
 	oio->oi_oa.o_flags = body->mbo_flags;
 	oio->oi_oa.o_data_version = body->mbo_version;
@@ -1296,7 +1296,7 @@ static int mdc_io_data_version_start(const struct lu_env *env,
 	body = req_capsule_client_get(&req->rq_pill, &RMF_MDT_BODY);
 	body->mbo_fid1 = *lu_object_fid(osc2lu(obj));
 	body->mbo_valid = OBD_MD_FLID;
-	/* Indicate that data version is needed */
+	
 	body->mbo_valid |= OBD_MD_FLDATAVERSION;
 	body->mbo_flags = 0;
 
@@ -1420,7 +1420,7 @@ static void mdc_req_attr_set(const struct lu_env *env, struct cl_object *obj,
 {
 	u64 flags = attr->cra_flags;
 
-	/* Copy object FID to cl_attr */
+	
 	attr->cra_oa->o_oi.oi_fid = *lu_object_fid(&obj->co_lu);
 
 	if (flags & OBD_MD_FLGROUP)
@@ -1476,7 +1476,7 @@ static int mdc_object_ast_clear(struct ldlm_lock *lock, void *data)
 	LASSERT(osc != NULL);
 	LASSERT(osc->oo_oinfo != NULL);
 
-	/* Updates lvb in lock by the cached oinfo */
+	
 	oinfo = osc->oo_oinfo;
 
 	LDLM_DEBUG(lock,
@@ -1488,7 +1488,7 @@ static int mdc_object_ast_clear(struct ldlm_lock *lock, void *data)
 	LASSERT(oinfo->loi_lvb.lvb_size >= oinfo->loi_kms);
 
 	cl_object_attr_lock(&osc->oo_cl);
-	/* l_ost_lvb is only in the LDLM_IBITS union **/
+	
 	LASSERT(lock->l_resource->lr_type == LDLM_IBITS);
 	memcpy(lvb, &oinfo->loi_lvb, sizeof(oinfo->loi_lvb));
 	cl_object_attr_unlock(&osc->oo_cl);
@@ -1552,14 +1552,14 @@ static int mdc_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 					  LCK_PR | LCK_PW | LCK_GROUP,
 					  &flags, osc, 0, &lockh);
 		fmkey->lfik_oa.o_valid |= OBD_MD_FLFLAGS;
-		if (mode) { /* lock is cached on client */
+		if (mode) { 
 			fmkey->lfik_oa.o_flags &= ~OBD_FL_SRVLOCK;
 			if (mode != LCK_PR) {
 				ldlm_lock_addref(&lockh, LCK_PR);
 				ldlm_lock_decref(&lockh, mode);
 			}
 		} else {
-			/* no cached lock, needs acquire lock on server side */
+			
 			fmkey->lfik_oa.o_flags |= OBD_FL_SRVLOCK;
 		}
 	}
@@ -1716,7 +1716,7 @@ static struct lu_device *mdc_device_alloc(const struct lu_env *env,
 	d = osc2lu_dev(osc);
 	d->ld_ops = &mdc_lu_ops;
 
-	/* Setup MDC OBD */
+	
 	obd = class_name2obd(lustre_cfg_string(cfg, 0));
 	if (obd == NULL)
 		RETURN(ERR_PTR(-ENODEV));
@@ -1767,4 +1767,4 @@ struct lu_device_type mdc_device_type = {
 	.ldt_ctx_tags = LCT_CL_THREAD
 };
 
-/** @} osc */
+

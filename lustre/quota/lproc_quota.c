@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2011, 2017, Intel Corporation.
@@ -30,7 +30,7 @@ struct lquota_procfs {
 	__u64 lqp_first_cookie;
 };
 
-/* global shared environment */
+
 static void *lprocfs_quota_seq_start(struct seq_file *p, loff_t *pos)
 {
 	struct lquota_procfs	*lqp = p->private;
@@ -45,14 +45,14 @@ static void *lprocfs_quota_seq_start(struct seq_file *p, loff_t *pos)
 		return SEQ_START_TOKEN;
 
 	if (lqp->lqp_obj == NULL)
-		/* accounting not enabled. */
+		
 		return NULL;
 
-	if (lqp->lqp_it == NULL) /* reach the end */
+	if (lqp->lqp_it == NULL) 
 		return NULL;
 
 	offset--;
-	/* move on to the the last processed entry */
+	
 	iops = &lqp->lqp_obj->do_index_ops->dio_it;
 	it = lqp->lqp_it;
 	rc = iops->load(&lqp->lqp_env, it, lqp->lqp_cookie);
@@ -124,7 +124,7 @@ static void *lprocfs_quota_seq_next(struct seq_file *p, void *v, loff_t *pos)
 	if (v == SEQ_START_TOKEN)
 		return lprocfs_quota_seq_start(p, pos);
 
-	if (lqp->lqp_it == NULL) /* reach the end */
+	if (lqp->lqp_it == NULL) 
 		return NULL;
 
 	iops = &lqp->lqp_obj->do_index_ops->dio_it;
@@ -140,7 +140,7 @@ static void *lprocfs_quota_seq_next(struct seq_file *p, void *v, loff_t *pos)
 		CERROR("%s: seq_next failed: rc = %d\n",
 		       lqp->lqp_obj->do_lu.lo_dev->ld_obd->obd_name, rc);
 
-	/* Reach the end or error */
+	
 	iops->put(&lqp->lqp_env, it);
 	iops->fini(&lqp->lqp_env, it);
 	lqp->lqp_it = NULL;
@@ -204,7 +204,7 @@ static int lprocfs_quota_seq_show(struct seq_file *p, void *v)
 			seq_printf(p, "global_pool%d_%s_%s\n", 0,
 				   RES_NAME(rtype), qtype_name(qtype));
 		} else if (fid_seq(fid) == FID_SEQ_LOCAL_NAME) {
-			/* global index copy object */
+			
 			seq_printf(p, "global_index_copy:\n");
 		} else {
 			return -ENOTSUPP;
@@ -267,10 +267,10 @@ static int lprocfs_quota_seq_open(struct inode *inode, struct file *file)
 	if (lqp == NULL)
 		return -ENOMEM;
 
-	/* store pointer to object we would like to iterate over */
+	
 	lqp->lqp_obj = (struct dt_object *)pde_data(inode);
 
-	/* Initialize the common environment to be used in the seq operations */
+	
 	rc = lu_env_init(&lqp->lqp_env, LCT_LOCAL);
 	if (rc) {
 		char *obd_name = "quota";
@@ -292,7 +292,7 @@ static int lprocfs_quota_seq_open(struct inode *inode, struct file *file)
 		goto out_seq;
 	}
 
-	/* initialize iterator */
+	
 	iops = &lqp->lqp_obj->do_index_ops->dio_it;
 	it = iops->init(&lqp->lqp_env, lqp->lqp_obj, 0);
 	if (IS_ERR(it)) {
@@ -342,4 +342,4 @@ const struct proc_ops lprocfs_quota_seq_fops = {
 	.proc_lseek	= seq_lseek,
 	.proc_release	= lprocfs_quota_seq_release,
 };
-#endif /* CONFIG_PROC_FS */
+#endif 

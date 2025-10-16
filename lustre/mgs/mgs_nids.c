@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * NID table management for lustre.
  *
@@ -60,7 +60,7 @@ static unsigned int mgs_tgt_nid_count(struct mgs_nidtbl_target *tgt,
 			nids_total += tnl->tnl_count;
 		}
 	} else {
-		/* only particular net */
+		
 		tnl = xa_load(&tgt->mnt_xa_nids, netid);
 		if (tnl)
 			nids_total += tnl->tnl_count;
@@ -128,7 +128,7 @@ static int nidtbl_fill_entry(struct mgs_nidtbl_target *tgt,
 	unsigned long xa_index;
 	int rc = 0;
 
-	/* fill in entry. */
+	
 	entry->mne_version = tgt->mnt_version;
 	entry->mne_instance = tgt->mnt_instance;
 	entry->mne_index = tgt->mnt_stripe_index;
@@ -137,7 +137,7 @@ static int nidtbl_fill_entry(struct mgs_nidtbl_target *tgt,
 	entry->mne_nid_count = 0;
 
 	if (netid == LNET_NET_ANY) {
-		/* Without restrictions it gets all NIDs across all nets */
+		
 		xa_for_each(&tgt->mnt_xa_nids, xa_index, xa_tnl) {
 			tnl = xa_tnl;
 			CDEBUG(D_INFO, "IR: %u NIDs from NET #%lu\n",
@@ -148,7 +148,7 @@ static int nidtbl_fill_entry(struct mgs_nidtbl_target *tgt,
 		}
 	} else {
 		xa_index = LNET_NETNUM(netid);
-		/* only particular netid */
+		
 		tnl = xa_load(&tgt->mnt_xa_nids, xa_index);
 		if (tnl) {
 			CDEBUG(D_INFO, "IR: %u NIDs from NET #%lu\n",
@@ -186,14 +186,14 @@ static int mgs_nidtbl_read(struct obd_export *exp, struct mgs_nidtbl *tbl,
 
 	ENTRY;
 
-	/* make sure unit_size is power 2 */
+	
 	LASSERT((unit_size & (unit_size - 1)) == 0);
 	LASSERT(nrpages << PAGE_SHIFT >= units_total * unit_size);
 
 	down_read(&tbl->mn_lock);
 	LASSERT(nidtbl_is_sane(tbl));
 
-	/* no more entries ? */
+	
 	if (version > tbl->mn_version) {
 		version = tbl->mn_version;
 		goto out;
@@ -214,7 +214,7 @@ static int mgs_nidtbl_read(struct obd_export *exp, struct mgs_nidtbl *tbl,
 		 * - network used by this request
 		 * - etc.
 		 */
-		/* no filtering yet */
+		
 		netid = LNET_NET_ANY;
 		nid_count = mgs_tgt_nid_count(tgt, netid);
 
@@ -227,7 +227,7 @@ static int mgs_nidtbl_read(struct obd_export *exp, struct mgs_nidtbl *tbl,
 			CDEBUG(D_MGS,
 			       "nidtbl: entry has %u NIDs, can't fit in %d\n",
 			       nid_count, unit_size);
-			/* return as many NIDs as can fit */
+			
 		}
 
 		if (bytes_in_unit < entry_len) {
@@ -236,7 +236,7 @@ static int mgs_nidtbl_read(struct obd_export *exp, struct mgs_nidtbl *tbl,
 				break;
 			}
 
-			/* check if we need to consume remaining bytes. */
+			
 			if (last_in_unit && bytes_in_unit) {
 				last_in_unit->mne_length += bytes_in_unit;
 				rc  += bytes_in_unit;
@@ -246,19 +246,19 @@ static int mgs_nidtbl_read(struct obd_export *exp, struct mgs_nidtbl *tbl,
 			LASSERT((rc & (unit_size - 1)) == 0);
 
 			if (units_in_page == 0) {
-				/* destroy previous map */
+				
 				if (kaddr) {
 					kunmap_local(kaddr);
 					kaddr = NULL;
 				}
-				/* allocate a new page */
+				
 				pages[index] = alloc_page(GFP_KERNEL);
 				if (!pages[index]) {
 					rc = -ENOMEM;
 					break;
 				}
 
-				/* reassign buffer */
+				
 				buf = kaddr = kmap_local_page(pages[index]);
 				++index;
 
@@ -266,14 +266,14 @@ static int mgs_nidtbl_read(struct obd_export *exp, struct mgs_nidtbl *tbl,
 				LASSERT(units_in_page > 0);
 			}
 
-			/* allocate an unit */
+			
 			LASSERT(((long)buf & (unit_size - 1)) == 0);
 			bytes_in_unit = unit_size;
 			--units_in_page;
 			--units_total;
 		}
 
-		/* fill in entry. */
+		
 		entry = (struct mgs_nidtbl_entry *)buf;
 		if (nid_size) {
 			entry->mne_nid_size = nid_size;
@@ -313,7 +313,7 @@ out:
 
 	CDEBUG(D_MGS, "Read IR logs %s return with %d, version %llu\n",
 	       tbl->mn_fsdb->fsdb_name, rc, version);
-	LASSERT(ergo(version == 1, rc <= 0)); /* get the log first time */
+	LASSERT(ergo(version == 1, rc <= 0)); 
 
 	RETURN(rc);
 }
@@ -349,7 +349,7 @@ static int nidtbl_update_version(const struct lu_env *env,
 	if (IS_ERR(th))
 		GOTO(out_put, rc = PTR_ERR(th));
 
-	th->th_sync = 1; /* update table synchronously */
+	th->th_sync = 1; 
 	rc = dt_declare_record_write(env, fsdb, &buf, off, th);
 	if (rc)
 		GOTO(out, rc);
@@ -417,7 +417,7 @@ static int nidtbl_read_version(const struct lu_env *env,
 	RETURN(rc);
 }
 
-/* Overwrite or append nidlist with new one */
+
 static int mgs_tnl_update(struct mgs_nidtbl_target *tgt, unsigned long net,
 			  struct mgs_target_info *mti, unsigned int mti_off,
 			  unsigned int count)
@@ -433,12 +433,12 @@ static int mgs_tnl_update(struct mgs_nidtbl_target *tgt, unsigned long net,
 	oldtnl = xa_load(&tgt->mnt_xa_nids, net);
 	if (oldtnl) {
 		oldsize = oldtnl->tnl_size;
-		/* if version is the same then append case */
+		
 		if (oldtnl->tnl_version == tgt->mnt_version)
 			tnl_off = oldtnl->tnl_count;
 	}
 
-	/* start with 4 slots as minumum */
+	
 	newsize = TNL_SIZE(max_t(unsigned int, tnl_off + count, 4));
 	if (newsize > oldsize) {
 		newsize = size_roundup_power2(newsize);
@@ -449,7 +449,7 @@ static int mgs_tnl_update(struct mgs_nidtbl_target *tgt, unsigned long net,
 			       mti->mti_svname, rc);
 			return rc;
 		}
-		if (oldtnl && tnl_off) /* append case */
+		if (oldtnl && tnl_off) 
 			memcpy(tnl, oldtnl, TNL_SIZE(oldtnl->tnl_count));
 		tnl->tnl_size = newsize;
 	} else {
@@ -478,7 +478,7 @@ static int mgs_tnl_update(struct mgs_nidtbl_target *tgt, unsigned long net,
 	if (rc) {
 		CDEBUG(D_MGS, "nidtbl: can't store NET #%lu, rc = %d\n",
 		       net, rc);
-		/* free tnl and keep using oldtnl whatever it is */
+		
 		OBD_FREE(tnl, tnl->tnl_size);
 	} else {
 		OBD_FREE(oldtnl, oldtnl->tnl_size);
@@ -512,7 +512,7 @@ static int mgs_build_nidlists(struct mgs_nidtbl_target *tgt,
 	unsigned long net;
 	int i, rc = 0;
 
-	/* Delete NET */
+	
 	if (mti->mti_nidlist[0][0] == NETDEL_TOKEN) {
 		struct tnt_nidlist *tnl;
 
@@ -580,7 +580,7 @@ static int mgs_nidtbl_write(const struct lu_env *env, struct fs_db *fsdb,
 
 		INIT_LIST_HEAD(&tgt->mnt_list);
 		tgt->mnt_fs = tbl;
-		tgt->mnt_version = 0; /* 0 means invalid */
+		tgt->mnt_version = 0; 
 		tgt->mnt_type = type;
 
 		tgt->mnt_stripe_index = mti->mti_stripe_index;
@@ -659,7 +659,7 @@ static int mgs_nidtbl_init_fs(const struct lu_env *env, struct fs_db *fsdb)
 	return rc;
 }
 
-/* --------- Imperative Recovery relies on nidtbl stuff ------- */
+
 void mgs_ir_notify_complete(struct fs_db *fsdb)
 {
 	struct timespec64 ts;
@@ -667,7 +667,7 @@ void mgs_ir_notify_complete(struct fs_db *fsdb)
 
 	atomic_set(&fsdb->fsdb_notify_phase, 0);
 
-	/* do statistic */
+	
 	fsdb->fsdb_notify_count++;
 	delta = ktime_sub(ktime_get(), fsdb->fsdb_notify_start);
 	fsdb->fsdb_notify_total = ktime_add(fsdb->fsdb_notify_total, delta);
@@ -685,7 +685,7 @@ static int mgs_ir_notify(void *arg)
 	struct ldlm_res_id resid;
 	char name[sizeof(fsdb->fsdb_name) + 16];
 
-	BUILD_BUG_ON(sizeof(name) >= 40); /* name is too large to be on stack */
+	BUILD_BUG_ON(sizeof(name) >= 40); 
 
 	snprintf(name, sizeof(name) - 1, "mgs_%s_notify", fsdb->fsdb_name);
 	complete(&fsdb->fsdb_notify_comp);
@@ -722,7 +722,7 @@ int mgs_ir_init_fs(const struct lu_env *env, struct mgs_device *mgs,
 	if (mgs->mgs_start_time + ir_timeout > ktime_get_real_seconds())
 		fsdb->fsdb_ir_state = IR_STARTUP;
 	fsdb->fsdb_nonir_clients = 0;
-	/* start notify thread */
+	
 	fsdb->fsdb_mgs = mgs;
 	task = kthread_run(mgs_ir_notify, fsdb,
 			       "mgs_%s_notify", fsdb->fsdb_name);
@@ -751,7 +751,7 @@ void mgs_ir_fini_fs(struct mgs_device *mgs, struct fs_db *fsdb)
 	wait_for_completion(&fsdb->fsdb_notify_comp);
 }
 
-/* caller must have held fsdb_mutex */
+
 static inline void ir_state_graduate(struct fs_db *fsdb)
 {
 	if (fsdb->fsdb_ir_state == IR_STARTUP) {
@@ -782,7 +782,7 @@ int mgs_ir_update(const struct lu_env *env, struct mgs_device *mgs,
 	if (rc)
 		GOTO(out, rc);
 
-	/* check ir state */
+	
 	mutex_lock(&fsdb->fsdb_mutex);
 	ir_state_graduate(fsdb);
 	switch (fsdb->fsdb_ir_state) {
@@ -813,7 +813,7 @@ out:
 	return rc;
 }
 
-/* NID table can be cached by two entities: Clients and MDTs */
+
 enum {
 	IR_CLIENT  = 1,
 	IR_MDT     = 2
@@ -911,7 +911,7 @@ int mgs_get_ir_logs(struct ptlrpc_request *req)
 	if (bytes < 0)
 		GOTO(out, rc = bytes);
 
-	/* start bulk transfer */
+	
 	page_count = (bytes + PAGE_SIZE - 1) >> PAGE_SHIFT;
 	LASSERT(page_count <= nrpages);
 	desc = ptlrpc_prep_bulk_exp(req, page_count, 1,
@@ -1023,12 +1023,12 @@ int lprocfs_wr_ir_state(struct file *file, const char __user *buffer,
 		return -EFAULT;
 	}
 
-	kbuf[count] = 0; /* buffer is supposed to end with 0 */
+	kbuf[count] = 0; 
 	if (kbuf[count - 1] == '\n')
 		kbuf[count - 1] = 0;
 	ptr = kbuf;
 
-	/* fsname=<file system name> must be the 1st entry */
+	
 	while (ptr) {
 		char *tmpptr;
 		int i;
@@ -1069,7 +1069,7 @@ int lprocfs_rd_ir_state(struct seq_file *seq, void *data)
 	struct timespec64 ts_max;
 	struct timespec64 ts;
 
-	/* mgs_live_seq_show() already holds fsdb_mutex. */
+	
 	ir_state_graduate(fsdb);
 
 	seq_printf(seq, "\nimperative_recovery_state:\n");
@@ -1106,8 +1106,8 @@ ssize_t lprocfs_ir_timeout_seq_write(struct file *file,
 	return kstrtoll_from_user(buffer, count, 0, &ir_timeout);
 }
 
-/* --------------- Handle non IR support clients --------------- */
-/* attach a lustre file system to an export */
+
+
 int mgs_fsc_attach(const struct lu_env *env, struct obd_export *exp,
 		   char *fsname)
 {
@@ -1125,7 +1125,7 @@ int mgs_fsc_attach(const struct lu_env *env, struct obd_export *exp,
 	if (rc)
 		RETURN(rc);
 
-	/* allocate a new fsc in case we need it in spinlock. */
+	
 	OBD_ALLOC_PTR(new_fsc);
 	if (!new_fsc)
 		GOTO(out, rc = -ENOMEM);
@@ -1140,7 +1140,7 @@ int mgs_fsc_attach(const struct lu_env *env, struct obd_export *exp,
 	rc = -EEXIST;
 	mutex_lock(&fsdb->fsdb_mutex);
 
-	/* tend to find it in export list because this list is shorter. */
+	
 	spin_lock(&data->med_lock);
 	list_for_each_entry(fsc, &data->med_clients, mfc_export_list) {
 		if (strcmp(fsname, fsc->mfc_fsdb->fsdb_name) == 0) {
@@ -1152,10 +1152,10 @@ int mgs_fsc_attach(const struct lu_env *env, struct obd_export *exp,
 		fsc = new_fsc;
 		new_fsc = NULL;
 
-		/* add it into export list. */
+		
 		list_add(&fsc->mfc_export_list, &data->med_clients);
 
-		/* add into fsdb list. */
+		
 		list_add(&fsc->mfc_fsdb_list, &fsdb->fsdb_clients);
 		if (!fsc->mfc_ir_capable) {
 			++fsdb->fsdb_nonir_clients;
@@ -1208,7 +1208,7 @@ void mgs_fsc_cleanup(struct obd_export *exp)
 	}
 }
 
-/* must be called with fsdb->fsdb_mutex held */
+
 void mgs_fsc_cleanup_by_fsdb(struct fs_db *fsdb)
 {
 	struct mgs_fsc *fsc, *tmp;

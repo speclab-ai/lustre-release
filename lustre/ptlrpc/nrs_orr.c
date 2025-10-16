@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
@@ -128,7 +128,7 @@ static int nrs_orr_key_fill(struct nrs_orr_data *orrd,
 		return 0;
 	}
 
-	/* Bounce unconnected requests to the default policy. */
+	
 	if (req->rq_export == NULL)
 		return -ENOTCONN;
 
@@ -163,7 +163,7 @@ static int nrs_orr_key_fill(struct nrs_orr_data *orrd,
 static void nrs_orr_range_fill_logical(struct niobuf_remote *nb, int niocount,
 				       struct nrs_orr_req_range *range)
 {
-	/* Should we do this at page boundaries ? */
+	
 	range->or_start = nb[0].rnb_offset & PAGE_MASK;
 	range->or_end = (nb[niocount - 1].rnb_offset +
 			 nb[niocount - 1].rnb_len - 1) | ~PAGE_MASK;
@@ -544,7 +544,7 @@ static int nrs_orr_start(struct ptlrpc_nrs_policy *policy, char *arg)
 		xa_init(&orrd->od_trr_objs);
 	}
 
-	/* XXX: Fields accessed unlocked */
+	
 	orrd->od_quantum = NRS_ORR_QUANTUM_DFLT;
 	orrd->od_supp = NOS_DFLT;
 	orrd->od_physical = true;
@@ -765,13 +765,13 @@ try_again:
 	orro = rhashtable_lookup_get_insert_fast(&orrd->od_obj_hash,
 						  &new_orro->oo_rhead,
 						  nrs_orr_hash_params);
-	/* insertion sucessfull */
+	
 	if (likely(orro == NULL)) {
 		orro = new_orro;
 		goto found_orro;
 	}
 
-	/* A returned non-error orro means it already exist */
+	
 	rc = IS_ERR(orro) ? PTR_ERR(orro) : 0;
 	if (!rc && refcount_inc_not_zero(&orro->oo_ref)) {
 		OBD_SLAB_FREE_PTR(new_orro, orrd->od_cache);
@@ -779,11 +779,11 @@ try_again:
 	}
 	rcu_read_unlock();
 
-	/* oo_ref == 0, orro will be freed */
+	
 	if (!rc)
 		goto try_again;
 
-	/* hash table could be resizing. */
+	
 	if (rc == -ENOMEM || rc == -EBUSY) {
 		mdelay(20);
 		goto try_again;
@@ -904,7 +904,7 @@ static int nrs_trr_res_get(struct ptlrpc_nrs_policy *policy,
 	if (!nrq->nr_u.orr.or_trr_set) {
 		struct ptlrpc_request *req;
 
-		/* Bounce unconnected requests to the default policy. */
+		
 		req = container_of(nrq, struct ptlrpc_request, rq_nrq);
 		if (!req->rq_export)
 			return -ENOTCONN;
@@ -1012,10 +1012,10 @@ struct ptlrpc_nrs_request *nrs_orr_req_get(struct ptlrpc_nrs_policy *policy,
 			       NRS_POL_NAME_TRR, nrq->nr_u.orr.or_key.ok_idx,
 			       nrq->nr_u.orr.or_round);
 
-		/** Peek at the next request to be served */
+		
 		node = binheap_root(orrd->od_binheap);
 
-		/** No more requests */
+		
 		if (unlikely(node == NULL)) {
 			orrd->od_round++;
 		} else {
@@ -1096,11 +1096,11 @@ static int nrs_orr_req_add(struct ptlrpc_nrs_policy *policy,
 		if (orro->oo_active == 0 && orro->oo_quantum > 0)
 			orro->oo_round++;
 
-		/** A new scheduling round has commenced */
+		
 		if (orro->oo_round < orrd->od_round)
 			orro->oo_round = orrd->od_round;
 
-		/** I was not the last object/OST that scheduled a request */
+		
 		if (orro->oo_sequence < orrd->od_sequence)
 			orro->oo_sequence = ++orrd->od_sequence;
 		/**
@@ -1154,10 +1154,10 @@ static void nrs_orr_req_del(struct ptlrpc_nrs_policy *policy,
 	 * to adjust round numbers.
 	 */
 	if (unlikely(is_root)) {
-		/** Peek at the next request to be served */
+		
 		struct binheap_node *node = binheap_root(orrd->od_binheap);
 
-		/** No more requests */
+		
 		if (unlikely(node == NULL)) {
 			orrd->od_round++;
 		} else {
@@ -1179,7 +1179,7 @@ static void nrs_orr_req_del(struct ptlrpc_nrs_policy *policy,
 static void nrs_orr_req_stop(struct ptlrpc_nrs_policy *policy,
 			     struct ptlrpc_nrs_request *nrq)
 {
-	/** NB: resource control, credits etc can be added here */
+	
 	CDEBUG(D_RPCTRACE,
 	       "NRS: finished handling ORR request for object with FID "DFID", from OST with index %u, with round %llu\n",
 	       PFID(&nrq->nr_u.orr.or_key.ok_fid), nrq->nr_u.orr.or_key.ok_idx,
@@ -1195,7 +1195,7 @@ static void nrs_orr_req_stop(struct ptlrpc_nrs_policy *policy,
 static void nrs_trr_req_stop(struct ptlrpc_nrs_policy *policy,
 			     struct ptlrpc_nrs_request *nrq)
 {
-	/** NB: resource control, credits etc can be added here */
+	
 	CDEBUG(D_RPCTRACE,
 	       "NRS: finished handling TRR request from OST with index %u, with round %llu\n",
 	       nrq->nr_u.orr.or_key.ok_idx, nrq->nr_u.orr.or_round);
@@ -1328,7 +1328,7 @@ ptlrpc_lprocfs_nrs_orr_quantum_seq_write(struct file *file,
 	char			    *val;
 	long			     quantum_reg;
 	long			     quantum_hp;
-	/** lprocfs_find_named_value() modifies its argument, so keep a copy */
+	
 	size_t			     count_copy;
 	int			     rc = 0;
 	int			     rc2 = 0;

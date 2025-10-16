@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 #ifndef __LINUX_STRINGHASH_LUSTRE_H
 #define __LINUX_STRINGHASH_LUSTRE_H
@@ -20,6 +20,6 @@ u64 hashlen_string(const void *salt, const char *name);
 
 #else
 #include <linux/stringhash.h>
-#endif /* !HAVE_STRINGHASH */
+#endif 
 
-#endif /* !__LINUX_STRINGHASH_LUSTRE_H */
+#endif 

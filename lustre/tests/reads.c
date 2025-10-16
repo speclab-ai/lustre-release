@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/reads.c
  *
@@ -13,7 +13,7 @@
  * Author: Nikita Danilov <nikita@clusterfs.com>
  */
 
-#define _XOPEN_SOURCE 500 /* for pread(2) */
+#define _XOPEN_SOURCE 500 
 
 #include <errno.h>
 #include <fcntl.h>

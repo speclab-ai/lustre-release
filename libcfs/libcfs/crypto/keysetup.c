@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /*
  * Key setup facility for FS encryption support.
  *
@@ -102,7 +102,7 @@ static inline char *crypto_engine_to_use(struct llcrypt_mode *mode)
 	}
 }
 
-/* Create a symmetric cipher object for the given encryption mode and key */
+
 struct crypto_skcipher *llcrypt_allocate_skcipher(struct llcrypt_mode *mode,
 						  const u8 *raw_key,
 						  const struct inode *inode)
@@ -164,7 +164,7 @@ static int derive_essiv_salt(const u8 *key, int keysize, u8 *salt)
 {
 	struct crypto_shash *tfm = READ_ONCE(essiv_hash_tfm);
 
-	/* init hash transform on demand */
+	
 	if (unlikely(!tfm)) {
 		struct crypto_shash *prev_tfm;
 
@@ -229,7 +229,7 @@ out:
 	return err;
 }
 
-/* Given the per-file key, set up the file's crypto transform object(s) */
+
 int llcrypt_set_derived_key(struct llcrypt_info *ci, const u8 *derived_key)
 {
 	struct llcrypt_mode *mode = ci->ci_mode;
@@ -266,7 +266,7 @@ static int setup_per_mode_key(struct llcrypt_info *ci,
 	if (WARN_ON(mode_num >= ARRAY_SIZE(mk->mk_mode_keys)))
 		return -EINVAL;
 
-	/* pairs with cmpxchg() below */
+	
 	tfm = READ_ONCE(mk->mk_mode_keys[mode_num]);
 	if (likely(tfm != NULL))
 		goto done;
@@ -283,7 +283,7 @@ static int setup_per_mode_key(struct llcrypt_info *ci,
 	if (IS_ERR(tfm))
 		return PTR_ERR(tfm);
 
-	/* pairs with READ_ONCE() above */
+	
 	prev_tfm = cmpxchg(&mk->mk_mode_keys[mode_num], NULL, tfm);
 	if (prev_tfm != NULL) {
 		crypto_free_skcipher(tfm);
@@ -384,7 +384,7 @@ static int setup_file_encryption_key(struct llcrypt_info *ci,
 	mk = key->payload.data[0];
 	down_read(&mk->mk_secret_sem);
 
-	/* Has the secret been removed (via LL_IOC_REMOVE_ENCRYPTION_KEY)? */
+	
 	if (!is_master_key_secret_present(&mk->mk_secret)) {
 		err = -ENOKEY;
 		goto out_release_key;
@@ -496,7 +496,7 @@ int llcrypt_get_encryption_info(struct inode *inode)
 				     res);
 			return res;
 		}
-		/* Fake up a context for an unencrypted directory */
+		
 		memset(&ctx, 0, sizeof(ctx));
 		ctx.version = LLCRYPT_CONTEXT_V1;
 		ctx.v1.contents_encryption_mode = LLCRYPT_MODE_AES_256_XTS;
@@ -655,7 +655,7 @@ EXPORT_SYMBOL_GPL(llcrypt_drop_inode);
 
 bool llcrypt_has_encryption_key(const struct inode *inode)
 {
-	/* pairs with cmpxchg_release() in llcrypt_get_encryption_info() */
+	
 	return READ_ONCE(llcrypt_info_nocast(inode)) != NULL;
 }
 EXPORT_SYMBOL_GPL(llcrypt_has_encryption_key);

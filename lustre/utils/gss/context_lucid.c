@@ -99,14 +99,14 @@ prepare_krb5_rfc1964_buffer(gss_krb5_lucid_context_v1_t *lctx,
 
 	if (WRITE_BYTES(&p, end, lctx->initiate)) goto out_err;
 
-	/* seed_init and seed not used by kernel anyway */
+	
 	if (WRITE_BYTES(&p, end, constant_zero)) goto out_err;
 	if (write_bytes(&p, end, &fakeseed, 16)) goto out_err;
 
 	if (WRITE_BYTES(&p, end, lctx->rfc1964_kd.sign_alg)) goto out_err;
 	if (WRITE_BYTES(&p, end, lctx->rfc1964_kd.seal_alg)) goto out_err;
 	if (WRITE_BYTES(&p, end, lctx->endtime)) goto out_err;
-	word_send_seq = lctx->send_seq;	/* XXX send_seq is 64-bit */
+	word_send_seq = lctx->send_seq;	
 	if (WRITE_BYTES(&p, end, word_send_seq)) goto out_err;
 	if (write_oid(&p, end, &krb5oid)) goto out_err;
 
@@ -127,7 +127,7 @@ prepare_krb5_rfc1964_buffer(gss_krb5_lucid_context_v1_t *lctx,
 		 __FUNCTION__, lctx->rfc1964_kd.ctx_key.type,
 		 lctx->rfc1964_kd.ctx_key.length);
 
-	/* derive the encryption key and copy it into buffer */
+	
 	enc_key.type = lctx->rfc1964_kd.ctx_key.type;
 	enc_key.length = lctx->rfc1964_kd.ctx_key.length;
 	if ((enc_key.data = calloc(1, enc_key.length)) == NULL)
@@ -155,26 +155,26 @@ out_err:
 	return -1;
 }
 
-/* XXX Hack alert! XXX  Do NOT submit upstream! XXX */
-/* XXX Hack alert! XXX  Do NOT submit upstream! XXX */
 
-/* for 3DES */
+
+
+
 #define KG_USAGE_SEAL 22
 #define KG_USAGE_SIGN 23
 #define KG_USAGE_SEQ  24
 
-/* for rfc???? */
+
 #define KG_USAGE_ACCEPTOR_SEAL  22
 #define KG_USAGE_ACCEPTOR_SIGN  23
 #define KG_USAGE_INITIATOR_SEAL 24
 #define KG_USAGE_INITIATOR_SIGN 25
 
-/* Lifted from mit src/lib/gssapi/krb5/gssapiP_krb5.h */
+
 enum seal_alg {
   SEAL_ALG_NONE            = 0xffff,
   SEAL_ALG_DES             = 0x0000,
-  SEAL_ALG_1               = 0x0001, /* not published */
-  SEAL_ALG_MICROSOFT_RC4   = 0x0010, /* microsoft w2k;  */
+  SEAL_ALG_1               = 0x0001, 
+  SEAL_ALG_MICROSOFT_RC4   = 0x0010, 
   SEAL_ALG_DES3KD          = 0x0002
 };
 
@@ -183,13 +183,13 @@ enum seal_alg {
 #define KEY_USAGE_SEED_CHECKSUM		0x99
 #define K5CLENGTH 5
 
-/* Flags for version 2 context flags */
+
 #define KRB5_CTX_FLAG_INITIATOR		0x00000001
 #define KRB5_CTX_FLAG_CFX		0x00000002
 #define KRB5_CTX_FLAG_ACCEPTOR_SUBKEY	0x00000004
 
-/* XXX Hack alert! XXX  Do NOT submit upstream! XXX */
-/* XXX Hack alert! XXX  Do NOT submit upstream! XXX */
+
+
 /*
  * We don't have "legal" access to these MIT-only
  * structures located in libk5crypto
@@ -238,10 +238,10 @@ key_krb5_to_lucid(const krb5_keyblock *kin, gss_krb5_lucid_key_t *lout)
 	return 0;
 }
 
-/* XXX Hack alert! XXX  Do NOT submit upstream! XXX */
-/* XXX Hack alert! XXX  Do NOT submit upstream! XXX */
-/* XXX Hack alert! XXX  Do NOT submit upstream! XXX */
-/* XXX Hack alert! XXX  Do NOT submit upstream! XXX */
+
+
+
+
 /*
  * Function to derive a new key from a given key and given constant data.
  */
@@ -256,7 +256,7 @@ derive_key_lucid(const gss_krb5_lucid_key_t *in, gss_krb5_lucid_key_t *out,
 #ifdef HAVE_KRB5
 	void *enc;
 #endif
-	krb5_keyblock kin;  /* must send krb5_keyblock, not lucid! */
+	krb5_keyblock kin;  
 #if defined(HAVE_HEIMDAL) || HAVE_KRB5INT_DERIVE_KEY
 	krb5_context kcontext;
 	krb5_keyblock *outkey;
@@ -296,7 +296,7 @@ derive_key_lucid(const gss_krb5_lucid_key_t *in, gss_krb5_lucid_key_t *out,
 	case ENCTYPE_DES3_CBC_SHA1:
 	case ENCTYPE_ARCFOUR_HMAC:
 	case ENCTYPE_ARCFOUR_HMAC_EXP:
-		/* deprecated enc types */
+		
 		printerr(0, "ERROR: %s: deprecated enc type %d\n",
 			 __func__, in->type);
 		fallthrough;
@@ -305,7 +305,7 @@ derive_key_lucid(const gss_krb5_lucid_key_t *in, gss_krb5_lucid_key_t *out,
 		goto out;
 	}
 
-	/* Convert to correct format for call to krb5_derive_key */
+	
 	key_lucid_to_krb5(in, &kin);
 
 	datain.data = (char *) constant_data;
@@ -318,15 +318,15 @@ derive_key_lucid(const gss_krb5_lucid_key_t *in, gss_krb5_lucid_key_t *out,
 
 	((char *)(datain.data))[4] = (char) extra;
 
-	/* Step 1: Init context */
-	/* Heimdal and newer MIT Kerberos require kcontext */
+	
+	
 #if defined(HAVE_KRB5INT_DERIVE_KEY) || defined(HAVE_HEIMDAL)
 	code = krb5_init_context(&kcontext);
 	if (code)
 		goto out;
 #endif
 
-	/* Step 2: Get the derived key */
+	
 #ifdef HAVE_KRB5
 #if HAVE_KRB5INT_DERIVE_KEY
 	code = krb5_k_create_key(kcontext, &kin, &key_in);
@@ -341,30 +341,30 @@ derive_key_lucid(const gss_krb5_lucid_key_t *in, gss_krb5_lucid_key_t *out,
 		krb5_k_key_keyblock(kcontext, key_out, &outkey);
 		krb5_k_free_key(kcontext, key_out);
 	}
-#else  /* !HAVE_KRB5INT_DERIVE_KEY */
+#else  
 	out->length = keylength;
 	out->type = in->type;
 
 	key_lucid_to_krb5(out, &kout);
 
 	code = krb5_derive_key(enc, &kin, &kout, &datain);
-#endif	/* HAVE_KRB5INT_DERIVE_KEY */
-#else	/* !defined(HAVE_KRB5) */
+#endif	
+#else	
 	code = krb5_derive_key(kcontext, &kin, in->type, constant_data, K5CLENGTH, &outkey);
-#endif	/* defined(HAVE_KRB5) */
+#endif	
 
 	if (code)
 		goto out;
 
-	/* Step 3: Copy the key to out */
+	
 #if defined(HAVE_KRB5INT_DERIVE_KEY) || defined(HAVE_HEIMDAL)
 	code = key_krb5_to_lucid(outkey, out);
 	krb5_free_keyblock(kcontext, outkey);
-#else	/* !defined(HAVE_KRB5) */
+#else	
 	code = key_krb5_to_lucid(&kout, out);
-#endif	/* defined(HAVE_KRB5) */
+#endif	
 
-	/* Step 4: Free the context */
+	
 #if defined(HAVE_KRB5INT_DERIVE_KEY) || defined(HAVE_HEIMDAL)
 	krb5_free_context(kcontext);
 #endif
@@ -419,7 +419,7 @@ prepare_krb5_rfc4121_buffer(gss_krb5_lucid_context_v1_t *lctx,
 	p = buf->value;
 	end = buf->value + MAX_CTX_LEN;
 
-	/* Version 2 */
+	
 	if (WRITE_BYTES(&p, end, constant_two)) goto out_err;
 	if (WRITE_BYTES(&p, end, lctx->endtime)) goto out_err;
 
@@ -434,12 +434,12 @@ prepare_krb5_rfc4121_buffer(gss_krb5_lucid_context_v1_t *lctx,
 
 	if (WRITE_BYTES(&p, end, lctx->send_seq)) goto out_err;
 
-	/* Protocol 0 here implies DES3 or RC4 */
+	
 	printerr(3, "protocol %d\n", lctx->protocol);
 	if (lctx->protocol == 0) {
 		enctype = lctx->rfc1964_kd.ctx_key.type;
 		keysize = lctx->rfc1964_kd.ctx_key.length;
-		numkeys = 3;	/* XXX is always gonna be three? */
+		numkeys = 3;	
 	} else {
 		if (lctx->cfx_kd.have_acceptor_subkey) {
 			enctype = lctx->cfx_kd.acceptor_subkey.type;
@@ -457,18 +457,18 @@ prepare_krb5_rfc4121_buffer(gss_krb5_lucid_context_v1_t *lctx,
 	if (WRITE_BYTES(&p, end, numkeys)) goto out_err;
 
 	if (lctx->protocol == 0) {
-		/* derive and send down: Ke, Ki, and Kc */
-		/* Ke */
+		
+		
 		if (write_bytes(&p, end, lctx->rfc1964_kd.ctx_key.data,
 				lctx->rfc1964_kd.ctx_key.length))
 			goto out_err;
 
-		/* Ki */
+		
 		if (write_bytes(&p, end, lctx->rfc1964_kd.ctx_key.data,
 				lctx->rfc1964_kd.ctx_key.length))
 			goto out_err;
 
-		/* Kc */
+		
 		if (derive_key_lucid(&lctx->rfc1964_kd.ctx_key, &derived_key,
 				     KG_USAGE_SIGN, KEY_USAGE_SEED_CHECKSUM))
 			goto out_err;
@@ -498,9 +498,9 @@ prepare_krb5_rfc4121_buffer(gss_krb5_lucid_context_v1_t *lctx,
 		sign_usage = KG_USAGE_SIGN;
 		seal_usage = KG_USAGE_SEAL;
 
-		/* derive and send down: Ke, Ki, and Kc */
+		
 
-		/* Ke */
+		
 		if (derive_key_lucid(keyptr, &derived_key,
 			       seal_usage, KEY_USAGE_SEED_ENCRYPTION))
 			goto out_err;
@@ -510,7 +510,7 @@ prepare_krb5_rfc4121_buffer(gss_krb5_lucid_context_v1_t *lctx,
 		free(derived_key.data);
 		derived_key.data = NULL;
 
-		/* Ki */
+		
 		if (derive_key_lucid(keyptr, &derived_key,
 			       seal_usage, KEY_USAGE_SEED_INTEGRITY))
 			goto out_err;
@@ -520,7 +520,7 @@ prepare_krb5_rfc4121_buffer(gss_krb5_lucid_context_v1_t *lctx,
 		free(derived_key.data);
 		derived_key.data = NULL;
 
-		/* Kc */
+		
 		if (derive_key_lucid(keyptr, &derived_key,
 			       sign_usage, KEY_USAGE_SEED_CHECKSUM))
 			goto out_err;
@@ -566,7 +566,7 @@ serialize_krb5_ctx(gss_ctx_id_t *ctx, gss_buffer_desc *buf)
 		goto out_err;
 	}
 
-	/* Check the version returned, we only support v1 right now */
+	
 	vers = ((gss_krb5_lucid_context_version_t *)return_ctx)->version;
 	switch (vers) {
 	case 1:

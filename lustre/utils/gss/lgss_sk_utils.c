@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (C) 2015, Trustees of Indiana University
  *
@@ -47,7 +47,7 @@ static int lgss_sk_prepare_cred(struct lgss_cred *cred)
 	return 0;
 }
 
-/* Free all the sk_cred resources */
+
 static void lgss_sk_release_cred(struct lgss_cred *cred)
 {
 	struct sk_cred *skc = cred->lc_mech_cred;
@@ -75,7 +75,7 @@ static int lgss_sk_using_cred(struct lgss_cred *cred)
 	if (rc)
 		return rc;
 
-	/* HMAC is generated in this order */
+	
 	version = htobe32(SK_MSG_VERSION);
 	bufs[SK_INIT_VERSION].value = &version;
 	bufs[SK_INIT_VERSION].length = sizeof(version);
@@ -89,7 +89,7 @@ static int lgss_sk_using_cred(struct lgss_cred *cred)
 	bufs[SK_INIT_FLAGS].value = &flags;
 	bufs[SK_INIT_FLAGS].length = sizeof(flags);
 
-	/* sign all the bufs except HMAC */
+	
 	rc = sk_sign_bufs(&skc->sc_kctx.skc_shared_key, bufs,
 			  SK_INIT_BUFFERS - 1, EVP_sha256(),
 			  &skc->sc_hmac);
@@ -116,7 +116,7 @@ static int lgss_sk_validate_cred(struct lgss_cred *cred, gss_buffer_desc *token,
 	int i;
 	uint32_t rc;
 
-	/* Decode responder buffers and validate */
+	
 	i = sk_decode_netstring(bufs, SK_RESP_BUFFERS, token);
 	if (i != SK_RESP_BUFFERS) {
 		printerr(0, "Invalid token received\n");
@@ -161,7 +161,7 @@ static int lgss_sk_validate_cred(struct lgss_cred *cred, gss_buffer_desc *token,
 		 * resulted in a key that is 1 byte short */
 		printerr(0, "Short key computed, must retry\n");
 		if (skc->sc_dh_shared_key.value) {
-			/* erase secret key before freeing memory */
+			
 			memset(skc->sc_dh_shared_key.value, 0,
 			       skc->sc_dh_shared_key.length);
 			free(skc->sc_dh_shared_key.value);

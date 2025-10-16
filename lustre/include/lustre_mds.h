@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * MDS data structures.
  * See also lustre_idl.h for wire formats of requests.
@@ -43,7 +43,7 @@ static inline int md_should_create(enum mds_open_flags open_flags)
 	       !(open_flags & MDS_OPEN_LEASE);
 }
 
-/* do NOT or the MAY_*'s, you'll get the weakest */
+
 static inline int mds_accmode(enum mds_open_flags open_flags)
 {
 	unsigned int may_mask = 0;
@@ -58,6 +58,6 @@ static inline int mds_accmode(enum mds_open_flags open_flags)
 	return may_mask;
 }
 
-/** @} mds */
+
 
 #endif

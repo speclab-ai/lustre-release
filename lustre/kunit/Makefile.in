@@ -1,17 +1,6 @@
-# SPDX-License-Identifier: GPL-2.0
-
-#
-# This file is part of Lustre, http://www.lustre.org/
-#
-# lustre/kunit/Makefile.in
-#
-# Makefile template for kunit
-#
-
 MODULES := kinode obd_test obd_mod_rpcs_test
 @TESTS_TRUE@@SERVER_TRUE@MODULES += ldlm_extent
 @TESTS_TRUE@@SERVER_TRUE@MODULES += llog_test
-
 EXTRA_DIST = kinode.c
 EXTRA_DIST += ldlm_extent.c
 EXTRA_DIST += llog_test.c

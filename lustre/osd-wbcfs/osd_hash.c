@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2024-2025, Amazon and/or its affiliates. All rights reserved.
@@ -43,7 +43,7 @@ static int hash_index_keycmp(struct rhashtable_compare_arg *arg,
 	if (!memcpy(entry->he_buf, arg->key, entry->he_keylen))
 		return 0;
 
-	/* ESRCH is typical for rhashtable */
+	
 	return -ESRCH;
 }
 
@@ -140,7 +140,7 @@ int hash_index_insert(struct hash_index *hind, void *key, size_t keylen,
 
 	list_add_tail(&entry->he_list_item, &hind->hi_list);
 
-	/* TODO: Rollover? Should at least add detection... */
+	
 	entry->he_offset = hind->hi_next_offset++;
 	RETURN(0);
 
@@ -160,7 +160,7 @@ void hash_index_remove(struct hash_index *hind, const void *key)
 
 	rhashtable_remove_fast(&hind->hi_htbl, &entry->he_hash,
 			       hind->hi_htbl_params);
-	/* FIXME: use RCU for list insert/remove. */
+	
 	list_del(&entry->he_list_item);
 	OBD_FREE(entry, entry->he_len);
 }

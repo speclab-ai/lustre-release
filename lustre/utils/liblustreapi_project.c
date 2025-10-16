@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2025, DataDirect Networks Inc, all rights reserved.
  */
@@ -28,7 +28,7 @@
  *
  * Fields after projname and projid are proposed and NOT CURRENTLY IMPLEMENTED.
  * These fields are based on the Solaris /etc/project format, as described in:
- * https://docs.oracle.com/cd/E19044-01/sol.containers/817-1592/rmtaskproj-12/index.html
+ * https:
  *
  *  description - A very brief description of the project.
  *    May not contain colon ':' or '#' or control characters. Not in XFS.
@@ -72,7 +72,7 @@ struct ll_project_handle {
 	FILE		*lph_file;
 };
 
-/* open project mapping file and maintain state across calls in @hdl */
+
 int llapi_project_open(const char *name, struct ll_project_handle **hdl,
 		       char *mode)
 {
@@ -90,7 +90,7 @@ int llapi_project_open(const char *name, struct ll_project_handle **hdl,
 		projid_file = name;
 	}
 
-	/* allow overriding the project mapping filename for testing */
+	
 	projid_env = secure_getenv("LIBLUSTREAPI_PROJID_FILE");
 	if (projid_env)
 		projid_file = projid_env;
@@ -117,7 +117,7 @@ out_close:
 	return rc;
 }
 
-/* close project mapping file and release state in @hdl */
+
 int llapi_project_close(struct ll_project_handle *hdl)
 {
 	int rc = 0;
@@ -138,7 +138,7 @@ out:
 	return rc;
 }
 
-/* populate remaining fields in @lprj from open @hdl based on valid fields */
+
 int llapi_project_get(struct ll_project_handle *hdl, struct ll_project *lprj)
 {
 	unsigned int prjid;
@@ -146,11 +146,11 @@ int llapi_project_get(struct ll_project_handle *hdl, struct ll_project *lprj)
 	char *line = NULL;
 	size_t len = 0;
 
-	/* check that at least name or id is filled out in @lprj */
+	
 	if (!(lprj->lprj_valid & (LPRJ_VALID_NAME|LPRJ_VALID_ID)))
 		return -EINVAL;
 
-	/* Reset file pointer to the beginning of the file */
+	
 	rewind(hdl->lph_file);
 
 	while (getline(&line, &len, hdl->lph_file) != -1) {
@@ -161,18 +161,18 @@ int llapi_project_get(struct ll_project_handle *hdl, struct ll_project *lprj)
 		char attrs[256];
 		int num;
 
-		/* Skip empty lines and comment lines starting with '#' */
+		
 		if (line[0] == '\n' || line[0] == '#')
 			continue;
 
-		/* projname:projid[:comment:user_list:group_list:attributes] */
+		
 		num = sscanf(line,
 			    "%31[^:]:%u:%255[^:]:%255[^:]:%255[^:]:%255[^\n]",
 			    name, &prjid, comment, users, groups, attrs);
 		if (num < 2)
 			continue;
 
-		/* check if the valid fields are matching */
+		
 		if ((lprj->lprj_valid & LPRJ_VALID_NAME) &&
 		    strcmp(lprj->lprj_projname, name) == 0) {
 			lprj->lprj_projid = prjid;
@@ -190,7 +190,7 @@ int llapi_project_get(struct ll_project_handle *hdl, struct ll_project *lprj)
 		}
 	}
 
-	/* fill in the other fields here */
+	
 
 	if (line)
 		free(line);
@@ -198,14 +198,14 @@ int llapi_project_get(struct ll_project_handle *hdl, struct ll_project *lprj)
 	return rc;
 }
 
-/* free any allocated memory in @lprj */
+
 int llapi_project_put(struct ll_project_handle *hdl, struct ll_project *lprj,
 		      int flags)
 {
 	return 0;
 }
 
-/* populate fields in @lprj based on requested @name from open @hdl */
+
 int llapi_project_fgetnam(struct ll_project_handle *hdl,
 			  struct ll_project *lprj, const char *name)
 {
@@ -219,7 +219,7 @@ int llapi_project_fgetnam(struct ll_project_handle *hdl,
 	return llapi_project_get(hdl, lprj);
 }
 
-/* populate fields in @lprj based on requested @name */
+
 int llapi_project_getnam(struct ll_project *lprj, const char *name)
 {
 	struct ll_project_handle *hdl = NULL;
@@ -237,7 +237,7 @@ out:
 	return rc;
 }
 
-/* populate fields in @lprj based on requested @prjid from open @hdl */
+
 int llapi_project_fgetprjid(struct ll_project_handle *hdl,
 			 struct ll_project *lprj, const unsigned int prjid)
 {
@@ -251,7 +251,7 @@ int llapi_project_fgetprjid(struct ll_project_handle *hdl,
 	return llapi_project_get(hdl, lprj);
 }
 
-/* populate fields in @lprj based on requested @prjid */
+
 int llapi_project_getprjid(struct ll_project *lprj, __u32 prjid)
 {
 	struct ll_project_handle *hdl = NULL;

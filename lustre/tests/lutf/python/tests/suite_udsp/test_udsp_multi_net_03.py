@@ -101,7 +101,6 @@ def run():
 			rc = main.lh.exec_udsp_cmd(" add --src "+nid_str)
 
 		before_stats_main = main.lh.get_net_stats()
-		#print(before_stats_main)
 
 		for i in range(0, PING_TIMES):
 			rc = main.lh.exec_ping(agent_nids[PING_NID_NUM])
@@ -109,7 +108,6 @@ def run():
 				return lutfrc(LUTF_TEST_FAIL, "ping failed")
 
 		after_stats_main = main.lh.get_net_stats()
-		#print(after_stats_main)
 
 		send_count_before = {}
 		send_count_after = {}
@@ -125,8 +123,6 @@ def run():
 
 		send_count_nid_before = getStatNIDStr(before_stats_main, nid_str, 'send_count')
 		send_count_nid_after = getStatNIDStr(after_stats_main, nid_str, 'send_count')
-		#print(send_count_before, send_count_after)
-		#print(send_count_nid_before, send_count_nid_after)
 
 		# Check stats:
 		# 1) expect the total send_count to be no less than the number of pings issued

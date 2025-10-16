@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd main interface.
  */
@@ -59,7 +59,7 @@
 #include "kfi_tagged.h"
 #include "kfi_cxi_ext.h"
 
-/* KFILND CFS fail range 0xF100 - 0xF1FF. */
+
 
 #define CFS_KFI_FAIL_SEND_EVENT 0xF100
 #define CFS_KFI_FAIL_READ_EVENT 0xF101
@@ -89,19 +89,19 @@
 #define CFS_KFI_REPLAY_RX_HELLO_REQ 0xF119
 #define CFS_KFI_FAIL_MSG_TYPE_EAGAIN 0xF11A
 
-/* Maximum number of transaction keys supported. */
+
 #define KFILND_EP_KEY_BITS 16U
 #define KFILND_EP_KEY_MAX (BIT(KFILND_EP_KEY_BITS) - 1)
 
-/* Some constants which should be turned into tunables */
+
 #define KFILND_IMMEDIATE_MSG_SIZE 4096
 
 #define KFILND_MY_PROCID 49152
 
-/* default kfilnd timeout in seconds */
+
 #define KFILND_TIMEOUT_DEFAULT 125
 
-/* 256 Rx contexts max */
+
 #define KFILND_FAB_RX_CTX_BITS 8
 
 /* Get the KFI base address from a KFI RX address. RX context information is
@@ -112,7 +112,7 @@
 
 #define MIN_DURATION_RESET 0x7fffffffffffffffLL
 
-/* States used by all kfilnd structures */
+
 enum kfilnd_object_states {
 	KFILND_STATE_UNINITIALIZED,
 	KFILND_STATE_INITIALIZED,
@@ -164,7 +164,7 @@ struct kfilnd_transaction;
 struct kfilnd_ep;
 struct kfilnd_dev;
 
-/* Multi-receive buffers for immediate receives */
+
 struct kfilnd_immediate_buffer {
 	void *immed_buf;
 	size_t immed_buf_size;
@@ -193,24 +193,24 @@ struct kfilnd_cq {
 };
 
 struct kfilnd_ep {
-	/* The contexts for this CPT */
+	
 	struct kfid_ep *end_tx;
 	struct kfid_ep *end_rx;
 
-	/* Corresponding CQs */
+	
 	struct kfilnd_cq *end_tx_cq;
 	struct kfilnd_cq *end_rx_cq;
 
-	/* Specific config values for this endpoint */
+	
 	struct kfilnd_dev *end_dev;
 	int end_cpt;
 	int end_context_id;
 
-	/* List of transactions. */
+	
 	struct list_head tn_list;
 	spinlock_t tn_list_lock;
 
-	/* Replay queues. */
+	
 	struct list_head tn_replay;
 	struct list_head imm_buffer_replay;
 	spinlock_t replay_lock;
@@ -218,20 +218,20 @@ struct kfilnd_ep {
 	struct work_struct replay_work;
 	atomic_t replay_count;
 
-	/* Key used to build the tag for tagged buffers. */
+	
 	struct ida keys;
 
-	/* Pre-posted immediate buffers */
+	
 	struct kfilnd_immediate_buffer end_immed_bufs[];
 };
 
-/* Newly allocated peer */
+
 #define KP_STATE_NEW 0x1
-/* Peer after successful hello handshake */
+
 #define KP_STATE_UPTODATE 0x2
-/* Peer experienced some sort of network failure */
+
 #define KP_STATE_STALE 0x3
-/* We suspect this peer is actually down or otherwise unreachable */
+
 #define KP_STATE_DOWN 0x4
 /* We received a HELLO request from a new peer, and are waiting
  * for the response to our HELLO request. We can handle RX events for
@@ -274,11 +274,11 @@ static inline int kfilnd_timeout(void)
  * INIT -> SENDING
  * SENDING -> NONE
  */
-#define KP_HELLO_NONE 0 /* There is no hello request being sent */
-#define KP_HELLO_INIT 1 /* Hello request is initializing */
-#define KP_HELLO_SENDING 2 /* Hello request TN is in the state machine */
+#define KP_HELLO_NONE 0 
+#define KP_HELLO_INIT 1 
+#define KP_HELLO_SENDING 2 
 
-/* If kp_hello_state is SENDING then set to NONE */
+
 static inline void kfilnd_peer_clear_hello_state(struct kfilnd_peer *kp)
 {
 	atomic_cmpxchg(&kp->kp_hello_state, KP_HELLO_SENDING, KP_HELLO_NONE);
@@ -289,7 +289,7 @@ static inline bool kfilnd_peer_is_new_peer(struct kfilnd_peer *kp)
 	return atomic_read(&kp->kp_state) == KP_STATE_NEW;
 }
 
-/* We need to throttle messages if the peer is not up-to-date or stale */
+
 static inline bool kfilnd_peer_needs_throttle(struct kfilnd_peer *kp)
 {
 	unsigned int kp_state = atomic_read(&kp->kp_state);
@@ -323,7 +323,7 @@ static inline bool kfilnd_peer_needs_hello(struct kfilnd_peer *kp,
 	} else if (hello_state == KP_HELLO_SENDING &&
 		   ktime_before(kp->kp_hello_ts + kfilnd_timeout(),
 				ktime_get_seconds())) {
-		/* Sent hello but never received reply */
+		
 		CDEBUG(D_NET,
 		       "No response from %s(%p):0x%llx after %lld\n",
 		       libcfs_nid2str(kp->kp_nid), kp, kp->kp_addr,
@@ -353,18 +353,18 @@ struct kfilnd_dom {
 	struct kref cnt;
 };
 
-/* Transaction States */
+
 enum tn_states {
 	TN_STATE_INVALID,
 
-	/* Shared initiator and target states. */
+	
 	TN_STATE_IDLE,
 	TN_STATE_WAIT_TAG_COMP,
 
-	/* Initiator immediate states. */
+	
 	TN_STATE_IMM_SEND,
 
-	/* Initiator bulk states. */
+	
 	TN_STATE_TAGGED_RECV_POSTED,
 	TN_STATE_SEND_FAILED,
 	TN_STATE_WAIT_COMP,
@@ -373,15 +373,15 @@ enum tn_states {
 	TN_STATE_WAIT_TIMEOUT_TAG_COMP,
 	TN_STATE_FAIL,
 
-	/* Target states. */
+	
 	TN_STATE_IMM_RECV,
 	TN_STATE_WAIT_TAG_RMA_COMP,
 
-	/* Invalid max value. */
+	
 	TN_STATE_MAX,
 };
 
-/* Base duration state stats. */
+
 struct kfilnd_tn_duration_stat {
 	atomic64_t accumulated_duration;
 	atomic_t accumulated_count;
@@ -409,7 +409,7 @@ static inline unsigned int kfilnd_msg_len_to_data_size_bucket(size_t size)
 	if (size >= KFILND_DATA_SIZE_MAX_SIZE)
 		return KFILND_DATA_SIZE_BUCKETS - 1;
 
-	/* Round size up to the nearest power of 2. */
+	
 	bit = fls64(size);
 	if (BIT(bit) < size)
 		bit++;
@@ -417,38 +417,38 @@ static inline unsigned int kfilnd_msg_len_to_data_size_bucket(size_t size)
 	return (unsigned int)bit;
 }
 
-/* One data size duraction state bucket for each transaction state. */
+
 struct kfilnd_tn_state_data_size_duration_stats {
 	struct kfilnd_tn_data_size_duration_stats state[TN_STATE_MAX];
 };
 
 struct kfilnd_dev {
-	struct list_head	kfd_list;	/* chain on kfid_devs */
+	struct list_head	kfd_list;	
 	struct lnet_ni		*kfd_ni;
 	enum kfilnd_object_states kfd_state;
 
-	/* KFI LND domain the device is associated with. */
+	
 	struct kfilnd_dom	*dom;
 
-	/* Fields specific to kfabric operation */
+	
 	spinlock_t		kfd_lock;
 	struct kfid_ep		*kfd_sep;
 	struct kfid_av		*kfd_av;
 	struct kfilnd_ep	**kfd_endpoints;
 
-	/* Map of LNet NI CPTs to endpoints. */
+	
 	struct kfilnd_ep	**cpt_to_endpoint;
 
-	/* Hash of LNet NIDs to KFI addresses. */
+	
 	struct rhashtable peer_cache;
 
-	/* Per LNet NI states. */
+	
 	struct kfilnd_tn_state_data_size_duration_stats initiator_state_stats;
 	struct kfilnd_tn_state_data_size_duration_stats target_state_stats;
 	struct kfilnd_tn_data_size_duration_stats initiator_stats;
 	struct kfilnd_tn_data_size_duration_stats target_stats;
 
-	/* Per LNet NI debugfs stats. */
+	
 	struct dentry *dev_dir;
 	struct dentry *initiator_state_stats_file;
 	struct dentry *initiator_stats_file;
@@ -456,45 +456,45 @@ struct kfilnd_dev {
 	struct dentry *target_stats_file;
 	struct dentry *reset_stats_file;
 
-	/* Physical NIC address. */
+	
 	unsigned int nic_addr;
 	atomic_t session_keys;
 
-	/* Physical device. */
+	
 	struct device *device;
 };
 
-/* Invalid checksum value is treated as no checksum. */
-/* TODO: Module parameter to disable checksum? */
+
+
 #define NO_CHECKSUM 0x0
 
-/* Hello message header. */
+
 struct kfilnd_hello_msg {
-	/* Support kfilnd version. */
+	
 	__u16 version;
 
-	/* Base RX context peer should used. */
+	
 	__u16 rx_base;
 
-	/* Session key used by peer. */
+	
 	__u32 session_key;
 
-	/* RX context count peer can target. */
+	
 	__u16 rx_count;
 } __packed;
 
-/* Immediate message header. */
+
 struct kfilnd_immed_msg {
 	/* Entire LNet header needed by the destination to match incoming
 	 * message.
 	 */
 	struct lnet_hdr_nid4	hdr;
 
-	/* Entire LNet message payload. */
+	
 	char payload[];
 } __packed;
 
-/* Bulk request message header. */
+
 struct kfilnd_bulk_req_msg {
 	/* Entire LNet header needed by the destination to match incoming
 	 * message.
@@ -506,7 +506,7 @@ struct kfilnd_bulk_req_msg {
 	 */
 	__u32 response_rx;
 
-	/* Memory key needed by the target to push/pull LNet payload. */
+	
 	__u16 key;
 } __packed;
 
@@ -521,10 +521,10 @@ struct kfilnd_bulk_req_msg_v2 {
 	 */
 	__u32 kbrm2_response_rx;
 
-	/* Memory key needed by the target to push/pull LNet payload. */
+	
 	__u16 kbrm2_key;
 
-	/* Session key used by peer. */
+	
 	__u32 kbrm2_session_key;
 } __packed;
 
@@ -532,31 +532,31 @@ struct kfilnd_bulk_req_msg_v2 {
  * message.
  */
 struct kfilnd_msg {
-	/* Unique kfilnd magic. */
+	
 	__u32 magic;
 
-	/* Version of the kfilnd protocol. */
+	
 	__u16 version;
 
-	/* Specific kfilnd protocol type. */
+	
 	__u8 type;
 
-	/* Unused 8 bits. */
+	
 	__u8 reserved;
 
-	/* Number of bytes in message. */
+	
 	__u16 nob;
 
-	/* Checksum of entire message. 0 is checksum disabled. */
+	
 	__sum16 cksum;
 
-	/* Message LNet source NID. */
+	
 	__u64 srcnid;
 
-	/* Message LNet target NID. */
+	
 	__u64 dstnid;
 
-	/* Embedded protocol headers. Must remain at bottom. */
+	
 	union {
 		struct kfilnd_immed_msg immed;
 		struct kfilnd_bulk_req_msg bulk_req;
@@ -565,7 +565,7 @@ struct kfilnd_msg {
 	} __packed proto;
 } __packed;
 
-#define KFILND_MSG_MAGIC LNET_PROTO_KFI_MAGIC	/* unique magic */
+#define KFILND_MSG_MAGIC LNET_PROTO_KFI_MAGIC	
 
 #define KFILND_MSG_VERSION_1	0x1
 #define KFILND_MSG_VERSION_2	0x2
@@ -634,19 +634,19 @@ struct kfilnd_msg {
 			KFILND_TN_DIR_ERROR(tn, fmt, "<-", ##__VA_ARGS__); \
 	} while (0)
 
-/* TODO: Support NOOPs? */
+
 enum kfilnd_msg_type {
-	/* Valid message types start at 1. */
+	
 	KFILND_MSG_INVALID,
 
-	/* Valid message types. */
+	
 	KFILND_MSG_IMMEDIATE,
 	KFILND_MSG_BULK_PUT_REQ,
 	KFILND_MSG_BULK_GET_REQ,
 	KFILND_MSG_HELLO_REQ,
 	KFILND_MSG_HELLO_RSP,
 
-	/* Invalid max value. */
+	
 	KFILND_MSG_MAX,
 };
 
@@ -688,11 +688,11 @@ static inline const char *tn_state_to_str(enum tn_states type)
 	return str[type];
 };
 
-/* Transaction Events */
+
 enum tn_events {
 	TN_EVENT_INVALID,
 
-	/* Initiator events. */
+	
 	TN_EVENT_INIT_IMMEDIATE,
 	TN_EVENT_INIT_BULK,
 	TN_EVENT_TX_HELLO,
@@ -703,7 +703,7 @@ enum tn_events {
 	TN_EVENT_TAG_RX_CANCEL,
 	TN_EVENT_TIMEOUT,
 
-	/* Target events. */
+	
 	TN_EVENT_RX_HELLO,
 	TN_EVENT_RX_OK,
 	TN_EVENT_RX_FAIL,
@@ -712,7 +712,7 @@ enum tn_events {
 	TN_EVENT_TAG_TX_OK,
 	TN_EVENT_TAG_TX_FAIL,
 
-	/* Invalid max value. */
+	
 	TN_EVENT_MAX,
 };
 
@@ -746,25 +746,25 @@ struct kfilnd_transaction_msg {
 	size_t length;
 };
 
-/* Initiator and target transaction structure. */
+
 struct kfilnd_transaction {
-	/* Endpoint list transaction lives on. */
+	
 	struct list_head	tn_entry;
-	struct mutex		tn_lock;	/* to serialize events */
-	int			tn_status;	/* return code from ops */
-	struct kfilnd_ep	*tn_ep;		/* endpoint we operate under */
-	enum tn_states		tn_state;	/* current state of Tn */
-	struct lnet_msg		*tn_lntmsg;	/* LNet msg to finalize */
-	struct lnet_msg		*tn_getreply;	/* GET LNet msg to finalize */
+	struct mutex		tn_lock;	
+	int			tn_status;	
+	struct kfilnd_ep	*tn_ep;		
+	enum tn_states		tn_state;	
+	struct lnet_msg		*tn_lntmsg;	
+	struct lnet_msg		*tn_getreply;	
 
-	bool			is_initiator;	/* Initiated LNet transfer. */
+	bool			is_initiator;	
 
-	/* Transaction send message and target address. */
+	
 	kfi_addr_t		tn_target_addr;
 	struct kfilnd_peer	*tn_kp;
 	struct kfilnd_transaction_msg tn_tx_msg;
 
-	/* Transaction multi-receive buffer and associated receive message. */
+	
 	struct kfilnd_immediate_buffer *tn_posted_buf;
 	struct kfilnd_transaction_msg tn_rx_msg;
 
@@ -774,13 +774,13 @@ struct kfilnd_transaction {
 	struct bio_vec		tn_kiov[LNET_MAX_IOV];
 	unsigned int		tn_num_iovec;
 
-	/* LNet transaction payload byte count. */
+	
 	unsigned int		tn_nob;
 
-	/* Bulk transaction buffer is sink or source buffer. */
+	
 	bool sink_buffer;
 
-	/* Memory region and remote key used to cover initiator's buffer. */
+	
 	u16			tn_mr_key;
 
 	/* RX context used to perform response operations to a Put/Get
@@ -796,23 +796,23 @@ struct kfilnd_transaction {
 	 */
 	u64 tagged_data;
 
-	/* Bulk operation timeout timer. */
+	
 	struct timer_list timeout_timer;
 	struct work_struct timeout_work;
 
-	/* Transaction health status. */
+	
 	enum lnet_msg_hstatus hstatus;
 
-	/* Transaction deadline. */
+	
 	ktime_t deadline;
-	/* Transaction replay deadline. */
+	
 	ktime_t tn_replay_deadline;
 
 	ktime_t tn_alloc_ts;
 	ktime_t tn_state_ts;
 	size_t lnet_msg_len;
 
-	/* Fields used to replay transaction. */
+	
 	struct list_head replay_entry;
 	enum tn_events replay_event;
 	int replay_status;
@@ -823,4 +823,4 @@ struct kfilnd_transaction {
 int kfilnd_send_hello_request(struct kfilnd_dev *dev, int cpt,
 			      struct kfilnd_peer *kp);
 
-#endif /* _KFILND_ */
+#endif 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Object Devices Class Driver
  * These are the only exported functions, they provide some generic
@@ -146,15 +146,15 @@ static ssize_t max_dirty_mb_store(struct kobject *kobj, struct attribute *attr,
 	if (rc)
 		return rc;
 
-	val *= 1 << (20 - PAGE_SHIFT); /* convert to pages */
+	val *= 1 << (20 - PAGE_SHIFT); 
 
 	if (val > ((cfs_totalram_pages() / 10) * 9)) {
-		/* Somebody wants to assign too much memory to dirty pages */
+		
 		return -EINVAL;
 	}
 
 	if (val < 4 << (20 - PAGE_SHIFT)) {
-		/* Less than 4 Mb for dirty cache is also bad */
+		
 		return -EINVAL;
 	}
 
@@ -190,7 +190,7 @@ static ssize_t no_transno_store(struct kobject *kobj,
 	return count;
 }
 LUSTRE_WO_ATTR(no_transno);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 static ssize_t version_show(struct kobject *kobj, struct attribute *attr,
 			    char *buf)
@@ -280,7 +280,7 @@ static ssize_t enable_health_write_store(struct kobject *kobj,
 	return count;
 }
 LUSTRE_RW_ATTR(enable_health_write);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 static ssize_t enable_fname_encoding_show(struct kobject *kobj,
 					struct attribute *attr,
@@ -324,7 +324,7 @@ static ssize_t jobid_var_store(struct kobject *kobj, struct attribute *attr,
 
 	memcpy(obd_jobid_var, buffer, count);
 
-	/* Trim the trailing '\n' if any */
+	
 	if (obd_jobid_var[count - 1] == '\n')
 		obd_jobid_var[count - 1] = 0;
 
@@ -353,14 +353,14 @@ static ssize_t jobid_name_store(struct kobject *kobj, struct attribute *attr,
 		return count;
 	}
 
-	/* clear previous value */
+	
 	memset(obd_jobid_name, 0, LUSTRE_JOBID_SIZE);
 
 	memcpy(obd_jobid_name, buffer, count);
 
-	/* Trim the trailing '\n' if any */
+	
 	if (obd_jobid_name[count - 1] == '\n') {
-		/* Don't echo just a newline */
+		
 		if (count == 1)
 			return -EINVAL;
 		obd_jobid_name[count - 1] = 0;
@@ -466,17 +466,17 @@ static ssize_t debug_raw_pointers_store(struct kobject *kobj,
 	return count;
 }
 
-/* Root for /sys/kernel/debug/lustre */
+
 struct dentry *debugfs_lustre_root;
 EXPORT_SYMBOL_GPL(debugfs_lustre_root);
 
 #ifdef CONFIG_PROC_FS
-/* Root for /proc/fs/lustre */
+
 struct proc_dir_entry *proc_lustre_root;
 EXPORT_SYMBOL(proc_lustre_root);
 #else
 #define lprocfs_base NULL
-#endif /* CONFIG_PROC_FS */
+#endif 
 
 LUSTRE_RO_ATTR(version);
 LUSTRE_RO_ATTR(pinger);
@@ -636,7 +636,7 @@ static const struct file_operations obd_device_list_fops = {
 	.release = seq_release,
 };
 
-/* checksum_speed */
+
 static void *checksum_speed_start(struct seq_file *p, loff_t *pos)
 {
 	return pos;
@@ -729,7 +729,7 @@ int class_procfs_init(void)
 	if (!lustre_kset)
 		goto out;
 
-	/* Create the files associated with this kobject */
+	
 	rc = sysfs_create_group(&lustre_kset->kobj, &lustre_attr_group);
 	if (rc) {
 		kset_unregister(lustre_kset);
@@ -783,9 +783,9 @@ int class_procfs_clean(void)
 	RETURN(0);
 }
 
-/* filename encoding */
+
 #define ENCODE_FN_LEN	BASE64URL_CHARS(sizeof(__u64)) + 2
-#define FN_COUNT 64 /* must be power-of-two value */
+#define FN_COUNT 64 
 const char *encode_fn_len(const char *fname, size_t namelen)
 {
 	static char fn_array[FN_COUNT][ENCODE_FN_LEN];

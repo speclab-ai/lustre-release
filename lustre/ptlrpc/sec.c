@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Eric Mei <ericm@clusterfs.com>
  */
@@ -254,7 +254,7 @@ EXPORT_SYMBOL(sptlrpc_secflags2str);
  * client context APIs
  */
 
-/* existingroot to tell we only want to fetch an already existing root ctx */
+
 static
 struct ptlrpc_cli_ctx *get_my_ctx(struct ptlrpc_sec *sec, bool existingroot)
 {
@@ -403,7 +403,7 @@ static int import_sec_validate_get(struct obd_import *imp,
 
 	*sec = sptlrpc_import_sec_ref(imp);
 	if (*sec == NULL) {
-		/* Only output an error when the import is still active */
+		
 		if (!test_bit(WORK_STRUCT_PENDING_BIT,
 			      work_data_bits(&imp->imp_zombie_work)))
 			CERROR("import %p (%s) with no sec\n",
@@ -503,7 +503,7 @@ int sptlrpc_req_ctx_switch(struct ptlrpc_request *req,
 			   struct ptlrpc_cli_ctx *newctx)
 {
 	struct sptlrpc_flavor old_flvr;
-	char *reqmsg = NULL; /* to workaround old gcc */
+	char *reqmsg = NULL; 
 	int reqmsg_size;
 	int rc = 0;
 
@@ -515,10 +515,10 @@ int sptlrpc_req_ctx_switch(struct ptlrpc_request *req,
 	       oldctx->cc_sec->ps_policy->sp_name, newctx->cc_sec,
 	       newctx->cc_sec->ps_policy->sp_name);
 
-	/* save flavor */
+	
 	old_flvr = req->rq_flvr;
 
-	/* save request message */
+	
 	reqmsg_size = req->rq_reqlen;
 	if (reqmsg_size != 0) {
 		LASSERT(req->rq_reqmsg);
@@ -528,13 +528,13 @@ int sptlrpc_req_ctx_switch(struct ptlrpc_request *req,
 		memcpy(reqmsg, req->rq_reqmsg, reqmsg_size);
 	}
 
-	/* release old req/rep buf */
+	
 	req->rq_cli_ctx = oldctx;
 	sptlrpc_cli_free_reqbuf(req);
 	sptlrpc_cli_free_repbuf(req);
 	req->rq_cli_ctx = newctx;
 
-	/* recalculate the flavor */
+	
 	sptlrpc_req_set_flavor(req, 0);
 
 	/*
@@ -614,7 +614,7 @@ int sptlrpc_req_replace_dead_ctx(struct ptlrpc_request *req,
 		if (unlikely(rc)) {
 			LASSERT(!req->rq_cli_ctx);
 
-			/* restore old ctx */
+			
 			GOTO(restore, rc);
 		}
 		newctx = req->rq_cli_ctx;
@@ -647,7 +647,7 @@ int sptlrpc_req_replace_dead_ctx(struct ptlrpc_request *req,
 		 */
 		rc = sptlrpc_req_ctx_switch(req, oldctx, newctx);
 		if (rc) {
-			/* restore old ctx */
+			
 			sptlrpc_req_put_ctx(req, 0);
 			GOTO(restore, rc);
 		}
@@ -848,7 +848,7 @@ out_sec_put:
 	if (timeout == 0)
 		RETURN(-EAGAIN);
 
-	/* Clear any flags that may be present from previous sends */
+	
 	LASSERT(req->rq_receiving_reply == 0);
 	spin_lock(&req->rq_lock);
 	req->rq_err = 0;
@@ -877,7 +877,7 @@ out_sec_put:
 	 *   e.g. ptlrpc_abort_inflight();
 	 */
 	if (!cli_ctx_is_refreshed(ctx)) {
-		/* timed out or interruptted */
+		
 		req_off_ctx_list(req, ctx);
 
 		LASSERT(rc != 0);
@@ -887,7 +887,7 @@ out_sec_put:
 	goto again;
 }
 
-/* Bring ptlrpc_sec context up-to-date */
+
 int sptlrpc_export_update_ctx(struct obd_export *exp)
 {
 	struct obd_import *imp = exp ? exp->exp_imp_reverse : NULL;
@@ -931,7 +931,7 @@ void sptlrpc_req_set_flavor(struct ptlrpc_request *req, int opcode)
 	LASSERT(req->rq_cli_ctx->cc_sec);
 	LASSERT(req->rq_bulk_read == 0 || req->rq_bulk_write == 0);
 
-	/* special security flags according to opcode */
+	
 	switch (opcode) {
 	case OST_READ:
 	case MDS_READPAGE:
@@ -950,11 +950,11 @@ void sptlrpc_req_set_flavor(struct ptlrpc_request *req, int opcode)
 		req->rq_ctx_fini = 1;
 		break;
 	case 0:
-		/* init/fini rpc won't be resend, so can't be here */
+		
 		LASSERT(req->rq_ctx_init == 0);
 		LASSERT(req->rq_ctx_fini == 0);
 
-		/* cleanup flags, which should be recalculated */
+		
 		req->rq_pack_udesc = 0;
 		req->rq_pack_bulk = 0;
 		break;
@@ -975,12 +975,12 @@ void sptlrpc_req_set_flavor(struct ptlrpc_request *req, int opcode)
 	else if (unlikely(req->rq_ctx_fini))
 		flvr_set_svc(&req->rq_flvr.sf_rpc, SPTLRPC_SVC_INTG);
 
-	/* user descriptor flag, null security can't do it anyway */
+	
 	if ((sec->ps_flvr.sf_flags & PTLRPC_SEC_FL_UDESC) &&
 	    (req->rq_flvr.sf_rpc != SPTLRPC_FLVR_NULL))
 		req->rq_pack_udesc = 1;
 
-	/* bulk security flag */
+	
 	if ((req->rq_bulk_read || req->rq_bulk_write) &&
 	    sptlrpc_flavor_has_bulk(&req->rq_flvr))
 		req->rq_pack_bulk = 1;
@@ -1244,7 +1244,7 @@ int sptlrpc_cli_unwrap_early_reply(struct ptlrpc_request *req,
 	if (early_buf == NULL)
 		GOTO(err_req, rc = -ENOMEM);
 
-	/* sanity checkings and copy data out, do it inside spinlock */
+	
 	spin_lock(&req->rq_lock);
 
 	if (req->rq_replied) {
@@ -1263,7 +1263,7 @@ int sptlrpc_cli_unwrap_early_reply(struct ptlrpc_request *req,
 	}
 
 	if (req->rq_nob_received != early_size) {
-		/* even another early arrived the size should be the same */
+		
 		CERROR("data size has changed from %u to %u\n",
 		       early_size, req->rq_nob_received);
 		spin_unlock(&req->rq_lock);
@@ -1535,7 +1535,7 @@ static void sptlrpc_import_sec_install(struct obd_import *imp,
 	if (old_sec) {
 		sptlrpc_sec_kill(old_sec);
 
-		/* balance the ref taken by this import */
+		
 		sptlrpc_sec_put(old_sec);
 	}
 }
@@ -1589,7 +1589,7 @@ int sptlrpc_import_sec_adapt(struct obd_import *imp,
 
 		sp = imp->imp_obd->u.cli.cl_sp_me;
 	} else {
-		/* reverse import, determine flavor from incoming reqeust */
+		
 		sf = *flvr;
 
 		if (sf.sf_rpc != SPTLRPC_FLVR_NULL)
@@ -1713,7 +1713,7 @@ int sptlrpc_cli_alloc_reqbuf(struct ptlrpc_request *req, int msgsize)
 		LASSERT(req->rq_reqmsg);
 		LASSERT(req->rq_reqbuf || req->rq_clrbuf);
 
-		/* zeroing preallocated buffer */
+		
 		if (req->rq_pool)
 			memset(req->rq_reqmsg, 0, msgsize);
 	}
@@ -1761,7 +1761,7 @@ void _sptlrpc_enlarge_msg_inplace(struct lustre_msg *msg,
 	if (msg->lm_buflens[segment] == newsize)
 		return;
 
-	/* nothing to do if we are enlarging the last segment */
+	
 	if (segment == msg->lm_bufcount - 1) {
 		msg->lm_buflens[segment] = newsize;
 		return;
@@ -1774,7 +1774,7 @@ void _sptlrpc_enlarge_msg_inplace(struct lustre_msg *msg,
 	dst = lustre_msg_buf(msg, segment + 1, 0);
 	msg->lm_buflens[segment] = oldsize;
 
-	/* move from segment + 1 to end segment */
+	
 	LASSERT(msg->lm_magic == LUSTRE_MSG_MAGIC_V2);
 	oldmsg_size = lustre_msg_size_v2(msg->lm_bufcount, msg->lm_buflens);
 	movesize = oldmsg_size - ((unsigned long) src - (unsigned long) msg);
@@ -1783,9 +1783,9 @@ void _sptlrpc_enlarge_msg_inplace(struct lustre_msg *msg,
 	if (movesize)
 		memmove(dst, src, movesize);
 
-	/* note we don't clear the ares where old data live, not secret */
+	
 
-	/* finally set new segment size */
+	
 	msg->lm_buflens[segment] = newsize;
 }
 EXPORT_SYMBOL(_sptlrpc_enlarge_msg_inplace);
@@ -1913,20 +1913,20 @@ int sptlrpc_svc_install_rvs_ctx(struct obd_import *imp,
 }
 
 
-/* Get SELinux policy info from userspace */
+
 static int sepol_helper(struct obd_import *imp)
 {
 	char mtime_str[21] = { 0 }, mode_str[2] = { 0 };
 	char *argv[] = {
 		[0] = "/usr/sbin/l_getsepol",
 		[1] = "-o",
-		[2] = NULL,	    /* obd type */
+		[2] = NULL,	    
 		[3] = "-n",
-		[4] = NULL,	    /* obd name */
+		[4] = NULL,	    
 		[5] = "-t",
-		[6] = mtime_str,    /* policy mtime */
+		[6] = mtime_str,    
 		[7] = "-m",
-		[8] = mode_str,	    /* enforcing mode */
+		[8] = mode_str,	    
 		[9] = NULL
 	};
 	struct sptlrpc_sepol *sepol;
@@ -1948,7 +1948,7 @@ static int sepol_helper(struct obd_import *imp)
 	rcu_read_lock();
 	sepol = rcu_dereference(imp->imp_sec->ps_sepol);
 	if (!sepol) {
-		/* ps_sepol has not been initialized */
+		
 		argv[5] = NULL;
 		argv[7] = NULL;
 	} else {
@@ -1976,24 +1976,24 @@ static inline int sptlrpc_sepol_needs_check(struct ptlrpc_sec *imp_sec)
 		return 0;
 
 	if (send_sepol == -1)
-		/* send_sepol == -1 means fetch sepol status every time */
+		
 		return 1;
 
 	spin_lock(&imp_sec->ps_lock);
 	checknext = imp_sec->ps_sepol_checknext;
 	spin_unlock(&imp_sec->ps_lock);
 
-	/* next check is too far in time, please update */
+	
 	if (ktime_after(checknext,
 			ktime_add(ktime_get(), ktime_set(send_sepol, 0))))
 		goto setnext;
 
 	if (ktime_before(ktime_get(), checknext))
-		/* too early to fetch sepol status */
+		
 		return 0;
 
 setnext:
-	/* define new sepol_checknext time */
+	
 	spin_lock(&imp_sec->ps_lock);
 	imp_sec->ps_sepol_checknext = ktime_add(ktime_get(),
 						ktime_set(send_sepol, 0));
@@ -2055,7 +2055,7 @@ struct sptlrpc_sepol *sptlrpc_sepol_get(struct ptlrpc_request *req)
 	if (imp_sec == NULL)
 		RETURN(ERR_PTR(-EINVAL));
 
-	/* Retrieve SELinux status info */
+	
 	if (sptlrpc_sepol_needs_check(imp_sec))
 		rc = sepol_helper(req->rq_import);
 
@@ -2124,7 +2124,7 @@ int sptlrpc_target_export_check(struct obd_export *exp,
 	if (exp->exp_imp_reverse == NULL)
 		return 0;
 
-	/* don't care about ctx fini rpc */
+	
 	if (req->rq_ctx_fini)
 		return 0;
 
@@ -2153,11 +2153,11 @@ int sptlrpc_target_export_check(struct obd_export *exp,
 					  EXP_FLVR_UPDATE_EXPIRE;
 		exp->exp_flvr = flavor;
 
-		/* flavor change finished */
+		
 		exp->exp_flvr_changed = 0;
 		LASSERT(exp->exp_flvr_adapt == 1);
 
-		/* if it's gss, we only interested in root ctx init */
+		
 		if (req->rq_auth_gss &&
 		    !(req->rq_ctx_init &&
 		    (req->rq_auth_usr_root || req->rq_auth_usr_mdt ||
@@ -2345,28 +2345,28 @@ EXPORT_SYMBOL(sptlrpc_target_update_exp_flavor);
 
 static int sptlrpc_svc_check_from(struct ptlrpc_request *req, int svc_rc)
 {
-	/* peer's claim is unreliable unless gss is being used */
+	
 	if (!req->rq_auth_gss || svc_rc == SECSVC_DROP)
 		return svc_rc;
 
 	switch (req->rq_sp_from) {
 	case LUSTRE_SP_CLI:
 		if (req->rq_auth_usr_mdt || req->rq_auth_usr_ost) {
-			/* The below message is checked in sanity-sec test_33 */
+			
 			DEBUG_REQ(D_ERROR, req, "faked source CLI");
 			svc_rc = SECSVC_DROP;
 		}
 		break;
 	case LUSTRE_SP_MDT:
 		if (!req->rq_auth_usr_mdt) {
-			/* The below message is checked in sanity-sec test_33 */
+			
 			DEBUG_REQ(D_ERROR, req, "faked source MDT");
 			svc_rc = SECSVC_DROP;
 		}
 		break;
 	case LUSTRE_SP_OST:
 		if (!req->rq_auth_usr_ost) {
-			/* The below message is checked in sanity-sec test_33 */
+			
 			DEBUG_REQ(D_ERROR, req, "faked source OST");
 			svc_rc = SECSVC_DROP;
 		}
@@ -2374,7 +2374,7 @@ static int sptlrpc_svc_check_from(struct ptlrpc_request *req, int svc_rc)
 	case LUSTRE_SP_MGS:
 		if (!req->rq_auth_usr_root && !req->rq_auth_usr_mdt &&
 		    !req->rq_auth_usr_ost) {
-			/* The below message is checked in sanity-sec test_33 */
+			
 			DEBUG_REQ(D_ERROR, req, "faked source MGS");
 			svc_rc = SECSVC_DROP;
 		}
@@ -2405,7 +2405,7 @@ static int sptlrpc_svc_check_from(struct ptlrpc_request *req, int svc_rc)
 			faked = false;
 		}
 		if (faked) {
-			/* The below message is checked in sanity-sec test_33 */
+			
 			DEBUG_REQ(D_ERROR, req, "faked source MGC");
 			svc_rc = SECSVC_DROP;
 		}
@@ -2466,7 +2466,7 @@ int sptlrpc_svc_unwrap_request(struct ptlrpc_request *req)
 
 	req->rq_flvr.sf_rpc = WIRE_FLVR(msg->lm_secflvr);
 	req->rq_sp_from = LUSTRE_SP_ANY;
-	req->rq_auth_uid = -1; /* set to INVALID_UID */
+	req->rq_auth_uid = -1; 
 	req->rq_auth_mapped_uid = -1;
 
 	policy = sptlrpc_wireflavor2policy(req->rq_flvr.sf_rpc);
@@ -2488,7 +2488,7 @@ int sptlrpc_svc_unwrap_request(struct ptlrpc_request *req)
 	if (SPTLRPC_FLVR_POLICY(req->rq_flvr.sf_rpc) != SPTLRPC_POLICY_NULL)
 		req->rq_req_swab_mask = 0;
 
-	/* sanity check for the request source */
+	
 	rc = sptlrpc_svc_check_from(req, rc);
 	RETURN(rc);
 }
@@ -2526,14 +2526,14 @@ int sptlrpc_svc_alloc_rs(struct ptlrpc_request *req, int msglen)
 
 		if (svcpt->scp_service->srv_max_reply_size <
 		   msglen + sizeof(struct ptlrpc_reply_state)) {
-			/* Just return failure if the size is too big */
+			
 			CERROR("size of message is too big (%zd), %d allowed\n",
 				msglen + sizeof(struct ptlrpc_reply_state),
 				svcpt->scp_service->srv_max_reply_size);
 			RETURN(-ENOMEM);
 		}
 
-		/* failed alloc, try emergency pool */
+		
 		rs = lustre_get_emerg_rs(svcpt);
 		if (rs == NULL)
 			RETURN(-ENOMEM);
@@ -2820,7 +2820,7 @@ int sptlrpc_svc_unwrap_bulk(struct ptlrpc_request *req,
 			CERROR("error unwrap bulk: %d\n", rc);
 	}
 
-	/* return 0 to allow reply be sent */
+	
 	return 0;
 }
 EXPORT_SYMBOL(sptlrpc_svc_unwrap_bulk);
@@ -2852,7 +2852,7 @@ int sptlrpc_svc_prep_bulk(struct ptlrpc_request *req,
 }
 EXPORT_SYMBOL(sptlrpc_svc_prep_bulk);
 
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 /*
  * user descriptor helpers
@@ -2891,10 +2891,10 @@ int sptlrpc_pack_user_desc(struct lustre_msg *msg, int offset)
 #ifdef HAVE_GROUP_INFO_GID
 	memcpy(pud->pud_groups, current_cred()->group_info->gid,
 	       pud->pud_ngroups * sizeof(__u32));
-#else /* !HAVE_GROUP_INFO_GID */
+#else 
 	memcpy(pud->pud_groups, current_cred()->group_info->blocks[0],
 	       pud->pud_ngroups * sizeof(__u32));
-#endif /* HAVE_GROUP_INFO_GID */
+#endif 
 	task_unlock(current);
 
 	return 0;
@@ -3014,7 +3014,7 @@ int bulk_sec_desc_unpack(struct lustre_msg *msg, int offset, int swabbed)
 		return -EPROTO;
 	}
 
-	/* FIXME more sanity check here */
+	
 
 	if (unlikely(bsd->bsd_svc != SPTLRPC_BULK_SVC_NULL &&
 		     bsd->bsd_svc != SPTLRPC_BULK_SVC_INTG &&

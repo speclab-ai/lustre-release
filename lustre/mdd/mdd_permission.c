@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Server (mdd) routines
  *
@@ -107,7 +107,7 @@ int mdd_acl_set(const struct lu_env *env, struct mdd_object *obj,
 	if (IS_ERR(handle))
 		RETURN(PTR_ERR(handle));
 
-	/* rc tells whether ACL can be represented by i_mode only */
+	
 	if (not_equiv)
 		rc = mdo_declare_xattr_set(env, obj, buf,
 				XATTR_NAME_ACL_ACCESS, fl, handle);
@@ -128,7 +128,7 @@ int mdd_acl_set(const struct lu_env *env, struct mdd_object *obj,
 		GOTO(stop, rc);
 
 	mdd_write_lock(env, obj, DT_TGT_CHILD);
-	/* whether ACL can be represented by i_mode only */
+	
 	if (not_equiv)
 		rc = mdo_xattr_set(env, obj, buf, XATTR_NAME_ACL_ACCESS, fl,
 				   handle);
@@ -140,7 +140,7 @@ int mdd_acl_set(const struct lu_env *env, struct mdd_object *obj,
 	if (mode_change)
 		rc = mdo_attr_set(env, obj, la, handle);
 
-	/* security-replated changes may require sync */
+	
 	if (S_ISDIR(mdd_object_type(obj)))
 		handle->th_sync |= !!mdd->mdd_sync_permission;
 unlock:
@@ -241,11 +241,11 @@ int __mdd_permission_internal(const struct lu_env *env, struct mdd_object *obj,
 	if (may_mask == 0)
 		RETURN(0);
 
-	/* These means unnecessary for permission check */
+	
 	if ((uc == NULL) || (uc->uc_valid == UCRED_INIT))
 		RETURN(0);
 
-	/* Invalid user credit */
+	
 	if (uc->uc_valid == UCRED_INVALID)
 		RETURN(-EACCES);
 

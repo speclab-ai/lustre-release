@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /* Copyright 2012 Xyratex Technology Limited
  *
@@ -18,14 +18,14 @@ struct cfs_crypto_hash_type {
 	unsigned int    cht_key;	/* init key by default (vaild for
 					 * 4 bytes context like crc32, adler
 					 */
-	unsigned int    cht_size;       /* hash digest size */
+	unsigned int    cht_size;       
 };
 
 struct cfs_crypto_crypt_type {
 	char	       *cct_name;	  /* crypto algorithm name, equal to
 					   * format name for crypto api
 					   */
-	unsigned int    cct_size;         /* crypto key size */
+	unsigned int    cct_size;         
 };
 
 enum cfs_crypto_hash_alg {
@@ -33,7 +33,7 @@ enum cfs_crypto_hash_alg {
 	CFS_HASH_ALG_ADLER32,
 	CFS_HASH_ALG_CRC32,
 	CFS_HASH_ALG_CRC32C,
-	/* hashes before here will be speed-tested at module load */
+	
 	CFS_HASH_ALG_MD5,
 	CFS_HASH_ALG_SHA1,
 	CFS_HASH_ALG_SHA256,
@@ -115,10 +115,10 @@ static struct cfs_crypto_crypt_type crypt_types[] = {
 	}
 };
 
-/* Maximum size of hash_types[].cht_size */
+
 #define CFS_CRYPTO_HASH_DIGESTSIZE_MAX 64
 
-/*  Array of hash algorithm speed in MByte per second */
+
 extern int cfs_crypto_hash_speeds[CFS_HASH_ALG_MAX];
 
 /**
@@ -284,4 +284,4 @@ int cfs_crypto_hash_digest(enum cfs_crypto_hash_alg hash_alg,
 			   unsigned char *key, unsigned int key_len,
 			   unsigned char *hash, unsigned int *hash_len);
 
-#endif /* _UAPI_LNET_CRYPT_H_ */
+#endif 

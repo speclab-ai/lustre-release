@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2017, DDN Storage Corporation.
  */
@@ -36,7 +36,7 @@
 
 #define CHLG_POLL_INTV	60
 #define REC_MIN_AGE	600
-#define DEF_CACHE_SIZE	(256 * 1048576) /* 256MB */
+#define DEF_CACHE_SIZE	(256 * 1048576) 
 #define ONE_MB 0x100000
 
 struct options {
@@ -48,7 +48,7 @@ struct options {
 	int		 o_verbose;
 	int		 o_intv;
 	int		 o_min_age;
-	unsigned long	 o_cached_fid_hiwm; /* high watermark */
+	unsigned long	 o_cached_fid_hiwm; 
 	unsigned long	 o_batch_sync_cnt;
 };
 
@@ -69,7 +69,7 @@ static const int fid_hash_shift = 6;
 
 struct lsom_head {
 	struct hlist_head	*lh_hash;
-	struct list_head	 lh_list; /* ordered list by record index */
+	struct list_head	 lh_list; 
 	unsigned long		 lh_cached_count;
 } head;
 
@@ -127,7 +127,7 @@ static int lsom_setup(void)
 {
 	int i;
 
-	/* set llapi message level */
+	
 	llapi_msg_set_level(opt.o_verbose);
 
 	memset(&head, 0, sizeof(head));
@@ -177,13 +177,13 @@ static int lsom_update_one(struct fid_rec *f)
 	if (opt.o_data_sync) {
 		__u64 dv;
 
-		/* Flush dirty pages from clients */
+		
 		rc = llapi_get_data_version(fd, &dv, LL_DV_RD_FLUSH);
 		if (rc < 0)
 			llapi_error(LLAPI_MSG_ERROR, errno,
 				    "failed to sync data for " DFID,
 				    PFID(&f->fr_fid));
-		/* ignore this error, continue to sync lsom data */
+		
 	}
 
 	rc = fstat(fd, &st);
@@ -538,14 +538,14 @@ int main(int argc, char **argv)
 				}
 
 				break;
-			case 1: /* EOF */
+			case 1: 
 				llapi_printf(LLAPI_MSG_DEBUG,
 					     "finished reading [%s]\n",
 					     opt.o_mdtname);
 				eof = true;
 				break;
-			case -EINVAL: /* FS unmounted */
-			case -EPROTO:  /* error in KUC channel */
+			case -EINVAL: 
+			case -EPROTO:  
 			default:
 				stop = true;
 				llapi_error(LLAPI_MSG_ERROR, rc,
@@ -555,7 +555,7 @@ int main(int argc, char **argv)
 			}
 		}
 
-		/* reach EOF of changelog */
+		
 		rc = llapi_changelog_fini(&chglog_hdlr);
 		if (rc) {
 			llapi_error(LLAPI_MSG_ERROR, rc,

@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /*
  * Copyright (c) 2022, DDN/Whamcloud Storage Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 /*
  * Probe whether OS supports io_uring.

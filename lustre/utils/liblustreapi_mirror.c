@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * library for creating and managing File Level Redundancy (FLR) mirrors
  *
@@ -117,7 +117,7 @@ ssize_t llapi_mirror_read(int fd, unsigned int id, void *buf, size_t count,
 		ssize_t bytes_read;
 
 		bytes_read = pread(fd, buf, count, pos);
-		if (!bytes_read) /* end of file */
+		if (!bytes_read) 
 			break;
 
 		if (bytes_read < 0) {
@@ -133,7 +133,7 @@ ssize_t llapi_mirror_read(int fd, unsigned int id, void *buf, size_t count,
 		buf += bytes_read;
 		count -= bytes_read;
 
-		if (bytes_read & (page_size - 1)) /* end of file */
+		if (bytes_read & (page_size - 1)) 
 			break;
 	}
 
@@ -301,7 +301,7 @@ ssize_t llapi_mirror_copy_many(int fd, __u16 src, __u16 *dst, size_t count)
 	}
 
 	rc = posix_memalign(&buf, page_size, buflen);
-	if (rc) /* error code is returned directly */
+	if (rc) 
 		return -rc;
 	(void)mlock(buf, buflen);
 
@@ -316,7 +316,7 @@ ssize_t llapi_mirror_copy_many(int fd, __u16 src, __u16 *dst, size_t count)
 			rc = llapi_mirror_truncate(fd, dst[i], pos);
 			if (rc < 0) {
 				result = rc;
-				/* exclude the failed one */
+				
 				dst[i] = dst[--nr];
 				i--;
 				continue;
@@ -337,7 +337,7 @@ ssize_t llapi_mirror_copy_many(int fd, __u16 src, __u16 *dst, size_t count)
 			data_off = llapi_mirror_data_seek(fd, src, pos,
 							  &data_size);
 			if (data_off < 0) {
-				/* Non-fatal, switch to full copy */
+				
 				sparse = false;
 				continue;
 			}
@@ -351,7 +351,7 @@ ssize_t llapi_mirror_copy_many(int fd, __u16 src, __u16 *dst, size_t count)
 			}
 
 			data_end = data_off + data_size;
-			/* align by page */
+			
 			pos = data_off & ~(page_size - 1);
 			data_end = ((data_end - 1) | (page_size - 1)) + 1;
 			to_read = MIN(data_end - pos, buflen);
@@ -360,7 +360,7 @@ ssize_t llapi_mirror_copy_many(int fd, __u16 src, __u16 *dst, size_t count)
 		}
 
 		bytes_read = llapi_mirror_read(fd, src, buf, to_read, pos);
-		if (!bytes_read) { /* end of file */
+		if (!bytes_read) { 
 			break;
 		} else if (bytes_read < 0) {
 			result = bytes_read;
@@ -401,7 +401,7 @@ ssize_t llapi_mirror_copy_many(int fd, __u16 src, __u16 *dst, size_t count)
 			if (rc < 0) {
 				result = rc;
 
-				/* exclude the failed one */
+				
 				dst[i] = dst[--nr];
 				--i;
 				continue;
@@ -451,7 +451,7 @@ int llapi_mirror_copy(int fd, unsigned int src, unsigned int dst, off_t pos,
 		return -EINVAL;
 
 	rc = posix_memalign(&buf, page_size, buflen);
-	if (rc) /* error code is returned directly */
+	if (rc) 
 		return -rc;
 	(void)mlock(buf, buflen);
 
@@ -465,7 +465,7 @@ int llapi_mirror_copy(int fd, unsigned int src, unsigned int dst, off_t pos,
 		else
 			bytes_read = llapi_mirror_read(fd, src, buf, to_read,
 							pos);
-		if (!bytes_read) { /* end of file */
+		if (!bytes_read) { 
 			break;
 		} else if (bytes_read < 0) {
 			result = bytes_read;
@@ -494,7 +494,7 @@ int llapi_mirror_copy(int fd, unsigned int src, unsigned int dst, off_t pos,
 		pos += bytes_read;
 		result += bytes_read;
 
-		if (bytes_read < to_read) /* short read occurred */
+		if (bytes_read < to_read) 
 			break;
 	}
 

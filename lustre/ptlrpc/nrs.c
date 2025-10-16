@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2014, 2016, Intel Corporation.
@@ -116,13 +116,13 @@ static int nrs_policy_stop_locked(struct ptlrpc_nrs_policy *policy)
 	if (policy->pol_state == NRS_POL_STATE_STARTING)
 		RETURN(-EAGAIN);
 
-	/* In progress or already stopped */
+	
 	if (policy->pol_state != NRS_POL_STATE_STARTED)
 		RETURN(0);
 
 	policy->pol_state = NRS_POL_STATE_STOPPING;
 
-	/* Immediately make it invisible */
+	
 	if (nrs->nrs_policy_primary == policy) {
 		nrs->nrs_policy_primary = NULL;
 
@@ -131,7 +131,7 @@ static int nrs_policy_stop_locked(struct ptlrpc_nrs_policy *policy)
 		nrs->nrs_policy_fallback = NULL;
 	}
 
-	/* Drop started ref and wait for requests to be drained */
+	
 	spin_unlock(&nrs->nrs_lock);
 	nrs_policy_started_put(policy);
 
@@ -176,7 +176,7 @@ static void nrs_policy_stop_primary(struct ptlrpc_nrs *nrs)
 	LASSERT(tmp->pol_state == NRS_POL_STATE_STARTED);
 	tmp->pol_state = NRS_POL_STATE_STOPPING;
 
-	/* Drop started ref to free the policy */
+	
 	spin_unlock(&nrs->nrs_lock);
 	nrs_policy_started_put(tmp);
 	spin_lock(&nrs->nrs_lock);
@@ -309,7 +309,7 @@ static int nrs_policy_start_locked(struct ptlrpc_nrs_policy *policy, char *arg)
 	if (arg)
 		strscpy(policy->pol_arg, arg, sizeof(policy->pol_arg));
 
-	/* take the started reference */
+	
 	refcount_set(&policy->pol_start_ref, 1);
 	policy->pol_state = NRS_POL_STATE_STARTED;
 
@@ -556,7 +556,7 @@ struct ptlrpc_nrs_request * nrs_request_get(struct ptlrpc_nrs_policy *policy,
 
 	LASSERT(policy->pol_req_queued > 0);
 
-	/* for a non-started policy, use force mode to drain requests */
+	
 	if (unlikely(policy->pol_state != NRS_POL_STATE_STARTED))
 		force = true;
 
@@ -917,7 +917,7 @@ static inline bool nrs_policy_compatible(const struct ptlrpc_service *svc,
 static int nrs_register_policies_locked(struct ptlrpc_nrs *nrs)
 {
 	struct ptlrpc_nrs_pol_desc *desc;
-	/* for convenience */
+	
 	struct ptlrpc_service_part	 *svcpt = nrs->nrs_svcpt;
 	struct ptlrpc_service		 *svc = svcpt->scp_service;
 	int				  rc = -EINVAL;
@@ -1053,9 +1053,9 @@ static void nrs_svcpt_cleanup_locked(struct ptlrpc_service_part *svcpt)
 	LASSERT(mutex_is_locked(&nrs_core.nrs_mutex));
 
 again:
-	/* scp_nrs_hp could be NULL due to short of memory. */
+	
 	nrs = hp ? svcpt->scp_nrs_hp : &svcpt->scp_nrs_reg;
-	/* check the nrs_svcpt to see if nrs is initialized. */
+	
 	if (!nrs || !nrs->nrs_svcpt) {
 		EXIT;
 		return;
@@ -1510,7 +1510,7 @@ static void nrs_request_removed(struct ptlrpc_nrs_policy *policy)
 				   &policy->pol_nrs->nrs_policy_queued);
 	}
 
-	/* remove the extra ref for policy pending requests */
+	
 	nrs_policy_started_put(policy);
 }
 
@@ -1763,7 +1763,7 @@ int ptlrpc_nrs_init(void)
 	rc = ptlrpc_nrs_policy_register(&nrs_conf_tbf);
 	if (rc != 0)
 		GOTO(fail, rc);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 	rc = ptlrpc_nrs_policy_register(&nrs_conf_delay);
 	if (rc != 0)

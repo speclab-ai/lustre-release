@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: BSD-2-Clause */
+
 
 /*
  * Copyright(c) 2011-2015 Intel Corporation All rights reserved.
@@ -134,10 +134,10 @@ void gf_gen_cauchy1_matrix(unsigned char *a, int m, int k);
  */
 int gf_invert_matrix(unsigned char *in, unsigned char *out, const int n);
 
-/*************************************************************/
+
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _ERASURE_CODE_H_ */
+#endif 

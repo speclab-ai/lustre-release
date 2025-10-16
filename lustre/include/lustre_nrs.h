@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2014, Intel Corporation.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Network Request Scheduler (NRS)
  */
@@ -314,7 +314,7 @@ enum ptlrpc_nrs_queue_type {
  */
 struct ptlrpc_nrs {
 	spinlock_t			nrs_lock;
-	/** XXX Possibly replace svcpt->scp_req_lock with another lock here. */
+	
 	/**
 	 * List of registered policies
 	 */
@@ -679,14 +679,14 @@ enum {
  * be maintained by a \e struct binheap instance.
  */
 struct binheap_node {
-	/** Index into the binary tree */
+	
 	unsigned int	chn_index;
 };
 #ifdef HAVE_SERVER_SUPPORT
 #include <lustre_nrs_tbf.h>
 #include <lustre_nrs_crr.h>
 #include <lustre_nrs_orr.h>
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 #include <lustre_nrs_delay.h>
 
 /**
@@ -729,13 +729,13 @@ struct ptlrpc_nrs_request {
 		 * CRR-N request defintion
 		 */
 		struct nrs_crrn_req	crr;
-		/** ORR and TRR share the same request definition */
+		
 		struct nrs_orr_req	orr;
 		/**
 		 * TBF request definition
 		 */
 		struct nrs_tbf_req	tbf;
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 		/**
 		 * Fields for the delay policy
 		 */
@@ -748,5 +748,5 @@ struct ptlrpc_nrs_request {
 	void			       *ext;
 };
 
-/** @} nrs */
+
 #endif

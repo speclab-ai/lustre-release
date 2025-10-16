@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2012, 2015, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Author: liang@whamcloud.com
  */
@@ -13,7 +13,7 @@
 
 #include <lnet/lib-lnet.h>
 
-/** destroy cpu-partition lock, see libcfs_private.h for more detail */
+
 void
 cfs_percpt_lock_free(struct cfs_percpt_lock *pcl)
 {
@@ -40,7 +40,7 @@ cfs_percpt_lock_create(struct cfs_cpt_table *cptab,
 	spinlock_t		*lock;
 	int			i;
 
-	/* NB: cptab can be NULL, pcl will be for HW CPUs on that case */
+	
 	LIBCFS_ALLOC(pcl, sizeof(*pcl));
 	if (pcl == NULL)
 		return NULL;
@@ -86,7 +86,7 @@ __acquires(pcl->pcl_locks)
 
 	if (ncpt == 1) {
 		index = 0;
-	} else { /* serialize with exclusive lock */
+	} else { 
 		while (pcl->pcl_locked)
 			cpu_relax();
 	}
@@ -96,7 +96,7 @@ __acquires(pcl->pcl_locks)
 		return;
 	}
 
-	/* exclusive lock request */
+	
 	for (i = 0; i < ncpt; i++) {
 		spin_lock(pcl->pcl_locks[i]);
 		if (i == 0) {
@@ -110,7 +110,7 @@ __acquires(pcl->pcl_locks)
 }
 EXPORT_SYMBOL(cfs_percpt_lock);
 
-/** unlock a CPU partition */
+
 void
 cfs_percpt_unlock(struct cfs_percpt_lock *pcl, int index)
 __releases(pcl->pcl_locks)

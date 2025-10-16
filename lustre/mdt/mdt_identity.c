@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Lai Siyao <lsy@clusterfs.com>
  * Author: Fan Yong <fanyong@clusterfs.com>
@@ -246,19 +246,19 @@ __u32 mdt_identity_get_perm(struct md_identity *identity, struct lnet_nid *nid)
 		return CFS_SETGRP_PERM;
 
 	perm = identity->mi_perms;
-	/* check exactly matched nid first */
+	
 	for (i = identity->mi_nperms - 1; i > 0; i--) {
 		if (!nid_same(&perm[i].mp_nid, nid))
 			continue;
 		return perm[i].mp_perm;
 	}
 
-	/* check LNET_NID_ANY then */
+	
 	if ((identity->mi_nperms > 0) &&
 	    ((nid_same(&perm[0].mp_nid, nid)) ||
 	     (LNET_NID_IS_ANY(&perm[0].mp_nid))))
 		return perm[0].mp_perm;
 
-	/* return default last */
+	
 	return CFS_SETGRP_PERM;
 }

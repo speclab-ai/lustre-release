@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Orphan handling code
  *
@@ -31,7 +31,7 @@ enum {
 	ORPH_OP_UNLINK,
 };
 
-/* obsolete after 2.11, needed for upgrades from older 2.x versions */
+
 #define ORPHAN_FILE_NAME_FORMAT_20      "%016llx:%08x:%08x:%2x"
 
 static struct dt_key *mdd_orphan_key_fill(const struct lu_env *env,
@@ -47,7 +47,7 @@ static struct dt_key *mdd_orphan_key_fill(const struct lu_env *env,
 	return (struct dt_key *)key;
 }
 
-/* compatibility with orphan files created in versions before 2.11 */
+
 static struct dt_key *mdd_orphan_key_fill_20(const struct lu_env *env,
 					     const struct lu_fid *lf)
 {
@@ -160,7 +160,7 @@ int mdd_orphan_insert(const struct lu_env *env, struct mdd_object *obj,
 	mdo_ref_add(env, obj, th);
 	dt_ref_add(env, mdd->mdd_orphans, th);
 
-	/* try best to fixup directory, do not return errors from here */
+	
 	if (!dt_try_as_dir(env, next, true))
 		GOTO(out, rc = 0);
 
@@ -249,7 +249,7 @@ int mdd_orphan_delete(const struct lu_env *env, struct mdd_object *obj,
 
 ref_del:
 	if (!rc) {
-		/* lov objects will be destroyed by caller */
+		
 		mdo_ref_del(env, obj, th);
 		if (S_ISDIR(mdd_object_type(obj))) {
 			mdo_ref_del(env, obj, th);
@@ -301,7 +301,7 @@ static int mdd_orphan_destroy(const struct lu_env *env, struct mdd_object *obj,
 	if (likely(obj->mod_count == 0)) {
 		dt_write_lock(env, mdd->mdd_orphans, DT_TGT_ORPHAN);
 		rc = dt_delete(env, mdd->mdd_orphans, key, th);
-		/* We should remove object even dt_delete failed */
+		
 		if (mdd_object_exists(obj) &&
 		    !lu_object_is_dying(obj->mod_obj.mo_lu.lo_header)) {
 			mdo_ref_del(env, obj, th);
@@ -346,7 +346,7 @@ static int mdd_orphan_key_test_and_delete(const struct lu_env *env,
 	if (mdo->mod_count == 0) {
 		CDEBUG(D_HA, "Found orphan "DFID", delete it\n", PFID(lf));
 		rc = mdd_orphan_destroy(env, mdo, key);
-		if (rc) /* below message checked in replay-single.sh test_37 */
+		if (rc) 
 			CERROR("%s: error unlinking orphan "DFID": rc = %d\n",
 			       mdd2obd_dev(mdd)->obd_name, PFID(lf), rc);
 	} else {
@@ -404,7 +404,7 @@ static int mdd_orphan_index_iterate(const struct lu_env *env,
 		rc = -EIO;
 		CERROR("%s: error loading iterator to clean '%s': rc = %d\n",
 		       mdd2obd_dev(mdd)->obd_name, mdd_orphan_index_name, rc);
-		/* Index contains no zero key? */
+		
 		GOTO(out_put, rc);
 	}
 
@@ -414,7 +414,7 @@ static int mdd_orphan_index_iterate(const struct lu_env *env,
 			break;
 
 		key_sz = iops->key_size(env, it);
-		/* filter out "." and ".." entries from PENDING dir. */
+		
 		if (key_sz < 8)
 			goto next;
 
@@ -433,11 +433,11 @@ static int mdd_orphan_index_iterate(const struct lu_env *env,
 			goto next;
 		}
 
-		/* kill orphan object */
+		
 		iops->put(env, it);
 		rc = mdd_orphan_key_test_and_delete(env, mdd, &fid,
 						(struct dt_key *)ent->lde_name);
-		/* after index delete reset iterator */
+		
 		if (rc == 0)
 			rc = iops->get(env, it, (const void *)"");
 next:
@@ -476,7 +476,7 @@ int mdd_orphan_index_init(const struct lu_env *env, struct mdd_device *mdd)
 	int rc = 0;
 
 	ENTRY;
-	/* create PENDING dir */
+	
 	fid_zero(&fid);
 	rc = mdd_local_file_create(env, mdd, &mdd->mdd_local_root_fid,
 				   mdd_orphan_index_name, S_IFDIR | 0755, &fid);

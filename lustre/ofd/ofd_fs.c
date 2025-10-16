@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file provides helper functions to handle various data stored on disk.
  * It uses OSD API and works with any OSD.
@@ -121,7 +121,7 @@ static struct ofd_seq *ofd_seq_add(const struct lu_env *env,
 		if (ostid_seq(&os->os_oi) == ostid_seq(&new_seq->os_oi)) {
 			refcount_inc(&os->os_refc);
 			write_unlock(&ofd->ofd_seq_list_lock);
-			/* The seq has not been added to the list */
+			
 			ofd_seq_put(env, new_seq);
 			return os;
 		}
@@ -355,7 +355,7 @@ struct ofd_seq *ofd_seq_load(const struct lu_env *env, struct ofd_device *ofd,
 
 	ENTRY;
 
-	/* if seq is already initialized */
+	
 	oseq = ofd_seq_get(ofd, seq);
 	if (oseq != NULL) {
 		CDEBUG(D_TRACE, "%s: got sequence %#llx "DOSTID"\n",
@@ -397,7 +397,7 @@ struct ofd_seq *ofd_seq_load(const struct lu_env *env, struct ofd_device *ofd,
 		GOTO(cleanup, rc);
 
 	if (info->fti_attr.la_size == 0) {
-		/* object is just created, initialize last id */
+		
 		if (CFS_FAIL_CHECK(OBD_FAIL_OFD_SET_OID)) {
 			struct seq_server_site *ss = &ofd->ofd_seq_site;
 			struct lu_client_seq *client_seq = ss->ss_client_seq;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_RPC
@@ -23,7 +23,7 @@
 
 static struct rhashtable conn_hash;
 
-/* per-cpu PM QoS management */
+
 struct cpu_latency_qos *cpus_latency_qos;
 
 /*
@@ -53,7 +53,7 @@ static int lnet_process_id_cmp(struct rhashtable_compare_arg *arg,
 }
 
 static const struct rhashtable_params conn_hash_params = {
-	.key_len	= 1,	/* actually variable-length */
+	.key_len	= 1,	
 	.key_offset	= offsetof(struct ptlrpc_connection, c_peer),
 	.head_offset	= offsetof(struct ptlrpc_connection, c_hash),
 	.hashfn		= lnet_process_id_hash,
@@ -88,7 +88,7 @@ static void cpu_latency_work(struct work_struct *work)
 	}
 	mutex_unlock(&latency_qos->lock);
 
-	/* must be done outside atomic section */
+	
 	if (pm_qos_req_done != NULL) {
 		dev_pm_qos_remove_request(pm_qos_req_done);
 		OBD_FREE_PTR(pm_qos_req_done);
@@ -127,9 +127,9 @@ try_again:
 	conn2 = rhashtable_lookup_get_insert_fast(&conn_hash, &conn->c_hash,
 						  conn_hash_params);
 	if (conn2) {
-		/* insertion failed */
+		
 		if (IS_ERR(conn2)) {
-			/* hash table could be resizing. */
+			
 			if (PTR_ERR(conn2) == -ENOMEM ||
 			    PTR_ERR(conn2) == -EBUSY) {
 				msleep(5);

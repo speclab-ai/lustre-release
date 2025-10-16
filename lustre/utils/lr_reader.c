@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,17 +6,17 @@
  * Copyright (c) 2013, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lr_reader.c
  *
  * Author: Nathan Rutman <nathan@clusterfs.com>
  */
- /* Safely read the last_rcvd file from a device */
+ 
 
 #if HAVE_CONFIG_H
 #  include "config.h"
-#endif /* HAVE_CONFIG_H */
+#endif 
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -134,7 +134,7 @@ static int print_last_rcvd(FILE *fp, int opt_client)
 	int rc = 0;
 	int n;
 
-	/* read lr_server_data structure */
+	
 	printf("%s:\n", LAST_RCVD);
 	n = fread(&lsd, 1, sizeof(lsd), fp);
 	if (n < sizeof(lsd)) {
@@ -143,7 +143,7 @@ static int print_last_rcvd(FILE *fp, int opt_client)
 		rc = ferror(fp) ? EIO : EINVAL;
 	}
 
-	/* swab structure fields of interest */
+	
 	lsd.lsd_feature_compat = __le32_to_cpu(lsd.lsd_feature_compat);
 	lsd.lsd_feature_incompat = __le32_to_cpu(lsd.lsd_feature_incompat);
 	lsd.lsd_feature_rocompat = __le32_to_cpu(lsd.lsd_feature_rocompat);
@@ -151,7 +151,7 @@ static int print_last_rcvd(FILE *fp, int opt_client)
 	lsd.lsd_osd_index = __le32_to_cpu(lsd.lsd_osd_index);
 	lsd.lsd_mount_count = __le64_to_cpu(lsd.lsd_mount_count);
 
-	/* display */
+	
 	printf("  uuid: %.40s\n", lsd.lsd_uuid);
 	printf("  feature_compat: %#x\n", lsd.lsd_feature_compat);
 	printf("  feature_incompat: %#x\n", lsd.lsd_feature_incompat);
@@ -165,13 +165,13 @@ static int print_last_rcvd(FILE *fp, int opt_client)
 	if (!opt_client || rc)
 		return rc;
 
-	/* read client information */
+	
 	lsd.lsd_client_start = __le32_to_cpu(lsd.lsd_client_start);
 	lsd.lsd_client_size = __le16_to_cpu(lsd.lsd_client_size);
 	printf("  client_area_start: %u\n", lsd.lsd_client_start);
 	printf("  client_area_size: %hu\n", lsd.lsd_client_size);
 
-	/* seek to per-client data area */
+	
 	rc = fseek(fp, lsd.lsd_client_start, SEEK_SET);
 	if (rc) {
 		fprintf(stderr, "%s: seek failed. %s\n",
@@ -179,11 +179,11 @@ static int print_last_rcvd(FILE *fp, int opt_client)
 		return errno;
 	}
 
-	/* walk throuh the per-client data area */
+	
 	while (true) {
 		struct lsd_client_data lcd;
 
-		/* read a per-client data area */
+		
 		n = fread(&lcd, 1, sizeof(lcd), fp);
 		if (n < sizeof(lcd)) {
 			if (feof(fp))
@@ -196,7 +196,7 @@ static int print_last_rcvd(FILE *fp, int opt_client)
 		if (lcd.lcd_uuid[0] == '\0')
 			continue;
 
-		/* swab structure fields */
+		
 		lcd.lcd_last_transno =
 			__le64_to_cpu(lcd.lcd_last_transno);
 		lcd.lcd_last_xid = __le64_to_cpu(lcd.lcd_last_xid);
@@ -204,7 +204,7 @@ static int print_last_rcvd(FILE *fp, int opt_client)
 		lcd.lcd_last_data = __le32_to_cpu(lcd.lcd_last_data);
 		lcd.lcd_generation = __le32_to_cpu(lcd.lcd_generation);
 
-		/* display per-client data area */
+		
 		printf("\n  %.40s:\n", lcd.lcd_uuid);
 		printf("    generation: %u\n", lcd.lcd_generation);
 		printf("    last_transaction: %llu\n",
@@ -246,7 +246,7 @@ static int print_reply_data(FILE *fp)
 	int rc = 0;
 	int n;
 
-	/* read reply_data header */
+	
 	printf("\n%s:\n", REPLY_DATA);
 	n = fread(&lrh, 1, sizeof(lrh), fp);
 	if (n < sizeof(lrh)) {
@@ -255,7 +255,7 @@ static int print_reply_data(FILE *fp)
 		rc = ferror(fp) ? EIO : EINVAL;
 	}
 
-	/* check header */
+	
 	lrh.lrh_magic = __le32_to_cpu(lrh.lrh_magic);
 	lrh.lrh_header_size = __le32_to_cpu(lrh.lrh_header_size);
 	lrh.lrh_reply_size = __le32_to_cpu(lrh.lrh_reply_size);
@@ -295,7 +295,7 @@ static int print_reply_data(FILE *fp)
 	}
 
 	if (rc) {
-		/* dump header */
+		
 		fprintf(stderr, "lsd_reply_header:\n");
 		fprintf(stderr, "\tlrh_magic: 0x%08x\n", lrh.lrh_magic);
 		fprintf(stderr, "\tlrh_header_size: %u\n", lrh.lrh_header_size);
@@ -303,11 +303,11 @@ static int print_reply_data(FILE *fp)
 		return rc;
 	}
 
-	/* walk throuh the reply data */
+	
 	for (slot = 0; ; slot++) {
 		struct lsd_reply_data lrd;
 
-		/* read a reply data */
+		
 		n = fread(&lrd, 1, recsz, fp);
 		if (n < recsz) {
 			if (feof(fp))
@@ -317,7 +317,7 @@ static int print_reply_data(FILE *fp)
 			return ferror(fp) ? EIO : EINVAL;
 		}
 
-		/* display reply data */
+		
 		lrd.lrd_transno = __le64_to_cpu(lrd.lrd_transno);
 		lrd.lrd_xid = __le64_to_cpu(lrd.lrd_xid);
 		lrd.lrd_data = __le64_to_cpu(lrd.lrd_data);
@@ -405,7 +405,7 @@ int main(int argc, char *const argv[])
 		return -1;
 	}
 
-	/* Make a temporary directory to hold Lustre data files. */
+	
 	if (need_dev && !mkdtemp(tmpdir)) {
 		fprintf(stderr, "%s: Can't create temporary directory %s: %s\n",
 			progname, tmpdir, strerror(errno));

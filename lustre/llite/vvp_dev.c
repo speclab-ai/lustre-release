@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * cl_device and cl_device_type implementation for VVP layer.
  *
@@ -137,7 +137,7 @@ struct lu_context_key vvp_thread_key = {
 	.lct_fini = vvp_thread_key_fini,
 };
 
-/* type constructor/destructor: vvp_type_{init,fini,start,stop}(). */
+
 LU_TYPE_INIT_FINI(vvp, &ll_thread_key, &vvp_session_key, &vvp_thread_key);
 
 static const struct lu_device_operations vvp_lu_ops = {
@@ -366,7 +366,7 @@ int cl_sb_fini(struct super_block *sb)
 	RETURN(result);
 }
 
-/* debugfs/lustre/llite/$MNT/dump_page_cache */
+
 struct vvp_seq_private {
 	struct ll_sb_info	*vsp_sbi;
 	struct lu_env		*vsp_env;
@@ -399,7 +399,7 @@ ll_filemap_get_one_page_contig(struct address_space *mapping,
 		return 1;
 	}
 	return 0;
-#else /* !HAVE_FILEMAP_GET_FOLIOS_CONTIG */
+#else 
 	return find_get_pages_contig(mapping, start, 1, pg);
 #endif
 }
@@ -463,8 +463,8 @@ static void vvp_pgcache_page_show(const struct lu_env *env,
 
 	vmpage = page->cp_vmpage;
 	seq_printf(seq, " %5i | %pK %pK %s %s | %pK "DFID"(%pK) %lu %u [",
-		   0 /* gen */,
-		   NULL, /* was vvp_page */
+		   0 ,
+		   NULL, 
 		   page,
 		   "none",
 		   PageWriteback(vmpage) ? "wb" : "-",
@@ -535,7 +535,7 @@ static void *vvp_pgcache_start(struct seq_file *f, loff_t *pos)
 	if (*pos == 0) {
 		vvp_pgcache_rewind(priv);
 	} else if (*pos == priv->vvp_prev_pos) {
-		/* Return the current item */;
+		;
 	} else {
 		WARN_ON(*pos != priv->vvp_prev_pos + 1);
 		priv->vsp_page_index += 1;
@@ -557,7 +557,7 @@ static void *vvp_pgcache_next(struct seq_file *f, void *v, loff_t *pos)
 
 static void vvp_pgcache_stop(struct seq_file *f, void *v)
 {
-	/* Nothing to do */
+	
 }
 
 static const struct seq_operations vvp_pgcache_ops = {

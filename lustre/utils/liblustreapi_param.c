@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2016, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This code handles user interaction with the configuration interface
  * to the Lustre file system to fine tune it and extract statistics.
@@ -323,7 +323,7 @@ static int copy_file_fixed(const char *path, char *buf, size_t *buflen)
 				     buf + bytes_read,
 				     max_read - bytes_read);
 
-		/* read the entire file */
+		
 		if (count == 0) {
 			*buflen = bytes_read + 1;
 			buf[bytes_read] = '\0';
@@ -349,7 +349,7 @@ check_size:
 	}
 	*buflen = bytes_read + remaining;
 
-	/* file was not (*buflen - 1) bytes, add 1 for reallocating */
+	
 	if (remaining != 0) {
 		*buflen += 1;
 		rc = -EOVERFLOW;
@@ -370,7 +370,7 @@ static void print_obd_line(char *s)
 	glob_t path;
 	char *ptr;
 retry:
-	/* obd device type is the first 3 characters of param name */
+	
 	snprintf(buf, sizeof(buf), " %%*d %%*s %.3s %%%zus %%*s %%*d ",
 		 param, sizeof(obd_name) - 1);
 	if (sscanf(s, buf, obd_name) == 0)
@@ -379,10 +379,10 @@ retry:
 		goto try_mdc;
 	fp = fopen(path.gl_pathv[0], "r");
 	if (!fp) {
-		/* need to free path data before retry */
+		
 		cfs_free_param_data(&path);
 try_mdc:
-		if (param[0] == 'o') { /* failed with osc, try mdc */
+		if (param[0] == 'o') { 
 			param = "mdc/%s/mds_conn_uuid";
 			goto retry;
 		}
@@ -390,7 +390,7 @@ try_mdc:
 		goto fail_print;
 	}
 
-	/* should not ignore fgets(3)'s return value */
+	
 	if (!fgets(buf, sizeof(buf), fp)) {
 		fprintf(stderr, "reading from %s: %s", buf, strerror(errno));
 		goto fail_close;
@@ -400,7 +400,7 @@ fail_close:
 	fclose(fp);
 	cfs_free_param_data(&path);
 
-	/* trim trailing newlines */
+	
 	ptr = strrchr(buf, '\n');
 	if (ptr)
 		*ptr = '\0';
@@ -434,7 +434,7 @@ static int print_out_devices(yaml_parser_t *reply, enum lctl_param_flags flags)
 			size_t len = strlen(buf);
 
 			if (len > 0 && strcmp(buf, "devices=\n") != 0) {
-				/* eat last white space */
+				
 				buf[len - 1] = '\0';
 				if (flags & PARAM_FLAGS_EXTRA_DETAILS)
 					print_obd_line(buf);
@@ -483,7 +483,7 @@ static int print_out_devices(yaml_parser_t *reply, enum lctl_param_flags flags)
 			size_t len = strlen(buf);
 
 			if (len > 0) {
-				/* eat last white space */
+				
 				buf[len - 1] = '\0';
 				if (flags & PARAM_FLAGS_EXTRA_DETAILS)
 					print_obd_line(buf);
@@ -600,7 +600,7 @@ static int print_out_stats(yaml_parser_t *reply, int version, int flags)
 			size_t len = strlen(buf);
 
 			if (len > 0) {
-				/* eat last white space */
+				
 				buf[len - 1] = '\0';
 				printf("%s\n",  buf);
 			}
@@ -719,7 +719,7 @@ static int lcfg_param_get_yaml(yaml_parser_t *reply, struct nl_sock *sk,
 	int rc;
 
 	bzero(source, sizeof(source));
-	/* replace '/' with '.' to match conf_param and sysctl */
+	
 	for (tmp = strchr(pattern, '/'); tmp != NULL;
 	     tmp = strchr(tmp, '/'))
 		*tmp = '.';
@@ -744,7 +744,7 @@ static int lcfg_param_get_yaml(yaml_parser_t *reply, struct nl_sock *sk,
 	if (!cmd)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(reply);
 	if (rc == 0)
 		return -EOPNOTSUPP;
@@ -753,7 +753,7 @@ static int lcfg_param_get_yaml(yaml_parser_t *reply, struct nl_sock *sk,
 	if (rc == 0)
 		return -EOPNOTSUPP;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	yaml_emitter_initialize(&request);
 	rc = yaml_emitter_set_output_netlink(&request, sk,
 					     family, version,
@@ -787,7 +787,7 @@ static int lcfg_param_get_yaml(yaml_parser_t *reply, struct nl_sock *sk,
 	if (source[0]) {
 		const char *key = cmd == LUSTRE_CMD_DEVICES ? "name" : "source";
 
-		/* Now fill in 'path' filter */
+		
 		yaml_sequence_start_event_initialize(&event, NULL,
 						     (yaml_char_t *)YAML_SEQ_TAG,
 						     1, YAML_ANY_SEQUENCE_STYLE);
@@ -866,7 +866,7 @@ int llapi_param_display_value(char *path, int version,
 	struct nl_sock *sk;
 	int rc;
 
-	/* version zero means just list sources. "devices is special case */
+	
 	if (!version && strcmp(path, "devices") == 0) {
 		fprintf(fp, "devices\n");
 		return 0;
@@ -884,7 +884,7 @@ int llapi_param_display_value(char *path, int version,
 		yaml_document_t results;
 		yaml_emitter_t output;
 
-		/* load the reply results */
+		
 		rc = yaml_parser_load(&reply, &results);
 		if (rc == 0) {
 			if (!(flags & PARAM_FLAGS_EXTRA_IGNORE_ERROR))
@@ -895,7 +895,7 @@ int llapi_param_display_value(char *path, int version,
 			goto free_reply;
 		}
 
-		/* create emitter to output results */
+		
 		rc = yaml_emitter_initialize(&output);
 		if (rc == 1) {
 			yaml_emitter_set_output_file(&output, fp);
@@ -958,11 +958,11 @@ int llapi_param_set_value(char *path, char *value, int version,
 	struct nl_sock *sk;
 	int rc;
 
-	/* Currently only stats allow changing settings */
+	
 	if (!strstr(path, "/stats"))
 		return -ENOENT;
 
-	/* Only clear is currently supported */
+	
 	if (strcmp(value, "clear") != 0)
 		return -EINVAL;
 
@@ -974,7 +974,7 @@ int llapi_param_set_value(char *path, char *value, int version,
 	if (rc < 0)
 		return rc;
 
-	/* load the reply results */
+	
 	rc = yaml_parser_load(&reply, &results);
 	if (rc == 0) {
 		yaml_parser_log_error(&reply, stderr, "set_param: ");
@@ -1005,12 +1005,12 @@ int llapi_get_target_uuids(int fd, struct obd_uuid *uuidp, int *indices,
 	glob_t param;
 	FILE *fp;
 
-	/* Get the lov / lmv name */
+	
 	rc = llapi_file_fget_type_uuid(fd, type, &name);
 	if (rc != 0)
 		return rc;
 
-	/* Now get the ost uuids */
+	
 	rc = get_lustre_param_path(type == LOV_TYPE ? "lov" : "lmv", name.uuid,
 				   FILTER_BY_EXACT, "target_obd", &param);
 	if (rc != 0) {
@@ -1082,7 +1082,7 @@ int llapi_get_target_uuids(int fd, struct obd_uuid *uuidp, int *indices,
 						value = (char *)event.data.scalar.value;
 						status[i] = strdup(value);
 					}
-					i++; /* status is last */
+					i++; 
 				}
 			}
 
@@ -1214,7 +1214,7 @@ int llapi_ostlist(char *path, struct find_param *param)
 				break;
 			}
 		} else if (!param->fp_quiet && !param->fp_obds_printed) {
-			/* Print everything */
+			
 			llapi_printf(LLAPI_MSG_NORMAL, "%d: %s %s\n",
 				     indices[i], uuidp[i].uuid, status[i]);
 		}

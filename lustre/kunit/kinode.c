@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2017 Cray Inc. All rights reserved.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/kunit/kinode.c
  *
@@ -33,7 +33,7 @@ static int run_id;
 module_param(run_id, int, 0644);
 MODULE_PARM_DESC(run_id, "run ID");
 
-/* Name of the file to stat. */
+
 static char fname[4096];
 module_param_string(fname, fname, sizeof(fname), 0644);
 MODULE_PARM_DESC(fname, "name of file to stat");
@@ -79,12 +79,12 @@ static int stat_thread(void *data)
 	struct kstat *stbuf = data;
 	int rc;
 
-	/* Signal caller that thread has started. */
+	
 	complete(&thr_start);
 
 	rc = stat_file(stbuf);
 
-	/* Wait for call to kthread_stop. */
+	
 	set_current_state(TASK_INTERRUPTIBLE);
 	while (!kthread_should_stop()) {
 		schedule();
@@ -119,7 +119,7 @@ static int __init kinode_init(void)
 		return -EINVAL;
 	}
 
-	/* Run the same from a kthread. */
+	
 	thr = kthread_run(stat_thread, &stbuf2, "kinode_%u", run_id);
 	if (IS_ERR(thr)) {
 		pr_err(PREFIX " Cannot create kthread\n", run_id);
@@ -139,7 +139,7 @@ static int __init kinode_init(void)
 		pr_err(PREFIX " inode numbers are different: %llu %llu\n",
 		       run_id, stbuf1.ino, stbuf2.ino);
 	else
-		/* below message is checked in sanity.sh test_129 */
+		
 		pr_err(PREFIX " inode numbers are identical: %llu\n",
 		       run_id, stbuf1.ino);
 
@@ -150,7 +150,7 @@ static void __exit kinode_exit(void)
 {
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre inode stat test module");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

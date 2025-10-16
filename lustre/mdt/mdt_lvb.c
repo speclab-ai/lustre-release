@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -11,7 +11,7 @@
 #include <lustre_swab.h>
 #include "mdt_internal.h"
 
-/* Called with res->lr_lvb_sem held */
+
 static int mdt_lvbo_init(struct ldlm_resource *res)
 {
 	if (IS_LQUOTA_RES(res)) {
@@ -21,7 +21,7 @@ static int mdt_lvbo_init(struct ldlm_resource *res)
 		if (mdt->mdt_qmt_dev == NULL)
 			return 0;
 
-		/* call lvbo init function of quota master */
+		
 		return qmt_hdls.qmth_lvbo_init(mdt->mdt_qmt_dev, res);
 	}
 	return 0;
@@ -160,7 +160,7 @@ int mdt_dom_lvbo_update(struct ldlm_resource *res, struct ldlm_lock *lock,
 	lvb = res->lr_lvb_data;
 	LASSERT(lvb);
 
-	/* Update the LVB from the network message */
+	
 	if (req != NULL) {
 		struct ost_lvb *rpc_lvb;
 
@@ -205,7 +205,7 @@ int mdt_dom_lvbo_update(struct ldlm_resource *res, struct ldlm_lock *lock,
 	}
 
 disk_update:
-	/* Update the LVB from the disk inode */
+	
 	mo = mdt_object_find(env, mdt, fid);
 	if (IS_ERR(mo))
 		GOTO(out_env, rc = PTR_ERR(mo));
@@ -228,7 +228,7 @@ static int mdt_lvbo_update(struct ldlm_resource *res, struct ldlm_lock *lock,
 		if (mdt->mdt_qmt_dev == NULL)
 			return 0;
 
-		/* call lvbo update function of quota master */
+		
 		return qmt_hdls.qmth_lvbo_update(mdt->mdt_qmt_dev, res, req,
 						 increase_only);
 	}
@@ -248,7 +248,7 @@ static int mdt_lvbo_size(struct ldlm_lock *lock)
 {
 	struct mdt_device *mdt;
 
-	/* resource on server side never changes. */
+	
 	mdt = ldlm_res_to_ns(lock->l_resource)->ns_lvbp;
 	if (!mdt)
 		return 0;
@@ -257,7 +257,7 @@ static int mdt_lvbo_size(struct ldlm_lock *lock)
 		if (mdt->mdt_qmt_dev == NULL)
 			return 0;
 
-		/* call lvbo size function of quota master */
+		
 		return qmt_hdls.qmth_lvbo_size(mdt->mdt_qmt_dev, lock);
 	}
 
@@ -313,7 +313,7 @@ static int mdt_lvbo_fill(struct ldlm_lock *lock,
 		if (mdt->mdt_qmt_dev == NULL)
 			GOTO(out, rc = 0);
 
-		/* call lvbo fill function of quota master */
+		
 		rc = qmt_hdls.qmth_lvbo_fill(mdt->mdt_qmt_dev, lock, lvb,
 					     *lvblen);
 		GOTO(out, rc);
@@ -343,11 +343,11 @@ static int mdt_lvbo_fill(struct ldlm_lock *lock,
 		GOTO(out, rc = lvb_len);
 	}
 
-	/* Only fill layout if layout lock is granted */
+	
 	if (!ldlm_has_layout(lock) || !ldlm_is_granted(lock))
 		GOTO(out, rc = 0);
 
-	/* XXX get fid by resource id. why don't include fid in ldlm_resource */
+	
 	fid = &info->mti_tmp_fid2;
 	fid_extract_from_res_name(fid, &lock->l_resource->lr_name);
 
@@ -360,7 +360,7 @@ static int mdt_lvbo_fill(struct ldlm_lock *lock,
 
 	child = mdt_object_child(obj);
 
-	/* get the length of lsm */
+	
 	rc = mo_xattr_get(env, child, &LU_BUF_NULL, XATTR_NAME_LOV);
 	if (rc < 0)
 		GOTO(out_put, rc);
@@ -417,11 +417,11 @@ static int mdt_lvbo_free(struct ldlm_resource *res)
 		if (!mdt || !mdt->mdt_qmt_dev)
 			return 0;
 
-		/* call lvbo free function of quota master */
+		
 		return qmt_hdls.qmth_lvbo_free(mdt->mdt_qmt_dev, res);
 	}
 
-	/* Data-on-MDT lvbo free */
+	
 	OBD_FREE(res->lr_lvb_data, res->lr_lvb_len);
 	return 0;
 }

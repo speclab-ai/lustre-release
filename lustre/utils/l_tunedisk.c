@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2018, Intel Corporation.
  */
@@ -6,7 +6,7 @@
 
 #if HAVE_CONFIG_H
 #  include "config.h"
-#endif /* HAVE_CONFIG_H */
+#endif 
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -39,7 +39,7 @@ int main(int argc, char *const argv[])
 		return ret;
 	}
 
-	/* device is last arg */
+	
 	memset(&mop, 0, sizeof(mop));
 	mop.mo_usource = argv[argc - 1];
 
@@ -49,7 +49,7 @@ int main(int argc, char *const argv[])
 		goto out;
 	}
 
-	/* Check whether the disk has already been formatted by mkfs.lustre */
+	
 	ret = osd_is_lustre(mop.mo_source, &mount_type);
 	if (ret == 0)
 		goto out;

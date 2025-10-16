@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2022, Whamcloud.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LGSS_H
@@ -13,10 +13,10 @@
 
 #ifndef __KERNEL__
 # define __USE_ISOC99	1
-# include <stdio.h> /* snprintf() */
-# include <stdlib.h> /* abs() */
-# include <inttypes.h> /* PRIu64 */
-# include <ctype.h> /* isascii() */
+# include <stdio.h> 
+# include <stdlib.h> 
+# include <inttypes.h> 
+# include <ctype.h> 
 # include <errno.h>
 # define __USE_GNU      1
 # define __USE_XOPEN2K8  1
@@ -24,7 +24,7 @@
 #include <linux/ctype.h>
 #define PRIu64 "llu"
 #define PRIx64 "llx"
-#endif /* !__KERNEL__ */
+#endif 
 
 #include <linux/types.h>
 #include <linux/string.h>
@@ -38,7 +38,7 @@
 #endif
 
 struct lgssd_ioctl_param {
-	/* in */
+	
 	__u32 version;
 	__u32 secid;
 	char __user *uuid;
@@ -48,7 +48,7 @@ struct lgssd_ioctl_param {
 	__u64 send_token_size;
 	char __user *send_token;
 	__u64 reply_buf_size;
-	/* out */
+	
 	char __user *reply_buf;
 	__s64 __user *status;
 };
@@ -85,7 +85,7 @@ struct rsi_downcall_data {
 #define RSC_DOWNCALL_PATH	"sptlrpc/gss/rsc_info"
 #define RSC_CACHE_NAME		"rsccache"
 
-/* rsc_downcall_data flags */
+
 enum scd_flag_bits {
 	RSC_DATA_FLAG_REMOTE	= 0x0001,
 	RSC_DATA_FLAG_ROOT	= 0x0002,
@@ -104,7 +104,7 @@ struct rsc_downcall_data {
 	__s64		scd_offset;
 	__u32		scd_len;
 	__u32		scd_padding;
-	/* scd_val contains handle and context token */
+	
 	char		scd_val[];
 };
 
@@ -201,7 +201,7 @@ static inline void gss_buffer_write(char **dst, int *dstlen,
 		goto out;
 	}
 
-	/* write size of data */
+	
 	p = (__u32 *)cp;
 	*p = srclen;
 	cp += sizeof(__u32);
@@ -210,7 +210,7 @@ static inline void gss_buffer_write(char **dst, int *dstlen,
 	if (!srclen)
 		goto out;
 
-	/* write data itself */
+	
 	while (srclen && len) {
 		*cp++ = *src++;
 		len--;
@@ -350,7 +350,7 @@ static inline int gss_base64url_decode(char **src, char *dst, int destsize)
 	while (*cp == ' ')
 		cp++;
 
-	/* the single digit 0 is inserted if field is empty */
+	
 	if (*cp == '0' &&
 	    (*(cp + 1) == ' ' || *(cp + 1) == '\n' || *(cp + 1) == '\0')) {
 		cp++;
@@ -404,7 +404,7 @@ static inline int gss_string_read(char **src, char *dst, int destsize,
 	while (*cp == ' ')
 		cp++;
 
-	/* the single digit 0 is inserted if field is empty */
+	
 	if (!allowzero && *cp == '0' &&
 	    (*(cp + 1) == ' ' || *(cp + 1) == '\n')) {
 		cp++;
@@ -468,7 +468,7 @@ static inline int gss_buffer_read(char **src, char *dst, int destsize)
 	__u32 *p;
 	int len, size;
 
-	/* read data size */
+	
 	p = (__u32 *)cp;
 	len = *p;
 	cp += sizeof(__u32);
@@ -481,7 +481,7 @@ static inline int gss_buffer_read(char **src, char *dst, int destsize)
 	if (!len)
 		goto fini;
 
-	/* read data itself */
+	
 	size = len;
 	while (size && destsize) {
 		*(bp++) = *(cp++);
@@ -505,18 +505,18 @@ static inline int gss_buffer_get(char **src, __u32 *len, __u8 **data)
 	char *cp = *src;
 	__u32 *p;
 
-	/* read data size */
+	
 	p = (__u32 *)cp;
 	*len = *p;
 	cp += sizeof(__u32);
 
-	/* point to data buf */
+	
 	if (!*len)
 		*data = NULL;
 	else
 		*data = (__u8 *)cp;
 
-	/* move forward */
+	
 	cp += *len;
 
 	*src = cp;
@@ -539,4 +539,4 @@ static inline int gss_u32_read(char **src, __u32 *val)
 	return 0;
 }
 
-#endif /* _LGSS_H */
+#endif 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2013, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Nathan Rutman <nathan.rutman@sun.com>
  *
@@ -95,7 +95,7 @@ int libcfs_ukuc_msg_get(struct lustre_kernelcomm *link, char *buf, int maxsize,
 	memset(buf, 0, maxsize);
 
 	while (1) {
-		/* Read header first to get message size */
+		
 		rc = read(link->lk_rfd, buf, lhsz);
 		if (rc <= 0) {
 			rc = -errno;
@@ -116,7 +116,7 @@ int libcfs_ukuc_msg_get(struct lustre_kernelcomm *link, char *buf, int maxsize,
 			break;
 		}
 
-		/* Read payload */
+		
 		rc = read(link->lk_rfd, buf + lhsz, kuch->kuc_msglen - lhsz);
 		if (rc < 0) {
 			rc = -errno;
@@ -134,7 +134,7 @@ int libcfs_ukuc_msg_get(struct lustre_kernelcomm *link, char *buf, int maxsize,
 		    kuch->kuc_transport == KUC_TRANSPORT_GENERIC) {
 			return 0;
 		}
-		/* Drop messages for other transports */
+		
 	}
 	return rc;
 }

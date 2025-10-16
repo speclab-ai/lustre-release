@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Top-level entry points into osd module
  *
@@ -47,10 +47,10 @@ struct lu_context_key	osd_key;
 
 static int osd_txg_sync_delay_us = -1;
 
-/* Slab for OSD object allocation */
+
 struct kmem_cache *osd_object_kmem;
 
-/* Slab to allocate osd_zap_it */
+
 struct kmem_cache *osd_zapit_cachep;
 
 static struct lu_kmem_descr osd_caches[] = {
@@ -128,7 +128,7 @@ static void osd_trans_commit_cb(void *cb_data, int error)
 				osd_dt_dev(th->th_dev)->od_svname, th, error);
 	}
 
-	/* call per-transaction callbacks if any */
+	
 	list_for_each_entry_safe(dcb, tmp, &oh->ot_dcb_list, dcb_linkage) {
 		LASSERTF(dcb->dcb_magic == TRANS_COMMIT_CB_MAGIC,
 			 "commit callback entry: magic=%x name='%s'\n",
@@ -207,7 +207,7 @@ static int osd_trans_start(const struct lu_env *env, struct dt_device *d,
 
 	rc = -dmu_tx_assign(oh->ot_tx, DMU_TX_WAIT);
 	if (unlikely(rc != 0)) {
-		/* dmu will call commit callback with error code during abort */
+		
 		if (!lu_device_is_md(&d->dd_lu_dev) && rc == -ENOSPC)
 			CERROR("%s: failed to start transaction due to ENOSPC: rc = %d\n",
 			       osd->od_svname, rc);
@@ -217,7 +217,7 @@ static int osd_trans_start(const struct lu_env *env, struct dt_device *d,
 	} else {
 		int slot;
 
-		/* add commit callback */
+		
 		dmu_tx_callback_register(oh->ot_tx, osd_trans_commit_cb, oh);
 
 		/* count all registered commit callbacks in txg-specific slot,
@@ -260,7 +260,7 @@ static void osd_trans_stop_cb(struct osd_thandle *oth, int result)
 	struct dt_txn_commit_cb *dcb;
 	struct dt_txn_commit_cb *tmp;
 
-	/* call per-transaction stop callbacks if any */
+	
 	list_for_each_entry_safe(dcb, tmp, &oth->ot_stop_dcb_list,
 				 dcb_linkage) {
 		LASSERTF(dcb->dcb_magic == TRANS_COMMIT_CB_MAGIC,
@@ -289,7 +289,7 @@ static int osd_trans_stop(const struct lu_env *env, struct dt_device *dt,
 	list_splice_init(&oh->ot_unlinked_list, &unlinked);
 
 	osd_oti_get(env)->oti_ins_cache_depth--;
-	/* reset OI cache for safety */
+	
 	if (osd_oti_get(env)->oti_ins_cache_depth == 0)
 		osd_oti_get(env)->oti_ins_cache_used = 0;
 
@@ -366,7 +366,7 @@ static struct thandle *osd_trans_create(const struct lu_env *env,
 		RETURN(ERR_PTR(rc));
 	}
 
-	/* alloc callback data */
+	
 	OBD_ALLOC_PTR(oh);
 	if (oh == NULL) {
 		rc = -ENOMEM;
@@ -391,7 +391,7 @@ static struct thandle *osd_trans_create(const struct lu_env *env,
 	RETURN(th);
 }
 
-/* Estimate the total number of objects from a number of blocks */
+
 uint64_t osd_objs_count_estimate(uint64_t usedbytes, uint64_t usedobjs,
 				 uint64_t nrblocks, uint64_t est_maxblockshift)
 {
@@ -492,7 +492,7 @@ static int osd_objset_statfs(struct osd_device *osd, struct obd_statfs *osfs)
 
 	memset(osfs, 0, sizeof(*osfs));
 
-	/* We're a zfs filesystem. */
+	
 	osfs->os_type = UBERBLOCK_MAGIC;
 
 	/*
@@ -508,9 +508,9 @@ static int osd_objset_statfs(struct osd_device *osd, struct obd_statfs *osfs)
 
 	osfs->os_blocks = (usedbytes + availbytes) >> bshift;
 	osfs->os_bfree = availbytes >> bshift;
-	osfs->os_bavail = osfs->os_bfree; /* no extra root reservation */
+	osfs->os_bavail = osfs->os_bfree; 
 
-	/* Take replication (i.e. number of copies) into account */
+	
 	if (os->os_copies != 0)
 		osfs->os_bavail /= os->os_copies;
 
@@ -622,17 +622,17 @@ static void osd_conf_get(const struct lu_env *env,
 	 * XXX should be taken from not-yet-existing fs abstraction layer.
 	 */
 	param->ddp_max_name_len	= MAXNAMELEN;
-	param->ddp_max_nlink	= 1 << 31; /* it's 8byte on a disk */
+	param->ddp_max_nlink	= 1 << 31; 
 	param->ddp_symlink_max	= PATH_MAX;
 	param->ddp_mount_type	= LDD_MT_ZFS;
 
 	param->ddp_mntopts	= MNTOPT_USERXATTR;
 	if (osd->od_posix_acl)
 		param->ddp_mntopts |= MNTOPT_ACL;
-	/* Previously DXATTR_MAX_ENTRY_SIZE */
+	
 	param->ddp_max_ea_size	= OBD_MAX_EA_SIZE;
 
-	/* for maxbytes, report same value as ZPL */
+	
 	param->ddp_maxbytes	= MAX_LFS_FILESIZE;
 
 	/* inodes are dynamically allocated, so we report the per-inode space
@@ -724,7 +724,7 @@ static int osd_ro(const struct lu_env *env, struct dt_device *d)
 	RETURN(0);
 }
 
-/* reserve or free quota for some operation */
+
 static int osd_reserve_or_free_quota(const struct lu_env *env,
 				     struct dt_device *dev,
 				     struct lquota_id_info *qi)
@@ -825,9 +825,9 @@ static int osd_shutdown(const struct lu_env *env, struct osd_device *o)
 {
 	ENTRY;
 
-	/* shutdown quota slave instance associated with the device */
+	
 	if (o->od_quota_slave_md != NULL) {
-		/* complete all in-flight callbacks */
+		
 		osd_sync(env, &o->od_dt_dev);
 		txg_wait_callbacks(spa_get_dsl(dmu_objset_spa(o->od_os)));
 		qsd_fini(env, o->od_quota_slave_md);
@@ -835,7 +835,7 @@ static int osd_shutdown(const struct lu_env *env, struct osd_device *o)
 	}
 
 	if (o->od_quota_slave_dt != NULL) {
-		/* complete all in-flight callbacks */
+		
 		osd_sync(env, &o->od_dt_dev);
 		txg_wait_callbacks(spa_get_dsl(dmu_objset_spa(o->od_os)));
 		qsd_fini(env, o->od_quota_slave_dt);
@@ -965,7 +965,7 @@ static int osd_objset_open(struct osd_device *o)
 		GOTO(out, rc);
 	}
 
-	/* Check ZFS version */
+	
 	rc = -zap_lookup(o->od_os, MASTER_NODE_OBJ,
 			 ZPL_VERSION_STR, 8, 1, &version);
 	if (rc) {
@@ -1005,7 +1005,7 @@ static int osd_objset_open(struct osd_device *o)
 		GOTO(out, rc);
 	}
 
-	/* Check that user/group usage tracking is supported */
+	
 	if (!dmu_objset_userused_enabled(o->od_os) ||
 	    DMU_USERUSED_DNODE(o->od_os)->dn_type != DMU_OT_USERGROUP_USED ||
 	    DMU_GROUPUSED_DNODE(o->od_os)->dn_type != DMU_OT_USERGROUP_USED) {
@@ -1143,7 +1143,7 @@ static int osd_mount(const struct lu_env *env,
 
 	o->od_index_backup_stop = 0;
 
-	o->od_index = -1; /* -1 means index is invalid */
+	o->od_index = -1; 
 	rc = server_name2index(o->od_svname, &o->od_index, NULL);
 	if (rc == LDD_F_SV_TYPE_OST)
 		o->od_is_ost = 1;
@@ -1229,7 +1229,7 @@ static int osd_mount(const struct lu_env *env,
 	if (rc)
 		GOTO(err, rc);
 
-	/* currently it's no need to prepare qsd_instance_md for OST */
+	
 	if (!o->od_is_ost) {
 		o->od_quota_slave_md = qsd_init(env, o->od_svname,
 						&o->od_dt_dev, o->od_proc_entry,
@@ -1259,7 +1259,7 @@ static int osd_mount(const struct lu_env *env,
 		CWARN("%s: dnode accounting not enabled: enable feature@userobj_accounting in pool\n",
 		      o->od_mntdev);
 
-	/* parse mount option "noacl", and enable ACL by default */
+	
 	if (opts == NULL || strstr(opts, "noacl") == NULL)
 		o->od_posix_acl = 1;
 
@@ -1309,14 +1309,14 @@ static void osd_umount(const struct lu_env *env, struct osd_device *o)
 		int slot;
 
 		if (!o->od_dt_dev.dd_rdonly)
-			/* force a txg sync to get all commit callbacks */
+			
 			txg_wait_synced(dmu_objset_pool(o->od_os), 0ULL);
 
 		for (slot = 0; slot < OSD_TXG_MAP_SIZE; slot++)
 			wait_event(o->od_commit_cb_waitq,
 				   !atomic_read(&o->od_commit_cb_in_txg[slot]));
 
-		/* close the object set */
+		
 		osd_dmu_objset_disown(o->od_os, B_TRUE, o);
 		o->od_os = NULL;
 	}
@@ -1331,7 +1331,7 @@ static int osd_device_init0(const struct lu_env *env,
 	struct lu_device *l = osd2lu_dev(o);
 	int rc;
 
-	/* if the module was re-loaded, env can loose its keys */
+	
 	rc = lu_env_refill((struct lu_env *) env);
 	if (rc)
 		GOTO(out, rc);
@@ -1367,7 +1367,7 @@ static struct lu_device *osd_device_fini(const struct lu_env *env,
 		}
 	}
 
-	/* now with all the callbacks completed we can cleanup the remainings */
+	
 	osd_shutdown(env, o);
 	osd_scrub_cleanup(env, o);
 	osd_procfs_fini(o);
@@ -1385,7 +1385,7 @@ static struct lu_device *osd_device_free(const struct lu_env *env,
 	struct osd_device *o = osd_dev(d);
 
 	ENTRY;
-	/* XXX: make osd top device in order to release reference */
+	
 	if (d->ld_site) {
 		d->ld_site->ls_top_dev = d;
 		lu_site_purge(env, d->ld_site, -1);
@@ -1549,10 +1549,10 @@ static int osd_obd_disconnect(struct obd_export *exp)
 	int                rc, release = 0;
 
 	ENTRY;
-	/* Only disconnect the underlying layers on the final disconnect. */
+	
 	release = atomic_dec_and_test(&osd->od_connects);
 
-	rc = class_disconnect(exp); /* bz 9811 */
+	rc = class_disconnect(exp); 
 
 	if (rc == 0 && release)
 		class_manual_cleanup(obd);
@@ -1567,14 +1567,14 @@ static int osd_prepare(const struct lu_env *env, struct lu_device *pdev,
 
 	ENTRY;
 	if (osd->od_quota_slave_md != NULL) {
-		/* set up quota slave objects */
+		
 		rc = qsd_prepare(env, osd->od_quota_slave_md);
 		if (rc != 0)
 			RETURN(rc);
 	}
 
 	if (osd->od_quota_slave_dt != NULL) {
-		/* set up quota slave objects */
+		
 		rc = qsd_prepare(env, osd->od_quota_slave_dt);
 		if (rc != 0)
 			RETURN(rc);
@@ -1660,7 +1660,7 @@ module_param(osd_txg_sync_delay_us, int, 0644);
 MODULE_PARM_DESC(osd_txg_sync_delay_us,
 		 "When zero or larger delay N usec instead of doing TXG sync");
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Object Storage Device ("LUSTRE_OSD_ZFS_NAME")");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2016, Intel Corporation.
@@ -35,7 +35,7 @@ static void qmt_work_lvbo_free(struct work_struct *work)
 		      lqe->lqe_id.qid_uid);
 	}
 
-	/* release lqe reference */
+	
 	lqe_putref(lqe);
 }
 
@@ -126,7 +126,7 @@ static int qmt_lqe_read(const struct lu_env *env, struct lquota_entry *lqe,
 	if (qmt_pool_global(pool))
 		lqe->lqe_is_global = 1;
 
-	/* read record from disk */
+	
 	rc = lquota_disk_read(env, pool->qpi_glb_obj[lqe->lqe_site->lqs_qtype],
 			      &lqe->lqe_id, (struct dt_rec *)&qti->qti_glb_rec);
 
@@ -137,7 +137,7 @@ static int qmt_lqe_read(const struct lu_env *env, struct lquota_entry *lqe,
 		qmt_lqe_set_default(env, pool, lqe, true);
 		break;
 	case 0:
-		/* copy quota settings from on-disk record */
+		
 		lqe->lqe_granted   = qti->qti_glb_rec.qbr_granted;
 		lqe->lqe_hardlimit = qti->qti_glb_rec.qbr_hardlimit;
 		lqe->lqe_softlimit = qti->qti_glb_rec.qbr_softlimit;
@@ -159,7 +159,7 @@ static int qmt_lqe_read(const struct lu_env *env, struct lquota_entry *lqe,
 
 	if (lqe->lqe_id.qid_uid == 0 ||
 	    (lqe->lqe_hardlimit == 0 && lqe->lqe_softlimit == 0))
-		/* {hard,soft}limit=0 means no quota enforced */
+		
 		lqe->lqe_enforced = false;
 	else
 		lqe->lqe_enforced  = true;
@@ -236,14 +236,14 @@ struct thandle *qmt_trans_start_with_slv(const struct lu_env *env,
 		lqes = &lqe;
 	}
 
-	/* qmt is the same for all lqes, so take it from the 1st */
+	
 	qmt = lqe2qpi(lqes[0])->qpi_qmt;
 
 	if (slv_obj != NULL)
 		LQUOTA_DEBUG(lqes[0], "declare write for slv "DFID,
 			     PFID(lu_object_fid(&slv_obj->do_lu)));
 
-	/* start transaction */
+	
 	th = dt_trans_create(env, qmt->qmt_child);
 	if (IS_ERR(th))
 		RETURN(th);
@@ -253,7 +253,7 @@ struct thandle *qmt_trans_start_with_slv(const struct lu_env *env,
 		 * time being */
 		th->th_sync = 1;
 
-	/* reserve credits for global index update */
+	
 	for (i = 0; i < lqes_cnt; i++) {
 		rc = lquota_disk_declare_write(env, th,
 					       LQE_GLB_OBJ(lqes[i]),
@@ -263,14 +263,14 @@ struct thandle *qmt_trans_start_with_slv(const struct lu_env *env,
 	}
 
 	if (slv_obj != NULL) {
-		/* reserve credits for slave index update */
+		
 		rc = lquota_disk_declare_write(env, th, slv_obj,
 					       &lqes[0]->lqe_id);
 		if (rc)
 			GOTO(out, rc);
 	}
 
-	/* start transaction */
+	
 	rc = dt_trans_start_local(env, qmt->qmt_child, th);
 	if (rc)
 		GOTO(out, rc);
@@ -360,7 +360,7 @@ int qmt_glb_write(const struct lu_env *env, struct thandle *th,
 	 * synced to slave during the reintegration. */
 	rec = &qti->qti_glb_rec;
 
-	/* fill global index with updated quota settings */
+	
 	rec->qbr_granted   = lqe->lqe_granted;
 	if (lqe->lqe_is_default) {
 		rec->qbr_hardlimit = 0;
@@ -379,7 +379,7 @@ int qmt_glb_write(const struct lu_env *env, struct thandle *th,
 		rec->qbr_time      = lqe->lqe_gracetime;
 	}
 
-	/* write new quota settings */
+	
 	rc = lquota_disk_write(env, th, LQE_GLB_OBJ(lqe), &lqe->lqe_id,
 			       (struct dt_rec *)rec, flags, ver);
 	if (rc)
@@ -417,7 +417,7 @@ int qmt_slv_read(const struct lu_env *env, union lquota_id *qid,
 	CDEBUG(D_QUOTA, "read id:%llu form slv "DFID"\n",
 	       qid->qid_uid, PFID(lu_object_fid(&slv_obj->do_lu)));
 
-	/* read slave record from disk */
+	
 	rc = lquota_disk_read(env, slv_obj, qid,
 			      (struct dt_rec *)slv_rec);
 	switch (rc) {
@@ -425,7 +425,7 @@ int qmt_slv_read(const struct lu_env *env, union lquota_id *qid,
 		*granted = 0;
 		break;
 	case 0:
-		/* extract granted from on-disk record */
+		
 		*granted = slv_rec->qsr_granted;
 		break;
 	default:
@@ -474,10 +474,10 @@ int qmt_slv_write(const struct lu_env *env, struct thandle *th,
 	 * to slave during reintegration. */
 	rec = &qti->qti_slv_rec;
 
-	/* updated space granted to this slave */
+	
 	rec->qsr_granted = granted;
 
-	/* write new granted space */
+	
 	rc = lquota_disk_write(env, th, slv_obj, &lqe->lqe_id,
 			       (struct dt_rec *)rec, flags, ver);
 	if (rc) {
@@ -503,7 +503,7 @@ int qmt_validate_limits(struct lquota_entry *lqe, __u64 hard, __u64 soft)
 	ENTRY;
 
 	if (hard != 0 && soft > hard)
-		/* soft limit must be less than hard limit */
+		
 		RETURN(-EINVAL);
 	RETURN(0);
 }
@@ -528,10 +528,10 @@ bool qmt_adjust_edquot(struct lquota_entry *lqe, __u64 now)
 		 * to set the flag */
 
 		if (!qmt_space_exhausted(lqe, now))
-			/* the qmt still has available space */
+			
 			RETURN(false);
 
-		/* See comment in qmt_adjust_qunit(). LU-4139 */
+		
 		if (qmt_hard_exhausted(lqe) ||
 		    pool->qpi_rtype != LQUOTA_RES_DT) {
 			time64_t lapse;
@@ -542,7 +542,7 @@ bool qmt_adjust_edquot(struct lquota_entry *lqe, __u64 now)
 			if (lqe->lqe_qunit != pool->qpi_least_qunit)
 				RETURN(false);
 
-			/* least qunit value not sent to all slaves yet */
+			
 			if (lqe->lqe_revoke_time == 0 &&
 			    !lqe->lqe_gl && list_empty(&lqe->lqe_link)) {
 				/* LU-16736: the revoke_time should be set when
@@ -555,7 +555,7 @@ bool qmt_adjust_edquot(struct lquota_entry *lqe, __u64 now)
 				RETURN(false);
 			}
 
-			/* Let's give more time to slave to release space */
+			
 			lapse = ktime_get_seconds() - QMT_REBA_TIMEOUT;
 			if (lqe->lqe_may_rel != 0 && lqe->lqe_revoke_time > lapse)
 				RETURN(false);
@@ -564,14 +564,14 @@ bool qmt_adjust_edquot(struct lquota_entry *lqe, __u64 now)
 				RETURN(false);
 		}
 
-		/* set edquot flag */
+		
 		lqe->lqe_edquot = true;
 	} else {
 		/* space exhausted flag set, let's check whether it is time to
 		 * clear it */
 
 		if (qmt_space_exhausted(lqe, now))
-			/* the qmt still has not space */
+			
 			RETURN(false);
 
 		if (lqe->lqe_hardlimit != 0 &&
@@ -581,7 +581,7 @@ bool qmt_adjust_edquot(struct lquota_entry *lqe, __u64 now)
 			 * is available */
 			RETURN(false);
 
-		/* clear edquot flag */
+		
 		lqe->lqe_edquot = false;
 	}
 
@@ -600,7 +600,7 @@ static __u64 qmt_calc_softlimit(struct lquota_entry *lqe, bool *oversoft)
 
 	LASSERT(lqe->lqe_softlimit != 0);
 	*oversoft = false;
-	/* No need to do special tweaking for inode limit */
+	
 	if (pool->qpi_rtype != LQUOTA_RES_DT)
 		return lqe->lqe_softlimit;
 
@@ -638,7 +638,7 @@ __u64 qmt_alloc_expand(struct lquota_entry *lqe, __u64 granted, __u64 spare)
 	slv_cnt = qpi_slv_nr(lqe2qpi(lqe), lqe_qtype(lqe));
 	qunit = lqe->lqe_qunit;
 
-	/* See comment in qmt_adjust_qunit(). LU-4139. */
+	
 	if (lqe->lqe_softlimit != 0) {
 		bool oversoft;
 		remaining = qmt_calc_softlimit(lqe, &oversoft);
@@ -725,10 +725,10 @@ bool qmt_adjust_qunit(const struct lu_env *env, struct lquota_entry *lqe)
 	LASSERT(lqe_is_locked(lqe));
 
 	if (!lqe->lqe_enforced || lqe->lqe_id.qid_uid == 0)
-		/* no quota limits */
+		
 		RETURN(need_reseed);
 
-	/* record how many slaves have already registered */
+	
 	slv_cnt = qpi_slv_nr(pool, lqe_qtype(lqe));
 	if (slv_cnt == 0) {
 		/* Pool hasn't slaves anymore. Qunit will be adjusted
@@ -737,7 +737,7 @@ bool qmt_adjust_qunit(const struct lu_env *env, struct lquota_entry *lqe)
 			qunit = 0;
 			GOTO(done, qunit);
 		}
-		/* wait for at least one slave to join */
+		
 		RETURN(need_reseed);
 	}
 
@@ -799,7 +799,7 @@ bool qmt_adjust_qunit(const struct lu_env *env, struct lquota_entry *lqe)
 		}
 
 	} else {
-		/* shrink qunit until we find a suitable value */
+		
 		while (qunit > pool->qpi_least_qunit &&
 		       limit < lqe->lqe_granted + ((slv_cnt * qunit) >> 1))
 			qunit >>= 2;
@@ -809,25 +809,25 @@ bool qmt_adjust_qunit(const struct lu_env *env, struct lquota_entry *lqe)
 		qunit = qunit2;
 done:
 	if (lqe->lqe_qunit == qunit)
-		/* keep current qunit */
+		
 		RETURN(need_reseed);
 
 	LQUOTA_DEBUG(lqe, "%s qunit to %llu",
 		     lqe->lqe_qunit < qunit ? "increasing" : "decreasing",
 		     qunit);
 
-	/* store new qunit value */
+	
 	swap(lqe->lqe_qunit, qunit);
 
 	/* reseed glbe array and notify
 	 * slave if qunit was shrinked */
 	need_reseed = true;
-	/* reset revoke time */
+	
 	lqe->lqe_revoke_time = 0;
 
 	if (lqe->lqe_qunit == pool->qpi_least_qunit) {
 		if (lqe->lqe_qunit >= qunit)
-			/* initial qunit value is the smallest one */
+			
 			lqe->lqe_revoke_time = ktime_get_seconds();
 		/* If there are several lqes and lqe_revoke_time is set for
 		 * some of them, it means appropriate OSTs have been already
@@ -975,7 +975,7 @@ int qti_lqes_add(const struct lu_env *env, struct lquota_entry *lqe)
 		if (!lqes)
 			return -ENOMEM;
 		memcpy(lqes, qti_lqes(env), qti->qti_lqes_cnt * sizeof(lqe));
-		/* Don't need to free, if it is the very 1st allocation */
+		
 		if (qti->qti_lqes_num > QMT_MAX_POOL_NUM)
 			OBD_FREE(qti->qti_lqes,
 				 qti->qti_lqes_num * sizeof(lqe));
@@ -1050,7 +1050,7 @@ __u64 qti_lqes_min_qunit(const struct lu_env *env)
 
 	for (i = 1, min = qti_lqe_qunit(env, 0); i < qti_lqes_cnt(env); i++) {
 		qunit = qti_lqe_qunit(env, i);
-		/* if qunit is 0, lqe is not enforced and we can ignore it */
+		
 		if (qunit && qunit < min)
 			min = qunit;
 	}
@@ -1152,7 +1152,7 @@ int qmt_map_lge_idx(struct lqe_glbl_data *lgd, int ostidx)
 
 	CDEBUG(D_QUOTA, "mapping ostidx %d num_used %d\n", ostidx,
 	       lgd->lqeg_num_used);
-	/* check common case of sequential OST numbers first */
+	
 	if (ostidx < lgd->lqeg_num_used &&
 	    lgd->lqeg_arr[ostidx].lge_idx == ostidx)
 		return ostidx;
@@ -1290,7 +1290,7 @@ qunit_lbl:
 		if (!pool_locked)
 			qmt_sarr_read_up(qpi);
 	}
-	/* TODO: only for debug purposes - remove it later */
+	
 	for (i = 0; i < lgd->lqeg_num_used; i++)
 		CDEBUG(D_QUOTA,
 			"lgd i %d tgt_idx %d qunit %lu nu %d;  edquot %d nu %d\n",

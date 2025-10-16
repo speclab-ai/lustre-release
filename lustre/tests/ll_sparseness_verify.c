@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/ll_sparseness_verify.c
  *
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
 			i = 0;
 		}
 
-		/* check for 0 when we aren't at a given offset */
+		
 		if (cur_off >= num_offsets || pos != offsets[cur_off]) {
 			if (buf[i] != 0)
 				error("found char 0x%x at pos %lu instead of 0x0\n",
@@ -97,15 +97,15 @@ int main(int argc, char **argv)
 			continue;
 		}
 
-		/* the command line asks us to check for + at this offset */
+		
 		if (buf[i] != '+')
 			error("found char 0x%x at pos %lu instead of '.'\n",
 			      buf[i], (long)pos);
 
-		/* skip over duplicate offset arguments */
+		
 		while (cur_off < num_offsets && offsets[cur_off] == pos)
 			cur_off++;
 	}
-	/* don't bother freeing or closing.. */
+	
 	return 0;
 }

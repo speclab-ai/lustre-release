@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 /*
@@ -52,7 +52,7 @@ module_param(ldlm_enqueue_min, uint, 0644);
 MODULE_PARM_DESC(ldlm_enqueue_min, "lock enqueue timeout minimum");
 EXPORT_SYMBOL(ldlm_enqueue_min);
 
-/* in client side, whether the cached locks will be canceled before replay */
+
 unsigned int ldlm_cancel_unused_locks_before_replay = 1;
 
 struct lock_wait_data {
@@ -81,7 +81,7 @@ static int ldlm_request_bufsize(int count, int type)
 	if (type == LDLM_ENQUEUE)
 		count++;
 
-	/* keep minimum handles to keep struct size for compatibility */
+	
 	if (count < LDLM_LOCKREQ_HANDLES)
 		count = LDLM_LOCKREQ_HANDLES;
 
@@ -186,7 +186,7 @@ static int ldlm_completion_tail(struct ldlm_lock *lock, void *data)
 		LDLM_DEBUG(lock, "client-side enqueue: granted");
 	} else {
 		struct obd_device *obd = class_exp2obd(lock->l_conn_export);
-		/* Take into AT only CP RPC, not immediately granted locks */
+		
 		timeout_t delay = 0;
 
 		/* Discard negative timeouts. We should also limit the
@@ -197,7 +197,7 @@ static int ldlm_completion_tail(struct ldlm_lock *lock, void *data)
 
 		LDLM_DEBUG(lock, "client-side enqueue: granted after %ds",
 			   delay);
-		/* Update our time estimate */
+		
 		obd_at_measure(obd, ldlm_lock_to_ns_at(lock), delay);
 	}
 	return result;
@@ -249,7 +249,7 @@ EXPORT_SYMBOL(ldlm_completion_ast_async);
  */
 int ldlm_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data)
 {
-	/* XXX ALLOCATE - 160 bytes */
+	
 	struct lock_wait_data lwd = {
 		.lwd_lock = NULL,
 		.lwd_conn_cnt = 0
@@ -277,7 +277,7 @@ noreproc:
 
 	obd = class_exp2obd(lock->l_conn_export);
 
-	/* if this is a local lock, then there is no import */
+	
 	if (obd != NULL)
 		imp = obd->u.cli.cl_import;
 
@@ -298,7 +298,7 @@ noreproc:
 		ldlm_set_fail_loc(lock);
 		rc = -EINTR;
 	} else {
-		/* Go to sleep until the lock is granted or cancelled. */
+		
 		if (ldlm_is_no_timeout(lock)) {
 			LDLM_DEBUG(lock, "waiting indefinitely because of NO_TIMEOUT");
 			rc = l_wait_event_abortable(
@@ -384,7 +384,7 @@ int ldlm_blocking_ast(struct ldlm_lock *lock, struct ldlm_lock_desc *desc,
 	ENTRY;
 
 	if (flag == LDLM_CB_CANCELING) {
-		/* Don't need to do anything here. */
+		
 		RETURN(0);
 	}
 
@@ -525,9 +525,9 @@ static void failed_lock_cleanup(struct ldlm_namespace *ns,
 {
 	int need_cancel = 0;
 
-	/* Set a flag to prevent us from sending a CANCEL (b=407) */
+	
 	lock_res_and_lock(lock);
-	/* Check that lock is not granted or failed, we might race. */
+	
 	if (!ldlm_is_granted(lock) && !ldlm_is_failed(lock)) {
 		/*
 		 * Make sure that this lock will not be found by raced
@@ -616,7 +616,7 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct req_capsule *pill,
 	}
 
 	lock = ldlm_handle2lock(lockh);
-	/* ldlm_cli_enqueue is holding a reference on this lock. */
+	
 	if (!lock) {
 		LASSERT(einfo->ei_type == LDLM_FLOCK);
 		RETURN(-ENOLCK);
@@ -634,7 +634,7 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct req_capsule *pill,
 			GOTO(cleanup, rc);
 	}
 
-	/* Before we return, swab the reply */
+	
 	reply = req_capsule_server_get(pill, &RMF_DLM_REP);
 	if (reply == NULL)
 		GOTO(cleanup, rc = -EPROTO);
@@ -662,11 +662,11 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct req_capsule *pill,
 		GOTO(cleanup, rc = rc ? : ELDLM_LOCK_ABORTED);
 	}
 
-	/* lock enqueued on the server */
+	
 	cleanup_phase = 0;
 
 	lock_res_and_lock(lock);
-	/* Key change rehash lock in per-export hash with new key */
+	
 	if (exp->exp_lock_hash) {
 		/*
 		 * In the function below, .hs_keycmp resolves to
@@ -718,7 +718,7 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct req_capsule *pill,
 		}
 
 		if (with_policy) {
-			/* We assume lock type cannot change on server*/
+			
 			ldlm_convert_policy_to_local(exp,
 						lock->l_resource->lr_type,
 						&reply->lock_desc.l_policy_data,
@@ -786,7 +786,7 @@ int ldlm_cli_enqueue_fini(struct obd_export *exp, struct req_capsule *pill,
 cleanup:
 	if (cleanup_phase == 1 && rc)
 		failed_lock_cleanup(ns, lock, einfo->ei_mode);
-	/* Put lock 2 times, the second reference is held by ldlm_cli_enqueue */
+	
 	ldlm_lock_put(lock);
 	ldlm_lock_put(lock);
 	return rc;
@@ -855,11 +855,11 @@ int ldlm_prep_elc_req(struct obd_export *exp, struct ptlrpc_request *req,
 	if (cancels == NULL)
 		cancels = &head;
 	if (ns_connect_cancelset(ns)) {
-		/* Estimate the amount of available space in the request. */
+		
 		req_capsule_filled_sizes(pill, RCL_CLIENT);
 		avail = ldlm_capsule_handles_avail(pill, RCL_CLIENT, canceloff);
 
-		/* If we have reached the limit, free +1 slot for the new one */
+		
 		if (!ns_connect_lru_resize(ns) && opc == LDLM_ENQUEUE &&
 		    ns->ns_nr_unused >= ns->ns_max_unused)
 			to_free = 1;
@@ -899,9 +899,9 @@ int ldlm_prep_elc_req(struct obd_export *exp, struct ptlrpc_request *req,
 			 */
 			dlm->lock_count = canceloff;
 		}
-		/* Pack into the request @pack lock handles. */
+		
 		ldlm_cli_cancel_list(cancels, pack, NULL, req, 0);
-		/* Prepare and send separate cancel RPC for others. */
+		
 		ldlm_cli_cancel_list(cancels, count - pack, NULL, NULL, 0);
 	} else {
 		ldlm_lock_list_put(cancels, l_bl_ast, count);
@@ -1006,7 +1006,7 @@ int ldlm_cli_enqueue(struct obd_export *exp, struct ptlrpc_request **reqp,
 		if (einfo->ei_cb_created)
 			einfo->ei_cb_created(lock);
 
-		/* for the local lock, add the reference */
+		
 		ldlm_lock_addref_internal(lock, einfo->ei_mode);
 		ldlm_lock2handle(lock, lockh);
 		if (policy != NULL)
@@ -1028,7 +1028,7 @@ int ldlm_cli_enqueue(struct obd_export *exp, struct ptlrpc_request **reqp,
 	lock->l_flags |= (*flags & (LDLM_FL_NO_LRU | LDLM_FL_EXCL));
 	lock->l_activity = ktime_get_real_seconds();
 
-	/* lock not sent to server yet */
+	
 	if (reqp == NULL || *reqp == NULL) {
 		req = ldlm_enqueue_pack(exp, lvb_len);
 		if (IS_ERR(req)) {
@@ -1057,18 +1057,18 @@ int ldlm_cli_enqueue(struct obd_export *exp, struct ptlrpc_request **reqp,
 		 * probably set a shorter timeout value and handle ETIMEDOUT
 		 * in osc_lock_upcall() correctly
 		 */
-		/* lustre_msg_set_timeout(req, req->rq_timeout / 2); */
+		
 	}
 
-	/* Dump lock data into the request buffer */
+	
 	body = req_capsule_client_get(&req->rq_pill, &RMF_DLM_REQ);
 	ldlm_lock2desc(lock, &body->lock_desc);
 	body->lock_flags = ldlm_flags_to_wire(*flags);
 	body->lock_handle[0] = *lockh;
 
-	/* extended LDLM opcodes in client stats */
+	
 	if (exp->exp_obd->obd_svc_stats != NULL) {
-		/* glimpse is intent with no intent buffer */
+		
 		if (*flags & LDLM_FL_HAS_INTENT &&
 		    !req_capsule_has_field(&req->rq_pill, &RMF_LDLM_INTENT,
 					   RCL_CLIENT))
@@ -1168,7 +1168,7 @@ int ldlm_cli_lock_create_pack(struct obd_export *exp,
 	if (einfo->ei_cb_created)
 		einfo->ei_cb_created(lock);
 
-	/* For the local lock, add the reference */
+	
 	ldlm_lock_addref_internal(lock, einfo->ei_mode);
 	ldlm_lock2handle(lock, lockh);
 	if (policy != NULL)
@@ -1286,7 +1286,7 @@ static __u64 ldlm_cli_cancel_local(struct ldlm_lock *lock)
 		CFS_FAIL_TIMEOUT(OBD_FAIL_LDLM_PAUSE_CANCEL_LOCAL,
 				 cfs_fail_val);
 
-		/* Set this flag to prevent others from getting new references*/
+		
 		lock_res_and_lock(lock);
 		ldlm_set_cbpending(lock);
 		local_only = !!(lock->l_flags &
@@ -1328,7 +1328,7 @@ static inline int __ldlm_pack_lock(struct ldlm_lock *lock,
 	ldlm_set_ast_sent(lock);
 	unlock_res_and_lock(lock);
 
-	/* Pack the lock handle to the given request buffer. */
+	
 	LDLM_DEBUG(lock, "packing");
 	dlm->lock_handle[dlm->lock_count++] = lock->l_remote_handle;
 
@@ -1350,7 +1350,7 @@ static int ldlm_cancel_pack(struct ptlrpc_request *req, struct ldlm_lock *lock,
 	dlm = req_capsule_client_get(&req->rq_pill, &RMF_DLM_REQ);
 	LASSERT(dlm != NULL);
 
-	/* Check the room in the request buffer. */
+	
 	max = req_capsule_get_size(&req->rq_pill, &RMF_DLM_REQ, RCL_CLIENT) -
 		sizeof(struct ldlm_request);
 	max /= sizeof(struct lustre_handle);
@@ -1362,12 +1362,12 @@ static int ldlm_cancel_pack(struct ptlrpc_request *req, struct ldlm_lock *lock,
 	 * so that the server cancel would call filter_lvbo_update() less
 	 * frequently.
 	 */
-	if (lock) { /* only pack one lock */
+	if (lock) { 
 		packed = __ldlm_pack_lock(lock, dlm);
 		count--;
 	}
 
-	if (count) { /* pack the list as well if given */
+	if (count) { 
 		list_for_each_entry(lock, head, l_bl_ast) {
 			packed += __ldlm_pack_lock(lock, dlm);
 			if (!--count)
@@ -1470,7 +1470,7 @@ int ldlm_cli_cancel_req(struct obd_export *exp, struct ldlm_lock *lock,
 			       "client/server (nid %s) out of sync -- not fatal\n",
 			       libcfs_nidstr(&req->rq_import->imp_connection->c_peer.nid));
 			rc = 0;
-		} else if (rc == -ETIMEDOUT && /* check there was no reconnect*/
+		} else if (rc == -ETIMEDOUT && 
 			   req->rq_import_generation == imp->imp_generation) {
 			struct ldlm_lock *pos;
 
@@ -1488,7 +1488,7 @@ int ldlm_cli_cancel_req(struct obd_export *exp, struct ldlm_lock *lock,
 			ptlrpc_req_put(req);
 			continue;
 		} else if (rc != ELDLM_OK) {
-			/* -ESHUTDOWN is common on umount */
+			
 			CDEBUG_LIMIT(rc == -ESHUTDOWN ? D_DLMTRACE : D_ERROR,
 				     "Got rc %d from cancel RPC: canceling anyway\n",
 				     rc);
@@ -1516,7 +1516,7 @@ int ldlm_cli_update_pool(struct ptlrpc_request *req)
 	ENTRY;
 	if (unlikely(!req->rq_import || !req->rq_import->imp_obd ||
 		     !imp_connect_lru_resize(req->rq_import)))
-		/* Do nothing for corner cases. */
+		
 		RETURN(0);
 
 	/*
@@ -1641,7 +1641,7 @@ int ldlm_cli_cancel(const struct lustre_handle *lockh,
 			RETURN(0);
 		}
 	} else if (ldlm_is_canceling(lock)) {
-		/* Lock is being canceled and the caller doesn't want to wait */
+		
 		if (flags & LCF_ASYNC) {
 			unlock_res_and_lock(lock);
 		} else {
@@ -1664,7 +1664,7 @@ int ldlm_cli_cancel(const struct lustre_handle *lockh,
 		ldlm_lock_put(lock);
 		RETURN(0);
 	} else if (rc == LDLM_FL_BL_AST) {
-		/* BL_AST lock must not wait. */
+		
 		lru_flags |= LDLM_LRU_FLAG_NO_WAIT;
 	}
 
@@ -1726,7 +1726,7 @@ int ldlm_cli_cancel_list_local(struct list_head *cancels, int count,
 			continue;
 		}
 		if (rc == LDLM_FL_LOCAL_ONLY) {
-			/* CANCEL RPC should not be sent to server. */
+			
 			list_del_init(&lock->l_bl_ast);
 			ldlm_lock_put(lock);
 			count--;
@@ -1805,7 +1805,7 @@ static enum ldlm_policy_res ldlm_cancel_lrur_policy(struct ldlm_namespace *ns,
 		     NSEC_PER_SEC);
 	lv = lvf * la * ns->ns_nr_unused >> 8;
 
-	/* Inform pool about current CLV to see it via debugfs. */
+	
 	ldlm_pool_set_clv(pl, lv);
 
 	/*
@@ -1937,20 +1937,20 @@ static int ldlm_prepare_lru_list(struct ldlm_namespace *ns,
 		RETURN(0);
 
 	LASSERT(ergo(max, min <= max));
-	/* No sense to give @batch for ELC */
+	
 	LASSERT(ergo(max, batch == 0));
 
 	if (!ns_connect_lru_resize(ns))
 		min = max_t(int, min, ns->ns_nr_unused - ns->ns_max_unused);
 
-	/* If at least 1 lock is to be cancelled, cancel at least @batch locks */
+	
 	if (min && min < batch)
 		min = batch;
 
 	pf = ldlm_cancel_lru_policy(ns, lru_flags);
 	LASSERT(pf != NULL);
 
-	/* For any flags, stop scanning if @max is reached. */
+	
 	while (!list_empty(&ns->ns_unused_list) && (max == 0 || added < max)) {
 		struct ldlm_lock *lock;
 		struct list_head *item, *next;
@@ -1964,7 +1964,7 @@ static int ldlm_prepare_lru_list(struct ldlm_namespace *ns,
 		     item = next, next = item->next) {
 			lock = list_entry(item, struct ldlm_lock, l_lru);
 
-			/* No locks which got blocking requests. */
+			
 			LASSERT(!ldlm_is_bl_ast(lock));
 
 			if (!ldlm_is_canceling(lock))
@@ -2021,7 +2021,7 @@ static int ldlm_prepare_lru_list(struct ldlm_namespace *ns,
 		}
 
 		lock_res_and_lock(lock);
-		/* Check flags again under the lock. */
+		
 		if (ldlm_is_canceling(lock) ||
 		    ldlm_lock_remove_from_lru_check(lock, last_use) == 0) {
 			/*
@@ -2074,7 +2074,7 @@ static int ldlm_prepare_lru_list(struct ldlm_namespace *ns,
 		list_add(&lock->l_bl_ast, cancels);
 		unlock_res_and_lock(lock);
 		added++;
-		/* Once a lock added, batch the requested amount */
+		
 		if (min == 0)
 			min = batch;
 	}
@@ -2184,7 +2184,7 @@ int ldlm_cancel_resource_local(struct ldlm_resource *res,
 				continue;
 		}
 
-		/* See CBPENDING comment in ldlm_cancel_lru */
+		
 		lock->l_flags |= LDLM_FL_CBPENDING | LDLM_FL_CANCELING |
 				 lock_flags;
 		LASSERT(list_empty(&lock->l_bl_ast));
@@ -2298,7 +2298,7 @@ int ldlm_cli_cancel_unused_resource(struct ldlm_namespace *ns,
 
 	res = ldlm_resource_get(ns, res_id, 0, 0);
 	if (IS_ERR(res)) {
-		/* This is not a problem. */
+		
 		CDEBUG(D_INFO, "No resource %llu\n", res_id->name[0]);
 		RETURN(0);
 	}
@@ -2330,7 +2330,7 @@ ldlm_cli_hash_cancel_unused(struct cfs_hash *hs, struct cfs_hash_bd *bd,
 	ldlm_cli_cancel_unused_resource(ldlm_res_to_ns(res), &res->lr_name,
 					NULL, LCK_MODE_MIN, lc->lc_flags,
 					lc->lc_opaque);
-	/* must return 0 for hash iteration */
+	
 	return 0;
 }
 
@@ -2366,7 +2366,7 @@ int ldlm_cli_cancel_unused(struct ldlm_namespace *ns,
 	}
 }
 
-/* Lock iterators. */
+
 
 int ldlm_resource_foreach(struct ldlm_resource *res, ldlm_iterator_t iter,
 			  void *closure)
@@ -2454,12 +2454,12 @@ int ldlm_resource_iterate(struct ldlm_namespace *ns,
 }
 EXPORT_SYMBOL(ldlm_resource_iterate);
 
-/* Lock replay */
+
 static int ldlm_chain_lock_for_replay(struct ldlm_lock *lock, void *closure)
 {
 	struct list_head *list = closure;
 
-	/* we use l_pending_chain here, because it's unused on clients. */
+	
 	LASSERTF(list_empty(&lock->l_pending_chain),
 		 "lock %px next %px prev %px\n",
 		 lock, &lock->l_pending_chain.next,
@@ -2505,7 +2505,7 @@ static int replay_lock_interpret(const struct lu_env *env,
 		GOTO(out, rc = -ESTALE);
 	}
 
-	/* Key change rehash lock in per-export hash with new key */
+	
 	exp = req->rq_export;
 	if (exp && exp->exp_lock_hash) {
 		/*
@@ -2540,7 +2540,7 @@ static int replay_one_lock(struct obd_import *imp, struct ldlm_lock *lock)
 	ENTRY;
 
 
-	/* b=11974: Do not replay a lock which is actively being canceled */
+	
 	if (ldlm_is_bl_done(lock)) {
 		LDLM_DEBUG(lock, "Not replaying canceled lock:");
 		RETURN(0);
@@ -2580,9 +2580,9 @@ static int replay_one_lock(struct obd_import *imp, struct ldlm_lock *lock)
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 
-	/* We're part of recovery, so don't wait for it. */
+	
 	req->rq_send_state = LUSTRE_IMP_REPLAY_LOCKS;
-	/* If the state changed while we were prepared, don't wait */
+	
 	req->rq_no_delay = 1;
 
 	body = req_capsule_client_get(&req->rq_pill, &RMF_DLM_REQ);
@@ -2655,7 +2655,7 @@ static int lock_can_replay(struct obd_import *imp)
 	       atomic_read(&imp->imp_replay_inflight) - 1,
 	       cli->cl_max_rpcs_in_flight);
 
-	/* +1 due to ldlm_lock_replay() increment */
+	
 	return atomic_read(&imp->imp_replay_inflight) <
 	       1 + min_t(u32, cli->cl_max_rpcs_in_flight, 8);
 }
@@ -2672,7 +2672,7 @@ static int __ldlm_replay_locks(struct obd_import *imp, bool rate_limit)
 	while (atomic_read(&imp->imp_replay_inflight) != 1)
 		cond_resched();
 
-	/* don't replay locks if import failed recovery */
+	
 	if (imp->imp_vbr_failed)
 		RETURN(0);
 
@@ -2726,7 +2726,7 @@ int ldlm_replay_locks(struct obd_import *imp)
 	struct task_struct *task;
 	int rc = 0;
 
-	/* ensure this doesn't fall to 0 before all have been queued */
+	
 	if (atomic_inc_return(&imp->imp_replay_inflight) > 1) {
 		atomic_dec(&imp->imp_replay_inflight);
 		return 0;
@@ -2738,7 +2738,7 @@ int ldlm_replay_locks(struct obd_import *imp)
 		rc = PTR_ERR(task);
 		CDEBUG(D_HA, "can't start lock replay thread: rc = %d\n", rc);
 
-		/* run lock replay without rate control */
+		
 		rc = __ldlm_replay_locks(imp, false);
 		atomic_dec(&imp->imp_replay_inflight);
 		class_import_put(imp);

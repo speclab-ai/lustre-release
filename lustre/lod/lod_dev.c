@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright  2009 Sun Microsystems, Inc. All rights reserved
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Logical Object Device
  *
@@ -153,10 +153,10 @@ int lod_fld_lookup(const struct lu_env *env, struct lod_device *lod,
 	RETURN(0);
 }
 
-/* Slab for OSD object allocation */
+
 struct kmem_cache *lod_object_kmem;
 
-/* Slab for dt_txn_callback */
+
 static struct kmem_cache *lod_txn_callback_kmem;
 static struct lu_kmem_descr lod_caches[] = {
 	{
@@ -325,7 +325,7 @@ static int lod_process_recovery_updates(const struct lu_env *env,
 					cookie, index);
 }
 
-/* retain old catalog, create new catalog and update catlist */
+
 static int lod_sub_recreate_llog(const struct lu_env *env,
 				 struct lod_device *lod, struct dt_device *dt,
 				 int index)
@@ -355,7 +355,7 @@ static int lod_sub_recreate_llog(const struct lu_env *env,
 	ctxt = llog_get_context(obd, LLOG_UPDATELOG_ORIG_CTXT);
 	LASSERT(ctxt != NULL);
 	if (ctxt->loc_handle) {
-		/* retain old catalog */
+		
 		llog_retain(env, ctxt->loc_handle);
 		llog_cat_close(env, ctxt->loc_handle);
 		LASSERT(!ctxt->loc_handle);
@@ -389,7 +389,7 @@ out_put:
 	RETURN(rc);
 }
 
-/* retain update catalog and llogs, and create a new catalog */
+
 static int lod_sub_cancel_llog(const struct lu_env *env,
 			       struct lod_device *lod, struct dt_device *dt,
 			       int index)
@@ -406,11 +406,11 @@ static int lod_sub_cancel_llog(const struct lu_env *env,
 		LCONSOLE(D_INFO, "%s: cancel update llog "DFID"\n",
 			 dt->dd_lu_dev.ld_obd->obd_name,
 			 PLOGID(&ctxt->loc_handle->lgh_id));
-		/* set retention on logs to simplify reclamation */
+		
 		llog_process_or_fork(env, ctxt->loc_handle, llog_cat_retain_cb,
 				     NULL, NULL, false);
 	}
-	/* retain old catalog and create a new one */
+	
 	lod_sub_recreate_llog(env, lod, dt, index);
 	llog_ctxt_put(ctxt);
 	return rc;
@@ -464,7 +464,7 @@ again:
 	}
 
 	if (!rc && !lod->lod_child->dd_rdonly) {
-		/* Process the recovery record */
+		
 		ctxt = llog_get_context(dt->dd_lu_dev.ld_obd,
 					LLOG_UPDATELOG_ORIG_CTXT);
 		LASSERT(ctxt != NULL);
@@ -579,7 +579,7 @@ void lod_sub_fini_llog(const struct lu_env *env,
 
 	obd = dt->dd_lu_dev.ld_obd;
 	CDEBUG(D_INFO, "%s: finish sub llog\n", obd->obd_name);
-	/* Wait for recovery thread to complete */
+	
 	if (thread)
 		task = xchg(thread, NULL);
 	if (task)
@@ -615,7 +615,7 @@ int lodname2mdt_index(char *lodname, u32 *mdt_index)
 	const char *ptr, *tmp;
 	int rc;
 
-	/* 1.8 configs don't have "-MDT0000" at the end */
+	
 	ptr = strstr(lodname, "-MDT");
 	if (!ptr) {
 		*mdt_index = 0;
@@ -736,7 +736,7 @@ int lod_sub_init_llog(const struct lu_env *env, struct lod_device *lod,
 		GOTO(free_lrd, rc);
 	}
 
-	/* Start the recovery thread */
+	
 	task = kthread_create(lod_sub_recovery_thread, lrd, "lod%04x_rec%04x",
 			      master_index, index);
 	if (IS_ERR(task)) {
@@ -881,7 +881,7 @@ static int lod_prepare_distribute_txn(const struct lu_env *env,
 
 	ENTRY;
 
-	/* Init update recovery data */
+	
 	OBD_ALLOC_PTR(tdtd);
 	if (!tdtd)
 		RETURN(-ENOMEM);
@@ -1014,7 +1014,7 @@ static int lod_process_config(const struct lu_env *env,
 			rc = lod_add_device(env, lod, arg1, index, gen,
 					    mdt_index, LUSTRE_MDC_NAME, 1);
 		} else if (lcfg->lcfg_command == LCFG_LOV_ADD_INA) {
-			/*FIXME: Add mdt_index for LCFG_LOV_ADD_INA*/
+			
 			mdt_index = 0;
 			rc = lod_add_device(env, lod, arg1, index, gen,
 					    mdt_index, LUSTRE_OSC_NAME, 0);
@@ -1222,7 +1222,7 @@ static int lod_sub_init_llogs(const struct lu_env *env, struct lod_device *lod)
 	 */
 	LASSERT(lod->lod_initialized);
 
-	/* Init the llog in its own stack */
+	
 	rc = lod_sub_init_llog(env, lod, lod->lod_child);
 	if (rc < 0)
 		RETURN(rc);
@@ -1234,7 +1234,7 @@ static int lod_sub_init_llogs(const struct lu_env *env, struct lod_device *lod)
 	RETURN(rc);
 }
 
-#define UPDATE_LOG_MAX_AGE	(30 * 24 * 60 * 60)	/* 30 days, in sec */
+#define UPDATE_LOG_MAX_AGE	(30 * 24 * 60 * 60)	
 
 static int lod_update_log_stale(const struct lu_env *env, struct dt_object *dto,
 				struct lu_buf *buf)
@@ -1252,11 +1252,11 @@ static int lod_update_log_stale(const struct lu_env *env, struct dt_object *dto,
 	if (!(attr->la_valid & (LA_CTIME | LA_SIZE)))
 		RETURN(-EFAULT);
 
-	/* by default update log ctime is not set */
+	
 	if (attr->la_ctime == 0)
 		RETURN(0);
 
-	/* update log not expired yet */
+	
 	if (attr->la_ctime + UPDATE_LOG_MAX_AGE > ktime_get_real_seconds())
 		RETURN(0);
 
@@ -1270,7 +1270,7 @@ static int lod_update_log_stale(const struct lu_env *env, struct dt_object *dto,
 	hdr = (struct llog_log_hdr *)buf->lb_buf;
 	if (LLOG_REC_HDR_NEEDS_SWABBING(&hdr->llh_hdr))
 		lustre_swab_llog_hdr(hdr);
-	/* log header is sane and flag LLOG_F_MAX_AGE|LLOG_F_RM_ON_ERR is set */
+	
 	if (rc >= sizeof(*hdr) &&
 	    hdr->llh_hdr.lrh_type == LLOG_HDR_MAGIC &&
 	    (hdr->llh_flags & (LLOG_F_MAX_AGE | LLOG_F_RM_ON_ERR)) ==
@@ -1325,7 +1325,7 @@ out_trans:
 	return rc;
 }
 
-/* reclaim stale update llogs under "update_log_dir" */
+
 static int lod_update_log_dir_gc(const struct lu_env *env,
 				 struct lod_device *lod,
 				 struct dt_object *dir)
@@ -1430,7 +1430,7 @@ static int lod_prepare(const struct lu_env *env, struct lu_device *pdev,
 	if (IS_ERR(root))
 		RETURN(PTR_ERR(root));
 
-	/* Create update log object */
+	
 	index = lu_site2seq(lod2lu_dev(lod)->ld_site)->ss_node_id;
 	lu_update_log_fid(fid, index);
 
@@ -1443,7 +1443,7 @@ static int lod_prepare(const struct lu_env *env, struct lu_device *pdev,
 
 	dt_object_put(env, dto);
 
-	/* Create update log dir */
+	
 	lu_update_log_dir_fid(fid, index);
 	dto = local_file_find_or_create_with_fid(env, lod->lod_child,
 						 fid, root,
@@ -1597,13 +1597,13 @@ static int lod_statfs(const struct lu_env *env, struct dt_device *dev,
 	lod_getref(&lod->lod_mdt_descs);
 	lod_foreach_mdt(lod, tgt) {
 		rc = dt_statfs(env, tgt->ltd_tgt, &ost_sfs);
-		/* ignore errors */
+		
 		if (rc)
 			continue;
 		sfs->os_files += ost_sfs.os_files;
 		sfs->os_ffree += ost_sfs.os_ffree;
 		lod_statfs_sum(sfs, &ost_sfs, &bs);
-		/* only update MDT os_namelen, OSTs do not store filenames */
+		
 		sfs->os_namelen = min(sfs->os_namelen, ost_sfs.os_namelen);
 	}
 	lod_putref(lod, &lod->lod_mdt_descs);
@@ -1616,7 +1616,7 @@ static int lod_statfs(const struct lu_env *env, struct dt_device *dev,
 	lod_getref(&lod->lod_ost_descs);
 	lod_foreach_ost(lod, tgt) {
 		rc = dt_statfs(env, tgt->ltd_tgt, &ost_sfs);
-		/* ignore errors */
+		
 		if (rc || ost_sfs.os_bsize == 0)
 			continue;
 		if (!ost_files) {
@@ -1635,7 +1635,7 @@ static int lod_statfs(const struct lu_env *env, struct dt_device *dev,
 		lod_statfs_sum(sfs, &ost_sfs, &bs);
 		LASSERTF(bs == ost_sfs.os_bsize, "%u != %u\n",
 			 sfs->os_bsize, ost_sfs.os_bsize);
-		/* only update OST os_maxbytes, DoM files are small */
+		
 		sfs->os_maxbytes = min(sfs->os_maxbytes, ost_sfs.os_maxbytes);
 	}
 	lod_putref(lod, &lod->lod_ost_descs);
@@ -1651,7 +1651,7 @@ static int lod_statfs(const struct lu_env *env, struct dt_device *dev,
 		sfs->os_ffree = ost_ffree;
 	}
 
-	/* a single successful statfs should be enough */
+	
 	rc = 0;
 
 out:
@@ -1677,7 +1677,7 @@ static struct thandle *lod_trans_create(const struct lu_env *env,
 
 	th->th_dev = dt;
 
-	/* initialize some lod_thread_info members */
+	
 	info->lti_obj_count = 0;
 
 	return th;
@@ -1715,7 +1715,7 @@ static int lod_trans_space_check(const struct lu_env *env,
 		if (rc) {
 			CDEBUG(D_INFO, "%s: fail - statfs error: rc = %d\n",
 			       sub_dt->dd_lu_dev.ld_obd->obd_name, rc);
-			/* statfs may fail during recovery, skip check */
+			
 			if (!lod->lod_recovery_completed)
 				rc = 0;
 			return rc;
@@ -1988,10 +1988,10 @@ static int lod_connect_to_osd(const struct lu_env *env, struct lod_device *lod,
 		}
 
 		if (strstr(nextdev, "-MDT")) {
-			/* 2.x config */
+			
 			strcpy(s, "-osd");
 		} else {
-			/* 1.8 config */
+			
 			strcpy(s, "-MDT0000-osd");
 		}
 	} else {
@@ -2045,7 +2045,7 @@ static int lod_lsfs_init(const struct lu_env *env, struct lod_device *d)
 		return rc;
 	}
 
-	/* udpate local OSD cached statfs data */
+	
 	spin_lock_init(&d->lod_lsfs_lock);
 	d->lod_lsfs_age = ktime_get_seconds();
 	d->lod_lsfs_total_mb = (sfs.os_blocks * sfs.os_bsize) >> 20;
@@ -2096,21 +2096,21 @@ static int lod_init0(const struct lu_env *env, struct lod_device *lod,
 
 	dt_conf_get(env, &lod->lod_dt_dev, &ddp);
 	lod->lod_osd_max_easize = ddp.ddp_max_ea_size;
-	lod->lod_dom_stripesize_max_kb = (1ULL << 10); /* 1Mb is default */
+	lod->lod_dom_stripesize_max_kb = (1ULL << 10); 
 	lod->lod_max_stripecount = 0;
 	lod->lod_max_stripes_per_mdt = LMV_MAX_STRIPES_PER_MDT;
 
-	/* initialize local statfs cached values */
+	
 	rc = lod_lsfs_init(env, lod);
 	if (rc)
 		GOTO(out_disconnect, rc);
 
-	/* default threshold as half of total space, in MiB */
+	
 	lod->lod_dom_threshold_free_mb = lod->lod_lsfs_total_mb / 2;
-	/* set default DoM stripe size based on free space amount */
+	
 	lod_dom_stripesize_recalc(lod);
 
-	/* setup obd to be used with old lov code */
+	
 	rc = lod_pools_init(lod, cfg);
 	if (rc)
 		GOTO(out_disconnect, rc);
@@ -2273,7 +2273,7 @@ static int lod_obd_connect(const struct lu_env *env, struct obd_export **exp,
 
 	spin_lock(&lod->lod_connects_lock);
 	lod->lod_connects++;
-	/* at the moment we expect the only user */
+	
 	LASSERT(lod->lod_connects == 1);
 	spin_unlock(&lod->lod_connects_lock);
 
@@ -2300,11 +2300,11 @@ static int lod_obd_disconnect(struct obd_export *exp)
 
 	ENTRY;
 
-	/* Only disconnect the underlying layers on the final disconnect. */
+	
 	spin_lock(&lod->lod_connects_lock);
 	lod->lod_connects--;
 	if (lod->lod_connects != 0) {
-		/* why should there be more than 1 connect? */
+		
 		spin_unlock(&lod->lod_connects_lock);
 		CERROR("%s: disconnect #%d\n", exp->exp_obd->obd_name,
 		       lod->lod_connects);
@@ -2312,11 +2312,11 @@ static int lod_obd_disconnect(struct obd_export *exp)
 	}
 	spin_unlock(&lod->lod_connects_lock);
 
-	/* the last user of lod has gone, let's release the device */
+	
 	release = 1;
 
 out:
-	rc = class_disconnect(exp); /* bz 9811 */
+	rc = class_disconnect(exp); 
 
 	if (rc == 0 && release)
 		class_manual_cleanup(obd);
@@ -2352,7 +2352,7 @@ static void lod_key_fini(const struct lu_context *ctx,
 	OBD_FREE_PTR(info);
 }
 
-/* context key: lod_thread_key */
+
 LU_CONTEXT_KEY_DEFINE(lod, LCT_MD_THREAD);
 
 LU_TYPE_INIT_FINI(lod, &lod_thread_key);
@@ -2415,7 +2415,7 @@ static int lod_obd_get_info(const struct lu_env *env, struct obd_export *exp,
 		lod_foreach_ost(d, tgt) {
 			rc = obd_get_info(env, tgt->ltd_exp, keylen, key,
 					  vallen, val);
-			/* one healthy device is enough */
+			
 			if (rc == 0)
 				break;
 		}
@@ -2519,7 +2519,7 @@ static struct obd_device *obd_find_qmt0(char *obd_name)
 	return qmt;
 }
 
-/* Run QMT0000 pool operations only for MDT0000 */
+
 static inline bool lod_pool_need_qmt0(const char *obd_name)
 {
 	__u32 idx;
@@ -2614,7 +2614,7 @@ static int lod_sub_print_llog(const struct lu_env *env, struct dt_device *dt,
 	rc = llog_process_or_fork(env, ctxt->loc_handle, llog_print_cb,
 				  lprd, NULL, false);
 
-	/* multiple iterations are not supported -> stop llog_print */
+	
 	if (rc == -EOVERFLOW)
 		rc = -E2BIG;
 
@@ -2625,7 +2625,7 @@ ctxt_put:
 	return rc;
 }
 
-/* print update catalog and update logs FID of all sub devices */
+
 static int lod_llog_print(const struct lu_env *env, struct lod_device *lod,
 			  void *data)
 {
@@ -2645,7 +2645,7 @@ static int lod_llog_print(const struct lu_env *env, struct lod_device *lod,
 		if (rc)
 			RETURN(rc);
 
-		/* multiple iterations are not supported -> stop llog_print */
+		
 		if (lprd.lprd_from > 1)
 			RETURN(-E2BIG);
 	}
@@ -2687,7 +2687,7 @@ out:
 	RETURN((rc == LLOG_PROC_BREAK) ? 0 : rc);
 }
 
-/* cancel update catalog from update catlist */
+
 static int lod_llog_cancel(const struct lu_env *env, struct lod_device *lod)
 {
 	struct lod_tgt_desc *tgt;
@@ -2803,11 +2803,11 @@ static int __init lod_init(void)
 		return rc;
 	}
 
-	/* create "lov" entry for compatibility purposes */
+	
 	sym = class_add_symlinks(LUSTRE_LOV_NAME, true);
 	if (IS_ERR(sym)) {
 		rc = PTR_ERR(sym);
-		/* does real "lov" already exist ? */
+		
 		if (rc == -EEXIST)
 			rc = 0;
 	}
@@ -2823,10 +2823,10 @@ static void __exit lod_exit(void)
 	 * then we are responsible for freeing this obd_type
 	 */
 	if (sym) {
-		/* final put if we manage this obd type */
+		
 		if (sym->typ_sym_filter)
 			kobject_put(&sym->typ_kobj);
-		/* put reference taken by class_search_type */
+		
 		kobject_put(&sym->typ_kobj);
 	}
 
@@ -2834,7 +2834,7 @@ static void __exit lod_exit(void)
 	lu_kmem_fini(lod_caches);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Logical Object Device ("LUSTRE_LOD_NAME")");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

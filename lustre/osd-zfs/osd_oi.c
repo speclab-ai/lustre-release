@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * OI functions to map fid to dnode
  *
@@ -60,7 +60,7 @@ static const struct named_oid oids[] = {
 	{ .oid = LAST_RECV_OID,	       .name = LAST_RCVD },
 	{ .oid = OFD_LAST_GROUP_OID,   .name = "LAST_GROUP" },
 	{ .oid = LLOG_CATALOGS_OID,    .name = "CATALOGS" },
-	{ .oid = MGS_CONFIGS_OID,      /*MOUNT_CONFIGS_DIR*/ },
+	{ .oid = MGS_CONFIGS_OID,       },
 	{ .oid = FID_SEQ_SRV_OID,      .name = "seq_srv" },
 	{ .oid = FID_SEQ_CTL_OID,      .name = "seq_ctl" },
 	{ .oid = FLD_INDEX_OID,	       .name = "fld" },
@@ -157,7 +157,7 @@ static int osd_obj_create(const struct lu_env *env, struct osd_device *o,
 			GOTO(out, rc);
 	}
 
-	/* create fid-to-dnode index */
+	
 	tx = dmu_tx_create(o->od_os);
 	if (!tx)
 		GOTO(out, rc = -ENOMEM);
@@ -322,13 +322,13 @@ int osd_fld_lookup(const struct lu_env *env, struct osd_device *osd,
 		return 0;
 	}
 
-	/* The seq_server_site may be NOT ready during initial OI scrub */
+	
 	if (unlikely(!ss || !ss->ss_server_fld ||
 		     !ss->ss_server_fld->lsf_cache))
 		return -ENOENT;
 
 	fld_range_set_any(range);
-	/* OSD will only do local fld lookup */
+	
 	return fld_local_lookup(env, ss->ss_server_fld, seq, range);
 }
 
@@ -411,7 +411,7 @@ static struct osd_seq *osd_find_or_add_seq(const struct lu_env *env,
 		RETURN(osd_seq);
 
 	down(&seq_list->osl_seq_init_sem);
-	/* Check again, in case some one else already add it to the list */
+	
 	osd_seq = osd_seq_find(seq_list, seq);
 	if (osd_seq != NULL)
 		GOTO(out, rc = 0);
@@ -487,7 +487,7 @@ osd_get_idx_for_ost_obj_compat(const struct lu_env *env, struct osd_device *osd,
 		id = 0;
 	} else {
 		rc = fid_to_ostid(fid, &osd_oti_get(env)->oti_ostid);
-		LASSERT(rc == 0); /* we should not get here with IGIF */
+		LASSERT(rc == 0); 
 		id = ostid_id(&osd_oti_get(env)->oti_ostid);
 	}
 
@@ -529,7 +529,7 @@ osd_get_idx_for_ost_obj(const struct lu_env *env, struct osd_device *osd,
 	}
 
 	rc = fid_to_ostid(fid, &osd_oti_get(env)->oti_ostid);
-	LASSERT(rc == 0); /* we should not get here with IGIF */
+	LASSERT(rc == 0); 
 
 	id = ostid_id(&osd_oti_get(env)->oti_ostid);
 	b = id % OSD_OST_MAP_SIZE;
@@ -579,7 +579,7 @@ osd_get_name_n_idx_compat(const struct lu_env *env, struct osd_device *osd,
 		zapid = osd_get_idx_for_ost_obj_compat(env, osd, fid,
 						       buf, bufsize);
 	} else if (unlikely(fid_seq(fid) == FID_SEQ_LOCAL_FILE)) {
-		/* special objects with fixed known fids get their name */
+		
 		char *name = oid2name(fid_oid(fid));
 
 		if (name) {
@@ -613,7 +613,7 @@ uint64_t osd_get_name_n_idx(const struct lu_env *env, struct osd_device *osd,
 	    fid_is_on_ost(env, osd, fid)) {
 		zapid = osd_get_idx_for_ost_obj(env, osd, fid, buf, bufsize);
 	} else if (unlikely(fid_seq(fid) == FID_SEQ_LOCAL_FILE)) {
-		/* special objects with fixed known fids get their name */
+		
 		char *name = oid2name(fid_oid(fid));
 
 		if (name) {
@@ -999,7 +999,7 @@ void osd_oi_fini(const struct lu_env *env, struct osd_device *o)
 
 int osd_options_init(void)
 {
-	/* osd_oi_count - Default number of OIs, 128 works well for ZFS */
+	
 	if (osd_oi_count == 0 || osd_oi_count > OSD_OI_FID_NR_MAX)
 		osd_oi_count = OSD_OI_FID_NR;
 
@@ -1095,7 +1095,7 @@ struct osd_idmap_cache *osd_idc_find_or_init(const struct lu_env *env,
 	CDEBUG(D_INODE, "%s: FID "DFID" not in the id map cache\n",
 	       osd->od_svname, PFID(fid));
 
-	/* new mapping is needed */
+	
 	idc = osd_idc_add(env, osd, fid);
 	if (IS_ERR(idc)) {
 		CERROR("%s: FID "DFID" add id map cache failed: %ld\n",
@@ -1103,13 +1103,13 @@ struct osd_idmap_cache *osd_idc_find_or_init(const struct lu_env *env,
 		return idc;
 	}
 
-	/* initialize it */
+	
 	rc = osd_remote_fid(env, osd, fid);
 	if (unlikely(rc < 0))
 		return ERR_PTR(rc);
 
 	if (rc == 0) {
-		/* the object is local, lookup in OI */
+		
 		uint64_t dnode;
 
 		rc = osd_fid_lookup(env, osd, fid, &dnode);
@@ -1121,7 +1121,7 @@ struct osd_idmap_cache *osd_idc_find_or_init(const struct lu_env *env,
 		LASSERT(dnode < (1ULL << DN_MAX_OBJECT_SHIFT));
 		idc->oic_dnode = dnode;
 	} else {
-		/* the object is remote */
+		
 		idc->oic_remote = 1;
 	}
 
@@ -1149,7 +1149,7 @@ int osd_idc_find_and_init(const struct lu_env *env, struct osd_device *osd,
 	CDEBUG(D_INODE, "%s: FID "DFID" not in the id map cache\n",
 	       osd->od_svname, PFID(fid));
 
-	/* new mapping is needed */
+	
 	idc = osd_idc_add(env, osd, fid);
 	if (IS_ERR(idc)) {
 		CERROR("%s: FID "DFID" add id map cache failed: %ld\n",

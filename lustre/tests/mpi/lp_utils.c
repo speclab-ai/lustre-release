@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2014, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lp_utils.c
  *
@@ -161,7 +161,7 @@ void create_file(char *name, long filesize, int fill)
 	short zero = 0;
 	long left = filesize;
 
-	/* Process 0 creates the test file(s) */
+	
 	if (rank == 0) {
 		sprintf(filename, "%s/%s", testdir, name);
 		remove_file_or_dir(filename);
@@ -214,7 +214,7 @@ void remove_file(char *name)
 {
 	char filename[MAX_FILENAME_LEN];
 
-	/* Process 0 remove the file(s) */
+	
 	if (rank == 0) {
 		sprintf(filename, "%s/%s", testdir, name);
 		if (unlink(filename) == -1)

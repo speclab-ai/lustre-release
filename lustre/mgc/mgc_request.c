@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,13 +8,13 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Nathan Rutman <nathan@clusterfs.com>
  */
 
 #define DEBUG_SUBSYSTEM S_MGC
-#define D_MGC D_CONFIG /*|D_WARNING*/
+#define D_MGC D_CONFIG 
 
 #include <linux/module.h>
 #include <linux/random.h>
@@ -43,10 +43,10 @@ static int mgc_name2resid(char *name, int len, struct ldlm_res_id *res_id,
 	}
 	memcpy(&resname, name, len);
 
-	/* Always use the same endianness for the resid */
+	
 	memset(res_id, 0, sizeof(*res_id));
 	res_id->name[0] = cpu_to_le64(resname);
-	/* XXX: unfortunately, sptlprc and config llog share one lock */
+	
 	switch (type) {
 	case MGS_CFG_T_CONFIG:
 	case MGS_CFG_T_SPTLRPC:
@@ -72,7 +72,7 @@ static int mgc_name2resid(char *name, int len, struct ldlm_res_id *res_id,
 int mgc_fsname2resid(char *fsname, struct ldlm_res_id *res_id,
 		     enum mgs_cfg_type type)
 {
-	/* fsname is at most 8 chars long, can contain "-". eg. lustre, lu-0 */
+	
 	return mgc_name2resid(fsname, strlen(fsname), res_id, type);
 }
 EXPORT_SYMBOL(mgc_fsname2resid);
@@ -95,11 +95,11 @@ int mgc_logname2resid(char *logname, struct ldlm_res_id *res_id,
 }
 EXPORT_SYMBOL(mgc_logname2resid);
 
-/********************** config llog list **********************/
-static LIST_HEAD(config_llog_list);
-static DEFINE_SPINLOCK(config_list_lock);	/* protects config_llog_list */
 
-/* Take a reference to a config log */
+static LIST_HEAD(config_llog_list);
+static DEFINE_SPINLOCK(config_list_lock);	
+
+
 static int config_log_get(struct config_llog_data *cld)
 {
 	ENTRY;
@@ -122,7 +122,7 @@ static void config_log_put(struct config_llog_data *cld)
 	CDEBUG(D_INFO, "log %s(%p) refs %d\n", cld->cld_logname, cld,
 		refcount_read(&cld->cld_refcount));
 
-	/* spinlock to make sure no item with 0 refcount in the list */
+	
 	if (refcount_dec_and_lock(&cld->cld_refcount, &config_list_lock)) {
 		list_del(&cld->cld_list_chain);
 		spin_unlock(&config_list_lock);
@@ -147,7 +147,7 @@ static void config_log_put(struct config_llog_data *cld)
 	EXIT;
 }
 
-/* Find a config log by name */
+
 static
 struct config_llog_data *config_log_find(char *logname,
 					 struct config_llog_instance *cfg)
@@ -162,11 +162,11 @@ struct config_llog_data *config_log_find(char *logname,
 	cfg_instance = cfg ? cfg->cfg_instance : 0;
 	spin_lock(&config_list_lock);
 	list_for_each_entry(cld, &config_llog_list, cld_list_chain) {
-		/* check if cfg_instance is the one we want */
+		
 		if (cfg_instance != cld->cld_cfg.cfg_instance)
 			continue;
 
-		/* instance may be NULL, should check name */
+		
 		if (strcmp(logname, cld->cld_logname) == 0) {
 			found = cld;
 			config_log_get(found);
@@ -216,7 +216,7 @@ struct config_llog_data *do_config_log_add(struct obd_device *obd,
 	cld->cld_type = type;
 	refcount_set(&cld->cld_refcount, 1);
 
-	/* Keep the mgc around until we are done */
+	
 	cld->cld_mgcexp = class_export_get(obd->obd_self_export);
 
 	if (cld_is_sptlrpc(cld))
@@ -250,7 +250,7 @@ config_recover_log_add(struct obd_device *obd, char *fsname,
 	if (IS_OST(s2lsi(sb)))
 		return NULL;
 
-	/* for osp-on-ost, see lustre_start_osp() */
+	
 	if (IS_MDT(s2lsi(sb)) && lcfg.cfg_instance)
 		return NULL;
 #endif
@@ -506,7 +506,7 @@ static int config_log_end(char *logname, struct config_llog_instance *cfg)
 	 */
 	if (unlikely(cld->cld_stopping)) {
 		mutex_unlock(&cld->cld_lock);
-		/* drop the ref from the find */
+		
 		config_log_put(cld);
 		RETURN(rc);
 	}
@@ -535,12 +535,12 @@ static int config_log_end(char *logname, struct config_llog_instance *cfg)
 	 * targets may be active, it will be done in config_log_put if necessary
 	 */
 	config_log_put(cld_sptlrpc);
-	/* don't set cld_stopping on nm lock as other targets may be active */
+	
 	config_log_put(cld_nodemap);
 
-	/* drop the ref from the find */
+	
 	config_log_put(cld);
-	/* drop the start ref */
+	
 	config_log_put(cld);
 
 	CDEBUG(D_MGC, "end config log %s (%d)\n", logname ? logname : "client",
@@ -583,7 +583,7 @@ int lprocfs_mgc_rd_ir_state(struct seq_file *m, void *data)
 	RETURN(0);
 }
 
-/* reenqueue any lost locks */
+
 #define RQ_RUNNING	0x1
 #define RQ_NOW		0x2
 #define RQ_LATER	0x4
@@ -630,14 +630,14 @@ static int mgc_requeue_thread(void *data)
 
 	CDEBUG(D_MGC, "Starting requeue thread\n");
 
-	/* Keep trying failed locks periodically */
+	
 	spin_lock(&config_list_lock);
 	rq_state |= RQ_RUNNING;
 	while (!(rq_state & RQ_STOP)) {
 		struct config_llog_data *cld, *cld_prev;
 		int to;
 
-		/* Any new or requeued lostlocks will change the state */
+		
 		rq_state &= ~(RQ_NOW | RQ_LATER);
 		spin_unlock(&config_list_lock);
 
@@ -694,12 +694,12 @@ static int mgc_requeue_thread(void *data)
 		spin_unlock(&config_list_lock);
 		config_log_put(cld_prev);
 
-		/* Wait a bit to see if anyone else needs a requeue */
+		
 		wait_event_idle(rq_waitq, rq_state & (RQ_NOW | RQ_STOP));
 		spin_lock(&config_list_lock);
 	}
 
-	/* spinlock and while guarantee RQ_NOW and RQ_LATER are not set */
+	
 	rq_state &= ~RQ_RUNNING;
 	spin_unlock(&config_list_lock);
 
@@ -722,7 +722,7 @@ static void mgc_requeue_add(struct config_llog_data *cld)
 		cld->cld_logname, refcount_read(&cld->cld_refcount),
 		cld->cld_stopping, rq_state);
 
-	/* lets cancel an existent lock to mark cld as "lostlock" */
+	
 	CDEBUG(D_INFO, "lockh %#llx\n", cld->cld_lockh.cookie);
 	if (!ldlm_lock_addref_try(&cld->cld_lockh, LCK_CR))
 		ldlm_lock_decref_and_cancel(&cld->cld_lockh, LCK_CR);
@@ -742,7 +742,7 @@ static void mgc_requeue_add(struct config_llog_data *cld)
 	EXIT;
 }
 
-/********************** class fns **********************/
+
 static int mgc_llog_init(const struct lu_env *env, struct obd_device *obd)
 {
 	struct llog_ctxt	*ctxt;
@@ -793,10 +793,10 @@ static struct lu_device *mgc_device_fini(const struct lu_env *env,
 
 	if (atomic_dec_and_test(&mgc_count)) {
 		LASSERT(rq_state & RQ_RUNNING);
-		/* stop requeue thread */
+		
 		temp = RQ_STOP;
 	} else {
-		/* wakeup requeue thread to clean our cld */
+		
 		temp = RQ_NOW | RQ_PRECLEANUP;
 	}
 
@@ -823,9 +823,9 @@ static struct lu_device *mgc_device_free(const struct lu_env *env,
 
 	ENTRY;
 
-	/* COMPAT_146 - old config logs may have added profiles secretly */
+	
 	if (atomic_read(&obd->obd_type->typ_refcnt) <= 1)
-		/* Only for the last mgc */
+		
 		class_del_profiles();
 
 	lprocfs_obd_cleanup(obd);
@@ -879,7 +879,7 @@ static struct lu_device *mgc_device_alloc(const struct lu_env *env,
 		rq_state = 0;
 		init_waitqueue_head(&rq_waitq);
 
-		/* start requeue thread */
+		
 		task = kthread_run(mgc_requeue_thread, NULL, "ll_cfg_requeue");
 		if (IS_ERR(task)) {
 			rc = PTR_ERR(task);
@@ -888,7 +888,7 @@ static struct lu_device *mgc_device_alloc(const struct lu_env *env,
 			       obd->obd_name, rc);
 			GOTO(err_sysfs, rc);
 		}
-		/* rc is the task_struct pointer of mgc_requeue_thread. */
+		
 		rc = 0;
 		wait_for_completion(&rq_start);
 	}
@@ -906,7 +906,7 @@ err_free:
 	RETURN(ERR_PTR(rc));
 }
 
-/* based on ll_mdc_blocking_ast */
+
 static int mgc_blocking_ast(struct ldlm_lock *lock, struct ldlm_lock_desc *desc,
 			    void *data, int flag)
 {
@@ -918,13 +918,13 @@ static int mgc_blocking_ast(struct ldlm_lock *lock, struct ldlm_lock_desc *desc,
 
 	switch (flag) {
 	case LDLM_CB_BLOCKING:
-		/* mgs wants the lock, give it up... */
+		
 		LDLM_DEBUG(lock, "MGC blocking CB");
 		ldlm_lock2handle(lock, &lockh);
 		rc = ldlm_cli_cancel(&lockh, LCF_ASYNC);
 		break;
 	case LDLM_CB_CANCELING:
-		/* We've given up the lock, prepare ourselves to update. */
+		
 		LDLM_DEBUG(lock, "MGC cancel CB");
 
 		CDEBUG(D_MGC, "Lock res "DLDLMRES" (%.8s)\n",
@@ -938,7 +938,7 @@ static int mgc_blocking_ast(struct ldlm_lock *lock, struct ldlm_lock_desc *desc,
 
 		lock->l_ast_data = NULL;
 		cld->cld_lockh.cookie = 0;
-		/* Are we done with this log? */
+		
 		if (cld->cld_stopping) {
 			CDEBUG(D_MGC, "log %s: stopping, won't requeue\n",
 				cld->cld_logname);
@@ -956,7 +956,7 @@ static int mgc_blocking_ast(struct ldlm_lock *lock, struct ldlm_lock_desc *desc,
 			break;
 		}
 
-		/* Re-enqueue now */
+		
 		mgc_requeue_add(cld);
 		config_log_put(cld);
 		break;
@@ -967,7 +967,7 @@ static int mgc_blocking_ast(struct ldlm_lock *lock, struct ldlm_lock_desc *desc,
 	RETURN(rc);
 }
 
-/* Take a config lock so we can get cancel notifications */
+
 int mgc_enqueue(struct obd_export *exp, enum ldlm_type type,
 		union ldlm_policy_data *policy, enum ldlm_mode mode,
 		__u64 *flags, ldlm_glimpse_callback glimpse_callback,
@@ -1007,11 +1007,11 @@ int mgc_enqueue(struct obd_export *exp, enum ldlm_type type,
 	req_capsule_set_size(&req->rq_pill, &RMF_DLM_LVB, RCL_SERVER, 0);
 	ptlrpc_request_set_replen(req);
 
-	/* check for server by local storage set via server_mgc_set_fs() */
+	
 	if (exp->exp_obd->u.cli.cl_mgc_los)
 		short_limit = 1;
 
-	/* Limit how long we will wait for the enqueue to complete */
+	
 	delay_limit = short_limit ? 5 : MGC_ENQUEUE_LIMIT(exp->exp_obd);
 	req->rq_delay_limit_ns = ktime_set(delay_limit, 0);
 	rc = ldlm_cli_enqueue(exp, &req, &einfo, &cld->cld_resid, NULL, flags,
@@ -1035,13 +1035,13 @@ static int mgc_cancel(struct obd_export *exp, enum ldlm_mode mode,
 
 static void mgc_notify_active(struct obd_device *unused)
 {
-	/* wakeup mgc_requeue_thread to requeue mgc lock */
+	
 	spin_lock(&config_list_lock);
 	rq_state |= RQ_NOW;
 	spin_unlock(&config_list_lock);
 	wake_up(&rq_waitq);
 
-	/* TODO: Help the MGS rebuild nidtbl. -jay */
+	
 }
 
 static int mgc_set_info_async(const struct lu_env *env, struct obd_export *exp,
@@ -1053,7 +1053,7 @@ static int mgc_set_info_async(const struct lu_env *env, struct obd_export *exp,
 
 	ENTRY;
 
-	/* Turn off initial_recov after we try all backup servers once */
+	
 	if (KEY_IS(KEY_INIT_RECOV_BACKUP)) {
 		struct obd_import *imp = class_exp2cliimp(exp);
 		int value;
@@ -1108,7 +1108,7 @@ static int mgc_set_info_async(const struct lu_env *env, struct obd_export *exp,
 			RETURN(rc);
 		}
 
-		/* caller already hold a mutex */
+		
 		if (cli->cl_flvr_mgc.sf_rpc == SPTLRPC_FLVR_INVALID) {
 			cli->cl_flvr_mgc = flvr;
 		} else if (memcmp(&cli->cl_flvr_mgc, &flvr,
@@ -1166,7 +1166,7 @@ static int mgc_import_event(struct obd_device *obd,
 
 	switch (event) {
 	case IMP_EVENT_DISCON:
-		/* MGC imports should not wait for recovery */
+		
 		if (OCD_HAS_FLAG(&imp->imp_connect_data, IMP_RECOV))
 			ptlrpc_pinger_ir_down();
 		break;
@@ -1180,7 +1180,7 @@ static int mgc_import_event(struct obd_device *obd,
 	}
 	case IMP_EVENT_ACTIVE:
 		CDEBUG(D_INFO, "%s: Reactivating import\n", obd->obd_name);
-		/* Clearing obd_no_recov allows us to continue pinging */
+		
 		obd->obd_no_recov = 0;
 		mgc_notify_active(obd);
 		if (OCD_HAS_FLAG(&imp->imp_connect_data, IMP_RECOV))
@@ -1242,7 +1242,7 @@ static int mgc_create_new_conn(struct obd_import *imp, struct lnet_nid *nidlist,
 	CDEBUG(D_INFO, "Adding a connection for %s on %s\n",
 	       imp->imp_obd->obd_name, prim_nid);
 
-	/* Add remaining NIDs in list to that connection */
+	
 	rc = client_import_add_nids_to_conn(imp, nidlist, nid_count,
 					    nid_size, uuid);
 	if (rc < 0)
@@ -1274,7 +1274,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 	LASSERT(cfg->cfg_instance != 0);
 	LASSERT(ll_get_cfg_instance(cfg->cfg_sb) == cfg->cfg_instance);
 
-	/* get dynamic nids setting */
+	
 	dynamic_nids = mgc->obd_dynamic_nids;
 
 	if (!IS_SERVER(s2lsi(cfg->cfg_sb))) {
@@ -1290,7 +1290,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 					sizeof(inst));
 		if (rc)
 			RETURN(-EINVAL);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 	}
 
 	OBD_ALLOC(buf, PAGE_SIZE);
@@ -1312,19 +1312,19 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 		bool is_ost;
 
 		rc = -EINVAL;
-		/* sanity checks */
-		if (datalen < entry_len) /* really short on data */
+		
+		if (datalen < entry_len) 
 			break;
 
-		/* swab non nid data */
+		
 		if (mne_swab)
 			lustre_swab_mgs_nidtbl_entry_header(entry);
 
-		if (entry->mne_nid_count == 0) /* at least one nid entry */
+		if (entry->mne_nid_count == 0) 
 			break;
 
 		entry_len += entry->mne_nid_count * entry->mne_nid_size;
-		if (datalen < entry_len) /* must have entry_len at least */
+		if (datalen < entry_len) 
 			break;
 
 		if (entry->mne_length > PAGE_SIZE) {
@@ -1332,15 +1332,15 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 			break;
 		}
 
-		/* improper mne_lenth */
+		
 		if (entry->mne_length < entry_len)
 			break;
 
-		/* entry length reports larger than all the data passed in */
+		
 		if (datalen < entry->mne_length)
 			break;
 
-		/* Looks OK. Can process this entry? else move to next entry */
+		
 		off += entry->mne_length;
 		datalen -= entry->mne_length;
 		if (datalen < 0)
@@ -1374,7 +1374,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 			if (mne_swab)
 				lustre_swab_mgs_nidtbl_entry_content(entry);
 
-			/* Turn old NID format to newer format. */
+			
 			for (i = 0; i < entry->mne_nid_count; i++)
 				lnet_nid4_to_nid(entry->u.nids[i], &nidlist[i]);
 		} else {
@@ -1397,7 +1397,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 		obdname = buf;
 		pos = 0;
 
-		/* lustre-OST0001-osc-<instance #> */
+		
 		strcpy(obdname, cld->cld_logname);
 		cname = strrchr(obdname, '-');
 		if (cname == NULL) {
@@ -1419,7 +1419,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 					inst);
 		lustre_cfg_bufs_reset(&bufs, obdname);
 
-		/* find the obd by obdname */
+		
 		obd = class_name2obd(obdname);
 		if (obd == NULL) {
 			CDEBUG(D_INFO, "mgc %s: cannot find obdname %s\n",
@@ -1428,14 +1428,14 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 			goto free_nids;
 		}
 
-		/* osc.import = "connection=<Conn UUID>::<target instance>" */
+		
 		++pos;
 		params = buf + pos;
 		pos += sprintf(params, "%s.import=%s", cname, "connection=");
 		uuid = (struct obd_uuid *)(buf + pos);
 
 		with_imp_locked(obd, imp, rc) {
-			/* refresh existing connection NID list with new one */
+			
 			rc = client_import_add_nids_to_conn(imp, nidlist,
 							entry->mne_nid_count,
 							entry->mne_nid_size,
@@ -1449,7 +1449,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 		}
 
 		if (rc == -ENODEV) {
-			/* client does not connect to the OST yet */
+			
 			rc = 0;
 			goto free_nids;
 		}
@@ -1458,7 +1458,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 			CERROR("mgc: cannot find UUID by nid '%s': rc = %d\n",
 			       libcfs_nidstr(&nidlist[0]), rc);
 
-			/* For old NID format case the nidlist was allocated. */
+			
 			if (entry->mne_nid_type == 0)
 				OBD_FREE_PTR_ARRAY(nidlist,
 						   entry->mne_nid_count);
@@ -1478,7 +1478,7 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 					       bufs.lcfg_buflen));
 		if (!lcfg) {
 			rc = -ENOMEM;
-			/* For old NID format case the nidlist was allocated. */
+			
 			if (entry->mne_nid_type == 0)
 				OBD_FREE_PTR_ARRAY(nidlist,
 						   entry->mne_nid_count);
@@ -1496,9 +1496,9 @@ static int mgc_apply_recover_logs(struct obd_device *mgc,
 			CDEBUG(D_INFO, "process config for %s error %d\n",
 			       obdname, rc);
 
-		/* continue, even one with error */
+		
 free_nids:
-		/* For old NID format case the nidlist was allocated. */
+		
 		if (entry->mne_nid_type == 0)
 			OBD_FREE_PTR_ARRAY(nidlist, entry->mne_nid_count);
 	}
@@ -1563,7 +1563,7 @@ again:
 	if (rc)
 		GOTO(out, rc);
 
-	/* pack request */
+	
 	body = req_capsule_client_get(&req->rq_pill, &RMF_MGS_CONFIG_BODY);
 	LASSERT(body != NULL);
 	LASSERT(sizeof(body->mcb_name) > strlen(cld->cld_logname));
@@ -1576,7 +1576,7 @@ again:
 	body->mcb_units = nrpages;
 	body->mcb_rec_nid_size = sizeof(struct lnet_nid);
 
-	/* allocate bulk transfer descriptor */
+	
 	desc = ptlrpc_prep_bulk_imp(req, nrpages, 1,
 				    PTLRPC_BULK_PUT_SINK,
 				    MGS_BULK_PORTAL,
@@ -1616,7 +1616,7 @@ again:
 	if (ealen > nrpages << PAGE_SHIFT)
 		GOTO(out, rc = -EINVAL);
 
-	if (ealen == 0) { /* no logs transferred */
+	if (ealen == 0) { 
 		if (!eof)
 			rc = -EINVAL;
 		GOTO(out, rc);
@@ -1686,7 +1686,7 @@ static int mgc_process_cfg_log(struct obd_device *mgc,
 #endif
 	if (cld->cld_cfg.cfg_sb)
 		lsi = s2lsi(cld->cld_cfg.cfg_sb);
-	/* sptlrpc is shared config and shouldn't leave sb in cld */
+	
 	if (cld_is_sptlrpc(cld))
 		cld->cld_cfg.cfg_sb = NULL;
 
@@ -1811,13 +1811,13 @@ restart:
 	CDEBUG(D_MGC, "Process log %s-%016lx from %d\n", cld->cld_logname,
 	       cld->cld_cfg.cfg_instance, cld->cld_cfg.cfg_last_idx + 1);
 
-	/* Get the cfg lock on the llog */
+	
 	rcl = mgc_enqueue(mgc->u.cli.cl_mgc_mgsexp, LDLM_PLAIN, NULL,
 			  LCK_CR, &flags,
 			  cld_is_barrier(cld) ? mgc_barrier_glimpse_ast : NULL,
 			  cld, 0, NULL, &lockh);
 	if (rcl == 0) {
-		/* Get the cld, it will be released in mgc_blocking_ast. */
+		
 		config_log_get(cld);
 		rc = ldlm_lock_set_data(&lockh, (void *)cld);
 		LASSERT(!lustre_handle_is_used(&cld->cld_lockh));
@@ -1853,7 +1853,7 @@ restart:
 				goto restart;
 			} else {
 				mutex_lock(&cld->cld_lock);
-				/* unlock/lock mutex, so check stopping again */
+				
 				if (cld->cld_stopping) {
 					mutex_unlock(&cld->cld_lock);
 					RETURN(0);
@@ -1897,12 +1897,12 @@ restart:
 		wake_up(&rq_waitq);
 	}
 
-	/* Now drop the lock so MGS can revoke it */
+	
 	if (!rcl)
 		mgc_cancel(mgc->u.cli.cl_mgc_mgsexp, LCK_CR, &lockh);
 	mutex_unlock(&cld->cld_lock);
 
-	/* requeue nodemap lock immediately if transfer was interrupted */
+	
 	if ((cld_is_nodemap(cld) && rc == -EAGAIN) ||
 	    (cld_is_recover(cld) && rc)) {
 		if (cld_is_recover(cld))
@@ -1951,7 +1951,7 @@ static int mgc_process_config(const struct lu_env *env, struct lu_device *lu,
 		CDEBUG(D_MGC, "parse_log %s from %d\n", logname,
 		       cfg->cfg_last_idx);
 
-		/* We're only called through here on the initial mount */
+		
 		cld = config_log_add(obd, logname, cfg, sb);
 		if (IS_ERR(cld)) {
 			rc = PTR_ERR(cld);
@@ -2000,7 +2000,7 @@ static int mgc_process_config(const struct lu_env *env, struct lu_device *lu,
 				       "There is no params config file yet\n");
 				rc = 0;
 			}
-			/* params log is optional */
+			
 			if (rc)
 				CERROR("%s: can't process params llog: rc = %d\n",
 				       obd->obd_name, rc);
@@ -2105,7 +2105,7 @@ static void __exit mgc_exit(void)
 	class_unregister_type(LUSTRE_MGC_NAME);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Management Client");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

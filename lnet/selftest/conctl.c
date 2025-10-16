@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * IOC handle in kernel
  *
@@ -34,7 +34,7 @@ lst_debug_ioctl(struct lstio_debug_args *args)
 	if (args->lstio_dbg_resultp == NULL)
 		return -EINVAL;
 
-	if (args->lstio_dbg_namep != NULL && /* name of batch/group */
+	if (args->lstio_dbg_namep != NULL && 
 	    (args->lstio_dbg_nmlen <= 0 ||
 	     args->lstio_dbg_nmlen > LST_NAME_SIZE))
 		return -EINVAL;
@@ -235,7 +235,7 @@ lst_nodes_add_ioctl(struct lstio_group_nodes_args *args)
 	if (args->lstio_grp_key != console_session.ses_key)
 		return -EACCES;
 
-	if (args->lstio_grp_idsp == NULL || /* array of ids */
+	if (args->lstio_grp_idsp == NULL || 
 	    args->lstio_grp_count <= 0 ||
 	    args->lstio_grp_resultp == NULL ||
 	    args->lstio_grp_featp == NULL ||
@@ -441,18 +441,18 @@ lst_batch_info_ioctl(struct lstio_batch_info_args *args)
 	if (args->lstio_bat_key != console_session.ses_key)
 		return -EACCES;
 
-	if (args->lstio_bat_namep == NULL || /* batch name */
+	if (args->lstio_bat_namep == NULL || 
 	    args->lstio_bat_nmlen <= 0 ||
 	    args->lstio_bat_nmlen > LST_NAME_SIZE)
 		return -EINVAL;
 
-	if (args->lstio_bat_entp == NULL && /* output: batch entry */
-	    args->lstio_bat_dentsp == NULL) /* output: node entry */
+	if (args->lstio_bat_entp == NULL && 
+	    args->lstio_bat_dentsp == NULL) 
 		return -EINVAL;
 
-	if (args->lstio_bat_dentsp != NULL) { /* have node entry */
-		if (args->lstio_bat_idxp == NULL || /* node index */
-		    args->lstio_bat_ndentp == NULL) /* # of node entry */
+	if (args->lstio_bat_dentsp != NULL) { 
+		if (args->lstio_bat_idxp == NULL || 
+		    args->lstio_bat_ndentp == NULL) 
 			return -EINVAL;
 
 		if (copy_from_user(&index, args->lstio_bat_idxp,
@@ -501,7 +501,7 @@ lst_stat_query_ioctl(struct lstio_stat_args *args)
 	int rc;
 	char *name = NULL;
 
-	/* TODO: not finished */
+	
 	if (args->lstio_sta_key != console_session.ses_key)
 		return -EACCES;
 
@@ -552,24 +552,24 @@ static int lst_test_add_ioctl(struct lstio_test_args *args)
 
 	if (args->lstio_tes_resultp == NULL ||
 	    args->lstio_tes_retp == NULL ||
-	    args->lstio_tes_bat_name == NULL || /* no specified batch */
+	    args->lstio_tes_bat_name == NULL || 
 	    args->lstio_tes_bat_nmlen <= 0 ||
 	    args->lstio_tes_bat_nmlen > LST_NAME_SIZE ||
-	    args->lstio_tes_sgrp_name == NULL || /* no source group */
+	    args->lstio_tes_sgrp_name == NULL || 
 	    args->lstio_tes_sgrp_nmlen <= 0 ||
 	    args->lstio_tes_sgrp_nmlen > LST_NAME_SIZE ||
-	    args->lstio_tes_dgrp_name == NULL || /* no target group */
+	    args->lstio_tes_dgrp_name == NULL || 
 	    args->lstio_tes_dgrp_nmlen <= 0 ||
 	    args->lstio_tes_dgrp_nmlen > LST_NAME_SIZE)
 		return -EINVAL;
 
-	if (args->lstio_tes_loop == 0 || /* negative is infinite */
+	if (args->lstio_tes_loop == 0 || 
 	    args->lstio_tes_concur <= 0 ||
 	    args->lstio_tes_dist <= 0 ||
 	    args->lstio_tes_span <= 0)
 		return -EINVAL;
 
-	/* have parameter, check if parameter length is valid */
+	
 	if (args->lstio_tes_param != NULL &&
 	    (args->lstio_tes_param_len <= 0 ||
 	     args->lstio_tes_param_len >
@@ -658,7 +658,7 @@ lstcon_ioctl_entry(struct notifier_block *nb,
 		goto err;
 	}
 
-	/* copy in parameter */
+	
 	if (copy_from_user(buf, data->ioc_pbuf1, data->ioc_plen1)) {
 		rc = -EFAULT;
 		goto out_free_buf;
@@ -1065,7 +1065,7 @@ static int lst_groups_show_done(struct netlink_callback *cb)
 	return 0;
 }
 
-/* LNet selftest groups ->start() handler for GET requests */
+
 static int lst_groups_show_start(struct netlink_callback *cb)
 {
 	struct genlmsghdr *gnlh = nlmsg_data(cb->nlh);
@@ -1099,7 +1099,7 @@ static int lst_groups_show_start(struct netlink_callback *cb)
 					       "failed to allocate group info");
 				GOTO(report_err, rc = -ENOMEM);
 			}
-			lstcon_group_addref(grp);  /* +1 ref for caller */
+			lstcon_group_addref(grp);  
 			prop->lggp_grp = grp;
 		}
 

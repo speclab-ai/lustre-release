@@ -34,7 +34,6 @@ def run():
 		t.configure_lnet()
 		t.api_config_peer(prim_nid='192.168.122.11@tcp', nids='192.168.122.[12-15]@tcp')
 		peers = t.get_peers()
-		#t.api_del_peer(prim_nid='192.168.122.11@tcp', nids='192.168.122.[12-15]@tcp', all=False)
 		t.api_del_peer(prim_nid='192.168.122.11@tcp', nids='192.168.122.12@tcp,192.168.122.13@tcp,192.168.122.14@tcp,192.168.122.15@tcp', all=False)
 		peers2 = t.get_peers()
 		t.api_config_peer(prim_nid='192.168.122.11@tcp', nids='192.168.122.[12-15]@tcp')

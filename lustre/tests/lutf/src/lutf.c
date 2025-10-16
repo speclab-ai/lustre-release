@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf.c
  *
@@ -93,7 +93,7 @@ lutf_rc_t hostname_to_ip(char *hostname, char *ip, int len)
 	int rv;
 
 	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC; // use AF_INET6 to force IPv6
+	hints.ai_family = AF_UNSPEC; 
 	hints.ai_socktype = SOCK_STREAM;
 
 	rv = getaddrinfo(hostname, "http", &hints, &servinfo);
@@ -102,14 +102,14 @@ lutf_rc_t hostname_to_ip(char *hostname, char *ip, int len)
 		return EN_LUTF_RC_BAD_ADDR;
 	}
 
-	// loop through all the results and connect to the first we can
+	
 	memset(ip, 0, len);
 	for (p = servinfo; p != NULL; p = p->ai_next) {
 		h = (struct sockaddr_in *) p->ai_addr;
 		strncpy(ip, inet_ntoa(h->sin_addr), len-1);
 	}
 
-	freeaddrinfo(servinfo); // all done with this structure
+	freeaddrinfo(servinfo); 
 	return EN_LUTF_RC_OK;
 }
 
@@ -131,7 +131,7 @@ lutf_rc_t extract_config_parameters(struct cYAML *config_tree,
 		return EN_LUTF_RC_BAD_PARAM;
 	}
 
-	/* go  to the list of elements we need to browse */
+	
 	head = head->cy_child;
 
 	tmp = get_value(head, "shell");
@@ -391,7 +391,7 @@ main(int argc, char *argv[])
 
 	memset(&g_lutf_cfg, 0, sizeof(g_lutf_cfg));
 
-	/* If followed by a ':', the option requires an argument*/
+	
 	const char *const short_options = "c:h";
 	const struct option long_options[] = {
 		{.name = "config", .has_arg = required_argument, .val = 'c'},
@@ -400,18 +400,18 @@ main(int argc, char *argv[])
 	};
 
 	static const char * const description[] = {
-		/*'c'*/":\n\t\tYAML config file",
-		/*'h'*/":\n\t\tPrint this help",
+		":\n\t\tYAML config file",
+		":\n\t\tPrint this help",
 		NULL
 	};
 
-	/* sanity check */
+	
 	if (argc < 1) {
 		lutf_help_usage(long_options, description);
 		exit(LUTF_EXIT_ERR_STARTUP);
 	}
 
-	/*now process command line arguments*/
+	
 	if (argc > 1) {
 		while ((cOpt = getopt_long(argc, argv,
 					   short_options,
@@ -473,7 +473,7 @@ main(int argc, char *argv[])
 		pid_t process_id = 0;
 		pid_t sid = 0;
 
-		/* create the child process */
+		
 		process_id = fork();
 		if (process_id < 0) {
 			PERROR("Failed to run lutf as deamon");
@@ -521,7 +521,7 @@ main(int argc, char *argv[])
 		exit(LUTF_EXIT_ERR_THREAD_STARTUP);
 	}
 
-	/* spawn listener thread iff running in Master mode */
+	
 	rc = python_init();
 	if (rc) {
 		PERROR("Failed to initialize Python Module");

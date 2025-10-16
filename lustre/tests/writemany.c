@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <stdlib.h>
@@ -99,11 +99,11 @@ static int wait_for_threads(int live_threads)
 				fprintf(stderr,
 					"%s: error: PID %d had rc=%d\n",
 					cmdname, ret, err);
-			/* Record first error */
+			
 			if (!rc)
 				rc = err;
 
-			/* Give up on first error */
+			
 			if (rc && o_abort) {
 				kill_kids();
 				break;
@@ -260,18 +260,18 @@ int main(int argc, char *argv[])
 			return rc;
 		}
 		if (rc == 0) {
-			/* children */
+			
 			snprintf(cmdname, sizeof(cmdname), "%s-%d", argv[0], i);
 			return run_one_child(directory, i, duration);
 		}
-		/* parent */
+		
 		rc = push_kid(rc);
 		if (rc != 0) {
 			kill_kids();
 			exit(3);
 		}
 	}
-	/* parent process */
+	
 	if (!o_quiet)
 		printf("%s will run for %ld minutes\n", cmdname, duration / 60);
 	return wait_for_threads(threads);

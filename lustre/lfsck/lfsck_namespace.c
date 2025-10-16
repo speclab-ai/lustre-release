@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Fan, Yong <fan.yong@intel.com>
  */
@@ -35,9 +35,9 @@
 #define LFSCK_NAMESPACE_MAGIC		LFSCK_NAMESPACE_MAGIC_V3
 
 enum lfsck_nameentry_check {
-	LFSCK_NAMEENTRY_DEAD		= 1, /* The object has been unlinked. */
-	LFSCK_NAMEENTRY_REMOVED		= 2, /* The entry has been removed. */
-	LFSCK_NAMEENTRY_RECREATED	= 3, /* The entry has been recreated. */
+	LFSCK_NAMEENTRY_DEAD		= 1, 
+	LFSCK_NAMEENTRY_REMOVED		= 2, 
+	LFSCK_NAMEENTRY_RECREATED	= 3, 
 };
 
 static struct lfsck_namespace_req *
@@ -609,10 +609,10 @@ static int lfsck_declare_namespace_exec_dir(const struct lu_env *env,
 	if (dt_object_remote(obj))
 		handle->th_sync = 1;
 
-	/* For destroying all invalid linkEA entries. */
+	
 	rc = dt_declare_xattr_del(env, obj, XATTR_NAME_LINK, handle);
 	if (rc == 0)
-		/* For insert new linkEA entry. */
+		
 		rc = dt_declare_xattr_set(env, obj, NULL,
 			lfsck_buf_get_const(env, NULL, MAX_LINKEA_SIZE),
 			XATTR_NAME_LINK, 0, handle);
@@ -632,7 +632,7 @@ int __lfsck_links_read(const struct lu_env *env, struct dt_object *obj,
 
 	rc = dt_xattr_get(env, obj, ldata->ld_buf, XATTR_NAME_LINK);
 	if (rc == -ERANGE) {
-		/* Buf was too small, figure out what we need. */
+		
 		rc = dt_xattr_get(env, obj, &LU_BUF_NULL, XATTR_NAME_LINK);
 		if (unlikely(rc == 0))
 			return -ENODATA;
@@ -785,7 +785,7 @@ static int lfsck_namespace_unpack_linkea_entry(struct linkea_data *ldata,
 	if (unlikely(!linkea_entry_is_valid(ldata, cname, pfid)))
 		return -EINVAL;
 
-	/* To guarantee the 'name' is terminated with '0'. */
+	
 	memcpy(buf, cname->ln_name, cname->ln_namelen);
 	buf[cname->ln_namelen] = 0;
 	cname->ln_name = buf;
@@ -798,7 +798,7 @@ static void lfsck_linkea_del_buf(struct linkea_data *ldata,
 {
 	LASSERT(ldata->ld_leh != NULL && ldata->ld_lee != NULL);
 
-	/* Current record corrupted?, all subsequent records will be dropped. */
+	
 	if (unlikely(!linkea_reclen_is_valid(ldata))) {
 		void *ptr = ldata->ld_lee;
 
@@ -946,7 +946,7 @@ again:
 	if (rc != 0)
 		GOTO(log, rc);
 
-	/* Re-check whether name conflict with othrs after taken ldlm lock. */
+	
 	rc = dt_lookup_dir(env, parent, info->lti_key, &tfid);
 	if (rc == 0) {
 		if (!lu_fid_eq(cfid, &tfid)) {
@@ -1229,7 +1229,7 @@ static int lfsck_namespace_insert_normal(const struct lu_env *env,
 	struct lu_attr *la = &info->lti_la;
 	struct dt_insert_rec *rec = &info->lti_dt_rec;
 	struct lfsck_instance *lfsck = com->lc_lfsck;
-	/* The child and its name may be on different MDTs. */
+	
 	const struct lu_fid *pfid = lfsck_dto2fid(parent);
 	const struct lu_fid *cfid = lfsck_dto2fid(child);
 	struct dt_device *dev = lfsck->li_next;
@@ -1237,9 +1237,9 @@ static int lfsck_namespace_insert_normal(const struct lu_env *env,
 	struct lfsck_lock_handle *llh = &info->lti_llh;
 	struct lmv_mds_md_v1 *lmv = &info->lti_lmv;
 	struct lu_buf buf = { lmv, sizeof(*lmv) };
-	/* whether parent's LMV is deleted before insertion */
+	
 	bool parent_lmv_deleted = false;
-	/* whether parent's LMV is missing */
+	
 	bool parent_lmv_lost = false;
 	int rc = 0;
 
@@ -1751,7 +1751,7 @@ again:
 	if (rc)
 		GOTO(unlock2, rc = (rc == -ENODATA ? 0 : rc));
 
-	/* The specified linkEA entry has been removed by race. */
+	
 	rc = linkea_links_find(&ldata_new, cname, pfid);
 	if (rc != 0)
 		GOTO(unlock2, rc = 0);
@@ -1932,7 +1932,7 @@ static int lfsck_namespace_replace_cond(const struct lu_env *env,
 	struct dt_insert_rec *rec = &info->lti_dt_rec;
 	struct lu_fid tfid;
 	struct lfsck_instance *lfsck = com->lc_lfsck;
-	/* The child and its name may be on different MDTs. */
+	
 	struct dt_device *dev = lfsck->li_next;
 	const char *name = cname->ln_name;
 	const struct lu_fid *pfid = lfsck_dto2fid(parent);
@@ -1991,11 +1991,11 @@ static int lfsck_namespace_replace_cond(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(log, rc);
 
-	/* Someone changed the name entry, cannot replace it. */
+	
 	if (!lu_fid_eq(cfid, &tfid))
 		GOTO(log, rc = 0);
 
-	/* lock the object to be destroyed. */
+	
 	rc = lfsck_ibits_lock(env, lfsck, cobj, &clh,
 			      MDS_INODELOCK_UPDATE |
 			      MDS_INODELOCK_UPDATE | MDS_INODELOCK_XATTR,
@@ -2020,7 +2020,7 @@ static int lfsck_namespace_replace_cond(const struct lu_env *env,
 
 	if (S_ISREG(la->la_mode)) {
 		rc = dt_xattr_get(env, cobj, &LU_BUF_NULL, XATTR_NAME_LOV);
-		/* Someone has created related OST-object(s), then keep it. */
+		
 		if ((rc > 0) || (rc < 0 && rc != -ENODATA))
 			GOTO(log, rc = (rc > 0 ? 0 : rc));
 	}
@@ -2030,7 +2030,7 @@ replace:
 	rc = lfsck_links_read2_with_rec(env, child, &ldata);
 	dt_read_unlock(env, child);
 
-	/* Someone changed the child, no need to replace. */
+	
 	if (rc == -ENODATA)
 		GOTO(log, rc = 0);
 
@@ -2038,7 +2038,7 @@ replace:
 		GOTO(log, rc);
 
 	rc = linkea_links_find(&ldata, cname, pfid);
-	/* Someone moved the child, no need to replace. */
+	
 	if (rc != 0)
 		GOTO(log, rc = 0);
 
@@ -2076,7 +2076,7 @@ replace:
 			GOTO(stop, rc);
 	}
 
-	/* The old name entry maybe not exist. */
+	
 	rc = dt_delete(env, parent, (const struct dt_key *)name, th);
 	if (rc != 0 && rc != -ENOENT)
 		GOTO(stop, rc);
@@ -2271,7 +2271,7 @@ int lfsck_namespace_repair_dirent(const struct lu_env *env,
 
 	dt_write_lock(env, parent, 0);
 	rc = dt_lookup_dir(env, dt_object_child(parent), name, &tfid);
-	/* Someone has removed the bad name entry by race. */
+	
 	if (rc == -ENOENT)
 		GOTO(unlock2, rc = 0);
 
@@ -2319,7 +2319,7 @@ stop:
 					     LNTF_CHECK_LINKEA, true);
 
 unlock1:
-	/* It is harmless even if unlock the unused lock_handle */
+	
 	lfsck_ibits_unlock(&lh, LCK_PW);
 	lfsck_unlock(llh);
 
@@ -2414,7 +2414,7 @@ static int lfsck_namespace_repair_unmatched_pairs(const struct lu_env *env,
 	if (unlikely(lfsck_is_dead_obj(obj)))
 		GOTO(unlock, rc = 0);
 
-	/* The old ".." name entry maybe not exist. */
+	
 	dt_delete(env, obj, (const struct dt_key *)dotdot, th);
 
 	rc = dt_insert(env, obj, (const struct dt_rec *)rec,
@@ -2480,7 +2480,7 @@ lfsck_namespace_dsd_orphan(const struct lu_env *env,
 	int rc;
 
 	ENTRY;
-	/* Remove the unrecognized linkEA. */
+	
 	rc = lfsck_namespace_links_remove(env, com, obj);
 	lfsck_ibits_unlock(lh, LCK_EX);
 	if (rc < 0 && rc != -ENODATA)
@@ -2559,7 +2559,7 @@ lfsck_namespace_dsd_single(const struct lu_env *env,
 	rc = lfsck_namespace_unpack_linkea_entry(ldata, cname, &tfid,
 						 info->lti_key,
 						 sizeof(info->lti_key));
-	/* The unique linkEA entry with bad parent will be handled as orphan. */
+	
 	if (rc != 0) {
 		if (!lustre_handle_is_used(lh) && retry != NULL)
 			*retry = true;
@@ -2611,7 +2611,7 @@ lost_parent:
 		} else if (lfsck_shard_name_to_index(env,
 					cname->ln_name, cname->ln_namelen,
 					S_IFDIR, cfid) < 0) {
-			/* An invalid name entry?, cannot trust parent also */
+			
 			rc = lfsck_namespace_shrink_linkea(env, com, child,
 						ldata, cname, &tfid, true);
 			if (rc < 0)
@@ -2625,10 +2625,10 @@ lost_parent:
 			GOTO(out, rc);
 		}
 
-		/* Create the lost parent as an orphan. */
+		
 		rc = lfsck_namespace_create_orphan_dir(env, com, parent, lmv);
 		if (rc >= 0) {
-			/* Add the missing name entry to the parent. */
+			
 			rc = lfsck_namespace_insert_normal(env, com, parent,
 							   child, cname);
 			if (unlikely(rc == -EEXIST)) {
@@ -2656,9 +2656,9 @@ lost_parent:
 		}
 
 		GOTO(out, rc);
-	} /* !dt_object_exists(parent) */
+	} 
 
-	/* The unique linkEA entry with bad parent will be handled as orphan. */
+	
 	if (unlikely(!dt_try_as_dir(env, parent, true))) {
 		if (!lustre_handle_is_used(lh) && retry != NULL)
 			*retry = true;
@@ -2697,7 +2697,7 @@ lost_parent:
 		if (rc < 0)
 			GOTO(out, rc);
 
-		/* It is an invalid name entry, drop it. */
+		
 		if (unlikely(rc > 0)) {
 			rc = lfsck_namespace_shrink_linkea(env, com, child,
 						ldata, cname, &tfid, true);
@@ -2712,7 +2712,7 @@ lost_parent:
 			GOTO(out, rc);
 		}
 
-		/* Add the missing name entry back to the namespace. */
+		
 		rc = lfsck_namespace_insert_normal(env, com, parent, child,
 						   cname);
 		if (unlikely(rc == -ESTALE))
@@ -2745,7 +2745,7 @@ lost_parent:
 		}
 
 		GOTO(out, rc);
-	} /* rc == -ENOENT */
+	} 
 
 	if (rc != 0)
 		GOTO(out, rc);
@@ -2785,7 +2785,7 @@ lost_parent:
 		GOTO(out, rc = 0);
 	}
 
-	/* The ".." name entry is wrong, update it. */
+	
 	if (!lu_fid_eq(pfid, lfsck_dto2fid(parent))) {
 		if (!lustre_handle_is_used(lh) && retry != NULL) {
 			*retry = true;
@@ -2861,13 +2861,13 @@ again:
 		rc = lfsck_namespace_unpack_linkea_entry(ldata, cname, &tfid,
 							 info->lti_key,
 							 sizeof(info->lti_key));
-		/* Drop invalid linkEA entry. */
+		
 		if (rc != 0) {
 			lfsck_linkea_del_buf(ldata, cname);
 			continue;
 		}
 
-		/* Drop repeated linkEA entries. */
+		
 		lfsck_namespace_filter_linkea_entry(ldata, cname, &tfid, true);
 
 		/* If current dotdot is the .lustre/lost+found/MDTxxxx/,
@@ -2921,7 +2921,7 @@ again:
 			break;
 		}
 
-		/* The linkEA entry with bad parent will be removed. */
+		
 		if (unlikely(!dt_try_as_dir(env, parent, true))) {
 			lfsck_object_put(env, parent);
 			lfsck_linkea_del_buf(ldata, cname);
@@ -3020,7 +3020,7 @@ next:
 			ns->ln_dirent_repaired += dirent_count;
 
 			RETURN(rc);
-		} /* lu_fid_eq(&tfid, lfsck_dto2fid(child)) */
+		} 
 
 		lfsck_ibits_unlock(lh, LCK_EX);
 		/* The name entry references another MDT-object that may be
@@ -3037,9 +3037,9 @@ next:
 			goto rebuild;
 
 		lfsck_linkea_del_buf(ldata, cname);
-	} /* while (ldata->ld_lee != NULL) */
+	} 
 
-	/* If there is still linkEA overflow, return. */
+	
 	if (unlikely(ldata->ld_leh->leh_overflow_time))
 		RETURN(0);
 
@@ -3329,7 +3329,7 @@ lock:
 			goto lock;
 
 		if (rc == -EINVAL && !fid_is_zero(pfid)) {
-			/* Remove the corrupted linkEA. */
+			
 			rc = lfsck_namespace_links_remove(env, com, child);
 			if (rc == 0)
 				/* Here, because of the crashed linkEA, we
@@ -3375,10 +3375,10 @@ lock:
 		}
 
 		GOTO(out, rc);
-	} /* rc != 0 */
+	} 
 
 	linkea_first_entry(&ldata);
-	/* This is the most common case: the object has unique linkEA entry. */
+	
 	if (ldata.ld_leh->leh_reccount == 1) {
 		rc = lfsck_namespace_dsd_single(env, com, child, pfid, &ldata,
 						&lh, &type, &retry, &unknown);
@@ -3774,7 +3774,7 @@ static int lfsck_namespace_double_scan_one(const struct lu_env *env,
 		rc = lfsck_namespace_unpack_linkea_entry(&ldata, cname, pfid,
 							 info->lti_key,
 							 sizeof(info->lti_key));
-		/* Invalid PFID in the linkEA entry. */
+		
 		if (rc != 0) {
 			rc = lfsck_namespace_shrink_linkea(env, com, child,
 						&ldata, cname, pfid, true);
@@ -3789,7 +3789,7 @@ static int lfsck_namespace_double_scan_one(const struct lu_env *env,
 
 		rc = lfsck_namespace_filter_linkea_entry(&ldata, cname, pfid,
 							 false);
-		/* Found repeated linkEA entries */
+		
 		if (rc > 0) {
 			rc = lfsck_namespace_shrink_linkea(env, com, child,
 						&ldata, cname, pfid, false);
@@ -3801,7 +3801,7 @@ static int lfsck_namespace_double_scan_one(const struct lu_env *env,
 
 			repaired = true;
 
-			/* fallthrough */
+			
 		}
 
 		parent = lfsck_object_find_bottom(env, lfsck, pfid);
@@ -3847,7 +3847,7 @@ lost_parent:
 					GOTO(out, rc = 0);
 				}
 
-				/* Create the lost parent as an orphan. */
+				
 				rc = lfsck_namespace_create_orphan_dir(env, com,
 								parent, NULL);
 				if (rc < 0) {
@@ -3859,7 +3859,7 @@ lost_parent:
 				if (rc > 0)
 					repaired = true;
 
-				/* Add the missing name entry to the parent. */
+				
 				rc = lfsck_namespace_insert_normal(env, com,
 							parent, child, cname);
 				if (unlikely(rc == -EEXIST))
@@ -3887,9 +3887,9 @@ lost_parent:
 				repaired = true;
 
 			continue;
-		} /* !dt_object_exists(parent) */
+		} 
 
-		/* The linkEA entry with bad parent will be removed. */
+		
 		if (unlikely(!dt_try_as_dir(env, parent, true))) {
 			lfsck_object_put(env, parent);
 			rc = lfsck_namespace_shrink_linkea(env, com, child,
@@ -3947,7 +3947,7 @@ lost_parent:
 			continue;
 		}
 
-		/* The following handles -ENOENT case */
+		
 
 		rc = dt_attr_get(env, child, la);
 		if (rc != 0)
@@ -3995,7 +3995,7 @@ lost_parent:
 			GOTO(out, rc);
 		}
 
-		/* It is an invalid name entry, drop it. */
+		
 		if (unlikely(rc > 0)) {
 			lfsck_object_put(env, parent);
 			rc = lfsck_namespace_shrink_linkea(env, com, child,
@@ -4009,7 +4009,7 @@ lost_parent:
 			continue;
 		}
 
-		/* Add the missing name entry back to the namespace. */
+		
 		rc = lfsck_namespace_insert_normal(env, com, parent, child,
 						   cname);
 		if (unlikely(rc == -ESTALE))
@@ -4257,7 +4257,7 @@ static int lfsck_namespace_check_for_double_scan(const struct lu_env *env,
 	return rc;
 }
 
-/* namespace APIs */
+
 
 static int lfsck_namespace_reset(const struct lu_env *env,
 				 struct lfsck_component *com, bool init)
@@ -4603,7 +4603,7 @@ static int lfsck_namespace_exec_oit(const struct lu_env *env,
 	if (rc == -ENOENT)
 		GOTO(out, rc = 0);
 
-	/* -EINVAL means crashed linkEA, should be verified. */
+	
 	if (rc == -EINVAL) {
 		rc = lfsck_namespace_trace_update(env, com, fid,
 						  LNTF_CHECK_LINKEA, true);
@@ -4665,7 +4665,7 @@ static int lfsck_namespace_exec_oit(const struct lu_env *env,
 			GOTO(out, rc);
 	}
 
-	/* Record multiple-linked object. */
+	
 	if (ldata.ld_leh->leh_reccount > 1) {
 		rc = lfsck_namespace_trace_update(env, com, fid,
 						  LNTF_CHECK_LINKEA, true);
@@ -5393,7 +5393,7 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 	if (IS_ERR(th))
 		GOTO(unlock_child, rc = PTR_ERR(th));
 
-	/* 1a. create child. */
+	
 	rc = dt_declare_create(env, child, la, hint, dof, th);
 	if (rc != 0)
 		GOTO(stop, rc);
@@ -5402,12 +5402,12 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 		if (unlikely(!dt_try_as_dir(env, child, false)))
 			GOTO(stop, rc = -ENOTDIR);
 
-		/* 2a. increase child nlink */
+		
 		rc = dt_declare_ref_add(env, child, th);
 		if (rc != 0)
 			GOTO(stop, rc);
 
-		/* 3a. insert dot into child dir */
+		
 		rec->rec_type = S_IFDIR;
 		rec->rec_fid = cfid;
 		rc = dt_declare_insert(env, child,
@@ -5416,7 +5416,7 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 		if (rc != 0)
 			GOTO(stop, rc);
 
-		/* 4a. insert dotdot into child dir */
+		
 		rec->rec_fid = pfid;
 		rc = dt_declare_insert(env, child,
 				       (const struct dt_rec *)rec,
@@ -5424,7 +5424,7 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 		if (rc != 0)
 			GOTO(stop, rc);
 
-		/* 5a. generate slave LMV EA. */
+		
 		if (lnr->lnr_lmv != NULL && lnr->lnr_lmv->ll_lmv_master) {
 			int idx;
 
@@ -5447,7 +5447,7 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 		}
 	}
 
-	/* 6a. insert linkEA for child */
+	
 	lfsck_buf_init(&linkea_buf, ldata.ld_buf->lb_buf,
 		       ldata.ld_leh->leh_len);
 	rc = dt_declare_xattr_set(env, child, NULL, &linkea_buf,
@@ -5455,7 +5455,7 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 7a. if child is remote, delete and insert to generate local agent */
+	
 	if (dt_object_remote(child)) {
 		rc = dt_declare_delete(env, parent,
 				       (const struct dt_key *)lnr->lnr_name,
@@ -5477,18 +5477,18 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 		GOTO(stop, rc = (rc == -EEXIST ? 1 : rc));
 
 	dt_write_lock(env, child, 0);
-	/* 1b. create child */
+	
 	rc = dt_create(env, child, la, hint, dof, th);
 	if (rc != 0)
 		GOTO(unlock, rc = (rc == -EEXIST ? 1 : rc));
 
 	if (S_ISDIR(type)) {
-		/* 2b. increase child nlink */
+		
 		rc = dt_ref_add(env, child, th);
 		if (rc != 0)
 			GOTO(unlock, rc);
 
-		/* 3b. insert dot into child dir */
+		
 		rec->rec_type = S_IFDIR;
 		rec->rec_fid = cfid;
 		rc = dt_insert(env, child, (const struct dt_rec *)rec,
@@ -5496,14 +5496,14 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 		if (rc != 0)
 			GOTO(unlock, rc);
 
-		/* 4b. insert dotdot into child dir */
+		
 		rec->rec_fid = pfid;
 		rc = dt_insert(env, child, (const struct dt_rec *)rec,
 			       (const struct dt_key *)dotdot, th);
 		if (rc != 0)
 			GOTO(unlock, rc);
 
-		/* 5b. generate slave LMV EA. */
+		
 		if (lnr->lnr_lmv != NULL && lnr->lnr_lmv->ll_lmv_master) {
 			rc = dt_xattr_set(env, child, &lmv_buf, XATTR_NAME_LMV,
 					  0, th);
@@ -5512,13 +5512,13 @@ int lfsck_namespace_repair_dangling(const struct lu_env *env,
 		}
 	}
 
-	/* 6b. insert linkEA for child. */
+	
 	rc = dt_xattr_set(env, child, &linkea_buf,
 			  XATTR_NAME_LINK, 0, th);
 	if (rc)
 		GOTO(unlock, rc);
 
-	/* 7b. if child is remote, delete and insert to generate local agent */
+	
 	if (dt_object_remote(child)) {
 		rc = dt_delete(env, parent,
 			       (const struct dt_key *)lnr->lnr_name, th);
@@ -5627,7 +5627,7 @@ static int lfsck_namespace_assistant_handler_p1(const struct lu_env *env,
 		       lnr->lnr_namelen, lnr->lnr_name, PFID(pfid));
 
 		if (strcmp(lnr->lnr_name, dotdot) != 0)
-			/* invalid FID means bad name entry, remove it. */
+			
 			type = LNIT_BAD_DIRENT;
 		else
 			/* If the parent FID is invalid, we cannot remove
@@ -6056,7 +6056,7 @@ trace:
 		if (bad_hash) {
 			ns->ln_name_hash_repaired++;
 
-			/* Not count repeatedly. */
+			
 			if (!repaired) {
 				ns->ln_items_repaired++;
 				if (log)
@@ -6173,27 +6173,27 @@ static int lfsck_namespace_scan_local_lpf_one(const struct lu_env *env,
 	if (IS_ERR(th))
 		GOTO(out, rc = PTR_ERR(th));
 
-	/* a1. remove name entry from backend /lost+found */
+	
 	rc = dt_declare_delete(env, parent,
 			       (const struct dt_key *)ent->lde_name, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
 	if (S_ISDIR(lfsck_object_type(child))) {
-		/* a2. decrease parent's nlink */
+		
 		rc = dt_declare_ref_del(env, parent, th);
 		if (rc != 0)
 			GOTO(stop, rc);
 	}
 
 	if (exist) {
-		/* a3. remove child's FID from the LFSCK trace file. */
+		
 		rc = dt_declare_delete(env, obj,
 				       (const struct dt_key *)key, th);
 		if (rc != 0)
 			GOTO(stop, rc);
 	} else {
-		/* a4. set child's ctime as 1 */
+		
 		memset(la, 0, sizeof(*la));
 		la->la_ctime = 1;
 		la->la_valid = LA_CTIME;
@@ -6202,7 +6202,7 @@ static int lfsck_namespace_scan_local_lpf_one(const struct lu_env *env,
 			GOTO(stop, rc);
 	}
 
-	/* a5. insert child's FID into the LFSCK trace file. */
+	
 	rc = dt_declare_insert(env, obj, (const struct dt_rec *)&flags,
 			       (const struct dt_key *)key, th);
 	if (rc != 0)
@@ -6212,13 +6212,13 @@ static int lfsck_namespace_scan_local_lpf_one(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* b1. remove name entry from backend /lost+found */
+	
 	rc = dt_delete(env, parent, (const struct dt_key *)ent->lde_name, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
 	if (S_ISDIR(lfsck_object_type(child))) {
-		/* b2. decrease parent's nlink */
+		
 		dt_write_lock(env, parent, 0);
 		rc = dt_ref_del(env, parent, th);
 		dt_write_unlock(env, parent);
@@ -6227,18 +6227,18 @@ static int lfsck_namespace_scan_local_lpf_one(const struct lu_env *env,
 	}
 
 	if (exist) {
-		/* a3. remove child's FID from the LFSCK trace file. */
+		
 		rc = dt_delete(env, obj, (const struct dt_key *)key, th);
 		if (rc != 0)
 			GOTO(stop, rc);
 	} else {
-		/* b4. set child's ctime as 1 */
+		
 		rc = dt_attr_set(env, child, la, th);
 		if (rc != 0)
 			GOTO(stop, rc);
 	}
 
-	/* b5. insert child's FID into the LFSCK trace file. */
+	
 	rc = dt_insert(env, obj, (const struct dt_rec *)&flags,
 		       (const struct dt_key *)key, th);
 
@@ -6295,7 +6295,7 @@ static void lfsck_namespace_scan_local_lpf(const struct lu_env *env,
 		RETURN_EXIT;
 	}
 
-	/* It is normal that the /lost+found does not exist for ZFS backend. */
+	
 	if (!dt_object_exists(parent))
 		GOTO(out, rc = 0);
 
@@ -6335,7 +6335,7 @@ static void lfsck_namespace_scan_local_lpf(const struct lu_env *env,
 			goto skip;
 		}
 
-		/* skip dot and dotdot entries */
+		
 		if (name_is_dot_or_dotdot(ent->lde_name, ent->lde_namelen))
 			goto next;
 
@@ -6517,7 +6517,7 @@ out:
 	if (rc <= 0)
 		RETURN(rc);
 
-	/* The close_dir() may insert a dummy lnr in the lad->lad_req_list. */
+	
 	if (list_empty(&lad->lad_req_list))
 		RETURN(1);
 
@@ -6980,7 +6980,7 @@ int lfsck_links_get_first(const struct lu_env *env, struct dt_object *obj,
 	if (!linkea_entry_is_valid(&ldata, cname, pfid))
 		return -EINVAL;
 
-	/* To guarantee the 'name' is terminated with '0'. */
+	
 	memcpy(name, cname->ln_name, cname->ln_namelen);
 	name[cname->ln_namelen] = 0;
 

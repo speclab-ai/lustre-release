@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2013, Intel Corporation.
  *
@@ -19,7 +19,7 @@ static void usage(char *prog)
 	printf("Usage: %s <pathname>\n", prog);
 }
 
-/* Test the listxattr return value when the buffer is small. */
+
 int main(int argc, char *argv[])
 {
 	char *path, *buf;
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 		goto out;
 	}
 
-	/* LU-3403 llite: error of listxattr when buffer is small */
+	
 	if (ret_null < 2) {
 		fprintf(stderr,
 			"listxattr(%s, NULL, 0) returned a sizes less than 2",

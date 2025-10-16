@@ -1,17 +1,17 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (C) 2009-2012, 2016 Cray, Inc.
  *
  * Copyright (c) 2013, 2015, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org.
+/* This file is part of Lustre, http:
  *
  * Author: Nic Henke <nic@cray.com>
  * Author: James Shimek <jshimek@cray.com>
  */
 
-/* this code liberated and modified from lnet/lnet/router_proc.c */
+
 
 #define DEBUG_SUBSYSTEM S_LND
 #include "gnilnd.h"
@@ -65,7 +65,7 @@ _kgnilnd_proc_run_cksum_test(int caseno, int nloops, int nob)
 		}
 	}
 
-	/* add extra 2 pages - one for offset of src, 2nd to allow dest offset */
+	
 	niov = (nob / PAGE_SIZE) + 2;
 	if (niov > GNILND_MAX_IOV) {
 		CERROR("bytes %d too large, requires niov %d > %d\n",
@@ -73,23 +73,23 @@ _kgnilnd_proc_run_cksum_test(int caseno, int nloops, int nob)
 		GOTO(unwind, rc = -E2BIG);
 	}
 
-	/* setup real data */
+	
 	src[0].bv_offset = 317;
 	dest[0].bv_offset = 592;
 	switch (caseno) {
 	default:
-		/* odd -> even */
+		
 		break;
 	case 1:
-		/* odd -> odd */
+		
 		dest[0].bv_offset -= 1;
 		break;
 	case 2:
-		/* even -> even */
+		
 		src[0].bv_offset += 1;
 		break;
 	case 3:
-		/* even -> odd */
+		
 		src[0].bv_offset += 1;
 		dest[0].bv_offset -= 1;
 	}
@@ -169,7 +169,7 @@ kgnilnd_proc_cksum_test_write(struct file *file, const char __user *ubuffer,
 		if (rc < 0) {
 			RETURN(rc);
 		} else {
-			/* spurious, but lets us know the parse was ok */
+			
 			RETURN(count);
 		}
 	}
@@ -201,10 +201,10 @@ kgnilnd_stats_seq_show(struct seq_file *sf, void *v)
 		return 0;
 	}
 
-	/* only do the first device */
+	
 	dev = &kgnilnd_data.kgn_devices[0];
 
-	/* sampling is racy, but so is reading this file! */
+	
 	smp_rmb();
 	ktime_get_ts64(&now);
 
@@ -295,7 +295,7 @@ kgnilnd_proc_stats_write(struct file *file, const char __user *ubuffer,
 		return -EINVAL;
 	}
 
-	/* only do the first device */
+	
 	dev = &kgnilnd_data.kgn_devices[0];
 
 	atomic_set(&dev->gnd_short_ntx, 0);
@@ -316,7 +316,7 @@ kgnilnd_proc_stats_write(struct file *file, const char __user *ubuffer,
 	atomic_set(&kgnilnd_data.kgn_nvmap_short, 0);
 	atomic_set(&kgnilnd_data.kgn_nvmap_cksum, 0);
 	atomic_set(&kgnilnd_data.kgn_nkmap_short, 0);
-	/* sampling is racy, but so is writing this file! */
+	
 	smp_wmb();
 	return count;
 }
@@ -359,11 +359,11 @@ kgnilnd_mdd_seq_seek(kgn_mdd_seq_iter_t *gseq, loff_t off)
 	tx = gseq->gmdd_tx;
 
 	if (tx == NULL || gseq->gmdd_off > off) {
-		/* search from start */
+		
 		r = gseq->gmdd_dev->gnd_map_list.next;
 		here = 1;
 	} else {
-		/* continue current search */
+		
 		r = &tx->tx_map_list;
 		here = gseq->gmdd_off;
 	}
@@ -407,7 +407,7 @@ kgnilnd_mdd_seq_start(struct seq_file *s, loff_t *pos)
 		return NULL;
 	}
 
-	/* only doing device 0 for now */
+	
 	gseq->gmdd_dev = &kgnilnd_data.kgn_devices[0];
 	gseq->gmdd_tx = NULL;
 
@@ -415,7 +415,7 @@ kgnilnd_mdd_seq_start(struct seq_file *s, loff_t *pos)
 	 * but without it, no way to get the data printed */
 	spin_lock(&gseq->gmdd_dev->gnd_map_lock);
 
-	/* set private to gseq for stop */
+	
 	s->private = gseq;
 
 	rc = kgnilnd_mdd_seq_seek(gseq, *pos);
@@ -504,7 +504,7 @@ kgnilnd_mdd_seq_open(struct inode *inode, struct file *file)
 	if (rc == 0) {
 		sf = file->private_data;
 
-		/* NULL means we've not yet open() */
+		
 		sf->private = NULL;
 	}
 	return rc;
@@ -549,17 +549,17 @@ kgnilnd_smsg_seq_seek(kgn_smsg_seq_iter_t *gseq, loff_t off)
 
 	if (fmablk != NULL &&
 		gseq->gsmsg_version != atomic_read(&dev->gnd_fmablk_vers)) {
-		/* list changed */
+		
 		rc = -ESTALE;
 		goto out;
 	}
 
 	if (fmablk == NULL || gseq->gsmsg_off > off) {
-		/* search from start */
+		
 		r = dev->gnd_fma_buffs.next;
 		here = 1;
 	} else {
-		/* continue current search */
+		
 		r = &fmablk->gnm_bufflist;
 		here = gseq->gsmsg_off;
 	}
@@ -605,7 +605,7 @@ kgnilnd_smsg_seq_start(struct seq_file *s, loff_t *pos)
 		return NULL;
 	}
 
-	/* only doing device 0 for now */
+	
 	gseq->gsmsg_dev = &kgnilnd_data.kgn_devices[0];
 	gseq->gsmsg_fmablk = NULL;
 	rc = kgnilnd_smsg_seq_seek(gseq, *pos);
@@ -666,13 +666,13 @@ kgnilnd_smsg_seq_show(struct seq_file *s, void *iter)
 	spin_lock(&dev->gnd_fmablk_lock);
 
 	if (gseq->gsmsg_version != atomic_read(&dev->gnd_fmablk_vers)) {
-		/* list changed */
+		
 		spin_unlock(&dev->gnd_fmablk_lock);
 		return -ESTALE;
 	}
 
 	live = fmablk->gnm_hold_timeout == 0;
-	/* none are available if it isn't live... */
+	
 	avail_mboxs = live ? fmablk->gnm_avail_mboxs : 0;
 	held_mboxs = fmablk->gnm_held_mboxs;
 	num_mboxs = fmablk->gnm_num_mboxs;
@@ -758,7 +758,7 @@ kgnilnd_conn_seq_seek(kgn_conn_seq_iter_t *gseq, loff_t off)
 	read_lock(&kgnilnd_data.kgn_peer_conn_lock);
 	if (gseq->gconn_list != NULL &&
 		gseq->gconn_version != kgnilnd_data.kgn_conn_version) {
-		/* list changed */
+		
 		rc = -ESTALE;
 		goto out;
 	}
@@ -766,12 +766,12 @@ kgnilnd_conn_seq_seek(kgn_conn_seq_iter_t *gseq, loff_t off)
 	if ((gseq->gconn_list == NULL) ||
 		(gseq->gconn_off > off) ||
 		(gseq->gconn_hashidx >= *kgnilnd_tunables.kgn_peer_hash_size)) {
-		/* search from start */
+		
 		gseq->gconn_hashidx = 0;
 		list = &kgnilnd_data.kgn_conns[gseq->gconn_hashidx];
 		here = 0;
 	} else {
-		/* continue current search */
+		
 		list = gseq->gconn_list;
 	}
 
@@ -788,7 +788,7 @@ start_list:
 		}
 		here++;
 	}
-	/* if we got through this hash bucket with 'off' still to go, try next*/
+	
 	gseq->gconn_hashidx++;
 	if ((here <= off) &&
 		(gseq->gconn_hashidx < *kgnilnd_tunables.kgn_peer_hash_size)) {
@@ -820,7 +820,7 @@ kgnilnd_conn_seq_start(struct seq_file *s, loff_t *pos)
 		return NULL;
 	}
 
-	/* only doing device 0 for now */
+	
 	gseq->gconn_list = NULL;
 	rc = kgnilnd_conn_seq_seek(gseq, *pos);
 	if (rc == 0)
@@ -870,15 +870,15 @@ kgnilnd_conn_seq_show(struct seq_file *s, void *iter)
 	read_lock(&kgnilnd_data.kgn_peer_conn_lock);
 	if (gseq->gconn_list != NULL &&
 		gseq->gconn_version != kgnilnd_data.kgn_conn_version) {
-		/* list changed */
+		
 		read_unlock(&kgnilnd_data.kgn_peer_conn_lock);
 		return -ESTALE;
 	}
 
-	/* instead of saving off the data, just refcount */
+	
 	kgnilnd_conn_addref(conn);
 	if (conn->gnc_peer) {
-		/* don't use link - after unlock it could get nuked */
+		
 		peer = conn->gnc_peer;
 		kgnilnd_peer_addref(peer);
 	}
@@ -1100,7 +1100,7 @@ kgnilnd_peer_seq_seek(kgn_peer_seq_iter_t *gseq, loff_t off)
 	read_lock(&kgnilnd_data.kgn_peer_conn_lock);
 	if (gseq->gpeer_list != NULL &&
 		gseq->gpeer_version != kgnilnd_data.kgn_peer_version) {
-		/* list changed */
+		
 		rc = -ESTALE;
 		goto out;
 	}
@@ -1108,12 +1108,12 @@ kgnilnd_peer_seq_seek(kgn_peer_seq_iter_t *gseq, loff_t off)
 	if ((gseq->gpeer_list == NULL) ||
 		(gseq->gpeer_off > off) ||
 		(gseq->gpeer_hashidx >= *kgnilnd_tunables.kgn_peer_hash_size)) {
-		/* search from start */
+		
 		gseq->gpeer_hashidx = 0;
 		list = &kgnilnd_data.kgn_peers[gseq->gpeer_hashidx];
 		here = 0;
 	} else {
-		/* continue current search */
+		
 		list = gseq->gpeer_list;
 	}
 
@@ -1130,7 +1130,7 @@ start_list:
 		}
 		here++;
 	}
-	/* if we got through this hash bucket with 'off' still to go, try next*/
+	
 	gseq->gpeer_hashidx++;
 	if ((here <= off) &&
 		(gseq->gpeer_hashidx < *kgnilnd_tunables.kgn_peer_hash_size)) {
@@ -1162,7 +1162,7 @@ kgnilnd_peer_seq_start(struct seq_file *s, loff_t *pos)
 		return NULL;
 	}
 
-	/* only doing device 0 for now */
+	
 	gseq->gpeer_list = NULL;
 	rc = kgnilnd_peer_seq_seek(gseq, *pos);
 	if (rc == 0)
@@ -1213,12 +1213,12 @@ kgnilnd_peer_seq_show(struct seq_file *s, void *iter)
 	read_lock(&kgnilnd_data.kgn_peer_conn_lock);
 	if (gseq->gpeer_list != NULL &&
 		gseq->gpeer_version != kgnilnd_data.kgn_peer_version) {
-		/* list changed */
+		
 		read_unlock(&kgnilnd_data.kgn_peer_conn_lock);
 		return -ESTALE;
 	}
 
-	/* instead of saving off the data, just refcount */
+	
 	kgnilnd_peer_addref(peer);
 	conn = kgnilnd_find_conn_locked(peer);
 
@@ -1300,7 +1300,7 @@ kgnilnd_proc_init(void)
 	int             rc = 0;
 	ENTRY;
 
-	/* setup dir */
+	
 	kgn_proc_root = proc_mkdir(libcfs_lnd2modname(GNILND), NULL);
 	if (kgn_proc_root == NULL) {
 		CERROR("couldn't create proc dir %s\n",
@@ -1308,7 +1308,7 @@ kgnilnd_proc_init(void)
 		return;
 	}
 
-	/* Initialize CKSUM_TEST */
+	
 	pde = proc_create(GNILND_PROC_CKSUM_TEST, 0200, kgn_proc_root,
 			  &kgn_cksum_test_fops);
 	if (pde == NULL) {
@@ -1316,7 +1316,7 @@ kgnilnd_proc_init(void)
 		GOTO(remove_dir, rc = -ENOENT);
 	}
 
-	/* Initialize STATS */
+	
 	pde = proc_create(GNILND_PROC_STATS, 0644, kgn_proc_root,
 			  &kgn_stats_fops);
 	if (pde == NULL) {
@@ -1324,14 +1324,14 @@ kgnilnd_proc_init(void)
 		GOTO(remove_test, rc = -ENOENT);
 	}
 
-	/* Initialize MDD */
+	
 	pde = proc_create(GNILND_PROC_MDD, 0444, kgn_proc_root, &kgn_mdd_fops);
 	if (pde == NULL) {
 		CERROR("couldn't create proc entry %s\n", GNILND_PROC_MDD);
 		GOTO(remove_stats, rc = -ENOENT);
 	}
 
-	/* Initialize SMSG */
+	
 	pde = proc_create(GNILND_PROC_SMSG, 0444, kgn_proc_root,
 			  &kgn_smsg_fops);
 	if (pde == NULL) {
@@ -1339,7 +1339,7 @@ kgnilnd_proc_init(void)
 		GOTO(remove_mdd, rc = -ENOENT);
 	}
 
-	/* Initialize CONN */
+	
 	pde = proc_create(GNILND_PROC_CONN, 0444, kgn_proc_root,
 			  &kgn_conn_fops);
 	if (pde == NULL) {
@@ -1347,7 +1347,7 @@ kgnilnd_proc_init(void)
 		GOTO(remove_smsg, rc = -ENOENT);
 	}
 
-	/* Initialize peer conns debug */
+	
 	pde = proc_create(GNILND_PROC_PEER_CONNS, 0644, kgn_proc_root,
 			  &kgn_peer_conns_fops);
 	if (pde == NULL) {
@@ -1355,7 +1355,7 @@ kgnilnd_proc_init(void)
 		GOTO(remove_conn, rc = -ENOENT);
 	}
 
-	/* Initialize PEER */
+	
 	pde = proc_create(GNILND_PROC_PEER, 0444, kgn_proc_root,
 			  &kgn_peer_fops);
 	if (pde == NULL) {

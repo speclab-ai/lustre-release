@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <linux/fs.h>
@@ -28,10 +28,10 @@
 #define SA_OMITTED_ENTRY_MAX 8ULL
 
 enum sa_entry_state {
-	/** negative values are for error cases */
-	SA_ENTRY_INIT = 0,      /** init entry */
-	SA_ENTRY_SUCC = 1,      /** stat succeed */
-	SA_ENTRY_INVA = 2,      /** invalid entry */
+	
+	SA_ENTRY_INIT = 0,      
+	SA_ENTRY_SUCC = 1,      
+	SA_ENTRY_INVA = 2,      
 };
 
 /*
@@ -41,25 +41,25 @@ enum sa_entry_state {
  * woken up if this entry is the waiting one, can access and free it.
  */
 struct sa_entry {
-	/* link into sai_entries */
+	
 	struct list_head		 se_list;
-	/* link into sai hash table locally */
+	
 	struct list_head		 se_hash;
-	/* entry index in the sai */
+	
 	__u64				 se_index;
-	/* low layer ldlm lock handle */
+	
 	__u64				 se_handle;
-	/* entry status */
+	
 	enum sa_entry_state		 se_state;
-	/* entry size, contains name */
+	
 	int				 se_size;
-	/* pointer to the target inode */
+	
 	struct inode			*se_inode;
-	/* pointer to @sai per process struct */
+	
 	struct ll_statahead_info	*se_sai;
-	/* entry name */
+	
 	struct qstr			 se_qstr;
-	/* entry fid */
+	
 	struct lu_fid			 se_fid;
 };
 
@@ -71,21 +71,21 @@ static inline int sa_unhashed(struct sa_entry *entry)
 	return list_empty(&entry->se_hash);
 }
 
-/* sa_entry is ready to use */
+
 static inline int sa_ready(struct sa_entry *entry)
 {
-	/* Make sure sa_entry is updated and ready to use */
+	
 	smp_rmb();
 	return (entry->se_state != SA_ENTRY_INIT);
 }
 
-/* hash value to put in sai_cache */
+
 static inline int sa_hash(int val)
 {
 	return val & LL_SA_CACHE_MASK;
 }
 
-/* hash entry into sax_cache */
+
 static inline void
 sa_rehash(struct ll_statahead_context *ctx, struct sa_entry *entry)
 {
@@ -96,7 +96,7 @@ sa_rehash(struct ll_statahead_context *ctx, struct sa_entry *entry)
 	spin_unlock(&ctx->sax_cache_lock[i]);
 }
 
-/* unhash entry from sai_cache */
+
 static inline int sa_unhash(struct ll_statahead_context *ctx,
 			    struct sa_entry *entry, bool inuse_check)
 {
@@ -130,13 +130,13 @@ agl_first_entry(struct ll_statahead_info *sai)
 				lli_agl_list);
 }
 
-/* statahead window is full */
+
 static inline int sa_sent_full(struct ll_statahead_info *sai)
 {
 	return atomic_read(&sai->sai_cache_count) >= sai->sai_max;
 }
 
-/* Batch metadata handle */
+
 static inline bool sa_has_batch_handle(struct ll_statahead_info *sai)
 {
 	return sai->sai_bh != NULL;
@@ -186,7 +186,7 @@ static inline int is_omitted_entry(struct ll_statahead_info *sai, __u64 index)
 		sai->sai_index);
 }
 
-/* allocate sa_entry and hash it to allow scanner process to find it */
+
 static struct sa_entry *
 sa_alloc(struct dentry *parent, struct ll_statahead_info *sai, __u64 index,
 	 const char *name, int len, const struct lu_fid *fid)
@@ -199,7 +199,7 @@ sa_alloc(struct dentry *parent, struct ll_statahead_info *sai, __u64 index,
 	ENTRY;
 
 	entry_size = sizeof(struct sa_entry) +
-		     round_up(len + 1 /* for trailing NUL */, 4);
+		     round_up(len + 1 , 4);
 	OBD_ALLOC(entry, entry_size);
 	if (unlikely(!entry))
 		RETURN(ERR_PTR(-ENOMEM));
@@ -233,7 +233,7 @@ sa_alloc(struct dentry *parent, struct ll_statahead_info *sai, __u64 index,
 	RETURN(entry);
 }
 
-/* free sa_entry, which should have been unhashed and not in any list */
+
 static void sa_free(struct ll_statahead_context *ctx, struct sa_entry *entry)
 {
 	CDEBUG(D_READA, "free sa entry "DNAME"(%p) index %llu\n",
@@ -284,7 +284,7 @@ static struct sa_entry *sa_get(struct ll_statahead_context *ctx,
 	return NULL;
 }
 
-/* unhash and unlink sa_entry, and then free it */
+
 static inline int sa_kill(struct ll_statahead_info *sai, struct sa_entry *entry,
 			  bool locked, bool inuse_check)
 {
@@ -321,7 +321,7 @@ static inline int sa_kill_try(struct ll_statahead_info *sai,
 	return sa_kill(sai, entry, locked, true);
 }
 
-/* called by scanner after use, sa_entry will be killed */
+
 static void sa_put(struct inode *dir, struct ll_statahead_info *sai,
 		   struct sa_entry *entry, bool inuse)
 {
@@ -371,7 +371,7 @@ static void sa_put(struct inode *dir, struct ll_statahead_info *sai,
 			if (!is_omitted_entry(sai, tmp->se_index))
 				break;
 
-			/* ll_sa_lock is dropped by sa_kill(), restart list */
+			
 			sa_kill(sai, tmp, true, false);
 		}
 	}
@@ -413,13 +413,13 @@ __sa_make_ready(struct ll_statahead_info *sai, struct sa_entry *entry, int ret)
 	return (index == sai->sai_index_wait);
 }
 
-/* finish async stat RPC arguments */
+
 static void sa_fini_data(struct md_op_item *item)
 {
 	struct md_op_data *op_data = &item->mop_data;
 
 	if (op_data->op_flags & MF_OPNAME_KMALLOCED)
-		/* allocated via ll_setup_filename called from sa_prep_data */
+		
 		kfree(op_data->op_name);
 	ll_unlock_md_op_lsm(&item->mop_data);
 	iput(item->mop_dir);
@@ -491,7 +491,7 @@ sa_make_ready(struct ll_statahead_info *sai, struct sa_entry *entry, int ret)
 		wake_up(&sai->sai_waitq);
 }
 
-/* insert inode into the list of sai_agls */
+
 static void ll_agl_add(struct ll_statahead_info *sai,
 		       struct inode *inode, int index)
 {
@@ -506,7 +506,7 @@ static void ll_agl_add(struct ll_statahead_info *sai,
 		LASSERT(list_empty(&child->lli_agl_list));
 
 		spin_lock(&parent->lli_agl_lock);
-		/* Re-check under the lock */
+		
 		if (agl_should_run(sai, inode)) {
 			if (agl_list_empty(sai))
 				wake_up_process(sai->sai_agl_task);
@@ -520,7 +520,7 @@ static void ll_agl_add(struct ll_statahead_info *sai,
 	}
 }
 
-/* Allocate sax */
+
 static struct ll_statahead_context *ll_sax_alloc(struct inode *dir)
 {
 	struct ll_statahead_context *ctx;
@@ -596,7 +596,7 @@ static inline void ll_sax_put(struct inode *dir,
 	}
 }
 
-/* allocate sai */
+
 static struct ll_statahead_info *ll_sai_alloc(struct dentry *dentry)
 {
 	struct ll_statahead_info *sai;
@@ -629,7 +629,7 @@ static struct ll_statahead_info *ll_sai_alloc(struct dentry *dentry)
 	RETURN(sai);
 }
 
-/* free sai */
+
 static inline void ll_sai_free(struct ll_statahead_info *sai)
 {
 	LASSERT(sai->sai_dentry != NULL);
@@ -671,7 +671,7 @@ static void ll_sai_put(struct ll_statahead_info *sai)
 	}
 }
 
-/* Do NOT forget to drop inode refcount when into sai_agls. */
+
 static void ll_agl_trigger(struct inode *inode, struct ll_statahead_info *sai)
 {
 	struct ll_inode_info *lli = ll_i2info(inode);
@@ -683,7 +683,7 @@ static void ll_agl_trigger(struct inode *inode, struct ll_statahead_info *sai)
 
 	LASSERT(list_empty(&lli->lli_agl_list));
 
-	/* AGL maybe fall behind statahead with one entry */
+	
 	if (is_omitted_entry(sai, index + 1)) {
 		lli->lli_agl_index = 0;
 		iput(inode);
@@ -704,7 +704,7 @@ static void ll_agl_trigger(struct inode *inode, struct ll_statahead_info *sai)
 		RETURN_EXIT;
 	}
 
-	/* Someone is in glimpse (sync or async), do nothing. */
+	
 	rc = down_write_trylock(&lli->lli_glimpse_sem);
 	if (rc == 0) {
 		lli->lli_agl_index = 0;
@@ -801,14 +801,14 @@ static void ll_statahead_interpret_work(struct work_struct *work)
 		GOTO(out, rc = -EFAULT);
 
 	child = entry->se_inode;
-	/* revalidate; unlinked and re-created with the same name */
+	
 	if (unlikely(!fid_is_zero(&item->mop_data.op_fid2) &&
 		     !lu_fid_eq(&item->mop_data.op_fid2, &body->mbo_fid1))) {
 		if (child) {
 			entry->se_inode = NULL;
 			iput(child);
 		}
-		/* The mdt_body is invalid. Skip this entry */
+		
 		GOTO(out, rc = -EAGAIN);
 	}
 
@@ -918,7 +918,7 @@ static int ll_statahead_interpret(struct md_op_item *item, int rc)
 			entry->se_inode = NULL;
 			iput(child);
 		}
-		/* The mdt_body is invalid. Skip this entry */
+		
 		GOTO(out, rc = -EAGAIN);
 	}
 
@@ -969,7 +969,7 @@ static inline int sa_getattr(struct ll_statahead_info *sai, struct inode *dir,
 	return rc;
 }
 
-/* async stat for file not found in dcache */
+
 static int sa_lookup(struct inode *dir, struct sa_entry *entry)
 {
 	struct md_op_item *item;
@@ -1042,7 +1042,7 @@ static int sa_revalidate(struct inode *dir, struct sa_entry *entry,
 	RETURN(rc);
 }
 
-/* async stat for file with @name */
+
 static void sa_statahead(struct ll_statahead_info *sai, struct dentry *parent,
 			 const char *name, int len, const struct lu_fid *fid)
 {
@@ -1082,7 +1082,7 @@ static void sa_statahead(struct ll_statahead_info *sai, struct dentry *parent,
 	EXIT;
 }
 
-/* async glimpse (agl) thread main function */
+
 static int ll_agl_thread(void *arg)
 {
 	/*
@@ -1155,7 +1155,7 @@ static void ll_stop_agl(struct ll_statahead_info *sai)
 	ll_sai_put(sai);
 }
 
-/* start agl thread */
+
 static void ll_start_agl(struct dentry *parent, struct ll_statahead_info *sai)
 {
 	int node = cfs_cpt_spread_node(cfs_cpt_tab, CFS_CPT_ANY);
@@ -1176,7 +1176,7 @@ static void ll_start_agl(struct dentry *parent, struct ll_statahead_info *sai)
 	}
 	sai->sai_agl_task = task;
 	atomic_inc(&ll_i2sbi(d_inode(parent))->ll_agl_total);
-	/* Get an extra reference that the thread holds */
+	
 	__ll_sai_get(sai);
 
 	wake_up_process(task);
@@ -1208,7 +1208,7 @@ static int ll_statahead_by_list(struct ll_statahead_info *sai,
 		RETURN(-ENOMEM);
 
 	while (pos != MDS_DIR_END_OFF &&
-	       /* matches smp_store_release() in ll_deauthorize_statahead() */
+	       
 	       smp_load_acquire(&sai->sai_task) &&
 	       lli->lli_sa_enabled) {
 		struct lu_dirpage *dp;
@@ -1237,7 +1237,7 @@ static int ll_statahead_by_list(struct ll_statahead_info *sai,
 		kaddr = kmap(page);
 		dp = kaddr;
 		for (ent = lu_dirent_start(dp);
-		     /* matches smp_store_release() in ll_deauthorize_statahead() */
+		     
 		     ent != NULL && smp_load_acquire(&sai->sai_task) &&
 		     !sa_low_hit(sai) && lli->lli_sa_enabled;
 		     ent = lu_dirent_next(ent)) {
@@ -1392,7 +1392,7 @@ static void ll_statahead_handle(struct ll_statahead_info *sai,
 	long timeout;
 
 	while (({set_current_state(TASK_IDLE);
-		/* matches smp_store_release() in ll_deauthorize_statahead() */
+		
 		 smp_load_acquire(&sai->sai_task); })) {
 		spin_lock(&lli->lli_agl_lock);
 		while (sa_sent_full(sai) && !agl_list_empty(sai)) {
@@ -1456,7 +1456,7 @@ static int ll_statahead_by_advise(struct ll_statahead_info *sai,
 	max_len = sizeof(sai->sai_fname) - len;
 	ptr = fname + len;
 
-	/* matches smp_store_release() in ll_deauthorize_statahead() */
+	
 	while (smp_load_acquire(&sai->sai_task) && lli->lli_sa_enabled) {
 		size_t numlen;
 
@@ -1498,7 +1498,7 @@ static int ll_statahead_by_fname(struct ll_statahead_info *sai,
 	max_len = sizeof(sai->sai_fname) - len;
 	ptr = fname + len;
 
-	/* matches smp_store_release() in ll_deauthorize_statahead() */
+	
 	while (smp_load_acquire(&sai->sai_task) && lli->lli_sa_enabled) {
 		size_t numlen;
 
@@ -1527,7 +1527,7 @@ static int ll_statahead_by_fname(struct ll_statahead_info *sai,
 	RETURN(rc);
 }
 
-/* statahead thread main function */
+
 static int ll_statahead_thread(void *arg)
 {
 	struct ll_statahead_info *sai = (struct ll_statahead_info *)arg;
@@ -1588,7 +1588,7 @@ static int ll_statahead_thread(void *arg)
 	 * for file release closedir() call to stop me.
 	 */
 	while (({set_current_state(TASK_IDLE);
-		/* matches smp_store_release() in ll_deauthorize_statahead() */
+		
 		smp_load_acquire(&sai->sai_task) && lli->lli_sa_enabled; })) {
 		long timeout;
 
@@ -1616,7 +1616,7 @@ out_stop_agl:
 	 * safely because statahead RPC will access sai data
 	 */
 	while (sai->sai_sent != sai->sai_replied)
-		/* in case we're not woken up, timeout wait */
+		
 		msleep(125);
 
 	CDEBUG(D_READA, "%s: statahead thread stopped: sai %p, parent %pd hit %llu miss %llu\n",
@@ -1630,7 +1630,7 @@ out_stop_agl:
 	atomic_add(sai->sai_hit, &sbi->ll_sa_hit_total);
 	atomic_add(sai->sai_miss, &sbi->ll_sa_miss_total);
 
-	/* Kill all local cached entry. */
+	
 	spin_lock(&lli->lli_sa_lock);
 	while ((entry = list_first_entry_or_null(&sai->sai_entries,
 						 struct sa_entry, se_list))) {
@@ -1658,7 +1658,7 @@ out_stop_agl:
 	return rc;
 }
 
-/* authorize opened dir handle @key to statahead */
+
 void ll_authorize_statahead(struct inode *dir, void *key)
 {
 	struct ll_inode_info *lli = ll_i2info(dir);
@@ -1690,7 +1690,7 @@ static void ll_deauthorize_statahead_advise(struct inode *dir, void *key)
 	if (sai->sai_task) {
 		struct task_struct *task = sai->sai_task;
 
-		/* matches smp_load_acquire() in ll_statahead_thread() */
+		
 		smp_store_release(&sai->sai_task, NULL);
 		wake_up_process(task);
 	}
@@ -1738,7 +1738,7 @@ void ll_deauthorize_statahead(struct inode *dir, void *key)
 		 */
 		struct task_struct *task = sai->sai_task;
 
-		/* matches smp_load_acquire() in ll_statahead_thread() */
+		
 		smp_store_release(&sai->sai_task, NULL);
 		wake_up_process(task);
 	}
@@ -1760,7 +1760,7 @@ enum {
 	LS_FIRST_DOT_DE
 };
 
-/* file is first dirent under @dir */
+
 static int is_first_dirent(struct inode *dir, struct dentry *dentry)
 {
 	struct qstr *target = &dentry->d_name;
@@ -2101,7 +2101,7 @@ static int revalidate_statahead_dentry(struct inode *dir,
 				 */
 				entry->se_inode = NULL;
 			} else if ((*dentryp)->d_inode != inode) {
-				/* revalidate, but inode is recreated */
+				
 				CDEBUG(D_READA,
 				       "%s: stale dentry %pd inode " DFID", statahead inode "DFID "\n",
 				       ll_i2sbi(inode)->ll_fsname, *dentryp,
@@ -2146,7 +2146,7 @@ sa_pattern_list_detect(struct inode *dir, struct dentry *dchild, int *first)
 	if (lli->lli_stat_pid == 0)
 		return false;
 
-	/* Directory listing needs to call opendir()/readdir()/stat(). */
+	
 	if (!(lli->lli_sa_pattern & LSA_PATTERN_OPENDIR))
 		return false;
 
@@ -2225,7 +2225,7 @@ sa_pattern_fname_detect(struct inode *dir, struct dentry *dchild)
 		}
 
 		while (--i >= 0 && isdigit(name[i]))
-			; /* do nothing */
+			; 
 		i++;
 		ret = kstrtol(&name[i], 0, &num);
 		if (ret)
@@ -2265,7 +2265,7 @@ out:
 	return rc;
 }
 
-/* detect the statahead pattern. */
+
 static inline bool
 sa_pattern_detect(struct inode *dir, struct dentry *dchild, int *first)
 {
@@ -2283,7 +2283,7 @@ static inline int ll_sax_add_sai(struct ll_statahead_context *ctx,
 	return 0;
 }
 
-/* Check whether it is shared FNAME statahead pattern. */
+
 static inline bool sa_pattern_shared_fname(struct ll_inode_info *lli)
 {
 	return (lli->lli_sa_pattern & LSA_PATTERN_SFNAME) == LSA_PATTERN_SFNAME;
@@ -2331,7 +2331,7 @@ static int start_statahead_thread(struct inode *dir, struct dentry *dentry,
 		GOTO(out, rc = -EMFILE);
 	}
 
-	/* on success ll_sai_alloc holds a ref on parent */
+	
 	sai = ll_sai_alloc(parent);
 	dput(parent);
 	if (!sai)
@@ -2351,7 +2351,7 @@ static int start_statahead_thread(struct inode *dir, struct dentry *dentry,
 
 		i = dname->len;
 		while (--i >= 0 && isdigit(name[i]))
-			; /* do nothing */
+			; 
 		i++;
 		rc = kstrtol(&name[i], 0, &num);
 		if (rc)
@@ -2360,12 +2360,12 @@ static int start_statahead_thread(struct inode *dir, struct dentry *dentry,
 		memcpy(sai->sai_fname, dname->name, i);
 		sai->sai_fname[i] = '\0';
 		sai->sai_fname_index = num;
-		/* The front part of the file name is zeroed padding. */
+		
 		if (name[i] == '0')
 			sai->sai_fname_zeroed_len = dname->len - i;
 	}
 
-	/* The workload like directory listing or mdtest unique dir stat() */
+	
 	if (lli->lli_sa_pattern & LSA_PATTERN_LIST ||
 	    (lli->lli_sa_pattern & LSA_PATTERN_SFNAME) == LSA_PATTERN_FNAME) {
 		ctx = ll_sax_alloc(dir);
@@ -2395,7 +2395,7 @@ static int start_statahead_thread(struct inode *dir, struct dentry *dentry,
 		lli->lli_sax = ctx;
 		spin_unlock(&lli->lli_sa_lock);
 	} else if (sa_pattern_shared_fname(lli)) {
-		/* For mdtest shared dir stat() workload */
+		
 		ctx = ll_sax_get(dir);
 		if (ctx == NULL) {
 			ctx = ll_sax_alloc(dir);
@@ -2470,7 +2470,7 @@ static int start_statahead_thread(struct inode *dir, struct dentry *dentry,
 		rc = PTR_ERR(task);
 		CERROR("%s: cannot start ll_sa_%u thread for '%pd': rc = %d\n",
 		       sbi->ll_fsname, current->pid, sai->sai_dentry, rc);
-		/* Use @ll_sai/sax_put to release @sai and @ctx. */
+		
 		fail_free = false;
 		GOTO(out, rc);
 	}

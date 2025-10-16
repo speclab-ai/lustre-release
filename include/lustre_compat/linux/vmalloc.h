@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 #ifndef __LIBCFS_LINUX_VMALLOC_H
 #define __LIBCFS_LINUX_VMALLOC_H
@@ -13,4 +13,4 @@
 
 extern void compat_vfree_atomic(const void *addr);
 
-#endif /* __LICBFS_LINUX_VMALLOC_H */
+#endif 

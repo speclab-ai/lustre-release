@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LMV_INTERNAL_H_
@@ -148,7 +148,7 @@ static inline int lmv_stripe_md_size(int stripe_count)
 	return sizeof(*lsm) + stripe_count * sizeof(lsm->lsm_md_oinfo[0]);
 }
 
-/* for file under migrating directory, return the target stripe info */
+
 static inline const struct lmv_oinfo *
 lsm_name_to_stripe_info(const struct lmv_stripe_object *lso, const char *name,
 			int namelen, bool new_layout)
@@ -198,6 +198,6 @@ struct lmv_tgt_desc *lmv_locate_tgt(struct lmv_obd *lmv,
 				    struct md_op_data *op_data);
 int lmv_old_layout_lookup(struct lmv_obd *lmv, struct md_op_data *op_data);
 
-/* lproc_lmv.c */
+
 int lmv_tunables_init(struct obd_device *obd);
 #endif

@@ -1,7 +1,7 @@
-/* SPDX-License-Identifier: LGPL-2.1+ WITH Linux-syscall-note */
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTRE_VER_H_

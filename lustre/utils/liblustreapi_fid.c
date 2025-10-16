@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -8,13 +8,13 @@
  * Copyright (c) 2018, 2019, Data Direct Networks
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for FID mapping calls for determining the pathname
  * of Lustre files from the File IDentifier.
  */
 
-/* for O_DIRECTORY and struct file_handle */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -36,7 +36,7 @@
 #include <lustre/lustreapi.h>
 #include "lustreapi_internal.h"
 
-/* strip instances of // (DNE striped directory) when copying to reply buffer */
+
 static int copy_strip_dne_path(const char *src, char *tgt, size_t tgtlen)
 {
 	const char *a;
@@ -55,7 +55,7 @@ static int copy_strip_dne_path(const char *src, char *tgt, size_t tgtlen)
 
 	*b = '\0';
 
-	if (tgt[0] == '\0') { /* ROOT path */
+	if (tgt[0] == '\0') { 
 		tgt[0] = '/';
 		tgt[1] = '\0';
 	}
@@ -113,7 +113,7 @@ int llapi_fid_parse(const char *fidstr, struct lu_fid *fid, char **endptr)
 	else
 		fid->f_seq = val;
 
-	fidstr = end + 1; /* skip first ':', checked above */
+	fidstr = end + 1; 
 	errno = 0;
 	val = strtoull(fidstr, &end, 0);
 	if ((val == 0 && errno == EINVAL) || *end != ':') {
@@ -125,7 +125,7 @@ int llapi_fid_parse(const char *fidstr, struct lu_fid *fid, char **endptr)
 	else
 		fid->f_oid = val;
 
-	fidstr = end + 1; /* skip second ':', checked above */
+	fidstr = end + 1; 
 	errno = 0;
 	val = strtoull(fidstr, &end, 0);
 	if (val == 0 && errno == EINVAL) {
@@ -222,7 +222,7 @@ int llapi_fid2path(const char *path_or_device, const char *fidstr, char *path,
 	if (rc < 0)
 		goto out;
 
-	/* mnt_fd is cached internally, no need to close it */
+	
 	rc = llapi_fid2path_at(mnt_fd, &fid, path, pathlen, recno, linkno);
 	close(mnt_fd);
 
@@ -284,19 +284,19 @@ int llapi_fd2fid(int fd, struct lu_fid *fid)
 
 	if (name_to_handle_at(fd, "", handle, &mount_id, AT_EMPTY_PATH)) {
 		if (errno == EOVERFLOW)
-			/* A Lustre file_handle would have fit */
+			
 			return -ENOTTY;
 		return -errno;
 	}
 
 	if (handle->handle_type != FILEID_LUSTRE)
-		/* Might be a locally mounted Lustre target */
+		
 		return fid_from_lma(NULL, fd, fid);
 	if (handle->handle_bytes < sizeof(*fid))
-		/* Unexpected error try and recover */
+		
 		return fid_from_lma(NULL, fd, fid);
 
-	/* Parse the FID out of the handle */
+	
 	data = (const struct lustre_file_handle *)handle->f_handle;
 	memcpy(fid, &data->lfh_child, sizeof(data->lfh_child));
 
@@ -404,7 +404,7 @@ int llapi_fid_to_handle(struct file_handle **_handle, const struct lu_fid *fid)
 	handle->handle_bytes = sizeof(*lfh);
 	handle->handle_type = FILEID_LUSTRE;
 	lfh = (struct lustre_file_handle *)handle->f_handle;
-	/* Only lfh->lfh_child needs to be set */
+	
 	lfh->lfh_child = *fid;
 
 	*_handle = handle;

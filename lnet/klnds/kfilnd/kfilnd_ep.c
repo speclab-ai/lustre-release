@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd endpoint implementation.
  */
@@ -219,14 +219,14 @@ int kfilnd_ep_post_tagged_send(struct kfilnd_ep *ep,
 	if (!ep || !tn)
 		return -EINVAL;
 
-	/* Make sure the device is not being shut down */
+	
 	if (ep->end_dev->kfd_state != KFILND_STATE_INITIALIZED)
 		return -EINVAL;
 
 	if (!tn_session_key_is_valid(tn))
 		return -EINVAL;
 
-	/* Progress transaction to failure if send should fail. */
+	
 	if (CFS_FAIL_CHECK(CFS_KFI_FAIL_TAGGED_SEND_EVENT)) {
 		rc = kfilnd_ep_gen_fake_err(ep, &fake_error);
 		if (!rc)
@@ -280,7 +280,7 @@ int kfilnd_ep_cancel_tagged_recv(struct kfilnd_ep *ep,
 	if (!ep || !tn)
 		return -EINVAL;
 
-	/* Make sure the device is not being shut down */
+	
 	if (ep->end_dev->kfd_state != KFILND_STATE_INITIALIZED)
 		return -EINVAL;
 
@@ -327,11 +327,11 @@ int kfilnd_ep_post_tagged_recv(struct kfilnd_ep *ep,
 	if (!ep || !tn)
 		return -EINVAL;
 
-	/* Make sure the device is not being shut down */
+	
 	if (ep->end_dev->kfd_state != KFILND_STATE_INITIALIZED)
 		return -EINVAL;
 
-	/* Progress transaction to failure if send should fail. */
+	
 	if (CFS_FAIL_CHECK(CFS_KFI_FAIL_TAGGED_RECV_EVENT)) {
 		rc = kfilnd_ep_gen_fake_err(ep, &fake_error);
 		if (!rc)
@@ -392,11 +392,11 @@ int kfilnd_ep_post_send(struct kfilnd_ep *ep, struct kfilnd_transaction *tn)
 	buf = tn->tn_tx_msg.msg;
 	len = tn->tn_tx_msg.length;
 
-	/* Make sure the device is not being shut down */
+	
 	if (ep->end_dev->kfd_state != KFILND_STATE_INITIALIZED)
 		return -EINVAL;
 
-	/* Progress transaction to failure if send should fail. */
+	
 	if (CFS_FAIL_CHECK_VALUE(CFS_KFI_FAIL_MSG_TYPE,
 				 tn->tn_tx_msg.msg->type) ||
 	    CFS_FAIL_CHECK(CFS_KFI_FAIL_SEND_EVENT)) {
@@ -466,14 +466,14 @@ int kfilnd_ep_post_write(struct kfilnd_ep *ep, struct kfilnd_transaction *tn)
 	if (!ep || !tn)
 		return -EINVAL;
 
-	/* Make sure the device is not being shut down */
+	
 	if (ep->end_dev->kfd_state != KFILND_STATE_INITIALIZED)
 		return -EINVAL;
 
 	if (!tn_session_key_is_valid(tn))
 		return -EINVAL;
 
-	/* Progress transaction to failure if read should fail. */
+	
 	if (CFS_FAIL_CHECK(CFS_KFI_FAIL_WRITE_EVENT)) {
 		rc = kfilnd_ep_gen_fake_err(ep, &fake_error);
 		if (!rc)
@@ -546,14 +546,14 @@ int kfilnd_ep_post_read(struct kfilnd_ep *ep, struct kfilnd_transaction *tn)
 	if (!ep || !tn)
 		return -EINVAL;
 
-	/* Make sure the device is not being shut down */
+	
 	if (ep->end_dev->kfd_state != KFILND_STATE_INITIALIZED)
 		return -EINVAL;
 
 	if (!tn_session_key_is_valid(tn))
 		return -EINVAL;
 
-	/* Progress transaction to failure if read should fail. */
+	
 	if (CFS_FAIL_CHECK(CFS_KFI_FAIL_READ_EVENT)) {
 		rc = kfilnd_ep_gen_fake_err(ep, &fake_error);
 		if (!rc)
@@ -647,7 +647,7 @@ void kfilnd_ep_flush_replay_queue(struct kfilnd_ep *ep)
 
 	spin_unlock(&ep->replay_lock);
 
-	/* Replay all queued transactions. */
+	
 	list_for_each_entry_safe(tn_first, tn_last, &tn_replay, replay_entry) {
 		list_del(&tn_first->replay_entry);
 		atomic_dec(&ep->replay_count);
@@ -706,10 +706,10 @@ void kfilnd_ep_free(struct kfilnd_ep *ep)
 		schedule_timeout_uninterruptible(HZ);
 	}
 
-	/* Cancel any outstanding immediate receive buffers. */
+	
 	kfilnd_ep_cancel_imm_buffers(ep);
 
-	/* Wait for RX buffers to no longer be used and then free them. */
+	
 	for (i = 0; i < immediate_rx_buf_count; i++) {
 		k = 2;
 		while (atomic_read(&ep->end_immed_bufs[i].immed_ref)) {
@@ -720,7 +720,7 @@ void kfilnd_ep_free(struct kfilnd_ep *ep)
 		}
 	}
 
-	/* Wait for all transactions to complete. */
+	
 	k = 2;
 	spin_lock(&ep->tn_list_lock);
 	while (!list_empty(&ep->tn_list)) {
@@ -733,7 +733,7 @@ void kfilnd_ep_free(struct kfilnd_ep *ep)
 	}
 	spin_unlock(&ep->tn_list_lock);
 
-	/* Free all immediate buffers. */
+	
 	for (i = 0; i < immediate_rx_buf_count; i++)
 		__free_pages(ep->end_immed_bufs[i].immed_buf_page,
 			     order_base_2(ep->end_immed_bufs[i].immed_buf_size / PAGE_SIZE));
@@ -799,13 +799,13 @@ struct kfilnd_ep *kfilnd_ep_alloc(struct kfilnd_dev *dev,
 	atomic_set(&ep->replay_count, 0);
 	ida_init(&ep->keys);
 
-	/* Create a CQ for this CPT */
+	
 	cq_attr.flags = KFI_AFFINITY;
 	cq_attr.format = KFI_CQ_FORMAT_DATA;
 	cq_attr.wait_cond = KFI_CQ_COND_NONE;
 	cq_attr.wait_obj = KFI_WAIT_NONE;
 
-	/* Vector is set to first core in the CPT */
+	
 	cq_attr.signaling_vector =
 		cpumask_first(*cfs_cpt_cpumask(lnet_cpt_table(), cpt));
 
@@ -827,7 +827,7 @@ struct kfilnd_ep *kfilnd_ep_alloc(struct kfilnd_dev *dev,
 		goto err_free_rx_cq;
 	}
 
-	/* Initialize the RX/TX contexts for the given CPT */
+	
 	rx_attr.op_flags = KFI_COMPLETION | KFI_MULTI_RECV;
 	rx_attr.msg_order = KFI_ORDER_NONE;
 	rx_attr.comp_order = KFI_ORDER_NONE;
@@ -842,7 +842,7 @@ struct kfilnd_ep *kfilnd_ep_alloc(struct kfilnd_dev *dev,
 		goto err_free_tx_cq;
 	}
 
-	/* Set the lower limit for multi-receive buffers */
+	
 	rc = kfi_setopt(&ep->end_rx->fid, KFI_OPT_ENDPOINT,
 			KFI_OPT_MIN_MULTI_RECV, &min_multi_recv,
 			sizeof(min_multi_recv));
@@ -869,7 +869,7 @@ struct kfilnd_ep *kfilnd_ep_alloc(struct kfilnd_dev *dev,
 		goto err_free_rx_context;
 	}
 
-	/* Bind these two contexts to the CPT's CQ */
+	
 	rc = kfi_ep_bind(ep->end_rx, &ep->end_rx_cq->cq->fid, 0);
 	if (rc) {
 		CERROR("Could not bind RX context on CPT %d, rc = %d\n", cpt,
@@ -884,7 +884,7 @@ struct kfilnd_ep *kfilnd_ep_alloc(struct kfilnd_dev *dev,
 		goto err_free_tx_context;
 	}
 
-	/* Enable both endpoints */
+	
 	rc = kfi_enable(ep->end_rx);
 	if (rc) {
 		CERROR("Could not enable RX context on CPT %d, rc = %d\n", cpt,

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Alex Zhuravlev <alexey.zhuravlev@intel.com>
  */
@@ -31,14 +31,14 @@ struct osp_id_tracker {
 	spinlock_t		 otr_lock;
 	__u64			 otr_next_id;
 	__u64			 otr_committed_id;
-	/* callback is register once per diskfs -- that's the whole point */
+	
 	struct dt_txn_callback	 otr_tx_cb;
-	/* single node can run many clusters */
+	
 	struct list_head	 otr_wakeup_list;
 	struct list_head	 otr_list;
-	/* underlying shared device */
+	
 	struct dt_device	*otr_dev;
-	/* how many users of this tracker */
+	
 	atomic_t		 otr_refcount;
 };
 
@@ -47,42 +47,42 @@ struct osp_precreate {
 	 * Precreation pool
 	 */
 
-	/* last fid to assign in creation */
+	
 	struct lu_fid			 osp_pre_used_fid;
-	/* last created id OST reported, next-created - available id's */
+	
 	struct lu_fid			 osp_pre_last_created_fid;
-	/* how many ids are reserved in declare, we shouldn't block in create */
+	
 	__u64				 osp_pre_reserved;
 	__u64				 osp_pre_seq_width;
-	/* consumers (who needs new ids) wait here */
+	
 	wait_queue_head_t		 osp_pre_user_waitq;
-	/* current precreation status: working, failed, stopping? */
+	
 	int				 osp_pre_status;
-	/* how many objects to precreate next time */
+	
 	int				 osp_pre_create_count;
 	int				 osp_pre_min_create_count;
 	int				 osp_pre_max_create_count;
-	/* whether to increase precreation window next time or not */
+	
 	unsigned int			 osp_pre_create_slow:1,
-	/* cleaning up orphans or recreating missing objects */
+	
 					 osp_pre_recovering:1,
-	/* force new seq rollover */
+	
 					 osp_pre_force_new_seq:1;
 };
 
 struct osp_update_request_sub {
-	struct object_update_request	*ours_req; /* may be vmalloc'd */
+	struct object_update_request	*ours_req; 
 	size_t				ours_req_size;
-	/* Linked to osp_update_request->our_req_list */
+	
 	struct list_head		ours_list;
 };
 
 struct osp_update_request {
 	int				our_flags;
-	/* update request result */
+	
 	int				our_rc;
 
-	/* List of osp_update_request_sub */
+	
 	struct list_head		our_req_list;
 	int				our_req_nr;
 	int				our_update_nr;
@@ -90,14 +90,14 @@ struct osp_update_request {
 	struct list_head		our_cb_items;
 	struct list_head		our_invalidate_cb_list;
 
-	/* points to thandle if this update request belongs to one */
+	
 	struct osp_thandle		*our_th;
 
 	__u64				our_version;
 	__u64				our_generation;
-	/* protect our_list and flag */
+	
 	spinlock_t			our_list_lock;
-	/* linked to the list(ou_list) in osp_updates */
+	
 	struct list_head		our_list;
 	__u32				our_batchid;
 	__u32				our_req_ready:1;
@@ -125,20 +125,20 @@ struct osp_updates {
 	 * will cause update lllog corruption */
 	__u64			ou_generation;
 
-	/* dedicate update thread */
+	
 	struct task_struct	*ou_update_task;
 	struct lu_env		ou_env;
 };
 
 struct osp_device {
 	struct dt_device		 opd_dt_dev;
-	/* corresponded OST index */
+	
 	int				 opd_index;
 
 	/* corrsponded MDT index, which will be used when connecting to OST
 	 * for validating the connection (see ofd_parse_connect_data) */
 	int				 opd_group;
-	/* device used to store persistent state (llogs, last ids) */
+	
 	struct obd_export		*opd_storage_exp;
 	struct dt_device		*opd_storage;
 	struct dt_object		*opd_last_used_oid_file;
@@ -148,7 +148,7 @@ struct osp_device {
 	 * and required le64_to_cpu() conversion before use.
 	 * Protected by opd_pre_lock */
 	struct lu_fid			opd_last_used_fid;
-	/* on disk copy last_used_fid.f_oid or idif */
+	
 	u64				opd_last_id;
 	struct lu_fid			opd_gap_start_fid;
 	int				 opd_gap_count;
@@ -158,7 +158,7 @@ struct osp_device {
 	struct completion		opd_disconnect_cmplt;
 	int				opd_disconnect_res;
 
-	/* connection status. */
+	
 	unsigned int			 opd_new_connection:1,
 					 opd_got_disconnected:1,
 					 opd_imp_connected:1,
@@ -171,61 +171,61 @@ struct osp_device {
 	 * reported via ->ldo_recovery_complete() */
 	int				 opd_recovery_completed;
 
-	/* precreate structure for OSP */
+	
 	struct osp_precreate		*opd_pre;
-	/* dedicate precreate thread */
+	
 	struct task_struct		*opd_pre_task;
 	spinlock_t			 opd_pre_lock;
-	/* thread waits for signals about pool going empty */
+	
 	wait_queue_head_t		 opd_pre_waitq;
 
-	/* send update thread */
+	
 	struct osp_updates		*opd_update;
 
 	/*
 	 * OST synchronization thread
 	 */
 	spinlock_t			 opd_sync_lock;
-	/* unique generation, to recognize start of new records in the llog */
+	
 	struct llog_gen			 opd_sync_generation;
-	/* number of changes to sync, used to wake up sync thread */
+	
 	atomic_t			 opd_sync_changes;
-	/* limit of changes to sync */
+	
 	int				 opd_sync_max_changes;
-	/* processing of changes from previous mount is done? */
+	
 	int				 opd_sync_prev_done;
-	/* found records */
+	
 	struct task_struct		*opd_sync_task;
 	wait_queue_head_t		 opd_sync_waitq;
-	/* list of in flight rpcs */
+	
 	struct list_head		 opd_sync_in_flight_list;
-	/* list of remotely committed rpc */
+	
 	struct list_head		 opd_sync_committed_there;
-	/* list for failed rpcs */
+	
 	struct list_head		 opd_sync_error_list;
 	atomic_t			 opd_sync_error_count;
 
-	/* number of RPCs in flight - flow control */
+	
 	atomic_t			 opd_sync_rpcs_in_flight;
 	int				 opd_sync_max_rpcs_in_flight;
-	/* number of RPC in processing (including non-committed by OST) */
+	
 	atomic_t			 opd_sync_rpcs_in_progress;
 	int				 opd_sync_max_rpcs_in_progress;
-	/* osd api's commit cb control structure */
+	
 	struct dt_txn_callback		 opd_sync_txn_cb;
-	/* last used change number -- semantically similar to transno */
+	
 	unsigned long			 opd_sync_last_used_id;
 	/* last committed change number -- semantically similar to
 	 * last_committed */
 	__u64				 opd_sync_last_committed_id;
-	/* last processed catalog index */
+	
 	int                              opd_sync_last_catalog_idx;
-	/* number of processed records */
+	
 	atomic64_t			 opd_sync_processed_recs;
-	/* stop processing new requests until barrier=0 */
+	
 	atomic_t			 opd_sync_barrier;
 	wait_queue_head_t		 opd_sync_barrier_waitq;
-	/* last generated id */
+	
 	ktime_t				 opd_sync_next_commit_cb;
 	atomic_t			 opd_commits_registered;
 
@@ -236,7 +236,7 @@ struct osp_device {
 	ktime_t				 opd_statfs_fresh_till;
 	struct timer_list		 opd_statfs_timer;
 	int				 opd_statfs_update_in_progress;
-	/* how often to update statfs data */
+	
 	time64_t			 opd_statfs_maxage;
 
 	struct dentry			*opd_debugfs;
@@ -247,7 +247,7 @@ struct osp_device {
 	 * requests can be packed together and sent to the remote server
 	 * via single OUT RPC later. */
 	struct osp_update_request	*opd_async_requests;
-	/* Protect current operations on opd_async_requests. */
+	
 	struct mutex			 opd_async_requests_mutex;
 	struct list_head		 opd_async_updates;
 	struct rw_semaphore		 opd_async_updates_rwsem;
@@ -296,7 +296,7 @@ struct osp_xattr_entry {
 	char			 oxe_name[];
 };
 
-/* this is a top object */
+
 struct osp_object {
 	struct lu_object_header	opo_header;
 	struct dt_object	opo_obj;
@@ -304,17 +304,17 @@ struct osp_object {
 				opo_non_exist:1,
 				opo_stale:1,
 				opo_destroyed:1,
-				opo_creating:1; /* create in progress */
+				opo_creating:1; 
 
-	/* read/write lock for md osp object */
+	
 	struct rw_semaphore	opo_sem;
 	const struct lu_env	*opo_owner;
 	struct lu_attr		opo_attr;
 	struct list_head	opo_xattr_list;
 	struct list_head	opo_invalidate_cb_list;
-	/* Protect opo_ooa. */
+	
 	spinlock_t		opo_lock;
-	/* to implement in-flight invalidation */
+	
 	atomic_t		opo_invalidate_seq;
 	struct rw_semaphore	opo_invalidate_sem;
 	atomic_t		opo_writes_in_flight;
@@ -345,7 +345,7 @@ struct osp_thread_info {
 	struct obdo		 osi_obdo;
 };
 
-/* Iterator for OSP */
+
 struct osp_it {
 	__u32			  ooi_pos_page;
 	__u32			  ooi_pos_lu_page;
@@ -367,7 +367,7 @@ struct osp_it {
 struct osp_thandle {
 	struct thandle		 ot_super;
 
-	/* OSP will use this thandle to update last oid*/
+	
 	struct thandle		*ot_storage_th;
 	__u32			 ot_magic;
 	struct list_head	 ot_commit_dcb_list;
@@ -573,7 +573,7 @@ static bool osp_fid_end_seq(struct lu_fid *fid, struct osp_device *osp)
 {
 	__u64 seq_width = osp->opd_pre_seq_width;
 
-	/* Skip IDIF sequence for MDT0000 */
+	
 	if (fid_is_idif(fid))
 		return true;
 	if (osp->opd_pre_force_new_seq)
@@ -654,7 +654,7 @@ int osp_object_update_request_create(struct osp_update_request *our,
 					 __VA_ARGS__);			\
 		if (ret == -E2BIG) {					\
 			int rc1;					\
-			/* Create new object update request */		\
+					\
 			rc1 = osp_object_update_request_create(our,	\
 				max_update_length  +			\
 				offsetof(struct object_update_request,	\
@@ -685,10 +685,10 @@ typedef int (*osp_update_interpreter_t)(const struct lu_env *env,
 					struct osp_object *obj,
 					void *data, int index, int rc);
 
-/* osp_dev.c */
+
 void osp_update_last_id(struct osp_device *d, u64 objid);
 
-/* osp_trans.c */
+
 int osp_insert_async_request(const struct lu_env *env, enum update_type op,
 			     struct osp_object *obj, int count, __u16 *lens,
 			     const void **bufs, void *data, __u32 repsize,
@@ -741,7 +741,7 @@ struct thandle *osp_get_storage_thandle(const struct lu_env *env,
 void osp_trans_callback(const struct lu_env *env,
 			struct osp_thandle *oth, int rc);
 void osp_invalidate_request(struct osp_device *osp);
-/* osp_object.c */
+
 int osp_attr_get(const struct lu_env *env, struct dt_object *dt,
 		 struct lu_attr *attr);
 int osp_xattr_get(const struct lu_env *env, struct dt_object *dt,
@@ -773,7 +773,7 @@ int osp_it_get(const struct lu_env *env, struct dt_it *di,
 void osp_it_put(const struct lu_env *env, struct dt_it *di);
 __u64 osp_it_store(const struct lu_env *env, const struct dt_it *di);
 int osp_it_next_page(const struct lu_env *env, struct dt_it *di);
-/* osp_md_object.c */
+
 int osp_md_declare_create(const struct lu_env *env, struct dt_object *dt,
 			  struct lu_attr *attr, struct dt_allocation_hint *hint,
 			  struct dt_object_format *dof, struct thandle *th);
@@ -786,7 +786,7 @@ int osp_md_attr_set(const struct lu_env *env, struct dt_object *dt,
 		    const struct lu_attr *attr, struct thandle *th);
 extern const struct dt_index_operations osp_md_index_ops;
 
-/* osp_precreate.c */
+
 int osp_init_precreate(struct osp_device *d);
 int osp_precreate_reserve(const struct lu_env *env,
 			  struct osp_device *d, bool can_block);
@@ -804,11 +804,11 @@ int osp_init_statfs(struct osp_device *osp);
 void osp_fini_statfs(struct osp_device *osp);
 void osp_statfs_fini(struct osp_device *d);
 
-/* lproc_osp.c */
+
 void osp_tunables_init(struct osp_device *osp);
 void osp_tunables_fini(struct osp_device *osp);
 
-/* osp_sync.c */
+
 int osp_sync_declare_add(const struct lu_env *env, struct osp_object *o,
 			 enum llog_op_type type, struct thandle *th);
 int osp_sync_add(const struct lu_env *env, struct osp_object *o,
@@ -821,7 +821,7 @@ void osp_sync_force(const struct lu_env *env, struct osp_device *d);
 int osp_sync_add_commit_cb_1s(const struct lu_env *env, struct osp_device *d,
 			      struct thandle *th);
 
-/* lwp_dev.c */
+
 extern const struct obd_ops lwp_obd_device_ops;
 extern struct lu_device_type lwp_device_type;
 

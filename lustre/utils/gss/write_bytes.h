@@ -52,7 +52,7 @@ write_bytes(char **ptr, const char *end, const void *arg, int arg_len)
 static inline int
 write_buffer(char **p, char *end, gss_buffer_desc *arg)
 {
-	int len = (int)arg->length;		/* make an int out of size_t */
+	int len = (int)arg->length;		
 	if (WRITE_BYTES(p, end, len))
 		return -1;
 	if (*p + len > end)
@@ -65,7 +65,7 @@ write_buffer(char **p, char *end, gss_buffer_desc *arg)
 static inline int
 write_oid(char **p, char *end, gss_OID_desc *arg)
 {
-	int len = (int)arg->length;		/* make an int out of size_t */
+	int len = (int)arg->length;		
 	if (WRITE_BYTES(p, end, len))
 		return -1;
 	if (*p + arg->length > end)
@@ -75,4 +75,4 @@ write_oid(char **p, char *end, gss_OID_desc *arg)
 	return 0;
 }
 
-#endif /* _WRITE_BYTES_H_ */
+#endif 

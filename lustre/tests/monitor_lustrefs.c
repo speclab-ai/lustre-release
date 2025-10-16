@@ -52,7 +52,7 @@ void print_event(struct fanotify_event_metadata *metadata)
 	char procfd_path[PATH_MAX], path[PATH_MAX], cmd_file[PATH_MAX];
 	int path_len, cmd_fd, cmd_len;
 
-	// print event type
+	
 	if (metadata->mask & FAN_OPEN) {
 		printf("open");
 		first = false;
@@ -77,7 +77,7 @@ void print_event(struct fanotify_event_metadata *metadata)
 	}
 	printf(":");
 
-	// print the name of the file
+	
 	snprintf(procfd_path, sizeof(procfd_path), "/proc/self/fd/%d",
 		 metadata->fd);
 	path_len = readlink(procfd_path, path, sizeof(path) - 1);
@@ -90,14 +90,14 @@ void print_event(struct fanotify_event_metadata *metadata)
 	printf("%s:", path);
 	close(metadata->fd);
 
-	// print the pid
+	
 	printf("%d:", metadata->pid);
 
-	// try to print the cmdline of process
+	
 	snprintf(cmd_file, sizeof(cmd_file), "/proc/%d/cmdline", metadata->pid);
 	cmd_fd = open(cmd_file, O_RDONLY);
 	if (cmd_fd >= 0) {
-		// reuse cmd_file as buffer
+		
 		cmd_len = read(cmd_fd, cmd_file, sizeof(cmd_file) - 1);
 		if (cmd_len > 0) {
 			cmd_file[cmd_len] = '\0';
@@ -154,7 +154,7 @@ int main(int argc, char *argv[])
 
 		metadata = &buf[0];
 		while (FAN_EVENT_OK(metadata, len)) {
-			/* Check run-time and compile-time structures match */
+			
 			if (metadata->vers != FANOTIFY_METADATA_VERSION) {
 				fprintf(stderr, "Mismatch of fanotify metadata version.\n");
 				exit(EXIT_FAILURE);

@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: LGPL-2.1+ */
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Amir Shehata <amir.shehata@intel.com>
  */
@@ -28,17 +28,17 @@
 #include <linux/lnet/lnetctl.h>
 #include <linux/lnet/nidstr.h>
 
-#define LUSTRE_CFG_RC_NO_ERR			 0 /* success */
-#define LUSTRE_CFG_RC_BAD_PARAM			-EINVAL /* 22 */
-#define LUSTRE_CFG_RC_MISSING_PARAM		-EFAULT /* 14 */
-#define LUSTRE_CFG_RC_OUT_OF_RANGE_PARAM	-ERANGE /* 34 */
-#define LUSTRE_CFG_RC_OUT_OF_MEM		-ENOMEM /* 12 */
-#define LUSTRE_CFG_RC_GENERIC_ERR		-ENODATA /* 61 */
-#define LUSTRE_CFG_RC_NO_MATCH			-ENOMSG /* 42 */
-#define LUSTRE_CFG_RC_MATCH			-EXFULL /* 54 */
-#define LUSTRE_CFG_RC_SKIP			-EBADSLT /* 57 */
-#define LUSTRE_CFG_RC_LAST_ELEM			-ECHRNG /* 48 */
-#define LUSTRE_CFG_RC_MARSHAL_FAIL		-ENOSTR /* 60 */
+#define LUSTRE_CFG_RC_NO_ERR			 0 
+#define LUSTRE_CFG_RC_BAD_PARAM			-EINVAL 
+#define LUSTRE_CFG_RC_MISSING_PARAM		-EFAULT 
+#define LUSTRE_CFG_RC_OUT_OF_RANGE_PARAM	-ERANGE 
+#define LUSTRE_CFG_RC_OUT_OF_MEM		-ENOMEM 
+#define LUSTRE_CFG_RC_GENERIC_ERR		-ENODATA 
+#define LUSTRE_CFG_RC_NO_MATCH			-ENOMSG 
+#define LUSTRE_CFG_RC_MATCH			-EXFULL 
+#define LUSTRE_CFG_RC_SKIP			-EBADSLT 
+#define LUSTRE_CFG_RC_LAST_ELEM			-ECHRNG 
+#define LUSTRE_CFG_RC_MARSHAL_FAIL		-ENOSTR 
 
 #define CONFIG_CMD		"configure"
 #define UNCONFIG_CMD		"unconfigure"
@@ -52,10 +52,10 @@
 #define INT_STRING_LEN		23
 #define LNET_DEFAULT_INDENT	6
 
-/* LNet module parameter path */
+
 #define modparam_path "/sys/module/lnet/parameters/"
 
-/* LND module parameter paths */
+
 #define o2iblnd_modparam_path "/sys/module/ko2iblnd/parameters/"
 #define socklnd_modparam_path "/sys/module/ksocklnd/parameters/"
 #define kfilnd_modparam_path "/sys/module/kkfilnd/parameters/"
@@ -162,7 +162,7 @@ union lnet_udsp_action {
 	int udsp_priority;
 };
 
-/* forward declaration of the cYAML structure. */
+
 struct cYAML;
 
 /*
@@ -1099,4 +1099,4 @@ void free_intf_descr(struct lnet_dlc_intf_descr *intf_descr);
 int lustre_lnet_resolve_ip2nets_rule(struct lustre_lnet_ip2nets *ip2nets,
 				     lnet_nid_t **nids, __u32 *nnids,
 				     char *err_str, size_t str_len);
-#endif /* LIB_LNET_CONFIG_API_H */
+#endif 

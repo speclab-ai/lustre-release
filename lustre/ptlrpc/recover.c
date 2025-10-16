@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Mike Shaver <shaver@clusterfs.com>
  */
@@ -52,12 +52,12 @@ int ptlrpc_replay_next(struct obd_import *imp, int *inflight)
 	       imp, obd2cli_tgt(imp->imp_obd),
 	       imp->imp_peer_committed_transno, last_transno);
 
-	/* Replay all the committed open requests on committed_list first */
+	
 	if (!list_empty(&imp->imp_committed_list)) {
 		req = list_last_entry(&imp->imp_committed_list,
 				      struct ptlrpc_request, rq_replay_list);
 
-		/* The last request on committed_list hasn't been replayed */
+		
 		if (req->rq_transno > last_transno) {
 			if (!imp->imp_resend_replay ||
 			    imp->imp_replay_cursor == &imp->imp_committed_list)
@@ -78,7 +78,7 @@ int ptlrpc_replay_next(struct obd_import *imp, int *inflight)
 					imp->imp_replay_cursor->next;
 			}
 		} else {
-			/* All requests on committed_list have been replayed */
+			
 			imp->imp_replay_cursor = &imp->imp_committed_list;
 			req = NULL;
 		}
@@ -203,7 +203,7 @@ void ptlrpc_request_handle_notconn(struct ptlrpc_request *failed_req)
 		libcfs_nidstr(&imp->imp_connection->c_peer.nid));
 
 	if (ptlrpc_set_import_discon(imp, conn, true)) {
-		/* to control recovery via lctl {disable|enable}_recovery */
+		
 		if (imp->imp_deactive == 0)
 			ptlrpc_connect_import(imp);
 	}
@@ -241,7 +241,7 @@ int ptlrpc_set_import_active(struct obd_import *imp, int active)
 	ENTRY;
 	LASSERT(obd);
 
-	/* When deactivating, mark import invalid, & abort in-flight requests */
+	
 	if (!active) {
 		LCONSOLE_WARN("setting import %s INACTIVE by administrator request\n",
 			      obd2cli_tgt(imp->imp_obd));
@@ -258,7 +258,7 @@ int ptlrpc_set_import_active(struct obd_import *imp, int active)
 		ptlrpc_invalidate_import(imp);
 	}
 
-	/* When activating, mark import valid, and attempt recovery */
+	
 	if (active) {
 		CDEBUG(D_HA, "setting import %s VALID\n",
 		       obd2cli_tgt(imp->imp_obd));
@@ -291,7 +291,7 @@ bool ptlrpc_import_in_recovery_disconnect(struct obd_import *imp,
 	return in_recovery;
 }
 
-/* Attempt to reconnect an import */
+
 int ptlrpc_recover_import(struct obd_import *imp, char *new_uuid, int async)
 {
 	int rc = 0;
@@ -305,20 +305,20 @@ int ptlrpc_recover_import(struct obd_import *imp, char *new_uuid, int async)
 	if (rc)
 		GOTO(out, rc);
 
-	/* force import to be disconnected. */
+	
 	ptlrpc_set_import_discon(imp, 0, false);
 
 	if (new_uuid) {
 		struct obd_uuid uuid;
 
-		/* intruct import to use new uuid */
+		
 		obd_str2uuid(&uuid, new_uuid);
 		rc = import_set_conn_priority(imp, &uuid);
 		if (rc)
 			GOTO(out, rc);
 	}
 
-	/* Check if reconnect is already in progress */
+	
 	spin_lock(&imp->imp_lock);
 	if (imp->imp_state != LUSTRE_IMP_DISCON) {
 		imp->imp_force_verify = 1;

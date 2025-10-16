@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Header defining common operations on OBD devices.
  */
@@ -44,7 +44,7 @@
 					 * obd_osfs_age */
 #define OBD_STATFS_FOR_MDT0	0x0004	/* The statfs is only for retrieving
 					 * information from MDT0. */
-#define OBD_STATFS_SUM		0x0008	/* get aggregated statfs from MDT */
+#define OBD_STATFS_SUM		0x0008	
 #define OBD_STATFS_NESTED	0x0010	/* Call while already holding
 					 * obd_dev_mutex of a difference
 					 * device.
@@ -75,7 +75,7 @@
 #define obd_device_lock() xa_lock(&obd_devs)
 #define obd_device_unlock() xa_unlock(&obd_devs)
 
-/* OBD Operations Declarations */
+
 extern struct obd_device *class_exp2obd(struct obd_export *);
 extern int class_handle_ioctl(unsigned int cmd, void __user *uarg);
 int lustre_get_jobid(char *jobid, size_t len);
@@ -87,7 +87,7 @@ int jobid_set_current(char *jobid);
 
 struct lu_device_type;
 
-/* genops.c */
+
 extern struct xarray obd_devs;
 struct obd_export *class_conn2export(struct lustre_handle *);
 #ifdef HAVE_SERVER_SUPPORT
@@ -151,7 +151,7 @@ __u16 obd_get_max_mod_rpcs_in_flight(struct client_obd *cli);
 int obd_set_max_mod_rpcs_in_flight(struct client_obd *cli, __u16 max);
 int obd_mod_rpc_stats_seq_show(struct client_obd *cli, struct seq_file *seq);
 
-/* page_pools.c */
+
 int  obd_pool_init(void);
 void obd_pool_fini(void);
 void obd_pool_add_user(void);
@@ -164,7 +164,7 @@ void obd_pool_put_objects(void *buf, unsigned int order);
 int obd_pool_get_free_objects(unsigned int order);
 int pool_is_at_full_capacity(int order);
 
-/* cfs_hash.c */
+
 int cfs_hash_init(void);
 void cfs_hash_fini(void);
 
@@ -183,8 +183,8 @@ struct obd_export *obd_stale_export_get(void);
 void obd_stale_export_put(struct obd_export *exp);
 void obd_stale_export_adjust(struct obd_export *exp);
 
-/* obd_config.c */
-/* For interoperability */
+
+
 struct cfg_interop_param {
 	char *old_param;
 	char *new_param;
@@ -228,19 +228,19 @@ int class_config_llog_handler(const struct lu_env *env,
 			      struct llog_rec_hdr *rec, void *data);
 int class_add_conn(struct obd_device *obd, struct lustre_cfg *lcfg);
 
-#define CFG_F_START	0x01   /* Set when we start updating from a log */
-#define CFG_F_MARKER	0x02   /* We are within a maker */
-#define CFG_F_SKIP	0x04   /* We should ignore this cfg command */
-#define CFG_F_EXCLUDE	0x10   /* OST exclusion list */
+#define CFG_F_START	0x01   
+#define CFG_F_MARKER	0x02   
+#define CFG_F_SKIP	0x04   
+#define CFG_F_EXCLUDE	0x10   
 
-/* Passed as data param to class_config_parse_llog */
+
 struct config_llog_instance {
 	unsigned long		 cfg_instance;
 	struct kobject		*cfg_kobj;
 	struct super_block	*cfg_sb;
 	struct obd_uuid		 cfg_uuid;
 	llog_cb_t		 cfg_callback;
-	int			 cfg_last_idx; /* for partial llog processing */
+	int			 cfg_last_idx; 
 	int			 cfg_flags;
 	__u32			 cfg_lwp_idx;
 	__u32			 cfg_sub_clds;
@@ -282,7 +282,7 @@ static inline bool logname_is_barrier(const char *logname)
 {
 	char *ptr;
 
-	/* logname for barrier is "fsname-barrier" */
+	
 	ptr = strstr(logname, BARRIER_FILENAME);
 	if (ptr && (ptr - logname) >= 2 &&
 	    *(ptr - 1) == '-' && *(ptr + 7) == '\0')
@@ -291,25 +291,25 @@ static inline bool logname_is_barrier(const char *logname)
 	return false;
 }
 
-/* list of active configuration logs  */
+
 struct config_llog_data {
 	struct ldlm_res_id	    cld_resid;
 	struct lustre_handle	    cld_lockh;
 	struct config_llog_instance cld_cfg;
-	struct list_head	    cld_list_chain;/* on config_llog_list */
+	struct list_head	    cld_list_chain;
 	refcount_t		    cld_refcount;
-	struct config_llog_data	   *cld_sptlrpc;/* depended sptlrpc log */
-	struct config_llog_data	   *cld_params;	/* common parameters log */
-	struct config_llog_data	   *cld_recover;/* imperative recover log */
-	struct config_llog_data	   *cld_nodemap;/* nodemap log */
-	struct config_llog_data	   *cld_barrier;/* barrier log (for MDT only) */
+	struct config_llog_data	   *cld_sptlrpc;
+	struct config_llog_data	   *cld_params;	
+	struct config_llog_data	   *cld_recover;
+	struct config_llog_data	   *cld_nodemap;
+	struct config_llog_data	   *cld_barrier;
 	struct obd_export	   *cld_mgcexp;
 	struct mutex		    cld_lock;
 	enum mgs_cfg_type	    cld_type;
 	unsigned int		    cld_stopping:1, /* we were told to stop
 						     * watching */
-				    cld_lostlock:1, /* lock not requeued */
-				    cld_processed:1;  /* successfully fetched */
+				    cld_lostlock:1, 
+				    cld_processed:1;  
 	char			    cld_logname[];
 };
 
@@ -392,7 +392,7 @@ extern void (*class_export_dump_hook)(struct obd_export *);
 	class_export_put(exp);						\
 })
 
-/* genops.c */
+
 struct obd_export *class_export_get(struct obd_export *exp);
 void class_export_put(struct obd_export *exp);
 struct obd_export *class_new_export(struct obd_device *obd,
@@ -456,7 +456,7 @@ static inline struct lr_server_data *class_server_data(struct obd_device *obd)
 }
 #endif
 
-/* obdo.c */
+
 struct lu_attr;
 struct inode;
 
@@ -862,7 +862,7 @@ static inline int obd_connect(const struct lu_env *env,
 
 	rc = obd->obd_type->typ_dt_ops->o_connect(env, exp, obd, cluuid, data,
 						  localdata);
-	/* check that only subset is granted */
+	
 	LASSERT(ergo(data != NULL, (data->ocd_connect_flags & ocf) ==
 				    data->ocd_connect_flags));
 	RETURN(rc);
@@ -889,7 +889,7 @@ static inline int obd_reconnect(const struct lu_env *env,
 
 	rc = obd->obd_type->typ_dt_ops->o_reconnect(env, exp, obd, cluuid, d,
 						    localdata);
-	/* check that only subset is granted */
+	
 	LASSERT(ergo(d != NULL,
 		     (d->ocd_connect_flags & ocf) == d->ocd_connect_flags));
 	RETURN(rc);
@@ -948,7 +948,7 @@ static inline int obd_pool_new(struct obd_device *obd, char *poolname)
 		RETURN(-EOPNOTSUPP);
 	}
 
-	/* Check poolname validity */
+	
 	if (!poolname || poolname[0] == '\0' || lov_pool_is_reserved(poolname))
 		RETURN(-EINVAL);
 
@@ -1081,11 +1081,11 @@ static inline int obd_statfs(const struct lu_env *env, struct obd_export *exp,
 
 	CDEBUG(D_SUPER, "%s: age %lld, max_age %lld\n",
 	       obd->obd_name, obd->obd_osfs_age, max_age);
-	/* ignore cache if aggregated isn't expected */
+	
 	if (obd->obd_osfs_age < max_age ||
 	    ((obd->obd_osfs.os_state & OS_STATFS_SUM) &&
 	     !(flags & OBD_STATFS_SUM))) {
-		/* the RPC will block anyway, so avoid sending many at once */
+		
 		rc = mutex_lock_interruptible_nested(&obd->obd_dev_mutex,
 						     (flags & OBD_STATFS_NESTED)
 						     ? SINGLE_DEPTH_NESTING : 0);
@@ -1325,7 +1325,7 @@ static inline int obd_health_check(const struct lu_env *env,
 
 	ENTRY;
 
-	/* NULL method is normal here */
+	
 	if (obd == NULL || !obd->obd_type) {
 		CERROR("cleaned up obd\n");
 		RETURN(-EOPNOTSUPP);
@@ -1360,7 +1360,7 @@ static inline int obd_register_observer(struct obd_device *obd,
 	RETURN(0);
 }
 
-/* metadata helpers */
+
 enum mps_stat_idx {
 	LPROC_MD_CLOSE,
 	LPROC_MD_CREATE,
@@ -1608,7 +1608,7 @@ static inline int md_fsync(struct obd_export *exp, const struct lu_fid *fid,
 	return exp->exp_obd->obd_type->typ_md_ops->m_fsync(exp, fid, request);
 }
 
-/* FLR: resync mirrored files. */
+
 static inline int md_file_resync(struct obd_export *exp,
 				 struct md_op_data *data)
 {
@@ -1975,7 +1975,7 @@ static inline int md_batch_add(struct obd_export *exp, struct lu_batch *bh,
 	return exp->exp_obd->obd_type->typ_md_ops->m_batch_add(exp, bh, item);
 }
 
-/* OBD Metadata Support */
+
 
 extern int obd_init_caches(void);
 extern void obd_cleanup_caches(void);
@@ -1991,7 +1991,7 @@ struct lwp_register_item {
 	char		    lri_name[MTI_NAME_MAXLEN];
 };
 
-/* obd_mount.c */
+
 #ifdef HAVE_SERVER_SUPPORT
 int lustre_register_lwp_item(const char *lwpname, struct obd_export **exp,
 			     register_lwp_cb cb_func, void *cb_data);
@@ -1999,10 +1999,10 @@ void lustre_deregister_lwp_item(struct obd_export **exp);
 struct obd_export *lustre_find_lwp_by_index(const char *dev, __u32 idx);
 void lustre_notify_lwp_list(struct obd_export *exp);
 int tgt_name2lwp_name(const char *tgt_name, char *lwp_name, int len, __u32 idx);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 int lustre_check_exclusion(struct super_block *sb, char *svname);
 
-/* lustre_peer.c    */
+
 int lustre_uuid_to_peer(const char *uuid, struct lnet_nid *peer_nid,
 			int index);
 int class_add_uuid(const char *uuid, struct lnet_nid *nid);
@@ -2011,7 +2011,7 @@ int class_add_nids_to_uuid(struct obd_uuid *uuid, struct lnet_nid *nidlist,
 			   int nid_count, int nid_size);
 int class_check_uuid(struct obd_uuid *uuid, struct lnet_nid *nid);
 
-/* class_obd.c */
+
 extern char obd_jobid_name[];
 
 extern unsigned int obd_lbug_on_eviction;
@@ -2029,12 +2029,12 @@ static inline bool do_dump_on_eviction(struct obd_device *exp_obd)
 	return obd_dump_on_eviction;
 }
 
-/* statfs_pack.c */
+
 struct kstatfs;
 void statfs_pack(struct obd_statfs *osfs, struct kstatfs *sfs);
 void statfs_unpack(struct kstatfs *sfs, struct obd_statfs *osfs);
 
-/* root squash info */
+
 struct root_squash_info {
 	uid_t			rsi_uid;
 	gid_t			rsi_gid;
@@ -2045,7 +2045,7 @@ struct root_squash_info {
 int server_name2fsname(const char *svname, char *fsname, const char **endptr);
 int server_name2index(const char *svname, __u32 *idx, const char **endptr);
 
-/* linux-module.c */
+
 struct obd_ioctl_data;
 int obd_ioctl_getdata(struct obd_ioctl_data **data, int *len, void __user *arg);
 int class_procfs_init(void);
@@ -2062,7 +2062,7 @@ extern __u64 obd_heat_get(struct obd_heat_instance *instance,
 			  unsigned int period_second);
 extern void obd_heat_clear(struct obd_heat_instance *instance, int count);
 
-/* struct kobj_type */
+
 static inline
 struct attribute *_get_attr_matches(const struct kobj_type *typ,
 				    const char *key, size_t keylen,
@@ -2125,9 +2125,9 @@ int obd_ioctl_msg(const char *file, const char *func, int line, int level,
 #define OBD_IOC_ERROR(dev, cmd, msg, rc)	\
 	obd_ioctl_msg(__FILE__, __func__, __LINE__, D_ERROR, dev, cmd, msg, rc)
 
-/* ldlm/ldlm_lib.c */
+
 void target_recovery_fini(struct obd_device *obd);
 void target_recovery_init(struct lu_target *lut, svc_handler_t handler);
 
 
-#endif /* __LINUX_OBD_CLASS_H */
+#endif 

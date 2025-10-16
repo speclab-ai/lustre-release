@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright  2008 Sun Microsystems, Inc. All rights reserved
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * OST pool methods
  *
@@ -108,7 +108,7 @@ static int pool_cmpfn(struct rhashtable_compare_arg *arg, const void *obj)
 }
 
 static const struct rhashtable_params pools_hash_params = {
-	.key_len	= 1, /* actually variable */
+	.key_len	= 1, 
 	.key_offset	= offsetof(struct lod_pool_desc, pool_name),
 	.head_offset	= offsetof(struct lod_pool_desc, pool_hash),
 	.hashfn		= pool_hashfh,
@@ -116,12 +116,12 @@ static const struct rhashtable_params pools_hash_params = {
 	.automatic_shrinking = true,
 };
 
-/* Methods for /proc seq_file iteration of the defined pools. */
+
 
 #define POOL_IT_MAGIC 0xB001CEA0
 struct lod_pool_iterator {
-	unsigned int	  lpi_magic;	/* POOL_IT_MAGIC */
-	unsigned int	  lpi_idx;	/* from 0 to pool_tgt_size - 1 */
+	unsigned int	  lpi_magic;	
+	unsigned int	  lpi_idx;	
 	struct lod_pool_desc *lpi_pool;
 };
 
@@ -149,21 +149,21 @@ static void *pool_proc_next(struct seq_file *seq, void *v, loff_t *pos)
 	LASSERTF(iter->lpi_magic == POOL_IT_MAGIC, "%08X\n", iter->lpi_magic);
 
 	(*pos)++;
-	/* test if end of file */
+	
 	if (*pos > pool_tgt_count(iter->lpi_pool))
 		return NULL;
 
 	CFS_FAIL_TIMEOUT(OBD_FAIL_OST_LIST_ASSERT, cfs_fail_val);
 
-	/* iterate to find a non empty entry */
+	
 	prev_idx = iter->lpi_idx;
 	iter->lpi_idx++;
 	if (iter->lpi_idx >= pool_tgt_count(iter->lpi_pool)) {
-		iter->lpi_idx = prev_idx; /* we stay on the last entry */
+		iter->lpi_idx = prev_idx; 
 		return NULL;
 	}
 
-	/* return != NULL to continue */
+	
 	return iter;
 }
 
@@ -452,7 +452,7 @@ int lod_pool_new(struct obd_device *obd, char *poolname)
 	lod->lod_pool_count++;
 	spin_unlock(&obd->obd_dev_lock);
 
-	/* Add to hash table only when it is fully ready. */
+	
 	rc = rhashtable_lookup_insert_fast(&lod->lod_pools_hash_body,
 					   &new_pool->pool_hash,
 					   pools_hash_params);
@@ -508,7 +508,7 @@ int lod_pool_del(struct obd_device *obd, char *poolname)
 	struct lod_pool_desc  *pool;
 	ENTRY;
 
-	/* lookup and kill hash reference */
+	
 	rcu_read_lock();
 	pool = rhashtable_lookup(&lod->lod_pools_hash_body, poolname,
 				 pools_hash_params);
@@ -538,7 +538,7 @@ int lod_pool_del(struct obd_device *obd, char *poolname)
 	lod->lod_pool_count--;
 	spin_unlock(&obd->obd_dev_lock);
 
-	/* release last reference */
+	
 	lod_pool_putref(pool);
 
 	RETURN(0);
@@ -571,7 +571,7 @@ int lod_pool_add(struct obd_device *obd, char *poolname, char *ostname)
 
 	obd_str2uuid(&ost_uuid, ostname);
 
-	/* search ost in lod array */
+	
 	lod_getref(&lod->lod_ost_descs);
 	lod_foreach_ost(lod, tgt) {
 		if (obd_uuid_equals(&ost_uuid, &tgt->ltd_uuid)) {
@@ -623,7 +623,7 @@ int lod_pool_remove(struct obd_device *obd, char *poolname, char *ostname)
 	int rc = -EINVAL;
 	ENTRY;
 
-	/* lookup and kill hash reference */
+	
 	pool = lod_pool_find(lod, poolname);
 	if (!pool)
 		RETURN(-ENOENT);
@@ -638,7 +638,7 @@ int lod_pool_remove(struct obd_device *obd, char *poolname, char *ostname)
 		}
 	}
 
-	/* test if ost found in lod array */
+	
 	if (rc)
 		GOTO(out, rc);
 
@@ -704,7 +704,7 @@ struct lod_pool_desc *lod_find_pool(struct lod_device *lod, const char *poolname
 		CDEBUG(D_CONFIG, "%s: request for an empty pool ("
 		       LOV_POOLNAMEF")\n",
 		       lod->lod_child_exp->exp_obd->obd_name, poolname);
-		/* pool is ignored, so we remove ref on it */
+		
 		lod_pool_putref(pool);
 		pool = NULL;
 	}
@@ -759,7 +759,7 @@ out_sem:
 	up_write(&pool_tgt_rw_sem(pool));
 }
 
-/* XXX: consider a better schema to detect loops */
+
 void lod_check_and_spill_pool(const struct lu_env *env, struct lod_device *lod,
 			      char **poolname)
 {

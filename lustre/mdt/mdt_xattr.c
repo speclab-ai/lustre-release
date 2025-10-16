@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Target (mdt) extended attributes management.
  *
@@ -28,7 +28,7 @@
 #include "mdt_internal.h"
 
 
-/* return EADATA length to the caller. negative value means error */
+
 static int mdt_getxattr_pack_reply(struct mdt_thread_info *info)
 {
 	struct req_capsule *pill = info->mti_pill;
@@ -43,7 +43,7 @@ static int mdt_getxattr_pack_reply(struct mdt_thread_info *info)
 
 	valid = info->mti_body->mbo_valid & (OBD_MD_FLXATTR | OBD_MD_FLXATTRLS);
 
-	/* Determine how many bytes we need */
+	
 	if (valid == OBD_MD_FLXATTR) {
 		xattr_name = req_capsule_client_get(pill, &RMF_NAME);
 		if (!xattr_name)
@@ -77,7 +77,7 @@ static int mdt_getxattr_pack_reply(struct mdt_thread_info *info)
 				     &LU_BUF_NULL);
 	} else if (valid == OBD_MD_FLXATTRALL) {
 		xattr_name = "all";
-		/* N.B. eadatasize = 0 is not valid for FLXATTRALL */
+		
 		/* We could calculate accurate sizes, but this would
 		 * introduce a lot of overhead, let's do it later...
 		 */
@@ -171,7 +171,7 @@ static int mdt_getxattr_all(struct mdt_thread_info *info,
 
 	eadatahead = buf->lb_buf;
 
-	/* Fill out EADATA first */
+	
 	rc = mo_xattr_list(env, next, buf);
 	if (rc < 0)
 		GOTO(out_shrink, rc);
@@ -182,7 +182,7 @@ static int mdt_getxattr_all(struct mdt_thread_info *info,
 	v = req_capsule_server_get(info->mti_pill, &RMF_EAVALS);
 	sizes = req_capsule_server_get(info->mti_pill, &RMF_EAVALS_LENS);
 
-	/* Fill out EAVALS and EAVALS_LENS */
+	
 	for (b = eadatahead; b < eadatatail; b += strlen(b) + 1, v += rc) {
 		buf->lb_buf = v;
 		buf->lb_len = reqbody->mbo_eadatasize - eavallen;
@@ -260,7 +260,7 @@ int mdt_getxattr(struct mdt_thread_info *info)
 	repbody = req_capsule_server_get(info->mti_pill, &RMF_MDT_BODY);
 	LASSERT(repbody != NULL);
 
-	/* No need further getxattr. */
+	
 	if (easize == 0 || reqbody->mbo_eadatasize == 0)
 		GOTO(out, rc = easize);
 
@@ -312,7 +312,7 @@ out:
 	return rc;
 }
 
-/* update dir layout after migration/restripe */
+
 int mdt_dir_layout_update(struct mdt_thread_info *info)
 {
 	const struct lu_env *env = info->mti_env;
@@ -350,7 +350,7 @@ int mdt_dir_layout_update(struct mdt_thread_info *info)
 	if (IS_ERR(obj))
 		RETURN(PTR_ERR(obj));
 
-	/* get parent from PFID */
+	
 	rc = mdt_attr_get_pfid(info, obj, &ma->ma_pfid);
 	if (rc)
 		GOTO(put_obj, rc);
@@ -372,7 +372,7 @@ int mdt_dir_layout_update(struct mdt_thread_info *info)
 			GOTO(put_pobj, rc);
 	}
 
-	/* lock object */
+	
 	lhc = &info->mti_lh[MDT_LH_CHILD];
 	rc = mdt_object_stripes_lock(info, pobj, obj, lhc, einfo,
 				     MDS_INODELOCK_ELC, LCK_EX);
@@ -383,7 +383,7 @@ int mdt_dir_layout_update(struct mdt_thread_info *info)
 	if (rc)
 		GOTO(unlock_obj, rc);
 
-	/* user may run 'lfs migrate' multiple times, so it's shrunk already */
+	
 	if (!(ma->ma_valid & MA_LMV))
 		GOTO(unlock_obj, rc = -EALREADY);
 
@@ -391,7 +391,7 @@ int mdt_dir_layout_update(struct mdt_thread_info *info)
 	if (!lmv_is_sane(lmv))
 		GOTO(unlock_obj, rc = -EBADF);
 
-	/* ditto */
+	
 	if (!lmv_is_layout_changing(lmv))
 		GOTO(unlock_obj, rc = -EALREADY);
 
@@ -542,11 +542,11 @@ int mdt_reint_setxattr(struct mdt_thread_info *info,
 	} else if (strncmp(xattr_name, XATTR_TRUSTED_PREFIX,
 		    sizeof(XATTR_TRUSTED_PREFIX) - 1) == 0) {
 
-		/* setxattr(LMV) with lum is used to shrink dir layout */
+		
 		if (strcmp(xattr_name, XATTR_NAME_LMV) == 0) {
 			__u32 *magic = rr->rr_eadata;
 
-			/* we don't let to remove LMV? */
+			
 			if (!rr->rr_eadata)
 				GOTO(out, rc = 0);
 
@@ -579,7 +579,7 @@ int mdt_reint_setxattr(struct mdt_thread_info *info,
 					 xattr_name, NODEMAP_CLIENT_TO_FS);
 		if (rc < 0)
 			GOTO(out, rc);
-		/* ACLs were mapped out, return an error so the user knows */
+		
 		if (rc != xattr_len)
 			GOTO(out, rc = -EPERM);
 	} else if ((strlen(xattr_name) > sizeof(XATTR_LUSTRE_LOV)) &&
@@ -656,14 +656,14 @@ int mdt_reint_setxattr(struct mdt_thread_info *info,
 		buf->lb_buf = rr->rr_eadata;
 		buf->lb_len = xattr_len;
 		rc = mo_xattr_set(env, child, buf, xattr_name, flags);
-		/* update ctime after xattr changed */
+		
 		if (rc == 0) {
 			ma->ma_attr_flags |= MDS_PERM_BYPASS;
 			mo_attr_set(env, child, ma);
 		}
 	} else if (valid & OBD_MD_FLXATTRRM) {
 		rc = mo_xattr_del(env, child, xattr_name);
-		/* update ctime after xattr changed */
+		
 		if (rc == 0) {
 			ma->ma_attr_flags |= MDS_PERM_BYPASS;
 			mo_attr_set(env, child, ma);

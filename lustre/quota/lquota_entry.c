@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2015, Intel Corporation.
@@ -77,7 +77,7 @@ static struct cfs_hash_ops lqe64_hash_ops = {
 	.hs_exit       = lqe_hash_exit
 };
 
-/* Logging helper function */
+
 void lquota_lqe_debug0(struct lquota_entry *lqe,
 		       struct libcfs_debug_msg_data *msgdata,
 		       const char *fmt, ...)
@@ -195,13 +195,13 @@ struct lquota_site *lquota_site_alloc(const struct lu_env *env, void *parent,
 	if (site == NULL)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	/* assign parameters */
+	
 	site->lqs_qtype  = qtype;
 	site->lqs_parent = parent;
 	site->lqs_is_mst = is_master;
 	site->lqs_ops    = ops;
 
-	/* allocate hash table */
+	
 	memset(hashname, 0, sizeof(hashname));
 	snprintf(hashname, sizeof(hashname), "LQUOTA_HASH%hu", qtype);
 	site->lqs_hash= cfs_hash_create(hashname, hash_lqs_cur_bits,
@@ -234,7 +234,7 @@ struct lquota_site *lquota_site_alloc(const struct lu_env *env, void *parent,
  */
 void lquota_site_free(const struct lu_env *env, struct lquota_site *site)
 {
-	/* cleanup hash table */
+	
 	lqe_cleanup(site->lqs_hash, true);
 	cfs_hash_putref(site->lqs_hash);
 
@@ -286,7 +286,7 @@ static int lqe_read(const struct lu_env *env,
 
 	rc = site->lqs_ops->lqe_read(env, lqe, site->lqs_parent, find);
 	if (rc == 0)
-		/* mark the entry as up-to-date */
+		
 		lqe->lqe_uptodate = true;
 
 	RETURN(rc);
@@ -325,7 +325,7 @@ struct lquota_entry *lqe_locate_find(const struct lu_env *env,
 		RETURN(ERR_PTR(-ENOMEM));
 	}
 
-	kref_init(&new->lqe_ref); /* hold 1 for caller */
+	kref_init(&new->lqe_ref); 
 	new->lqe_id     = *qid;
 	new->lqe_site   = site;
 	INIT_LIST_HEAD(&new->lqe_link);
@@ -334,15 +334,15 @@ struct lquota_entry *lqe_locate_find(const struct lu_env *env,
 	 * lqe->lqe_uptodate isn't set yet */
 	new->lqe_uptodate = false;
 
-	/* perform qmt/qsd specific initialization */
+	
 	lqe_init(new);
 
-	/* read quota settings from disk and mark lqe as up-to-date */
+	
 	rc = lqe_read(env, new, find);
 	if (rc)
 		GOTO(out, lqe = ERR_PTR(rc));
 
-	/* add new entry to hash */
+	
 	lqe = cfs_hash_findadd_unique(site->lqs_hash, &new->lqe_id.qid_uid,
 				      &new->lqe_hash);
 	if (lqe == new)

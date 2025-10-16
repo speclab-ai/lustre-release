@@ -1,8 +1,8 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
 
-/* Copyright (c) 2014, 2017, Intel Corporation. */
 
-/* This file is part of Lustre, http://www.lustre.org/
+
+
+/* This file is part of Lustre, http:
  *
  * header for lnet ioctl
  */
@@ -49,7 +49,7 @@ enum {
 	HSTATUS_RANDOM = 0xffffffff,
 };
 
-/** ioctl parameter for LNet fault simulation */
+
 struct lnet_fault_attr {
 	/**
 	 * source NID of drop rule
@@ -57,7 +57,7 @@ struct lnet_fault_attr {
 	 * 255.255.255.255@net is wildcard for all addresses from @net
 	 */
 	lnet_nid_t			fa_src;
-	/** destination NID of drop rule, see \a dr_src for details */
+	
 	lnet_nid_t			fa_dst;
 	/** local NID. In case of router this is the NID we're ceiving
 	 * messages on
@@ -81,23 +81,23 @@ struct lnet_fault_attr {
 	 */
 	__u32				fa_msg_mask;
 	union {
-		/** message drop simulation */
+		
 		struct {
-			/** drop rate of this rule */
+			
 			__u32			da_rate;
 			/**
 			 * time interval of message drop, it is exclusive
 			 * with da_rate
 			 */
 			__u32			da_interval;
-			/** error type mask */
+			
 			__u32			da_health_error_mask;
-			/** randomize error generation */
+			
 			__u32			da_random:1,
-			/** drop all messages if flag is set */
+			
 						da_drop_all:1;
 		} drop;
-		/** message latency simulation */
+		
 		struct {
 			__u32			la_rate;
 			/**
@@ -105,7 +105,7 @@ struct lnet_fault_attr {
 			 * with la_rate
 			 */
 			__u32			la_interval;
-			/** latency to delay */
+			
 			__u32			la_latency;
 		} delay;
 		__u64			space[8];
@@ -113,32 +113,32 @@ struct lnet_fault_attr {
 
 };
 
-/** fault simluation stats */
+
 struct lnet_fault_stat {
-	/** total # matched messages */
+	
 	__u64				fs_count;
-	/** # dropped LNET_MSG_PUT by this rule */
+	
 	__u64				fs_put;
-	/** # dropped LNET_MSG_ACK by this rule */
+	
 	__u64				fs_ack;
-	/** # dropped LNET_MSG_GET by this rule */
+	
 	__u64				fs_get;
-	/** # dropped LNET_MSG_REPLY by this rule */
+	
 	__u64				fs_reply;
 	union {
 		struct {
-			/** total # dropped messages */
+			
 			__u64			ds_dropped;
 		} drop;
 		struct {
-			/** total # delayed messages */
+			
 			__u64			ls_delayed;
 		} delay;
 		__u64			space[8];
 	} u;
 };
 
-/** @} lnet_fault_simulation */
+
 
 #define LNET_DEV_ID	0
 #define LNET_DEV_PATH	"/dev/lnet"

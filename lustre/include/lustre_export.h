@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __EXPORT_H
@@ -36,13 +36,13 @@ struct mdt_idmap_table;
  * Target-specific export data
  */
 struct tg_export_data {
-	/** Protects ted_lcd, ted_reply_* and ted_release_* fields below */
+	
 	struct mutex		ted_lcd_lock;
-	/** Per-client data for each export */
+	
 	struct lsd_client_data	*ted_lcd;
-	/** Offset of record in last_rcvd file */
+	
 	loff_t			ted_lr_off;
-	/** Client index in last_rcvd file */
+	
 	int			ted_lr_idx;
 
 	/**
@@ -60,31 +60,31 @@ struct tg_export_data {
 	struct lu_nodemap	*ted_nodemap;
 	struct list_head	ted_nodemap_member;
 
-	/** last version of nodemap config sent to client */
+	
 	__u64			ted_nodemap_version;
 
-	/* Every reply data fields below are protected by ted_lcd_lock */
-	/** List of reply data */
+	
+	
 	struct list_head	ted_reply_list;
 	int			ted_reply_cnt;
-	/** Reply data with highest transno is retained */
+	
 	struct tg_reply_data	*ted_reply_last;
-	/* Statistics */
-	int			ted_reply_max; /* high water mark */
+	
+	int			ted_reply_max; 
 	int			ted_release_xid;
 	int			ted_release_tag;
-	/* grants */
-	long			ted_dirty;    /* in bytes */
-	long			ted_grant;    /* in bytes */
-	long			ted_pending;  /* bytes just being written */
-	__u8			ted_pagebits; /* log2 of client page size */
+	
+	long			ted_dirty;    
+	long			ted_grant;    
+	long			ted_pending;  
+	__u8			ted_pagebits; 
 
 	/**
 	 * File Modification Data (FMD) tracking
 	 */
-	spinlock_t		ted_fmd_lock; /* protects ted_fmd_list */
-	struct list_head	ted_fmd_list; /* FIDs being modified */
-	int			ted_fmd_count;/* items in ted_fmd_list */
+	spinlock_t		ted_fmd_lock; 
+	struct list_head	ted_fmd_list; 
+	int			ted_fmd_count;
 };
 
 /**
@@ -92,17 +92,17 @@ struct tg_export_data {
  */
 struct mdt_export_data {
 	struct tg_export_data	med_ted;
-	/** List of all files opened by client on this MDT */
+	
 	struct list_head	med_open_head;
-	spinlock_t		med_open_lock; /* med_open_head, mfd_list */
+	spinlock_t		med_open_lock; 
 };
 
-struct ec_export_data { /* echo client */
+struct ec_export_data { 
 	struct list_head	eced_locks;
 };
 
-/* In-memory access to client data from OST struct */
-/** Filter (oss-side) specific import data */
+
+
 struct filter_export_data {
 	struct tg_export_data	fed_ted;
 	__u64			fed_lastid_gen;
@@ -114,8 +114,8 @@ struct filter_export_data {
 };
 
 struct mgs_export_data {
-	struct list_head	med_clients;	/* mgc fs client via this exp */
-	spinlock_t		med_lock;	/* protect med_clients */
+	struct list_head	med_clients;	
+	spinlock_t		med_lock;	
 };
 
 /**
@@ -130,7 +130,7 @@ struct nid_stat {
 	struct dentry		*nid_debugfs;
 	struct lprocfs_stats    *nid_stats;
 	struct lprocfs_stats    *nid_ldlm_stats;
-	/* for obd_nid_stats_hash exp_nid_stats */
+	
 	atomic_t		 nid_exp_ref_count;
 };
 
@@ -170,26 +170,26 @@ struct obd_export {
 	 * the cb_count and locks_count are for debug purposes only for now.
 	 * The sum of them should be less than exp_handle.href by 3
 	 */
-	atomic_t		exp_rpc_count; /* RPC references */
-	atomic_t		exp_cb_count; /* Commit callback references */
-	/** Number of queued replay requests to be processes */
+	atomic_t		exp_rpc_count; 
+	atomic_t		exp_cb_count; 
+	
 	atomic_t		exp_replay_count;
-	atomic_t		exp_locks_count; /** Lock references */
+	atomic_t		exp_locks_count; 
 #if LUSTRE_TRACKS_LOCK_EXP_REFS
 	struct list_head	exp_locks_list;
 	spinlock_t		exp_locks_list_guard;
 #endif
-	/** UUID of client connected to this export */
+	
 	struct obd_uuid		exp_client_uuid;
-	/** To link all exports on an obd device */
+	
 	struct list_head	exp_obd_chain;
-	/** work_struct for destruction of export */
+	
 	struct work_struct	exp_zombie_work;
-	/* Unlinked export list */
+	
 	struct list_head	exp_stale_list;
-	struct rhash_head	exp_uuid_hash;	/** uuid-export hash */
-	struct rhlist_head	exp_nid_hash;	/** nid-export hash */
-	struct hlist_node	exp_gen_hash;   /** last_rcvd clt gen hash */
+	struct rhash_head	exp_uuid_hash;	
+	struct rhlist_head	exp_nid_hash;	
+	struct hlist_node	exp_gen_hash;   
 	/**
 	 * All exports eligible for ping evictor are linked into a list
 	 * through this field in "most time since last request on this export"
@@ -197,7 +197,7 @@ struct obd_export {
 	 * protected by obd_dev_lock
 	 */
 	struct list_head	exp_timed_chain;
-	/** Obd device of this export */
+	
 	struct obd_device      *exp_obd;
 	/**
 	 * "reverse" import to send requests (e.g. from ldlm) back to client
@@ -205,11 +205,11 @@ struct obd_export {
 	 */
 	struct obd_import        *exp_imp_reverse;
 	struct nid_stat          *exp_nid_stats;
-	/** Active connetion */
+	
 	struct ptlrpc_connection *exp_connection;
-	/** Connection count value from last successful reconnect rpc */
+	
 	__u32			  exp_conn_cnt;
-	/** Hash list of all ldlm locks granted on this export */
+	
 	struct cfs_hash		 *exp_lock_hash;
 	/**
 	 * Hash list for Posix lock deadlock detection, added with
@@ -219,28 +219,28 @@ struct obd_export {
 	struct list_head	exp_outstanding_replies;
 	struct list_head	exp_uncommitted_replies;
 	spinlock_t		exp_uncommitted_replies_lock;
-	/** Last committed transno for this export */
+	
 	__u64			exp_last_committed;
-	/** When was last request received */
+	
 	time64_t		exp_last_request_time;
 	time64_t		exp_deadline;
-	/** On replay all requests waiting for replay are linked here */
+	
 	struct list_head	exp_req_replay_queue;
 	/**
 	 * protects exp_flags, exp_outstanding_replies and the change
 	 * of exp_imp_reverse
 	 */
 	spinlock_t		exp_lock;
-	/* Compatibility flags for this export embedded into exp_connect_data */
+	
 	struct obd_connect_data exp_connect_data;
 	enum obd_option		exp_flags;
 	unsigned long		exp_failed:1,
 				exp_in_recovery:1,
 				exp_disconnected:1,
 				exp_connecting:1,
-				/** VBR: export missed recovery */
+				
 				exp_delayed:1,
-				/** VBR: failed version checking */
+				
 				exp_vbr_failed:1,
 				exp_req_replay_needed:1,
 				exp_lock_replay_needed:1,
@@ -251,9 +251,9 @@ struct obd_export {
 				 * Only used by the MGS to fix LU-1644.
 				 */
 				exp_need_mne_swab:1,
-				/* export got final replay ping request */
+				
 				exp_replay_done:1,
-				/* local client with recovery disabled */
+				
 				exp_no_recovery:1,
 				/* old client will set this to 1 (true).
 				 * Newer clients 2.15 and beyond will have this
@@ -263,22 +263,22 @@ struct obd_export {
 				exp_hashed:1,
 				exp_timed:1,
 				exp_banned:1;
-	/* also protected by exp_lock */
+	
 	enum lustre_sec_part	exp_sp_peer;
-	struct sptlrpc_flavor	exp_flvr;		/* current */
-	struct sptlrpc_flavor	exp_flvr_old[2];	/* about-to-expire */
-	time64_t		exp_flvr_expire[2];	/* seconds */
+	struct sptlrpc_flavor	exp_flvr;		
+	struct sptlrpc_flavor	exp_flvr_old[2];	
+	time64_t		exp_flvr_expire[2];	
 
-	/** protects exp_hp_rpcs */
+	
 	spinlock_t		exp_rpc_lock;
-	struct list_head	exp_hp_rpcs;	/* (potential) HP RPCs */
-	struct list_head	exp_reg_rpcs;  /* RPC being handled */
+	struct list_head	exp_hp_rpcs;	
+	struct list_head	exp_reg_rpcs;  
 
-	/** blocking dlm lock list, protected by exp_bl_list_lock */
+	
 	struct list_head	exp_bl_list;
 	spinlock_t		exp_bl_list_lock;
 
-	/** Target specific data */
+	
 	union {
 		struct tg_export_data     eu_target_data;
 		struct mdt_export_data    eu_mdt_data;
@@ -294,7 +294,7 @@ struct obd_export {
 	 */
 	__u64			exp_last_xid;
 	long			*exp_used_slots;
-	struct lu_fid		exp_root_fid; /* subdir mount fid */
+	struct lu_fid		exp_root_fid; 
 };
 
 #define exp_target_data u.eu_target_data
@@ -304,7 +304,7 @@ struct obd_export {
 
 static inline int lprocfs_nid_ldlm_stats_init(struct nid_stat *tmp)
 {
-	/* Always add in ldlm_stats */
+	
 	tmp->nid_ldlm_stats =
 		lprocfs_stats_alloc(LDLM_LAST_OPC - LDLM_FIRST_OPC,
 				    LPROCFS_STATS_FLAG_NOPERCPU);
@@ -550,9 +550,9 @@ static inline int exp_connect_open_readdir(struct obd_export *exp)
 }
 
 enum {
-	/* archive_ids in array format */
+	
 	KKUC_CT_DATA_ARRAY_MAGIC	= 0x092013cea,
-	/* archive_ids in bitmap format */
+	
 	KKUC_CT_DATA_BITMAP_MAGIC	= 0x082018cea,
 };
 
@@ -563,7 +563,7 @@ struct kkuc_ct_data {
 	__u32		kcd_archives[];
 };
 
-/** @} export */
 
-#endif /* __EXPORT_H */
-/** @} obd_export */
+
+#endif 
+

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #define DEBUG_SUBSYSTEM S_LNET
 
@@ -22,7 +22,7 @@ static int config_on_load = 0;
 module_param(config_on_load, int, 0444);
 MODULE_PARM_DESC(config_on_load, "configure network at module load");
 
-/* enable sysctl configuration (especially for large systems) */
+
 static unsigned int enable_sysctl_setup;
 module_param(enable_sysctl_setup, int, 0644);
 MODULE_PARM_DESC(enable_sysctl_setup, "enable sysctl parameters for large systems");
@@ -31,7 +31,7 @@ static DEFINE_MUTEX(lnet_config_mutex);
 
 int lnet_configure(void *arg)
 {
-	/* 'arg' only there so I can be passed to cfs_create_thread() */
+	
 	int    rc = 0;
 
 	mutex_lock(&lnet_config_mutex);
@@ -133,7 +133,7 @@ lnet_dyn_configure_ni(struct libcfs_ioctl_hdr *hdr)
 		struct lnet_nid nid;
 		u32 net_id;
 
-		/* get the tunables if they are available */
+		
 		if (conf->lic_cfg_hdr.ioc_len >=
 		    sizeof(*conf) + sizeof(*tun))
 			tun = (struct lnet_ioctl_config_lnd_tunables *) conf->lic_bulk;
@@ -362,7 +362,7 @@ lnet_psdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		return -EINVAL;
 	}
 
-	/* 'cmd' and permissions get checked in our arch-specific caller */
+	
 	err = lnet_ioctl_getdata(&hdr, uparam);
 	if (err != 0) {
 		CDEBUG_LIMIT(D_ERROR,
@@ -393,7 +393,7 @@ lnet_psdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 		err = blocking_notifier_call_chain(&lnet_ioctl_list,
 						   cmd, hdr);
 		if (!(err & NOTIFY_STOP_MASK))
-			/* No-one claimed the ioctl */
+			
 			err = -EINVAL;
 		else
 			err = notifier_to_errno(err);
@@ -478,7 +478,7 @@ static void __exit lnet_exit(void)
 	cfs_cpu_fini();
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Networking layer");
 MODULE_VERSION(LNET_VERSION);
 MODULE_LICENSE("GPL");

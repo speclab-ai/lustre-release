@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #ifndef __UAPI_LNET_IDL_H__
 #define __UAPI_LNET_IDL_H__
@@ -45,7 +45,7 @@ typedef __u64 lnet_nid_t;
  * can be 0xff without making the address too big to fit.
  */
 struct lnet_nid {
-	__u8	nid_size;	/* total bytes - 8 */
+	__u8	nid_size;	
 	__u8	nid_type;
 	__be16	nid_num;
 	__be32	nid_addr[4];
@@ -60,10 +60,10 @@ struct lnet_nid {
  */
 typedef __u32 lnet_pid_t;
 
-/* Packed version of struct lnet_process_id to transfer via network */
+
 struct lnet_process_id_packed {
 	lnet_nid_t nid;
-	lnet_pid_t pid;	/* node id / process id */
+	lnet_pid_t pid;	
 } __attribute__((packed));
 
 /* The wire handle's interface cookie only matches one network interface in
@@ -136,9 +136,9 @@ struct lnet_hdr {
 	struct lnet_nid		src_nid;
 	lnet_pid_t		dest_pid;
 	lnet_pid_t		src_pid;
-	__u32			type;		/* enum lnet_msg_type */
-	__u32			payload_length;	/* payload data to follow */
-	/*<------__u64 aligned------->*/
+	__u32			type;		
+	__u32			payload_length;	
+	
 	union lnet_cmd_hdr	msg;
 } __attribute__((packed));
 
@@ -150,9 +150,9 @@ struct _lnet_hdr_nid4 {
 	lnet_nid_t	src_nid;
 	lnet_pid_t	dest_pid;
 	lnet_pid_t	src_pid;
-	__u32		type;		/* enum lnet_msg_type */
-	__u32		payload_length;	/* payload data to follow */
-	/*<------__u64 aligned------->*/
+	__u32		type;		
+	__u32		payload_length;	
+	
 	union lnet_cmd_hdr msg;
 } __attribute__((packed));
 
@@ -173,44 +173,44 @@ struct lnet_hdr_nid4 {
  * LNDs can put whatever else they fancy in lnet_hdr::msg.
  */
 struct lnet_magicversion {
-	__u32	magic;		/* LNET_PROTO_TCP_MAGIC */
-	__u16	version_major;	/* increment on incompatible change */
-	__u16	version_minor;	/* increment on compatible change */
+	__u32	magic;		
+	__u16	version_major;	
+	__u16	version_minor;	
 } __attribute__((packed));
 
-/* PROTO MAGIC for LNDs */
+
 #define LNET_PROTO_IB_MAGIC		0x0be91b91
-#define LNET_PROTO_GNI_MAGIC		0xb00fbabe /* ask Kim */
+#define LNET_PROTO_GNI_MAGIC		0xb00fbabe 
 #define LNET_PROTO_TCP_MAGIC		0xeebc0ded
 #define LNET_PROTO_KFI_MAGIC		0xdeadbeef
 #define LNET_PROTO_ACCEPTOR_MAGIC	0xacce7100
-#define LNET_PROTO_PING_MAGIC		0x70696E67 /* 'ping' */
-#define LNET_PROTO_EFA_MAGIC		0x2be092be /* 2B or 9 2B */
+#define LNET_PROTO_PING_MAGIC		0x70696E67 
+#define LNET_PROTO_EFA_MAGIC		0x2be092be 
 
-/* Placeholder for a future "unified" protocol across all LNDs */
+
 /* Current LNDs that receive a request with this magic will respond
  * with a "stub" reply using their current protocol */
-#define LNET_PROTO_MAGIC		0x45726963 /* ! */
+#define LNET_PROTO_MAGIC		0x45726963 
 
 #define LNET_PROTO_TCP_VERSION_MAJOR	1
 #define LNET_PROTO_TCP_VERSION_MINOR	0
 
-/* Acceptor connection request */
+
 struct lnet_acceptor_connreq {
-	__u32	acr_magic;	/* LNET_PROTO_ACCEPTOR_MAGIC */
-	__u32	acr_version;	/* protocol version */
-	__u64	acr_nid;	/* target NID */
+	__u32	acr_magic;	
+	__u32	acr_version;	
+	__u64	acr_nid;	
 } __attribute__((packed));
 
 #define LNET_PROTO_ACCEPTOR_VERSION	1
 
 struct lnet_acceptor_connreq_v2 {
-	__u32			acr_magic;	/* LNET_PROTO_ACCEPTOR_MAGIC */
-	__u32			acr_version;	/* protocol version - 2 */
-	struct lnet_nid		acr_nid;	/* target NID */
+	__u32			acr_magic;	
+	__u32			acr_version;	
+	struct lnet_nid		acr_nid;	
 } __attribute__((packed));
 
-/* For use with 16-byte addresses */
+
 #define LNET_PROTO_ACCEPTOR_VERSION_16  2
 
 struct lnet_counters_common {
@@ -264,15 +264,15 @@ struct lnet_nid_metadata {
 /* NB: value of these features equal to LNET_PROTO_PING_VERSION_x
  * of old LNet, so there shouldn't be any compatibility issue
  */
-#define LNET_PING_FEAT_INVAL		(0)		/* no feature */
-#define LNET_PING_FEAT_BASE		(1 << 0)	/* just a ping */
-#define LNET_PING_FEAT_NI_STATUS	(1 << 1)	/* return NI status */
-#define LNET_PING_FEAT_RTE_DISABLED	(1 << 2)	/* Routing enabled */
-#define LNET_PING_FEAT_MULTI_RAIL	(1 << 3)	/* Multi-Rail aware */
-#define LNET_PING_FEAT_DISCOVERY	(1 << 4)	/* Supports Discovery */
-#define LNET_PING_FEAT_LARGE_ADDR	(1 << 5)	/* Large addr nids present */
-#define LNET_PING_FEAT_PRIMARY_LARGE	(1 << 6)	/* Primary is first Large addr */
-#define LNET_PING_FEAT_METADATA		(1 << 7)	/* LND defined NID metadata */
+#define LNET_PING_FEAT_INVAL		(0)		
+#define LNET_PING_FEAT_BASE		(1 << 0)	
+#define LNET_PING_FEAT_NI_STATUS	(1 << 1)	
+#define LNET_PING_FEAT_RTE_DISABLED	(1 << 2)	
+#define LNET_PING_FEAT_MULTI_RAIL	(1 << 3)	
+#define LNET_PING_FEAT_DISCOVERY	(1 << 4)	
+#define LNET_PING_FEAT_LARGE_ADDR	(1 << 5)	
+#define LNET_PING_FEAT_PRIMARY_LARGE	(1 << 6)	
+#define LNET_PING_FEAT_METADATA		(1 << 7)	
 
 /*
  * All ping feature bits fit to hit the wire.
@@ -302,7 +302,7 @@ struct lnet_ping_info {
 	__u32			pi_magic;
 	__u32			pi_features;
 	lnet_pid_t		pi_pid;
-	__u32			pi_nnis;	/* number of nid4 entries */
+	__u32			pi_nnis;	
 	struct lnet_ni_status	pi_ni[];
 } __attribute__((packed));
 

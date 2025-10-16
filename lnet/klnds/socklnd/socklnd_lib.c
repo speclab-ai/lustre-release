@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #include "socklnd.h"
 
@@ -16,7 +16,7 @@ ksocknal_lib_get_conn_addrs(struct ksock_conn *conn)
 	int rc = lnet_sock_getaddr(conn->ksnc_sock, true,
 				   &conn->ksnc_peeraddr);
 
-	/* Didn't need the {get,put}connsock dance to deref ksnc_sock... */
+	
 	LASSERT(!conn->ksnc_closing);
 
 	if (rc != 0) {
@@ -56,10 +56,10 @@ ksocknal_lib_send_hdr(struct ksock_conn *conn, struct ksock_tx *tx,
 	int		nob = 0;
 	int		rc;
 
-	if (*ksocknal_tunables.ksnd_enable_csum	       && /* checksum enabled */
-	    conn->ksnc_proto == &ksocknal_protocol_v2x && /* V2.x connection  */
-	    tx->tx_nob == tx->tx_resid		       && /* frist sending    */
-	    tx->tx_msg.ksm_csum == 0)			  /* not checksummed  */
+	if (*ksocknal_tunables.ksnd_enable_csum	       && 
+	    conn->ksnc_proto == &ksocknal_protocol_v2x && 
+	    tx->tx_nob == tx->tx_resid		       && 
+	    tx->tx_msg.ksm_csum == 0)			  
 		ksocknal_lib_csum_tx(tx);
 
 	/* NB we can't trust socket ops to either consume our iovs
@@ -125,12 +125,12 @@ ksocknal_lib_send_kiov(struct ksock_conn *conn, struct ksock_tx *tx,
 	int rc;
 	int nob;
 
-	/* Not NOOP message */
+	
 	LASSERT(tx->tx_lnetmsg != NULL);
 
-	/* can't trust socket ops to consume our iovs or leave them alone */
+	
 	if (tx->tx_msg.ksm_zc_cookies[0] != 0) {
-		/* Zero copy is enabled */
+		
 		int msgflg = MSG_DONTWAIT;
 
 		CDEBUG(D_NET, "page %p + offset %x for %d\n",
@@ -227,7 +227,7 @@ ksocknal_lib_recv_iov(struct ksock_conn *conn, struct kvec *scratchiov)
 	}
 
 	if (saved_csum != 0) {
-		/* accumulate checksum */
+		
 		for (i = 0, sum = rc; sum > 0; i++, sum -= fragnob) {
 			LASSERT(i < niov);
 
@@ -441,7 +441,7 @@ ksocknal_lib_setup_sock(struct socket *sock, struct lnet_ni *ni)
 
 	sock->sk->sk_allocation = GFP_NOFS;
 
-	/* Ensure this socket aborts active sends immediately when closed. */
+	
 	sock_reset_flag(sock->sk, SOCK_LINGER);
 
 	tp->linger2 = -1;
@@ -453,7 +453,7 @@ ksocknal_lib_setup_sock(struct socket *sock, struct lnet_ni *ni)
 			 *ksocknal_tunables.ksnd_tx_buffer_size,
 			 *ksocknal_tunables.ksnd_rx_buffer_size);
 
-/* TCP_BACKOFF_* sockopt tunables unsupported in stock kernels */
+
 #ifdef SOCKNAL_BACKOFF
 	if (*ksocknal_tunables.ksnd_backoff_init > 0) {
 		int option = *ksocknal_tunables.ksnd_backoff_init;
@@ -486,7 +486,7 @@ ksocknal_lib_setup_sock(struct socket *sock, struct lnet_ni *ni)
 	}
 #endif
 
-	/* snapshot tunables */
+	
 	keep_idle  = *ksocknal_tunables.ksnd_keepalive_idle;
 	keep_count = *ksocknal_tunables.ksnd_keepalive_count;
 	keep_intvl = *ksocknal_tunables.ksnd_keepalive_intvl;
@@ -511,7 +511,7 @@ ksocknal_lib_setup_sock(struct socket *sock, struct lnet_ni *ni)
 		sock_set_flag(sock->sk, SOCK_KEEPOPEN);
 	else
 		sock_reset_flag(sock->sk, SOCK_KEEPOPEN);
-#endif /* HAVE_KERNEL_SETSOCKOPT */
+#endif 
 
 	if (!do_keepalive)
 		return (0);
@@ -550,7 +550,7 @@ ksocknal_lib_push_conn(struct ksock_conn *conn)
 	int rc;
 
 	rc = ksocknal_connsock_addref(conn);
-	if (rc != 0)                            /* being shut down */
+	if (rc != 0)                            
 		return;
 
 	sk = conn->ksnc_sock->sk;
@@ -584,12 +584,12 @@ ksocknal_data_ready(struct sock *sk, int n)
 {
 	struct ksock_conn  *conn;
 
-	/* interleave correctly with closing sockets... */
+	
 	LASSERT(!in_irq());
 	read_lock_bh(&ksocknal_data.ksnd_global_lock);
 
 	conn = sk->sk_user_data;
-	if (conn == NULL) {	/* raced with ksocknal_terminate_conn */
+	if (conn == NULL) {	
 		LASSERT(sk->sk_data_ready != &ksocknal_data_ready);
 #ifdef HAVE_SK_DATA_READY_ONE_ARG
 		sk->sk_data_ready(sk);
@@ -609,7 +609,7 @@ ksocknal_write_space(struct sock *sk)
 	int wspace;
 	int min_wpace;
 
-	/* interleave correctly with closing sockets... */
+	
 	LASSERT(!in_irq());
 	read_lock(&ksocknal_data.ksnd_global_lock);
 
@@ -626,7 +626,7 @@ ksocknal_write_space(struct sock *sk)
 	       (conn == NULL) ? "" : (list_empty(&conn->ksnc_tx_queue) ?
 				      " empty" : " queued"));
 
-	if (conn == NULL) {             /* raced with ksocknal_terminate_conn */
+	if (conn == NULL) {             
 		LASSERT(sk->sk_write_space != &ksocknal_write_space);
 		sk->sk_write_space(sk);
 
@@ -634,7 +634,7 @@ ksocknal_write_space(struct sock *sk)
 		return;
 	}
 
-	if (wspace >= min_wpace) { /* got enough space */
+	if (wspace >= min_wpace) { 
 		ksocknal_write_callback(conn);
 
 		/* Clear SOCK_NOSPACE _after_ ksocknal_write_callback so the

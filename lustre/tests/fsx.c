@@ -10,7 +10,7 @@
  * are subject to the Apple Public Source License Version 1.1 (the
  * "License").  You may not use this file except in compliance with the
  * License.  Please obtain a copy of the License at
- * http://www.apple.com/publicsource and read it before using this file.
+ * http:
  *
  * This Original Code and all software distributed under the License are
  * distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, EITHER
@@ -113,9 +113,9 @@ struct log_entry {
 
 #define	LOGSIZE	100000
 
-struct log_entry oplog[LOGSIZE]; /* the log */
-int logptr; /* current position in log */
-int logcount; /* total ops */
+struct log_entry oplog[LOGSIZE]; 
+int logptr; 
+int logcount; 
 int jmpbuf_good;
 jmp_buf jmpbuf;
 
@@ -124,14 +124,14 @@ unsigned int mirror_ids[LUSTRE_MIRROR_COUNT_MAX];
  * Define operations
  */
 
-/* common operations */
+
 #define OP_READ		0
 #define OP_WRITE	1
 #define OP_MAPREAD	2
 #define OP_MAPWRITE	3
 #define OP_MAX_LITE	4
 
-/* !lite operations */
+
 #define OP_TRUNCATE		4
 #define OP_FALLOCATE		5
 #define OP_PUNCH_HOLE		6
@@ -155,60 +155,60 @@ char *mirror_op_str[] = {
 #define OP_DIRECT O_DIRECT
 
 #ifndef FALLOC_FL_PUNCH_HOLE
-#define FALLOC_FL_PUNCH_HOLE 0x02 /* de-allocates range */
+#define FALLOC_FL_PUNCH_HOLE 0x02 
 #endif
 
 #ifndef FALLOC_FL_KEEP_SIZE
-#define FALLOC_FL_KEEP_SIZE 0x01 /* default is extend size */
+#define FALLOC_FL_KEEP_SIZE 0x01 
 #endif
 
 #ifndef FALLOC_FL_ZERO_RANGE
-#define FALLOC_FL_ZERO_RANGE 0x10 /* convert range to zeros */
+#define FALLOC_FL_ZERO_RANGE 0x10 
 #endif
 
 
-char *original_buf; /* a pointer to the original data */
-char *good_buf; /* a pointer to the correct data */
-char *temp_buf; /* a pointer to the current data */
-char *fname; /* name of our test file */
-char logfile[PATH_MAX]; /* name of our log file */
-char goodfile[PATH_MAX]; /* name of our test file */
+char *original_buf; 
+char *good_buf; 
+char *temp_buf; 
+char *fname; 
+char logfile[PATH_MAX]; 
+char goodfile[PATH_MAX]; 
 
-struct timeval tv; /* time current operation started */
+struct timeval tv; 
 off_t file_size;
 off_t biggest;
 char state[256];
-unsigned long testcalls; /* calls to function "test" */
+unsigned long testcalls; 
 
-long simulatedopcount;			/* -b flag */
-int closeprob;				/* -c flag */
-int debug ;				/* -d flag */
-long debugstart;			/* -D flag */
-int flush;				/* -f flag */
-int do_fsync;				/* -y flag */
-long maxfilelen = 256 * 1024;		/* -l flag */
-int sizechecks = 1;			/* -n flag disables them */
-int maxoplen = 64 * 1024;		/* -o flag */
-int quiet;				/* -q flag */
-long progressinterval;			/* -p flag */
-int readbdy = 1;			/* -r flag */
-int style;				/* -s flag */
-int truncbdy = 1;			/* -t flag */
-int writebdy = 1;			/* -w flag */
-long monitorstart = -1;			/* -m flag */
-long monitorend = -1;			/* -m flag */
-long flrmode;				/* -M flag */
-int lite;				/* -L flag */
-long numops = -1;			/* -N flag */
-int randomoplen = 1;			/* -O flag disables it */
-int seed = 1;				/* -S flag */
-int mapped_writes = 1;			/* -W flag disables */
-int fallocate_calls = 1;		/* -F flag disables */
-int punch_hole_calls = 1;		/* -H flag disables */
-int zero_range_calls = 1;		/* -z flag disables */
-int mapped_reads = 1;			/* -R flag disables it */
+long simulatedopcount;			
+int closeprob;				
+int debug ;				
+long debugstart;			
+int flush;				
+int do_fsync;				
+long maxfilelen = 256 * 1024;		
+int sizechecks = 1;			
+int maxoplen = 64 * 1024;		
+int quiet;				
+long progressinterval;			
+int readbdy = 1;			
+int style;				
+int truncbdy = 1;			
+int writebdy = 1;			
+long monitorstart = -1;			
+long monitorend = -1;			
+long flrmode;				
+int lite;				
+long numops = -1;			
+int randomoplen = 1;			
+int seed = 1;				
+int mapped_writes = 1;			
+int fallocate_calls = 1;		
+int punch_hole_calls = 1;		
+int zero_range_calls = 1;		
+int mapped_reads = 1;			
 int fsxgoodfd;
-int o_direct;				/* -Z */
+int o_direct;				
 int fl_keep_size;
 
 int page_size;
@@ -379,7 +379,7 @@ logdump(void)
 				prt("\t******TTTT");
 			break;
 		case OP_FALLOCATE:
-			/* 0: offset 1: length 2: where alloced */
+			
 			prt("FALLOC   0x%05x thru 0x%05x\t(0x%05x bytes)%s",
 			    lp->args[0], lp->args[0] + lp->args[1],
 			    lp->args[1], falloc_type[lp->args[2]]);
@@ -666,7 +666,7 @@ check_trunc_hack(void)
 	struct stat statbuf;
 	int fd = get_fd();
 
-	/* should not ignore ftruncate(2)'s return value */
+	
 	if (ftruncate(fd, (off_t)0) < 0) {
 		prterr("trunc_hack: ftruncate(0)");
 		exit(1);
@@ -705,7 +705,7 @@ output_line(struct test_file *tf, int op, unsigned int offset,
 		[OP_PUNCH_HOLE] = "punch from",
 	};
 
-	/* W. */
+	
 	if (!(!quiet &&
 	    ((progressinterval && testcalls % progressinterval == 0) ||
 	    (debug && (monitorstart == -1 ||
@@ -1337,7 +1337,7 @@ get_mirror_ids(int fd, unsigned int *ids)
 	if (layout == NULL)
 		return 0;
 
-	/* only get mirror count */
+	
 	rc = llapi_layout_mirror_count_get(layout, &count);
 	if (rc < 0)
 		prt("llapi_layout_mirror_count_get: %d\n", rc);
@@ -1455,7 +1455,7 @@ do_mirror_ops(int op)
 			break;
 	case MIRROR_EXTEND:
 	case MIRROR_RESYNC:
-		/* verify mirror */
+		
 		snprintf(cmd, sizeof(cmd),
 			 "lfs mirror verify %s", tf->path);
 
@@ -1523,7 +1523,7 @@ test(void)
 	if (randomoplen)
 		size = random() % (maxoplen + 1);
 
-	/* calculate appropriate op to run */
+	
 	if (lite)
 		op = rv % OP_MAX_LITE;
 	else
@@ -1639,12 +1639,12 @@ usage(void)
 "	-c P: 1 in P chance of file close+open at each op (default infinity)\n"
 "	-d: debug output for all operations [-d -d = more debugging]\n"
 "	-f flush and invalidate cache after I/O\n"
-/* OSX: -d duration: number of hours for the tool to run\n\ */
-/* OSX: -e: tests using an extended attribute rather than a file\n\ */
-/* OSX: -f forkname: test the named fork of fname\n\ */
-/* OSX: -g logpath: path for .fsxlog file\n\ */
-/* OSX: -h: write 0s instead of creating holes (i.e. sparse file)\n\ */
-/* OSX: -i: interactive mode, hit return before performing each operation\n\ */
+
+
+
+
+
+
 "	-l flen: the upper bound on file size (default 262144)\n"
 "	-m startop:endop: monitor (print debug output) specified byte range\n"
 "	   (default 0:infinity)\n"
@@ -1656,33 +1656,33 @@ usage(void)
 "	-s style: 1 gives smaller truncates (default 0)\n"
 "	-t truncbdy: %1$u would make truncates page aligned (default 1)\n"
 "	-w writebdy: %1$u would make writes page aligned (default 1)\n"
-/* XFS: -x: preallocate file space before starting, XFS only (default 0)\n\ */
+
 "	-y synchronize changes to a file\n"
-/* OSX: -v: debug output for all operations\n\ */
-/* XFS: -A: Use the AIO system calls\n" */
-/* OSX: -C mix cached and un-cached read/write ops\n\ */
+
+
+
 "	-D startingop: debug output starting at specified operation\n"
 "	-F: Do not use fallocate (preallocation) calls\n"
-/* OSX: -G logsize: #entries in oplog (default 1024)\n\ */
+
 #ifdef FALLOC_FL_PUNCH_HOLE
 "	-H: Do not use punch hole calls\n"
 #endif
 #ifdef FALLOC_FL_ZERO_RANGE
 "	-z: Do not use zero range calls\n"
 #endif
-/* XFS: -C: Do not use collapse range calls\n\ */
+
 "	-I [rotate|random]: When multiple paths to the file are given,\n"
 "	    each operation uses a different path.  Iterate through them in\n"
 "	    order with 'rotate' or chose them at 'random'.  (default random)\n"
 "	-L: fsxLite - no file creations & no file size changes\n"
-/* OSX: -I: start interactive mode since operation opnum\n\ */
+
 "	-M: mirror file test mode\n"
 "	-N numops: total # operations to do (default infinity)\n"
 "	-O: use oplen (see -o flag) for every op (default random)\n"
 "	-P: save .fsxlog and .fsxgood files in dirpath (default ./)\n"
 "	-R: read() system calls only (mapped reads disabled)\n"
 "	-S seed: for random # generator (default 1) 0 gets timestamp\n"
-/* OSX: -T datasize: atomic data element write size [1,2,4] (default 4)\n\ */
+
 "	-W: mapped write operations DISabled\n"
 "	-Z[P]: O_DIRECT file IO [1 in P chance for each open] (default off)\n"
 "	fname: this filename is REQUIRED (no default)\n",
@@ -1730,7 +1730,7 @@ test_fallocate(int mode)
 	int fd = get_fd();
 
 	if (!lite) {
-		/* Must go more than a page away so let's go 4M to be sure */
+		
 		if (fallocate(fd, mode, 0, 4096*1024) && errno == EOPNOTSUPP) {
 			if (!quiet)
 				warn("%s: filesystem does not support fallocate mode 0x%x, disabling!",
@@ -1761,7 +1761,7 @@ main(int argc, char **argv)
 	page_size = getpagesize();
 	page_mask = page_size - 1;
 
-	setvbuf(stdout, (char *)0, _IOLBF, 0); /* line buffered stdout */
+	setvbuf(stdout, (char *)0, _IOLBF, 0); 
 
 	while ((ch = getopt(argc, argv,
 			    "b:c:dfl:m:no:p:qr:s:t:w:xyzD:FHI:LMN:OP:RS:WZ::"))
@@ -1806,7 +1806,7 @@ main(int argc, char **argv)
 			if (monitorend < 0)
 				usage();
 			if (monitorend == 0)
-				monitorend = -1; /* aka infinity */
+				monitorend = -1; 
 			debug = 1;
 		case 'n':
 			sizechecks = 0;
@@ -1910,7 +1910,7 @@ main(int argc, char **argv)
 			break;
 		default:
 			usage();
-			/* NOTREACHED */
+			
 		}
 	argc -= optind;
 	argv += optind;
@@ -2005,7 +2005,7 @@ main(int argc, char **argv)
 	memset(good_buf, 0, maxfilelen);
 	memset(temp_buf, 0, maxoplen);
 
-	if (lite) {	/* zero entire existing file */
+	if (lite) {	
 		ssize_t written;
 		int fd = get_fd();
 

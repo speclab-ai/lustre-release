@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/liblutf_agent.c
  *
@@ -29,7 +29,7 @@
 static pthread_mutex_t agent_array_mutex;
 static lutf_agent_blk_t *agent_live_list[MAX_NUM_AGENTS];
 static lutf_agent_blk_t *agent_dead_list[MAX_NUM_AGENTS];
-/* TODO: this is probably not thread safe */
+
 static char agent_state_str[128];
 
 static bool g_agent_enable_hb = true;
@@ -118,7 +118,7 @@ void release_agent_blk(lutf_agent_blk_t *agent, int dead)
 	MUTEX_LOCK(&agent->mutex);
 
 	if (agent->state & LUTF_AGENT_STATE_ALIVE) {
-		/* sanity check */
+		
 		assert(agent_live_list[agent->id] != NULL &&
 		       agent_live_list[agent->id] == agent);
 	} else {
@@ -138,7 +138,7 @@ void release_agent_blk(lutf_agent_blk_t *agent, int dead)
 		MUTEX_UNLOCK(&agent_array_mutex);
 		close_agent_connection(agent);
 		memset(agent, 0xdeadbeef, sizeof(*agent));
-		/* free the block */
+		
 		free(agent);
 	} else if (dead) {
 		agent_live_list[agent->id] = NULL;
@@ -157,7 +157,7 @@ void release_agent_blk(lutf_agent_blk_t *agent, int dead)
 
 void acquire_agent_blk(lutf_agent_blk_t *agent)
 {
-	/* acquire the agent blk mutex */
+	
 	MUTEX_LOCK(&agent->mutex);
 	if (agent)
 		agent->ref_count++;
@@ -280,10 +280,10 @@ lutf_agent_blk_t *find_free_agent_blk(struct sockaddr_in *addr)
 	int i = 0;
 	lutf_agent_blk_t *agent;
 
-	/* grab the lock for the array */
+	
 	MUTEX_LOCK(&agent_array_mutex);
 
-	/* iterate through the array to find a free entry */
+	
 	for (i = 0; i < MAX_NUM_AGENTS; i++) {
 		if (agent_live_list[i] == NULL)
 			break;
@@ -294,7 +294,7 @@ lutf_agent_blk_t *find_free_agent_blk(struct sockaddr_in *addr)
 		return NULL;
 	}
 
-	/* allocate a new agent blk and assign it to that entry */
+	
 	agent = calloc(sizeof(char),
 		sizeof(lutf_agent_blk_t));
 	if (!agent) {
@@ -312,13 +312,13 @@ lutf_agent_blk_t *find_free_agent_blk(struct sockaddr_in *addr)
 	pthread_mutex_init(&agent->mutex, NULL);
 	acquire_agent_blk(agent);
 
-	/* assign to array */
+	
 	agent_live_list[i] = agent;
 
-	/* release the array mutex */
+	
 	MUTEX_UNLOCK(&agent_array_mutex);
 
-	/* return the agent blk */
+	
 	return agent;
 }
 
@@ -329,7 +329,7 @@ lutf_agent_blk_t *find_agent_blk_by_id(int idx)
 	if ((idx < 0) || (idx >= MAX_NUM_AGENTS))
 		return NULL;
 
-	/* grab the array mutex */
+	
 	MUTEX_LOCK(&agent_array_mutex);
 
 	/* if the blk is non null grab the mutex.
@@ -347,10 +347,10 @@ lutf_agent_blk_t *find_agent_blk_by_id(int idx)
 	else
 		agent = NULL;
 
-	/* release the array mutex */
+	
 	MUTEX_UNLOCK(&agent_array_mutex);
 
-	/* return the agent blk */
+	
 	return agent;
 }
 
@@ -413,7 +413,7 @@ lutf_agent_blk_t *find_agent_blk_by_name(char *name)
 
 	MUTEX_UNLOCK(&agent_array_mutex);
 
-	/* return the agent blk */
+	
 	return agent;
 }
 
@@ -428,7 +428,7 @@ lutf_agent_blk_t *find_agent_blk_by_ip(char *ip)
 
 	inet_aton(ip, &addr.sin_addr);
 
-	/* grab the array mutex */
+	
 	MUTEX_LOCK(&agent_array_mutex);
 
 	for (i = 0; i < MAX_NUM_AGENTS; i++) {
@@ -444,10 +444,10 @@ lutf_agent_blk_t *find_agent_blk_by_ip(char *ip)
 	if (agent)
 		acquire_agent_blk(agent);
 
-	/* release the array mutex */
+	
 	MUTEX_UNLOCK(&agent_array_mutex);
 
-	/* return the agent blk */
+	
 	return agent;
 }
 
@@ -610,7 +610,7 @@ lutf_rc_t lutf_send_rpc(char *agent, char *yaml, int timeout, char **rsp)
 		goto fail_rpc;
 	}
 
-	/* wait for the response */
+	
 	rc = readTcpMessage(agent_blk->iRpcFd, (char *)&hdr,
 			    sizeof(hdr), timeout);
 	if (rc != EN_LUTF_RC_OK) {

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Internal cl interfaces.
  *
@@ -36,4 +36,4 @@ extern unsigned short cl_page_kmem_size_array[16];
 struct cl_thread_info *cl_env_info(const struct lu_env *env);
 void __cl_page_disown(const struct lu_env *env, struct cl_page *pg);
 
-#endif /* _CL_INTERNAL_H */
+#endif 

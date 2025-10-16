@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Peter Braam <braam@clusterfs.com>
  * Author: Phil Schwan <phil@clusterfs.com>
@@ -123,7 +123,7 @@ restart:
 	RETURN(rc);
 }
 
-/* lock of COS mode is compatible with locks from the same client. */
+
 static inline bool ldlm_cos_same_client(const struct ldlm_lock *req,
 					const struct ldlm_lock *lock)
 {
@@ -131,7 +131,7 @@ static inline bool ldlm_cos_same_client(const struct ldlm_lock *req,
 	       lock->l_client_cookie == req->l_client_cookie;
 }
 
-/* lock of TXN mode is compatible with locks from the same MDT. */
+
 static inline bool ldlm_txn_same_server(const struct ldlm_lock *req,
 					const struct ldlm_lock *lock)
 {
@@ -179,7 +179,7 @@ ldlm_inodebits_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 	if ((req_bits | *try_bits) == MDS_INODELOCK_NONE)
 		RETURN(0);
 
-	/* Group lock could be only DOM */
+	
 	if (unlikely(req_mode == LCK_GROUP &&
 		     (req_bits | *try_bits) != MDS_INODELOCK_DOM))
 		RETURN(-EPROTO);
@@ -196,15 +196,15 @@ ldlm_inodebits_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 		if (req == lock)
 			RETURN(compat);
 
-		/* last lock in mode group */
+		
 		LASSERT(lock->l_sl_mode.prev != NULL);
 		mode_tail = &list_entry(lock->l_sl_mode.prev, struct ldlm_lock,
 					l_sl_mode)->l_res_link;
 
 		if (lockmode_compat(lock->l_req_mode, req_mode)) {
-			/* non group locks are compatible, bits don't matter */
+			
 			if (likely(req_mode != LCK_GROUP)) {
-				/* jump to last lock in mode group */
+				
 				tmp = mode_tail;
 				continue;
 			}
@@ -217,7 +217,7 @@ ldlm_inodebits_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 				if (*ldlm_flags & LDLM_FL_BLOCK_NOWAIT)
 					RETURN(-EWOULDBLOCK);
 
-				/* Place the same group together */
+				
 				ldlm_resource_insert_lock_after(lock, req);
 				RETURN(0);
 			}
@@ -231,11 +231,11 @@ ldlm_inodebits_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 		}
 
 
-		/* GROUP(by gid) locks placed to a head of the waiting list */
+		
 		if (unlikely(req_mode == LCK_GROUP && !ldlm_is_granted(lock))) {
 			compat = 0;
 			if (lock->l_req_mode != LCK_GROUP) {
-				/* Already not a GROUP lock, insert before. */
+				
 				ldlm_resource_insert_lock_before(lock, req);
 				break;
 			}
@@ -250,7 +250,7 @@ ldlm_inodebits_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 		for (;;) {
 			struct list_head *head;
 
-			/* Advance loop cursor to last lock in policy group. */
+			
 			tmp = &list_entry(lock->l_sl_policy.prev,
 					  struct ldlm_lock,
 					  l_sl_policy)->l_res_link;
@@ -271,7 +271,7 @@ ldlm_inodebits_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 			 */
 			lock->l_policy_data.l_inodebits.try_bits &= ~req_bits;
 
-			/* Locks with overlapping bits conflict. */
+			
 			if (lock->l_policy_data.l_inodebits.bits & req_bits) {
 				compat = 0;
 
@@ -294,7 +294,7 @@ ldlm_inodebits_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 					goto skip_work_list;
 				}
 
-				/* Found a conflicting policy group. */
+				
 				if (!work_list)
 					RETURN(0);
 
@@ -316,8 +316,8 @@ skip_work_list:
 
 			tmp = tmp->next;
 			lock = list_entry(tmp, struct ldlm_lock, l_res_link);
-		} /* Loop over policy groups within one mode group. */
-	} /* Loop over mode groups within @queue. */
+		} 
+	} 
 
 	RETURN(compat);
 }
@@ -381,7 +381,7 @@ int ldlm_process_inodebits_lock(struct ldlm_lock *lock, __u64 *ldlm_flags,
 		if (!rc)
 			RETURN(LDLM_ITER_STOP);
 
-		/* grant also try_bits if any */
+		
 		if (lock->l_policy_data.l_inodebits.try_bits !=
 						    MDS_INODELOCK_NONE) {
 			lock->l_policy_data.l_inodebits.bits |=
@@ -410,7 +410,7 @@ int ldlm_process_inodebits_lock(struct ldlm_lock *lock, __u64 *ldlm_flags,
 	}
 
 	if (rc + rc2 != 2) {
-		/* if there were only bits to try and all are conflicting */
+		
 		if ((lock->l_policy_data.l_inodebits.bits |
 		     lock->l_policy_data.l_inodebits.try_bits)) {
 			/* There is no sense to set LDLM_FL_NO_TIMEOUT to
@@ -421,7 +421,7 @@ int ldlm_process_inodebits_lock(struct ldlm_lock *lock, __u64 *ldlm_flags,
 			*err = ELDLM_OK;
 		}
 	} else {
-		/* grant also all remaining try_bits */
+		
 		if (lock->l_policy_data.l_inodebits.try_bits !=
 						    MDS_INODELOCK_NONE) {
 			lock->l_policy_data.l_inodebits.bits |=
@@ -440,7 +440,7 @@ int ldlm_process_inodebits_lock(struct ldlm_lock *lock, __u64 *ldlm_flags,
 out:
 	return rc;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 void ldlm_ibits_policy_wire_to_local(const union ldlm_wire_policy_data *wpolicy,
 				     union ldlm_policy_data *lpolicy)
@@ -478,12 +478,12 @@ int ldlm_inodebits_drop(struct ldlm_lock *lock, enum mds_ibits_locks to_drop)
 
 	check_res_locked(lock->l_resource);
 
-	/* Just return if there are no conflicting bits */
+	
 	if ((lock->l_policy_data.l_inodebits.bits & to_drop) ==
 			MDS_INODELOCK_NONE) {
 		LDLM_WARN(lock, "try to drop unset bits %#lx/%#lx",
 			  lock->l_policy_data.l_inodebits.bits, to_drop);
-		/* nothing to do */
+		
 		RETURN(0);
 	}
 
@@ -497,7 +497,7 @@ int ldlm_inodebits_drop(struct ldlm_lock *lock, enum mds_ibits_locks to_drop)
 }
 EXPORT_SYMBOL(ldlm_inodebits_drop);
 
-/* convert single lock */
+
 int ldlm_cli_inodebits_convert(struct ldlm_lock *lock,
 			       enum ldlm_cancel_flags cancel_flags)
 {
@@ -511,7 +511,7 @@ int ldlm_cli_inodebits_convert(struct ldlm_lock *lock,
 
 	check_res_locked(lock->l_resource);
 
-	/* Lock is being converted already */
+	
 	if (ldlm_is_converting(lock)) {
 		if (!(cancel_flags & LCF_ASYNC)) {
 			unlock_res_and_lock(lock);
@@ -528,21 +528,21 @@ int ldlm_cli_inodebits_convert(struct ldlm_lock *lock,
 	if (ldlm_is_canceling(lock))
 		RETURN(-EINVAL);
 
-	/* no need in only local convert */
+	
 	if (lock->l_flags & (LDLM_FL_LOCAL_ONLY | LDLM_FL_CANCEL_ON_BLOCK))
 		RETURN(-EINVAL);
 
 	drop_bits = lock->l_policy_data.l_inodebits.cancel_bits;
-	/* no cancel bits - means that caller needs full cancel */
+	
 	if (drop_bits == MDS_INODELOCK_NONE)
 		RETURN(-EINVAL);
 
 	new_bits = lock->l_policy_data.l_inodebits.bits & ~drop_bits;
-	/* check if all lock bits are dropped, proceed with cancel */
+	
 	if (!new_bits)
 		RETURN(-EINVAL);
 
-	/* check if no dropped bits, consider this as successful convert */
+	
 	if (lock->l_policy_data.l_inodebits.bits == new_bits)
 		RETURN(0);
 
@@ -555,7 +555,7 @@ int ldlm_cli_inodebits_convert(struct ldlm_lock *lock,
 	ld.l_policy_data.l_inodebits.cancel_bits = drop_bits;
 	unlock_res_and_lock(lock);
 	lock->l_blocking_ast(lock, &ld, lock->l_ast_data, LDLM_CB_CANCELING);
-	/* now notify server about convert */
+	
 	rc = ldlm_cli_convert_req(lock, &flags, new_bits);
 	lock_res_and_lock(lock);
 	if (rc)
@@ -575,10 +575,10 @@ int ldlm_cli_inodebits_convert(struct ldlm_lock *lock,
 	if (ldlm_is_canceling(lock))
 		GOTO(full_cancel, rc = -EINVAL);
 
-	/* Finally clear these bits in lock ibits */
+	
 	ldlm_inodebits_drop(lock, drop_bits);
 
-	/* also check again if more bits to be cancelled appeared */
+	
 	if (drop_bits != lock->l_policy_data.l_inodebits.cancel_bits)
 		GOTO(clear_converting, rc = -EAGAIN);
 
@@ -644,12 +644,12 @@ void ldlm_inodebits_add_lock(struct ldlm_resource *res, struct list_head *head,
 		OBD_SLAB_FREE_PTR(lock->l_ibits_node, ldlm_inodebits_slab);
 		lock->l_ibits_node = NULL;
 	} else if (head != &res->lr_granted) {
-		/* we are inserting in a middle of a list, after @head */
+		
 		struct ldlm_lock *orig = list_entry(head, struct ldlm_lock,
 						    l_res_link);
 		LASSERT(orig->l_policy_data.l_inodebits.bits ==
 			lock->l_policy_data.l_inodebits.bits);
-		/* should not insert before with exactly matched set of bits */
+		
 		LASSERT(tail == false);
 
 		for (i = 0; i < MDS_INODELOCK_NUMBITS; i++) {

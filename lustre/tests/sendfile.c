@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <stdio.h>
@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
 
 	if (stat(sfile, &stbuf) < 0) {
 		if (errno == ENOENT) {
-			/* assume doing non-object file testing */
+			
 			infd = open(sfile,
 				    O_LOV_DELAY_CREATE | O_CREAT | O_RDWR,
 				    0644);

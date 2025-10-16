@@ -52,11 +52,11 @@ extern int *sk_dh_checks;
 
 #define GSSD_SERVICE_NAME	"lustre"
 
-/* XXX */
+
 #define GSSD_SERVICE_MGS			"lustre_mgs"
 #define GSSD_SERVICE_MDS			"lustre_mds"
 #define GSSD_SERVICE_OSS			"lustre_oss"
 #define GSSD_SERVICE_HOST			"host"
 #define LUSTRE_ROOT_NAME			"lustre_root"
 
-#endif /* _RPC_SVCGSSD_H_ */
+#endif 

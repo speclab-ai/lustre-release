@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * String manipulation functions.
  *
@@ -43,7 +43,7 @@ cfs_gettok(struct cfs_lstr *next, char delim, struct cfs_lstr *res)
 	if (next->ls_str == NULL)
 		return 0;
 
-	/* skip leading white spaces */
+	
 	while (next->ls_len) {
 		if (!isspace(*next->ls_str))
 			break;
@@ -51,18 +51,18 @@ cfs_gettok(struct cfs_lstr *next, char delim, struct cfs_lstr *res)
 		next->ls_len--;
 	}
 
-	if (next->ls_len == 0) /* whitespaces only */
+	if (next->ls_len == 0) 
 		return 0;
 
 	if (*next->ls_str == delim) {
-		/* first non-writespace is the delimiter */
+		
 		return 0;
 	}
 
 	res->ls_str = next->ls_str;
 	end = memchr(next->ls_str, delim, next->ls_len);
 	if (end == NULL) {
-		/* there is no the delimeter in the string */
+		
 		end = next->ls_str + next->ls_len;
 		next->ls_str = NULL;
 		next->ls_len = 0;
@@ -71,7 +71,7 @@ cfs_gettok(struct cfs_lstr *next, char delim, struct cfs_lstr *res)
 		next->ls_len -= (end - res->ls_str + 1);
 	}
 
-	/* skip ending whitespaces */
+	
 	while (--end != res->ls_str) {
 		if (!isspace(*end))
 			break;
@@ -141,7 +141,7 @@ cfs_range_expr_parse(struct cfs_lstr *src, unsigned min, unsigned max,
 
 	if (cfs_str2num_check(src->ls_str, src->ls_len,
 			      &re->re_lo, min, max)) {
-		/* <number> is parsed */
+		
 		re->re_hi = re->re_lo;
 		re->re_stride = 1;
 		goto out;
@@ -154,24 +154,24 @@ cfs_range_expr_parse(struct cfs_lstr *src, unsigned min, unsigned max,
 			       &re->re_lo, min, max))
 		goto failed;
 
-	/* <number> - */
+	
 	if (cfs_str2num_check(src->ls_str, src->ls_len,
 			      &re->re_hi, min, max)) {
-		/* <number> - <number> is parsed */
+		
 		re->re_stride = 1;
 		goto out;
 	}
 
-	/* go to check <number> '-' <number> '/' <number> */
+	
 	if (cfs_gettok(src, '/', &tok)) {
 		if (!cfs_str2num_check(tok.ls_str, tok.ls_len,
 				       &re->re_hi, min, max))
 			goto failed;
 
-		/* <number> - <number> / ... */
+		
 		if (cfs_str2num_check(src->ls_str, src->ls_len,
 				      &re->re_stride, min, max)) {
-			/* <number> - <number> / <number> is parsed */
+			
 			goto out;
 		}
 	}
@@ -276,7 +276,7 @@ cfs_expr_list_values(struct cfs_expr_list *expr_list, int max, __u32 **valpp)
 		}
 	}
 
-	if (count == 0) /* empty expression list */
+	if (count == 0) 
 		return 0;
 
 	if (count > max)
@@ -437,7 +437,7 @@ int cfs_abs_path(const char *request_path, char **resolved_path)
 			goto out;
 		}
 	} else {
-		/* skip duplicate leading '/' */
+		
 		len = snprintf(buf, sizeof(buf), "%s",
 			       request_path + strspn(request_path, "/") - 1);
 		if (len >= sizeof(buf)) {
@@ -446,7 +446,7 @@ int cfs_abs_path(const char *request_path, char **resolved_path)
 		}
 	}
 
-	/* if filename not in root directory, call realpath for parent path */
+	
 	ptr = strrchr(buf, '/');
 	if (ptr != buf) {
 		*ptr = '\0';
@@ -454,7 +454,7 @@ int cfs_abs_path(const char *request_path, char **resolved_path)
 			rc = -errno;
 			goto out;
 		}
-		/* add the filename back */
+		
 		len = strlen(path);
 		fmt = (path[len - 1] == '/') ? "%s" : "/%s";
 		len = snprintf(path + len, sizeof(buf) - len, fmt, ptr + 1);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  *
@@ -7,7 +7,7 @@
  * Copyright (c) 2018-2020 Data Direct Networks.
  */
 
-/*   This file is part of Lustre, http://www.lustre.org/
+/*   This file is part of Lustre, http:
  *
  *   User Defined Selection Policies (UDSP) are introduced to add
  *   ability of fine traffic control. The policies are instantiated
@@ -175,7 +175,7 @@ lnet_udsp_action_equal(struct lnet_udsp *e1, struct lnet_udsp *e2)
 static bool
 lnet_udsp_equal(struct lnet_udsp *e1, struct lnet_udsp *e2)
 {
-	/* check each NID descr */
+	
 	if (!lnet_udsp_nid_descr_equal(&e1->udsp_src, &e2->udsp_src) ||
 	    !lnet_udsp_nid_descr_equal(&e1->udsp_dst, &e2->udsp_dst) ||
 	    !lnet_udsp_nid_descr_equal(&e1->udsp_rte, &e2->udsp_rte))
@@ -212,7 +212,7 @@ lnet_udsp_apply_rule_on_ni(struct udsp_info *udi)
 	CDEBUG(D_NET, "apply udsp on ni %s\n",
 	       libcfs_nidstr(&ni->ni_nid));
 
-	/* Detected match. Set NIDs priority */
+	
 	lnet_ni_set_sel_priority_locked(ni, priority);
 
 	return 0;
@@ -236,7 +236,7 @@ lnet_udsp_apply_rte_list_on_net(struct lnet_net *net,
 		rn_list = &the_lnet.ln_remote_nets_hash[i];
 		list_for_each_entry(rnet, rn_list, lrn_list) {
 			list_for_each_entry(route, &rnet->lrn_routes, lr_list) {
-				/* look if gw nid on the same net matches */
+				
 				gw_prim_nid =
 					&route->lr_gateway->lp_primary_nid;
 				lpni = NULL;
@@ -254,7 +254,7 @@ lnet_udsp_apply_rte_list_on_net(struct lnet_net *net,
 					if (rc)
 						break;
 				}
-				/* match gw primary nid on a remote network */
+				
 				if (!rc) {
 					gw_nid = gw_prim_nid;
 					rc = cfs_match_nid_net(
@@ -274,13 +274,13 @@ lnet_udsp_apply_rte_list_on_net(struct lnet_net *net,
 						continue;
 					}
 				}
-				/* match. Add to pref NIDs */
+				
 				CDEBUG(D_NET, "udsp net->gw: %s->%s\n",
 				       libcfs_net2str(net->net_id),
 				       libcfs_nidstr(gw_prim_nid));
 				rc = lnet_net_add_pref_rtr(net, gw_prim_nid);
 				lnet_net_lock(LNET_LOCK_EX);
-				/* success if EEXIST return */
+				
 				if (rc && rc != -EEXIST) {
 					CERROR("Failed to add %s to %s pref rtr list\n",
 					       libcfs_nidstr(gw_prim_nid),
@@ -439,10 +439,10 @@ lnet_udsp_apply_rte_list_on_lpni(struct lnet_peer_ni *lpni,
 				CDEBUG(D_NET, "add gw nid %s as preferred for peer %s\n",
 				       libcfs_nidstr(gw_nid),
 				       libcfs_nidstr(&lpni->lpni_nid));
-				/* match. Add to pref NIDs */
+				
 				rc = lnet_peer_add_pref_rtr(lpni, gw_nid);
 				lnet_net_lock(LNET_LOCK_EX);
-				/* success if EEXIST return */
+				
 				if (rc && rc != -EEXIST) {
 					CERROR("Failed to add %s to %s pref rtr list\n",
 					       libcfs_nidstr(gw_nid),
@@ -492,10 +492,10 @@ lnet_udsp_apply_ni_list(struct lnet_peer_ni *lpni,
 			CDEBUG(D_NET, "add nid %s as preferred for peer %s\n",
 				libcfs_nidstr(&ni->ni_nid),
 				libcfs_nidstr(&lpni->lpni_nid));
-			/* match. Add to pref NIDs */
+			
 			rc = lnet_peer_add_pref_nid(lpni, &ni->ni_nid);
 			lnet_net_lock(LNET_LOCK_EX);
-			/* success if EEXIST return */
+			
 			if (rc && rc != -EEXIST) {
 				CERROR("Failed to add %s to %s pref nid list\n",
 					libcfs_nidstr(&ni->ni_nid),
@@ -525,7 +525,7 @@ lnet_udsp_apply_rule_on_lpni(struct udsp_info *udi)
 		&lp_match->ud_net_id.udn_net_num_range,
 		&lp_match->ud_addr_range);
 
-	/* check if looking for a net match */
+	
 	if (!rc &&
 	    (!udi->udi_lpn ||
 	     lnet_get_list_len(&lp_match->ud_addr_range) ||
@@ -640,7 +640,7 @@ lnet_udsp_apply_single_policy(struct lnet_udsp *udsp, struct udsp_info *udi,
 
 	if (lnet_udsp_criteria_present(&udsp->udsp_dst) &&
 	    lnet_udsp_criteria_present(&udsp->udsp_src)) {
-		/* NID Pair rule */
+		
 		if (!cbs[UDSP_APPLY_ON_PEERS])
 			return 0;
 
@@ -663,7 +663,7 @@ lnet_udsp_apply_single_policy(struct lnet_udsp *udsp, struct udsp_info *udi,
 			return rc;
 	} else if (lnet_udsp_criteria_present(&udsp->udsp_dst) &&
 		   lnet_udsp_criteria_present(&udsp->udsp_rte)) {
-		/* Router rule */
+		
 		if (!cbs[UDSP_APPLY_ON_PEERS])
 			return 0;
 
@@ -690,7 +690,7 @@ lnet_udsp_apply_single_policy(struct lnet_udsp *udsp, struct udsp_info *udi,
 		if (rc)
 			return rc;
 	} else if (lnet_udsp_criteria_present(&udsp->udsp_dst)) {
-		/* destination priority rule */
+		
 		if (!cbs[UDSP_APPLY_ON_PEERS])
 			return 0;
 
@@ -717,7 +717,7 @@ lnet_udsp_apply_single_policy(struct lnet_udsp *udsp, struct udsp_info *udi,
 		if (rc)
 			return rc;
 	} else if (lnet_udsp_criteria_present(&udsp->udsp_src)) {
-		/* source priority rule */
+		
 		if (!cbs[UDSP_APPLY_PRIO_ON_NIS])
 			return 0;
 
@@ -1004,7 +1004,7 @@ lnet_udsp_get_peer_info(struct lnet_ioctl_construct_udsp_info *info,
 	struct lnet_nid_list *ne;
 	int i = 0;
 
-	/* peer tree structure needs to be in existence */
+	
 	LASSERT(lpni && lpni->lpni_peer_net &&
 		lpni->lpni_peer_net->lpn_peer);
 
@@ -1145,16 +1145,16 @@ lnet_size_marshaled_nid_descr(struct lnet_ud_nid_descr *descr)
 	if (!lnet_udsp_criteria_present(descr))
 		return size;
 
-	/* we always have one net expression */
+	
 	if (!list_empty(&descr->ud_net_id.udn_net_num_range)) {
 		expr = list_first_entry(&descr->ud_net_id.udn_net_num_range,
 					struct cfs_expr_list, el_link);
 
-		/* count the number of cfs_range_expr in the net expression */
+		
 		range_count = lnet_get_list_len(&expr->el_exprs);
 	}
 
-	/* count the number of cfs_range_expr in the address expressions */
+	
 	list_for_each_entry(expr, &descr->ud_addr_range, el_link) {
 		expr_count++;
 		range_count += lnet_get_list_len(&expr->el_exprs);
@@ -1187,7 +1187,7 @@ copy_exprs(struct cfs_expr_list *expr, void __user **bulk,
 	struct cfs_range_expr *range;
 	struct lnet_range_expr range_expr;
 
-	/* copy over the net range expressions to the bulk */
+	
 	list_for_each_entry(range, &expr->el_exprs, re_link) {
 		range_expr.re_lo = range->re_lo;
 		range_expr.re_hi = range->re_hi;
@@ -1241,7 +1241,7 @@ copy_nid_range(struct lnet_ud_nid_descr *nid_descr, char *type,
 
 	expr_count = lnet_get_list_len(&nid_descr->ud_addr_range);
 
-	/* copy the net information */
+	
 	if (!list_empty(&nid_descr->ud_net_id.udn_net_num_range)) {
 		expr = list_first_entry(&nid_descr->ud_net_id.udn_net_num_range,
 					struct cfs_expr_list, el_link);
@@ -1250,7 +1250,7 @@ copy_nid_range(struct lnet_ud_nid_descr *nid_descr, char *type,
 		net_expr_count = 0;
 	}
 
-	/* set the total expression count */
+	
 	ioc_udsp_descr.iud_src_hdr.ud_descr_count = expr_count;
 	ioc_udsp_descr.iud_net.ud_net_type =
 		nid_descr->ud_net_id.udn_net_type;
@@ -1262,7 +1262,7 @@ copy_nid_range(struct lnet_ud_nid_descr *nid_descr, char *type,
 		ioc_udsp_descr.iud_net.ud_net_type,
 		ioc_udsp_descr.iud_net.ud_net_num_expr.le_count);
 
-	/* copy over the header info to the bulk */
+	
 	if (copy_to_user(*bulk, &ioc_udsp_descr, sizeof(ioc_udsp_descr))) {
 		CDEBUG(D_NET, "Failed to copy data\n");
 		return -EFAULT;
@@ -1270,14 +1270,14 @@ copy_nid_range(struct lnet_ud_nid_descr *nid_descr, char *type,
 	*bulk += sizeof(ioc_udsp_descr);
 	*bulk_size -= sizeof(ioc_udsp_descr);
 
-	/* copy over the net num expression if it exists */
+	
 	if (net_expr_count) {
 		rc = copy_exprs(expr, bulk, bulk_size);
 		if (rc)
 			return rc;
 	}
 
-	/* copy the address range */
+	
 	list_for_each_entry(expr, &nid_descr->ud_addr_range, el_link) {
 		ioc_expr.le_count = lnet_get_list_len(&expr->el_exprs);
 		if (copy_to_user(*bulk, &ioc_expr, sizeof(ioc_expr))) {
@@ -1339,7 +1339,7 @@ lnet_udsp_marshal(struct lnet_udsp *udsp, struct lnet_ioctl_udsp *ioc_udsp)
 
 	CDEBUG(D_NET, "MEM <----- bulk: %p\n", bulk);
 
-	/* we should've consumed the entire buffer */
+	
 	LASSERT(bulk_size == 0);
 	return 0;
 
@@ -1448,13 +1448,13 @@ copy_ioc_udsp_descr(struct lnet_ud_nid_descr *nid_descr, char *type,
 
 	CDEBUG(D_NET, "Total net num ranges in %s: %d:%u\n", type,
 	       range_count, size);
-	/* the number of expressions for the NID. IE 4 for IP, 1 for GNI */
+	
 	expr_count = ioc_nid->iud_src_hdr.ud_descr_count;
 	CDEBUG(D_NET, "addr as %d exprs\n", expr_count);
-	/* point tmp to the beginning of the NID expressions */
+	
 	tmp += size;
 	for (i = 0; i < expr_count; i++) {
-		/* get the number of ranges per expression */
+		
 		exprs = tmp;
 		range_count += exprs->le_count;
 		size = (range_expr_s * exprs->le_count) + lnet_exprs_s;
@@ -1470,12 +1470,12 @@ copy_ioc_udsp_descr(struct lnet_ud_nid_descr *nid_descr, char *type,
 
 	*bulk_size = remaining_size;
 
-	/* copy over the net type */
+	
 	nid_descr->ud_net_id.udn_net_type = ioc_nid->iud_net.ud_net_type;
 
 	CDEBUG(D_NET, "%u\n", nid_descr->ud_net_id.udn_net_type);
 
-	/* allocate the total memory required to copy this NID descriptor */
+	
 	if (ioc_nid->iud_net.ud_net_num_expr.le_count) {
 		if (ioc_nid->iud_net.ud_net_num_expr.le_count != 1) {
 			CERROR("Unexpected number of net numeric ranges \"%u\". Cannot add UDSP rule.\n",
@@ -1493,10 +1493,10 @@ copy_ioc_udsp_descr(struct lnet_ud_nid_descr *nid_descr, char *type,
 	if (!buf)
 		return -ENOMEM;
 
-	/* store the amount of memory allocated so we can free it later on */
+	
 	nid_descr->ud_mem_size = alloc_size;
 
-	/* copy over the net number range */
+	
 	range_count = ioc_nid->iud_net.ud_net_num_expr.le_count;
 	*bulk += sizeof(*ioc_nid);
 	CDEBUG(D_NET, "bulk = %p\n", *bulk);
@@ -1504,7 +1504,7 @@ copy_ioc_udsp_descr(struct lnet_ud_nid_descr *nid_descr, char *type,
 			range_count);
 	CDEBUG(D_NET, "bulk = %p\n", *bulk);
 
-	/* copy over the NID descriptor */
+	
 	for (i = 0; i < expr_count; i++) {
 		copy_range_info(bulk, &buf, &nid_descr->ud_addr_range, -1);
 		CDEBUG(D_NET, "bulk = %p\n", *bulk);

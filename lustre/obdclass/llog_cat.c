@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * OST<->MDS recovery logging infrastructure.
  *
@@ -131,7 +131,7 @@ static int llog_cat_new_log(const struct lu_env *env,
 	}
 
 	rc = llog_create(env, loghandle, th);
-	/* if llog is already created, no need to initialize it */
+	
 	if (rc == -EEXIST) {
 		GOTO(out, rc = 0);
 	} else if (rc != 0) {
@@ -147,7 +147,7 @@ static int llog_cat_new_log(const struct lu_env *env,
 	if (rc < 0)
 		GOTO(out, rc);
 
-	/* build the record for this log in the catalog */
+	
 	rec->lid_hdr.lrh_len = sizeof(*rec);
 	rec->lid_hdr.lrh_type = LLOG_LOGID_MAGIC;
 	rec->lid_id = loghandle->lgh_id;
@@ -158,7 +158,7 @@ static int llog_cat_new_log(const struct lu_env *env,
 			    &loghandle->u.phd.phd_cookie, LLOG_NEXT_IDX, th);
 	if (rc < 0)
 		GOTO(out_destroy, rc);
-	/* update for catalog which doesn't happen very often */
+	
 	lgi->lgi_attr.la_valid = LA_MTIME;
 	lgi->lgi_attr.la_mtime = ktime_get_real_seconds();
 	dt_attr_set(env, cathandle->lgh_obj, &lgi->lgi_attr, th);
@@ -171,7 +171,7 @@ static int llog_cat_new_log(const struct lu_env *env,
 
 	/* limit max size of plain llog so that space can be
 	 * released sooner, especially on small filesystems */
-	/* 2MB for the cases when free space hasn't been learned yet */
+	
 	loghandle->lgh_max_size = 2 << 20;
 	dt = lu2dt_dev(cathandle->lgh_obj->do_lu.lo_dev);
 	rc = dt_statfs(env, dt, &lgi->lgi_statfs);
@@ -187,7 +187,7 @@ static int llog_cat_new_log(const struct lu_env *env,
 	}
 	if (unlikely(CFS_FAIL_PRECHECK(OBD_FAIL_PLAIN_RECORDS) ||
 		     CFS_FAIL_PRECHECK(OBD_FAIL_CATALOG_FULL_CHECK))) {
-		// limit the numer of plain records for test
+		
 		loghandle->lgh_max_size = loghandle->lgh_hdr_size +
 		       cfs_fail_val * 64;
 	}
@@ -430,7 +430,7 @@ int llog_cat_close(const struct lu_env *env, struct llog_handle *cathandle)
 		struct llog_log_hdr	*llh = loghandle->lgh_hdr;
 		int			 index;
 
-		/* unlink open-not-created llogs */
+		
 		list_del_init(&loghandle->u.phd.phd_entry);
 		llh = loghandle->lgh_hdr;
 		if (loghandle->lgh_obj != NULL && llh != NULL &&
@@ -447,7 +447,7 @@ int llog_cat_close(const struct lu_env *env, struct llog_handle *cathandle)
 		}
 		llog_close(env, loghandle);
 	}
-	/* if handle was stored in ctxt, remove it too */
+	
 	if (cathandle->lgh_ctxt->loc_handle == cathandle)
 		cathandle->lgh_ctxt->loc_handle = NULL;
 	rc = llog_close(env, cathandle);
@@ -490,9 +490,9 @@ retry:
 			up_write(&loghandle->lgh_lock);
 	}
 
-	/* time to use next log */
+	
 next:
-	/* first, we have to make sure the state hasn't changed */
+	
 	down_write_nested(&cathandle->lgh_lock, LLOGH_CAT);
 	if (unlikely(loghandle == cathandle->u.chd.chd_current_log)) {
 		struct llog_logid lid = {.lgl_oi.oi.oi_id = 0,
@@ -560,7 +560,7 @@ retry:
 	if (IS_ERR(loghandle))
 		RETURN(PTR_ERR(loghandle));
 
-	/* loghandle is already locked by llog_cat_current_log() for us */
+	
 	if (!llog_exist(loghandle)) {
 		rc = llog_cat_new_log(env, cathandle, loghandle, th);
 		if (rc < 0) {
@@ -570,7 +570,7 @@ retry:
 			 * so better to stay with the old.
 			 */
 			if (rc != -ENOSPC) {
-				/* nobody should be trying to use this llog */
+				
 				down_write(&cathandle->lgh_lock);
 				if (cathandle->u.chd.chd_current_log ==
 				    loghandle)
@@ -585,7 +585,7 @@ retry:
 		}
 	}
 
-	/* now let's try to add the record */
+	
 	rc = llog_write_rec(env, loghandle, rec, reccookie, LLOG_NEXT_IDX, th);
 	if (rc < 0) {
 		CDEBUG_LIMIT(rc == -ENOSPC ? D_HA : D_ERROR,
@@ -607,7 +607,7 @@ retry:
 			dt_attr_set(env, loghandle->lgh_obj, &lgi->lgi_attr, th);
 		}
 	}
-	/* llog_write_rec could unlock a semaphore */
+	
 	if (!(loghandle->lgh_hdr->llh_flags & LLOG_F_UNLCK_SEM))
 		up_write(&loghandle->lgh_lock);
 
@@ -644,7 +644,7 @@ start:
 		GOTO(estale, rc);
 
 	loghandle = cathandle->u.chd.chd_current_log;
-	if (IS_ERR_OR_NULL(loghandle)) { /* low chance race, repeat */
+	if (IS_ERR_OR_NULL(loghandle)) { 
 		GOTO(estale, rc = -ESTALE);
 	} else {
 		loghandle = llog_handle_get(loghandle);
@@ -652,7 +652,7 @@ start:
 			GOTO(estale, rc = -ESTALE);
 	}
 
-	/* For local llog this would always reserves credits for creation */
+	
 	rc = llog_cat_prep_log(env, cathandle, &cathandle->u.chd.chd_next_log,
 			       th);
 	if (!rc) {
@@ -757,7 +757,7 @@ int llog_cat_cancel_arr_rec(const struct lu_env *env,
 	}
 
 	rc = llog_cancel_arr_rec(env, loghandle, count, index);
-	if (rc == LLOG_DEL_PLAIN) { /* log has been destroyed */
+	if (rc == LLOG_DEL_PLAIN) { 
 		int cat_index;
 
 		cat_index = loghandle->u.phd.phd_cookie.lgc_index;
@@ -843,8 +843,8 @@ static int llog_cat_process_common(const struct lu_env *env,
 		RETURN(rc);
 	}
 
-	/* clean old empty llogs, do not consider current llog in use */
-	/* ignore remote (lgh_obj == NULL) llogs */
+	
+	
 	hdr = (*llhp)->lgh_hdr;
 	if ((hdr->llh_flags & LLOG_F_ZAP_WHEN_EMPTY) &&
 	    hdr->llh_count == 1 && cat_llh->lgh_obj != NULL &&
@@ -871,7 +871,7 @@ static int llog_cat_process_cb(const struct lu_env *env,
 
 	ENTRY;
 
-	/* Skip processing of the logs until startcat */
+	
 	if (rec->lrh_index < d->lpd_startcat)
 		RETURN(0);
 
@@ -886,13 +886,13 @@ static int llog_cat_process_cb(const struct lu_env *env,
 			.lpcd_read_mode = LLOG_READ_MODE_NORMAL,
 		};
 
-		/* startidx is always associated with a catalog index */
+		
 		if (d->lpd_startcat == rec->lrh_index)
 			cd.lpcd_first_idx = d->lpd_startidx;
 
 		rc = llog_process_or_fork(env, llh, d->lpd_cb, d->lpd_data,
 					  &cd, false);
-		/* Continue processing the next log from idx 0 */
+		
 		d->lpd_startidx = 0;
 	} else {
 		rc = llog_process_or_fork(env, llh, d->lpd_cb, d->lpd_data,
@@ -909,12 +909,12 @@ static int llog_cat_process_cb(const struct lu_env *env,
 	}
 
 out:
-	/* The empty plain log was destroyed while processing */
+	
 	if (rc == LLOG_DEL_PLAIN || rc == LLOG_DEL_RECORD)
-		/* clear wrong catalog entry */
+		
 		rc = llog_cat_cleanup(env, cat_llh, llh, rec->lrh_index);
 	else if (rc == LLOG_SKIP_PLAIN)
-		/* processing callback ask to skip the llog -> continue */
+		
 		rc = 0;
 
 	if (llh)
@@ -939,7 +939,7 @@ int llog_cat_process_or_fork(const struct lu_env *env,
 	d.lpd_data = data;
 	d.lpd_cb = cb;
 
-	/* default: start from the oldest record */
+	
 	d.lpd_startidx = 0;
 	d.lpd_startcat = llh->llh_cat_idx + 1;
 	cd.lpcd_first_idx = llh->llh_cat_idx;
@@ -947,7 +947,7 @@ int llog_cat_process_or_fork(const struct lu_env *env,
 	cd.lpcd_read_mode = LLOG_READ_MODE_NORMAL;
 
 	if (startcat > 0 && startcat <= llog_max_idx(llh)) {
-		/* start from a custom catalog/llog plain indexes*/
+		
 		d.lpd_startidx = startidx;
 		d.lpd_startcat = startcat;
 		cd.lpcd_first_idx = startcat - 1;
@@ -970,7 +970,7 @@ int llog_cat_process_or_fork(const struct lu_env *env,
 		      loghandle2name(cat_llh),
 		      PLOGID(&cat_llh->lgh_id));
 
-		/* processing the catalog part at the end */
+		
 		rc = llog_process_or_fork(env, cat_llh, cat_cb, &d, &cd, fork);
 		if (rc)
 			RETURN(rc);
@@ -985,11 +985,11 @@ int llog_cat_process_or_fork(const struct lu_env *env,
 		cd.lpcd_first_idx = 0;
 		cd.lpcd_last_idx = max(cat_idx_origin, cat_llh->lgh_last_idx);
 	} else if (llog_cat_is_wrapped(cat_llh)) {
-		/* only process 1st part -> stop before reaching 2sd part */
+		
 		cd.lpcd_last_idx = llh->llh_cat_idx;
 	}
 
-	/* processing the catalog part at the begining */
+	
 	rc = llog_process_or_fork(env, cat_llh, cat_cb, &d, &cd, fork);
 
 	RETURN(rc);
@@ -1040,11 +1040,11 @@ static int llog_cat_size_cb(const struct lu_env *env,
 	rc = llog_cat_process_common(env, cat_llh, rec, &llh);
 
 	if (rc == LLOG_DEL_PLAIN) {
-		/* empty log was deleted, don't count it */
+		
 		rc = llog_cat_cleanup(env, cat_llh, llh,
 				      llh->u.phd.phd_cookie.lgc_index);
 	} else if (rc == LLOG_DEL_RECORD) {
-		/* clear wrong catalog entry */
+		
 		rc = llog_cat_cleanup(env, cat_llh, NULL, rec->lrh_index);
 	} else {
 		size = llog_size(env, llh);
@@ -1077,7 +1077,7 @@ EXPORT_SYMBOL(llog_cat_size);
  */
 __u32 llog_cat_free_space(struct llog_handle *cat_llh)
 {
-	/* simulate almost full Catalog */
+	
 	if (CFS_FAIL_CHECK(OBD_FAIL_CAT_FREE_RECORDS))
 		return cfs_fail_val;
 
@@ -1088,7 +1088,7 @@ __u32 llog_cat_free_space(struct llog_handle *cat_llh)
 		return llog_max_idx(cat_llh->lgh_hdr) +
 		       cat_llh->lgh_hdr->llh_cat_idx - cat_llh->lgh_last_idx;
 
-	/* catalog is presently wrapped */
+	
 	return cat_llh->lgh_hdr->llh_cat_idx - cat_llh->lgh_last_idx;
 }
 EXPORT_SYMBOL(llog_cat_free_space);
@@ -1104,15 +1104,15 @@ static int llog_cat_reverse_process_cb(const struct lu_env *env,
 	ENTRY;
 	rc = llog_cat_process_common(env, cat_llh, rec, &llh);
 
-	/* The empty plain log was destroyed while processing */
+	
 	if (rc == LLOG_DEL_PLAIN) {
 		rc = llog_cat_cleanup(env, cat_llh, llh,
 				      llh->u.phd.phd_cookie.lgc_index);
 	} else if (rc == LLOG_DEL_RECORD) {
-		/* clear wrong catalog entry */
+		
 		rc = llog_cat_cleanup(env, cat_llh, NULL, rec->lrh_index);
 	} else if (rc == LLOG_SKIP_PLAIN) {
-		/* processing callback ask to skip the llog -> continue */
+		
 		rc = 0;
 	}
 	if (rc)
@@ -1120,7 +1120,7 @@ static int llog_cat_reverse_process_cb(const struct lu_env *env,
 
 	rc = llog_reverse_process(env, llh, d->lpd_cb, d->lpd_data, NULL);
 
-	/* The empty plain was destroyed while processing */
+	
 	if (rc == LLOG_DEL_PLAIN)
 		rc = llog_cat_cleanup(env, cat_llh, llh,
 				      llh->u.phd.phd_cookie.lgc_index);
@@ -1197,11 +1197,11 @@ int llog_cat_set_first_idx(struct llog_handle *cathandle, int newidx)
 			 * expecting the next one is set */
 			llh->llh_cat_idx = idx;
 		} else if (idx == 0) {
-			/* skip header bit */
+			
 			llh->llh_cat_idx = 0;
 			continue;
 		} else {
-			/* the first index is found */
+			
 			break;
 		}
 	} while (idx != cathandle->lgh_last_idx);
@@ -1214,7 +1214,7 @@ int llog_cat_set_first_idx(struct llog_handle *cathandle, int newidx)
 }
 EXPORT_SYMBOL(llog_cat_set_first_idx);
 
-/* Cleanup deleted plain llog traces from catalog */
+
 int llog_cat_cleanup(const struct lu_env *env, struct llog_handle *cathandle,
 		     struct llog_handle *loghandle, int index)
 {
@@ -1231,18 +1231,18 @@ int llog_cat_cleanup(const struct lu_env *env, struct llog_handle *cathandle,
 		up_write(&cathandle->lgh_lock);
 		LASSERT(index == loghandle->u.phd.phd_cookie.lgc_index ||
 			loghandle->u.phd.phd_cookie.lgc_index == 0);
-		/* llog was opened and keep in a list, close it now */
+		
 		llog_close(env, loghandle);
 	}
 
-	/* do not attempt to cleanup on-disk llog if on client side */
+	
 	if (cathandle->lgh_obj == NULL)
 		return 0;
 
 	/* cancel record and decrease count, then move llh_cat_idx
 	 * llog_cat_set_first_idx() is called inside llog_cancel_arr_rec()
 	 */
-	/* remove plain llog entry from catalog by index */
+	
 	rc = llog_cancel_rec(env, cathandle, index);
 	if (rc < 0)
 		return rc;
@@ -1255,7 +1255,7 @@ int llog_cat_cleanup(const struct lu_env *env, struct llog_handle *cathandle,
 	return rc;
 }
 
-/* retain log in catalog, and zap it if log is empty */
+
 int llog_cat_retain_cb(const struct lu_env *env, struct llog_handle *cat,
 		       struct llog_rec_hdr *rec, void *data)
 {
@@ -1264,9 +1264,9 @@ int llog_cat_retain_cb(const struct lu_env *env, struct llog_handle *cat,
 
 	rc = llog_cat_process_common(env, cat, rec, &log);
 
-	/* The empty plain log was destroyed while processing */
+	
 	if (rc == LLOG_DEL_PLAIN || rc == LLOG_DEL_RECORD)
-		/* clear wrong catalog entry */
+		
 		rc = llog_cat_cleanup(env, cat, log, rec->lrh_index);
 	else if (!rc)
 		llog_retain(env, log);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_MDC
@@ -20,7 +20,7 @@
 #include "mdc_internal.h"
 #include <lustre_fid.h>
 
-/* mdc_setattr does its own semaphore handling */
+
 static int mdc_reint(struct ptlrpc_request *request, int level)
 {
 	int rc;
@@ -65,7 +65,7 @@ int mdc_resource_cancel_unused_res(struct obd_export *exp,
 	res = ldlm_resource_get(ns, res_id, 0, 0);
 	if (IS_ERR(res))
 		RETURN(0);
-	/* Initialize ibits lock policy. */
+	
 	policy.l_inodebits.bits = bits;
 	count = ldlm_cancel_resource_local(res, cancels, &policy, mode, 0, 0,
 					   NULL);
@@ -152,7 +152,7 @@ int mdc_create(struct obd_export *exp, struct md_op_data *op_data,
 	LIST_HEAD(cancels);
 
 	ENTRY;
-	/* For case if upper layer did not alloc fid, do it now. */
+	
 	if (!fid_is_sane(&op_data->op_fid2)) {
 		/*
 		 * mdc_fid_alloc() may return errno 1 in case of switch to new
@@ -193,7 +193,7 @@ rebuild:
 	req_capsule_set_size(&req->rq_pill, &RMF_FILE_ENCCTX, RCL_CLIENT,
 			     op_data->op_file_encctx_size);
 
-	/* get SELinux policy info if any */
+	
 	sepol = sptlrpc_sepol_get(req);
 	if (IS_ERR(sepol))
 		GOTO(err_free_rq, rc = PTR_ERR(sepol));
@@ -232,7 +232,7 @@ rebuild:
  resend:
 	rc = mdc_reint(req, level);
 
-	/* Resend if we were told to. */
+	
 	if (rc == -ERESTARTSYS) {
 		level = LUSTRE_IMP_RECOVER;
 		goto resend;
@@ -322,7 +322,7 @@ int mdc_unlink(struct obd_export *exp, struct md_op_data *op_data,
 						   MDS_INODELOCK_UPDATE);
 	if ((op_data->op_flags & MF_MDC_CANCEL_FID3) &&
 	    (fid_is_sane(&op_data->op_fid3)))
-		/* cancel DOM lock only if it has no data to flush */
+		
 		count += mdc_resource_cancel_unused(exp, &op_data->op_fid3,
 						    &cancels, LCK_EX,
 						    op_data->op_cli_flags &
@@ -339,7 +339,7 @@ int mdc_unlink(struct obd_export *exp, struct md_op_data *op_data,
 	req_capsule_set_size(&req->rq_pill, &RMF_NAME, RCL_CLIENT,
 			     op_data->op_namelen + 1);
 
-	/* get SELinux policy info if any */
+	
 	sepol = sptlrpc_sepol_get(req);
 	if (IS_ERR(sepol))
 		GOTO(err_free_rq, rc = PTR_ERR(sepol));
@@ -403,7 +403,7 @@ int mdc_link(struct obd_export *exp, struct md_op_data *op_data,
 	req_capsule_set_size(&req->rq_pill, &RMF_NAME, RCL_CLIENT,
 			     op_data->op_namelen + 1);
 
-	/* get SELinux policy info if any */
+	
 	sepol = sptlrpc_sepol_get(req);
 	if (IS_ERR(sepol))
 		GOTO(err_free_rq, rc = PTR_ERR(sepol));
@@ -481,7 +481,7 @@ int mdc_rename(struct obd_export *exp, struct md_op_data *op_data,
 		req_capsule_set_size(&req->rq_pill, &RMF_EADATA, RCL_CLIENT,
 				     op_data->op_data_size);
 
-	/* get SELinux policy info if any */
+	
 	sepol = sptlrpc_sepol_get(req);
 	if (IS_ERR(sepol))
 		GOTO(err_free_rq, rc = PTR_ERR(sepol));
@@ -501,9 +501,9 @@ int mdc_rename(struct obd_export *exp, struct md_op_data *op_data,
 
 	sptlrpc_sepol_put(sepol);
 
-	/* LU-17441: avoid blocking MDS_REQUEST_PORTAL for renames with BFL */
+	
 #if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
-	/* MDS_IO_PORTAL available since v2_10_53_0-33-g2bcc5ad0ed */
+	
 	if ((exp_connect_flags(exp) &
 	     (OBD_CONNECT_GRANT | OBD_CONNECT_SRVLOCK)) ==
 	    (OBD_CONNECT_GRANT | OBD_CONNECT_SRVLOCK))

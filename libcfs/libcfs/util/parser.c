@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2001 Cluster File Systems, Inc.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * libcfs/libcfs/parser.c
  *
@@ -27,16 +27,16 @@
 #ifdef HAVE_LIBREADLINE
 # include <readline/history.h>
 # include <readline/readline.h>
-#endif /* HAVE_LIBREADLINE */
+#endif 
 #include <string.h>
 #include <unistd.h>
 
 #include <libcfs/util/parser.h>
 #include <linux/lustre/lustre_ver.h>
 
-/* Top level of commands */
+
 static command_t top_level[MAXCMDS];
-/* Set to 1 if user types exit or quit */
+
 static int done;
 /*
  * Normally, the parser will quit when an error occurs in non-interacive
@@ -117,7 +117,7 @@ static int line2args(char *line, char **argv, int maxargs)
 	return i;
 }
 
-/* find a command -- return it if unique otherwise print alternatives */
+
 static command_t *cfs_parser_findargcmd(char *name, command_t cmds[])
 {
 	command_t *cmd;
@@ -239,7 +239,7 @@ static int process(char *s, char **next, command_t *lookup,
 	*result = find_cmd(s, lookup, next);
 	*prev = s;
 
-	/* non existent */
+	
 	if (!*result)
 		return CMD_NONE;
 
@@ -282,7 +282,7 @@ static int process(char *s, char **next, command_t *lookup,
 	}
 
 got_it:
-	/* found a unique command: component or full? */
+	
 	if ((*result)->pc_func)
 		return CMD_COMPLETE;
 
@@ -293,23 +293,23 @@ got_it:
 }
 
 #ifdef HAVE_LIBREADLINE
-static command_t *match_tbl; /* Command completion against this table */
+static command_t *match_tbl; 
 static char *command_generator(const char *text, int state)
 {
 	static int index, len;
 	char *name;
 
-	/* Do we have a match table? */
+	
 	if (!match_tbl)
 		return NULL;
 
-	/* If this is the first time called on this word, state is 0 */
+	
 	if (!state) {
 		index = 0;
 		len = (int)strlen(text);
 	}
 
-	/* Return next name in the command list that paritally matches test */
+	
 	while ((name = (match_tbl + index)->pc_name)) {
 		index++;
 
@@ -317,11 +317,11 @@ static char *command_generator(const char *text, int state)
 			return strdup(name);
 	}
 
-	/* No more matches */
+	
 	return NULL;
 }
 
-/* probably called by readline */
+
 static char **command_completion(const char *text, int start, int end)
 {
 	command_t *table;
@@ -339,7 +339,7 @@ static char **command_completion(const char *text, int start, int end)
 }
 #endif
 
-/* take a string and execute the function or print help */
+
 static int execute_line(char *line)
 {
 	command_t *cmd, *ambig;
@@ -473,7 +473,7 @@ outfree:
 }
 #endif
 
-/* this is the command execution machine */
+
 static int cfs_parser_commands(command_t *cmds)
 {
 	char *line, *s;
@@ -494,7 +494,7 @@ static int cfs_parser_commands(command_t *cmds)
 			add_history(s);
 			rc = execute_line(s);
 		}
-		/* stop on error if not-interactive */
+		
 		if (rc != 0 && !interactive) {
 			if (save_error == 0)
 				save_error = rc;

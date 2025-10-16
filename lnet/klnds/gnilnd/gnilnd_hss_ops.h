@@ -1,8 +1,8 @@
-/* SPDX-License-Identifier: GPL-2.0 */
 
-/* Copyright (C) 2009-2012 Cray, Inc. */
 
-/* This file is part of Lustre, http://www.lustre.org.
+
+
+/* This file is part of Lustre, http:
  *
  * Author: Nic Henke <nic@cray.com>
  * Author: James Shimek <jshimek@cray.com>
@@ -14,10 +14,10 @@
 #include <linux/typecheck.h>
 
 #if defined(GNILND_USE_RCA)
-/* for krca nid & nic translation */
+
 #include <krca_lib.h>
 
-/* it isn't exported, so just point directly to it */
+
 extern void send_hb_2_l0(void);
 
 static inline void
@@ -63,6 +63,6 @@ kgnilnd_setup_nic_translation(__u32 device_id)
 	return 0;
 }
 
-#endif /* GNILND_USE_RCA */
+#endif 
 
-#endif /* _GNILND_HSS_OPS_H */
+#endif 

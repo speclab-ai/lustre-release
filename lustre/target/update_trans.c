@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2015, 2017, Intel Corporation.
@@ -104,7 +104,7 @@ static int sub_declare_updates_write(const struct lu_env *env,
 	ctxt = llog_get_context(dt->dd_lu_dev.ld_obd,
 				LLOG_UPDATELOG_ORIG_CTXT);
 
-	/* Not ready to record updates yet. */
+	
 	if (ctxt == NULL || ctxt->loc_handle == NULL) {
 		llog_ctxt_put(ctxt);
 		return 0;
@@ -217,7 +217,7 @@ static int sub_updates_write(const struct lu_env *env,
 		GOTO(llog_put, rc);
 	}
 
-	/* Split the records into chunk_size update record */
+	
 	OBD_ALLOC_LARGE(lur, ctxt->loc_chunk_size);
 	if (lur == NULL)
 		GOTO(llog_put, rc = -ENOMEM);
@@ -335,7 +335,7 @@ static int prepare_writing_updates(const struct lu_env *env,
 		return 0;
 
 	lur = tur->tur_update_records;
-	/* Extends the update records buffer if needed */
+	
 	params_size = update_params_size(tur->tur_update_params,
 					 tur->tur_update_param_count);
 	LASSERT(lur->lur_update_rec.ur_param_count == 0);
@@ -355,11 +355,11 @@ static int prepare_writing_updates(const struct lu_env *env,
 
 	lur->lur_update_rec.ur_param_count = tur->tur_update_param_count;
 	lur->lur_update_rec.ur_batchid = tmt->tmt_batchid;
-	/* Init update record header */
+	
 	lur->lur_hdr.lrh_len = llog_update_record_size(lur);
 	lur->lur_hdr.lrh_type = UPDATE_REC;
 
-	/* Dump updates for debugging purpose */
+	
 	update_records_dump(&lur->lur_update_rec, D_INFO, true);
 
 	return 0;
@@ -424,7 +424,7 @@ static void sub_trans_commit_cb_internal(struct top_multiple_thandle *tmt,
 	struct sub_thandle	*st;
 	bool			all_committed = true;
 
-	/* Check if all sub thandles are committed */
+	
 	spin_lock(&tmt->tmt_sub_lock);
 	list_for_each_entry(st, &tmt->tmt_sub_thandle_list, st_sub_list) {
 		if (st->st_sub_th == sub_th) {
@@ -611,7 +611,7 @@ static int declare_updates_write(const struct lu_env *env,
 	int rc = 0;
 
 	record = tmt->tmt_update_records->tur_update_records;
-	/* Declare update write for all other target */
+	
 	list_for_each_entry(st, &tmt->tmt_sub_thandle_list, st_sub_list) {
 		if (st->st_sub_th == NULL)
 			continue;
@@ -670,7 +670,7 @@ void distribute_txn_insert_by_batchid(struct top_multiple_thandle *new)
 	LASSERT(dt != NULL);
 	tdtd = dt2lu_dev(dt)->ld_site->ls_tgt->lut_tdtd;
 
-	/* have a reference so the competing commit thread can't release it*/
+	
 	top_multiple_thandle_get(new);
 
 	spin_lock(&tdtd->tdtd_batchid_lock);
@@ -814,7 +814,7 @@ static bool top_check_write_updates(struct top_thandle *top_th)
 	struct top_multiple_thandle	*tmt;
 	struct thandle_update_records	*tur;
 
-	/* Do not write updates to records if the transaction fails */
+	
 	if (top_th->tt_super.th_result != 0)
 		return false;
 
@@ -930,16 +930,16 @@ int top_trans_stop(const struct lu_env *env, struct dt_device *master_dev,
 	/* Note: we need stop the master thandle first, then the stop
 	 * callback will fill the master transno in the update logs,
 	 * then these update logs will be sent to other MDTs */
-	/* get the master sub thandle */
+	
 	master_st = lookup_sub_thandle(tmt, tmt->tmt_master_sub_dt);
 	write_updates = top_check_write_updates(top_th);
 
-	/* Step 1: write the updates log on Master MDT */
+	
 	if (master_st != NULL && master_st->st_sub_th != NULL &&
 	    write_updates) {
 		struct llog_update_record *lur;
 
-		/* Merge the parameters and updates into one buffer */
+		
 		rc = prepare_writing_updates(env, tmt);
 		if (rc < 0) {
 			CERROR("%s: cannot prepare updates: rc = %d\n",
@@ -950,7 +950,7 @@ int top_trans_stop(const struct lu_env *env, struct dt_device *master_dev,
 		}
 
 		lur = tur->tur_update_records;
-		/* Write updates to the master MDT */
+		
 		rc = sub_updates_write(env, lur, master_st);
 
 		/* Cleanup the common parameters in the update records,
@@ -1003,7 +1003,7 @@ stop_master_trans:
 		}
 	}
 
-	/* Step 3: write updates to other MDTs */
+	
 	if (write_updates) {
 		struct llog_update_record *lur;
 		if (CFS_FAIL_PRECHECK(OBD_FAIL_OUT_OBJECT_MISS)) {
@@ -1047,7 +1047,7 @@ stop_master_trans:
 	}
 
 stop_other_trans:
-	/* Step 4: Stop the transaction on other MDTs */
+	
 	list_for_each_entry(st, &tmt->tmt_sub_thandle_list, st_sub_list) {
 		if (st == master_st || st->st_sub_th == NULL)
 			continue;
@@ -1119,7 +1119,7 @@ create_sub_thandle_with_thandle(struct top_thandle *top_th,
 {
 	struct sub_thandle *st;
 
-	/* create and init sub th to the top trans list */
+	
 	st = create_sub_thandle(top_th->tt_multiple_thandle,
 				sub_th->th_dev);
 	if (IS_ERR(st))
@@ -1170,7 +1170,7 @@ struct thandle *thandle_get_sub_by_dt(const struct lu_env *env,
 	if (IS_ERR(sub_th))
 		RETURN(sub_th);
 
-	/* Create top_multiple_thandle if necessary */
+	
 	if (top_th->tt_multiple_thandle == NULL) {
 		struct top_multiple_thandle *tmt;
 
@@ -1180,7 +1180,7 @@ struct thandle *thandle_get_sub_by_dt(const struct lu_env *env,
 
 		tmt = top_th->tt_multiple_thandle;
 
-		/* Add master sub th to the top trans list */
+		
 		tmt->tmt_master_sub_dt =
 			top_th->tt_master_sub_thandle->th_dev;
 		master_st = create_sub_thandle_with_thandle(top_th,
@@ -1192,7 +1192,7 @@ struct thandle *thandle_get_sub_by_dt(const struct lu_env *env,
 		}
 	}
 
-	/* create and init sub th to the top trans list */
+	
 	st = create_sub_thandle_with_thandle(top_th, sub_th);
 	if (IS_ERR(st)) {
 		rc = PTR_ERR(st);
@@ -1270,7 +1270,7 @@ static int distribute_txn_cancel_records(const struct lu_env *env,
 		RETURN(0);
 
 	top_multiple_thandle_dump(tmt, D_INFO);
-	/* Cancel update logs on other MDTs */
+	
 	list_for_each_entry(st, &tmt->tmt_sub_thandle_list, st_sub_list) {
 		struct llog_ctxt	*ctxt;
 		struct obd_device	*obd;
@@ -1569,15 +1569,15 @@ static int distribute_txn_commit_thread(void *_arg)
 		CDEBUG(D_HA, "%s: batchid: %llu committed batchid "
 		       "%llu\n", tdtd->tdtd_lut->lut_obd->obd_name, batchid,
 		       tdtd->tdtd_committed_batchid);
-		/* update globally committed on a storage */
+		
 		if (batchid > tdtd->tdtd_committed_batchid) {
 			rc = distribute_txn_commit_batchid_update(env, tdtd,
 							     batchid);
 			if (rc == 0)
 				batchid = 0;
 		}
-		/* cancel the records for committed batchid's */
-		/* XXX: should we postpone cancel's till the end of recovery? */
+		
+		
 		committed = tdtd->tdtd_committed_batchid;
 		list_for_each_entry_safe(tmt, tmp, &list, tmt_commit_list) {
 			if (tmt->tmt_batchid > committed)
@@ -1692,7 +1692,7 @@ void distribute_txn_fini(const struct lu_env *env,
 	struct top_multiple_thandle *tmt;
 	LIST_HEAD(list);
 
-	/* Stop cancel thread */
+	
 	if (!tdtd->tdtd_commit_task)
 		return;
 

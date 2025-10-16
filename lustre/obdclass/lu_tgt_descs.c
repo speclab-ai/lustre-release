@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre target descriptions
  * These are the only exported functions, they provide some generic
@@ -111,7 +111,7 @@ int lu_qos_add_tgt(struct lu_qos *qos, struct lu_tgt_desc *tgt)
 		++id;
 		svr->lsq_id = id;
 	} else {
-		/* Assume we have to move this one */
+		
 		list_del(&svr->lsq_svr_list);
 	}
 
@@ -248,7 +248,7 @@ int lu_tgt_descs_init(struct lu_tgt_descs *ltd, bool is_mdt)
 	ltd->ltd_death_row = 0;
 	atomic_set(&ltd->ltd_refcount, 0);
 
-	/* Set up allocation policy (QoS and RR) */
+	
 	INIT_LIST_HEAD(&ltd->ltd_qos.lq_svr_list);
 	init_rwsem(&ltd->ltd_qos.lq_rw_sem);
 	set_bit(LQ_DIRTY, &ltd->ltd_qos.lq_flags);
@@ -310,7 +310,7 @@ static int lu_tgt_descs_resize(struct lu_tgt_descs *ltd, __u32 newsize)
 {
 	unsigned long *new_bitmap, *old_bitmap = NULL;
 
-	/* someone else has already resize the array */
+	
 	if (newsize <= ltd->ltd_tgts_size)
 		return 0;
 
@@ -319,7 +319,7 @@ static int lu_tgt_descs_resize(struct lu_tgt_descs *ltd, __u32 newsize)
 		return -ENOMEM;
 
 	if (ltd->ltd_tgts_size > 0) {
-		/* the bitmap already exists, copy data from old one */
+		
 		bitmap_copy(new_bitmap, ltd->ltd_tgt_bitmap,
 			    ltd->ltd_tgts_size);
 		old_bitmap = ltd->ltd_tgt_bitmap;
@@ -442,10 +442,10 @@ int ltd_qos_penalties_calc(struct lu_tgt_descs *ltd)
 	if (num_active < 1)
 		GOTO(out, rc = -EAGAIN);
 
-	/* find bavail on each server */
+	
 	list_for_each_entry(svr, &qos->lq_svr_list, lsq_svr_list) {
 		svr->lsq_bavail = 0;
-		/* if inode is not counted, set to 1 to ignore */
+		
 		svr->lsq_iavail = ltd->ltd_is_mdt ? 0 : 1;
 	}
 	qos->lq_active_svr_count = 0;
@@ -463,12 +463,12 @@ int ltd_qos_penalties_calc(struct lu_tgt_descs *ltd)
 	ia_max = 0;
 	now = ktime_get_real_seconds();
 
-	/* Calculate server penalty per object */
+	
 	ltd_foreach_tgt(ltd, tgt) {
 		if (!tgt->ltd_active)
 			continue;
 
-		/* when inode is counted, bavail >> 16 to avoid overflow */
+		
 		ba = tgt_statfs_bavail(tgt);
 		if (ltd->ltd_is_mdt)
 			ba >>= 16;
@@ -480,13 +480,13 @@ int ltd_qos_penalties_calc(struct lu_tgt_descs *ltd)
 		ba_min = min(ba, ba_min);
 		ba_max = max(ba, ba_max);
 
-		/* Count the number of usable servers */
+		
 		if (tgt->ltd_qos.ltq_svr->lsq_bavail == 0)
 			qos->lq_active_svr_count++;
 		tgt->ltd_qos.ltq_svr->lsq_bavail += ba;
 
 		if (ltd->ltd_is_mdt) {
-			/* iavail >> 8 to avoid overflow */
+			
 			ia = tgt_statfs_iavail(tgt) >> 8;
 			if (!ia)
 				continue;
@@ -509,7 +509,7 @@ int ltd_qos_penalties_calc(struct lu_tgt_descs *ltd)
 		    age > 32 * desc->ld_qos_maxage)
 			tgt->ltd_qos.ltq_penalty = 0;
 		else if (age > desc->ld_qos_maxage)
-			/* Decay tgt penalty. */
+			
 			tgt->ltd_qos.ltq_penalty >>= age / desc->ld_qos_maxage;
 	}
 
@@ -545,7 +545,7 @@ int ltd_qos_penalties_calc(struct lu_tgt_descs *ltd)
 		    age > 32 * desc->ld_qos_maxage)
 			svr->lsq_penalty = 0;
 		else if (age > desc->ld_qos_maxage)
-			/* Decay server penalty. */
+			
 			svr->lsq_penalty >>= age / desc->ld_qos_maxage;
 	}
 
@@ -559,7 +559,7 @@ int ltd_qos_penalties_calc(struct lu_tgt_descs *ltd)
 	    ((ia_max * (QOS_THRESHOLD_MAX - qos->lq_threshold_rr)) /
 	    QOS_THRESHOLD_MAX) < ia_min) {
 		set_bit(LQ_SAME_SPACE, &qos->lq_flags);
-		/* Reset weights for the next time we enter qos mode */
+		
 		set_bit(LQ_RESET, &qos->lq_flags);
 	} else {
 		clear_bit(LQ_SAME_SPACE, &qos->lq_flags);
@@ -601,7 +601,7 @@ int ltd_qos_update(struct lu_tgt_descs *ltd, struct lu_tgt_desc *tgt,
 	ltq = &tgt->ltd_qos;
 	LASSERT(ltq);
 
-	/* Don't allocate on this device anymore, until the next alloc_qos */
+	
 	ltq->ltq_usable = 0;
 
 	svr = ltq->ltq_svr;
@@ -613,10 +613,10 @@ int ltd_qos_update(struct lu_tgt_descs *ltd, struct lu_tgt_desc *tgt,
 	ltq->ltq_penalty >>= 1;
 	svr->lsq_penalty >>= 1;
 
-	/* mark the server and tgt as recently used */
+	
 	ltq->ltq_used = svr->lsq_used = ktime_get_real_seconds();
 
-	/* Set max penalties for this tgt and server */
+	
 	ltq->ltq_penalty += ltq->ltq_penalty_per_obj *
 			    ltd->ltd_lov_desc.ld_active_tgt_count;
 	CDEBUG(D_OTHER, "ltq_penalty: %llu per_obj: %llu tgt_count: %d\n",
@@ -629,7 +629,7 @@ int ltd_qos_update(struct lu_tgt_descs *ltd, struct lu_tgt_desc *tgt,
 	       qos->lq_active_svr_count);
 
 
-	/* Decrease all MDS penalties */
+	
 	list_for_each_entry(svr, &qos->lq_svr_list, lsq_svr_list) {
 		if (svr->lsq_penalty < svr->lsq_penalty_per_obj)
 			svr->lsq_penalty = 0;
@@ -638,7 +638,7 @@ int ltd_qos_update(struct lu_tgt_descs *ltd, struct lu_tgt_desc *tgt,
 	}
 
 	*total_wt = 0;
-	/* Decrease all tgt penalties */
+	
 	ltd_foreach_tgt(ltd, tgt) {
 		if (!tgt->ltd_active)
 			continue;
@@ -651,7 +651,7 @@ int ltd_qos_update(struct lu_tgt_descs *ltd, struct lu_tgt_desc *tgt,
 
 		lu_tgt_qos_weight_calc(tgt, ltd->ltd_is_mdt);
 
-		/* Recalc the total weight of usable osts */
+		
 		if (ltq->ltq_usable)
 			*total_wt += ltq->ltq_weight;
 

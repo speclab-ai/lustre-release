@@ -106,8 +106,6 @@ def obd_print_one_device_hashes(obd):
         print_hash_summary("cl_quota0", obd.u.cli.cl_quota_hash[0])
         print_hash_summary("cl_quota1", obd.u.cli.cl_quota_hash[1])
 
-#    obd_print_export_hashes(obd, obd.obd_exports, 'exp_obd_chain')
-#    obd_print_export_hashes(obd, obd.obd_exports_timed, 'exp_obd_chain_timed')
     print("")
     return 0
 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2014, 2015, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/libiam.c
  *
@@ -88,7 +88,7 @@ static void lfix_root(void *buf,
 	 * XXX: this key is hard-coded to be a sequence of 0's.
 	 */
 	entry += keysize;
-	/* now @entry points to <ptr> */
+	
 	if (ptrsize == 4)
 		STORE_UNALIGNED(htole32(1), (u_int32_t *)entry);
 	else
@@ -100,7 +100,7 @@ static void lfix_leaf(void *buf,
 {
 	struct iam_leaf_head *head;
 
-	/* form leaf */
+	
 	head = buf;
 	*head = (typeof(*head)) {
 		.ill_magic = htole16(IAM_LEAF_HEADER_MAGIC),
@@ -157,7 +157,7 @@ static void lvar_root(void *buf,
 	 * XXX: this key is hard-coded to be a sequence of 0's.
 	 */
 	entry += sizeof(lvar_hash_t);
-	/* now @entry points to <ptr> */
+	
 	if (ptrsize == 4)
 		STORE_UNALIGNED(htole32(1), (u_int32_t *)entry);
 	else
@@ -176,7 +176,7 @@ static void lvar_leaf(void *buf,
 	struct lvar_leaf_header *head;
 	char *rec;
 
-	/* form leaf */
+	
 	head = buf;
 	*head = (typeof(*head)) {
 		.vlh_magic = htole16(IAM_LVAR_LEAF_MAGIC),

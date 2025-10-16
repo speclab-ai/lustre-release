@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2014, Intel Corporation.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Network Request Scheduler (NRS) First-in First-out (FIFO) policy
  */
@@ -49,5 +49,5 @@ struct nrs_fifo_req {
 	__u64			fr_sequence;
 };
 
-/** @} fifo */
+
 #endif

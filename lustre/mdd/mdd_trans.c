@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Server (mdd) routines
  *
@@ -98,7 +98,7 @@ static int mdd_changelog_gc_cb(const struct lu_env *env,
 	RETURN(0);
 }
 
-/* recover space from long-term inactive ChangeLog users */
+
 static int mdd_chlg_garbage_collect(void *data)
 {
 	struct mdd_device *mdd = data;
@@ -140,7 +140,7 @@ static int mdd_chlg_garbage_collect(void *data)
 			.mcgc_name = { 0 },
 		};
 
-		/* Prior each iteration check if emergency GC is still needed */
+		
 		if (mdd->mdd_changelog_emrg_gc &&
 		    mdd_changelog_is_space_safe(env, mdd, ctxt->loc_handle, 0))
 			mdd->mdd_changelog_emrg_gc = false;
@@ -159,7 +159,7 @@ static int mdd_chlg_garbage_collect(void *data)
 		      mdd->mdd_cl.mc_index - mcgc.mcgc_minrec);
 
 		mdd_changelog_user_purge(env, mdd, mcgc.mcgc_id);
-		/* purge just the oldest user in emergency per GC run */
+		
 		mdd->mdd_changelog_emrg_gc = false;
 
 		if (kthread_should_stop())

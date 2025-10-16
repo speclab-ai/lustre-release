@@ -1,10 +1,10 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
+
 /*
  * Copyright (c) 2017, DataDirect Networks Storage.
  * Copyright (c) 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lfs_project.h
  *
@@ -45,4 +45,4 @@ int lfs_project_clear(const char *pathname,
 		      struct project_handle_control *phc);
 int lfs_project_set(const char *pathname,
 		    struct project_handle_control *phc);
-#endif	/* _LFS_PROJECT_H */
+#endif	

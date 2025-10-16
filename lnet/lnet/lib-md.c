@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Memory Descriptor management routines
  */
@@ -15,12 +15,12 @@
 
 #include <lnet/lib-lnet.h>
 
-/* must be called with lnet_res_lock held */
+
 void
 lnet_md_unlink(struct lnet_libmd *md)
 {
 	if ((md->md_flags & LNET_MD_FLAG_ZOMBIE) == 0) {
-		/* first unlink attempt... */
+		
 		struct lnet_me *me = md->md_me;
 
 		md->md_flags |= LNET_MD_FLAG_ZOMBIE;
@@ -28,13 +28,13 @@ lnet_md_unlink(struct lnet_libmd *md)
 		/* Disassociate from ME (if any), and unlink it if it was created
 		 * with LNET_UNLINK */
 		if (me != NULL) {
-			/* detach MD from portal */
+			
 			lnet_ptl_detach_md(me, md);
 			if (me->me_unlink == LNET_UNLINK)
 				lnet_me_unlink(me);
 		}
 
-		/* ensure all future handle lookups fail */
+		
 		lnet_res_lh_invalidate(&md->md_lh);
 	}
 
@@ -162,11 +162,11 @@ lnet_md_build(const struct lnet_md *umd, int unlink)
 		       niov * sizeof(lmd->md_kiov[0]));
 
 		for (i = 0; i < (int)niov; i++) {
-			/* We take the page pointer on trust */
+			
 			if (lmd->md_kiov[i].bv_offset +
 			    lmd->md_kiov[i].bv_len > PAGE_SIZE) {
 				lnet_md_free(lmd);
-				return ERR_PTR(-EINVAL); /* invalid length */
+				return ERR_PTR(-EINVAL); 
 			}
 
 			total_length += lmd->md_kiov[i].bv_len;
@@ -174,13 +174,13 @@ lnet_md_build(const struct lnet_md *umd, int unlink)
 
 		lmd->md_length = total_length;
 
-		if ((umd->umd_options & LNET_MD_MAX_SIZE) && /* max size used */
+		if ((umd->umd_options & LNET_MD_MAX_SIZE) && 
 		    (umd->umd_max_size < 0 ||
-		     umd->umd_max_size > total_length)) { /* illegal max_size */
+		     umd->umd_max_size > total_length)) { 
 			lnet_md_free(lmd);
 			return ERR_PTR(-EINVAL);
 		}
-	} else {   /* contiguous - split into pages */
+	} else {   
 		void *pa = umd->umd_start;
 		int len = umd->umd_length;
 
@@ -208,7 +208,7 @@ lnet_md_build(const struct lnet_md *umd, int unlink)
 		WARN(!(lmd->md_options  & LNET_MD_GNILND) && i > LNET_MAX_IOV,
 			"Max IOV exceeded: %d should be < %d\n",
 			i, LNET_MAX_IOV);
-		if ((umd->umd_options & LNET_MD_MAX_SIZE) && /* max size used */
+		if ((umd->umd_options & LNET_MD_MAX_SIZE) && 
 		    (umd->umd_max_size < 0 ||
 		     umd->umd_max_size > (int)umd->umd_length)) {
 			lnet_md_free(lmd);
@@ -220,7 +220,7 @@ lnet_md_build(const struct lnet_md *umd, int unlink)
 	return lmd;
 }
 
-/* must be called with resource lock held */
+
 static void
 lnet_md_link(struct lnet_libmd *md, lnet_handler_t handler, int cpt)
 {
@@ -264,7 +264,7 @@ void lnet_assert_handler_unused(lnet_handler_t handler)
 }
 EXPORT_SYMBOL(lnet_assert_handler_unused);
 
-/* must be called with lnet_res_lock held */
+
 void
 lnet_md_deconstruct(struct lnet_libmd *lmd, struct lnet_event *ev)
 {
@@ -462,7 +462,7 @@ LNetMDUnlink(struct lnet_handle_md mdh)
 		}
 		if (md->md_refcount == 0 &&
 		    md->md_flags & LNET_MD_FLAG_HANDLING) {
-			/* Race with unlocked call to ->md_handler. */
+			
 			lnet_md_wait_handling(md, cpt);
 			md = NULL;
 		}

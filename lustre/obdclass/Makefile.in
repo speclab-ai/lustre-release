@@ -1,17 +1,5 @@
-# SPDX-License-Identifier: GPL-2.0
-
-#
-# This file is part of Lustre, http://www.lustre.org/
-#
-# lustre/obdclass/Makefile.in
-#
-# Makefile template for obdclass
-#
-
 MODULES := obdclass
-
 default: all
-
 obdclass-all-objs := llog.o llog_cat.o llog_obd.o llog_swab.o
 obdclass-all-objs += class_obd.o genops.o hash.o
 obdclass-all-objs += lprocfs_status.o lprocfs_counters.o
@@ -24,7 +12,6 @@ obdclass-all-objs += integrity.o obd_cksum.o
 obdclass-all-objs += lu_tgt_descs.o lu_tgt_pool.o
 obdclass-all-objs += range_lock.o
 obdclass-all-objs += page_pools.o
-
 @SERVER_TRUE@obdclass-all-objs += dt_object.o
 @SERVER_TRUE@obdclass-all-objs += idmap.o
 @SERVER_TRUE@obdclass-all-objs += llog_ioctl.o
@@ -37,14 +24,10 @@ obdclass-all-objs += page_pools.o
 @SERVER_TRUE@obdclass-all-objs += obdo_server.o
 @SERVER_TRUE@obdclass-all-objs += scrub.o
 @SERVER_TRUE@obdclass-all-objs += upcall_cache_internal.o
-
 obdclass-objs := $(obdclass-all-objs)
-
 EXTRA_PRE_CFLAGS := -I@LINUX@/fs -I@LDISKFS_DIR@ -I@LDISKFS_DIR@/ldiskfs
-
 EXTRA_DIST = $(obdclass-all-objs:.o=.c) llog_internal.h
 EXTRA_DIST += cl_internal.h local_storage.h upcall_cache_internal.h
-
 @SERVER_FALSE@EXTRA_DIST += dt_object.c
 @SERVER_FALSE@EXTRA_DIST += idmap.c
 @SERVER_FALSE@EXTRA_DIST += llog_ioctl.c
@@ -57,5 +40,4 @@ EXTRA_DIST += cl_internal.h local_storage.h upcall_cache_internal.h
 @SERVER_FALSE@EXTRA_DIST += obdo_server.c
 @SERVER_FALSE@EXTRA_DIST += scrub.c
 @SERVER_FALSE@EXTRA_DIST += upcall_cache_internal.c
-
 @INCLUDE_RULES@

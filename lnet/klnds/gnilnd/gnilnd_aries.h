@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /* Copyright (C) 2009-2012 Cray, Inc.
  *
  * Copyright (c) 2014, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org.
+/* This file is part of Lustre, http:
  *
  * Author: Nic Henke <nic@cray.com>, James Shimek <jshimek@cray.com>
  */
@@ -19,19 +19,19 @@
 # error "must include gnilnd_hss_ops.h first"
 #endif
 
-/* Set HW related values */
+
 #ifdef CONFIG_CRAY_XT
 #include <aries/aries_timeouts_gpl.h>
 #else
-/* from aries_timeouts_gpl.h when building for generic kernel */
+
 #define TIMEOUT_SECS(x)         ((uint64_t)(((x) / 1000.0) + 0.5))
 #ifndef TO_GNILND_timeout
 #define TO_GNILND_timeout               (60000.000000)
-#endif /* TO_GNILND_timeout */
-#endif /* CONFIG_CRAY_XT */
+#endif 
+#endif 
 
 #define GNILND_BASE_TIMEOUT        TIMEOUT_SECS(TO_GNILND_timeout)
-#define GNILND_CHECKSUM_DEFAULT    0            /* all off for Aries */
+#define GNILND_CHECKSUM_DEFAULT    0            
 
 #if defined(CONFIG_CRAY_COMPUTE)
 #define GNILND_REVERSE_RDMA        GNILND_REVERSE_PUT
@@ -39,14 +39,14 @@
 #else
 #define GNILND_REVERSE_RDMA        GNILND_REVERSE_GET
 #define GNILND_RDMA_DLVR_OPTION    GNI_DLVMODE_PERFORMANCE
-#define GNILND_SCHED_THREADS       7             /* scheduler threads */
+#define GNILND_SCHED_THREADS       7             
 #endif
 
-/* Thread-safe kgni implemented in minor ver 45, code rev 0xb9 */
+
 #define GNILND_KGNI_TS_MINOR_VER 0x45
 #define GNILND_TS_ENABLE         1
 
-/* register some memory to allocate a shared mdd */
+
 static inline gni_return_t
 kgnilnd_register_smdd_buf(kgn_device_t *dev)
 {
@@ -78,4 +78,4 @@ kgnilnd_deregister_smdd_buf(kgn_device_t *dev)
 	return rc;
 }
 
-#endif /* _GNILND_ARIES_H */
+#endif 

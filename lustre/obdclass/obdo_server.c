@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Object Devices Class Driver
  * These are the only exported functions, they provide some generic
@@ -19,10 +19,10 @@
 
 #include <linux/fs.h>
 #include <linux/module.h>
-#include <linux/pagemap.h> /* for PAGE_SIZE */
+#include <linux/pagemap.h> 
 #include <obd_class.h>
 
-/*FIXME: Just copy from obdo_from_inode*/
+
 void obdo_from_la(struct obdo *dst, const struct lu_attr *la, u64 valid)
 {
 	u64 newvalid = 0;
@@ -43,7 +43,7 @@ void obdo_from_la(struct obdo *dst, const struct lu_attr *la, u64 valid)
 		dst->o_size = la->la_size;
 		newvalid |= OBD_MD_FLSIZE;
 	}
-	if (valid & LA_BLOCKS) {  /* allocation of space (x512 bytes) */
+	if (valid & LA_BLOCKS) {  
 		dst->o_blocks = la->la_blocks;
 		newvalid |= OBD_MD_FLBLOCKS;
 	}
@@ -81,7 +81,7 @@ void obdo_from_la(struct obdo *dst, const struct lu_attr *la, u64 valid)
 }
 EXPORT_SYMBOL(obdo_from_la);
 
-/*FIXME: Just copy from obdo_from_inode*/
+
 void la_from_obdo(struct lu_attr *dst, const struct obdo *obdo, u64 valid)
 {
 	u64 newvalid = 0;

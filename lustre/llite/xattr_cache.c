@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2012 Xyratex Technology Limited
@@ -21,11 +21,11 @@
  * using a hash or a tree structure instead of list for faster lookups.
  */
 struct ll_xattr_entry {
-	struct list_head xe_list; /* protected by lli_xattrs_list_rwsem */
-	char *xe_name;            /* xattr name, \0-terminated */
-	char *xe_value;           /* xattr value */
-	unsigned int xe_namelen;  /* strlen(xe_name) + 1 */
-	unsigned int xe_vallen;   /* xattr value length */
+	struct list_head xe_list; 
+	char *xe_name;            
+	char *xe_value;           
+	unsigned int xe_namelen;  
+	unsigned int xe_vallen;   
 };
 
 static struct kmem_cache *xattr_kmem;
@@ -93,7 +93,7 @@ static int ll_xattr_cache_find(struct list_head *cache,
 	ENTRY;
 
 	list_for_each_entry(entry, cache, xe_list) {
-		/* xattr_name == NULL means look for any entry */
+		
 		if (xattr_name == NULL ||
 		    strcmp(xattr_name, entry->xe_name) == 0) {
 			*xattr = entry;
@@ -303,7 +303,7 @@ static int ll_xattr_cache_destroy_locked(struct ll_inode_info *lli)
 		RETURN(0);
 
 	while (ll_xattr_cache_del(&lli->lli_xattrs, NULL) == 0)
-		; /* empty loop */
+		; 
 
 	clear_bit(LLIF_XATTR_CACHE_FILLED, &lli->lli_flags);
 	clear_bit(LLIF_XATTR_CACHE, &lli->lli_flags);
@@ -396,18 +396,18 @@ static int ll_xattr_find_get_lock(struct inode *inode,
 	 * only when data exists.
 	 */
 	if (ll_xattr_cache_filled(lli)) {
-		/* Try matching first. */
+		
 		mode = ll_take_md_lock(inode, MDS_INODELOCK_XATTR, &lockh, 0,
 					LCK_PR);
 		if (mode != 0) {
-			/* fake oit in mdc_revalidate_lock() manner */
+			
 			oit->it_lock_handle = lockh.cookie;
 			oit->it_lock_mode = mode;
 			goto out;
 		}
 	}
 
-	/* Enqueue if the lock isn't cached locally. */
+	
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
 				     LUSTRE_OPC_ANY, NULL);
 	if (IS_ERR(op_data)) {
@@ -470,14 +470,14 @@ static int ll_xattr_cache_refill(struct inode *inode)
 	if (rc)
 		GOTO(err_req, rc);
 
-	/* Do we have the data at this point? */
+	
 	if (ll_xattr_cache_filled(lli)) {
 		ll_stats_ops_tally(sbi, LPROC_LL_GETXATTR_HITS, 1);
 		ll_intent_drop_lock(&oit);
 		GOTO(err_req, rc = 0);
 	}
 
-	/* Matched but no cache? Cancelled on error by a parallel refill. */
+	
 	if (unlikely(req == NULL)) {
 		CDEBUG(D_CACHE, "cancelled by a parallel getxattr\n");
 		ll_intent_drop_lock(&oit);
@@ -489,7 +489,7 @@ static int ll_xattr_cache_refill(struct inode *inode)
 		CERROR("no MDT BODY in the refill xattr reply\n");
 		GOTO(err_cancel, rc = -EPROTO);
 	}
-	/* do not need swab xattr data */
+	
 	xdata = req_capsule_server_sized_get(&req->rq_pill, &RMF_EADATA,
 						body->mbo_eadatasize);
 	xval = req_capsule_server_sized_get(&req->rq_pill, &RMF_EAVALS,
@@ -512,7 +512,7 @@ static int ll_xattr_cache_refill(struct inode *inode)
 
 	for (i = 0; i < body->mbo_max_mdsize; i++) {
 		CDEBUG(D_CACHE, "caching [%s]=%.*s\n", xdata, *xsizes, xval);
-		/* Perform consistency checks: attr names and vals in pill */
+		
 		if (memchr(xdata, 0, xtail - xdata) == NULL) {
 			CERROR("xattr protocol violation (names are broken)\n");
 			rc = -EPROTO;
@@ -522,16 +522,16 @@ static int ll_xattr_cache_refill(struct inode *inode)
 		} else if (CFS_FAIL_CHECK(OBD_FAIL_LLITE_XATTR_ENOMEM)) {
 			rc = -ENOMEM;
 		} else if (!strcmp(xdata, XATTR_NAME_ACL_ACCESS)) {
-			/* Filter out ACL ACCESS since it's cached separately */
+			
 			CDEBUG(D_CACHE, "not caching %s\n",
 			       XATTR_NAME_ACL_ACCESS);
 			rc = 0;
 		} else if (ll_xattr_is_seclabel(xdata)) {
-			/* Filter out security label, it is cached in slab */
+			
 			CDEBUG(D_CACHE, "not caching %s\n", xdata);
 			rc = 0;
 		} else if (!strcmp(xdata, XATTR_NAME_SOM)) {
-			/* Filter out trusted.som, it is not cached on client */
+			
 			CDEBUG(D_CACHE, "not caching trusted.som\n");
 			rc = 0;
 		} else {
@@ -635,7 +635,7 @@ int ll_xattr_cache_get(struct inode *inode,
 		rc = ll_xattr_cache_find(&lli->lli_xattrs, name, &xattr);
 		if (rc == 0) {
 			rc = xattr->xe_vallen;
-			/* zero size means we are only requested size in rc */
+			
 			if (size != 0) {
 				if (size >= xattr->xe_vallen)
 					memcpy(buffer, xattr->xe_value,
@@ -647,7 +647,7 @@ int ll_xattr_cache_get(struct inode *inode,
 		 * is explicitly asked.
 		 */
 		} else if (strcmp(name, XATTR_NAME_PROJID) == 0) {
-			/* 10 chars to hold u32 in decimal, plus ending \0 */
+			
 			char projid[11];
 
 			rc = snprintf(projid, sizeof(projid),

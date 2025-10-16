@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef OSC_INTERNAL_H
@@ -139,11 +139,11 @@ struct ldlm_lock *osc_obj_dlmlock_at_pgoff(const struct lu_env *env,
 
 int osc_object_invalidate(const struct lu_env *env, struct osc_object *osc);
 
-/** osc shrink list to link all osc client obd */
+
 extern struct list_head osc_shrink_list;
-/** spin lock to protect osc_shrink_list */
+
 extern spinlock_t osc_shrink_lock;
-/** Whether enable page cache shrinker */
+
 extern bool osc_page_cache_shrink_enabled;
 
 extern unsigned long osc_cache_shrink_count(struct shrinker *sk,
@@ -186,11 +186,11 @@ static inline void osc_set_io_portal(struct ptlrpc_request *req)
 {
 	struct obd_import *imp = req->rq_import;
 
-	/* Distinguish OSC from MDC here to use OST or MDS portal */
+	
 	if (OCD_HAS_FLAG(&imp->imp_connect_data, IBITS))
 		req->rq_request_portal = MDS_IO_PORTAL;
 	else
 		req->rq_request_portal = OST_IO_PORTAL;
 }
 
-#endif /* OSC_INTERNAL_H */
+#endif 

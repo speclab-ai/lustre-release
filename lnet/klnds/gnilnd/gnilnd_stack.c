@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (C) 2012 Cray, Inc.
  *
  * Copyright (c) 2014, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org.
+/* This file is part of Lustre, http:
  *
  * Author: Nic Henke <nic@cray.com>
  */
@@ -14,7 +14,7 @@
 #if defined(GNILND_USE_RCA)
 #include <rsms/rs_sm_states.h>
 #endif
-/* Advance all timeouts by nap_time seconds. */
+
 void
 kgnilnd_bump_timeouts(__u32 nap_time, char *reason)
 {
@@ -41,11 +41,11 @@ kgnilnd_bump_timeouts(__u32 nap_time, char *reason)
 	for (i = 0; i < *kgnilnd_tunables.kgn_peer_hash_size; i++) {
 		list_for_each_entry(peer, &kgnilnd_data.kgn_peers[i], gnp_list) {
 
-			/* we can reconnect again at any time */
+			
 			peer->gnp_reconnect_time = jiffies;
-			/* reset now that network is healthy */
+			
 			peer->gnp_reconnect_interval = 0;
-			/* tell LNet dude is still alive */
+			
 			kgnilnd_peer_alive(peer);
 			kgnilnd_peer_notify(peer, 0, 1);
 
@@ -92,9 +92,9 @@ kgnilnd_quiesce_wait(char *reason)
 
 	if (kgnilnd_data.kgn_quiesce_trigger) {
 		unsigned long   quiesce_deadline, quiesce_to;
-		/* FREEZE TAG!!!! */
+		
 
-		/* morning sunshine */
+		
 		spin_lock(&kgnilnd_data.kgn_reaper_lock);
 		wake_up(&kgnilnd_data.kgn_reaper_waitq);
 		spin_unlock(&kgnilnd_data.kgn_reaper_lock);
@@ -109,12 +109,12 @@ kgnilnd_quiesce_wait(char *reason)
 
 		kgnilnd_wakeup_rca_thread();
 
-		/* we'll wait for 10x the timeout for the threads to pause */
+		
 		quiesce_to = cfs_time_seconds(*kgnilnd_tunables.kgn_timeout * 10);
 		quiesce_deadline = (long) jiffies + quiesce_to;
 
 		LCONSOLE_INFO("Quiesce start: %s\n", reason);
-		/* wait for everyone to check-in as quiesced */
+		
 		while (!GNILND_IS_QUIESCED) {
 			CDEBUG(D_INFO,
 				 "%s: Waiting for %d threads to pause\n",
@@ -154,7 +154,7 @@ kgnilnd_quiesce_wait(char *reason)
 	}
 }
 
-/* Reset the stack.  */
+
 void
 kgnilnd_reset_stack(void)
 {
@@ -167,7 +167,7 @@ kgnilnd_reset_stack(void)
 	unsigned long    start, end;
 	ENTRY;
 
-	/* Race with del_peer and its atomics */
+	
 	CFS_RACE(CFS_FAIL_GNI_RACE_RESET);
 
 	if (kgnilnd_data.kgn_init != GNILND_INIT_ALL) {
@@ -186,7 +186,7 @@ kgnilnd_reset_stack(void)
 	/* wake up the dgram waitq thread - but after trigger set to make sure it
 	 * goes into quiesce */
 	CFS_RACE(CFS_FAIL_GNI_WC_DGRAM_FREE);
-	/* same for scheduler that is dropping state transitiosn */
+	
 	CFS_RACE(CFS_FAIL_GNI_DROP_CLOSING);
 	CFS_RACE(CFS_FAIL_GNI_DROP_DESTROY_EP);
 
@@ -206,7 +206,7 @@ kgnilnd_reset_stack(void)
 		}
 	}
 
-	/* error -ENOTRECOVERABLE is stack reset */
+	
 	kgnilnd_del_conn_or_peer(NULL, LNET_NID_ANY, GNILND_DEL_CONN, -ENOTRECOVERABLE);
 
 	for (i = 0; i < kgnilnd_data.kgn_ndevs; i++) {
@@ -215,7 +215,7 @@ kgnilnd_reset_stack(void)
 		kgnilnd_wait_for_canceled_dgrams(dev);
 	}
 
-	/* manually do some conn processing ala kgnilnd_process_conns */
+	
 	for (i = 0; i < kgnilnd_data.kgn_ndevs; i++) {
 		kgn_device_t    *dev = &kgnilnd_data.kgn_devices[i];
 		kgn_conn_t      *conn;
@@ -245,7 +245,7 @@ kgnilnd_reset_stack(void)
 				list_del_init(&conn->gnc_delaylist); 
 
 			if (conn->gnc_state == GNILND_CONN_CLOSING) {
-				/* bump to CLOSED to fake out send of CLOSE */
+				
 				conn->gnc_state = GNILND_CONN_CLOSED;
 				conn->gnc_close_sent = 1;
 			}
@@ -268,7 +268,7 @@ kgnilnd_reset_stack(void)
 		}
 	}
 
-	/* don't let the little weasily purgatory conns hide from us */
+	
 	for (i = 0; i < *kgnilnd_tunables.kgn_peer_hash_size; i++) {
 		list_for_each_entry_safe(peer, peerN, &kgnilnd_data.kgn_peers[i], gnp_list) {
 			kgn_conn_t       *conn, *connN;
@@ -284,7 +284,7 @@ kgnilnd_reset_stack(void)
 
 	kgnilnd_release_purgatory_list(&souls);
 
-	/* validate we are now clean */
+	
 	for (i = 0; i < kgnilnd_data.kgn_ndevs; i++) {
 		kgn_device_t    *dev = &kgnilnd_data.kgn_devices[i];
 
@@ -309,7 +309,7 @@ kgnilnd_reset_stack(void)
 	/* fine to have peers left - they are waiting for new conns
 	 * but should not be holding any open HW resources */
 
-	/* like the last part of kgnilnd_base_shutdown() */
+	
 
 	CFS_RACE(CFS_FAIL_GNI_SR_DOWN_RACE);
 
@@ -322,9 +322,9 @@ kgnilnd_reset_stack(void)
 	 * kgnilnd_close_matching_conns and asserted it worked in
 	 * kgnilnd_dev_fini */
 
-	/* At this point, all HW is torn down, start to reset */
+	
 
-	/* only reset our known devs */
+	
 	for (i = 0; i < kgnilnd_data.kgn_ndevs; i++) {
 		kgn_device_t    *dev = &kgnilnd_data.kgn_devices[i];
 		rc = kgnilnd_dev_init(dev);
@@ -336,7 +336,7 @@ kgnilnd_reset_stack(void)
 			i, rc);
 	}
 
-	/* Now the fun restarts... - release the hounds! */
+	
 
 	end = jiffies;
 	seconds = cfs_duration_sec((long)end - start);
@@ -373,11 +373,11 @@ kgnilnd_ruhroh_thread(void *arg)
 			schedule();
 		finish_wait(&kgnilnd_data.kgn_ruhroh_waitq, &wait);
 
-	       /* Exit if the driver is shutting down. */
+	       
 		if (kgnilnd_data.kgn_ruhroh_shutdown)
 			break;
 
-		/* Serialize with driver startup and shutdown. */
+		
 		mutex_lock(&kgnilnd_data.kgn_quiesce_mutex);
 
 	       CDEBUG(D_NET, "trigger %d reset %d to_bump %d pause %d\n",
@@ -386,10 +386,10 @@ kgnilnd_ruhroh_thread(void *arg)
 			kgnilnd_data.kgn_bump_info_rdy,
 			kgnilnd_data.kgn_needs_pause);
 
-		/* Do we need to do a pause/quiesce? */
+		
 		if (kgnilnd_data.kgn_needs_pause) {
 
-			/* Pause all other kgnilnd threads. */
+			
 			set_mb(kgnilnd_data.kgn_quiesce_trigger, GNILND_QUIESCE_HW_QUIESCE);
 			kgnilnd_quiesce_wait("hardware quiesce");
 
@@ -411,9 +411,9 @@ kgnilnd_ruhroh_thread(void *arg)
 				schedule_timeout_uninterruptible(
 					cfs_time_seconds(i));
 
-				/* If we got a quiesce event with bump info, DO THE BUMP!. */
+				
 				if (kgnilnd_data.kgn_bump_info_rdy) {
-					/* reset console rate limiting for each event */
+					
 					i = 1;
 
 					/* Make sure the core doesn't start fetching
@@ -433,12 +433,12 @@ kgnilnd_ruhroh_thread(void *arg)
 			 * setting of this flag in kgnilnd_pause_threads().  */
 			set_mb(kgnilnd_data.kgn_needs_pause, 0);
 
-			/* ok, let the kids back into the pool */
+			
 			set_mb(kgnilnd_data.kgn_quiesce_trigger, GNILND_QUIESCE_IDLE);
 			kgnilnd_quiesce_wait("hardware quiesce");
 		}
 
-		/* Do a stack reset if needed. */
+		
 		if (kgnilnd_data.kgn_needs_reset) {
 			kgnilnd_reset_stack();
 			set_mb(kgnilnd_data.kgn_needs_reset, 0);
@@ -459,7 +459,7 @@ kgnilnd_ruhroh_thread(void *arg)
 void
 kgnilnd_pause_threads(void)
 {
-	/* only device 0 gets the handle, see kgnilnd_dev_init */
+	
 	kgn_device_t  *dev = &kgnilnd_data.kgn_devices[0];
 	LASSERTF(dev != NULL, "dev 0 is NULL\n");
 
@@ -481,11 +481,11 @@ kgnilnd_pause_threads(void)
 	}
 }
 
-/* Return non-zero if the GNI hardware quiesce flag is set */
+
 int
 kgnilnd_hw_in_quiesce(void)
 {
-	/* only device 0 gets the handle, see kgnilnd_dev_init */
+	
 	kgn_device_t      *dev0 = &kgnilnd_data.kgn_devices[0];
 
 	LASSERTF(dev0 != NULL, "dev 0 is NULL\n");
@@ -518,7 +518,7 @@ kgnilnd_check_hw_quiesce(void)
 void
 kgnilnd_quiesce_end_callback(gni_nic_handle_t nic_handle, uint64_t msecs)
 {
-	/* only device 0 gets the handle, see kgnilnd_dev_init */
+	
 	kgn_device_t  *dev = &kgnilnd_data.kgn_devices[0];
 	LASSERTF(dev != NULL, "dev 0 is NULL\n");
 
@@ -546,7 +546,7 @@ kgnilnd_quiesce_end_callback(gni_nic_handle_t nic_handle, uint64_t msecs)
 void
 kgnilnd_critical_error(struct gni_err *err_handle)
 {
-	/* only device 0 gets the handle, see kgnilnd_dev_init */
+	
 	kgn_device_t  *dev = &kgnilnd_data.kgn_devices[0];
 	LASSERTF(dev != NULL, "dev 0 is NULL\n");
 
@@ -562,7 +562,7 @@ kgnilnd_critical_error(struct gni_err *err_handle)
 #if defined(GNILND_USE_RCA)
 #include <krca_lib.h>
 #define RCA_EVENTS 3
-/* RCA ticket is needed for krca_wakeup_wait_event() */
+
 static krca_ticket_t rca_krt = KRCA_NULL_TICKET;
 struct rcadata {
 	rca_ticket_t ticket;
@@ -574,7 +574,7 @@ static struct rcadata rd[RCA_EVENTS] = {
 	{ .ec = ec_node_available },
 	{ .ec = ec_node_failed } };
 
-/* thread for receiving rca events */
+
 int
 kgnilnd_rca(void *arg)
 {
@@ -583,7 +583,7 @@ kgnilnd_rca(void *arg)
 	rs_event_t event;
 	lnet_nid_t nid;
 
-	/* all gnilnd threads need to run fairly urgently */
+	
 	set_user_nice(current, *kgnilnd_tunables.kgn_nice);
 
 	/*
@@ -621,7 +621,7 @@ subscribe_retry:
 		if (unlikely(kgnilnd_data.kgn_quiesce_trigger)) {
 			KGNILND_SPIN_QUIESCE;
 		}
-		/* wait here for a subscribed event */
+		
 		rc = krca_wait_event(&rca_krt);
 
 		/* RCA return values:
@@ -650,7 +650,7 @@ subscribe_retry:
 				continue;
 			}
 
-			/* Only care about compute and service nodes not GPUs */
+			
 			if (!(RSN_GET_FLD(event.ev_gen.svid_node.rs_node_flat,
 					TYPE) == rt_node ||
 			     RSN_GET_FLD(event.ev_gen.svid_node.rs_node_flat,
@@ -779,7 +779,7 @@ ns_done:
 	return rc;
 }
 
-#else /* GNILND_USE_RCA */
+#else 
 
 int
 kgnilnd_start_rca_thread(void)
@@ -797,4 +797,4 @@ kgnilnd_get_node_state(__u32 nid)
 {
 	return GNILND_PEER_UP;
 }
-#endif /* GNILND_USE_RCA */
+#endif 

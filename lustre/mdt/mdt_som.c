@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
@@ -28,17 +28,17 @@ static int lustre_buf2som(void *buf, int rc, struct md_som *ms)
 	ENTRY;
 
 	if (rc == 0 || rc == -ENODATA)
-		/* no LSOM attributes */
+		
 		RETURN(-ENODATA);
 
 	if (rc < 0)
-		/* error hit while fetching xattr */
+		
 		RETURN(rc);
 
-	/* unpack LSOM attributes */
+	
 	lustre_som_swab(attrs);
 
-	/* fill in-memory md_som structure */
+	
 	ms->ms_valid = attrs->lsa_valid;
 	ms->ms_size = attrs->lsa_size;
 	ms->ms_blocks = attrs->lsa_blocks;
@@ -122,7 +122,7 @@ int mdt_set_som(struct mdt_thread_info *info, struct mdt_object *obj,
 	memset(&som->lsa_reserved, 0, sizeof(som->lsa_reserved));
 	lustre_som_swab(som);
 
-	/* update SOM attributes */
+	
 	buf->lb_buf = som;
 	buf->lb_len = sizeof(*som);
 	rc = mo_xattr_set(info->mti_env, next, buf, XATTR_NAME_SOM, 0);
@@ -157,7 +157,7 @@ int mdt_lsom_downgrade(struct mdt_thread_info *info, struct mdt_object *o)
 		struct md_som *som = &tmp_ma->ma_som;
 
 		info->mti_som_strict = 0;
-		/* The size and blocks info should be still correct. */
+		
 		if (som->ms_valid & SOM_FL_STRICT)
 			rc = mdt_set_som(info, o, SOM_FL_STALE,
 					 som->ms_size, som->ms_blocks);
@@ -207,7 +207,7 @@ int mdt_lsom_update(struct mdt_thread_info *info,
 		if (rc < 0 && rc != -ENODATA)
 			RETURN(rc);
 
-		/* No LOV EA */
+		
 		if (rc == -ENODATA)
 			RETURN(0);
 

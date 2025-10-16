@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __LUSTRE_LU_OBJECT_H
@@ -286,7 +286,7 @@ struct lu_device {
 	struct lu_site                    *ld_site;
 	struct proc_dir_entry             *ld_proc_entry;
 
-	/* todo XXX: temporary back pointer into obd. */
+	
 	struct obd_device                 *ld_obd;
 
 	/*
@@ -302,13 +302,13 @@ struct lu_device_type_operations;
  * device types.
  */
 enum lu_device_tag {
-	/* this device doesn't implement any particular API */
+	
 	LU_DEVICE_MISC = 0,
-	/* this is meta-data device */
+	
 	LU_DEVICE_MD = BIT(0),
-	/* this is data device */
+	
 	LU_DEVICE_DT = BIT(1),
-	/* data device in the client stack */
+	
 	LU_DEVICE_CL = BIT(2)
 };
 
@@ -474,39 +474,39 @@ struct lu_attr {
 	 * see enum la_valid
 	 */
 	__u64		la_valid;
-	/* size in bytes */
+	
 	__u64		la_size;
-	/* modification time in seconds since Epoch */
+	
 	s64		la_mtime;
-	/* access time in seconds since Epoch */
+	
 	s64		la_atime;
-	/* change time in seconds since Epoch */
+	
 	s64		la_ctime;
-	/* create time in seconds since Epoch */
+	
 	s64		la_btime;
-	/* 512-byte blocks allocated to object */
+	
 	__u64		la_blocks;
-	/* permission bits and file type */
+	
 	__u32		la_mode;
-	/* owner id */
+	
 	__u32		la_uid;
-	/* group id */
+	
 	__u32		la_gid;
-	/* object flags */
+	
 	__u32		la_flags;
-	/* number of persistent references to this object */
+	
 	__u32		la_nlink;
-	/* blk bits of the object*/
+	
 	__u32		la_blkbits;
-	/* blk size of the object*/
+	
 	__u32		la_blksize;
-	/* real device */
+	
 	__u32		la_rdev;
-	/* project id */
+	
 	__u32		la_projid;
-	/* set layout version to OST objects. */
+	
 	__u32		la_layout_version;
-	/* dirent count */
+	
 	__u64		la_dirent_count;
 };
 
@@ -557,9 +557,9 @@ enum lu_object_header_attr {
 	LOHA_REMOTE		= BIT(1),
 	LOHA_HAS_AGENT_ENTRY	= BIT(2),
 	LOHA_FSCRYPT_MD		= BIT(3),
-	/* UNIX file type is stored in S_IFMT bits. */
-	LOHA_FT_START		= 001 << 12, /* S_IFIFO */
-	LOHA_FT_END		= 017 << 12, /* S_IFMT */
+	
+	LOHA_FT_START		= 001 << 12, 
+	LOHA_FT_END		= 017 << 12, 
 };
 
 /*
@@ -636,19 +636,19 @@ enum {
  * lu_object.
  */
 struct lu_site {
-	/* objects hash table */
+	
 	struct rhashtable	ls_obj_hash;
-	/* buckets for summary data */
+	
 	struct lu_site_bkt_data	*ls_bkts;
 	int			ls_bkt_cnt;
 	u32			ls_bkt_seed;
-	/* index of bucket on hash table while purging */
+	
 	unsigned int		ls_purge_start;
-	/* Top-level device for this stack. */
+	
 	struct lu_device	*ls_top_dev;
-	/* Bottom-level device for this stack */
+	
 	struct lu_device	*ls_bottom_dev;
-	/* Linkage into global list of sites. */
+	
 	struct list_head	ls_linkage;
 	/*
 	 * List for lu device for this site, protected
@@ -656,17 +656,17 @@ struct lu_site {
 	 */
 	struct list_head	ls_ld_linkage;
 	spinlock_t		ls_ld_lock;
-	/* Lock to serialize site purge. */
+	
 	struct mutex		ls_purge_mutex;
-	/* lu_site stats */
+	
 	struct lprocfs_stats	*ls_stats;
 	/*
 	 * XXX: a hack! fld has to find md_site via site, remove when possible
 	 */
 	struct seq_server_site	*ld_seq_site;
-	/* Pointer to the lu_target for this site. */
+	
 	struct lu_target	*ls_tgt;
-	/* Number of objects in lsb_lru_lists - used for shrinking */
+	
 	struct percpu_counter   ls_lru_len_counter;
 };
 
@@ -725,7 +725,7 @@ static inline int lu_object_is_dying(const struct lu_object_header *h)
 	return test_bit(LU_OBJECT_HEARD_BANSHEE, &h->loh_flags);
 }
 
-/* Return true if object is initialized. */
+
 static inline int lu_object_is_inited(const struct lu_object_header *h)
 {
 	return test_bit(LU_OBJECT_INITED, &h->loh_flags);
@@ -759,20 +759,20 @@ struct lu_object *lu_object_find_slice(const struct lu_env *env,
 				       const struct lu_fid *f,
 				       const struct lu_object_conf *conf);
 
-/* First (topmost) sub-object of given compound object */
+
 static inline struct lu_object *lu_object_top(struct lu_object_header *h)
 {
 	LASSERT(!list_empty(&h->loh_layers));
 	return container_of(h->loh_layers.next, struct lu_object, lo_linkage);
 }
 
-/* Next sub-object in the layering */
+
 static inline struct lu_object *lu_object_next(const struct lu_object *o)
 {
 	return container_of(o->lo_linkage.next, struct lu_object, lo_linkage);
 }
 
-/* Pointer to the fid of this object. */
+
 static inline const struct lu_fid *lu_object_fid(const struct lu_object *o)
 {
 	return &o->lo_header->loh_fid;
@@ -822,7 +822,7 @@ void lu_object_header_print(const struct lu_env *env, void *cookie,
 			    lu_printer_t printer,
 			    const struct lu_object_header *hdr);
 
-/* Check object consistency. */
+
 int lu_object_invariant(const struct lu_object *o);
 
 
@@ -833,10 +833,10 @@ int lu_object_invariant(const struct lu_object *o);
  */
 #define lu_object_exists(o) ((o)->lo_header->loh_attr & LOHA_EXISTS)
 
-/* Check whether object on the remote storage. */
+
 #define lu_object_remote(o) unlikely((o)->lo_header->loh_attr & LOHA_REMOTE)
 
-/* Check whether the object as agent entry on current target */
+
 #define lu_object_has_agent_entry(o) \
 	unlikely((o)->lo_header->loh_attr & LOHA_HAS_AGENT_ENTRY)
 
@@ -860,24 +860,24 @@ static inline __u32 lu_object_attr(const struct lu_object *o)
 	return o->lo_header->loh_attr & S_IFMT;
 }
 
-/* input params, should be filled out by mdt */
+
 struct lu_rdpg {
-	/** hash */
+	
 	__u64                   rp_hash;
-	/** count in bytes */
+	
 	unsigned int            rp_count;
-	/** number of pages */
+	
 	unsigned int            rp_npages;
-	/** requested attr */
+	
 	__u32                   rp_attrs;
-	/** pointers to pages */
+	
 	union {
 		struct page	**rp_pages;
 		void		*rp_data;
 	};
 };
 
-/* for dt_index_walk / mdd_readpage */
+
 void *rdpg_page_get(const struct lu_rdpg *rdpg, unsigned int index);
 void rdpg_page_put(const struct lu_rdpg *rdpg, unsigned int index, void *kaddr);
 
@@ -889,7 +889,7 @@ enum lu_xattr_flags {
 	LU_XATTR_PURGE   = BIT(4),
 };
 
-/* For lu_context health-checks */
+
 enum lu_context_state {
 	LCS_INITIALIZED = 1,
 	LCS_ENTERED,
@@ -953,7 +953,7 @@ struct lu_context {
 	 * keys were registered.
 	 */
 	unsigned int lc_version;
-	/* Debugging cookie. */
+	
 	unsigned int lc_cookie;
 };
 
@@ -961,24 +961,24 @@ struct lu_context {
  * lu_context_key interface. Similar to pthread_key.
  */
 enum lu_context_tag {
-	/* Thread on md server */
+	
 	LCT_MD_THREAD		= BIT(0),
-	/* Thread on dt server */
+	
 	LCT_DT_THREAD		= BIT(1),
-	/* Thread on client */
+	
 	LCT_CL_THREAD		= BIT(3),
 	/*
 	 * A per-request session on a server, and a per-system-call session on
 	 * a client.
 	 */
 	LCT_SESSION		= BIT(4),
-	/* A per-request data on OSP device */
+	
 	LCT_OSP_THREAD		= BIT(5),
-	/* MGS device thread */
+	
 	LCT_MG_THREAD		= BIT(6),
-	/* Context for local operations */
+	
 	LCT_LOCAL		= BIT(7),
-	/* session for server thread */
+	
 	LCT_SERVER_SESSION	= BIT(8),
 	/*
 	 * Set when at least one of keys, having values in this context has
@@ -996,9 +996,9 @@ enum lu_context_tag {
 	 * for it.
 	 */
 	LCT_QUIESCENT		= BIT(30),
-	/* Context should be remembered. */
+	
 	LCT_REMEMBER		= BIT(31),
-	/* Contexts usable in cache shrinker thread. */
+	
 	LCT_SHRINKER	= LCT_MD_THREAD|LCT_DT_THREAD|LCT_CL_THREAD|LCT_NOREF,
 };
 
@@ -1073,7 +1073,7 @@ struct lu_context_key {
 	 * key.
 	 */
 	atomic_t	lct_used;
-	/* Internal implementation detail: module for this key. */
+	
 	struct module	*lct_owner;
 };
 
@@ -1091,7 +1091,7 @@ struct lu_context_key {
 								  \
 		return value;                                     \
 	}                                                         \
-	struct __##mod##__dummy_init { ; } /* semicolon catcher */
+	struct __##mod##__dummy_init { ; } 
 
 #define LU_KEY_FINI(mod, type)                                              \
 	static void mod##_key_fini(const struct lu_context *ctx,            \
@@ -1101,7 +1101,7 @@ struct lu_context_key {
 									    \
 		OBD_FREE_PTR(info);                                         \
 	}                                                                   \
-	struct __##mod##__dummy_fini {; } /* semicolon catcher */
+	struct __##mod##__dummy_fini {; } 
 
 #define LU_KEY_INIT_FINI(mod, type)			\
 	LU_KEY_INIT(mod, type);				\
@@ -1207,9 +1207,9 @@ void lu_session_tags_update(__u32 tags);
 void lu_session_tags_clear(__u32 tags);
 
 struct lu_env {
-	/* "Local" context, used to store data instead of stack. */
+	
 	struct lu_context  le_ctx;
-	/* "Session" context for per-request data. */
+	
 	struct lu_context *le_ses;
 };
 
@@ -1342,7 +1342,7 @@ static inline bool lu_name_is_temp_file(const char *name, int namelen,
 		if (digit >= suffixlen - 1 &&
 		    isdigit(name[namelen - suffixlen]))
 			return false;
-	} else { /* old crush incorrectly returns "true" for all-digit suffix */
+	} else { 
 		if (digit >= suffixlen - 1 &&
 		    !isdigit(name[namelen - suffixlen]))
 			return false;
@@ -1381,22 +1381,22 @@ static inline bool lu_name_is_backup_file(const char *name, int namelen,
 
 static inline bool lu_name_in_white_list(const char *name, int nlen)
 {
-	/* Check for specific filenames */
+	
 	if (strncmp(name, "mountdata", nlen) == 0 ||
 	    strncmp(name, "nodemap", nlen) == 0 ||
 	    strncmp(name, "params", nlen) == 0 ||
 	    strncmp(name, "sptlrpc", nlen) == 0)
 		return 1;
 
-	/* names like lustre-client */
+	
 	if (nlen > 7 && strncmp(name + nlen - 7, "-client", 7) == 0)
 		return 1;
 
-	/* Check if the string is long enough to match the pattern */
+	
 	if (nlen < 9)
 		return 0;
 
-	/* Check if the string ends with "-OSTxxxx" or "-MDTxxxx" */
+	
 	if ((strncmp(name + nlen - 8, "-OST", 4) == 0 ||
 	     strncmp(name + nlen - 8, "-MDT", 4) == 0) &&
 	     isxdigit(name[nlen - 4]) && isxdigit(name[nlen - 3]) &&
@@ -1446,11 +1446,11 @@ struct lu_buf {
 #define DLUBUF "(%p %zu)"
 #define PLUBUF(buf) ((buf)->lb_buf, (buf)->lb_len)
 
-/* read buffer params, should be filled out by out */
+
 struct lu_rdbuf {
-	/* number of buffers */
+	
 	unsigned int	rb_nbufs;
-	/* pointers to buffers */
+	
 	struct lu_buf	rb_bufs[];
 };
 
@@ -1459,10 +1459,10 @@ struct lu_rdbuf {
  * exported.
  */
 
-/* Initialization of global lu_* data. */
+
 int lu_global_init(void);
 
-/* Dual to lu_global_init(). */
+
 void lu_global_fini(void);
 
 struct lu_kmem_descr {
@@ -1480,7 +1480,7 @@ struct lu_object *lu_object_anon(const struct lu_env *env,
 				 struct lu_device *dev,
 				 const struct lu_object_conf *conf);
 
-/* null buffer */
+
 extern struct lu_buf LU_BUF_NULL;
 
 void lu_buf_free(struct lu_buf *buf);
@@ -1503,14 +1503,14 @@ static inline bool lu_object_is_cl(const struct lu_object *o)
 	return lu_device_is_cl(o->lo_dev);
 }
 
-/* Generic subset of tgts */
+
 struct lu_tgt_pool {
 	__u32		   *op_array;	/* array of index of
 					 * lov_obd->lov_tgts
 					 */
-	unsigned int	    op_count;	/* number of tgts in the array */
-	unsigned int	    op_size;	/* allocated size of op_array */
-	struct rw_semaphore op_rw_sem;	/* to protect lu_tgt_pool use */
+	unsigned int	    op_count;	
+	unsigned int	    op_size;	
+	struct rw_semaphore op_rw_sem;	
 };
 
 int lu_tgt_pool_init(struct lu_tgt_pool *op, unsigned int count);
@@ -1525,22 +1525,22 @@ void lu_tgt_pool_free(struct lu_tgt_pool *op);
 int lu_tgt_check_index(int idx, struct lu_tgt_pool *osts);
 int lu_tgt_pool_extend(struct lu_tgt_pool *op, unsigned int min_count);
 
-/* bitflags used in rr / qos allocation */
+
 enum lq_flag {
-	LQ_DIRTY	= 0, /* recalc qos data */
-	LQ_SAME_SPACE,	     /* OSTs all have approx the same space avail */
-	LQ_RESET,	     /* zero current penalties */
-	LQ_SF_PROGRESS,      /* statfs op in progress */
+	LQ_DIRTY	= 0, 
+	LQ_SAME_SPACE,	     
+	LQ_RESET,	     
+	LQ_SF_PROGRESS,      
 };
 
 #ifdef HAVE_SERVER_SUPPORT
-/* round-robin QoS data for LOD/LMV */
+
 struct lu_qos_rr {
-	spinlock_t		 lqr_alloc;	/* protect allocation index */
-	atomic_t		 lqr_start_idx;	/* start index of new inode */
-	__u32			 lqr_offset_idx;/* aliasing for start_idx */
-	int			 lqr_start_count;/* reseed counter */
-	struct lu_tgt_pool	 lqr_pool;	/* round-robin optimized list */
+	spinlock_t		 lqr_alloc;	
+	atomic_t		 lqr_start_idx;	
+	__u32			 lqr_offset_idx;
+	int			 lqr_start_count;
+	struct lu_tgt_pool	 lqr_pool;	
 	unsigned long		 lqr_flags;
 };
 
@@ -1550,33 +1550,33 @@ static inline void lu_qos_rr_init(struct lu_qos_rr *lqr)
 	set_bit(LQ_DIRTY, &lqr->lqr_flags);
 }
 
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
-/* QoS data per MDS/OSS */
+
 struct lu_svr_qos {
-	struct obd_uuid		 lsq_uuid;	/* ptlrpc's c_remote_uuid */
-	struct list_head	 lsq_svr_list;	/* link to lq_svr_list */
-	__u64			 lsq_bavail;	/* total bytes avail on svr */
-	__u64			 lsq_iavail;	/* total inode avail on svr */
-	__u64			 lsq_penalty;	/* current penalty */
-	__u64			 lsq_penalty_per_obj; /* penalty dec per obj*/
-	time64_t		 lsq_used;	/* last used time, seconds */
-	__u32			 lsq_tgt_count;	/* number of tgts on this svr */
-	__u32			 lsq_id;	/* unique svr id */
+	struct obd_uuid		 lsq_uuid;	
+	struct list_head	 lsq_svr_list;	
+	__u64			 lsq_bavail;	
+	__u64			 lsq_iavail;	
+	__u64			 lsq_penalty;	
+	__u64			 lsq_penalty_per_obj; 
+	time64_t		 lsq_used;	
+	__u32			 lsq_tgt_count;	
+	__u32			 lsq_id;	
 };
 
-/* QoS data per MDT/OST */
+
 struct lu_tgt_qos {
-	struct lu_svr_qos	*ltq_svr;	/* svr info */
-	__u64			 ltq_penalty;	/* current penalty */
-	__u64			 ltq_penalty_per_obj; /* penalty dec per obj */
-	__u64			 ltq_avail;	/* bytes/inode avail */
-	__u64			 ltq_weight;	/* net weighting */
-	time64_t		 ltq_used;	/* last used time, seconds */
-	bool			 ltq_usable:1;	/* usable for striping */
+	struct lu_svr_qos	*ltq_svr;	
+	__u64			 ltq_penalty;	
+	__u64			 ltq_penalty_per_obj; 
+	__u64			 ltq_avail;	
+	__u64			 ltq_weight;	
+	time64_t		 ltq_used;	
+	bool			 ltq_usable:1;	
 };
 
-/* target descriptor */
+
 #define LOV_QOS_DEF_THRESHOLD_RR_PCT	17
 #define LMV_QOS_DEF_THRESHOLD_RR_PCT	5
 
@@ -1595,14 +1595,14 @@ struct lu_tgt_desc {
 	struct list_head   ltd_kill;
 	struct task_struct *ltd_recovery_task;
 	struct mutex	   ltd_fid_mutex;
-	struct lu_tgt_qos  ltd_qos; /* qos info per target */
+	struct lu_tgt_qos  ltd_qos; 
 	struct obd_statfs  ltd_statfs;
 	time64_t	   ltd_statfs_age;
-	unsigned long      ltd_active:1,/* is target available for requests */
-			   ltd_activate:1,/* should LOV target be connected */
-			   ltd_reap:1,  /* should this target be deleted */
-			   ltd_got_update_log:1, /* Already got update log */
-			   ltd_discon:1; /* LOD target disconnected from OST */
+	unsigned long      ltd_active:1,
+			   ltd_activate:1,
+			   ltd_reap:1,  
+			   ltd_got_update_log:1, 
+			   ltd_discon:1; 
 };
 
 static inline __u64 tgt_statfs_bavail(struct lu_tgt_desc *tgt)
@@ -1617,9 +1617,9 @@ static inline __u64 tgt_statfs_iavail(struct lu_tgt_desc *tgt)
 	return tgt->ltd_statfs.os_ffree;
 }
 
-/* number of pointers at 2nd level */
+
 #define TGT_PTRS_PER_BLOCK	(PAGE_SIZE / sizeof(void *))
-/* number of pointers at 1st level - only need as many as max OST/MDT count */
+
 #define TGT_PTRS		((LOV_ALL_STRIPES + 1) / TGT_PTRS_PER_BLOCK)
 
 struct lu_tgt_desc_idx {
@@ -1627,16 +1627,16 @@ struct lu_tgt_desc_idx {
 };
 
 
-/* QoS data for LOD/LMV */
-#define QOS_THRESHOLD_MAX 256 /* should be power of two */
+
+#define QOS_THRESHOLD_MAX 256 
 struct lu_qos {
-	struct list_head	 lq_svr_list;	/* lu_svr_qos list */
+	struct list_head	 lq_svr_list;	
 	struct rw_semaphore	 lq_rw_sem;
 	__u32			 lq_active_svr_count;
-	unsigned int		 lq_prio_free;   /* priority for free space */
-	unsigned int		 lq_threshold_rr;/* priority for rr */
+	unsigned int		 lq_prio_free;   
+	unsigned int		 lq_threshold_rr;
 #ifdef HAVE_SERVER_SUPPORT
-	struct lu_qos_rr	 lq_rr;          /* round robin qos data */
+	struct lu_qos_rr	 lq_rr;          
 #endif
 	unsigned long		 lq_flags;
 };
@@ -1646,25 +1646,25 @@ struct lu_tgt_descs {
 		struct lov_desc	      ltd_lov_desc;
 		struct lmv_desc	      ltd_lmv_desc;
 	};
-	/* list of known TGTs */
+	
 	struct lu_tgt_desc_idx	*ltd_tgt_idx[TGT_PTRS];
-	/* Size of the lu_tgts array, granted to be a power of 2 */
+	
 	__u32			ltd_tgts_size;
-	/* bitmap of TGTs available */
+	
 	unsigned long		*ltd_tgt_bitmap;
-	/* TGTs scheduled to be deleted */
+	
 	__u32			ltd_death_row;
-	/* Table refcount used for delayed deletion */
+	
 	atomic_t		ltd_refcount;
-	/* mutex to serialize concurrent updates to the tgt table */
+	
 	struct mutex		ltd_mutex;
-	/* read/write semaphore used for array relocation */
+	
 	struct rw_semaphore	ltd_rw_sem;
-	/* QoS */
+	
 	struct lu_qos		ltd_qos;
-	/* all tgts in a packed array */
+	
 	struct lu_tgt_pool	ltd_tgt_pool;
-	/* true if tgt is MDT */
+	
 	bool			ltd_is_mdt;
 };
 
@@ -1685,14 +1685,14 @@ int ltd_qos_penalties_calc(struct lu_tgt_descs *ltd);
 int ltd_qos_update(struct lu_tgt_descs *ltd, struct lu_tgt_desc *tgt,
 		   __u64 *total_wt);
 
-/* Whether MDT inode and space usages are balanced. */
+
 static inline bool ltd_qos_is_balanced(struct lu_tgt_descs *ltd)
 {
 	return !test_bit(LQ_DIRTY, &ltd->ltd_qos.lq_flags) &&
 	       test_bit(LQ_SAME_SPACE, &ltd->ltd_qos.lq_flags);
 }
 
-/* Whether QoS data is up-to-date and QoS can be applied. */
+
 static inline bool ltd_qos_is_usable(struct lu_tgt_descs *ltd)
 {
 	if (ltd_qos_is_balanced(ltd))
@@ -1735,4 +1735,4 @@ static inline struct lu_tgt_desc *ltd_next_tgt(struct lu_tgt_descs *ltd,
 	for (tgt = ltd_first_tgt(ltd), tmp = ltd_next_tgt(ltd, tgt); tgt; \
 	     tgt = tmp, tmp = ltd_next_tgt(ltd, tgt))
 
-#endif /* __LUSTRE_LU_OBJECT_H */
+#endif 

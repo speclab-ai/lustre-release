@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Target (mdt) open/close file handling
  *
@@ -65,7 +65,7 @@ struct mdt_file_data *mdt_open_handle2mfd(struct mdt_export_data *med,
 	if (mfd)
 		refcount_dec(&mfd->mfd_open_handle.h_ref);
 
-	/* during dw/setattr replay the mfd can be found by old handle */
+	
 	if ((!mfd || mfd->mfd_owner != med) && is_replay_or_resent) {
 		list_for_each_entry(mfd, &med->med_open_head, mfd_list) {
 			if (mfd->mfd_open_handle_old.cookie ==
@@ -78,7 +78,7 @@ struct mdt_file_data *mdt_open_handle2mfd(struct mdt_export_data *med,
 	RETURN(mfd);
 }
 
-/* free mfd */
+
 void mdt_mfd_free(struct mdt_file_data *mfd)
 {
 	LASSERT(refcount_read(&mfd->mfd_open_handle.h_ref) == 1);
@@ -173,7 +173,7 @@ static void mdt_write_allow(struct mdt_object *o)
 	EXIT;
 }
 
-/* there can be no real transaction so prepare the fake one */
+
 static void mdt_empty_transno(struct mdt_thread_info *info, int rc)
 {
 	struct mdt_device *mdt = info->mti_mdt;
@@ -185,7 +185,7 @@ static void mdt_empty_transno(struct mdt_thread_info *info, int rc)
 	if (mdt_rdonly(req->rq_export))
 		RETURN_EXIT;
 
-	/* transaction has occurred already */
+	
 	if (lustre_msg_get_transno(req->rq_repmsg) != 0)
 		RETURN_EXIT;
 
@@ -216,7 +216,7 @@ static void mdt_empty_transno(struct mdt_thread_info *info, int rc)
 	} else if (info->mti_transno == 0) {
 		info->mti_transno = ++mdt->mdt_lut.lut_last_transno;
 	} else {
-		/* should be replay */
+		
 		if (info->mti_transno > mdt->mdt_lut.lut_last_transno)
 			mdt->mdt_lut.lut_last_transno = info->mti_transno;
 	}
@@ -229,7 +229,7 @@ static void mdt_empty_transno(struct mdt_thread_info *info, int rc)
 	req->rq_transno = info->mti_transno;
 	lustre_msg_set_transno(req->rq_repmsg, info->mti_transno);
 
-	/* update lcd in memory only for resent cases */
+	
 	ted = &req->rq_export->exp_target_data;
 	LASSERT(ted);
 	mutex_lock(&ted->ted_lcd_lock);
@@ -253,7 +253,7 @@ static void mdt_empty_transno(struct mdt_thread_info *info, int rc)
 		lcd->lcd_last_close_xid = req->rq_xid;
 		lcd->lcd_last_close_result = rc;
 	} else {
-		/* VBR: save versions in last_rcvd for reconstruct. */
+		
 		__u64 *pre_versions = lustre_msg_get_versions(req->rq_repmsg);
 
 		if (pre_versions) {
@@ -385,7 +385,7 @@ static int mdt_mfd_open(struct mdt_thread_info *info, struct mdt_object *p,
 		ma->ma_lmm_size = req_capsule_get_size(info->mti_pill,
 						       &RMF_MDT_MD,
 						       RCL_SERVER);
-		/* in replay case, p == NULL */
+		
 		rc = mdt_create_data(info, p, o);
 		if (rc)
 			RETURN(rc);
@@ -461,14 +461,14 @@ static int mdt_mfd_open(struct mdt_thread_info *info, struct mdt_object *p,
 	 */
 	LASSERT(open_flags != 0);
 
-	/* Open handling. */
+	
 	mdt_mfd_set_mode(mfd, open_flags);
 
 	atomic_inc(&o->mot_open_count);
 	if (open_flags & MDS_OPEN_LEASE)
 		atomic_inc(&o->mot_lease_count);
 
-	/* replay handle */
+	
 	if (req_is_replay(req)) {
 		struct mdt_file_data *old_mfd;
 		/* Check wheather old cookie already exist in
@@ -488,7 +488,7 @@ static int mdt_mfd_open(struct mdt_thread_info *info, struct mdt_object *p,
 			class_handle_unhash(&old_mfd->mfd_open_handle);
 			list_del_init(&old_mfd->mfd_list);
 			spin_unlock(&med->med_open_lock);
-			/* no attr update for that close */
+			
 			la->la_valid = 0;
 			ma->ma_valid |= MA_FLAGS;
 			ma->ma_attr_flags |= MDS_RECOV_OPEN;
@@ -579,7 +579,7 @@ static int mdt_finish_open(struct mdt_thread_info *info,
 		RETURN(-EOPNOTSUPP);
 	}
 
-	/* Overstriped files can crash older clients */
+	
 	if (isreg && !exp_connect_overstriping(exp) &&
 	    mdt_lmm_is_overstriping(ma->ma_lmm))
 		RETURN(-EOPNOTSUPP);
@@ -630,10 +630,10 @@ static int mdt_finish_open(struct mdt_thread_info *info,
 	    (open_flags & MDS_OPEN_CREAT))
 		RETURN(-EEXIST);
 
-	/* This can't be done earlier, we need to return reply body */
+	
 	if (isdir) {
 		if (open_flags & (MDS_OPEN_CREAT | MDS_FMODE_WRITE)) {
-			/* We are trying to create or write an existing dir. */
+			
 			RETURN(-EISDIR);
 		}
 	} else if (open_flags & MDS_OPEN_DIRECTORY)
@@ -658,7 +658,7 @@ static int mdt_finish_open(struct mdt_thread_info *info,
 		spin_unlock(&med->med_open_lock);
 
 		if (mfd != NULL) {
-			/* set repbody->ea_size for resent case */
+			
 			if (ma->ma_valid & MA_LOV) {
 				LASSERT(ma->ma_lmm_size != 0);
 				repbody->mbo_eadatasize = ma->ma_lmm_size;
@@ -706,7 +706,7 @@ void mdt_reconstruct_open(struct mdt_thread_info *info,
 	CDEBUG(D_INODE, "This is reconstruct open: disp=%#llx, result=%d\n",
 	       ldlm_rep->lock_policy_res1, req->rq_status);
 	if (req->rq_status)
-		/* We did not create successfully, return error to client. */
+		
 		GOTO(out, rc = req->rq_status);
 
 	/* tg_reply_data is just memory only  structure, so any non zero fid
@@ -720,7 +720,7 @@ void mdt_reconstruct_open(struct mdt_thread_info *info,
 		if (rc)
 			lustre_msg_set_transno(req->rq_repmsg, 0);
 	} else {
-		/* We did not try to create, so we are a pure open */
+		
 		rc = mdt_reint_open(info, lhc);
 	}
 	EXIT;
@@ -753,7 +753,7 @@ static int mdt_open_by_fid(struct mdt_thread_info *info, struct ldlm_reply *rep,
 		GOTO(out, rc);
 
 	if (unlikely(mdt_object_remote(o))) {
-		/* the child object was created on remote server */
+		
 		struct mdt_body *repbody;
 
 		mdt_set_disposition(info, rep, (DISP_IT_EXECD |
@@ -792,7 +792,7 @@ out:
 	RETURN(rc);
 }
 
-/* lock object for open */
+
 static int mdt_object_open_lock(struct mdt_thread_info *info,
 				struct mdt_object *obj,
 				struct mdt_lock_handle *lhc,
@@ -844,17 +844,17 @@ static int mdt_object_open_lock(struct mdt_thread_info *info,
 	}
 
 	if (acq_lease) {
-		/* lease open, acquire write mode of open sem */
+		
 		down_write(&obj->mot_open_sem);
 
-		/* Lease exists and ask for new lease */
+		
 		if (atomic_read(&obj->mot_lease_count) > 0) {
 			/* only exclusive open is supported, so lease
 			 * are conflicted to each other */
 			GOTO(out, rc = -EBUSY);
 		}
 
-		/* Lease must be with open lock */
+		
 		if (!(open_flags & MDS_OPEN_LOCK)) {
 			CERROR("%s: Request lease for file:"DFID ", but open lock is missed, open_flags = %#lo : rc = %d\n",
 			       mdt_obd_name(info->mti_mdt),
@@ -862,14 +862,14 @@ static int mdt_object_open_lock(struct mdt_thread_info *info,
 			GOTO(out, rc = -EPROTO);
 		}
 
-		/* should conflict with new opens for write/execute */
+		
 		lm = LCK_PW;
 		*ibits = MDS_INODELOCK_OPEN;
 
-		/* never grant LCK_EX layout lock to client */
+		
 		try_layout = false;
-	} else { /* normal open */
-		/* normal open holds read mode of open sem */
+	} else { 
+		
 		down_read(&obj->mot_open_sem);
 
 		if (open_flags & MDS_OPEN_LOCK) {
@@ -887,7 +887,7 @@ static int mdt_object_open_lock(struct mdt_thread_info *info,
 			else
 				lm = LCK_CR;
 
-			/* revoke lease */
+			
 			*ibits = MDS_INODELOCK_OPEN;
 			try_layout = false;
 
@@ -948,7 +948,7 @@ static int mdt_object_open_lock(struct mdt_thread_info *info,
 	       mdt_obd_name(info->mti_mdt), PFID(mdt_object_fid(obj)),
 	       *ibits, trybits, open_flags, try_layout, rc);
 
-	/* will change layout, revoke layout locks by enqueuing EX lock. */
+	
 	if (rc == 0 && create_layout) {
 		struct mdt_lock_handle *ll = &info->mti_lh[MDT_LH_LAYOUT];
 
@@ -1005,7 +1005,7 @@ static int mdt_object_open_lock(struct mdt_thread_info *info,
 			atomic_read(&obj->mot_open_count), open_count);
 
 		if (atomic_read(&obj->mot_open_count) > open_count) {
-			/* fail if anyone *else* has opened file for write */
+			
 			if (mdt_write_read(obj) > 1)
 				GOTO(out, rc = -EBUSY);
 		}
@@ -1034,7 +1034,7 @@ static void mdt_object_open_unlock(struct mdt_thread_info *info,
 		mdt_object_unlock(info, obj, ll, 1);
 
 	ll = &info->mti_lh[MDT_LH_LAYOUT];
-	/* Release local layout lock, layout was created */
+	
 	if (lustre_handle_is_used(&ll->mlh_reg_lh)) {
 		LASSERT(!(ibits & MDS_INODELOCK_LAYOUT));
 		mdt_object_unlock(info, obj, ll, 1);
@@ -1045,7 +1045,7 @@ static void mdt_object_open_unlock(struct mdt_thread_info *info,
 	else
 		up_read(&obj->mot_open_sem);
 
-	/* Cross-ref case, the lock should be returned to the client */
+	
 	if (ibits == MDS_INODELOCK_NONE || rc == -MDT_EREMOTE_OPEN)
 		RETURN_EXIT;
 
@@ -1162,7 +1162,7 @@ static int mdt_open_by_fid_lock(struct mdt_thread_info *info,
 		GOTO(out, rc = -ENOENT);
 	}
 
-	/* do not check enc or id for directory: always allow open */
+	
 	if (!S_ISDIR(lu_object_attr(&o->mot_obj))) {
 		rc = mdt_check_resource_ids(info, o);
 		if (unlikely(rc))
@@ -1182,7 +1182,7 @@ static int mdt_open_by_fid_lock(struct mdt_thread_info *info,
 	if (rc)
 		GOTO(out, rc);
 
-	/* We should not change file's existing LOV EA */
+	
 	if (S_ISREG(lu_object_attr(&o->mot_obj)) &&
 	    open_flags & MDS_OPEN_HAS_EA && ma->ma_valid & MA_LOV)
 		GOTO(out, rc = -EEXIST);
@@ -1245,7 +1245,7 @@ out_parent_put:
 	return rc;
 }
 
-/* Cross-ref request. Currently it can only be a pure open (w/o create) */
+
 static int mdt_cross_open(struct mdt_thread_info *info,
 			  const struct lu_fid *parent_fid,
 			  const struct lu_fid *fid,
@@ -1271,7 +1271,7 @@ static int mdt_cross_open(struct mdt_thread_info *info,
 		GOTO(out, rc);
 
 	if (mdt_object_remote(o)) {
-		/* Something is wrong here, the object is on another MDS! */
+		
 		CERROR("%s: "DFID" isn't on this server!: rc = %d\n",
 		       mdt_obd_name(info->mti_mdt), PFID(fid), -EFAULT);
 		LU_OBJECT_DEBUG(D_WARNING, info->mti_env,
@@ -1371,7 +1371,7 @@ static int mdt_lock_root_xattr(struct mdt_thread_info *info,
 
 	md_root->mot_cache_attr = 1;
 
-	/* don't cancel this lock, so that we know the cached xattr is valid. */
+	
 	ldlm_lock_decref(&lh->mlh_rreg_lh, LCK_PR);
 	lh->mlh_rreg_lh.cookie = 0ull;
 
@@ -1386,7 +1386,7 @@ static inline enum ldlm_mode mdt_open_lock_mode(struct mdt_thread_info *info,
 	int result;
 	struct lu_fid fid;
 
-	/* We don't need to take the DLM lock for a volatile */
+	
 	if (open_flags & MDS_OPEN_VOLATILE)
 		return LCK_NL;
 
@@ -1396,7 +1396,7 @@ static inline enum ldlm_mode mdt_open_lock_mode(struct mdt_thread_info *info,
 	result = mdo_lookup(info->mti_env, mdt_object_child(p), name, &fid,
 			    &info->mti_spec);
 
-	/* If the file exists we only need a read lock on the parent */
+	
 	return (result == 0) ? LCK_PR : LCK_PW;
 }
 
@@ -1485,7 +1485,7 @@ int mdt_reint_open(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 		GOTO(out, result = -EPERM);
 
 	if (info->mti_cross_ref) {
-		/* This is cross-ref open */
+		
 		mdt_set_disposition(info, ldlm_rep,
 			    (DISP_IT_EXECD | DISP_LOOKUP_EXECD |
 			     DISP_LOOKUP_POS));
@@ -1531,7 +1531,7 @@ int mdt_reint_open(struct mdt_thread_info *info, struct mdt_lock_handle *lhc)
 	if (IS_ERR(parent))
 		GOTO(out, result = PTR_ERR(parent));
 
-	/* get and check version of parent */
+	
 	result = mdt_version_get_check(info, parent, 0);
 	if (result) {
 		mdt_object_put(info->mti_env, parent);
@@ -1594,7 +1594,7 @@ again_pw:
 		LASSERT(equi(lh == NULL, lock_mode == LCK_NL));
 
 		if (lock_mode == LCK_PR) {
-			/* unlink vs create race: get write lock and restart */
+			
 			mdt_object_unlock(info, parent, lh, 1);
 			mdt_clear_disposition(info, ldlm_rep, DISP_LOOKUP_NEG);
 			lock_mode = LCK_PW;
@@ -1618,7 +1618,7 @@ again_pw:
 	if (IS_ERR(child))
 		GOTO(out_parent_unlock, result = PTR_ERR(child));
 
-	/** check version of child  */
+	
 	rc = mdt_version_get_check(info, child, 1);
 	if (rc)
 		GOTO(out_child, result = rc);
@@ -1626,26 +1626,26 @@ again_pw:
 	tgt_open_obj_set(info->mti_env, mdt_obj2dt(child));
 
 	if (result == -ENOENT) {
-		/* Create under OBF and .lustre is not permitted */
+		
 		if (!fid_is_md_operative(rr->rr_fid1) &&
 		    (open_flags & MDS_OPEN_VOLATILE) == 0)
 			GOTO(out_child, result = -EPERM);
 
-		/* save versions in reply */
+		
 		mdt_version_get_save(info, parent, 0);
 		mdt_version_get_save(info, child, 1);
 
-		/* version of child will be changed */
+		
 		tgt_vbr_obj_set(info->mti_env, mdt_obj2dt(child));
 
-		/* Not found and with MDS_OPEN_CREAT: let's create it. */
+		
 		mdt_set_disposition(info, ldlm_rep, DISP_OPEN_CREATE);
 
-		/* Don't do lookup sanity check. We know name doesn't exist. */
+		
 		info->mti_spec.sp_cr_lookup = 0;
 		info->mti_spec.sp_feat = &dt_directory_features;
 
-		/* set jobid xattr name from sysfs parameter */
+		
 		strncpy(info->mti_spec.sp_cr_job_xattr, mdt->mdt_job_xattr,
 			XATTR_JOB_MAX_LEN);
 
@@ -1657,7 +1657,7 @@ again_pw:
 			GOTO(out_child, result);
 		} else {
 			mdt_prep_ma_buf_from_rep(info, child, ma, open_flags);
-			/* XXX: we should call this once, see few lines below */
+			
 			if (result == 0)
 				result = mdt_attr_get_complex(info, child, ma);
 
@@ -1714,7 +1714,7 @@ again_pw:
 			if (result != 0)
 				GOTO(out_child, result);
 		} else {
-			/* Object does not exist. Likely FS corruption. */
+			
 			CERROR("%s: name '"DNAME"' present, but FID "
 			       DFID" is invalid\n", mdt_obd_name(info->mti_mdt),
 			       encode_fn_luname(&rr->rr_name), PFID(child_fid));
@@ -1743,7 +1743,7 @@ again_pw:
 		if (open_flags & MDS_OPEN_LOCK)
 			mdt_set_disposition(info, ldlm_rep, DISP_OPEN_LOCK);
 	} else {
-		/* get openlock if this isn't replay and client requested it */
+		
 		if (!req_is_replay(req)) {
 			CFS_FAIL_TIMEOUT(OBD_FAIL_MDS_DELAY_OPEN, cfs_fail_val);
 			rc = mdt_object_open_lock(info, child, lhc, &ibits);
@@ -1755,11 +1755,11 @@ again_pw:
 						    DISP_OPEN_LOCK);
 		}
 	}
-	/* Try to open it now. */
+	
 	rc = mdt_finish_open(info, parent, child, open_flags, ldlm_rep);
 	if (rc) {
 		result = rc;
-		/* openlock will be released if mdt_finish_open() failed */
+		
 		mdt_clear_disposition(info, ldlm_rep, DISP_OPEN_LOCK);
 
 		if (created && (open_flags & MDS_OPEN_VOLATILE)) {
@@ -1893,7 +1893,7 @@ out:
 	return obj;
 }
 
-/* XXX Look into layout in MDT layer. */
+
 static inline int mdt_hsm_set_released(struct lov_mds_md *lmm)
 {
 	struct lov_comp_md_v1 *comp_v1;
@@ -1970,13 +1970,13 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 	if (lease == NULL)
 		RETURN(-ESTALE);
 
-	/* try to hold open_sem so that nobody else can open the file */
+	
 	if (!down_write_trylock(&o->mot_open_sem)) {
 		ldlm_lock_cancel(lease);
 		GOTO(out_reprocess, rc = -EBUSY);
 	}
 
-	/* Check if the lease open lease has already canceled */
+	
 	lock_res_and_lock(lease);
 	lease_broken = (lease->l_flags & LDLM_FL_CANCEL);
 	unlock_res_and_lock(lease);
@@ -1989,7 +1989,7 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 	 * held mot_open_sem. */
 	ldlm_lock_cancel(lease);
 
-	if (lease_broken) /* don't perform release task */
+	if (lease_broken) 
 		GOTO(out_unlock, rc = -ESTALE);
 
 	if (fid_is_zero(&data->cd_fid) || !fid_is_sane(&data->cd_fid))
@@ -2028,7 +2028,7 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 			if (ma->ma_hsm.mh_flags & HS_DIRTY)
 				ma->ma_hsm.mh_flags = HS_ARCHIVED | HS_EXISTS;
 		} else {
-			/* Set up HSM attribte for PCC archived object */
+			
 			BUILD_BUG_ON(sizeof(struct hsm_attrs) >
 				     sizeof(info->mti_xattr_buf));
 			buf = &info->mti_buf;
@@ -2049,11 +2049,11 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 		if (!mdt_hsm_release_allow(ma))
 			GOTO(out_unlock, rc = -EPERM);
 
-		/* already released? */
+		
 		if (ma->ma_hsm.mh_flags & HS_RELEASED)
 			GOTO(out_unlock, rc = 0);
 
-		/* Compare on-disk and packed data_version */
+		
 		if (data->cd_data_version != ma->ma_hsm.mh_arch_ver) {
 			CDEBUG(D_HSM, DFID" data_version mismatches: "
 			       "packed=%llu and on-disk=%llu\n",
@@ -2087,7 +2087,7 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 		GOTO(out_unlock, rc);
 
 	if (!(ma->ma_valid & MA_LOV)) {
-		/* Even empty file are released */
+		
 		ma->ma_lmm = (void *)info->mti_xattr_buf;
 		LASSERT(sizeof(*ma->ma_lmm) < sizeof(info->mti_xattr_buf));
 		memset(ma->ma_lmm, 0, sizeof(*ma->ma_lmm));
@@ -2106,7 +2106,7 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 			GOTO(out_unlock, rc = -EINVAL);
 	}
 
-	/* Set file as released. */
+	
 	rc = mdt_hsm_set_released(ma->ma_lmm);
 	if (rc)
 		GOTO(out_unlock, rc);
@@ -2130,7 +2130,7 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 		GOTO(out_unlock, rc = PTR_ERR(orphan));
 	}
 
-	/* Set up HSM attribute for orphan object */
+	
 	BUILD_BUG_ON(sizeof(struct hsm_attrs) > sizeof(info->mti_xattr_buf));
 	buf = &info->mti_buf;
 	buf->lb_buf = info->mti_xattr_buf;
@@ -2154,7 +2154,7 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 	if (rc != 0)
 		GOTO(out_layout_lock, rc);
 
-	/* Swap layout with orphan objects. */
+	
 	rc = mo_swap_layouts(info->mti_env, mdt_object_child(o),
 			     mdt_object_child(orphan), 0, 0,
 			     SWAP_LAYOUTS_MDS_RELEASE);
@@ -2167,10 +2167,10 @@ static int mdt_hsm_release(struct mdt_thread_info *info, struct mdt_object *o,
 	EXIT;
 
 out_layout_lock:
-	/* Release exclusive LL */
+	
 	mdt_object_unlock(info, o, lh, 1);
 out_close:
-	/* Close orphan object anyway */
+	
 	rc2 = mo_close(info->mti_env, mdt_object_child(orphan), orp_ma,
 		       MDS_FMODE_WRITE);
 	if (rc2 < 0)
@@ -2183,7 +2183,7 @@ out_close:
 out_unlock:
 	up_write(&o->mot_open_sem);
 
-	/* already released */
+	
 	if (rc == 0) {
 		struct mdt_body *repbody;
 
@@ -2248,10 +2248,10 @@ static int mdt_close_handle_layouts(struct mdt_thread_info *info,
 		if (!(ma->ma_attr_flags & MDS_CLOSE_LAYOUT_SPLIT))
 			RETURN(-EINVAL);
 
-		/* zero cd_fid to keeps o2 be NULL */
+		
 		fid_zero(&data->cd_fid);
 	} else if (rc < 0) {
-		/* Exchange o1 and o2, to enforce locking order */
+		
 		swap_objects = true;
 	}
 
@@ -2287,13 +2287,13 @@ static int mdt_close_handle_layouts(struct mdt_thread_info *info,
 			GOTO(out_obj, rc);
 	}
 
-	/* try to hold open_sem so that nobody else can open the file */
+	
 	if (!down_write_trylock(&o->mot_open_sem)) {
 		ldlm_lock_cancel(lease);
 		GOTO(out_obj, rc = -EBUSY);
 	}
 
-	/* Check if the lease open lease has already canceled */
+	
 	lock_res_and_lock(lease);
 	lease_broken = (lease->l_flags & LDLM_FL_CANCEL);
 	unlock_res_and_lock(lease);
@@ -2321,7 +2321,7 @@ static int mdt_close_handle_layouts(struct mdt_thread_info *info,
 			GOTO(out_unlock1, rc);
 	}
 
-	/* Swap layout with orphan object */
+	
 	if (ma->ma_attr_flags & MDS_CLOSE_LAYOUT_SWAP) {
 		__u64 dv1 = data->cd_data_version;
 		__u64 dv2 = 0;
@@ -2348,20 +2348,20 @@ static int mdt_close_handle_layouts(struct mdt_thread_info *info,
 			mrd.mrd_obj = mdt_object_child(o == o1 ? o2 : o1);
 		} else {
 			if (!(ma->ma_attr_flags & MDS_CLOSE_LAYOUT_SPLIT)) {
-				/* paranoid check again */
+				
 				CERROR(DFID
 				  ":only mirror split support NULL o2 object\n",
 					PFID(mdt_object_fid(o)));
 				GOTO(out_unlock1, rc = -EINVAL);
 			}
 
-			/* set NULL mrd_obj for deleting mirror objects */
+			
 			mrd.mrd_obj = NULL;
 		}
 
 		if (ma->ma_attr_flags & MDS_CLOSE_LAYOUT_SPLIT) {
 			mrd.mrd_mirror_id = data->cd_mirror_id;
-			/* set a small enough blocks in the SoM */
+			
 			ma->ma_attr.la_blocks >>= 1;
 		}
 
@@ -2399,7 +2399,7 @@ static int mdt_close_handle_layouts(struct mdt_thread_info *info,
 	EXIT;
 
 out_unlock2:
-	/* Release exclusive LL */
+	
 	if (o2)
 		mdt_object_unlock(info, o2, lh2, 1);
 
@@ -2409,7 +2409,7 @@ out_unlock1:
 out_unlock_sem:
 	up_write(&o->mot_open_sem);
 
-	/* already swapped */
+	
 	if (rc == 0) {
 		struct mdt_body *repbody;
 
@@ -2420,10 +2420,10 @@ out_unlock_sem:
 
 out_obj:
 	if (o1 != o)
-		/* the 2nd object has been used, and swapped to o1 */
+		
 		mdt_object_put(info->mti_env, o1);
 	else if (o2)
-		/* the 2nd object has been used, and not swapped */
+		
 		mdt_object_put(info->mti_env, o2);
 
 	ldlm_reprocess_all(lease->l_resource,
@@ -2473,13 +2473,13 @@ static int mdt_close_resync_done(struct mdt_thread_info *info,
 	if (lease == NULL)
 		RETURN(-ESTALE);
 
-	/* try to hold open_sem so that nobody else can open the file */
+	
 	if (!down_write_trylock(&o->mot_open_sem)) {
 		ldlm_lock_cancel(lease);
 		GOTO(out_reprocess, rc = -EBUSY);
 	}
 
-	/* Check if the lease open lease has already canceled */
+	
 	lock_res_and_lock(lease);
 	lease_broken = (lease->l_flags & LDLM_FL_CANCEL);
 	unlock_res_and_lock(lease);
@@ -2492,7 +2492,7 @@ static int mdt_close_resync_done(struct mdt_thread_info *info,
 	 * held mot_open_sem. */
 	ldlm_lock_cancel(lease);
 
-	if (lease_broken) /* don't perform release task */
+	if (lease_broken) 
 		GOTO(out_unlock, rc = -ESTALE);
 
 	resync_count = data->cd_resync.resync_count;
@@ -2534,7 +2534,7 @@ static int mdt_close_resync_done(struct mdt_thread_info *info,
 out_unlock:
 	up_write(&o->mot_open_sem);
 
-	/* already released */
+	
 	if (rc == 0) {
 		struct mdt_body *repbody;
 
@@ -2580,7 +2580,7 @@ int mdt_mfd_close(struct mdt_thread_info *info, struct mdt_file_data *mfd)
 	intent = ma->ma_attr_flags & MDS_CLOSE_INTENT;
 	*ofid = *mdt_object_fid(o);
 
-	/* the below message is checked in replay-single.sh test_46 */
+	
 	CDEBUG(D_INODE, "%s: %sclosing file handle "DFID" with intent: %llx\n",
 	       mdt_obd_name(info->mti_mdt),
 	       ma->ma_valid & MA_FORCE_LOG ? "force " : "", PFID(ofid), intent);
@@ -2592,7 +2592,7 @@ int mdt_mfd_close(struct mdt_thread_info *info, struct mdt_file_data *mfd)
 			CDEBUG(D_HSM, "%s: File " DFID " release failed: %d\n",
 			       mdt_obd_name(info->mti_mdt),
 			       PFID(ofid), rc);
-			/* continue to close even error occurred. */
+			
 		}
 		break;
 	}
@@ -2608,7 +2608,7 @@ int mdt_mfd_close(struct mdt_thread_info *info, struct mdt_file_data *mfd)
 			       intent == MDS_CLOSE_LAYOUT_SPLIT ? "split" :
 			       "swap",
 			       PFID(ofid), rc);
-			/* continue to close even if error occurred. */
+			
 		}
 		break;
 	}
@@ -2619,11 +2619,11 @@ int mdt_mfd_close(struct mdt_thread_info *info, struct mdt_file_data *mfd)
 			       "%s: cannot resync layout of "DFID": rc = %d\n",
 			       mdt_obd_name(info->mti_mdt),
 			       PFID(ofid), rc);
-			/* continue to close even if error occurred. */
+			
 		}
 		break;
 	default:
-		/* nothing */
+		
 		break;
 	}
 
@@ -2637,7 +2637,7 @@ int mdt_mfd_close(struct mdt_thread_info *info, struct mdt_file_data *mfd)
 			       PFID(ofid), rc2);
 			if (rc == 0)
 				rc = rc2;
-			/* continue to close even if error occurred. */
+			
 		}
 	}
 
@@ -2646,7 +2646,7 @@ int mdt_mfd_close(struct mdt_thread_info *info, struct mdt_file_data *mfd)
 	else if (open_flags & MDS_FMODE_EXEC)
 		mdt_write_allow(o);
 
-	/* Update atime|mtime|ctime on close. */
+	
 	if ((open_flags & MDS_FMODE_EXEC || open_flags & MDS_FMODE_READ ||
 	     open_flags & MDS_FMODE_WRITE) && (ma->ma_valid & MA_INODE) &&
 	    (ma->ma_attr.la_valid & LA_ATIME ||
@@ -2672,7 +2672,7 @@ int mdt_mfd_close(struct mdt_thread_info *info, struct mdt_file_data *mfd)
 		}
 	}
 
-	/* If file data is modified, add the dirty flag. */
+	
 	if (ma->ma_attr_flags & MDS_DATA_MODIFIED) {
 		rc2 = mdt_add_dirty_flag(info, o, ma);
 		if (rc2 != 0) {
@@ -2704,7 +2704,7 @@ int mdt_mfd_close(struct mdt_thread_info *info, struct mdt_file_data *mfd)
 			mdt_dom_discard_data(info, o);
 	}
 
-	/* adjust open and lease count */
+	
 	if (open_flags & MDS_OPEN_LEASE) {
 		LASSERT(atomic_read(&o->mot_lease_count) > 0);
 		atomic_dec(&o->mot_lease_count);
@@ -2734,7 +2734,7 @@ int mdt_close_internal(struct mdt_thread_info *info, struct ptlrpc_request *req,
 		CDEBUG(D_INODE, "no handle for file close: fid = "DFID
 		       ": cookie = %#llx\n", PFID(info->mti_rr.rr_fid1),
 		       info->mti_open_handle.cookie);
-		/** not serious error since bug 3633 */
+		
 		rc = -ESTALE;
 	} else {
 		class_handle_unhash(&mfd->mfd_open_handle);
@@ -2757,7 +2757,7 @@ int mdt_close(struct tgt_session_info *tsi)
 	int rc2;
 
 	ENTRY;
-	/* Close may come with the Size-on-MDS update. Unpack it. */
+	
 	rc = mdt_close_unpack(info);
 	if (rc)
 		GOTO(out, rc = err_serious(rc));
@@ -2777,7 +2777,7 @@ int mdt_close(struct tgt_session_info *tsi)
 		GOTO(out, rc = lustre_msg_get_status(req->rq_repmsg));
 	}
 
-	/* Continue to close handle even if we can not pack reply */
+	
 	if (rc == 0) {
 		repbody = req_capsule_server_get(info->mti_pill,
 						 &RMF_MDT_BODY);

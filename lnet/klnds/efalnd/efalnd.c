@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2023-2025, Amazon and/or its affiliates. All rights reserved.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Yehuda Yitschak <yehuday@amazon.com>
  * Author: Yonatan Nachum <ynachum@amazon.com>
@@ -316,7 +316,7 @@ kefalnd_obj_pool_alloc(struct kefa_obj_pool *pool)
 		return NULL;
 	}
 
-	/* Get first object from the list. */
+	
 	node = pool->free_obj.next;
 	list_del_init(node);
 
@@ -532,7 +532,7 @@ __must_hold(&conn->lock)
 				  (const struct ib_send_wr **)&bad);
 		if (rc) {
 			if (rc != -ENOMEM) {
-				/* We don't expect anything other than -ENOMEM here. */
+				
 				EFA_DEV_WARN(qp->efa_dev,
 					     "QP[%u] failed to post send. err[%d]\n",
 					     qp->ib_qp->qp_num, rc);
@@ -564,7 +564,7 @@ kefalnd_launch_tx(struct kefa_conn *conn, struct kefa_tx *tx)
 
 	tx->conn = conn;
 
-	/* TODO - consider all pending connections. i.e. connection arbitration */
+	
 	if (conn->state == KEFA_CONN_ACTIVE)
 		kefalnd_conn_post_tx_locked(conn);
 	spin_unlock_irqrestore(&conn->lock, flags);
@@ -575,7 +575,7 @@ kefalnd_post_finv_failure(struct kefa_dev *efa_dev, struct kefa_qp *qp,
 			  struct kefa_fmr *fmr, int rc)
 {
 	if (rc != -ENOMEM) {
-		/* We don't expect anything other than -ENOMEM here. */
+		
 		EFA_DEV_WARN(efa_dev,
 			     "QP[%u] failed to post FINV[0x%x]. err[%d]\n",
 			     qp->ib_qp->qp_num, fmr->mr->lkey, rc);
@@ -728,7 +728,7 @@ kefalnd_bio_vec_to_sgl(struct kefa_ni *efa_ni, struct scatterlist *sg,
 	LASSERT(nob > 0);
 	LASSERT(nkiov > 0);
 
-	/* Trasnalate from bio_vec to sg to use for mapping */
+	
 	while (offset >= kiov->bv_len) {
 		offset -= kiov->bv_len;
 		nkiov--;
@@ -791,7 +791,7 @@ kefalnd_map_msg_iov(struct kefa_ni *efa_ni, struct kefa_tx *tx, int nkiov,
 
 	tx->nfrags = rc;
 
-	/* Map the SGs to our device */
+	
 	rc = kefalnd_map_tx(efa_ni, tx, remote_access_fmr);
 
 out:
@@ -876,7 +876,7 @@ kefalnd_tx_done(struct kefa_tx *tx)
 		if (tx->lntmsg[i] == NULL)
 			continue;
 
-		/* propagate health status to LNet for requests */
+		
 		if (i == 0 && tx->lntmsg[i])
 			tx->lntmsg[i]->msg_health_status = tx->hstatus;
 
@@ -909,7 +909,7 @@ kefalnd_abort_tx(struct kefa_tx *tx, enum lnet_msg_hstatus hstatus, int status)
 	tx->hstatus = hstatus;
 	tx->status = status;
 
-	/* Make sure response message refcount decreased only once */
+	
 	if (!atomic_xchg_relaxed(&tx->waiting_resp, false))
 		return;
 
@@ -1055,12 +1055,12 @@ kefalnd_send(struct lnet_ni *ni, void *private, struct lnet_msg *lntmsg)
 		break;
 
 	case LNET_MSG_GET:
-		/* use RDMA or SEND based on size */
+		
 		nob = offsetof(struct kefa_msg, msg_v2.u.immediate.payload[msg_md->md_length]);
 		if (nob <= EFALND_NO_RDMA_THRESH && !gpu)
 			break;
 
-		/* RDMA based flow */
+		
 		rc = kefalnd_map_msg_iov(efa_ni, tx, msg_md->md_niov,
 					 msg_md->md_kiov, 0, msg_md->md_length,
 					 false);
@@ -1073,7 +1073,7 @@ kefalnd_send(struct lnet_ni *ni, void *private, struct lnet_msg *lntmsg)
 			return -EIO;
 		}
 
-		/* setup the message */
+		
 		kefalnd_fill_getr_msg(conn, tx, hdr);
 		tx->lntmsg[1] = lnet_create_reply_msg(ni, lntmsg);
 		if (tx->lntmsg[1] == NULL) {
@@ -1086,21 +1086,21 @@ kefalnd_send(struct lnet_ni *ni, void *private, struct lnet_msg *lntmsg)
 			return -EIO;
 		}
 
-		/* finalise lntmsg[0,1] on completion */
+		
 		tx->lntmsg[0] = lntmsg;
-		atomic_inc(&tx->ref_cnt); /* wait for GETR_{ACK,NACK} */
+		atomic_inc(&tx->ref_cnt); 
 		atomic_set(&tx->waiting_resp, true);
 		kefalnd_launch_tx(conn, tx);
 		return 0;
 
 	case LNET_MSG_REPLY:
 	case LNET_MSG_PUT:
-		/* use RDMA or SEND based on size */
+		
 		nob = offsetof(struct kefa_msg, msg_v2.u.immediate.payload[lntmsg->msg_len]);
 		if (nob <= EFALND_NO_RDMA_THRESH && !gpu)
 			break;
 
-		/* RDMA based flow */
+		
 		rc = kefalnd_map_msg_iov(efa_ni, tx, lntmsg->msg_niov,
 					 lntmsg->msg_kiov, lntmsg->msg_offset,
 					 lntmsg->msg_len, true);
@@ -1113,20 +1113,20 @@ kefalnd_send(struct lnet_ni *ni, void *private, struct lnet_msg *lntmsg)
 			return -EIO;
 		}
 
-		/* setup the message */
+		
 		kefalnd_fill_putr_msg(conn, tx, hdr);
-		/* finalise lntmsg[0,1] on completion */
+		
 		tx->lntmsg[0] = lntmsg;
-		atomic_inc(&tx->ref_cnt); /* wait for PUT_DONE */
+		atomic_inc(&tx->ref_cnt); 
 		atomic_set(&tx->waiting_resp, true);
 		kefalnd_launch_tx(conn, tx);
 		return 0;
 	}
 
-	/* SEND based (non-RDMA flow) */
+	
 	kefalnd_fill_imm_msg(conn, lntmsg, tx, hdr);
 
-	/* finalise lntmsg on completion */
+	
 	tx->lntmsg[0] = lntmsg;
 
 	kefalnd_launch_tx(conn, tx);
@@ -1163,11 +1163,11 @@ kefalnd_init_tx_rdma_read(struct kefa_conn *conn, struct kefa_tx *tx, int type,
 	ib_wr->next = NULL;
 	ib_wr->wr_id = (u64)tx;
 	ib_wr->sg_list = sge;
-	ib_wr->num_sge = 1; /* EFA supports a single SGE for RDMA */
+	ib_wr->num_sge = 1; 
 	ib_wr->opcode = IB_WR_RDMA_READ;
 	ib_wr->send_flags = 0;
 
-	/* RDMA specific */
+	
 	wrq->remote_addr = src_rdma->addr;
 	wrq->rkey = src_rdma->key;
 
@@ -1217,10 +1217,10 @@ kefalnd_handle_putr_req(struct kefa_ni *efa_ni, struct kefa_conn *conn,
 				  src_cookie);
 
 	if (nob == 0) {
-		/* No RDMA: local completion may happen now! */
+		
 		lnet_finalize(lntmsg, 0);
 	} else {
-		/* RDMA: lnet_finalize(lntmsg) when it completes */
+		
 		tx->lntmsg[0] = lntmsg;
 	}
 
@@ -1283,10 +1283,10 @@ kefalnd_handle_getr_req(struct kefa_ni *efa_ni, struct kefa_conn *conn,
 	}
 
 	if (nob == 0) {
-		/* No RDMA: local completion may happen now! */
+		
 		lnet_finalize(lntmsg, 0);
 	} else {
-		/* RDMA: lnet_finalize(lntmsg) when it completes */
+		
 		tx->lntmsg[0] = lntmsg;
 	}
 
@@ -1299,7 +1299,7 @@ kefalnd_handle_getr_req(struct kefa_ni *efa_ni, struct kefa_conn *conn,
 	getr_ack->src_cookie = kefalnd_tx_to_idx(tx);
 	getr_ack->rdma_desc = tx->rdma_desc;
 
-	atomic_inc(&tx->ref_cnt); /* Wait for GETR_DONE */
+	atomic_inc(&tx->ref_cnt); 
 	atomic_set(&tx->waiting_resp, true);
 
 	kefalnd_launch_tx(conn, tx);
@@ -1330,13 +1330,13 @@ kefalnd_refill_rx(struct kefa_qp *qp, u32 budget)
 
 	budget = min(budget, qp->rq_space);
 
-	/* prepare a list of recv WRs to submit */
+	
 	list_for_each_entry_safe(rx, tmp, &qp->free_rx, list_node) {
 		if (budget == 0)
 			break;
 
 		LASSERT(rx->rx_nob >= 0);
-		rx->rx_nob = -1; /* mark posted */
+		rx->rx_nob = -1; 
 
 		list_move_tail(&rx->list_node, &qp->posted_rx);
 
@@ -1460,7 +1460,7 @@ kefalnd_finv_complete(struct kefa_ni *efa_ni, struct ib_wc *wc)
 	struct kefa_fmr *fmr = (void *)wc->wr_id;
 
 	if (!fmr) {
-		/* Reaching here means FW or LND did something bad */
+		
 		CERROR("cpu[%u] received bad FINV completion with status[%u]\n",
 		       smp_processor_id(), wc->status);
 		return;
@@ -1489,7 +1489,7 @@ kefalnd_tx_complete(struct kefa_ni *efa_ni, struct ib_wc *wc)
 
 	tx = (void *)wc->wr_id;
 	if (!tx) {
-		/* Reaching here means FW or LND did something bad */
+		
 		CERROR("cpu[%u] received bad TX completion with status[%u]",
 		       smp_processor_id(), wc->status);
 		return;
@@ -1549,12 +1549,12 @@ kefalnd_handle_completion(struct kefa_ni *efa_ni,
 	if (!tx)
 		return;
 
-	/* Response handling might race with TX abort, first 'wins' */
+	
 	if (!atomic_xchg_relaxed(&tx->waiting_resp, false))
 		return;
 
-	if (tx->status == 0) { /* success so far */
-		if (status < 0) { /* failed? */
+	if (tx->status == 0) { 
+		if (status < 0) { 
 			tx->status = status;
 			tx->hstatus = LNET_MSG_STATUS_REMOTE_ERROR;
 		}
@@ -1575,7 +1575,7 @@ kefalnd_handle_getr_ack(struct kefa_ni *efa_ni,
 	if (!tx)
 		return -EINVAL;
 
-	/* Response handling might race with TX abort, first 'wins' */
+	
 	if (!atomic_xchg_relaxed(&tx->waiting_resp, false))
 		return -EINVAL;
 
@@ -1584,7 +1584,7 @@ kefalnd_handle_getr_ack(struct kefa_ni *efa_ni,
 	lnet_set_reply_msg_len(efa_ni->lnet_ni, tx->lntmsg[1],
 			       getr_ack->rdma_desc.nob);
 
-	/* source has mapped his buffers - let's read */
+	
 	kefalnd_init_tx_rdma_read(conn, tx, EFALND_MSG_GETR_DONE,
 				  &getr_ack->rdma_desc, getr_ack->src_cookie);
 
@@ -1818,7 +1818,7 @@ kefalnd_rx_complete(struct kefa_ni *efa_ni, struct ib_wc *wc)
 	rx = (void *)wc->wr_id;
 	nob = wc->byte_len;
 	if (!rx || nob == 0) {
-		/* Reaching here means FW or LND did something bad */
+		
 		CERROR("cpu[%u] received bad RX handle with status[%u] nob[%u]",
 		       smp_processor_id(), wc->status, nob);
 		return;
@@ -1832,7 +1832,7 @@ kefalnd_rx_complete(struct kefa_ni *efa_ni, struct ib_wc *wc)
 		goto failed;
 	}
 
-	LASSERT(rx->rx_nob < 0);	/* was posted */
+	LASSERT(rx->rx_nob < 0);	
 	rx->rx_nob = nob;
 
 	rc = kefalnd_unpack_msg(efa_ni, rx, wc);
@@ -1914,33 +1914,33 @@ kefalnd_scheduler(void *arg)
 again:
 		cqe_cnt = ib_poll_cq(cq->ib_cq, MAX_CQE_BATCH, wc);
 		if (cqe_cnt < 0) {
-			/* TODO - handle error is fatal */
+			
 			EFA_DEV_ERR(cq->efa_dev, "poll CQ failed. err[%d]\n",
 				    cqe_cnt);
 			continue;
 		}
 
 		if (cqe_cnt == 0) {
-			/* TODO - consider releasing CQ on every CQ poll */
+			
 			rc = ib_req_notify_cq(cq->ib_cq,
 					      IB_CQ_NEXT_COMP |
 					      IB_CQ_REPORT_MISSED_EVENTS);
 			if (rc < 0) {
-				/* TODO - This is fatal, handle error flow */
+				
 				EFA_DEV_ERR(cq->efa_dev,
 					    "request notify CQ failed. err[%d]\n",
 					    rc);
 			}
 
-			/* We missed some CQEs. try again */
+			
 			if (rc > 0)
 				goto again;
 
-			/* Try acquire a new CQ */
+			
 			continue;
 		}
 
-		/* return the CQ so other threads can take the next batch */
+		
 		spin_lock_irqsave(&sched->lock, flags);
 		if (list_empty(&cq->sched_node))
 			list_add_tail(&cq->sched_node, &sched->pend_cqs);
@@ -1949,7 +1949,7 @@ again:
 		for (i = 0; i < cqe_cnt; i++)
 			kefalnd_complete(cq->efa_dev->efa_ni, wc + i);
 
-		/* respect periodic scheduling  */
+		
 		if (need_resched())
 			cond_resched();
 	}
@@ -1982,18 +1982,18 @@ kefalnd_start_scheduler(struct kefa_sched *sched)
 	int i;
 
 	if (sched->nthreads == 0) {
-		/* decide thread count for new interface */
+		
 		if (*kefalnd_tunables.kefa_nscheds > 0) {
 			nthrs = sched->nthreads_max;
 		} else {
-			/* re-calculate thread count in case cpt changed */
+			
 			nthrs = cfs_cpt_weight(lnet_cpt_table(), sched->cpt);
 			nthrs = min(max(EFALND_MIN_SCHED_THRS, nthrs >> 1), nthrs);
 			nthrs = min(EFALND_MAX_SCHED_THRS, nthrs);
 		}
 	} else {
 		LASSERT(sched->nthreads <= sched->nthreads_max);
-		/* increase one thread if there is new interface */
+		
 		nthrs = (sched->nthreads < sched->nthreads_max);
 	}
 
@@ -2279,7 +2279,7 @@ kefalnd_create_qp(struct kefa_dev *efa_dev, struct kefa_qp *qp,
 	}
 	qp->ib_qp = ib_qp;
 
-	/* EFA doesn't support CM so change QP to ready immediately */
+	
 	qp->qkey = qkey;
 	qp_attr.qp_state = IB_QPS_INIT;
 	qp_attr.cur_qp_state = IB_QPS_RESET;
@@ -2324,7 +2324,7 @@ kefalnd_create_qp(struct kefa_dev *efa_dev, struct kefa_qp *qp,
 	INIT_LIST_HEAD(&qp->free_rx);
 	INIT_LIST_HEAD(&qp->posted_rx);
 
-	/* allocate RX buffers */
+	
 	LIBCFS_CPT_ALLOC(qp->rx_msgs, lnet_cpt_table(), efa_dev->cpt,
 			 EFALND_RX_MSGS(qp) * sizeof(*qp->rx_msgs));
 	if (!qp->rx_msgs) {
@@ -2340,7 +2340,7 @@ kefalnd_create_qp(struct kefa_dev *efa_dev, struct kefa_qp *qp,
 		goto failed;
 	}
 
-	/* initial post receives */
+	
 	rc = kefalnd_refill_rx(qp, rq_depth);
 	if (rc) {
 		EFA_DEV_ERR(efa_dev, "can't post rx msg: %d\n", rc);
@@ -2413,7 +2413,7 @@ kefalnd_create_qps(struct kefa_dev *efa_dev, int num_qps, int sq_depth,
 	memset(efa_dev->qps, 0, num_qps * sizeof(*efa_dev->qps));
 
 	for (i = 0; i < num_qps; i++) {
-		/* bit 31 is reserved for privileged qkeys */
+		
 		qkey = get_random_u32() & ~BIT(31);
 		rc = kefalnd_create_qp(efa_dev, &efa_dev->qps[i],
 				       &efa_dev->cqs[i % efa_dev->ncqs],
@@ -2436,7 +2436,7 @@ kefalnd_deschedule_cq(struct kefa_cq *cq)
 
 	sched = kefalnd.scheds[cq->cpt];
 
-	/* TODO - handle cq processing be scheduler */
+	
 	spin_lock_irqsave(&sched->lock, flags);
 	if (!list_empty(&cq->sched_node))
 		list_del_init(&cq->sched_node);
@@ -2908,7 +2908,7 @@ kefalnd_base_shutdown(void)
 	module_put(THIS_MODULE);
 }
 
-/* global initialization of EFA LND data */
+
 static int
 kefalnd_base_startup(void)
 {
@@ -2922,7 +2922,7 @@ kefalnd_base_startup(void)
 	CDEBUG(D_MALLOC, "Before LND startup: kmem[%lld]\n",
 	       libcfs_kmem_read());
 
-	/* take a reference count until we clear all module resources */
+	
 	if (!try_module_get(THIS_MODULE)) {
 		rc = -ENETDOWN;
 		goto failed;
@@ -2934,7 +2934,7 @@ kefalnd_base_startup(void)
 	if (rc)
 		goto failed;
 
-	/* allocate a shceduler per NUMA node (cpt) */
+	
 	kefalnd.scheds = cfs_percpt_alloc(lnet_cpt_table(), sizeof(*sched));
 	if (!kefalnd.scheds) {
 		rc = -ENOMEM;
@@ -2961,7 +2961,7 @@ kefalnd_base_startup(void)
 		init_waitqueue_head(&sched->waitq);
 	}
 
-	/* allocate a connection manager daemon per NUMA node (cpt) */
+	
 	kefalnd.cm_daemons = cfs_percpt_alloc(lnet_cpt_table(), sizeof(*cm_daemon));
 	if (!kefalnd.cm_daemons) {
 		rc = -ENOMEM;
@@ -3009,25 +3009,25 @@ kefalnd_shutdown(struct lnet_ni *ni)
 	if (efa_ni->self_peer_ni)
 		kefalnd_put_peer_ni(efa_ni->self_peer_ni);
 
-	/* remove network resources - connections pools, etc */
+	
 	kefalnd_destroy_tx_pool(efa_ni);
 	kefalnd_destroy_all_conns(efa_ni);
 
-	/* Remove the underlaying device if exists */
+	
 	if (efa_dev)
 		kefalnd_dev_destroy(efa_dev, true);
 
 	if (!list_empty(&efa_ni->lnd_node))
 		list_del_init(&efa_ni->lnd_node);
 
-	/* remove the NI itself */
+	
 	ni->ni_data = NULL;
 	LIBCFS_FREE(efa_ni, sizeof(*efa_ni));
 
 	CDEBUG(D_MALLOC, "After NI[%s] cleanup: kmem[%lld]\n",
 	       libcfs_nidstr(&ni->ni_nid), libcfs_kmem_read());
 
-	/* if there are no more NIs - destroy the global efalnd */
+	
 	if (list_empty(&kefalnd.efa_ni_list))
 		kefalnd_base_shutdown();
 }
@@ -3086,7 +3086,7 @@ kefalnd_startup(struct lnet_ni *ni)
 		goto failed;
 	}
 
-	/* initialize the device */
+	
 	efa_dev = kefalnd_dev_init(efa_ni, ifname, ip_addr);
 	if (IS_ERR(efa_dev)) {
 		rc = PTR_ERR(efa_dev);

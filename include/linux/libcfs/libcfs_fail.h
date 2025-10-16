@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LIBCFS_FAIL_H
@@ -45,26 +45,26 @@ enum {
  *	"0xf000 - 0xffff" for LNDs
  */
 
-/* Failure injection control */
+
 #define CFS_FAIL_MASK_SYS    0x0000FF00
 #define CFS_FAIL_MASK_LOC   (0x000000FF | CFS_FAIL_MASK_SYS)
 
 #define CFS_FAILED_BIT       30
-/* CFS_FAILED is 0x40000000 */
+
 #define CFS_FAILED          BIT(CFS_FAILED_BIT)
 
 #define CFS_FAIL_ONCE_BIT    31
-/* CFS_FAIL_ONCE is 0x80000000 */
+
 #define CFS_FAIL_ONCE       BIT(CFS_FAIL_ONCE_BIT)
 
-/* The following flags aren't made to be combined */
-#define CFS_FAIL_SKIP        0x20000000 /* skip N times then fail */
-#define CFS_FAIL_SOME        0x10000000 /* only fail N times */
-#define CFS_FAIL_RAND        0x08000000 /* fail 1/N of the times */
-#define CFS_FAIL_USR1        0x04000000 /* user flag */
 
-/* CFS_FAULT may be combined with any one of the above flags. */
-#define CFS_FAULT	     0x02000000 /* match any CFS_FAULT_CHECK */
+#define CFS_FAIL_SKIP        0x20000000 
+#define CFS_FAIL_SOME        0x10000000 
+#define CFS_FAIL_RAND        0x08000000 
+#define CFS_FAIL_USR1        0x04000000 
+
+
+#define CFS_FAULT	     0x02000000 
 
 static inline bool CFS_FAIL_PRECHECK(__u32 id)
 {
@@ -84,7 +84,7 @@ static inline int cfs_fail_check_set_loc(const char *file, const char *func,
 	int ret = 0;
 
 	if (CFS_FAIL_PRECHECK(id)) {
-		/* set failed_once before the CFS_FAILED flag is set below */
+		
 		unsigned long failed_once = cfs_fail_loc & CFS_FAILED;
 
 		ret = __cfs_fail_check_set(id, value, set);
@@ -148,7 +148,7 @@ static inline int cfs_fail_timeout_set_loc(const char *file, const char *func,
 	return 0;
 }
 
-/* If id hit cfs_fail_loc, sleep for seconds or milliseconds */
+
 #define CFS_FAIL_TIMEOUT(id, secs) \
 	UNLIKELY_TIMEOUT_SET(id, cfs_fail_val, (secs)*1000, CFS_FAIL_LOC_NOSET)
 #define CFS_FAIL_TIMEOUT_MS(id, ms) \
@@ -249,4 +249,4 @@ static inline void cfs_race_wakeup_loc(const char *file, const char *func,
 }
 #define CFS_RACE_WAKEUP(id) cfs_race_wakeup_loc(__FILE__, __func__, __LINE__,id)
 
-#endif /* _LIBCFS_FAIL_H */
+#endif 

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: LGPL-2.1+ WITH Linux-syscall-note */
+
 
 /* Copyright (c) 2021,  UT-Battelle, LLC
  *
@@ -11,9 +11,9 @@
 #include <linux/types.h>
 
 enum lnet_nl_key_format {
-	/* Is it FLOW or BLOCK */
+	
 	LNKF_FLOW		= 1,
-	/* Is it SEQUENCE or MAPPING */
+	
 	LNKF_MAPPING		= 2,
 	LNKF_SEQUENCE		= 4,
 };
@@ -65,4 +65,4 @@ struct ln_key_list {
 	struct ln_key_props	lkl_list[];
 };
 
-#endif /* __UAPI_LNET_NL_H__ */
+#endif 

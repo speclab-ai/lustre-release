@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre VFS/process permission interface
  */
@@ -24,7 +24,7 @@
 #include <lustre_compat.h>
 
 #define OBD_RUN_CTXT_MAGIC	0xC0FFEEAA
-#define OBD_CTXT_DEBUG		/* development-only debugging */
+#define OBD_CTXT_DEBUG		
 
 struct dt_device;
 
@@ -45,7 +45,7 @@ static inline void OBD_SET_CTXT_MAGIC(struct lvfs_run_ctxt *ctxt)
 #endif
 }
 
-/* ptlrpc_sec_ctx.c */
+
 void push_ctxt(struct lvfs_run_ctxt *save, struct lvfs_run_ctxt *new_ctx);
 void pop_ctxt(struct lvfs_run_ctxt *saved, struct lvfs_run_ctxt *new_ctx);
 
@@ -77,6 +77,6 @@ struct file *alloc_file_pseudo(struct inode *inode, struct vfsmount *mnt,
 	}
 	return file;
 }
-#endif /* !HAVE_ALLOC_FILE_PSEUDO */
+#endif 
 
 #endif

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/write_append_truncate.c
  *
@@ -75,7 +75,7 @@ void usage(char *prog)
 	exit(1);
 }
 
-/* Print process rank, loop count, message, and exit (i.e. a fatal error) */
+
 void rprintf(int rank, int loop, int error, const char *fmt, ...)
 __attribute__ ((format (printf, 4, 5)));
 
@@ -253,7 +253,7 @@ int main(int argc, char *argv[])
 				"%s: error allocating trunc_buf %u\n",
 				prog, trunc_max ?: append_max);
 
-		/* initial write + truncate up + append */
+		
 		read_buf = malloc(max_size);
 		if (!read_buf)
 			rprintf(rank, -1, 1,
@@ -273,12 +273,12 @@ int main(int argc, char *argv[])
 			fnames[ifnames], ifnames, strerror(errno));
 
 	for (n = 0; n < nloops; n++) {
-		/* Initialized only to quiet stupid GCC warnings */
+		
 		unsigned int append_rank = n, trunc_rank = n + 1;
 		unsigned int write_rank = 0;
 		unsigned int mpi_shared_vars[6];
 
-		/* reset the environment */
+		
 		write_char = 'A' + (n % 26);
 		append_char = 'a' + (n % 26);
 
@@ -377,7 +377,7 @@ int main(int argc, char *argv[])
 			rprintf(rank, n, error != MPI_SUCCESS,
 				"start MPI_Barrier: %d\n", error);
 
-		/* Do the race */
+		
 		if (rank == append_rank) {
 			done = 0;
 			do {
@@ -420,7 +420,7 @@ int main(int argc, char *argv[])
 
 		error = 0;
 
-		/* Check the result */
+		
 		if (rank == 0) {
 			char *tmp_buf;
 			struct stat st = { 0 };
@@ -464,7 +464,7 @@ int main(int argc, char *argv[])
 			tmp_buf = read_buf + write_size;
 
 			if (st.st_size == trunc_offset) {
-				/* Check case 1: first append then truncate */
+				
 				int tmp_size, tmp_offset;
 
 				tmp_size = trunc_size < append_size ?
@@ -490,7 +490,7 @@ int main(int argc, char *argv[])
 				}
 			} else {
 				int expected_size = trunc_offset + append_size;
-				/* Check case 2: first truncate then append */
+				
 				if (st.st_size != expected_size) {
 					rprintf(rank, n, 0,
 						"APPEND-after-trunc bad file size %llu != %u\n",

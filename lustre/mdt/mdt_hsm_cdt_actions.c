@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
@@ -108,7 +108,7 @@ static int hsm_last_cookie_cb(const struct lu_env *env, struct llog_handle *llh,
 	struct hsm_action_item *hai = &larr->arr_hai;
 	struct coordinator *cdt = data;
 
-	/* do not stop on cancel, it takes cookie from other request */
+	
 	if (hai->hai_action == HSMA_CANCEL)
 		RETURN(0);
 
@@ -137,7 +137,7 @@ static int cdt_update_last_cookie(const struct lu_env *env,
 		RETURN(rc);
 	}
 
-	/* no pending request found -> start a new session */
+	
 	if (!atomic64_read(&cdt->cdt_last_cookie))
 		atomic64_set(&cdt->cdt_last_cookie, ktime_get_real_seconds());
 
@@ -235,13 +235,13 @@ free:
  */
 #define AGENT_ACTIONS_IT_MAGIC 0x19660426
 struct agent_action_iterator {
-	int			 aai_magic;	 /**< magic number */
-	bool			 aai_eof;	 /**< all done */
-	struct lu_env		 aai_env;	 /**< lustre env for llog */
-	struct mdt_device	*aai_mdt;	 /**< metadata device */
-	struct llog_ctxt	*aai_ctxt;	 /**< llog context */
-	int			 aai_cat_index;	 /**< cata idx already shown */
-	int			 aai_index;	 /**< idx in cata shown */
+	int			 aai_magic;	 
+	bool			 aai_eof;	 
+	struct lu_env		 aai_env;	 
+	struct mdt_device	*aai_mdt;	 
+	struct llog_ctxt	*aai_ctxt;	 
+	int			 aai_cat_index;	 
+	int			 aai_index;	 
 };
 
 /**
@@ -266,7 +266,7 @@ static void *mdt_hsm_actions_debugfs_start(struct seq_file *s, loff_t *pos)
 
 	CDEBUG(D_HSM, "llog successfully initialized, start from %lld\n",
 	       *pos);
-	/* first call = rewind */
+	
 	if (*pos == 0) {
 		aai->aai_cat_index = 0;
 		aai->aai_index = 0;
@@ -309,7 +309,7 @@ static int hsm_actions_show_cb(const struct lu_env *env,
 	LASSERTF(aai->aai_magic == AGENT_ACTIONS_IT_MAGIC, "%08X\n",
 		 aai->aai_magic);
 
-	/* if rec already printed => skip */
+	
 	if (unlikely(llh->lgh_hdr->llh_cat_idx < aai->aai_cat_index))
 		RETURN(0);
 
@@ -327,7 +327,7 @@ static int hsm_actions_show_cb(const struct lu_env *env,
 		   llh->lgh_hdr->llh_cat_idx, hdr->lrh_index,
 		   PFID(&larr->arr_hai.hai_fid),
 		   PFID(&larr->arr_hai.hai_dfid),
-		   0ULL /* compound_id */, larr->arr_hai.hai_cookie,
+		   0ULL , larr->arr_hai.hai_cookie,
 		   hsm_copytool_action2name(larr->arr_hai.hai_action),
 		   larr->arr_archive_id,
 		   larr->arr_flags,
@@ -366,9 +366,9 @@ static int mdt_hsm_actions_debugfs_show(struct seq_file *s, void *v)
 	rc = llog_cat_process(&aai->aai_env, aai->aai_ctxt->loc_handle,
 			      hsm_actions_show_cb, s,
 			      aai->aai_cat_index, aai->aai_index);
-	if (rc == 0) /* all llog parsed */
+	if (rc == 0) 
 		aai->aai_eof = true;
-	if (rc == LLOG_PROC_BREAK) /* buffer full */
+	if (rc == LLOG_PROC_BREAK) 
 		rc = 0;
 
 	RETURN(rc);
@@ -458,7 +458,7 @@ static int ldebugfs_release_hsm_actions(struct inode *inode, struct file *file)
 	return seq_release(inode, file);
 }
 
-/* Methods to access HSM action list LLOG through /proc */
+
 const struct file_operations mdt_hsm_actions_fops = {
 	.owner		= THIS_MODULE,
 	.open		= ldebugfs_open_hsm_actions,

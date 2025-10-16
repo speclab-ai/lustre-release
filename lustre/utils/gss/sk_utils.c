@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (C) 2015, Trustees of Indiana University
  *
@@ -134,7 +134,7 @@ int gen_ssk_prime(struct sk_keyfile_config *config)
 #ifndef HAVE_OPENSSL_EVP_PKEY
 		return __fetch_ssk_prime(config);
 #endif
-#endif /* OPENSSL_VERSION_NUMBER >= 0x10100000L */
+#endif 
 	}
 
 	ctx = EVP_PKEY_CTX_new_from_name(NULL, "DH", NULL);
@@ -235,7 +235,7 @@ int write_config_file(char *output_file, struct sk_keyfile_config *config,
 	}
 
 	if (ascii_format) {
-		/* Generate ASCII-encoded output */
+		
 		rc = sk_encode_ascii_key(config, &ascii_data, &ascii_len);
 		if (rc) {
 			fprintf(stderr,
@@ -248,7 +248,7 @@ int write_config_file(char *output_file, struct sk_keyfile_config *config,
 						    output_file, "ASCII data");
 		free(ascii_data);
 	} else {
-		/* Binary format output */
+		
 		rc = write_data_with_error_handling(fd, config, sizeof(*config),
 						    output_file, "data");
 	}
@@ -277,7 +277,7 @@ struct sk_keyfile_config *sk_read_file(char *filename)
 	int fd;
 	ssize_t rc;
 
-	/* allow standard input override */
+	
 	if (strcmp(filename, "-") == 0)
 		fd = STDIN_FILENO;
 	else
@@ -289,7 +289,7 @@ struct sk_keyfile_config *sk_read_file(char *filename)
 		return NULL;
 	}
 
-	/* Check file permissions for regular files */
+	
 	if (fd != STDIN_FILENO) {
 		rc = fstat(fd, &st);
 		if (rc == 0 && (st.st_mode & ~(S_IFREG | 0600))) {
@@ -299,7 +299,7 @@ struct sk_keyfile_config *sk_read_file(char *filename)
 		}
 	}
 
-	/* Allocate fixed buffer - twice config size should be enough */
+	
 	max_size = 2 * sizeof(struct sk_keyfile_config);
 	file_data = malloc(max_size + 1);
 	if (!file_data) {
@@ -307,7 +307,7 @@ struct sk_keyfile_config *sk_read_file(char *filename)
 		goto out_close;
 	}
 
-	/* Read file with size limit */
+	
 	ptr = file_data;
 	while (bytes_read < max_size) {
 		rc = read(fd, ptr, max_size - bytes_read);
@@ -325,7 +325,7 @@ struct sk_keyfile_config *sk_read_file(char *filename)
 		bytes_read += rc;
 	}
 
-	/* Check if file is too large */
+	
 	if (bytes_read >= max_size) {
 		printerr(0,
 			 "File %s too large, exceeds maximum expected size\n",
@@ -337,16 +337,16 @@ struct sk_keyfile_config *sk_read_file(char *filename)
 		close(fd);
 	fd = -1;
 
-	/* Null-terminate for ASCII processing */
+	
 	file_data[bytes_read] = '\0';
 
 	if (sk_is_ascii_encoded(file_data, bytes_read)) {
 		config = sk_decode_ascii_key(file_data, bytes_read);
 
-		/* Free original buffer since decode allocates new one */
+		
 		free(file_data);
 	} else {
-		/* Binary format - check size and process */
+		
 		if (bytes_read != sizeof(struct sk_keyfile_config)) {
 			printerr(0,
 				"File %s does not have a complete key: got %zu bytes, expected %zu bytes\n",
@@ -355,7 +355,7 @@ struct sk_keyfile_config *sk_read_file(char *filename)
 			goto out_free;
 		}
 
-		/* Use the existing buffer as config */
+		
 		config = (struct sk_keyfile_config *)file_data;
 	}
 
@@ -391,10 +391,10 @@ static key_serial_t sk_load_key(const struct sk_keyfile_config *skc,
 
 	memcpy(&payload, skc, sizeof(*skc));
 
-	/* In the keyring use the disk layout so keyctl pipe can be used */
+	
 	sk_config_cpu_to_disk(&payload);
 
-	/* Check to see if a key is already loaded matching description */
+	
 	key = keyctl_search(KEY_SPEC_USER_KEYRING, "user", description, 0);
 	if (key != -1)
 		printerr(2, "Key %d found in session keyring, replacing\n",
@@ -450,7 +450,7 @@ read_sk:
 	if (!config)
 		return -ENOKEY;
 
-	/* Similar to ssh, require adequate care of key files */
+	
 	if (buf.st_mode & (S_IRGRP | S_IWGRP | S_IWOTH | S_IXOTH)) {
 		printerr(0,
 			 "Shared key files must be readable/writeable only by owner\n");
@@ -466,7 +466,7 @@ read_sk:
 	 * the nodemap name is appended to the key description to uniquely
 	 * identify it */
 	if (config->skc_type & SK_TYPE_MGS) {
-		/* Any key can be an MGS key as long as we are told to use it */
+		
 		rc = snprintf(description, SK_DESCRIPTION_SIZE, "lustre:MGS:%s",
 			      config->skc_nodemap);
 		if (rc >= SK_DESCRIPTION_SIZE) {
@@ -485,7 +485,7 @@ read_sk:
 			 */
 			config->skc_type = SK_TYPE_CLIENT;
 
-			/* This message is verified by sanity-sec.sh test_100 */
+			
 			printf("Generating DH parameters to turn %s into a client key, this can take a while...\n",
 				path);
 			if (gen_ssk_prime(config))
@@ -496,7 +496,7 @@ read_sk:
 			goto read_sk;
 		}
 
-		/* Server keys need to have the file system name in the key */
+		
 		if (config->skc_fsname[0] == '\0') {
 			printerr(0,
 				 "Key configuration has no file system attribute.  Can't load as server type\n");
@@ -515,7 +515,7 @@ read_sk:
 		}
 	}
 	if (config->skc_type & SK_TYPE_CLIENT) {
-		/* Load client file system key */
+		
 		if (config->skc_fsname[0] != '\0') {
 			rc = snprintf(description, SK_DESCRIPTION_SIZE,
 				      "lustre:%s", config->skc_fsname);
@@ -530,7 +530,7 @@ read_sk:
 			}
 		}
 
-		/* Load client MGC keys */
+		
 		for (i = 0; i < MAX_MGSNIDS; i++) {
 			if (config->skc_mgsnids[i] == LNET_NID_ANY)
 				continue;
@@ -657,10 +657,10 @@ int sk_validate_config(const struct sk_keyfile_config *config)
 		return -1;
 	}
 
-	/* Check for terminating nulls on strings */
+	
 	for (i = 0; i < sizeof(config->skc_fsname) &&
 	     config->skc_fsname[i] != '\0';  i++)
-		; /* empty loop */
+		; 
 	if (i == sizeof(config->skc_fsname)) {
 		printerr(0, "File system name not null terminated\n");
 		return -1;
@@ -668,7 +668,7 @@ int sk_validate_config(const struct sk_keyfile_config *config)
 
 	for (i = 0; i < sizeof(config->skc_nodemap) &&
 	     config->skc_nodemap[i] != '\0';  i++)
-		; /* empty loop */
+		; 
 	if (i == sizeof(config->skc_nodemap)) {
 		printerr(0, "Nodemap name not null terminated\n");
 		return -1;
@@ -720,7 +720,7 @@ struct sk_keyfile_config *sk_decode_ascii_key(char *ascii_data, size_t len)
 		return NULL;
 	}
 
-	/* Skip the header string and any whitespace */
+	
 	encoded_start = ascii_data + SK_ASCII_HEADER_LEN;
 	while (encoded_start < ascii_data + len &&
 	       (*encoded_start == ' ' || *encoded_start == '\t' ||
@@ -733,7 +733,7 @@ struct sk_keyfile_config *sk_decode_ascii_key(char *ascii_data, size_t len)
 		return NULL;
 	}
 
-	/* Remove trailing whitespace */
+	
 	while (encoded_len > 0 &&
 	       (encoded_start[encoded_len - 1] == ' ' ||
 		encoded_start[encoded_len - 1] == '\t' ||
@@ -751,14 +751,14 @@ struct sk_keyfile_config *sk_decode_ascii_key(char *ascii_data, size_t len)
 		return NULL;
 	}
 
-	/* Allocate new buffer for the result */
+	
 	config = malloc(sizeof(struct sk_keyfile_config));
 	if (!config) {
 		printerr(0, "Failed to allocate memory for config\n");
 		return NULL;
 	}
 
-	/* Copy the decoded data to the result buffer */
+	
 	memcpy(config, ascii_data, sizeof(struct sk_keyfile_config));
 
 	return config;
@@ -801,11 +801,11 @@ int sk_encode_ascii_key(const struct sk_keyfile_config *config,
 		return -1;
 	}
 
-	/* header */
+	
 	memcpy(output, SK_ASCII_HEADER, SK_ASCII_HEADER_LEN);
 
 	ptr = output + SK_ASCII_HEADER_LEN;
-	len = encoded_len + 1; /* +1 for trailing space padding */
+	len = encoded_len + 1; 
 	rc = gss_base64url_encode(&ptr, &len, (const __u8 *)config,
 				  sizeof(*config));
 	if (rc < 0) {
@@ -814,7 +814,7 @@ int sk_encode_ascii_key(const struct sk_keyfile_config *config,
 		return -1;
 	}
 
-	/* back up pointer to trailing space and bound check for new line */
+	
 	ptr--;
 	if (ptr < output || ptr > output + total_len - 2) {
 		printerr(0,
@@ -822,7 +822,7 @@ int sk_encode_ascii_key(const struct sk_keyfile_config *config,
 		free(output);
 		return -1;
 	}
-	/* add newline, overwrite trailing space */
+	
 	*ptr++ = '\n';
 	*ptr = '\0';
 
@@ -953,12 +953,12 @@ struct sk_cred *sk_create_cred(const char *tgt, const char *nodemap,
 	memset(description, 0, sizeof(description));
 	memset(fsname, 0, sizeof(fsname));
 
-	/* extract the file system name from target */
+	
 	ptr = index(tgt, '-');
 	if (!ptr) {
 		len = strlen(tgt);
 
-		/* This must be an MGC target */
+		
 		if (strncmp(tgt, "MGC", 3) || len <= 3) {
 			printerr(0, "Invalid target name\n");
 			return NULL;
@@ -1041,7 +1041,7 @@ struct sk_cred *sk_create_cred(const char *tgt, const char *nodemap,
 		goto out_err;
 	}
 
-	/* this initializes all gss_buffer_desc to empty as well */
+	
 	memset(skc, 0, sizeof(*skc));
 
 	skc->sc_flags = flags;
@@ -1072,7 +1072,7 @@ struct sk_cred *sk_create_cred(const char *tgt, const char *nodemap,
 	strcpy(kctx->skc_crypt_alg, sk_crypt2name(config->skc_crypt_alg));
 	kctx->skc_expire = config->skc_expire;
 
-	/* key payload format is in bits, convert to bytes */
+	
 	kctx->skc_shared_key.length = config->skc_shared_keylen / 8;
 	kctx->skc_shared_key.value = malloc(kctx->skc_shared_key.length);
 	if (!kctx->skc_shared_key.value) {
@@ -1170,7 +1170,7 @@ static inline bool sk_check_dh(const DH *dh, int num_rounds, bool fullcheck)
 		return false;
 	}
 	BN_CTX_start(ctx);
-	r = BN_CTX_get(ctx); /* must be called before "ctx" used elsewhere */
+	r = BN_CTX_get(ctx); 
 
 	rc = BN_is_prime_ex(p, num_rounds, ctx, NULL);
 	if (rc == 0)
@@ -1283,7 +1283,7 @@ int sk_speedtest_dh_valid(unsigned int usec_check_max, pid_t *child)
 		return 0;
 	}
 
-	/* now in forked child process, start speed test */
+	
 
 	dh = DH_new();
 	if (!dh)
@@ -1300,7 +1300,7 @@ int sk_speedtest_dh_valid(unsigned int usec_check_max, pid_t *child)
 	if (!BN_set_word(g, SK_GENERATOR))
 		goto free_g;
 
-	/* "dh" takes over freeing of 'p' and 'g' if this succeeds */
+	
 	if (!DH_set0_pqg(dh, p, NULL, g)) {
 	free_g:
 		BN_free(g);
@@ -1315,7 +1315,7 @@ int sk_speedtest_dh_valid(unsigned int usec_check_max, pid_t *child)
 		unsigned int usec_this;
 		int j;
 
-		/* get max duration of 4 runs at current number of rounds */
+		
 		usec_this = 0;
 		for (j = 0; j < 4; j++) {
 			struct timeval now, prev;
@@ -1323,7 +1323,7 @@ int sk_speedtest_dh_valid(unsigned int usec_check_max, pid_t *child)
 
 			gettimeofday(&prev, NULL);
 			if (!sk_is_dh_valid(dh, num_rounds)) {
-				/* if test_prime is found bad, use default */
+				
 				prev_rounds = 0;
 				goto free_dh;
 			}
@@ -1353,7 +1353,7 @@ free_dh:
 
 	return prev_rounds;
 }
-#endif /* !HAVE_OPENSSL_EVP_PKEY */
+#endif 
 
 #ifdef HAVE_OPENSSL_EVP_PKEY
 static uint32_t __sk_gen_params(struct sk_cred *skc, BIGNUM *p, BIGNUM *g,
@@ -1393,7 +1393,7 @@ static uint32_t __sk_gen_params(struct sk_cred *skc, BIGNUM *p, BIGNUM *g,
 		goto err;
 	}
 
-	/* Verify that we have a safe prime and valid generator */
+	
 	if (!sk_is_dh_valid(ctx_from_key))
 		goto err;
 
@@ -1428,14 +1428,14 @@ err:
 	BN_free(p);
 	return rc;
 }
-#else /* !HAVE_OPENSSL_EVP_PKEY */
+#else 
 static uint32_t __sk_gen_params(struct sk_cred *skc, BIGNUM *p, BIGNUM *g,
 				int num_rounds)
 {
 	const BIGNUM *pub_key;
 
-	/* Populate DH parameters */
-	/* "dh" takes over freeing of 'p' and 'g' if this succeeds */
+	
+	
 	skc->sc_params = DH_new();
 	if (!skc->sc_params || !DH_set0_pqg(skc->sc_params, p, NULL, g)) {
 		printerr(0, "Failed to set pqg\n");
@@ -1444,7 +1444,7 @@ static uint32_t __sk_gen_params(struct sk_cred *skc, BIGNUM *p, BIGNUM *g,
 		return GSS_S_FAILURE;
 	}
 
-	/* Verify that we have a safe prime and valid generator */
+	
 	if (!sk_is_dh_valid(skc->sc_params, num_rounds))
 		return GSS_S_FAILURE;
 
@@ -1466,7 +1466,7 @@ static uint32_t __sk_gen_params(struct sk_cred *skc, BIGNUM *p, BIGNUM *g,
 
 	return GSS_S_COMPLETE;
 }
-#endif /* HAVE_OPENSSL_EVP_PKEY */
+#endif 
 
 /**
  * Populates the DH parameters for the DHKE
@@ -1506,7 +1506,7 @@ uint32_t sk_gen_params(struct sk_cred *skc, int num_rounds)
 		return GSS_S_FAILURE;
 	}
 
-	/* We use a static generator for shared key */
+	
 	g = BN_new();
 	if (!g) {
 		printerr(0, "Failed to allocate new BIGNUM\n");
@@ -1607,7 +1607,7 @@ int sk_sign_bufs(gss_buffer_desc *key, gss_buffer_desc *bufs, const int numbufs,
 		}
 	}
 
-	/* The result gets populated in hmac */
+	
 	if (EVP_MAC_final(ctx, hmac->value, &len, hashlen) != 1) {
 		printerr(0, "Failed to finalize HMAC\n");
 		goto out;
@@ -1689,7 +1689,7 @@ void sk_free_cred(struct sk_cred *skc)
 	if (skc->sc_hmac.value)
 		free(skc->sc_hmac.value);
 
-	/* Overwrite keys and IV before freeing */
+	
 	if (skc->sc_dh_shared_key.value) {
 		memset(skc->sc_dh_shared_key.value, 0,
 		       skc->sc_dh_shared_key.length);
@@ -1879,7 +1879,7 @@ int sk_compute_keys(struct sk_cred *skc)
 	if (rc == 0)
 		return -EINVAL;
 
-	/* Encryption key is only populated in privacy mode */
+	
 	if ((skc->sc_flags & LGSS_SVC_PRIV) == 0)
 		return 0;
 
@@ -1957,7 +1957,7 @@ static uint32_t __sk_compute_dh_key(struct sk_cred *skc,
 out_err:
 	EVP_PKEY_CTX_free(ctx);
 	EVP_PKEY_free(peerkey);
-#else /* !HAVE_OPENSSL_EVP_PKEY */
+#else 
 	BIGNUM *remote_pub_key;
 
 	remote_pub_key = BN_bin2bn(pub_key->value, pub_key->length, NULL);
@@ -1975,7 +1975,7 @@ out_err:
 		goto out_err;
 	}
 
-	/* This computes the shared key from the DHKE */
+	
 	dh_shared->length = DH_compute_key(dh_shared->value, remote_pub_key,
 					   skc->sc_params);
 	if (dh_shared->length == -1) {
@@ -1987,7 +1987,7 @@ out_err:
 	rc = GSS_S_COMPLETE;
 out_err:
 	BN_free(remote_pub_key);
-#endif /* HAVE_OPENSSL_EVP_PKEY */
+#endif 
 	return rc;
 }
 
@@ -2111,16 +2111,16 @@ int sk_decode_netstring(gss_buffer_desc *bufs, int numbufs, gss_buffer_desc *ns)
 	int i;
 
 	for (i = 0; i < numbufs; i++) {
-		/* read the size of first buffer */
+		
 		rc = sscanf(ptr, "%9u", &size);
 		if (rc < 1)
 			goto out_err;
 		digits = (size) ? ceil(log10(size + 1)) : 1;
 
-		/* sep of current string */
+		
 		sep = size + digits + 2;
 
-		/* check to make sure it's valid */
+		
 		if (remain < sep || ptr[digits] != ':' ||
 		    ptr[sep - 1] != ',')
 			goto out_err;
@@ -2172,7 +2172,7 @@ int sk_encode_netstring(gss_buffer_desc *bufs, int numbufs,
 	int rc;
 	int i;
 
-	/* size of string in decimal, string size, colon, and comma */
+	
 	for (i = 0; i < numbufs; i++) {
 
 		if (bufs[i].length == 0)
@@ -2191,20 +2191,20 @@ int sk_encode_netstring(gss_buffer_desc *bufs, int numbufs,
 
 	ptr = ns->value;
 	for (i = 0; i < numbufs; i++) {
-		/* size */
+		
 		rc = scnprintf((char *) ptr, size, "%zu:", bufs[i].length);
 		ptr += rc;
 
-		/* contents */
+		
 		memcpy(ptr, bufs[i].value, bufs[i].length);
 		ptr += bufs[i].length;
 
-		/* delimeter */
+		
 		*ptr++ = ',';
 
 		size -= bufs[i].length + rc + 1;
 
-		/* should not happen */
+		
 		if (size < 0)
 			abort();
 	}

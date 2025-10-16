@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2025-2026, DDN/Whamcloud, Inc.
@@ -15,7 +15,7 @@
 
 #include <linux/rhashtable.h>
 
-/* Store key and value together in @he_buf. */
+
 struct hash_index_entry {
 	struct rhash_head	he_hash;
 	struct list_head	he_list_item;
@@ -25,7 +25,7 @@ struct hash_index_entry {
 	char			he_buf[];
 };
 
-/* Index access via @rhashtable. */
+
 struct hash_index {
 	struct rhashtable		hi_htbl;
 	struct rhashtable_params	hi_htbl_params;
@@ -41,6 +41,6 @@ int hash_index_insert(struct hash_index *hind, void *key, size_t keylen,
 		      void *rec, size_t reclen);
 void hash_index_remove(struct hash_index *hind, const void *key);
 
-/* TODO: Index access via Maple Tree. Only support in newer kernels. */
 
-#endif /* __OSD_INDEX_H_ */
+
+#endif 

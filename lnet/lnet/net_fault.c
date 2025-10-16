@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: GPL-2.0
 
-/* Copyright (c) 2014, 2017, Intel Corporation. */
 
-/* This file is part of Lustre, http://www.lustre.org/
+
+
+/* This file is part of Lustre, http:
  *
  * Lustre network fault simulation
  *
@@ -22,11 +22,11 @@
 				 LNET_GET_BIT | LNET_REPLY_BIT)
 
 struct lnet_drop_rule {
-	/** link chain on the_lnet.ln_drop_rules */
+	
 	struct list_head		dr_link;
-	/** attributes of this rule */
+	
 	struct lnet_fault_large_attr	dr_attr;
-	/** lock to protect \a dr_drop_at and \a dr_stat */
+	
 	spinlock_t			dr_lock;
 	/**
 	 * the message sequence to drop, which means message is dropped when
@@ -37,9 +37,9 @@ struct lnet_drop_rule {
 	 * seconds to drop the next message, it's exclusive with dr_drop_at
 	 */
 	time64_t			dr_drop_time;
-	/** baseline to caculate dr_drop_time */
+	
 	time64_t			dr_time_base;
-	/** statistic of dropped messages */
+	
 	struct lnet_fault_stat		dr_stat;
 };
 
@@ -100,7 +100,7 @@ lnet_fault_nid_match(struct lnet_nid *nid, struct lnet_nid *msg_nid)
 	if (LNET_NID_NET(nid) != LNET_NID_NET(msg_nid))
 		return false;
 
-	/* 255.255.255.255@net is wildcard for all addresses in a network */
+	
 	return __be32_to_cpu(nid->nid_addr[0]) == LNET_NIDADDR(LNET_NID_ANY);
 }
 
@@ -121,7 +121,7 @@ lnet_fault_attr_match(struct lnet_fault_large_attr *attr,
 
 	/* NB: ACK and REPLY have no portal, but they should have been
 	 * rejected by message mask */
-	if (attr->fa_ptl_mask != 0 && /* has portal filter */
+	if (attr->fa_ptl_mask != 0 && 
 	    !(attr->fa_ptl_mask & (1ULL << portal)))
 		return false;
 
@@ -132,12 +132,12 @@ static int
 lnet_fault_attr_validate(struct lnet_fault_large_attr *attr)
 {
 	if (attr->fa_msg_mask == 0)
-		attr->fa_msg_mask = LNET_MSG_MASK; /* all message types */
+		attr->fa_msg_mask = LNET_MSG_MASK; 
 
-	if (attr->fa_ptl_mask == 0) /* no portal filter */
+	if (attr->fa_ptl_mask == 0) 
 		return 0;
 
-	/* NB: only PUT and GET can be filtered if portal filter has been set */
+	
 	attr->fa_msg_mask &= LNET_GET_BIT | LNET_PUT_BIT;
 	if (attr->fa_msg_mask == 0) {
 		CDEBUG(D_NET, "can't find valid message type bits %x\n",
@@ -150,7 +150,7 @@ lnet_fault_attr_validate(struct lnet_fault_large_attr *attr)
 static void
 lnet_fault_stat_inc(struct lnet_fault_stat *stat, unsigned int type)
 {
-	/* NB: fs_counter is NOT updated by this function */
+	
 	switch (type) {
 	case LNET_MSG_PUT:
 		stat->fs_put++;
@@ -364,7 +364,7 @@ lnet_fault_match_health(enum lnet_msg_hstatus *hstatus, __u32 mask)
 	int best_delta;
 	int i;
 
-	/* assign a random failure */
+	
 	choice = get_random_u32_below(LNET_MSG_STATUS_END - LNET_MSG_STATUS_OK);
 	if (choice == 0)
 		choice++;
@@ -379,7 +379,7 @@ lnet_fault_match_health(enum lnet_msg_hstatus *hstatus, __u32 mask)
 		return;
 	}
 
-	/* round to the closest ON bit */
+	
 	i = HSTATUS_END;
 	best_delta = HSTATUS_END;
 	while (i > 0) {
@@ -430,7 +430,7 @@ drop_rule_match(struct lnet_drop_rule *rule,
 	    (!hstatus && attr->u.drop.da_health_error_mask))
 		return false;
 
-	/* match this rule, check drop rate now */
+	
 	spin_lock(&rule->dr_lock);
 	if (attr->u.drop.da_random) {
 		int value = get_random_u32_below(attr->u.drop.da_interval);
@@ -438,7 +438,7 @@ drop_rule_match(struct lnet_drop_rule *rule,
 			drop = true;
 		else
 			drop = false;
-	} else if (rule->dr_drop_time != 0) { /* time based drop */
+	} else if (rule->dr_drop_time != 0) { 
 		time64_t now = ktime_get_seconds();
 
 		rule->dr_stat.fs_count++;
@@ -457,7 +457,7 @@ drop_rule_match(struct lnet_drop_rule *rule,
 			       rule->dr_drop_time);
 		}
 
-	} else { /* rate based drop */
+	} else { 
 		__u64 count;
 
 		drop = rule->dr_stat.fs_count++ == rule->dr_drop_at;
@@ -473,7 +473,7 @@ drop_rule_match(struct lnet_drop_rule *rule,
 
 drop_matched:
 
-	if (drop) { /* drop this message, update counters */
+	if (drop) { 
 		if (hstatus)
 			lnet_fault_match_health(hstatus,
 				attr->u.drop.da_health_error_mask);
@@ -522,19 +522,19 @@ lnet_drop_rule_match(struct lnet_hdr *hdr,
 /**
  * LNet Delay Simulation
  */
-/** timestamp (second) to send delayed message */
+
 #define msg_delay_send		 msg_ev.hdr_data
 
 struct lnet_delay_rule {
-	/** link chain on the_lnet.ln_delay_rules */
+	
 	struct list_head		dl_link;
-	/** link chain on delay_dd.dd_sched_rules */
+	
 	struct list_head		dl_sched_link;
-	/** attributes of this rule */
+	
 	struct lnet_fault_large_attr	dl_attr;
-	/** lock to protect \a below members */
+	
 	spinlock_t			dl_lock;
-	/** refcount of delay rule */
+	
 	struct kref		dl_refcount;
 	/**
 	 * the message sequence to delay, which means message is delayed when
@@ -545,32 +545,32 @@ struct lnet_delay_rule {
 	 * seconds to delay the next message, it's exclusive with dl_delay_at
 	 */
 	time64_t			dl_delay_time;
-	/** baseline to caculate dl_delay_time */
+	
 	time64_t			dl_time_base;
-	/** seconds until we send the next delayed message */
+	
 	time64_t			dl_msg_send;
-	/** delayed message list */
+	
 	struct list_head		dl_msg_list;
-	/** statistic of delayed messages */
+	
 	struct lnet_fault_stat		dl_stat;
-	/** timer to wakeup delay_daemon */
+	
 	struct timer_list		dl_timer;
 };
 
 struct delay_daemon_data {
-	/** serialise rule add/remove */
+	
 	struct mutex		dd_mutex;
-	/** protect rules on \a dd_sched_rules */
+	
 	spinlock_t		dd_lock;
-	/** scheduled delay rules (by timer) */
+	
 	struct list_head	dd_sched_rules;
-	/** deamon thread sleeps at here */
+	
 	wait_queue_head_t	dd_waitq;
-	/** controler (lctl command) wait at here */
+	
 	wait_queue_head_t	dd_ctl_waitq;
-	/** deamon is running */
+	
 	unsigned int		dd_running;
-	/** deamon stopped */
+	
 	unsigned int		dd_stopped;
 };
 
@@ -606,9 +606,9 @@ delay_rule_match(struct lnet_delay_rule *rule, struct lnet_nid *src,
 				   dst, type, portal))
 		return false;
 
-	/* match this rule, check delay rate now */
+	
 	spin_lock(&rule->dl_lock);
-	if (rule->dl_delay_time != 0) { /* time based delay */
+	if (rule->dl_delay_time != 0) { 
 		rule->dl_stat.fs_count++;
 		delay = now >= rule->dl_delay_time;
 		if (delay) {
@@ -625,11 +625,11 @@ delay_rule_match(struct lnet_delay_rule *rule, struct lnet_nid *src,
 			       rule->dl_delay_time);
 		}
 
-	} else { /* rate based delay */
+	} else { 
 		__u64 count;
 
 		delay = rule->dl_stat.fs_count++ == rule->dl_delay_at;
-		/* generate the next random rate sequence */
+		
 		count = rule->dl_stat.fs_count;
 		if (do_div(count, attr->u.delay.la_rate) == 0) {
 			rule->dl_delay_at = rule->dl_stat.fs_count +
@@ -645,7 +645,7 @@ delay_rule_match(struct lnet_delay_rule *rule, struct lnet_nid *src,
 		return false;
 	}
 
-	/* delay this message, update counters */
+	
 	lnet_fault_stat_inc(&rule->dl_stat, type);
 	rule->dl_stat.u.delay.ls_delayed++;
 
@@ -672,7 +672,7 @@ lnet_delay_rule_match_locked(struct lnet_hdr *hdr, struct lnet_msg *msg)
 	unsigned int		 typ = hdr->type;
 	unsigned int		 ptl = -1;
 
-	/* NB: called with hold of lnet_net_lock */
+	
 
 	/* NB: if Portal is specified, then only PUT and GET will be
 	 * filtered by delay rule */
@@ -690,7 +690,7 @@ lnet_delay_rule_match_locked(struct lnet_hdr *hdr, struct lnet_msg *msg)
 	return false;
 }
 
-/** check out delayed messages for send */
+
 static void
 delayed_msg_check(struct lnet_delay_rule *rule, bool all,
 		  struct list_head *msg_list)
@@ -740,7 +740,7 @@ delayed_msg_process(struct list_head *msg_list, bool drop)
 		int		rc;
 
 		if (msg->msg_sending) {
-			/* Delayed send */
+			
 			list_del_init(&msg->msg_list);
 			ni = msg->msg_txni;
 			CDEBUG(D_NET, "TRACE: msg %p %s -> %s : %s\n", msg,
@@ -751,7 +751,7 @@ delayed_msg_process(struct list_head *msg_list, bool drop)
 			continue;
 		}
 
-		/* Delayed receive */
+		
 		LASSERT(msg->msg_rxpeer != NULL);
 		LASSERT(msg->msg_rxni != NULL);
 
@@ -779,7 +779,7 @@ delayed_msg_process(struct list_head *msg_list, bool drop)
 				fallthrough;
 			case LNET_CREDIT_WAIT:
 				continue;
-			default: /* failures */
+			default: 
 				break;
 			}
 		}
@@ -816,7 +816,7 @@ lnet_delay_rule_check(void)
 		spin_unlock_bh(&delay_dd.dd_lock);
 
 		delayed_msg_check(rule, false, &msgs);
-		/* -1 for delay_dd.dd_sched_rules */
+		
 		kref_put(&rule->dl_refcount, delay_rule_free);
 	}
 
@@ -824,7 +824,7 @@ lnet_delay_rule_check(void)
 		delayed_msg_process(&msgs, false);
 }
 
-/** deamon thread to handle delayed messages */
+
 static int
 lnet_delay_rule_daemon(void *arg)
 {
@@ -838,7 +838,7 @@ lnet_delay_rule_daemon(void *arg)
 		lnet_delay_rule_check();
 	}
 
-	/* in case more rules have been enqueued after my last check */
+	
 	lnet_delay_rule_check();
 	delay_dd.dd_stopped = 1;
 	wake_up(&delay_dd.dd_ctl_waitq);
@@ -988,11 +988,11 @@ lnet_delay_rule_del(struct lnet_nid *src, struct lnet_nid *dst, bool shutdown)
 		       libcfs_nidstr(&rule->dl_attr.fa_dst),
 		       rule->dl_attr.u.delay.la_rate,
 		       rule->dl_attr.u.delay.la_interval);
-		/* refcount is taken over by rule_list */
+		
 		list_move(&rule->dl_link, &rule_list);
 	}
 
-	/* check if we need to shutdown delay_daemon */
+	
 	cleanup = list_empty(&the_lnet.ln_delay_rules) &&
 		  !list_empty(&rule_list);
 	lnet_net_unlock(LNET_LOCK_EX);
@@ -1002,12 +1002,12 @@ lnet_delay_rule_del(struct lnet_nid *src, struct lnet_nid *dst, bool shutdown)
 
 		timer_delete_sync(&rule->dl_timer);
 		delayed_msg_check(rule, true, &msg_list);
-		/* -1 for the_lnet.ln_delay_rules */
+		
 		kref_put(&rule->dl_refcount, delay_rule_free);
 		n++;
 	}
 
-	if (cleanup) { /* no more delay rule, shutdown delay_daemon */
+	if (cleanup) { 
 		LASSERT(delay_dd.dd_running);
 		delay_dd.dd_running = 0;
 		wake_up(&delay_dd.dd_waitq);

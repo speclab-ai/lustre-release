@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2020, 2022, DDN Storage Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Batch Metadata Updating on the client (MDC)
  *
@@ -77,7 +77,7 @@ static int mdc_batch_getattr_pack(struct batch_update_head *head,
 	req_capsule_subreq_init(&pill, &RQF_BUT_GETATTR, NULL,
 				reqmsg, NULL, RCL_CLIENT);
 
-	/* send name of security xattr to get upon intent */
+	
 	if (it->it_op & (IT_LOOKUP | IT_GETATTR) &&
 	    req_capsule_has_field(&pill, &RMF_FILE_SECCTX_NAME,
 				  RCL_CLIENT) &&
@@ -98,13 +98,13 @@ static int mdc_batch_getattr_pack(struct batch_update_head *head,
 	}
 
 	req_capsule_client_pack(&pill);
-	/* pack the intent */
+	
 	lit = req_capsule_client_get(&pill, &RMF_LDLM_INTENT);
 	lit->opc = (__u64)it->it_op;
 
-	easize = MAX_MD_SIZE_OLD; /* obd->u.cli.cl_default_mds_easize; */
+	easize = MAX_MD_SIZE_OLD; 
 
-	/* pack the intended request */
+	
 	mdc_getattr_pack(&pill, valid, it->it_open_flags, op_data, easize);
 
 	item->mop_lock_flags |= LDLM_FL_HAS_INTENT;
@@ -117,7 +117,7 @@ static int mdc_batch_getattr_pack(struct batch_update_head *head,
 	req_capsule_set_size(&pill, &RMF_ACL, RCL_SERVER,
 			     LUSTRE_POSIX_ACL_MAX_SIZE_OLD);
 	req_capsule_set_size(&pill, &RMF_DEFAULT_MDT_MD, RCL_SERVER,
-			     /*sizeof(struct lmv_user_md)*/MIN_MD_SIZE);
+			     MIN_MD_SIZE);
 
 	if (have_secctx) {
 		char *secctx_name;

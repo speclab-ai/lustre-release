@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright 2015 Cray Inc, all rights reserved.
@@ -77,22 +77,22 @@
 			(unsigned long long)time(NULL));		\
 	} while (0)
 
-/* This test will copy from source_file to dest_file */
+
 static const char *source_file;
 static char *dest_file;
-static unsigned long source_crc; /* CRC32 of original file */
+static unsigned long source_crc; 
 
 /*
  * A small CRC32 implementation, from RFC 1952
  */
 
-/* Table of CRCs of all 8-bit messages. */
+
 static unsigned long crc_table[256];
 
-/* Flag: has the table been computed? Initially false. */
+
 static int crc_table_computed;
 
-/* Make the table for a fast CRC. */
+
 static void make_crc_table(void)
 {
 	unsigned long c;
@@ -138,13 +138,13 @@ static unsigned long update_crc(unsigned long crc,
 	return c ^ 0xffffffffL;
 }
 
-/* Cleanup our test file. */
+
 static void cleanup(void)
 {
 	unlink(dest_file);
 }
 
-/* Compute the CRC32 of a file */
+
 static unsigned long compute_crc(const char *fname)
 {
 	unsigned char buf[1024*1024];
@@ -220,7 +220,7 @@ static int sendfile_copy(const char *source, int source_gid,
 			dest_gid, dest, strerror(-rc));
 	}
 
-	/* Transfer by 10M blocks */
+	
 	while (filesize != 0) {
 		size_t to_copy = 10*1024*1024;
 		ssize_t sret;
@@ -267,7 +267,7 @@ static int sendfile_copy(const char *source, int source_gid,
 	return 0;
 }
 
-/* Basic sendfile, without lock taken */
+
 static void test10(void)
 {
 	unsigned long crc;
@@ -280,7 +280,7 @@ static void test10(void)
 	ASSERTF(source_crc == crc, "CRC differs: %lu and %lu", source_crc, crc);
 }
 
-/* sendfile, source locked */
+
 static void test11(void)
 {
 	unsigned long crc;
@@ -293,7 +293,7 @@ static void test11(void)
 	ASSERTF(source_crc == crc, "CRC differs: %lu and %lu", source_crc, crc);
 }
 
-/* sendfile, destination locked */
+
 static void test12(void)
 {
 	unsigned long crc;
@@ -306,7 +306,7 @@ static void test12(void)
 	ASSERTF(source_crc == crc, "CRC differs: %lu and %lu", source_crc, crc);
 }
 
-/* sendfile, source and destination locked, with same lock number */
+
 static void test13(void)
 {
 	const int gid = 8765;
@@ -320,7 +320,7 @@ static void test13(void)
 	ASSERTF(source_crc == crc, "CRC differs: %lu and %lu", source_crc, crc);
 }
 
-/* sendfile, source and destination locked, with different lock number */
+
 static void test14(void)
 {
 	unsigned long crc;
@@ -333,14 +333,14 @@ static void test14(void)
 	ASSERTF(source_crc == crc, "CRC differs: %lu and %lu", source_crc, crc);
 }
 
-/* Basic sendfile, without lock taken, to /dev/null */
+
 static void test15(void)
 {
 	sendfile_copy(source_file, 0, "/dev/null", 0);
 	sync();
 }
 
-/* sendfile, source locked, to /dev/null */
+
 static void test16(void)
 {
 	sendfile_copy(source_file, 85543, "/dev/null", 0);
@@ -372,7 +372,7 @@ int main(int argc, char *argv[])
 	cleanup();
 	atexit(cleanup);
 
-	/* Compute crc of original file */
+	
 	source_crc = compute_crc(source_file);
 
 	PERFORM(test10);

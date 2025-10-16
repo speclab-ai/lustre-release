@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file provides functions to handle IO requests from clients and
  * also LFSCK routines to check parent file identifier (PFID) consistency.
@@ -55,9 +55,9 @@ static void ofd_inconsistency_verify_one(const struct lu_env *env,
 	LASSERT(fo->ofo_pfid_checking);
 	LASSERT(!fo->ofo_pfid_verified);
 
-	lrl->lrl_fid = fo->ofo_header.loh_fid; /* OST-object itself FID. */
-	lrl->lrl_ff_client = *client_ff; /* client given PFID. */
-	lrl->lrl_ff_local = *local_ff; /* OST local stored PFID. */
+	lrl->lrl_fid = fo->ofo_header.loh_fid; 
+	lrl->lrl_ff_client = *client_ff; 
+	lrl->lrl_ff_local = *local_ff; 
 
 	rc = lfsck_in_notify_local(env, ofd->ofd_osd, lrl, NULL);
 	ofd_write_lock(env, fo);
@@ -399,7 +399,7 @@ int ofd_verify_ff(const struct lu_env *env, struct ofd_object *fo,
 		   oa->o_stripe_idx == pfid->f_stripe_idx))
 		RETURN(0);
 
-	/* Push it to the dedicated thread for further verification. */
+	
 	ofd_add_inconsistency_item(env, fo, oa);
 
 	RETURN(-EINPROGRESS);
@@ -512,7 +512,7 @@ static void ofd_handle_attrs(const struct lu_env *env, struct ofd_device *ofd,
 			GOTO(trans, rc = 0);
 		}
 
-		/* atime hasn't been updated too long, update it */
+		
 		fo->ofo_atime_ondisk = oa->o_atime;
 	}
 
@@ -628,7 +628,7 @@ static int ofd_preprw_read(const struct lu_env *env, struct obd_export *exp,
 		if (unlikely(rc < 0))
 			GOTO(buf_put, rc);
 		LASSERT(rc <= PTLRPC_MAX_BRW_PAGES);
-		/* correct index for local buffers to continue with */
+		
 		j += rc;
 		*nr_local += rc;
 		maxlnb -= rc;
@@ -733,7 +733,7 @@ static int ofd_preprw_write(const struct lu_env *env, struct obd_export *exp,
 			mutex_lock(&oseq->os_create_lock);
 			diff = oid - ofd_seq_last_oid(oseq);
 
-			/* Do sync create if the seq is about to used up */
+			
 			sync = ofd_seq_is_exhausted(ofd, oa);
 			if (sync < 0) {
 				mutex_unlock(&oseq->os_create_lock);
@@ -792,7 +792,7 @@ static int ofd_preprw_write(const struct lu_env *env, struct obd_export *exp,
 	begin = -1;
 	end = 0;
 
-	/* parse remote buffers to local buffers and prepare the latter */
+	
 	for (*nr_local = 0, i = 0, j = 0; i < obj->ioo_bufcnt; i++) {
 		begin = min_t(__u64, begin, rnb[i].rnb_offset);
 		end = max_t(__u64, end, rnb[i].rnb_offset + rnb[i].rnb_len);
@@ -804,7 +804,7 @@ static int ofd_preprw_write(const struct lu_env *env, struct obd_export *exp,
 		if (unlikely(rc < 0))
 			GOTO(err_nolock, rc);
 		LASSERT(rc <= PTLRPC_MAX_BRW_PAGES);
-		/* correct index for local buffers to continue with */
+		
 		for (k = 0; k < rc; k++) {
 			lnb[j+k].lnb_flags = rnb[i].rnb_flags;
 			lnb[j+k].lnb_flags &= ~OBD_BRW_LOCALS;
@@ -832,7 +832,7 @@ static int ofd_preprw_write(const struct lu_env *env, struct obd_export *exp,
 			GOTO(err, rc);
 	}
 
-	/* need to verify layout version */
+	
 	if (oa->o_valid & OBD_MD_LAYOUT_VERSION) {
 		rc = ofd_verify_layout_version(env, fo, oa);
 		if (rc)
@@ -865,9 +865,9 @@ err_nolock:
 err_put:
 	ofd_object_put(env, fo);
 err_commit:
-	/* tgt_grant_prepare_write() was called, so we must commit */
+	
 	tgt_grant_commit(exp, oa->o_grant_used, rc);
-	/* dealloc grants, client won't receive them */
+	
 	tgt_grant_dealloc(exp, oa);
 out:
 	/* let's still process incoming grant information packed in the oa,
@@ -913,7 +913,7 @@ int ofd_preprw(const struct lu_env *env, int cmd, struct obd_export *exp,
 		RETURN(-EPROTO);
 	}
 
-	if (tgt_ses_req(tsi) == NULL) { /* echo client case */
+	if (tgt_ses_req(tsi) == NULL) { 
 		info = ofd_info_init(env, exp);
 	} else {
 		info = tsi2ofd_info(tsi);
@@ -1044,13 +1044,13 @@ ofd_write_attr_set(const struct lu_env *env, struct ofd_device *ofd,
 		la->la_flags = LUSTRE_ENCRYPT_FL;
 	}
 
-	rc = ofd_attr_handle_id(env, ofd_obj, la, 0 /* !is_setattr */);
+	rc = ofd_attr_handle_id(env, ofd_obj, la, 0 );
 	if (rc != 0)
 		GOTO(out, rc);
 
 	if (!la->la_valid && !(oa->o_valid &
 	    (OBD_MD_FLFID | OBD_MD_FLOSTLAYOUT | OBD_MD_LAYOUT_VERSION)))
-		/* no attributes to set */
+		
 		GOTO(out, rc = 0);
 
 	th = ofd_trans_create(env, ofd);
@@ -1078,16 +1078,16 @@ ofd_write_attr_set(const struct lu_env *env, struct ofd_device *ofd,
 
 	ofd_read_lock(env, ofd_obj);
 
-	rc = ofd_attr_handle_id(env, ofd_obj, la, 0 /* !is_setattr */);
+	rc = ofd_attr_handle_id(env, ofd_obj, la, 0 );
 	if (rc != 0)
 		GOTO(out_unlock, rc);
 
 	if (!la->la_valid && !(oa->o_valid &
 	    (OBD_MD_FLFID | OBD_MD_FLOSTLAYOUT | OBD_MD_LAYOUT_VERSION)))
-		/* no attributes to set */
+		
 		GOTO(out_unlock, rc = 0);
 
-	/* set uid/gid/projid */
+	
 	if (la->la_valid) {
 		rc = dt_attr_set(env, dt_obj, la, th);
 		if (rc)
@@ -1273,7 +1273,7 @@ ofd_commitrw_write(const struct lu_env *env, struct obd_export *exp,
 
 	la->la_valid &= LA_ATIME | LA_MTIME | LA_CTIME;
 
-	/* do fake write, to simulate the write case for performance testing */
+	
 	if (CFS_FAIL_CHECK_QUIET(OBD_FAIL_OST_FAKE_RW)) {
 		struct niobuf_local *last = &lnb[niocount - 1];
 		__u64 file_size = last->lnb_file_offset + last->lnb_len;
@@ -1288,7 +1288,7 @@ ofd_commitrw_write(const struct lu_env *env, struct obd_export *exp,
 		if (file_size < la->la_size)
 			file_size = la->la_size;
 
-		/* dirty inode by setting file size */
+		
 		la->la_valid = valid | LA_SIZE;
 		la->la_size = file_size;
 
@@ -1323,12 +1323,12 @@ retry:
 			GOTO(out_stop, rc);
 	}
 
-	/* don't update atime on disk if it is older */
+	
 	if (la->la_valid & LA_ATIME && la->la_atime <= fo->ofo_atime_ondisk)
 		la->la_valid &= ~LA_ATIME;
 
 	if (la->la_valid) {
-		/* update [mac]time if needed */
+		
 		rc = dt_declare_attr_set(env, o, la, th);
 		if (rc)
 			GOTO(out_stop, rc);
@@ -1362,7 +1362,7 @@ retry:
 		}
 	}
 
-	/* get attr to return */
+	
 	rc = dt_attr_get(env, o, la);
 
 out_unlock:
@@ -1373,7 +1373,7 @@ out_stop:
 	if (rc == -ENOSPC)
 		th->th_sync = 1;
 
-	/* do this before trans stop in case commit has finished */
+	
 	if (!th->th_sync && soft_sync && !cb_registered) {
 		ofd_soft_sync_cb_add(th, exp);
 		cb_registered = true;
@@ -1404,7 +1404,7 @@ out_stop:
 		goto retry;
 	}
 	if (!soft_sync)
-		/* reset fed_soft_sync_count upon non-SOFT_SYNC RPC */
+		
 		atomic_set(&fed->fed_soft_sync_count, 0);
 	else if (atomic_inc_return(&fed->fed_soft_sync_count) ==
 		 ofd->ofd_soft_sync_limit)
@@ -1416,7 +1416,7 @@ out:
 	if (granted > 0)
 		tgt_grant_commit(exp, granted, old_rc);
 	if (rc)
-		/* dealloc grants, client won't receive them */
+		
 		tgt_grant_dealloc(exp, oa);
 	RETURN(rc);
 }
@@ -1461,7 +1461,7 @@ int ofd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 
 	LASSERT(npages > 0);
 
-	if (tgt_ses_req(tsi) == NULL) { /* echo client case */
+	if (tgt_ses_req(tsi) == NULL) { 
 		jobid = NULL;
 	} else {
 		jobid = tsi->tsi_jobid;
@@ -1495,7 +1495,7 @@ int ofd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 						       NODEMAP_FS_TO_CLIENT,
 						       oa->o_projid);
 		} else if (old_rc == 0) {
-			/* always allow ECHO client */
+			
 			if (strcmp(obd_uuid2str(&exp->exp_client_uuid),
 				   LUSTRE_ECHO_UUID) != 0 ||
 			    exp->exp_connection)
@@ -1503,7 +1503,7 @@ int ofd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 		}
 
 		if (!IS_ERR_OR_NULL(nodemap)) {
-			/* do not bypass quota enforcement if squashed uid */
+			
 			if (unlikely(mapped_uid == nodemap->nm_squash_uid)) {
 				int idx;
 
@@ -1533,7 +1533,7 @@ int ofd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 		/* don't report overquota flag if we failed before reaching
 		 * commit */
 		if (old_rc == 0 && (rc == 0 || rc == -EDQUOT)) {
-			/* return the overquota flags to client */
+			
 			if (lnb[0].lnb_flags & OBD_BRW_OVER_USRQUOTA) {
 				if (oa->o_valid & OBD_MD_FLFLAGS)
 					oa->o_flags |= OBD_FL_NO_USRQUOTA;
@@ -1588,7 +1588,7 @@ int ofd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 		oa->o_gid = mapped_gid;
 		oa->o_projid = mapped_projid;
 	} else if (cmd == OBD_BRW_READ) {
-		/* see comment on LPROC_OFD_STATS_WRITE_BYTES usage above */
+		
 		ofd_counter_incr(exp, LPROC_OFD_STATS_READ_BYTES, jobid, nob);
 		ofd_counter_incr(exp, LPROC_OFD_STATS_READ, jobid,
 				 ktime_us_delta(ktime_get(), kstart));

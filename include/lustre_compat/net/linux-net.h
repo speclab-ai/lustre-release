@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 #ifndef __LIBCFS_LINUX_NET_H__
 #define __LIBCFS_LINUX_NET_H__
@@ -40,16 +40,16 @@ static inline const char *netdev_cmd_to_name(unsigned long cmd)
 #endif
 
 #ifndef NLM_F_DUMP_FILTERED
-#define NLM_F_DUMP_FILTERED   0x20    /* Dump was filtered as requested */
+#define NLM_F_DUMP_FILTERED   0x20    
 #endif
 
 #ifndef HAVE_NLA_STRDUP
 char *nla_strdup(const struct nlattr *nla, gfp_t flags);
-#endif /* !HAVE_NLA_STRDUP */
+#endif 
 
 #ifdef HAVE_NLA_STRLCPY
 #define nla_strscpy	nla_strlcpy
-#endif /* HAVE_NLA_STRLCPY */
+#endif 
 
 #ifndef HAVE_NLA_PUT_U64_64BIT
 #define nla_put_u64_64bit(skb, type, value, padattr) \
@@ -60,7 +60,7 @@ char *nla_strdup(const struct nlattr *nla, gfp_t flags);
 
 #define NL_SET_BAD_ATTR(extack, attr)
 
-/* this can be increased when necessary - don't expose to userland */
+
 #define NETLINK_MAX_COOKIE_LEN  20
 
 /**
@@ -96,7 +96,7 @@ static inline int cfs_nla_parse_nested(struct nlattr *tb[], int maxtype,
 	return nla_parse_nested(tb, maxtype, nla, policy);
 }
 
-#else /* !HAVE_NL_PARSE_WITH_EXT_ACK */
+#else 
 
 #define cfs_nla_parse_nested    nla_parse_nested
 #define cfs_nla_parse           nla_parse
@@ -123,7 +123,7 @@ lnet_genl_dumpit_info(struct netlink_callback *cb)
 {
 	return (const struct cfs_genl_dumpit_info *)genl_dumpit_info(cb);
 }
-#endif /* HAVE_GENL_DUMPIT_INFO */
+#endif 
 
 #ifdef HAVE_KERNEL_SETSOCKOPT
 
@@ -137,7 +137,7 @@ static inline void tcp_sock_set_quickack(struct sock *sk, int opt)
 	kernel_setsockopt(sock, SOL_TCP, TCP_QUICKACK,
 			  (char *)&opt, sizeof(opt));
 }
-#endif /* HAVE_TCP_SOCK_SET_QUICKACK */
+#endif 
 
 #if !defined(HAVE_TCP_SOCK_SET_NODELAY)
 static inline void tcp_sock_set_nodelay(struct sock *sk)
@@ -148,7 +148,7 @@ static inline void tcp_sock_set_nodelay(struct sock *sk)
 	kernel_setsockopt(sock, SOL_TCP, TCP_NODELAY,
 			  (char *)&opt, sizeof(opt));
 }
-#endif /* HAVE_TCP_SOCK_SET_NODELAY */
+#endif 
 
 #if !defined(HAVE_TCP_SOCK_SET_KEEPIDLE)
 static inline int tcp_sock_set_keepidle(struct sock *sk, int opt)
@@ -158,7 +158,7 @@ static inline int tcp_sock_set_keepidle(struct sock *sk, int opt)
 	return kernel_setsockopt(sock, SOL_TCP, TCP_KEEPIDLE,
 				 (char *)&opt, sizeof(opt));
 }
-#endif /* HAVE_TCP_SOCK_SET_KEEPIDLE */
+#endif 
 
 #if !defined(HAVE_TCP_SOCK_SET_KEEPINTVL)
 static inline int tcp_sock_set_keepintvl(struct sock *sk, int opt)
@@ -168,7 +168,7 @@ static inline int tcp_sock_set_keepintvl(struct sock *sk, int opt)
 	return kernel_setsockopt(sock, SOL_TCP, TCP_KEEPINTVL,
 				 (char *)&opt, sizeof(opt));
 }
-#endif /* HAVE_TCP_SOCK_SET_KEEPINTVL */
+#endif 
 
 #if !defined(HAVE_TCP_SOCK_SET_KEEPCNT)
 static inline int tcp_sock_set_keepcnt(struct sock *sk, int opt)
@@ -178,7 +178,7 @@ static inline int tcp_sock_set_keepcnt(struct sock *sk, int opt)
 	return kernel_setsockopt(sock, SOL_TCP, TCP_KEEPCNT,
 				 (char *)&opt, sizeof(opt));
 }
-#endif /* HAVE_TCP_SOCK_SET_KEEPCNT */
+#endif 
 
 #if !defined(HAVE_IP6_SET_PREF)
 static inline void ip6_sock_set_addr_preferences(struct sock *sk,
@@ -187,7 +187,7 @@ static inline void ip6_sock_set_addr_preferences(struct sock *sk,
 	kernel_setsockopt(sk->sk_socket, SOL_IPV6, IPV6_ADDR_PREFERENCES,
 			  (char *)&pref, sizeof(pref));
 }
-#endif /* HAVE_IP6_SET_PREF */
+#endif 
 
 #if !defined(HAVE_IP_SET_TOS)
 static inline void ip_sock_set_tos(struct sock *sk, int val)
@@ -195,7 +195,7 @@ static inline void ip_sock_set_tos(struct sock *sk, int val)
 	kernel_setsockopt(sk->sk_socket, IPPROTO_IP, IP_TOS,
 			  (char *)&val, sizeof(val));
 }
-#endif /* HAVE_IP_SET_TOS */
-#endif /* HAVE_KERNEL_SETSOCKOPT */
+#endif 
+#endif 
 
-#endif /* __LIBCFS_LINUX_NET_H__ */
+#endif 

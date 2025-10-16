@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Amir Shehata <amir.shehata@intel.com>
  */
@@ -1163,12 +1163,12 @@ static int yaml_lnet_cpt_of_nid(int start, int end, char **nids)
 	yaml_event_t event;
 	int i, rc;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -1179,7 +1179,7 @@ static int yaml_lnet_cpt_of_nid(int start, int end, char **nids)
 	if (rc == 0)
 		goto free_reply;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&request);
 	if (rc == 0)
 		goto free_reply;
@@ -1528,12 +1528,12 @@ static int yaml_lnet_route(char *nw, char *gw, int hops, int prio,
 		return -EINVAL;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -1546,7 +1546,7 @@ static int yaml_lnet_route(char *nw, char *gw, int hops, int prio,
 		goto free_reply;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&output);
 	if (rc == 0) {
 		msg = "failed to initialize emitter";
@@ -1580,7 +1580,7 @@ static int yaml_lnet_route(char *nw, char *gw, int hops, int prio,
 	if (rc == 0)
 		goto emitter_error;
 
-	/* NLM_F_DUMP can have no arguments */
+	
 	if (nw || gw) {
 		NL_INIT_LIST_HEAD(&head.children);
 		nl_init_list_head(&head.list);
@@ -1666,7 +1666,7 @@ emitter_error:
 			yaml_emitter_delete(&debug);
 		} else {
 			msg = yaml_parser_get_reader_error(&reply);
-			/* If we didn't find any routes just be silent */
+			
 			if (msg && strcmp(msg, "No routes found") == 0)
 				rc = 1;
 		}
@@ -1717,7 +1717,7 @@ static int jt_add_route(int argc, char **argv)
 		case 'c':
 			rc = parse_long(optarg, &hop);
 			if (rc != 0) {
-				/* ignore option */
+				
 				hop = -1;
 				continue;
 			}
@@ -1725,7 +1725,7 @@ static int jt_add_route(int argc, char **argv)
 		case 'p':
 			rc = parse_long(optarg, &prio);
 			if (rc != 0) {
-				/* ingore option */
+				
 				prio = -1;
 				continue;
 			}
@@ -2098,12 +2098,12 @@ static int yaml_lnet_config_ni(char *net_id, char *ip2net,
 		return -EINVAL;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -2116,7 +2116,7 @@ static int yaml_lnet_config_ni(char *net_id, char *ip2net,
 		goto free_reply;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&output);
 	if (rc == 0) {
 		msg = "failed to initialize emitter";
@@ -2226,7 +2226,7 @@ static int yaml_lnet_config_ni(char *net_id, char *ip2net,
 		if (rc == 0)
 			goto emitter_error;
 
-		/* Use NI addresses instead of interface */
+		
 		if (strchr(intf->intf_name, '@') ||
 		    (strcmp(intf->intf_name, "<?>") == 0 &&
 -                    flags == NLM_F_REPLACE)) {
@@ -2306,7 +2306,7 @@ static int yaml_lnet_config_ni(char *net_id, char *ip2net,
 			if (rc == 0)
 				goto emitter_error;
 
-			/* Setup all mappings for data related to the 'health stats' */
+			
 			yaml_mapping_start_event_initialize(&event, NULL,
 							    (yaml_char_t *)YAML_MAP_TAG,
 							    1, YAML_BLOCK_MAPPING_STYLE);
@@ -2462,7 +2462,7 @@ static int jt_add_ni(int argc, char **argv)
 		case 'a':
 			rc = parse_long(optarg, &auth_key);
 			if (rc != 0) {
-				/* ignore option */
+				
 				auth_key = -1;
 				continue;
 			}
@@ -2470,7 +2470,7 @@ static int jt_add_ni(int argc, char **argv)
 		case 'b':
 			rc = parse_long(optarg, &pbc);
 			if (rc != 0) {
-				/* ignore option */
+				
 				pbc = -1;
 				continue;
 			}
@@ -2478,7 +2478,7 @@ static int jt_add_ni(int argc, char **argv)
 		case 'c':
 			rc = parse_long(optarg, &pc);
 			if (rc != 0) {
-				/* ignore option */
+				
 				pc = -1;
 				continue;
 			}
@@ -2498,7 +2498,7 @@ static int jt_add_ni(int argc, char **argv)
 		case 'm':
 			rc = parse_long(optarg, &cpp);
 			if (rc != 0) {
-				/* ignore option */
+				
 				cpp = -1;
 				continue;
 			}
@@ -2524,7 +2524,7 @@ static int jt_add_ni(int argc, char **argv)
 		case 'r':
 			rc = parse_long(optarg, &cre);
 			if (rc != 0) {
-				/* ignore option */
+				
 				cre = -1;
 				continue;
 			}
@@ -2537,7 +2537,7 @@ static int jt_add_ni(int argc, char **argv)
 		case 't':
 			rc = parse_long(optarg, &pto);
 			if (rc != 0) {
-				/* ignore option */
+				
 				pto = -1;
 				continue;
 			}
@@ -2819,7 +2819,7 @@ static int jt_show_route(int argc, char **argv)
 		case 'c':
 			rc = parse_long(optarg, &hop);
 			if (rc != 0) {
-				/* ignore option */
+				
 				hop = -1;
 				continue;
 			}
@@ -2827,7 +2827,7 @@ static int jt_show_route(int argc, char **argv)
 		case 'p':
 			rc = parse_long(optarg, &prio);
 			if (rc != 0) {
-				/* ignore option */
+				
 				prio = -1;
 				continue;
 			}
@@ -2871,10 +2871,10 @@ static int yaml_lnet_config_ni_value(int healthv, bool all, char *nidstr,
 {
 	struct lnet_ioctl_config_lnd_tunables tunables;
 	struct lnet_dlc_network_descr nw_descr;
-	char *net_id = "<255:65535>"; /* LNET_NET_ANY */
+	char *net_id = "<255:65535>"; 
 	int rc = 0;
 
-	/* For NI you can't have both setting all NIDs and a requested NID */
+	
 	if (all && nidstr)
 		return -EINVAL;
 
@@ -2975,7 +2975,7 @@ static int yaml_lnet_peer_display(yaml_parser_t *reply, bool list_only)
 				if (rc == 0)
 					break;
 
-				/* Now print NID address */
+				
 				rc = yaml_parser_parse(reply, &event);
 				if (rc == 0)
 					goto report_reply_error;
@@ -2984,14 +2984,14 @@ static int yaml_lnet_peer_display(yaml_parser_t *reply, bool list_only)
 				if (rc == 0)
 					break;
 
-				/* skip ALL peer_ni info */
+				
 				while (event.type != YAML_SEQUENCE_END_EVENT) {
 					rc = yaml_parser_parse(reply, &event);
 					if (rc == 0)
 						goto report_reply_error;
 				}
 
-				/* But keep sequence end event */
+				
 				rc = yaml_parser_parse(reply, &event);
 				if (rc == 0)
 					goto report_reply_error;
@@ -3022,7 +3022,7 @@ merge_event:
 out_err:
 	if (rc == 0) {
 		yaml_emitter_log_error(&debug, stderr);
-		rc = -EINVAL; /* Avoid reporting as reply error */
+		rc = -EINVAL; 
 	}
 report_reply_error:
 	yaml_emitter_delete(&debug);
@@ -3041,12 +3041,12 @@ static int yaml_lnet_peer(char *prim_nid, char *nidstr, bool disable_mr,
 	yaml_event_t event;
 	int rc;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -3059,7 +3059,7 @@ static int yaml_lnet_peer(char *prim_nid, char *nidstr, bool disable_mr,
 		goto free_reply;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&output);
 	if (rc == 0) {
 		msg = "failed to initialize emitter";
@@ -3251,7 +3251,7 @@ static int yaml_lnet_peer(char *prim_nid, char *nidstr, bool disable_mr,
 				rc = 0;
 				goto free_reply;
 			}
-			rc = 1; /* one means its working */
+			rc = 1; 
 
 			nl_list_for_each_entry(entry, &head.children, list) {
 				char *nid = entry->nidstr;
@@ -3320,7 +3320,7 @@ handle_health:
 			if (rc == 0)
 				goto emitter_error;
 
-			/* Setup all mappings for data related to the 'health stats' */
+			
 			yaml_mapping_start_event_initialize(&event, NULL,
 							    (yaml_char_t *)YAML_MAP_TAG,
 							    1, YAML_BLOCK_MAPPING_STYLE);
@@ -3402,7 +3402,7 @@ emitter_error:
 		rc = yaml_lnet_peer_display(&reply, list_only);
 		if (rc == 0) {
 			msg = yaml_parser_get_reader_error(&reply);
-			/* If we didn't find any peers just be silent */
+			
 			if (msg && strcmp(msg, "No peers found") == 0)
 				rc = 1;
 		}
@@ -3592,7 +3592,7 @@ static int yaml_debug_recovery(enum lnet_health_type type)
 	if (rc < 0)
 		return rc;
 
-	/* Initialize configuration parser */
+	
 	rc = yaml_parser_initialize(&setup);
 	if (rc == 0) {
 		yaml_parser_log_error(&setup, stderr, NULL);
@@ -3610,14 +3610,14 @@ static int yaml_debug_recovery(enum lnet_health_type type)
 	}
 	yaml_parser_delete(&setup);
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk) {
 		yaml_document_delete(&results);
 		return -EOPNOTSUPP;
 	}
 
-	/* Setup parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		yaml_document_delete(&results);
@@ -3633,7 +3633,7 @@ static int yaml_debug_recovery(enum lnet_health_type type)
 	rc = yaml_emitter_set_output_netlink(&output, sk, LNET_GENL_NAME,
 					     LNET_GENL_VERSION,
 					     LNET_CMD_DBG_RECOV, NLM_F_DUMP);
-	if (rc == 1) /* 1 is success */
+	if (rc == 1) 
 		rc = yaml_emitter_dump(&output, &results);
 	if (rc == 0) {
 		yaml_emitter_log_error(&output, stderr);
@@ -3813,7 +3813,7 @@ static int jt_show_net(int argc, char **argv)
 			network = optarg;
 			break;
 		case 'v':
-			/* '-v' has an optional argument. Default is 1. */
+			
 			if (optarg || optind >= argc ||
 			    argv[optind] == NULL || argv[optind][0] == '-' ||
 			    parse_long(argv[optind++], &detail))
@@ -4366,13 +4366,13 @@ static const struct command_mapping *find_command_mapping(const char *value,
 {
 	const struct command_mapping *mapping = cmd_mappings;
 
-	/* The "route" yaml block can contain a "net" key */
+	
 	if (current_op == LNET_CMD_ROUTES && !strcmp(value, "net"))
 		return NULL;
 
 	for (; mapping->cm_name; mapping++) {
 		if (!strcmp(value, mapping->cm_name)) {
-			// Check execute command restriction
+			
 			if (cmd == 'e' && !mapping->cm_exec_only)
 				return NULL;
 
@@ -4434,10 +4434,10 @@ static int handle_udsp_sequences(yaml_parser_t *setup, char cmd, int flags,
 		if (rc == 0)
 			goto failed;
 
-		/* Finished one of the UDSP rules. */
+		
 		if (event.type == YAML_MAPPING_END_EVENT && idx != -1) {
 			switch (flags) {
-			case 0: /* delete */
+			case 0: 
 				rc = lustre_lnet_del_udsp(idx, seq_no,
 							  &err_rc);
 				break;
@@ -4455,7 +4455,7 @@ static int handle_udsp_sequences(yaml_parser_t *setup, char cmd, int flags,
 				break;
 			}
 
-			/* reset values */
+			
 			idx = -1;
 			if (src) {
 				free(src);
@@ -4602,7 +4602,7 @@ free_ip2nets_lists(struct lustre_lnet_ip2nets *ip2nets)
 	}
 }
 
-/* Handles ip2nets "tunables" and "lnd tunables" */
+
 static int
 parse_yaml_tunables(__u32 net_id,
 		    struct lnet_ioctl_config_lnd_tunables *tunables,
@@ -4622,17 +4622,17 @@ parse_yaml_tunables(__u32 net_id,
 
 	yaml_event_delete(&event);
 
-	/* Parse the "key" event */
+	
 	if (!yaml_parser_parse(setup, &event))
 		return 0;
 
 	while (event.type == YAML_SCALAR_EVENT) {
-		/* Consumes the "key" and "value" events */
+		
 		rc = set_tunable(net_id, tunables, setup, &event, flags);
 		if (rc < 0)
 			return rc;
 
-		/* Parse the next "key" event" */
+		
 		if (!yaml_parser_parse(setup, &event))
 			return 0;
 	}
@@ -4640,7 +4640,7 @@ parse_yaml_tunables(__u32 net_id,
 	return 1;
 }
 
-/* Handles ip2nets "interfaces" and "ip-range" */
+
 static int parse_yaml_list(yaml_parser_t *setup, struct list_head *list,
 			   int (*add_item)(struct list_head *, char *))
 {
@@ -4656,15 +4656,15 @@ static int parse_yaml_list(yaml_parser_t *setup, struct list_head *list,
 
 	yaml_event_delete(&event);
 
-	/* Parse the "key" event */
+	
 	if (!yaml_parser_parse(setup, &event))
 		return 0;
 
 	while (event.type == YAML_SCALAR_EVENT) {
-		/* Delete the "key" event */
+		
 		yaml_event_delete(&event);
 
-		/* Parse the "value" event */
+		
 		if (!yaml_parser_parse(setup, &event))
 			return 0;
 
@@ -4677,10 +4677,10 @@ static int parse_yaml_list(yaml_parser_t *setup, struct list_head *list,
 		if (rc != LUSTRE_CFG_RC_NO_ERR)
 			return rc;
 
-		/* Delete the "value" event */
+		
 		yaml_event_delete(&event);
 
-		/* Parse the next "key" event */
+		
 		if (!yaml_parser_parse(setup, &event))
 			return 0;
 	}
@@ -5002,13 +5002,13 @@ handle_ip2nets_sequence(yaml_parser_t *setup, int flags)
 		if (!rc)
 			goto yaml_parser_error;
 
-		/* Reached the end of the ip2nets sequence */
+		
 		if (event.type == YAML_SEQUENCE_END_EVENT) {
 			yaml_event_delete(&event);
 			goto out;
 		}
 
-		/* Reached the end of a network specification block */
+		
 		if (event.type == YAML_MAPPING_END_EVENT) {
 			struct lnet_ioctl_config_lnd_tunables *tun = NULL;
 			char *net;
@@ -5054,7 +5054,7 @@ handle_ip2nets_sequence(yaml_parser_t *setup, int flags)
 			tunables_set = lnd_tunables_set = false;
 		}
 
-		/* Skip other events we do not care about */
+		
 		if (event.type != YAML_SCALAR_EVENT) {
 			yaml_event_delete(&event);
 			continue;
@@ -5062,7 +5062,7 @@ handle_ip2nets_sequence(yaml_parser_t *setup, int flags)
 
 		value = (char *)event.data.scalar.value;
 
-		/* "net-spec" must be the first scalar */
+		
 		if (ip2nets.ip2nets_net.nw_id == LNET_NET_ANY &&
 		    strcmp(value, "net-spec")) {
 			snprintf(errmsg, LNET_MAX_STR_LEN,
@@ -5212,11 +5212,11 @@ static int jt_import(int argc, char **argv)
 		opt_found = 1;
 		switch (opt) {
 		case 'a':
-			/* default is NLM_F_CREATE */
+			
 			cmd = opt;
 			break;
 		case 'd':
-			flags = 0; /* Netlink delete cmd */
+			flags = 0; 
 			cmd = opt;
 			break;
 		case 's':
@@ -5224,7 +5224,7 @@ static int jt_import(int argc, char **argv)
 			cmd = opt;
 			break;
 		case 'e':
-			/* use NLM_F_CREATE for discover */
+			
 			cmd = opt;
 			break;
 		case 'h':
@@ -5243,15 +5243,15 @@ static int jt_import(int argc, char **argv)
 		}
 	}
 
-	/* grab the file name if one exists */
+	
 	if (opt_found && argc == 3)
 		file = argv[2];
 	else if (!opt_found && argc == 2)
 		file = argv[1];
 
-	/* file always takes precedence */
+	
 	if (file != NULL) {
-		/* Set a file input. */
+		
 		input = fopen(file, "rb");
 		if (!input) {
 			rc = -errno;
@@ -5267,12 +5267,12 @@ static int jt_import(int argc, char **argv)
 		input = stdin;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		goto old_api;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -5285,7 +5285,7 @@ static int jt_import(int argc, char **argv)
 		goto free_reply;
 	}
 
-	/* Initialize configuration parser */
+	
 	rc = yaml_parser_initialize(&setup);
 	if (rc == 0) {
 		yaml_parser_log_error(&setup, stderr, "import: ");
@@ -5424,7 +5424,7 @@ free_reply:
 
 	return rc == 1 ? 0 : rc;
 old_api:
-	/* assume that we're getting our input from stdin */
+	
 	rc = fstat(fileno(input), &st);
 	if (rc < 0) {
 		snprintf(err_str, sizeof(err_str),
@@ -5844,7 +5844,7 @@ static int jt_show_peer(int argc, char **argv)
 			nid = optarg;
 			break;
 		case 'v':
-			/* '-v' has an optional argument. Default is 1. */
+			
 			if (optarg || optind >= argc ||
 			    argv[optind] == NULL || argv[optind][0] == '-' ||
 			    parse_long(argv[optind++], &detail))
@@ -6012,12 +6012,12 @@ static int yaml_lnet_ping(char *group, int timeout, struct lnet_nid *src_nid,
 	yaml_event_t event;
 	int rc, i;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -6030,7 +6030,7 @@ static int yaml_lnet_ping(char *group, int timeout, struct lnet_nid *src_nid,
 		goto free_reply;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&output);
 	if (rc == 0) {
 		msg = "failed to initialize emitter";
@@ -6290,7 +6290,7 @@ static int jt_discover(int argc, char **argv)
 				  long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'f':
-			/* BSD treats NLM_F_CREATE | NLM_F_EXCL as an add */
+			
 			flags |= NLM_F_EXCL;
 			force = 1;
 			break;
@@ -6591,7 +6591,7 @@ static int jt_fault_add(__u32 opc, int argc, char **argv)
 	while ((opt = getopt_long(argc, argv, optstr,
 				  long_options, NULL)) != -1) {
 		switch (opt) {
-		case 'd': /* dest NID/NET */
+		case 'd': 
 			fa_dst = optarg;
 			break;
 		case 'e':
@@ -6602,7 +6602,7 @@ static int jt_fault_add(__u32 opc, int argc, char **argv)
 					goto getopt_failed;
 			}
 			break;
-		case 'i': /* time interval (# seconds) for message drop */
+		case 'i': 
 			if (opc == LNET_CTL_DROP_ADD)
 				attr.u.drop.da_interval = strtoul(optarg,
 								  NULL, 0);
@@ -6610,10 +6610,10 @@ static int jt_fault_add(__u32 opc, int argc, char **argv)
 				attr.u.delay.la_interval = strtoul(optarg,
 								   NULL, 0);
 			break;
-		case 'l': /* seconds to wait before activating rule */
+		case 'l': 
 			attr.u.delay.la_latency = strtoul(optarg, NULL, 0);
 			break;
-		case 'm': /* message types to filter */
+		case 'm': 
 			rc = fault_attr_msg_parse(optarg, &attr.fa_msg_mask);
 			if (rc != 0)
 				goto getopt_failed;
@@ -6625,22 +6625,22 @@ static int jt_fault_add(__u32 opc, int argc, char **argv)
 		case 'o':
 			fa_local_nid = optarg;
 			break;
-		case 'p': /* portal to filter */
+		case 'p': 
 			rc = fault_attr_ptl_parse(optarg, &attr.fa_ptl_mask);
 			if (rc != 0)
 				goto getopt_failed;
 			break;
-		case 'r': /* drop rate */
+		case 'r': 
 			if (opc == LNET_CTL_DROP_ADD)
 				attr.u.drop.da_rate = strtoul(optarg, NULL, 0);
 			else
 				attr.u.delay.la_rate = strtoul(optarg, NULL, 0);
 			break;
-		case 's': /* source NID/NET */
+		case 's': 
 			fa_src = optarg;
 			break;
 		case 't':
-			/* Handled by our caller */
+			
 			break;
 		case 'x':
 			if (opc == LNET_CTL_DROP_ADD)
@@ -6656,7 +6656,7 @@ static int jt_fault_add(__u32 opc, int argc, char **argv)
 	}
 
 	if (opc == LNET_CTL_DROP_ADD) {
-		/* NB: drop rate and interval are exclusive to each other */
+		
 		if (!((attr.u.drop.da_rate == 0) ^
 		      (attr.u.drop.da_interval == 0))) {
 			fprintf(stderr,
@@ -6752,10 +6752,10 @@ static int jt_fault_del_common(__u32 opc, int argc, char **argv)
 		switch (opt) {
 		case 'a':
 			all = true;
-		case 'd': /* dest NID/NET */
+		case 'd': 
 			fa_dst = optarg;
 			break;
-		case 's': /* source NID/NET */
+		case 's': 
 			fa_src = optarg;
 			break;
 		default:

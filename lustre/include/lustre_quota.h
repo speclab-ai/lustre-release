@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTRE_QUOTA_H
@@ -25,11 +25,11 @@
 #include <lustre_nodemap.h>
 
 #ifndef MAX_IQ_TIME
-#define MAX_IQ_TIME  604800     /* (7*24*60*60) 1 week */
+#define MAX_IQ_TIME  604800     
 #endif
 
 #ifndef MAX_DQ_TIME
-#define MAX_DQ_TIME  604800     /* (7*24*60*60) 1 week */
+#define MAX_DQ_TIME  604800     
 #endif
 
 struct lquota_id_info;
@@ -45,7 +45,7 @@ union lquota_rec {
 	struct lquota_acct_rec	lqr_acct_rec;
 };
 
-/* flags for inode/block quota accounting */
+
 enum osd_qid_declare_flags {
 	OSD_QID_INODE	= BIT(0),
 	OSD_QID_BLK	= BIT(1),
@@ -97,39 +97,39 @@ extern struct dt_index_features dt_quota_bgrp_features;
  * does not rely any more on the MDT service threads and namespace.
  */
 struct qmt_handlers {
-	/* Handle quotactl request from client. */
+	
 	int (*qmth_quotactl)(const struct lu_env *env, struct lu_device *d,
 			     struct lu_nodemap *nodemap, struct obd_quotactl *,
 			     char *buf);
 
-	/* Handle dqacq/dqrel request from slave. */
+	
 	int (*qmth_dqacq)(const struct lu_env *env, struct lu_device *d,
 			  struct ptlrpc_request *req);
 
-	/* LDLM intent policy associated with quota locks */
+	
 	int (*qmth_intent_policy)(const struct lu_env *env, struct lu_device *d,
 				  struct ptlrpc_request *req,
 				  struct ldlm_lock **lock, int i);
 
-	/* Initialize LVB of ldlm resource associated with quota objects */
+	
 	int (*qmth_lvbo_init)(struct lu_device *d, struct ldlm_resource *res);
 
-	/* Update LVB of ldlm resource associated with quota objects */
+	
 	int (*qmth_lvbo_update)(struct lu_device *d, struct ldlm_resource *res,
 				struct ptlrpc_request *req, int i);
 
-	/* Return size of LVB to be packed in ldlm message */
+	
 	int (*qmth_lvbo_size)(struct lu_device *d, struct ldlm_lock *lock);
 
-	/* Fill request buffer with lvb */
+	
 	int (*qmth_lvbo_fill)(struct lu_device *d, struct ldlm_lock *lock,
 			      void *lvb, int lvblen);
 
-	/* Free lvb associated with ldlm resource */
+	
 	int (*qmth_lvbo_free)(struct lu_device *d, struct ldlm_resource *res);
 };
 
-/* actual handlers are defined in lustre/quota/qmt_handler.c */
+
 extern struct qmt_handlers qmt_hdls;
 
 /*
@@ -185,7 +185,7 @@ struct qsd_instance;
  * enforcement. Arguments are documented where each function is defined.
  */
 
-/* flags for quota local enforcement */
+
 enum osd_quota_local_flags {
 	QUOTA_FL_OVER_USRQUOTA	= BIT(0),
 	QUOTA_FL_OVER_GRPQUOTA	= BIT(1),
@@ -222,7 +222,7 @@ int qsd_reserve_or_free_quota(const struct lu_env *env,
 struct lquota_entry;
 
 struct lquota_id_info {
-	/* quota identifier */
+	
 	union lquota_id		 lqi_id;
 
 	/* USRQUOTA or GRPQUOTA for now, could be expanded for
@@ -235,15 +235,15 @@ struct lquota_id_info {
 	 */
 	long long		 lqi_space;
 
-	/* the space released by truncating big files */
+	
 	long long		 lqi_truncated_space;
 
-	/* quota slave entry structure associated with this ID */
+	
 	struct lquota_entry	*lqi_qentry;
 
-	/* whether we are reporting blocks or inodes */
+	
 	bool			 lqi_is_blk;
-	/* enforce project quota for root */
+	
 	bool			 lqi_ignore_root_proj_quota;
 };
 
@@ -257,7 +257,7 @@ struct lquota_id_info {
  */
 #define QUOTA_MAX_TRANSIDS    12
 
-/* all qids involved in a single transaction */
+
 struct lquota_trans {
 	unsigned short		lqt_id_cnt;
 	struct lquota_id_info	lqt_ids[QUOTA_MAX_TRANSIDS];
@@ -303,7 +303,7 @@ static inline int lquota_iter_change_qid(struct lu_nodemap *nodemap,
 	end = nodemap_map_id(nodemap, oqctl->qc_type, NODEMAP_CLIENT_TO_FS,
 			     end);
 
-	/* start and end sanity check */
+	
 	if ((!start && !end) || start > end)
 		return -EINVAL;
 
@@ -319,5 +319,5 @@ static inline int lquota_iter_change_qid(struct lu_nodemap *nodemap,
 	return 0;
 }
 
-/** @} quota */
-#endif /* _LUSTRE_QUOTA_H */
+
+#endif 

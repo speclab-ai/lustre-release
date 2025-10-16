@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LOG
@@ -18,7 +18,7 @@
 #include <lustre_log.h>
 #include "llog_internal.h"
 
-/* helper functions for calling the llog obd methods */
+
 static struct llog_ctxt* llog_new_ctxt(struct obd_device *obd)
 {
 	struct llog_ctxt *ctxt;
@@ -62,7 +62,7 @@ int __llog_ctxt_put(const struct lu_env *env, struct llog_ctxt *ctxt)
 
 	obd = ctxt->loc_obd;
 	spin_lock(&obd->obd_dev_lock);
-	/* sync with llog ctxt user thread */
+	
 	spin_unlock(&obd->obd_dev_lock);
 
 	/*
@@ -75,7 +75,7 @@ int __llog_ctxt_put(const struct lu_env *env, struct llog_ctxt *ctxt)
 		 "wrong obd state: %d/%d/%d\n", !!obd->obd_starting,
 		 !!obd->obd_stopping, test_bit(OBDF_SET_UP, obd->obd_flags));
 
-	/* cleanup the llog ctxt here */
+	
 	if (ctxt->loc_logops->lop_cleanup)
 		rc = ctxt->loc_logops->lop_cleanup(env, ctxt);
 
@@ -212,9 +212,9 @@ int llog_sync(struct llog_ctxt *ctxt, struct obd_export *exp, int flags)
 }
 EXPORT_SYMBOL(llog_sync);
 
-/* context key constructor/destructor: llog_key_init, llog_key_fini */
+
 LU_KEY_INIT_FINI(llog, struct llog_thread_info);
-/* context key: llog_thread_key */
+
 LU_CONTEXT_KEY_DEFINE(llog, LCT_MD_THREAD | LCT_MG_THREAD | LCT_LOCAL);
 LU_KEY_INIT_GENERIC(llog);
 

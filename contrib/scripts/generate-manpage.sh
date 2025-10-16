@@ -1,21 +1,15 @@
 #!/bin/bash
-
-# Generate a man page with section-specific content
-# Usage: ./generate_manpage.sh NAME SECTION [OUTPUT_FILE]
-# Usage: ./generate_manpage.sh MANUAL_FILE
-
 show_usage() {
 	cat >&2 <<EOF
 Usage: $0 NAME (1-8) [OUTPUT_FILE]
        $0 [DIR/]NAME.(1-8)
 EOF
 }
-
-if (( $# < 1 )); then
+if (( $
 	echo "Error: Missing arguments" >&2
 	show_usage
 	exit 1
-elif (( $# == 1 )); then
+elif (( $
 	if [[ "$1" =~ ^([^.]*/)?(.*)\.([1-8])$ ]]; then
 		NAME="${BASH_REMATCH[2]}"
 		SECTION="${BASH_REMATCH[3]}"
@@ -25,11 +19,11 @@ elif (( $# == 1 )); then
 		show_usage
 		exit 1
 	fi
-elif (( $# == 2 )); then
+elif (( $
 	NAME="$1"
 	SECTION="$2"
 	OUTPUT="Documentation/man$SECTION/$NAME.$SECTION"
-elif (( $# == 3 )); then
+elif (( $
 	NAME="$1"
 	SECTION="$2"
 	OUTPUT="$3"
@@ -38,15 +32,11 @@ else
 	show_usage
 	exit 1
 fi
-
-# Validate section number
 if ! [[ "$SECTION" =~ ^[1-8]$ ]]; then
 	echo "Error: Section must be between 1 and 8" >&2
 	show_usage
 	exit 1
 fi
-
-# Check if Documentation/man$SECTION folder exists when using default output path
 if [[ "$OUTPUT" == Documentation/man$SECTION/* ]]; then
 	if [[ ! -d "Documentation/man$SECTION" ]]; then
 		echo "Error: Documentation/man$SECTION does not exist" >&2
@@ -54,17 +44,12 @@ if [[ "$OUTPUT" == Documentation/man$SECTION/* ]]; then
 		exit 1
 	fi
 fi
-
-# Don't overwrite non-empty files
 if [[ -s $OUTPUT ]]; then
 	echo "Error: $OUTPUT is not empty"
 	exit 1
 fi
-
 LCTL=$(find ../.. -name lctl -type f -executable 2>/dev/null | head -1)
 DATE=$(date +"%Y-%m-%d")
-
-# Section-specific content
 case $SECTION in
 	1)
 	DESC="Lustre User Utilities"
@@ -91,12 +76,10 @@ case $SECTION in
 	DESC="Lustre Configuration Utilities"
 	;;
 esac
-
 case $SECTION in
 	1|8)
 	SYNOPSIS=$(cat <<EOF
 .SY "${NAME//_/ }"
-
 .YS
 EOF
 	)
@@ -106,7 +89,7 @@ EOF
 	2|3)
 	SYNOPSIS=$(cat <<EOF
 .nf
-.B #include
+.B
 .PP
 .BI "RETURN_TYPE $NAME( ... );
 .fi
@@ -128,9 +111,8 @@ EOF
 		printf -v PARAM ".EX\n$($LCTL get_param ${NAME//.-/.*})\n.EE"
 		param_path=$($LCTL list_param -p ${NAME//.-/.*})
 		printf -v FILES "\n.SH FILES\nThis parameter is located at:\n.P\n.B $param_path"
-		# actual path
 		param_path=$(readlink -f $param_path)
-		code_location=$(git grep -E "LDEBUGFS_SEQ_FOPS|LUSTRE_[RW][OW]_ATTR" 82f2bdb17ae~1 -- | grep ${NAME##*\.})
+		code_location=$(git grep -E "LDEBUGFS_SEQ_FOPS|LUSTRE_[RW][OW]_ATTR" 82f2bdb17ae~1 -- | grep ${NAME
 		printf -v SYNOPSIS ".SY \"lctl set_param\"\n.YS
 .SS PROPERTIES
 .TP\n.B Perms\n.BR $(stat -c "%a" $param_path) \" | \" $(ls -l $param_path | awk '{print $1}')
@@ -143,9 +125,6 @@ EOF
 	printf -v EXAMPLES "\n.SH EXAMPLES\n$PARAM"
 	;;
 esac
-
-
-# Generate the man page
 cat > "$OUTPUT" <<EOF
 .TH ${NAME^^} $SECTION $DATE Lustre "$DESC"
 .SH NAME
@@ -159,8 +138,7 @@ $OPTIONS$EXIT_STATUS$RETURN_VALUE$ERRORS$ENVIRONMENT$FILES$ATTRIBUTES$VERSIONS$H
 is part of the
 .BR lustre (7)
 filesystem package.
-.\" commit #
+.\" commit
 .SH SEE ALSO
 EOF
-
 echo "Generated man page: $OUTPUT"

@@ -68,7 +68,6 @@ def getNetNIDbyIdx(stats_dict, net_name, nid_idx):
 def run():
 	la = agents.keys()
 	#if len(la) < MIN_NODES:
-	#	return lutfrc(LUTF_TEST_SKIP, "Not enough agents to run the test")
 	nodes = []
 	try:
 		# General config for all nodes
@@ -117,10 +116,6 @@ def run():
 		gw1_nids = gw1.lh.list_nids()
 		gw2_nids = gw2.lh.list_nids()
 
-		#print("main nids: ", main_nids)
-		#print("remote nids: ", remote_nids)
-		#print("gw1 nids: ", gw1_nids)
-		#print("gw2 nids: ", gw2_nids)
 
 		gw1.lh.api_set_routing(True)
 		gw2.lh.api_set_routing(True)
@@ -131,8 +126,6 @@ def run():
 		gw2_remote_nids = [x for x in gw2_nids if REMOTE_NETS[0] in x]
 		gw2_local_nids = [x for x in gw2_nids if x not in gw2_remote_nids]
 
-		#print("gw1 local/remote nids: ", gw1_local_nids, gw1_remote_nids)
-		#print("gw2 local/remote nids: ", gw2_local_nids, gw2_remote_nids)
 
 		# discover the gateways from main and remote
 		if len(main.lh.exec_discover_cmd(gw1_local_nids[0])) == 0:
@@ -159,13 +152,6 @@ def run():
 		rc = remote.lh.exec_route_cmd(" add "+rt2)
 
 		# commit configuration
-		#gw1.sln.commit()
-		#gw1.lh.api_set_routing(True)
-		#time.sleep(1)
-		#gw2.sln.commit()
-		#gw2.lh.api_set_routing(True)
-		#main.sln.commit()
-		#remote.sln.commit()
 		time.sleep(1)
 
 		rc = main.lh.exec_ping(remote_nids[0])
@@ -204,7 +190,6 @@ def run():
 						   " --dst "+remote_nids[0])
 
 		before_stats_gw1 = gw1.lh.get_stats()
-		#print(before_stats_gw1)
 
 		for i in range(0, PING_TIMES):
 			rc = main.lh.exec_ping(remote_nids[PING_NID_NUM])
@@ -212,12 +197,10 @@ def run():
 				return lutfrc(LUTF_TEST_FAIL, "ping failed")
 
 		after_stats_gw1 = gw1.lh.get_stats()
-		#print(after_stats_gw1)
 
 		route_count_before = before_stats_gw1['statistics']['route_count']
 		route_count_after = after_stats_gw1['statistics']['route_count']
 
-		#print(route_count_before, route_count_after)
 
 		# Check stats:
 		# 1) expect the difference between "before" and "after" route counts to be
@@ -233,7 +216,6 @@ def run():
 			if i != MAIN_NODE_ID and i != REMOTE_NODE_ID:
 				nodes[i].lh.unconfigure_lnet()
 		#for n in nodes:
-		#	n.lh.unconfigure_lnet()
 
 		return lutfrc(LUTF_TEST_PASS)
 	except Exception as e:

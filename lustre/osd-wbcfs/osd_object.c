@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2025-2026, DDN/Whamcloud, Inc.
@@ -17,7 +17,7 @@
 #include "osd_internal.h"
 #include "wbcfs.h"
 
-/* Concurrency: no external locking is necessary. */
+
 static int osd_index_try(const struct lu_env *env, struct dt_object *dt,
 			 const struct dt_index_features *feat)
 {
@@ -27,10 +27,10 @@ static int osd_index_try(const struct lu_env *env, struct dt_object *dt,
 		dt->do_index_ops = &osd_dir_ops;
 		rc = 0;
 	} else if (unlikely(feat == &dt_acct_features)) {
-		/* TODO: Add quota support. */
+		
 		rc = -ENOTSUPP;
 	} else if (unlikely(feat == &dt_otable_features)) {
-		/* TODO: Add scrub support. */
+		
 		dt->do_index_ops = &osd_hash_index_ops;
 		rc = 0;
 	} else {
@@ -135,7 +135,7 @@ static void osd_object_delete(const struct lu_env *env, struct lu_object *l)
 	iput(inode);
 }
 
-/* Concurrency: ->loo_object_release() is called under site spin-lock. */
+
 static void osd_object_release(const struct lu_env *env, struct lu_object *l)
 {
 	struct osd_object *o = osd_obj(l);
@@ -235,7 +235,7 @@ static int osd_inode_setattr(const struct lu_env *env,
 {
 	__u64 bits = attr->la_valid;
 
-	/* Only allow set size for regular file */
+	
 	if (!S_ISREG(inode->i_mode))
 		bits &= ~(LA_SIZE | LA_BLOCKS);
 
@@ -276,7 +276,7 @@ static int osd_inode_setattr(const struct lu_env *env,
 		inode->i_rdev = attr->la_rdev;
 
 	if (bits & LA_FLAGS) {
-		/* always keep S_NOCMTIME */
+		
 		inode->i_flags = ll_ext_to_inode_flags(attr->la_flags) |
 				 S_NOCMTIME;
 #if defined(S_ENCRYPTED)
@@ -317,7 +317,7 @@ static int osd_attr_set(const struct lu_env *env, struct dt_object *dt,
 	if (rc)
 		RETURN(rc);
 
-	/* TODO: extra flags for LUSTRE_LMA_FL_MASKS */
+	
 
 	return 0;
 }
@@ -352,7 +352,7 @@ static int osd_mkfile(const struct lu_env *env, struct osd_object *obj,
 	    !dt_object_remote(hint->dah_parent))
 		parent = hint->dah_parent;
 
-	/* if a time component is not valid set it to UTIME_OMIT */
+	
 	if (!(attr->la_valid & LA_CTIME))
 		iattr.ia_ctime = omit;
 	if (!(attr->la_valid & LA_MTIME))
@@ -367,7 +367,7 @@ static int osd_mkfile(const struct lu_env *env, struct osd_object *obj,
 	if (IS_ERR(inode))
 		return PTR_ERR(inode);
 
-	/* Do not update file c/mtime in MemFS. */
+	
 	inode->i_flags |= S_NOCMTIME;
 	inode->i_ino = lu_fid_build_ino(fid, 0);
 	inode->i_generation = lu_fid_build_gen(fid);
@@ -416,7 +416,7 @@ static int osd_mk_index(const struct lu_env *env, struct osd_object *obj,
 
 	LASSERT(S_ISREG(attr->la_mode));
 
-	/* Only support index with fixed key length. */
+	
 	if (feat->dif_flags & DT_IND_VARKEY)
 		RETURN(-EINVAL);
 
@@ -436,7 +436,7 @@ static int osd_mk_index(const struct lu_env *env, struct osd_object *obj,
 		CERROR("%s: failed to create index for FID="DFID": rc=%d\n",
 		       osd_name(osd_obj2dev(obj)),
 		       PFID(lu_object_fid(&obj->oo_dt.do_lu)), rc);
-		/* TODO: cleanup @oo_inode... */
+		
 	}
 out:
 	RETURN(rc);
@@ -461,7 +461,7 @@ static int osd_mksym(const struct lu_env *env, struct osd_object *obj,
 		     struct thandle *th)
 {
 	LASSERT(S_ISLNK(attr->la_mode));
-	/* TODO: symlink support. */
+	
 	RETURN(-EOPNOTSUPP);
 }
 
@@ -547,7 +547,7 @@ static void osd_attr_init(const struct lu_env *env, struct osd_object *obj,
 	    (attr->la_mtime == inode_get_mtime_sec(inode)))
 		attr->la_valid &= ~LA_MTIME;
 
-	/* TODO: Perform quota transfer. */
+	
 
 	if (attr->la_valid != 0) {
 		result = osd_inode_setattr(env, inode, attr);
@@ -564,7 +564,7 @@ static void osd_attr_init(const struct lu_env *env, struct osd_object *obj,
 	attr->la_valid = valid;
 }
 
-/* Helper function for osd_create(). */
+
 static int __osd_create(const struct lu_env *env, struct osd_object *obj,
 			struct lu_attr *attr, struct dt_allocation_hint *hint,
 			struct dt_object_format *dof, struct thandle *th)
@@ -572,7 +572,7 @@ static int __osd_create(const struct lu_env *env, struct osd_object *obj,
 	int result;
 	__u32 umask;
 
-	/* we drop umask so that permissions we pass are not affected */
+	
 	umask = current->fs->umask;
 	current->fs->umask = 0;
 
@@ -590,7 +590,7 @@ static int __osd_create(const struct lu_env *env, struct osd_object *obj,
 		__osd_object_init(obj);
 	}
 
-	/* restore previous umask value */
+	
 	current->fs->umask = umask;
 
 	return result;
@@ -605,7 +605,7 @@ static void osd_ah_init(const struct lu_env *env, struct dt_allocation_hint *ah,
 	ah->dah_parent = parent;
 }
 
-/* OSD layer object creation funcation for OST objects. */
+
 static int osd_create(const struct lu_env *env, struct dt_object *dt,
 		      struct lu_attr *attr, struct dt_allocation_hint *hint,
 		      struct dt_object_format *dof, struct thandle *th)
@@ -622,12 +622,12 @@ static int osd_create(const struct lu_env *env, struct dt_object *dt,
 	LASSERT(!dt_object_remote(dt));
 	LASSERT(dt_write_locked(env, dt));
 
-	/* Quota files cannot be created from the kernel any more */
+	
 	if (unlikely(fid_is_acct(fid)))
 		RETURN(-EPERM);
 
 	rc = __osd_create(env, obj, attr, hint, dof, th);
-	/* TODO: Update LMA EA with @fid. */
+	
 	LASSERT(ergo(rc == 0,
 		     dt_object_exists(dt) && !dt_object_remote(dt)));
 	RETURN(rc);
@@ -649,7 +649,7 @@ static int osd_destroy(const struct lu_env *env, struct dt_object *dt,
 	if (unlikely(fid_is_acct(fid)))
 		RETURN(-EPERM);
 
-	/* TODO: Agent entry remvoal... */
+	
 	if (S_ISDIR(inode->i_mode)) {
 		if (inode->i_nlink > 2)
 			CERROR("%s: dir "DFID" ino %lu nlink %u at unlink.\n",
@@ -703,7 +703,7 @@ static int osd_ref_add(const struct lu_env *env, struct dt_object *dt,
 	 */
 	down_write(&obj->oo_guard);
 	if (unlikely(inode->i_nlink == 0))
-		/* inc_nlink from 0 may cause WARN_ON */
+		
 		set_nlink(inode, 1);
 	else
 		inc_nlink(inode);
@@ -750,7 +750,7 @@ static int osd_ref_del(const struct lu_env *env, struct dt_object *dt,
 	return 0;
 }
 
-/* Concurrency: @dt is write locked. */
+
 static int osd_xattr_set(const struct lu_env *env, struct dt_object *dt,
 			 const struct lu_buf *buf, const char *name, int fl,
 			 struct thandle *handle)
@@ -769,13 +769,13 @@ static int osd_xattr_set(const struct lu_env *env, struct dt_object *dt,
 	if (fl & LU_XATTR_CREATE)
 		flags |= XATTR_CREATE;
 
-	/* FIXME: using VFS i_op->setxattr()? */
+	
 	rc = memfs_xattr_set(inode, buf->lb_buf, buf->lb_len, name, flags);
 
 	RETURN(rc);
 }
 
-/* Concurrency: @dt is read locked. */
+
 static int osd_xattr_get(const struct lu_env *env, struct dt_object *dt,
 			 struct lu_buf *buf, const char *name)
 {
@@ -790,12 +790,12 @@ static int osd_xattr_get(const struct lu_env *env, struct dt_object *dt,
 
 	LASSERT(!dt_object_remote(dt));
 
-	/* FIXME: using VFS i_op->getxattr()? */
+	
 	rc = memfs_xattr_get(inode, buf->lb_buf, buf->lb_len, name);
 	RETURN(rc);
 }
 
-/* Concurrency: @dt is write locked. */
+
 static int osd_xattr_del(const struct lu_env *env, struct dt_object *dt,
 			 const char *name, struct thandle *handle)
 {
@@ -805,20 +805,20 @@ static int osd_xattr_del(const struct lu_env *env, struct dt_object *dt,
 		return -ENOENT;
 
 	LASSERT(!dt_object_remote(dt));
-	/* FIXME: using VFS i_op->removexattr() */
+	
 	memfs_xattr_del(inode, name);
 
 	return 0;
 }
 
-/* TODO: Implement xattr listing. */
+
 static int osd_xattr_list(const struct lu_env *env, struct dt_object *dt,
 			  const struct lu_buf *buf)
 {
 	RETURN(0);
 }
 
-/* MemFS does not support object sync, return zero to ignore the error. */
+
 static int osd_object_sync(const struct lu_env *env, struct dt_object *dt,
 			   __u64 start, __u64 end)
 {

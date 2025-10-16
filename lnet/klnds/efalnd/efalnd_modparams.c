@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2023-2025, Amazon and/or its affiliates. All rights reserved.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Yehuda Yitschak <yehuday@amazon.com>
  * Author: Yonatan Nachum <ynachum@amazon.com>
@@ -21,12 +21,12 @@ static int nscheds;
 module_param(nscheds, int, 0444);
 MODULE_PARM_DESC(nscheds, "number of threads in each scheduler pool");
 
-/* Number of QPs each device allocates. */
+
 static int nqps = 8;
 module_param(nqps, int, 0444);
 MODULE_PARM_DESC(nqps, "number of QPs each device allocates");
 
-/* NB: this value is shared by all CPTs */
+
 static int credits = DEFAULT_CREDITS;
 module_param(credits, int, 0444);
 MODULE_PARM_DESC(credits, "# concurrent sends");
@@ -79,7 +79,7 @@ kefalnd_tunables_setup(struct lnet_ni *ni)
 
 	tunables = &ni->ni_lnd_tunables.lnd_tun_u.lnd_efa;
 
-	/* Current LND version */
+	
 	tunables->lnd_version = kefalnd_get_lnd_version();
 
 	net_tunables = &ni->ni_net->net_tunables;

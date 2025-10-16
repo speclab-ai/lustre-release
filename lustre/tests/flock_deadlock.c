@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright 2012 Xyratex Technology Limited
@@ -24,7 +24,7 @@
 #define LOCK_LEN 100
 
 struct flock flocks[4] = {
-	/* 1st region */
+	
 	{
 		.l_type         = F_WRLCK,
 		.l_whence       = SEEK_SET,
@@ -32,7 +32,7 @@ struct flock flocks[4] = {
 		.l_len          = LOCK_LEN,
 		.l_pid          = 0,
 	},
-	/* 2nd region */
+	
 	{
 		.l_type         = F_WRLCK,
 		.l_whence       = SEEK_SET,
@@ -40,7 +40,7 @@ struct flock flocks[4] = {
 		.l_len          = LOCK_LEN,
 		.l_pid          = 0,
 	},
-	/* 3rd region */
+	
 	{
 		.l_type         = F_WRLCK,
 		.l_whence       = SEEK_SET,
@@ -48,7 +48,7 @@ struct flock flocks[4] = {
 		.l_len          = LOCK_LEN,
 		.l_pid          = 0,
 	},
-	/* 2nd & 3rd regions */
+	
 	{
 		.l_type         = F_WRLCK,
 		.l_whence       = SEEK_SET,
@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
 			pid = getpid();
 			num = 2;
 
-			/* Let flocks[1] 2nd child get granted first */
+			
 			printf("%d: sleeping 1\n", pid);
 			sleep(1);
 

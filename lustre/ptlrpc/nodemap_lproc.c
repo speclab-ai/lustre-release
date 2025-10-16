@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2013, Trustees of Indiana University
@@ -20,7 +20,7 @@
 
 static LIST_HEAD(nodemap_pde_list);
 
-/* nodemap debugfs root directory under lustre */
+
 static struct dentry *nodemap_root;
 
 /**
@@ -185,7 +185,7 @@ static int nodemap_capabilities_seq_show(struct seq_file *m, void *unused)
 			break;
 		}
 	}
-	/* if not applicable, stop here */
+	
 	if (nodemap->nmf_caps_type == NODEMAP_CAP_OFF) {
 		seq_printf(m, "%s\n", type);
 		goto out;
@@ -417,7 +417,7 @@ nodemap_fileset_seq_write(struct file *file,
 		RETURN(-EINVAL);
 
 	OBD_ALLOC(nm_fileset, count + 1);
-	/* OBD_ALLOC zero-fills the buffer */
+	
 	if (nm_fileset == NULL)
 		RETURN(-ENOMEM);
 
@@ -1214,7 +1214,7 @@ static const struct file_operations nodemap_exports_fops = {
 };
 
 static struct ldebugfs_vars lprocfs_nodemap_vars[] = {
-	/* in alphabetical order */
+	
 	{
 		.name		= "admin_nodemap",
 		.fops		= &nodemap_admin_fops,
@@ -1313,7 +1313,7 @@ static struct ldebugfs_vars lprocfs_nodemap_vars[] = {
 };
 
 static struct ldebugfs_vars lprocfs_default_nodemap_vars[] = {
-	/* in alphabetical order */
+	
 	{
 		.name		= "admin_nodemap",
 		.fops		= &nodemap_admin_fops,

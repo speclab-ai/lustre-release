@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2014, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _GNU_SOURCE
@@ -53,7 +53,7 @@ const char * lustre_svc_name[] =
 	[LUSTRE_GSS_SVC_OSS]    = "OSS",
 };
 
-/* exclusive startup */
+
 
 static struct __sem_s {
 	char           *name;
@@ -247,7 +247,7 @@ out:
 	return rc;
 }
 
-/* FIXME what about IPv6? */
+
 static
 int ipv4_nid2hostname(char *lnd, uint32_t net, uint32_t addr,
 		      char *buf, int buflen)
@@ -322,7 +322,7 @@ int external_nid2hostname(char *lnd, uint32_t net, uint32_t addr,
 	if (pclose(fghn) == -1)
 		printerr(LL_WARN, "pclose failed, continue\n");
 
-	/* trim head/tail space */
+	
 	while (is_space(*head))
 		head++;
 
@@ -340,7 +340,7 @@ int external_nid2hostname(char *lnd, uint32_t net, uint32_t addr,
 	}
 	*tail = '\0';
 
-	/* start with '@' means error msg */
+	
 	if (head[0] == '@') {
 		printerr(LL_ERR, "error from %s: %s\n",
 			 gethostname_ex, &head[1]);
@@ -415,7 +415,7 @@ uid_t parse_uid(char *uidstr)
 	return -1;
 }
 
-/* realm of this node */
+
 char *krb5_this_realm;
 
 static int gss_get_provided_realm(char *realm)

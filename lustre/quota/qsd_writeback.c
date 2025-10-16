@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -40,7 +40,7 @@ static struct qsd_upd_rec *qsd_upd_alloc(struct qsd_qtype_info *qqi,
 		return NULL;
 	}
 
-	/* fill it */
+	
 	INIT_LIST_HEAD(&upd->qur_link);
 	upd->qur_qqi = qqi;
 	upd->qur_lqe = lqe;
@@ -61,12 +61,12 @@ static void qsd_upd_free(struct qsd_upd_rec *upd)
 	OBD_SLAB_FREE_PTR(upd, upd_kmem);
 }
 
-/* must hold the qsd_lock */
+
 static void qsd_upd_add(struct qsd_instance *qsd, struct qsd_upd_rec *upd)
 {
 	if (!qsd->qsd_stopping) {
 		list_add_tail(&upd->qur_link, &qsd->qsd_upd_list);
-		/* wake up the upd thread */
+		
 		if (qsd->qsd_upd_task)
 			wake_up_process(qsd->qsd_upd_task);
 	} else {
@@ -77,7 +77,7 @@ static void qsd_upd_add(struct qsd_instance *qsd, struct qsd_upd_rec *upd)
 	}
 }
 
-/* must hold the qsd_lock */
+
 static void qsd_add_deferred(struct qsd_instance *qsd, struct list_head *list,
 			     struct qsd_upd_rec *upd)
 {
@@ -91,7 +91,7 @@ static void qsd_add_deferred(struct qsd_instance *qsd, struct list_head *list,
 		return;
 	}
 
-	/* Sort the updates in ascending order */
+	
 	list_for_each_entry_safe_reverse(tmp, n, list, qur_link) {
 
 		/* There could be some legacy records which have duplicated
@@ -122,7 +122,7 @@ static void qsd_add_deferred(struct qsd_instance *qsd, struct list_head *list,
 	list_add(&upd->qur_link, list);
 }
 
-/* must hold the qsd_lock */
+
 static void qsd_kickoff_deferred(struct qsd_qtype_info *qqi,
 				 struct list_head *list, __u64 ver)
 {
@@ -134,7 +134,7 @@ static void qsd_kickoff_deferred(struct qsd_qtype_info *qqi,
 	 * one */
 	list_for_each_entry_safe(upd, tmp, list, qur_link) {
 		if (upd->qur_ver <= ver) {
-			/* drop this update */
+			
 			list_del_init(&upd->qur_link);
 			CDEBUG(D_QUOTA, "%s: skipping deferred update ver:"
 			       "%llu/%llu, global:%d, qid:%llu\n",
@@ -146,7 +146,7 @@ static void qsd_kickoff_deferred(struct qsd_qtype_info *qqi,
 		}
 	}
 
-	/* No remaining deferred update */
+	
 	if (list_empty(list))
 		RETURN_EXIT;
 
@@ -158,7 +158,7 @@ static void qsd_kickoff_deferred(struct qsd_qtype_info *qqi,
 	LASSERTF(upd->qur_ver > ver, "lur_ver:%llu, cur_ver:%llu\n",
 		 upd->qur_ver, ver);
 
-	/* Kick off the deferred udpate */
+	
 	if (upd->qur_ver == ver + 1) {
 		list_del_init(&upd->qur_link);
 		qsd_upd_add(qqi->qqi_qsd, upd);
@@ -244,7 +244,7 @@ void qsd_upd_schedule(struct qsd_qtype_info *qqi, struct lquota_entry *lqe,
 		qsd_upd_free(upd);
 	} else if ((ver == cur_ver + 1) && qqi->qqi_glb_uptodate &&
 		   qqi->qqi_slv_uptodate) {
-		/* In order update, and reintegration has been done. */
+		
 		qsd_upd_add(qsd, upd);
 	} else if (qqi->qqi_last_version_update_time + QSD_WB_INTERVAL >=
 		   ktime_get_seconds()) {
@@ -275,7 +275,7 @@ static int qsd_process_upd(const struct lu_env *env, struct qsd_upd_rec *upd)
 	int			 rc;
 	ENTRY;
 
-	if (qsd->qsd_exclusive) { /* It could be deadlock running with reint */
+	if (qsd->qsd_exclusive) { 
 		read_lock(&qsd->qsd_lock);
 		rc = qqi->qqi_reint;
 		read_unlock(&qsd->qsd_lock);
@@ -334,7 +334,7 @@ out_del:
 		rc = qsd_update_lqe(env, lqe, upd->qur_global, &upd->qur_rec);
 		if (rc)
 			GOTO(out, rc);
-		/* refresh usage */
+		
 		qsd_refresh_usage(env, lqe);
 
 		spin_lock(&qsd->qsd_adjust_lock);
@@ -348,7 +348,7 @@ out_del:
 			lqe_write_unlock(lqe);
 		}
 
-		/* Report usage asynchronously */
+		
 		rc = qsd_adjust(env, lqe);
 		lqe_write_lock(lqe);
 		lqe->lqe_revoke = 0;
@@ -437,7 +437,7 @@ void qsd_adjust_schedule(struct lquota_entry *lqe, bool defer, bool cancel)
 			lqe->lqe_adjust_time = 0;
 		}
 
-		/* lqe reference transferred to list */
+		
 		list_for_each_entry(tmp, &qsd->qsd_adjust_list, lqe_link) {
 			if (tmp->lqe_adjust_time >= lqe->lqe_adjust_time) {
 				list_add(&lqe->lqe_link, &tmp->lqe_link);
@@ -595,7 +595,7 @@ static int qsd_upd_thread(void *_args)
 		while (!list_empty(&qsd->qsd_adjust_list)) {
 			lqe = list_first_entry(&qsd->qsd_adjust_list,
 					       struct lquota_entry, lqe_link);
-			/* deferred items are sorted by time */
+			
 			if (lqe->lqe_adjust_time > cur_time)
 				break;
 

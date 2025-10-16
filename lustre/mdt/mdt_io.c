@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
@@ -101,7 +101,7 @@ static int mdt_rw_hpreq_lock_match(struct ptlrpc_request *req,
 	if (!fid_res_name_eq(&ioo->ioo_oid.oi_fid, &lock->l_resource->lr_name))
 		RETURN(0);
 
-	/* a bulk write can only hold a reference on a PW extent lock. */
+	
 	mode = LCK_PW | LCK_GROUP;
 	if (opc == OST_READ)
 		/* whereas a bulk read can be protected by either a PR or PW
@@ -189,12 +189,12 @@ void mdt_hp_brw(struct tgt_session_info *tsi)
 	ENTRY;
 
 	ioo = req_capsule_client_get(tsi->tsi_pill, &RMF_OBD_IOOBJ);
-	LASSERT(ioo != NULL); /* must exist after request preprocessing */
+	LASSERT(ioo != NULL); 
 	if (ioo->ioo_bufcnt > 0) {
 		rnb = req_capsule_client_get(tsi->tsi_pill, &RMF_NIOBUF_REMOTE);
-		LASSERT(rnb != NULL); /* must exist after preprocessing */
+		LASSERT(rnb != NULL); 
 
-		/* no high priority if server lock is needed */
+		
 		if (rnb->rnb_flags & OBD_BRW_SRVLOCK ||
 		    (lustre_msg_get_flags(tgt_ses_req(tsi)->rq_reqmsg) &
 		     MSG_REPLAY))
@@ -306,8 +306,8 @@ static struct ptlrpc_hpreq_ops mdt_hpreq_punch = {
 
 void mdt_hp_punch(struct tgt_session_info *tsi)
 {
-	LASSERT(tsi->tsi_ost_body != NULL); /* must exists if we are here */
-	/* no high-priority if server lock is needed */
+	LASSERT(tsi->tsi_ost_body != NULL); 
+	
 	if ((tsi->tsi_ost_body->oa.o_valid & OBD_MD_FLFLAGS &&
 	     tsi->tsi_ost_body->oa.o_flags & OBD_FL_SRVLOCK) ||
 	    tgt_conn_flags(tsi) & OBD_CONNECT_MDS ||
@@ -366,12 +366,12 @@ static int mdt_preprw_read(const struct lu_env *env, struct obd_export *exp,
 	}
 
 	dob = mdt_obj2dt(mo);
-	/* parse remote buffers to local buffers and prepare the latter */
+	
 	for (i = 0, j = 0; i < niocount; i++) {
 		rc = dt_bufs_get(env, dob, rnb + i, lnb + j, maxlnb, 0);
 		if (unlikely(rc < 0))
 			GOTO(buf_put, rc);
-		/* correct index for local buffers to continue with */
+		
 		j += rc;
 		maxlnb -= rc;
 		*nr_local += rc;
@@ -413,7 +413,7 @@ static int mdt_preprw_write(const struct lu_env *env, struct obd_export *exp,
 
 	down_read(&mo->mot_dom_sem);
 	*nr_local = 0;
-	/* don't report error in cases with failed export */
+	
 	if (!mdt_object_exists(mo)) {
 		int level = exp->exp_failed ? D_INFO : D_ERROR;
 
@@ -422,7 +422,7 @@ static int mdt_preprw_write(const struct lu_env *env, struct obd_export *exp,
 			     "%s: WRITE IO to missing obj "DFID": rc = %d\n",
 			     exp->exp_obd->obd_name, PFID(mdt_object_fid(mo)),
 			     rc);
-		/* exit with no data written, note nr_local = 0 above */
+		
 		GOTO(unlock, rc);
 	}
 
@@ -444,12 +444,12 @@ static int mdt_preprw_write(const struct lu_env *env, struct obd_export *exp,
 	}
 
 	dob = mdt_obj2dt(mo);
-	/* parse remote buffers to local buffers and prepare the latter */
+	
 	for (i = 0, j = 0; i < obj->ioo_bufcnt; i++) {
 		rc = dt_bufs_get(env, dob, rnb + i, lnb + j, maxlnb, 1);
 		if (unlikely(rc < 0))
 			GOTO(err, rc);
-		/* correct index for local buffers to continue with */
+		
 		for (k = 0; k < rc; k++) {
 			lnb[j + k].lnb_flags = rnb[i].rnb_flags;
 			if (!(rnb[i].rnb_flags & OBD_BRW_GRANTED))
@@ -469,9 +469,9 @@ err:
 	dt_bufs_put(env, dob, lnb, *nr_local);
 unlock:
 	up_read(&mo->mot_dom_sem);
-	/* tgt_grant_prepare_write() was called, so we must commit */
+	
 	tgt_grant_commit(exp, oa->o_grant_used, rc);
-	/* dealloc grants, client won't receive them */
+	
 	tgt_grant_dealloc(exp, oa);
 	/* let's still process incoming grant information packed in the oa,
 	 * but without enforcing grant since we won't proceed with the write.
@@ -610,7 +610,7 @@ retry:
 		GOTO(out_stop, rc);
 
 	if (la->la_valid) {
-		/* update [mac]time if needed */
+		
 		rc = dt_declare_attr_set(env, dob, la, th);
 		if (rc)
 			GOTO(out_stop, rc);
@@ -623,7 +623,7 @@ retry:
 
 	dt_write_lock(env, dob, 0);
 	if (lu_object_is_dying(&mo->mot_header)) {
-		/* Commit to stale object can be just skipped silently. */
+		
 		CDEBUG(D_INODE, "skip commit to stale object "DFID"\n",
 			PFID(mdt_object_fid(mo)));
 		GOTO(unlock, rc = 0);
@@ -639,7 +639,7 @@ retry:
 		if (rc)
 			GOTO(unlock, rc);
 	}
-	/* get attr to return */
+	
 	rc = dt_attr_get(env, dob, la);
 unlock:
 	dt_write_unlock(env, dob);
@@ -681,7 +681,7 @@ out:
 	if (granted > 0)
 		tgt_grant_commit(exp, granted, old_rc);
 	if (rc)
-		/* dealloc grants, client won't receive them */
+		
 		tgt_grant_dealloc(exp, oa);
 	RETURN(rc);
 }
@@ -698,7 +698,7 @@ void mdt_dom_obj_lvb_update(const struct lu_env *env, struct mdt_object *mo,
 	if (IS_ERR(res))
 		return;
 
-	/* Update lvbo data if exists. */
+	
 	if (mdt_dom_lvb_is_valid(res)) {
 		mdt_dom_disk_lvbo_update(env, mo, res, increase_only);
 		if (oa) {
@@ -760,7 +760,7 @@ int mdt_obd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 		}
 
 		if (!IS_ERR_OR_NULL(nodemap)) {
-			/* do not bypass quota enforcement if squashed uid */
+			
 			if (unlikely(mapped_uid == nodemap->nm_squash_uid)) {
 				int idx;
 
@@ -802,7 +802,7 @@ int mdt_obd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 		/* don't report overquota flag if we failed before reaching
 		 * commit */
 		if (old_rc == 0 && (rc == 0 || rc == -EDQUOT)) {
-			/* return the overquota flags to client */
+			
 			if (lnb[0].lnb_flags & OBD_BRW_OVER_USRQUOTA) {
 				if (oa->o_valid & OBD_MD_FLFLAGS)
 					oa->o_flags |= OBD_FL_NO_USRQUOTA;
@@ -940,7 +940,7 @@ mdt_object_fallocate_zero(const struct lu_env *env, struct obd_export *exp,
 	tbc = env->le_ses->lc_thread->t_data;
 	while (start < end) {
 		struct niobuf_remote rnb;
-		/* limit memory usage each round to ~64KB */
+		
 		int mem_threshold = 65536;
 		__u64 next_end = 0;
 		int i = 0;
@@ -960,7 +960,7 @@ mdt_object_fallocate_zero(const struct lu_env *env, struct obd_export *exp,
 
 		npages = rc;
 		lnbs = tbc->local;
-		/* read in partial pages, then zero out rest part */
+		
 		rc = dt_write_prep(env, dob, lnbs, npages);
 		if (rc)
 			GOTO(out, rc);
@@ -971,7 +971,7 @@ mdt_object_fallocate_zero(const struct lu_env *env, struct obd_export *exp,
 			kunmap(lnbs[i].lnb_page);
 		}
 
-		/* mdt_write will handle write, resource put, etc. */
+		
 		rc = mdt_commitrw_write(env, exp, mdt, mo, la, &oa, 0, npages,
 					lnbs, 0, 0, false);
 		if (rc)
@@ -1059,7 +1059,7 @@ int mdt_fallocate_hdl(struct tgt_session_info *tsi)
 	if (tsi->tsi_exp->exp_old_falloc && start >= end)
 		RETURN(-EOPNOTSUPP);
 #endif
-	/* client should already limit len >= 0 */
+	
 	if (start >= end)
 		RETURN(-EINVAL);
 
@@ -1106,7 +1106,7 @@ int mdt_fallocate_hdl(struct tgt_session_info *tsi)
 	if (!mdt_object_exists(mo))
 		GOTO(out_put, rc = -ENOENT);
 
-	/* Shouldn't happen on dirs */
+	
 	if (S_ISDIR(lu_object_attr(&mo->mot_obj))) {
 		rc = -EPERM;
 		CERROR("%s: fallocate on dir "DFID": rc = %d\n",
@@ -1129,7 +1129,7 @@ int mdt_fallocate_hdl(struct tgt_session_info *tsi)
 
 	rc = mdt_object_fallocate(tsi->tsi_env, mdt->mdt_bottom, dob,
 				  start, end, mode, la, &error_code);
-	/* in case file is indirect-mapping, mimic brw */
+	
 	if (rc == -EOPNOTSUPP && error_code == DT_FALLOC_ERR_NEED_ZERO)
 		rc = mdt_object_fallocate_zero(tsi->tsi_env, exp, mdt,
 					       mo, start, end, la);
@@ -1277,7 +1277,7 @@ static int mdt_object_punch(const struct lu_env *env, struct dt_device *dt,
 
 	ENTRY;
 
-	/* we support truncate, not punch yet */
+	
 	LASSERT(end == OBD_OBJECT_EOF);
 
 	if (!dt_object_exists(dob))
@@ -1344,11 +1344,11 @@ int mdt_punch_hdl(struct tgt_session_info *tsi)
 	if (repbody == NULL)
 		RETURN(err_serious(-ENOMEM));
 
-	/* punch start,end are passed in o_size,o_blocks throught wire */
+	
 	start = oa->o_size;
 	end = oa->o_blocks;
 
-	if (end != OBD_OBJECT_EOF) /* Only truncate is supported */
+	if (end != OBD_OBJECT_EOF) 
 		RETURN(-EPROTO);
 
 	info = tsi2mdt_info(tsi);
@@ -1383,7 +1383,7 @@ int mdt_punch_hdl(struct tgt_session_info *tsi)
 	if (!mdt_object_exists(mo))
 		GOTO(out_put, rc = -ENOENT);
 
-	/* Shouldn't happen on dirs */
+	
 	if (S_ISDIR(lu_object_attr(&mo->mot_obj))) {
 		rc = -EPERM;
 		CERROR("%s: Truncate on dir "DFID": rc = %d\n",
@@ -1402,7 +1402,7 @@ int mdt_punch_hdl(struct tgt_session_info *tsi)
 	la->la_size = start;
 	la->la_valid |= LA_SIZE;
 
-	/* MDT supports FMD for Data-on-MDT needs */
+	
 	if (la->la_valid & (LA_ATIME | LA_MTIME | LA_CTIME))
 		tgt_fmd_update(tsi->tsi_exp, &tsi->tsi_fid,
 			       tgt_ses_req(tsi)->rq_xid);
@@ -1448,13 +1448,13 @@ static int mdt_do_glimpse(const struct lu_env *env, struct ldlm_namespace *ns,
 
 	ENTRY;
 
-	/* There can be only one write lock covering data, try to match it. */
+	
 	policy.l_inodebits.bits = MDS_INODELOCK_DOM;
 	mode = ldlm_lock_match(ns, LDLM_FL_TEST_LOCK,
 			       &res->lr_name, LDLM_IBITS, &policy,
 			       LCK_PW, 0, &lockh);
 
-	/* There is no PW lock on this object; finished. */
+	
 	if (mode == 0)
 		RETURN(0);
 
@@ -1488,10 +1488,10 @@ static int mdt_do_glimpse(const struct lu_env *env, struct ldlm_namespace *ns,
 	/* There is actually no need for a glimpse descriptor when glimpsing
 	 * IO locks */
 	gl_work->gl_desc = NULL;
-	/* the ldlm_glimpse_work structure is allocated on the stack */
+	
 	gl_work->gl_flags = LDLM_GL_WORK_SLAB_ALLOCATED;
 
-	ldlm_glimpse_locks(res, &gl_list); /* this will update the LVB */
+	ldlm_glimpse_locks(res, &gl_list); 
 
 	/* If the list is not empty, we failed to glimpse a lock and
 	 * must clean it up. Usually due to a race with unlink.*/
@@ -1553,7 +1553,7 @@ int mdt_dom_object_size(const struct lu_env *env, struct mdt_device *mdt,
 	if (IS_ERR(res))
 		RETURN(-ENOENT);
 
-	/* Update lvbo data if DoM lock returned or if LVB is not yet valid. */
+	
 	if (dom_lock || !mdt_dom_lvb_is_valid(res))
 		mdt_dom_lvbo_update(res, NULL, NULL, false);
 
@@ -1635,7 +1635,7 @@ int mdt_glimpse_enqueue(struct mdt_thread_info *mti, struct ldlm_namespace *ns,
 	}
 	unlock_res(res);
 
-	/* The lock met with no resistance; we're finished. */
+	
 	if (rc == LDLM_ITER_CONTINUE) {
 		GOTO(fill_mbo, rc = ELDLM_LOCK_REPLACED);
 	} else if (flags & LDLM_FL_BLOCK_NOWAIT) {
@@ -1647,7 +1647,7 @@ int mdt_glimpse_enqueue(struct mdt_thread_info *mti, struct ldlm_namespace *ns,
 
 	rc = mdt_do_glimpse(mti->mti_env, ns, res);
 	if (rc == -ENOENT) {
-		/* We are racing with unlink(); just return -ENOENT */
+		
 		rep->lock_policy_res2 = ptlrpc_status_hton(-ENOENT);
 	} else if (rc == -EINVAL) {
 		/* this is possible is client lock has been cancelled but
@@ -1660,7 +1660,7 @@ int mdt_glimpse_enqueue(struct mdt_thread_info *mti, struct ldlm_namespace *ns,
 	}
 	rc = ELDLM_LOCK_ABORTED;
 fill_mbo:
-	/* LVB can be without valid data in case of DOM */
+	
 	if (!mdt_dom_lvb_is_valid(res))
 		mdt_dom_lvbo_update(res, lock, NULL, false);
 	mdt_lvb2reply(res, mbo, lvb);
@@ -1708,9 +1708,9 @@ int mdt_brw_enqueue(struct mdt_thread_info *mti, struct ldlm_namespace *ns,
 	if (mdt_object_remote(mo))
 		GOTO(out, rc = -EPROTO);
 
-	/* Get lock from request for possible resent case. */
+	
 	mdt_intent_fixup_resent(mti, *lockp, lhc, flags);
-	/* resent case */
+	
 	if (!lustre_handle_is_used(&lhc->mlh_reg_lh)) {
 		enum mds_ibits_locks ibits = MDS_INODELOCK_DOM;
 
@@ -1753,7 +1753,7 @@ out:
 	RETURN(rc);
 }
 
-/* check if client has already DoM lock for given resource */
+
 bool mdt_dom_client_has_lock(struct mdt_thread_info *info,
 			     const struct lu_fid *fid)
 {
@@ -1776,7 +1776,7 @@ bool mdt_dom_client_has_lock(struct mdt_thread_info *info,
 			       LDLM_FL_TEST_LOCK, res_id, LDLM_IBITS, policy,
 			       lm, 0, &lockh);
 
-	/* There is no other PW lock on this object; finished. */
+	
 	if (mode == 0)
 		return false;
 
@@ -1784,7 +1784,7 @@ bool mdt_dom_client_has_lock(struct mdt_thread_info *info,
 	if (lock == 0)
 		return false;
 
-	/* check if lock from the same client */
+	
 	rc = (lock->l_export->exp_handle.h_cookie ==
 	      info->mti_exp->exp_handle.h_cookie);
 	ldlm_lock_put(lock);
@@ -1850,17 +1850,17 @@ int mdt_data_version_get(struct tgt_session_info *tsi)
 	if (!S_ISREG(lu_object_attr(&mo->mot_obj)))
 		GOTO(out, rc = -EBADF);
 
-	/* Get version first */
+	
 	version = dt_data_version_get(tsi->tsi_env, mdt_obj2dt(mo));
 	if (version && version != -EOPNOTSUPP) {
 		repbody->mbo_valid |= OBD_MD_FLDATAVERSION;
-		/* re-use mbo_ioepoch to transfer version */
+		
 		repbody->mbo_version = version;
 	}
 
-	/* Read layout to get its version */
+	
 	rc = mdt_big_xattr_get(mti, mo, XATTR_NAME_LOV);
-	if (rc == -ENODATA) /* File has no layout yet */
+	if (rc == -ENODATA) 
 		GOTO(out, rc = 0);
 	else if (rc < 0)
 		GOTO(out, rc);
@@ -1876,7 +1876,7 @@ int mdt_data_version_get(struct tgt_session_info *tsi)
 	       PFID(&tsi->tsi_fid), le32_to_cpu(comp->lcm_layout_gen));
 
 	repbody->mbo_valid |= OBD_MD_LAYOUT_VERSION;
-	/* re-use mbo_rdev for that */
+	
 	repbody->mbo_layout_gen = le32_to_cpu(comp->lcm_layout_gen);
 	rc = 0;
 out:
@@ -1888,7 +1888,7 @@ out:
 	RETURN(rc);
 }
 
-/* read file data to the buffer */
+
 int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 			 struct lustre_handle *lh)
 {
@@ -1929,7 +1929,7 @@ int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 		}
 	}
 
-	/* return data along with open only along with DoM lock */
+	
 	if (!dom_lock || !mdt->mdt_dom_read_open)
 		RETURN(0);
 
@@ -1964,7 +1964,7 @@ int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 	 * 2) return just file tail otherwise.
 	 */
 	if (real_dom_size <= len) {
-		/* can fit whole data */
+		
 		len = real_dom_size;
 		offset = 0;
 	} else if (real_dom_size <
@@ -1988,7 +1988,7 @@ int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 			       req->rq_export->exp_target_data.ted_pagebits);
 		tail = real_dom_size % (1 << pgbits);
 
-		/* no partial tail or tail can't fit in reply */
+		
 		if (tail == 0 || len < tail)
 			RETURN(0);
 
@@ -2005,11 +2005,11 @@ int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 	rc = req_capsule_server_grow(pill, &RMF_NIOBUF_INLINE,
 				     sizeof(*rnb) + len);
 	if (rc != 0) {
-		/* failed to grow data buffer, just exit */
+		
 		GOTO(out, rc = -E2BIG);
 	}
 
-	/* re-take MDT_BODY and NIOBUF_INLINE buffers after the buffer grow */
+	
 	mbo = req_capsule_server_get(pill, &RMF_MDT_BODY);
 	fid = &mbo->mbo_fid1;
 	if (!fid_is_sane(fid))
@@ -2032,7 +2032,7 @@ int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 	if (!dt_object_exists(mo))
 		GOTO(unlock, rc = -ENOENT);
 
-	/* parse remote buffers to local buffers and prepare the latter */
+	
 	lnbs = (len >> PAGE_SHIFT) + 1;
 	OBD_ALLOC_PTR_ARRAY(lnb, lnbs);
 	if (lnb == NULL)
@@ -2046,7 +2046,7 @@ int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 	rc = dt_read_prep(env, mo, lnb, nr_local);
 	if (unlikely(rc))
 		GOTO(buf_put, rc);
-	/* copy data to the buffer finally */
+	
 	for (i = 0; i < nr_local; i++) {
 		char *p = kmap_local_page(lnb[i].lnb_page);
 		long off;
@@ -2067,7 +2067,7 @@ int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 		      " but wanted %u, is size wrong?\n",
 		      tsi->tsi_exp->exp_obd->obd_name, copied,
 		      PFID(&tsi->tsi_fid), len);
-		/* Ignore partially copied data */
+		
 		copied = 0;
 	}
 	EXIT;

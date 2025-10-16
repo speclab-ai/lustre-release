@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Supplementary groups cache.
  */
@@ -134,7 +134,7 @@ int upcall_cache_set_upcall(struct upcall_cache *cache, const char *buffer,
 	if (upcall == NULL)
 		return -ENOMEM;
 
-	/* Remove any extraneous bits from the upcall (e.g. linefeeds) */
+	
 	if (sscanf(buffer, "%s", upcall) != 1)
 		GOTO(out, rc = -EINVAL);
 
@@ -197,10 +197,10 @@ find_again:
 find_with_lock:
 	best_exp = NULL;
 	list_for_each_entry_safe(entry, next, head, ue_hash) {
-		/* check invalid & expired items */
+		
 		rc2 = check_unlink_entry(cache, entry, writelock);
 		if (rc2 == -1) {
-			/* look for most recent expired entry */
+			
 			if (upcall_compare(cache, entry, key, args) == 0 &&
 			    (!best_exp ||
 			     entry->ue_expire > best_exp->ue_expire))
@@ -226,7 +226,7 @@ find_with_lock:
 						     &writelock);
 				goto find_with_lock;
 			}
-			/* let's use that expired entry */
+			
 			entry = best_exp;
 			get_entry(entry);
 			goto out;
@@ -267,10 +267,10 @@ find_with_lock:
 		}
 		list_move(&entry->ue_hash, head);
 	}
-	/* now we hold a write lock */
+	
 	get_entry(entry);
 
-	/* special processing of supp groups for identity upcall */
+	
 	if (strcmp(cache->uc_upcall, IDENTITY_UPCALL_INTERNAL) == 0) {
 		write_unlock(&cache->uc_lock);
 		rc = upcall_cache_get_entry_internal(cache, entry, args,
@@ -280,7 +280,7 @@ find_with_lock:
 			GOTO(out, entry = ERR_PTR(rc));
 	}
 
-	/* acquire for new one */
+	
 	if (UC_CACHE_IS_NEW(entry)) {
 		UC_CACHE_CLEAR_NEW(entry);
 		if (strcmp(cache->uc_upcall, IDENTITY_UPCALL_INTERNAL) == 0) {
@@ -321,7 +321,7 @@ find_with_lock:
 		write_lock(&cache->uc_lock);
 		remove_wait_queue(&entry->ue_waitq, &wait);
 		if (UC_CACHE_IS_ACQUIRING(entry)) {
-			/* we're interrupted or upcall failed in the middle */
+			
 			rc = left > 0 ? -EINTR : -ETIMEDOUT;
 			/* if we waited uc_acquire_expire, we can try again
 			 * with same data, but only if acquire is replayable
@@ -346,7 +346,7 @@ find_with_lock:
 		}
 	}
 
-	/* invalid means error, don't need to try again */
+	
 	if (UC_CACHE_IS_INVALID(entry)) {
 		put_entry(cache, entry);
 		GOTO(out, entry = ERR_PTR(-EIDRM));
@@ -363,7 +363,7 @@ find_with_lock:
 		 * chance to use it once.
 		 */
 		if (entry != new) {
-			/* as stated above, we already hold a write lock */
+			
 			put_entry(cache, entry);
 			write_unlock(&cache->uc_lock);
 			new = NULL;
@@ -371,7 +371,7 @@ find_with_lock:
 		}
 	}
 
-	/* Now we know it's good */
+	
 out:
 	if (writelock)
 		write_unlock(&cache->uc_lock);
@@ -452,7 +452,7 @@ int upcall_cache_downcall(struct upcall_cache *cache, __u32 err, __u64 key,
 	if (!found) {
 		CDEBUG(D_OTHER, "%s: upcall for key %llu not expected\n",
 		       cache->uc_name, key);
-		/* haven't found, it's possible */
+		
 		read_unlock(&cache->uc_lock);
 		RETURN(-EINVAL);
 	}
@@ -491,7 +491,7 @@ int upcall_cache_downcall(struct upcall_cache *cache, __u32 err, __u64 key,
 	CDEBUG(D_OTHER, "%s: created upcall cache entry %p for key %llu\n",
 	       cache->uc_name, entry, entry->ue_key);
 out:
-	/* 'goto out' needs to make sure to take a write lock first */
+	
 	if (rc) {
 		UC_CACHE_SET_INVALID(entry);
 		list_del_init(&entry->ue_hash);
@@ -584,7 +584,7 @@ struct upcall_cache *upcall_cache_init(const char *name, const char *upcall,
 	for (i = 0; i < cache->uc_hashsize; i++)
 		INIT_LIST_HEAD(&cache->uc_hashtable[i]);
 	strscpy(cache->uc_name, name, sizeof(cache->uc_name));
-	/* upcall pathname proc tunable */
+	
 	strscpy(cache->uc_upcall, upcall, sizeof(cache->uc_upcall));
 	cache->uc_entry_expire = entry_expire;
 	cache->uc_acquire_expire = acquire_expire;

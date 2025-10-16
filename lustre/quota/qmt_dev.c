@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -77,16 +77,16 @@ static struct lu_device *qmt_device_fini(const struct lu_env *env,
 	CDEBUG(D_QUOTA, "%s: initiating QMT shutdown\n", qmt->qmt_svname);
 	qmt->qmt_stopping = true;
 
-	/* kill pool instances, if any */
+	
 	qmt_pool_fini(env, qmt);
 
-	/* remove qmt proc entry */
+	
 	if (qmt->qmt_proc != NULL && !IS_ERR(qmt->qmt_proc)) {
 		lprocfs_remove(&qmt->qmt_proc);
 		qmt->qmt_proc = NULL;
 	}
 
-	/* stop rebalance thread */
+	
 	if (!qmt->qmt_child->dd_rdonly)
 		qmt_stop_reba_thread(qmt);
 
@@ -95,14 +95,14 @@ static struct lu_device *qmt_device_fini(const struct lu_env *env,
 		qmt->qmt_root = NULL;
 	}
 
-	/* disconnect from OSD */
+	
 	if (qmt->qmt_child_exp != NULL) {
 		obd_disconnect(qmt->qmt_child_exp);
 		qmt->qmt_child_exp = NULL;
 		qmt->qmt_child = NULL;
 	}
 
-	/* clear references to MDT namespace */
+	
 	ld->ld_obd->obd_namespace = NULL;
 	qmt->qmt_ns = NULL;
 
@@ -151,7 +151,7 @@ static int qmt_connect_to_osd(const struct lu_env *env, struct qmt_device *qmt,
 	data->ocd_connect_flags = OBD_CONNECT_VERSION;
 	data->ocd_version = LUSTRE_VERSION_CODE;
 
-	/* connect to OSD device */
+	
 	rc = obd_connect(NULL, &qmt->qmt_child_exp, obd, &obd->obd_uuid, data,
 			 NULL);
 	if (rc) {
@@ -199,21 +199,21 @@ static int qmt_device_init0(const struct lu_env *env, struct qmt_device *qmt,
 	if (svname == NULL)
 		RETURN(-EINVAL);
 
-	/* record who i am, it might be useful ... */
+	
 	rc = strscpy(qmt->qmt_svname, svname, sizeof(qmt->qmt_svname));
 	if (rc < 0)
 		RETURN(rc);
 
-	/* look-up the obd_device associated with the qmt */
+	
 	obd = class_name2obd(qmt->qmt_svname);
 	if (obd == NULL)
 		RETURN(-ENOENT);
 
-	/* reference each other */
+	
 	obd->obd_lu_dev = ld;
 	ld->ld_obd      = obd;
 
-	/* look-up the parent MDT to steal its ldlm namespace ... */
+	
 	mdt_obd = class_name2obd(lustre_cfg_string(cfg, 2));
 	if (mdt_obd == NULL)
 		RETURN(-ENOENT);
@@ -224,12 +224,12 @@ static int qmt_device_init0(const struct lu_env *env, struct qmt_device *qmt,
 	obd->obd_namespace = mdt_obd->obd_namespace;
 	qmt->qmt_ns = obd->obd_namespace;
 
-	/* connect to backend osd device */
+	
 	rc = qmt_connect_to_osd(env, qmt, cfg);
 	if (rc)
 		GOTO(out, rc);
 
-	/* set up and start rebalance thread */
+	
 	INIT_LIST_HEAD(&qmt->qmt_reba_list);
 	spin_lock_init(&qmt->qmt_reba_lock);
 	if (!qmt->qmt_child->dd_rdonly) {
@@ -246,10 +246,10 @@ static int qmt_device_init0(const struct lu_env *env, struct qmt_device *qmt,
 	type = class_search_type(LUSTRE_QMT_NAME);
 	LASSERT(type != NULL);
 
-	/* put reference taken by class_search_type */
+	
 	kobject_put(&type->typ_kobj);
 
-	/* register proc directory associated with this qmt */
+	
 	qmt->qmt_proc = lprocfs_register(qmt->qmt_svname, type->typ_procroot,
 					 NULL, NULL);
 	if (IS_ERR(qmt->qmt_proc)) {
@@ -259,7 +259,7 @@ static int qmt_device_init0(const struct lu_env *env, struct qmt_device *qmt,
 		GOTO(out, rc);
 	}
 
-	/* initialize pool configuration */
+	
 	rc = qmt_pool_init(env, qmt);
 	if (rc)
 		GOTO(out, rc);
@@ -320,17 +320,17 @@ static struct lu_device *qmt_device_alloc(const struct lu_env *env,
 	int			 rc;
 	ENTRY;
 
-	/* allocate qmt device */
+	
 	OBD_ALLOC_PTR(qmt);
 	if (qmt == NULL)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	/* configure lu/dt_device */
+	
 	ld = qmt2lu_dev(qmt);
 	dt_device_init(&qmt->qmt_dt_dev, ldt);
 	ld->ld_ops = &qmt_lu_ops;
 
-	/* initialize qmt device */
+	
 	rc = qmt_device_init0(env, qmt, ldt, cfg);
 	if (rc != 0) {
 		qmt_device_free(env, ld);
@@ -456,7 +456,7 @@ static int qmt_device_prepare(const struct lu_env *env,
 	}
 
 	qmt->qmt_root = qmt_root;
-	/* initialize on-disk indexes associated with each pool */
+	
 	rc = qmt_pool_prepare(env, qmt, qmt_root, NULL);
 	RETURN(rc);
 }
@@ -470,7 +470,7 @@ static const struct lu_device_operations qmt_lu_ops = {
 					 * configuration */
 };
 
-/* global variable initialization called when the lquota module is loaded */
+
 int qmt_glb_init(void)
 {
 	int rc;
@@ -481,7 +481,7 @@ int qmt_glb_init(void)
 	RETURN(rc);
 }
 
-/* called when the lquota module is about to be unloaded */
+
 void qmt_glb_fini(void)
 {
 	class_unregister_type(LUSTRE_QMT_NAME);

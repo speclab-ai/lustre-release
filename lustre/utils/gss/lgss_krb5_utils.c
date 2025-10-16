@@ -8,7 +8,7 @@
 
 /*
  *  Adapted in part from MIT Kerberos 5-1.2.1 slave/kprop.c and from
- *  http://docs.sun.com/?p=/doc/816-1331/6m7oo9sms&a=view
+ *  http:
  *
  *  Copyright (c) 2002-2004 The Regents of the University of Michigan.
  *  All rights reserved.
@@ -243,14 +243,14 @@ static int lkrb5_cc_check_tgt_princ(krb5_context ctx,
 	       krb5_princ_name(ctx, princ)->length,
 	       krb5_princ_name(ctx, princ)->data);
 
-	/* check type */
+	
 	if (krb5_princ_type(ctx, princ) != KRB5_NT_PRINCIPAL) {
 		logmsg(LL_WARN, "principal type %d is not I want\n",
 		       krb5_princ_type(ctx, princ));
 		return -1;
 	}
 
-	/* check local realm */
+	
 	if (!princ_is_local_realm(ctx, princ)) {
 		logmsg(LL_WARN, "principal realm %.*s not local: %s\n",
 		       krb5_princ_realm(ctx, princ)->length,
@@ -259,7 +259,7 @@ static int lkrb5_cc_check_tgt_princ(krb5_context ctx,
 		return -1;
 	}
 
-	/* check principal name against flag for cred type */
+	
 	if (lgss_krb5_strcmp(krb5_princ_name(ctx, princ),
 			     LGSS_SVC_HOST_STR) == 0 ||
 	    lgss_krb5_strcmp(krb5_princ_name(ctx, princ),
@@ -368,7 +368,7 @@ static int acquire_user_cred_and_check(char *ccname)
 		return -1;
 	}
 
-	/* force validation of cred to check for expiry */
+	
 	maj_stat = gss_inquire_cred(&min_stat, gss_cred,
 				    NULL, &lifetime, NULL, NULL);
 	if (maj_stat != GSS_S_COMPLETE) {
@@ -406,7 +406,7 @@ static int find_existing_krb5_ccache(uid_t uid, char *dir,
 	char dirname[PATH_MAX], buf[PATH_MAX];
 	int num_ents, i, j = 0, rc = -1;
 
-	/* provided dir can be a pattern */
+	
 	for (i = 0; dir[i] != '\0'; i++) {
 		switch (dir[i]) {
 		case '%':
@@ -449,18 +449,18 @@ static int find_existing_krb5_ccache(uid_t uid, char *dir,
 			goto next_find;
 		}
 
-		/* we only look for files as credentials caches */
+		
 		if (!S_ISREG(tmp_stat.st_mode))
 			goto next_find;
 
-		/* make sure it is owned by uid */
+		
 		if (tmp_stat.st_uid != uid) {
 			logmsg(LL_INFO, "%s not owned by %u\n",
 			       buf, uid);
 			goto next_find;
 		}
 
-		/* check user has rw perms */
+		
 		if (!(tmp_stat.st_mode & S_IRUSR &&
 		      tmp_stat.st_mode & S_IWUSR)) {
 			logmsg(LL_INFO, "%s does not have rw perms for %u\n",
@@ -506,7 +506,7 @@ static int lkrb5_check_root_tgt_cc(krb5_context ctx, unsigned int flag,
 		return found;
 	logmsg(LL_DEBUG, "root krb5 TGT ccname: %s\n", ccname);
 
-	/* prepare parsing the cache file */
+	
 	code = krb5_cc_resolve(ctx, ccname, &tgt_ccache);
 	if (code) {
 		logmsg(LL_ERR, "resolve krb5 cc %s: %s\n",
@@ -514,7 +514,7 @@ static int lkrb5_check_root_tgt_cc(krb5_context ctx, unsigned int flag,
 		goto out_fail;
 	}
 
-	/* checks the principal */
+	
 	code = krb5_cc_get_principal(ctx, tgt_ccache, &princ);
 	if (code) {
 		logmsg(LL_ERR, "get cc principal: %s\n", krb5_err_msg(code));
@@ -557,7 +557,7 @@ static int lkrb5_check_root_tgt_cc(krb5_context ctx, unsigned int flag,
 		 * we found the princ type is always 0 (KRB5_NT_UNKNOWN), why???
 		 */
 
-		/* FIXME how about inter-realm TGT??? FIXME */
+		
 		if (lgss_krb5_strcasecmp(krb5_princ_name(ctx, cred.server),
 					 "krbtgt"))
 			continue;
@@ -566,8 +566,8 @@ static int lkrb5_check_root_tgt_cc(krb5_context ctx, unsigned int flag,
 					 krb5_this_realm))
 			continue;
 
-		/* check validity of time */
-		delta = 60 * 30; /* half an hour */
+		
+		delta = 60 * 30; 
 		duration = cred.times.endtime - cred.times.starttime;
 		if (duration / 4 < delta)
 			delta = duration / 4;
@@ -679,7 +679,7 @@ static int lkrb5_refresh_root_tgt_cc(krb5_context ctx, unsigned int root_flags,
 	unsigned int flag = 0;
 	int rc = -1;
 
-	/* prepare parsing the keytab file */
+	
 	code = krb5_kt_resolve(ctx, krb5_keytab_file, &kt);
 	if (code) {
 		logmsg(LL_ERR, "resolve keytab %s: %s\n",
@@ -693,7 +693,7 @@ static int lkrb5_refresh_root_tgt_cc(krb5_context ctx, unsigned int root_flags,
 		goto out_kt;
 	}
 
-	/* iterate keytab to find proper an entry */
+	
 	do {
 		krb5_data      *princname;
 
@@ -761,7 +761,7 @@ static int lkrb5_refresh_root_tgt_cc(krb5_context ctx, unsigned int root_flags,
 		goto out_kt;
 	}
 
-	/* obtain root TGT */
+	
 	rc = get_root_tgt_ccname(ctx, ccname, sizeof(ccname));
 	if (!rc)
 		rc = lkrb5_get_root_tgt_keytab(ctx, kt, princ, ccname);
@@ -828,15 +828,15 @@ static int lkrb5_prepare_user_cred(struct lgss_cred *cred)
 		goto free;
 	}
 
-	/* getting default ccname requires impersonating user */
+	
 	rc = lgss_krb5_get_default_ccache_name(ctx, ccname, size);
 	if (rc)
 		goto end_ccache;
 
-	/* try ccname as returned by gss */
+	
 	rc = acquire_user_cred_and_check(ccname);
 	if (!rc)
-		/* user's creds found in default ccache */
+		
 		goto end_ccache;
 
 	/* fallback: look at every file matching
@@ -846,13 +846,13 @@ static int lkrb5_prepare_user_cred(struct lgss_cred *cred)
 	rc = find_existing_krb5_ccache(cred->lc_uid, LGSS_DEFAULT_CRED_DIR,
 				       ccname, size);
 	if (!rc)
-		/* user's creds found in LGSS_DEFAULT_CRED_DIR */
+		
 		goto end_ccache;
 
 	rc = find_existing_krb5_ccache(cred->lc_uid, LGSS_USER_CRED_DIR,
 				       ccname, size);
 	if (!rc)
-		/* user's creds found in LGSS_USER_CRED_DIR */
+		
 		goto end_ccache;
 
 	rc = -ENODATA;

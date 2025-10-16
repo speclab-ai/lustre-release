@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <errno.h>
@@ -183,5 +183,5 @@ int main(int argc, char **argv)
 		sleep(interval);
 		do_stat(fd);
 	}
-	/* Never reached */
+	
 }

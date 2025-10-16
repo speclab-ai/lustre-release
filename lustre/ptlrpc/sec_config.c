@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_SEC
@@ -65,9 +65,9 @@ enum lustre_sec_part sptlrpc_target_sec_part(struct obd_device *obd)
 	return LUSTRE_SP_ANY;
 }
 
-/* user supplied flavor string parsing */
 
-/* format: <base_flavor>[-<bulk_type:alg_spec>] */
+
+
 int sptlrpc_parse_flavor(const char *str, struct sptlrpc_flavor *flvr)
 {
 	char            buf[32];
@@ -90,11 +90,11 @@ int sptlrpc_parse_flavor(const char *str, struct sptlrpc_flavor *flvr)
 	if (flvr->sf_rpc == SPTLRPC_FLVR_INVALID)
 		goto err_out;
 
-	/* currently only base flavor "plain" can have bulk specification.  */
+	
 	if (flvr->sf_rpc == SPTLRPC_FLVR_PLAIN) {
 		flvr->u_bulk.hash.hash_alg = BULK_HASH_ALG_ADLER32;
 		if (bulk) {
-			/* format: plain-hash:<hash_alg> */
+			
 			alg = strchr(bulk, ':');
 			if (alg == NULL)
 				goto err_out;
@@ -126,7 +126,7 @@ err_out:
 }
 EXPORT_SYMBOL(sptlrpc_parse_flavor);
 
-/* configure rules */
+
 
 static void get_default_flavor(struct sptlrpc_flavor *sf)
 {
@@ -146,7 +146,7 @@ static void sptlrpc_rule_init(struct sptlrpc_rule *rule)
 	get_default_flavor(&rule->sr_flvr);
 }
 
-/* format: network[.direction]=flavor */
+
 int sptlrpc_parse_rule(char *param, struct sptlrpc_rule *rule)
 {
 	char *flavor, *dir;
@@ -165,7 +165,7 @@ int sptlrpc_parse_rule(char *param, struct sptlrpc_rule *rule)
 	if (dir)
 		*dir++ = '\0';
 
-	/* 1.1 network */
+	
 	if (strcmp(param, "default")) {
 		rule->sr_netid = libcfs_str2net(param);
 		if (rule->sr_netid == LNET_NET_ANY) {
@@ -174,7 +174,7 @@ int sptlrpc_parse_rule(char *param, struct sptlrpc_rule *rule)
 		}
 	}
 
-	/* 1.2 direction */
+	
 	if (dir) {
 		if (!strcmp(dir, "mdt2ost")) {
 			rule->sr_from = LUSTRE_SP_MDT;
@@ -194,7 +194,7 @@ int sptlrpc_parse_rule(char *param, struct sptlrpc_rule *rule)
 		}
 	}
 
-	/* 2.1 flavor */
+	
 	rc = sptlrpc_parse_flavor(flavor, &rule->sr_flvr);
 	if (rc)
 		RETURN(-EINVAL);
@@ -215,7 +215,7 @@ void sptlrpc_rule_set_free(struct sptlrpc_rule_set *rset)
 }
 EXPORT_SYMBOL(sptlrpc_rule_set_free);
 
-/* return 0 if the rule set could accomodate one more rule.  */
+
 int sptlrpc_rule_set_expand(struct sptlrpc_rule_set *rset)
 {
 	struct sptlrpc_rule *rules;
@@ -228,7 +228,7 @@ int sptlrpc_rule_set_expand(struct sptlrpc_rule_set *rset)
 
 	nslot = rset->srs_nslot + 8;
 
-	/* better use realloc() if available */
+	
 	OBD_ALLOC_PTR_ARRAY(rules, nslot);
 	if (rules == NULL)
 		return -ENOMEM;
@@ -302,7 +302,7 @@ int sptlrpc_rule_set_merge(struct sptlrpc_rule_set *rset,
 			}
 		}
 
-		/* test dir match, same logic as net matching */
+		
 		if (!rule_match_dir(p, rule)) {
 			if (spec_dir) {
 				if (rule_spec_dir(p))
@@ -314,7 +314,7 @@ int sptlrpc_rule_set_merge(struct sptlrpc_rule_set *rset,
 			}
 		}
 
-		/* find a match */
+		
 		match = 1;
 		break;
 	}
@@ -323,7 +323,7 @@ int sptlrpc_rule_set_merge(struct sptlrpc_rule_set *rset,
 		LASSERT(n >= 0 && n < rset->srs_nrule);
 
 		if (rule->sr_flvr.sf_rpc == SPTLRPC_FLVR_INVALID) {
-			/* remove this rule */
+			
 			if (n < rset->srs_nrule - 1)
 				memmove(&rset->srs_rules[n],
 					&rset->srs_rules[n + 1],
@@ -331,7 +331,7 @@ int sptlrpc_rule_set_merge(struct sptlrpc_rule_set *rset,
 					sizeof(*rule));
 			rset->srs_nrule--;
 		} else {
-			/* override the rule */
+			
 			memcpy(&rset->srs_rules[n], rule, sizeof(*rule));
 		}
 	} else {
@@ -378,7 +378,7 @@ int sptlrpc_rule_set_choose(struct sptlrpc_rule_set *rset,
 	int n;
 
 	if (nid_is_lo0(nid))
-		/* do not enforce any sec flavor on loopback connection */
+		
 		return 0;
 
 	for (n = 0; n < rset->srs_nrule; n++) {
@@ -428,7 +428,7 @@ static int sptlrpc_rule_set_extract(struct sptlrpc_rule_set *gen,
 
 	might_sleep();
 
-	/* merge general rules firstly, then target-specific rules */
+	
 	for (i = 0; i < 2; i++) {
 		if (src[i] == NULL)
 			continue;
@@ -456,7 +456,7 @@ static int sptlrpc_rule_set_extract(struct sptlrpc_rule_set *gen,
 	return 0;
 }
 
-/* sptlrpc configuration support  */
+
 
 struct sptlrpc_conf_tgt {
 	struct list_head              sct_list;
@@ -467,11 +467,11 @@ struct sptlrpc_conf_tgt {
 struct sptlrpc_conf {
 	struct list_head	sc_list;
 	char			sc_fsname[MTI_NAME_MAXLEN];
-	unsigned int		sc_modified;	/* modified during updating */
-	unsigned int		sc_updated:1,	/* updated copy from MGS */
-				sc_local:1;	/* local copy from target */
-	struct sptlrpc_rule_set	sc_rset;	/* fs general rules */
-	struct list_head	sc_tgts;	/* target-specific rules */
+	unsigned int		sc_modified;	
+	unsigned int		sc_updated:1,	
+				sc_local:1;	
+	struct sptlrpc_rule_set	sc_rset;	
+	struct list_head	sc_tgts;	
 };
 
 static struct mutex sptlrpc_conf_lock;
@@ -558,7 +558,7 @@ struct sptlrpc_conf *sptlrpc_conf_get(const char *fsname,
 	return conf;
 }
 
-/* caller must hold conf_lock already. */
+
 static int sptlrpc_conf_merge_rule(struct sptlrpc_conf *conf,
 				   const char *target,
 				   struct sptlrpc_rule *rule)
@@ -566,7 +566,7 @@ static int sptlrpc_conf_merge_rule(struct sptlrpc_conf *conf,
 	struct sptlrpc_conf_tgt  *conf_tgt;
 	struct sptlrpc_rule_set  *rule_set;
 
-	/* fsname == target means general rules for the whole fs */
+	
 	if (strcmp(conf->sc_fsname, target) == 0) {
 		rule_set = &conf->sc_rset;
 	} else {
@@ -647,7 +647,7 @@ int sptlrpc_process_config(struct lustre_cfg *lcfg)
 		return -EINVAL;
 	}
 
-	/* parse rule to make sure the format is correct */
+	
 	if (strncmp(param, PARAM_SRPC_FLVR,
 		    sizeof(PARAM_SRPC_FLVR) - 1) != 0) {
 		CERROR("Invalid sptlrpc parameter: %s\n", param);
@@ -719,7 +719,7 @@ void sptlrpc_conf_log_update_begin(const char *logname)
 }
 EXPORT_SYMBOL(sptlrpc_conf_log_update_begin);
 
-/* mark a config log has been updated */
+
 void sptlrpc_conf_log_update_end(const char *logname)
 {
 	struct sptlrpc_conf *conf;
@@ -786,22 +786,22 @@ static inline void flavor_set_flags(struct sptlrpc_flavor *sf,
 		return;
 
 	if (from == LUSTRE_SP_MDT) {
-		/* MDT->MDT; MDT->OST */
+		
 		sf->sf_flags |= PTLRPC_SEC_FL_ROOTONLY;
 	} else if (from == LUSTRE_SP_CLI && to == LUSTRE_SP_OST) {
-		/* CLI->OST */
+		
 		sf->sf_flags |= PTLRPC_SEC_FL_ROOTONLY | PTLRPC_SEC_FL_BULK;
 	} else if (from == LUSTRE_SP_CLI && to == LUSTRE_SP_MDT) {
-		/* CLI->MDT */
+		
 		if (fl_udesc && sf->sf_rpc != SPTLRPC_FLVR_NULL)
 			sf->sf_flags |= PTLRPC_SEC_FL_UDESC;
 	}
 
-	/* Some flavors use a single uid (0) context */
+	
 	if (flvr_is_rootonly(sf->sf_rpc))
 		sf->sf_flags |= PTLRPC_SEC_FL_ROOTONLY;
 
-	/* User descriptor might need to be cleared */
+	
 	if (flvr_allows_user_desc(sf->sf_rpc) == 0)
 		sf->sf_flags &= ~PTLRPC_SEC_FL_UDESC;
 }
@@ -825,7 +825,7 @@ void sptlrpc_conf_choose_flavor(enum lustre_sec_part from,
 	if (conf == NULL)
 		goto out;
 
-	/* convert uuid name (supposed end with _UUID) to target name */
+	
 	len = strlen(target->uuid);
 	LASSERT(len > 5);
 	memcpy(name, target->uuid, len - 5);
@@ -885,7 +885,7 @@ void sptlrpc_conf_client_adapt(struct obd_device *obd)
 		strcmp(obd->obd_type->typ_name, LUSTRE_LWP_NAME) == 0);
 	CDEBUG(D_SEC, "obd %s\n", obd->u.cli.cl_target_uuid.uuid);
 
-	/* serialize with connect/disconnect import */
+	
 	with_imp_locked_nested(obd, imp, rc, OBD_CLI_SEM_MDCOSC) {
 		write_lock(&imp->imp_sec_lock);
 		if (imp->imp_sec)
@@ -930,7 +930,7 @@ int sptlrpc_conf_target_get_rules(struct obd_device *obd,
 		CERROR("missing sptlrpc config log\n");
 		rc = -EFAULT;
 	} else {
-		/* extract rule set for this target */
+		
 		conf_tgt = sptlrpc_conf_get_tgt(conf, obd->obd_name, 0);
 
 		rc = sptlrpc_rule_set_extract(&conf->sc_rset,

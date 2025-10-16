@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/liblutf_connect.c
  *
@@ -78,7 +78,7 @@ static lutf_rc_t doNonBlockingConnect(int iSockFd, struct sockaddr *psSA,
 		}
 	}
 
-	/* There was some error when connecting */
+	
 	if (iError) {
 		errno = iError;
 		PERROR("Error on connect. errno = %s", strerror(errno));
@@ -98,19 +98,19 @@ int establishTCPConnection(unsigned long uiAddress,
 	struct sockaddr_in tm_addr;
 	lutf_rc_t eRc = EN_LUTF_RC_OK;
 
-	/* Create TCP socket */
+	
 	rsocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (rsocket == -1)
 		return EN_LUTF_RC_FAIL;
 
-	/* Turn off Nagle's algorithm for this TCP socket. */
+	
 	setsockopt(rsocket, IPPROTO_TCP, TCP_NODELAY, (void *)&iOption,
 		   sizeof(iOption));
 
 	iFlags = 1;
 	if (setsockopt(rsocket, SOL_SOCKET, SO_REUSEADDR, (void *)&iFlags,
 		       sizeof(iFlags)) < 0) {
-		/*  Cannot change the socket options.  */
+		
 		close(rsocket);
 		return EN_LUTF_RC_FAIL;
 	}
@@ -121,7 +121,7 @@ int establishTCPConnection(unsigned long uiAddress,
 	else
 		fcntl(rsocket, F_SETFL, iFlags & (~O_NONBLOCK));
 
-	/* Set address parameters for TCP connection */
+	
 	bzero((char *) &tm_addr, sizeof(tm_addr));
 	tm_addr.sin_addr.s_addr = (endian) ? htonl(uiAddress) : uiAddress;
 	tm_addr.sin_port = (endian) ? htons(iPort) : iPort;
@@ -176,7 +176,7 @@ lutf_rc_t sendTcpMessage(int iTcpSocket, char *pcBody, int iBodySize)
 	tNleft = iBodySize;
 
 	while (tNleft > 0) {
-		/*  Send as many bytes, up to current maximum, as we can.  */
+		
 		tNwritten = write(iTcpSocket, pcCur, tNleft);
 
 		if (tNwritten < 0) {
@@ -186,7 +186,7 @@ lutf_rc_t sendTcpMessage(int iTcpSocket, char *pcBody, int iBodySize)
 				 */
 				tNwritten = 0;
 			} else {
-				/* System error has occurred.  */
+				
 				PERROR("Failed to send message (%d, %p, %d, %u)  %s:%d",
 				       iTcpSocket, pcBody, iBodySize, tNwritten,
 				       strerror(errno), errno);
@@ -230,7 +230,7 @@ lutf_rc_t populateMsgHdr(int rsocket, char *msg_hdr,
 
 	hdr = (lutf_message_hdr_t *)msg_hdr;
 
-	/* get the local IP address we are connected on */
+	
 	rc = getsockname(rsocket,
 			(struct sockaddr *)&sock,
 			(socklen_t *)&len);
@@ -263,7 +263,7 @@ lutf_rc_t readTcpMessage(int iFd, char *pcBuffer,
 	if (iFd == -1)
 		return EN_LUTF_RC_CLIENT_CLOSED;
 
-	/* set the timeout */
+	
 	if (iTimeout) {
 		sTimeout.tv_sec = iTimeout;
 		sTimeout.tv_usec = 0;
@@ -275,7 +275,7 @@ lutf_rc_t readTcpMessage(int iFd, char *pcBuffer,
 		iFlags = fcntl(iFd, F_GETFL, 0);
 		fcntl(iFd, F_SETFL, iFlags & (~O_NONBLOCK));
 	} else {
-		/* if no timeout specified do a non blocking read */
+		
 		iFlags = fcntl(iFd, F_GETFL, 0);
 		fcntl(iFd, F_SETFL, iFlags | O_NONBLOCK);
 	}
@@ -286,7 +286,7 @@ lutf_rc_t readTcpMessage(int iFd, char *pcBuffer,
 	pcCur = pcBuffer;
 	tNleft = iBufferSize;
 	while (tNleft > 0) {
-		/*  Get as many bytes, up to current maximum as we can.  */
+		
 		tNread = read(iFd, pcCur, tNleft);
 
 		if (tNread < 0) {
@@ -298,7 +298,7 @@ lutf_rc_t readTcpMessage(int iFd, char *pcBuffer,
 			} else if ((errno == EAGAIN) && (!iTimeout)) {
 				return EN_LUTF_RC_SOCKET_FAIL;
 			} else {
-				/*  System error has occurred. */
+				
 				return EN_LUTF_RC_SOCKET_FAIL;
 			}
 		} else {

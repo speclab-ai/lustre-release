@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
@@ -381,7 +381,7 @@ static int out_xattr_set(struct tgt_session_info *tsi)
 		RETURN(PTR_ERR(name));
 	}
 
-	/* If buffer == NULL (-ENODATA), then it might mean delete xattr */
+	
 	buf = object_update_param_get(update, 1, &buf_len,
 				      tgt_name(tsi->tsi_tgt), "char");
 	if (IS_ERR(buf) && PTR_ERR(buf) != -ENODATA)
@@ -682,7 +682,7 @@ static int out_read(struct tgt_session_info *tsi)
 	}
 	pos = le64_to_cpu(*(__u64 *)(tmp));
 
-	/* Put the offset into the begining of the buffer in reply */
+	
 	orr = (struct out_read_reply *)update_result->our_data;
 
 	nbufs = (size + OUT_BULK_BUFFER_SIZE - 1) / OUT_BULK_BUFFER_SIZE;
@@ -714,7 +714,7 @@ static int out_read(struct tgt_session_info *tsi)
 		size -= read_size;
 	}
 
-	/* send pages to client */
+	
 	rc = tgt_send_buffer(tsi, rdbuf);
 	if (rc < 0)
 		GOTO(out_free, rc);
@@ -734,7 +734,7 @@ out_free:
 	OBD_FREE(rdbuf, sizeof(*rdbuf) +
 			nbufs * sizeof(rdbuf->rb_bufs[0]));
 out:
-	/* Insert read buffer */
+	
 	update_result->our_rc = ptlrpc_status_hton(rc);
 	reply->ourp_lens[index] = round_up(update_result->our_datalen +
 					   sizeof(*update_result), 8);
@@ -799,7 +799,7 @@ static struct tgt_handler *out_handler_find(__u32 opc)
 		LASSERTF(h->th_opc == opc, "opcode mismatch %d != %d\n",
 			 h->th_opc, opc);
 	} else {
-		h = NULL; /* unsupported opc */
+		h = NULL; 
 	}
 	return h;
 }
@@ -985,7 +985,7 @@ int out_handle(struct tgt_session_info *tsi)
 			GOTO(out_free, rc = err_serious(-EPROTO));
 
 		for (i = 0; i < update_buf_count; i++)
-			/* First *and* last might be partial pages, hence +1 */
+			
 			page_count += DIV_ROUND_UP(oub[i].oub_size,
 						   PAGE_SIZE) + 1;
 
@@ -1040,7 +1040,7 @@ int out_handle(struct tgt_session_info *tsi)
 		}
 		updates += our->ourq_count;
 
-		/* need to calculate reply size */
+		
 		for (j = 0; j < our->ourq_count; j++) {
 			update = object_update_request_get(our, j, NULL);
 			if (update == NULL)
@@ -1055,7 +1055,7 @@ int out_handle(struct tgt_session_info *tsi)
 				GOTO(out, rc = err_serious(-EPROTO));
 			}
 
-			/* XXX: what ou_result_size can be considered safe? */
+			
 
 			reply_size += sizeof(reply->ourp_lens[0]);
 			reply_size += sizeof(struct object_update_result);
@@ -1080,7 +1080,7 @@ int out_handle(struct tgt_session_info *tsi)
 		GOTO(out_free, rc = err_serious(-EPROTO));
 	}
 
-	/* Prepare the update reply buffer */
+	
 	reply = req_capsule_server_get(pill, &RMF_OUT_UPDATE_REPLY);
 	if (reply == NULL)
 		GOTO(out_free, rc = -EPROTO);
@@ -1095,7 +1095,7 @@ int out_handle(struct tgt_session_info *tsi)
 
 	need_reconstruct = tgt_check_resent(pill->rc_req, trd);
 
-	/* Walk through updates in the request to execute them */
+	
 	for (i = 0; i < update_buf_count; i++) {
 		struct tgt_handler *h;
 		struct dt_object *dt_obj;
@@ -1147,9 +1147,9 @@ int out_handle(struct tgt_session_info *tsi)
 				GOTO(next, rc = -ENOTSUPP);
 			}
 
-			/* Check resend case only for modifying RPC */
+			
 			if (h->th_flags & IS_MUTABLE) {
-				/* sanity check for last XID changing */
+				
 				if (unlikely(!need_reconstruct &&
 					     req_xid_is_last(pill->rc_req))) {
 					DEBUG_REQ(D_ERROR, pill->rc_req,
@@ -1167,7 +1167,7 @@ int out_handle(struct tgt_session_info *tsi)
 					GOTO(next, rc = -EROFS);
 			}
 
-			/* start transaction for modification RPC only */
+			
 			if (h->th_flags & IS_MUTABLE && current_batchid == -1) {
 				current_batchid = update->ou_batchid;
 
@@ -1192,7 +1192,7 @@ int out_handle(struct tgt_session_info *tsi)
 				if (rc != 0)
 					GOTO(next, rc);
 
-				/* start a new transaction if needed */
+				
 				if (h->th_flags & IS_MUTABLE) {
 					rc = out_tx_start(env, dt, ta,
 							  tsi->tsi_exp);

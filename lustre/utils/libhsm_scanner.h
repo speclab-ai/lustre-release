@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
+
 /*
  * Copyright (c) 2019, DDN Storage Corporation.
  */
@@ -39,4 +39,4 @@ static inline bool endswith(const char *str, const char *s)
 	return !strcmp(str + len1 - len2, s);
 }
 
-#endif /* LIBHSM_SCANNER_H */
+#endif 

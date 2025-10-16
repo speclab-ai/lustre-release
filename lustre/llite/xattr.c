@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <linux/fs.h>
@@ -52,7 +52,7 @@ const struct xattr_handler *get_xattr_type(const char *name)
 static int xattr_type_filter(struct ll_sb_info *sbi,
 			     const struct xattr_handler *handler)
 {
-	/* No handler means XATTR_OTHER_T */
+	
 	if (!handler)
 		return -EOPNOTSUPP;
 
@@ -92,7 +92,7 @@ static int ll_xattr_set_common(const struct xattr_handler *handler,
 	int rc;
 
 	ENTRY;
-	/* VFS has locked the inode before calling this */
+	
 	ll_set_inode_lock_owner(inode);
 
 	/* When setxattr() is called with a size of 0 the value is
@@ -104,7 +104,7 @@ static int ll_xattr_set_common(const struct xattr_handler *handler,
 	else
 		valid = OBD_MD_FLXATTR;
 
-	/* FIXME: enable IMA when the conditions are ready */
+	
 	if (handler->flags == XATTR_SECURITY_T &&
 	    (!strcmp(name, "ima") || !strcmp(name, "evm")))
 		GOTO(out, rc = -EOPNOTSUPP);
@@ -118,7 +118,7 @@ static int ll_xattr_set_common(const struct xattr_handler *handler,
 	    !inode_owner_or_capable(map, inode))
 		GOTO(out, rc = -EPERM);
 
-	/* b10667: ignore lustre special xattr for now */
+	
 	if (!strcmp(name, "hsm") ||
 	    ((handler->flags == XATTR_TRUSTED_T && !strcmp(name, "lov")) ||
 	     (handler->flags == XATTR_LUSTRE_T && !strcmp(name, "lov"))))
@@ -162,7 +162,7 @@ static int ll_xattr_set_common(const struct xattr_handler *handler,
 		if (clum->lum_magic != LMV_USER_MAGIC)
 			GOTO(out, rc = -EINVAL);
 
-		/* skip default dmv */
+		
 		if (clum->lum_stripe_offset == LMV_OFFSET_DEFAULT &&
 		    clum->lum_stripe_count == 1 &&
 		    clum->lum_hash_type == LMV_HASH_TYPE_UNKNOWN)
@@ -274,7 +274,7 @@ static int ll_adjust_lum(struct inode *inode, struct lov_user_md *lump,
 			}
 		}
 	} else if (lump->lmm_magic == LOV_USER_MAGIC_V1) {
-		/* reset starting offset if xattr is copied */
+		
 		if (v1->lmm_stripe_offset == 0 && size > sizeof(*v1) &&
 		    !fid_is_zero(&v1->lmm_objects[0].l_ost_oi.oi_fid)) {
 			default_offset = true;
@@ -282,13 +282,13 @@ static int ll_adjust_lum(struct inode *inode, struct lov_user_md *lump,
 	} else  if (lump->lmm_magic == LOV_USER_MAGIC_V3) {
 		struct lov_user_md_v3 *v3 = (void *)v1;
 
-		/* reset starting offset if xattr is copied */
+		
 		if (v3->lmm_stripe_offset == 0 && size > sizeof(*v3) &&
 		    !fid_is_zero(&v3->lmm_objects[0].l_ost_oi.oi_fid)) {
 			default_offset = true;
 		}
 	} else {
-		/* skip for other layout types */
+		
 		return 0;
 	}
 
@@ -313,7 +313,7 @@ static int ll_adjust_lum(struct inode *inode, struct lov_user_md *lump,
 		if (default_offset)
 			v1->lmm_stripe_offset = LOV_OFFSET_DEFAULT;
 
-		/* Avoid anyone directly setting the RELEASED flag. */
+		
 		if (v1->lmm_pattern & LOV_PATTERN_F_RELEASED) {
 			if (!release_checked) {
 				u32 state = HS_NONE;
@@ -406,13 +406,13 @@ static int ll_xattr_set(const struct xattr_handler *handler,
 	LASSERT(inode);
 	LASSERT(name);
 
-	/* VFS has locked the inode before calling this */
+	
 	ll_set_inode_lock_owner(inode);
 
 	CDEBUG(D_VFSTRACE, "VFS Op:inode=" DFID "(%p), xattr %s\n",
 	       PFID(ll_inode2fid(inode)), inode, name);
 
-	/* lustre/trusted.lov.xxx would be passed through xattr API */
+	
 	if (!strcmp(name, "lov")) {
 		rc = ll_setstripe_ea(dentry, (struct lov_user_md *)value,
 				       size);
@@ -500,7 +500,7 @@ int ll_xattr_list(struct inode *inode, const char *name, int type, void *buffer,
 		if (rc < 0)
 			GOTO(out_xattr, rc);
 
-		/* Add "system.posix_acl_access" to the list */
+		
 		if (lli->lli_posix_acl && valid & OBD_MD_FLXATTRLS) {
 			if (size == 0) {
 				rc += sizeof(XATTR_NAME_ACL_ACCESS);
@@ -519,14 +519,14 @@ getxattr_nocache:
 		if (rc < 0)
 			GOTO(out_xattr, rc);
 
-		/* only detect the xattr size */
+		
 		if (size == 0)
 			GOTO(out, rc);
 
 		if (size < rc)
 			GOTO(out, rc = -ERANGE);
 
-		/* do not need swab xattr data */
+		
 		xdata = req_capsule_server_sized_get(&req->rq_pill, &RMF_EADATA,
 						     rc);
 		if (!xdata)
@@ -806,7 +806,7 @@ ssize_t ll_listxattr(struct dentry *dentry, char *buffer, size_t size)
 		len = strnlen(xattr_name, rem - 1) + 1;
 		rem -= len;
 		if (!xattr_type_filter(sbi, hide_xattr ? NULL : xh)) {
-			/* Skip OK xattr type, leave it in buffer. */
+			
 			xattr_name += len;
 			continue;
 		}

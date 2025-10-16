@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 
 /*
  * This code handles user interaction with the configuration interface
@@ -67,7 +67,7 @@ cfs_get_param_paths(glob_t *paths, const char *pattern, ...)
 		goto skip_mounting;
 
 	if (mount("none", "/sys/kernel/debug", "debugfs", 0, "") == -1) {
-		/* Already mounted or don't have permission to mount is okay */
+		
 		if (errno != EPERM && errno != EBUSY)
 			fprintf(stderr, "Warning: failed to mount debug: %s\n",
 				strerror(errno));

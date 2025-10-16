@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd transaction and state machine processing.
  */
@@ -32,4 +32,4 @@ int kfilnd_tn_init(void);
 int kfilnd_tn_set_kiov_buf(struct kfilnd_transaction *tn, struct bio_vec *kiov,
 		           size_t num_iov, size_t offset, size_t nob);
 
-#endif /* _KFILND_TN_ */
+#endif 

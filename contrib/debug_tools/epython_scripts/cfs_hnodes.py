@@ -6,7 +6,6 @@ Copyright (c) 2019 Cray Inc. All Rights Reserved.
 """
 
 from pykdump.API import *
-#from struct import *
 import argparse
 import os
 

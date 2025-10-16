@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2011 FUJITSU LIMITED.  All rights reserved.
@@ -388,4 +388,4 @@ generic:
 }
 EXPORT_SYMBOL(lustre_errno_ntoh);
 
-#endif /* LUSTRE_TRANSLATE_ERRNOS */
+#endif 

@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Shared definitions and declarations for Lustre OI scrub.
  *
@@ -24,34 +24,34 @@
 #define SCRUB_WINDOW_SIZE		1024
 
 enum scrub_next_status {
-	/* exit current loop and process next group */
+	
 	SCRUB_NEXT_BREAK	= 1,
 
-	/* skip current object and process next bit */
+	
 	SCRUB_NEXT_CONTINUE	= 2,
 
-	/* exit all the loops */
+	
 	SCRUB_NEXT_EXIT		= 3,
 
-	/* wait for free cache slot */
+	
 	SCRUB_NEXT_WAIT		= 4,
 
-	/* simulate system crash during OI scrub */
+	
 	SCRUB_NEXT_CRASH	= 5,
 
-	/* simulate failure during OI scrub */
+	
 	SCRUB_NEXT_FATAL	= 6,
 
-	/* new created object, no scrub on it */
+	
 	SCRUB_NEXT_NOSCRUB	= 7,
 
-	/* the object has no FID-in-LMA */
+	
 	SCRUB_NEXT_NOLMA	= 8,
 
-	/* for OST-object */
+	
 	SCRUB_NEXT_OSTOBJ	= 9,
 
-	/* old OST-object, no LMA or no FID-on-OST flags in LMA */
+	
 	SCRUB_NEXT_OSTOBJ_OLD	= 10,
 };
 
@@ -64,25 +64,25 @@ enum scrub_local_file_flags {
 };
 
 enum scrub_start {
-	/* Set failout flag. */
+	
 	SS_SET_FAILOUT		= 0x00000001,
 
-	/* Clear failout flag. */
+	
 	SS_CLEAR_FAILOUT	= 0x00000002,
 
-	/* Reset scrub start position. */
+	
 	SS_RESET		= 0x00000004,
 
-	/* Trigger full scrub automatically. */
+	
 	SS_AUTO_FULL		= 0x00000008,
 
-	/* Trigger partial scrub automatically. */
+	
 	SS_AUTO_PARTIAL		= 0x00000010,
 
-	/* Set dryrun flag. */
+	
 	SS_SET_DRYRUN		= 0x00000020,
 
-	/* Clear dryrun flag. */
+	
 	SS_CLEAR_DRYRUN		= 0x00000040,
 };
 
@@ -103,7 +103,7 @@ enum osd_lf_flags {
  * enable auto detect OI inconsistency since last OI scurb done.
  */
 enum auto_scrub {
-	/* Disable auto scrub. */
+	
 	AS_NEVER	= 0,
 
 	/* 1 second is too short interval, it is almost equal to always auto
@@ -118,12 +118,12 @@ enum auto_scrub {
 };
 
 struct lustre_scrub {
-	/* Object for the scrub file. */
+	
 	struct dt_object       *os_obj;
 
 	struct task_struct     *os_task;
 	struct list_head	os_inconsistent_items;
-	/* once inconsistent mapping can't be fixed, put into this list */
+	
 	struct list_head	os_stale_items;
 
 	/* write lock for scrub prep/update/post/checkpoint,
@@ -132,29 +132,29 @@ struct lustre_scrub {
 	struct rw_semaphore	os_rwsem;
 	spinlock_t		os_lock;
 
-	/* Scrub file in memory. */
+	
 	struct scrub_file       os_file;
 
-	/* Buffer for scrub file load/store. */
+	
 	struct scrub_file       os_file_disk;
 
 	const char	       *os_name;
 
-	/* The time for last checkpoint, seconds */
+	
 	time64_t		os_time_last_checkpoint;
 
-	/* The time for next checkpoint, seconds */
+	
 	time64_t		os_time_next_checkpoint;
 
-	/* How long to wait to start scrubbing */
+	
 	time64_t		os_auto_scrub_interval;
 
-	/* How many objects have been checked since last checkpoint. */
+	
 	__u64			os_new_checked;
 	__u64			os_pos_current;
 	__u32			os_start_flags;
 
-	/* FIDs with maxmimum OID in local storage */
+	
 	__u32			os_ls_size;
 	__u32			os_ls_count;
 	struct lu_fid		*os_ls_fids;
@@ -163,15 +163,15 @@ struct lustre_scrub {
 	 * all updates must be protected by ->os_lock to avoid
 	 * racing read-modify-write cycles causing corruption.
 	 */
-	/* process inconsistent item found by RPC prior */
+	
 	unsigned int		os_in_prior:1,
-				os_waiting:1, /* Waiting for scan window. */
-				os_full_speed:1, /* run w/o speed limit */
-				os_paused:1, /* The scrub is paused. */
+				os_waiting:1, 
+				os_full_speed:1, 
+				os_paused:1, 
 				os_convert_igif:1,
 				os_partial_scan:1,
 				os_in_join:1,
-				os_running:1,	/* scrub thread is running */
+				os_running:1,	
 				os_full_scrub:1,
 				os_has_ml_file:1;
 };
@@ -180,10 +180,10 @@ struct lustre_scrub {
 #define INDEX_BACKUP_BUFSIZE	(4096 * 4)
 
 enum lustre_index_backup_policy {
-	/* By default, do not backup the index */
+	
 	LIBP_NONE	= 0,
 
-	/* Backup the dirty index objects when umount */
+	
 	LIBP_AUTO	= 1,
 };
 
@@ -193,7 +193,7 @@ struct lustre_index_backup_header {
 	__u32		libh_keysize;
 	__u32		libh_recsize;
 	struct lu_fid	libh_owner;
-	__u64		libh_pad[60]; /* keep header 512 bytes aligned */
+	__u64		libh_pad[60]; 
 };
 
 struct lustre_index_backup_unit {
@@ -256,4 +256,4 @@ static inline const char *osd_scrub2name(struct lustre_scrub *scrub)
 {
 	return scrub->os_name;
 }
-#endif /* _LUSTRE_SCRUB_H */
+#endif 

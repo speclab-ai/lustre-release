@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-v2.0+
+
 /*
  * Copyright (C) 2007, Lawrence Livermore National Labs
  * Author: Brian Behlendorf
@@ -8,10 +8,10 @@
 
 #include "defs.h"
 
-#define UINT32_LEN   10		/* ceil(log10(UINT_MAX)) */
-#define UINT64_LEN   20		/* ceil(log10(ULONG_MAX)) */
+#define UINT32_LEN   10		
+#define UINT64_LEN   20		
 
-/* three types of trace_data in linux */
+
 enum {
 	TCD_TYPE_PROC = 0,
 	TCD_TYPE_SOFTIRQ,
@@ -57,7 +57,7 @@ static const char *name_prefix = lustre2_pfx;
 void cmd_lustre(void);
 char *help_lustre[];
 int global_daemon_pages;
-/* not all crash tools have  OFFSET(page_private) */
+
 unsigned int pg_private_off;
 
 static struct command_table_entry command_table[] = {
@@ -153,7 +153,7 @@ static int lustre_walk_trace_pages(int cpu, int fd, ulong lh_addr)
 	hq_close();
 
 	printf("%s(%d, %d, %#lx) = %d\n", __func__, cpu, fd, lh_addr, count);
-	/* count include a list_head itself for empty */
+	
 	if (count <= 1)
 		return 0;
 
@@ -167,7 +167,7 @@ static int lustre_walk_trace_pages(int cpu, int fd, ulong lh_addr)
 		readmem(ld.list_ptr[i], KVADDR, (char *) &buf, sizeof(buf),
 			"cfs_trace_page buffer", FAULT_ON_ERROR);
 
-		/* Validate the list heads for some sanity */
+		
 		if ((buf.linkage.next == 0) || (buf.linkage.prev == 0)) {
 			error(WARNING,
 			      "Trace page %p has bogus next (%#p) or prev (%#p) pointers\n",
@@ -192,7 +192,7 @@ static int lustre_walk_trace_pages(int cpu, int fd, ulong lh_addr)
 	return ret;
 }
 
-/* Aquire the debug page list head pointer for this CPU and walk them */
+
 static int lustre_walk_cpus(int type, int cpu, int fd, int mode)
 {
 	static const char cmd_head_fmt[] =
@@ -235,7 +235,7 @@ static int lustre_walk_cpus(int type, int cpu, int fd, int mode)
 	}
 	printf("cmd:\t%s\n\t%s\n", cmd_head, cmd_count);
 
-	/* Aquire the expected number of debug pages */
+	
 	open_tmpfile();
 	if (!gdb_pass_through(cmd_count, pc->tmpfile, GNU_RETURN_ON_ERROR)) {
 		close_tmpfile();
@@ -253,12 +253,12 @@ static int lustre_walk_cpus(int type, int cpu, int fd, int mode)
 	}
 	close_tmpfile();
 
-	/* Skip CPUs with no debug pages */
+	
 	if (count == 0)
 		return count;
 
 
-	/* Aquire the list head address for the tage list */
+	
 	open_tmpfile();
 	if (!gdb_pass_through(cmd_head, pc->tmpfile, GNU_RETURN_ON_ERROR)) {
 		close_tmpfile();
@@ -301,7 +301,7 @@ static int lustre_walk_daemon_pages(int fd)
 
 	printf("%s(%p:%d)\n", __func__, (void *)ld.start,
 	       count);
-	/* count include a list_head itself for empty */
+	
 	if (count <= 1)
 		return 0;
 
@@ -408,9 +408,9 @@ void cmd_lustre(void)
 }
 
 char *help_lustre[] = {
-	"lustre",		/* command name */
-	"lustre specific debug commands",	/* short description */
-	"[-l <file>]",		/* argument synopsis */
+	"lustre",		
+	"lustre specific debug commands",	
+	"[-l <file>]",		
 	"  This command displays lustre specific data.\n",
 	"       -l  Extract lustre kernel debug data to <file>",
 	"           (use 'lctl df <file>' for ascii text)",

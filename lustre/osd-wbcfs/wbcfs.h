@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2025-2026, DDN/Whamcloud, Inc.
@@ -22,15 +22,15 @@
 
 #include "index.h"
 
-/* Pretend that each entry is of this size in directory's i_size */
+
 #define BOGO_DIRENT_SIZE	20
 
-/* Pretend that one inode + its dentry occupy this much memory */
+
 #define BOGO_INODE_SIZE		1024
 
 #define WBCFS_MAGIC		0xbdacbd05
 
-/* In-memory xattr list */
+
 struct mem_xattrs {
 	spinlock_t		mex_lock;
 	struct list_head	mex_xattr_list;
@@ -46,27 +46,27 @@ struct memfs_options {
 };
 
 struct memfs_sb_info {
-	/* How many blocks are allowed. */
+	
 	unsigned long		msi_max_blocks;
-	/* How many blocks are allocated. */
+	
 	struct percpu_counter	msi_used_blocks;
-	/* How many inodes are allowed. */
+	
 	unsigned long		msi_max_inodes;
-	/* How much ispace left for allocation. */
+	
 	unsigned long		msi_free_inodes;
-	/* Serialize memfs_sb_info changes. */
+	
 	spinlock_t		msi_stat_lock;
-	/* Mount mode for root directory */
+	
 	umode_t			msi_mode;
-	/* Mount uid for root directory */
+	
 	kuid_t			msi_uid;
-	/* Mount gid for root directory */
+	
 	kgid_t			msi_gid;
-	/* Whether enable swap with much larger capacity. */
+	
 	bool			msi_noswap;
-	/* Whether there is backing persistent store. */
+	
 	bool			msi_no_backing;
-	/* TODO: Quota limits support for MemFS. */
+	
 };
 
 enum index_type {
@@ -75,16 +75,16 @@ enum index_type {
 	INDEX_TYPE_MTREE,
 };
 
-/* MemFS inode in-kernel data */
+
 struct memfs_inode_info {
 	__u32			 mei_flags;
 	struct mem_xattrs	 mei_xattrs;
 	struct lu_fid		 mei_fid;
 #ifdef HAVE_PROJECT_QUOTA
-	/* Project ID */
+	
 	kprojid_t		 mei_projid;
 #endif
-	/* File creation time. */
+	
 	struct timespec64	 mei_crtime;
 	/*
 	 * Index access for dir dentry or indexing KV store.
@@ -94,7 +94,7 @@ struct memfs_inode_info {
 	 */
 	enum index_type		 mei_index_type;
 	struct hash_index	 mei_hash_index;
-	/* Stack backing inode with the persistent storage. */
+	
 	struct inode		*mei_backing;
 	struct inode		 mei_vfs_inode;
 };
@@ -175,4 +175,4 @@ struct inode *memfs_create_inode(struct super_block *sb, struct inode *dir,
 
 int memfs_init(void);
 void memfs_fini(void);
-#endif /* _OSD_WBCFS_H_ */
+#endif 

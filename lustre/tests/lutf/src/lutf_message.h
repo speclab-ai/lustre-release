@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf_message.h
  *
@@ -40,4 +40,4 @@ typedef struct lutf_msg_num_agents_query_s {
 	int num_agents;
 } lutf_msg_num_agents_query_t;
 
-#endif /* LUTF_MESSAGE_H */
+#endif 

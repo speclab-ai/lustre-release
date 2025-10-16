@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _GNU_SOURCE
@@ -30,7 +30,7 @@
 
 #define BLANK_LINE() printf("\n")
 
-#define COMMENT(c) printf("        /* "c" */\n")
+#define COMMENT(c) printf("        \n")
 
 #define STRINGIFY(a) #a
 
@@ -184,7 +184,7 @@ system_string(char *cmdline, char *str, int len)
 
 	pid = fork();
 	if (pid == 0) {
-		/* child */
+		
 		int fd = fileno(stdout);
 
 		rc = dup2(fds[1], fd);
@@ -192,7 +192,7 @@ system_string(char *cmdline, char *str, int len)
 			abort();
 
 		exit(system(cmdline));
-		/* notreached */
+		
 	} else if ((int)pid < 0) {
 		abort();
 	} else {

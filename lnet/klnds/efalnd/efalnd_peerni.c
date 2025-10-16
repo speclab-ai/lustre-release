@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2023-2025, Amazon and/or its affiliates. All rights reserved.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * EFA GID/QP Discovery via TCP
  *
@@ -285,7 +285,7 @@ kefalnd_find_remote_peer_ni(struct kefa_dev *efa_dev, struct lnet_nid *efa_nid)
 		GOTO(out_success, rc);
 	}
 
-	/* We couldn't find the mapping we're looking for */
+	
 	if (!peer_ni)
 		GOTO(out_mapping, rc = -ENODEV);
 

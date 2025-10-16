@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -74,7 +74,7 @@ static inline u64 tgt_grant_inflate(struct tg_grants_data *tgd, u64 val)
 	return val;
 }
 
-/* Companion of tgt_grant_inflate() */
+
 static inline u64 tgt_grant_deflate(struct tg_grants_data *tgd, u64 val)
 {
 	if (tgd->tgd_blockbits > COMPAT_BSIZE_SHIFT)
@@ -95,21 +95,21 @@ static inline u64 tgt_grant_chunk(struct obd_export *exp,
 	u64 tax;
 
 	if (exp->exp_obd->obd_self_export == exp)
-		/* Grant enough space to handle a big precreate request */
+		
 		return OST_MAX_PRECREATE * lut->lut_dt_conf.ddp_inodespace / 2;
 
 	if ((data == NULL && !(exp_grant_param_supp(exp))) ||
 	    (data != NULL && !OCD_HAS_FLAG(data, GRANT_PARAM)))
-		/* Try to grant enough space to send 2 full-size RPCs */
+		
 		return tgt_grant_inflate(tgd, chunk) << 1;
 
 	/* Try to return enough to send two full-size RPCs
 	 * = 2 * (BRW_size + #extents_in_BRW * grant_tax) */
-	tax = 1ULL << tgd->tgd_blockbits;	     /* block size */
-	tax *= lut->lut_dt_conf.ddp_max_extent_blks; /* max extent size */
-	tax = (chunk + tax - 1) / tax;		     /* #extents in a RPC */
-	tax *= lut->lut_dt_conf.ddp_extent_tax;	     /* extent tax for a RPC */
-	chunk = (chunk + tax) * 2;		     /* we said two full RPCs */
+	tax = 1ULL << tgd->tgd_blockbits;	     
+	tax *= lut->lut_dt_conf.ddp_max_extent_blks; 
+	tax = (chunk + tax - 1) / tax;		     
+	tax *= lut->lut_dt_conf.ddp_extent_tax;	     
+	chunk = (chunk + tax) * 2;		     
 	return chunk;
 }
 
@@ -328,11 +328,11 @@ int tgt_statfs_internal(const struct lu_env *env, struct lu_target *lut,
 		tgd->tgd_osfs_unstable += tgd->tgd_tot_pending;
 		spin_unlock(&tgd->tgd_grant_lock);
 
-		/* finally udpate cached statfs data */
+		
 		tgd->tgd_osfs = *osfs;
 		tgd->tgd_osfs_age = ktime_get_seconds();
 
-		tgd->tgd_statfs_inflight--; /* stop tracking */
+		tgd->tgd_statfs_inflight--; 
 		if (tgd->tgd_statfs_inflight == 0)
 			tgd->tgd_osfs_inflight = 0;
 		spin_unlock(&tgd->tgd_osfs_lock);
@@ -340,7 +340,7 @@ int tgt_statfs_internal(const struct lu_env *env, struct lu_target *lut,
 		if (from_cache)
 			*from_cache = 0;
 	} else {
-		/* use cached statfs data */
+		
 		*osfs = tgd->tgd_osfs;
 		spin_unlock(&tgd->tgd_osfs_lock);
 		if (from_cache)
@@ -380,7 +380,7 @@ static void tgt_grant_statfs(const struct lu_env *env, struct obd_export *exp,
 	int rc;
 
 	if (force)
-		max_age = 0; /* get fresh statfs data */
+		max_age = 0; 
 	else
 		max_age = ktime_get_seconds() - OBD_STATFS_CACHE_SECONDS;
 
@@ -427,9 +427,9 @@ static u64 tgt_grant_space_left(struct obd_export *exp)
 	assert_spin_locked(&tgd->tgd_grant_lock);
 
 	spin_lock(&tgd->tgd_osfs_lock);
-	/* get available space from cached statfs data */
+	
 	left = tgd->tgd_osfs.os_bavail << tgd->tgd_blockbits;
-	unstable = tgd->tgd_osfs_unstable; /* those might be accounted twice */
+	unstable = tgd->tgd_osfs_unstable; 
 	spin_unlock(&tgd->tgd_osfs_lock);
 
 	reserved = left * tgd->tgd_reserved_pcnt / 100;
@@ -440,7 +440,7 @@ static u64 tgt_grant_space_left(struct obd_export *exp)
 			    tot_granted - tgd->tgd_tot_pending) ?
 			    D_ERROR : D_CACHE;
 
-		/* the below message is checked in sanityn.sh test_15 */
+		
 		CDEBUG_LIMIT(mask,
 			     "%s: cli %s/%p left=%llu < tot_grant=%llu unstable=%llu pending=%llu dirty=%llu\n",
 			     obd->obd_name, exp->exp_client_uuid.uuid, exp,
@@ -451,10 +451,10 @@ static u64 tgt_grant_space_left(struct obd_export *exp)
 	}
 
 	avail = left;
-	/* Withdraw space already granted to clients */
+	
 	left -= tot_granted;
 
-	/* Align left on block size */
+	
 	left &= ~((1ULL << tgd->tgd_blockbits) - 1);
 
 	CDEBUG(D_CACHE,
@@ -507,7 +507,7 @@ static void tgt_grant_incoming(const struct lu_env *env, struct obd_export *exp,
 	if ((long long)oa->o_dirty < 0)
 		oa->o_dirty = 0;
 
-	/* inflate grant counters if required */
+	
 	if (!exp_grant_param_supp(exp)) {
 		u64 tmp;
 		oa->o_grant	= tgt_grant_inflate(tgd, oa->o_grant);
@@ -586,7 +586,7 @@ static void tgt_grant_shrink(struct obd_export *exp, struct obdo *oa,
 	assert_spin_locked(&tgd->tgd_grant_lock);
 	LASSERT(exp);
 
-	/* don't need to shrink grant if it uses less than 25% of left space */
+	
 	if (tgd->tgd_tot_granted * 4 < left_space)
 		return;
 
@@ -607,7 +607,7 @@ static void tgt_grant_shrink(struct obd_export *exp, struct obdo *oa,
 	       obd->obd_name, exp->exp_client_uuid.uuid, exp, grant_shrink,
 	       ted->ted_grant, tgd->tgd_tot_granted);
 
-	/* client has just released some grant, don't grant any space back */
+	
 	oa->o_grant = 0;
 }
 
@@ -653,7 +653,7 @@ static inline u64 tgt_grant_rnb_size(struct obd_export *exp,
 		bytes += blksize - end;
 
 	if (exp == NULL || exp_grant_param_supp(exp)) {
-		/* add per-extent insertion cost */
+		
 		u64 max_ext;
 		int nr_ext;
 
@@ -747,7 +747,7 @@ static void tgt_grant_check(const struct lu_env *env, struct obd_export *exp,
 			/* check whether we can fill the gap with unallocated
 			 * grant */
 			if (*left > (oa->o_grant_used - ted->ted_grant)) {
-				/* ouf .. we are safe for now */
+				
 				granted = ted->ted_grant;
 				ungranted = oa->o_grant_used - granted;
 				*left -= ungranted;
@@ -796,7 +796,7 @@ static void tgt_grant_check(const struct lu_env *env, struct obd_export *exp,
 		 * size, unlike some clients */
 		bytes = tgt_grant_rnb_size(NULL, lut, &rnb[i]);
 		if (*left > bytes) {
-			/* if enough space, pretend it was granted */
+			
 			ungranted += bytes;
 			*left -= bytes;
 			rnb[i].rnb_flags |= OBD_BRW_GRANTED;
@@ -819,7 +819,7 @@ static void tgt_grant_check(const struct lu_env *env, struct obd_export *exp,
 	 * used later in tgt_grant_commmit() */
 	oa->o_grant_used = granted + ungranted;
 
-	/* record space used for the I/O, will be used in tgt_grant_commmit() */
+	
 	/* Now substract what the clients has used already.  We don't subtract
 	 * this from the tot_granted yet, so that other client's can't grab
 	 * that space before we have actually allocated our blocks. That
@@ -929,14 +929,14 @@ static long tgt_grant_alloc(struct obd_export *exp, u64 curgrant,
 		 * one chunk */
 		left >>= 3;
 	grant = min(want - curgrant, left);
-	/* round grant up to the next block size */
+	
 	grant = (grant + (1 << tgd->tgd_blockbits) - 1) &
 		~((1ULL << tgd->tgd_blockbits) - 1);
 
 	if (!grant)
 		RETURN(0);
 
-	/* Limit to grant_chunk if not reconnect/recovery */
+	
 	if ((grant > chunk) && conservative)
 		grant = chunk;
 
@@ -1030,9 +1030,9 @@ void tgt_grant_connect(const struct lu_env *env, struct obd_export *exp,
 	u64			 want;
 	long			 chunk;
 	int			 from_cache;
-	int			 force = 0; /* can use cached data */
+	int			 force = 0; 
 
-	/* don't grant space to client with read-only access */
+	
 	if (OCD_HAS_FLAG(data, RDONLY) ||
 	    (!OCD_HAS_FLAG(data, GRANT_PARAM) &&
 	     tgd->tgd_grant_compat_disable)) {
@@ -1056,7 +1056,7 @@ refresh:
 	 * to clients as well as reserved space */
 	left = tgt_grant_space_left(exp);
 
-	/* get fresh statfs data if we are short in ungranted space */
+	
 	if (from_cache && left < 32 * chunk) {
 		spin_unlock(&tgd->tgd_grant_lock);
 		CDEBUG(D_CACHE, "fs has no space left and statfs too old\n");
@@ -1066,14 +1066,14 @@ refresh:
 
 	tgt_grant_alloc(exp, (u64)ted->ted_grant, want, left, chunk, new_conn);
 
-	/* return to client its current grant */
+	
 	if (OCD_HAS_FLAG(data, GRANT_PARAM))
 		data->ocd_grant = ted->ted_grant;
 	else
-		/* deflate grant */
+		
 		data->ocd_grant = tgt_grant_deflate(tgd, (u64)ted->ted_grant);
 
-	/* reset dirty accounting */
+	
 	tgd->tgd_tot_dirty -= ted->ted_dirty;
 	ted->ted_dirty = 0;
 
@@ -1191,14 +1191,14 @@ void tgt_grant_prepare_read(const struct lu_env *env,
 		 * statfs information. */
 		tgt_grant_statfs(env, exp, 1, NULL);
 
-		/* protect all grant counters */
+		
 		spin_lock(&tgd->tgd_grant_lock);
 
 		/* Grab free space from cached statfs data and take out space
 		 * already granted to clients as well as reserved space */
 		left = tgt_grant_space_left(exp);
 
-		/* all set now to proceed with shrinking */
+		
 		do_shrink = 1;
 	} else {
 		/* no grant shrinking request packed in the obdo and
@@ -1257,22 +1257,22 @@ void tgt_grant_prepare_write(const struct lu_env *env,
 	struct tg_grants_data	*tgd = &lut->lut_tgd;
 	u64			 left;
 	int			 from_cache;
-	int			 force = 0; /* can use cached data intially */
+	int			 force = 0; 
 	long			 chunk = tgt_grant_chunk(exp, lut, NULL);
 
 	ENTRY;
 
 refresh:
-	/* get statfs information from OSD layer */
+	
 	tgt_grant_statfs(env, exp, force, &from_cache);
 
-	spin_lock(&tgd->tgd_grant_lock); /* protect all grant counters */
+	spin_lock(&tgd->tgd_grant_lock); 
 
 	/* Grab free space from cached statfs data and take out space already
 	 * granted to clients as well as reserved space */
 	left = tgt_grant_space_left(exp);
 
-	/* Get fresh statfs data if we are short in ungranted space */
+	
 	if (from_cache && left < 32 * chunk) {
 		spin_unlock(&tgd->tgd_grant_lock);
 		CDEBUG(D_CACHE, "%s: fs has no space left and statfs too old\n",
@@ -1299,7 +1299,7 @@ refresh:
 			/* at least one network buffer requires acquiring grant
 			 * space on the server */
 			spin_unlock(&tgd->tgd_grant_lock);
-			/* discard errors, at least we tried ... */
+			
 			dt_sync(env, lut->lut_bottom);
 			force = 2;
 			goto refresh;
@@ -1310,7 +1310,7 @@ refresh:
 	 * and inflate grant counters if required */
 	tgt_grant_incoming(env, exp, oa, chunk);
 
-	/* check limit */
+	
 	tgt_grant_check(env, exp, oa, rnb, niocount, &left);
 
 	if (!(oa->o_valid & OBD_MD_FLGRANT)) {
@@ -1324,7 +1324,7 @@ refresh:
 	    (oa->o_flags & OBD_FL_SHRINK_GRANT))
 		tgt_grant_shrink(exp, oa, left);
 	else
-		/* grant more space back to the client if possible */
+		
 		oa->o_grant = tgt_grant_alloc(exp, oa->o_grant, oa->o_undirty,
 					      left, chunk, true);
 
@@ -1365,13 +1365,13 @@ long tgt_grant_create(const struct lu_env *env, struct obd_export *exp, s64 *nr)
 
 	if (test_bit(OBDF_RECOVERING, exp->exp_obd->obd_flags) ||
 	    lut->lut_dt_conf.ddp_inodespace == 0)
-		/* don't enforce grant during recovery */
+		
 		RETURN(0);
 
-	/* Update statfs data if required */
+	
 	tgt_grant_statfs(env, exp, 1, NULL);
 
-	/* protect all grant counters */
+	
 	spin_lock(&tgd->tgd_grant_lock);
 
 	/* fail precreate request if there is not enough blocks available for
@@ -1403,16 +1403,16 @@ long tgt_grant_create(const struct lu_env *env, struct obd_export *exp, s64 *nr)
 			spin_unlock(&tgd->tgd_grant_lock);
 			RETURN(-ENOSPC);
 		}
-		/* compute space needed for the new number of creations */
+		
 		wanted = *nr * lut->lut_dt_conf.ddp_inodespace;
 	}
 	LASSERT(wanted <= ted->ted_grant + left);
 
 	if (wanted <= ted->ted_grant) {
-		/* we've enough grant space to handle this precreate request */
+		
 		ted->ted_grant -= wanted;
 	} else {
-		/* we need to take some space from the ungranted pool */
+		
 		tgd->tgd_tot_granted += wanted - ted->ted_grant;
 		left -= wanted - ted->ted_grant;
 		ted->ted_grant = 0;
@@ -1421,7 +1421,7 @@ long tgt_grant_create(const struct lu_env *env, struct obd_export *exp, s64 *nr)
 	ted->ted_pending += granted;
 	tgd->tgd_tot_pending += granted;
 
-	/* grant more space for precreate purpose if possible. */
+	
 	wanted = OST_MAX_PRECREATE * lut->lut_dt_conf.ddp_inodespace / 2;
 	if (wanted > ted->ted_grant) {
 		long chunk;
@@ -1468,7 +1468,7 @@ void tgt_grant_commit(struct obd_export *exp, unsigned long pending,
 	 * statfs data before failing a request with ENOSPC */
 	if (rc == 0) {
 		spin_lock(&tgd->tgd_osfs_lock);
-		/* Take pending out of cached statfs data */
+		
 		tgd->tgd_osfs.os_bavail -= min_t(u64,
 						 tgd->tgd_osfs.os_bavail,
 						 pending >> tgd->tgd_blockbits);
@@ -1511,11 +1511,11 @@ void tgt_grant_commit(struct obd_export *exp, unsigned long pending,
 EXPORT_SYMBOL(tgt_grant_commit);
 
 struct tgt_grant_cb {
-	/* commit callback structure */
+	
 	struct dt_txn_commit_cb	 tgc_cb;
-	/* export associated with the bulk write */
+	
 	struct obd_export	*tgc_exp;
-	/* pending grant to be released */
+	
 	unsigned long		 tgc_granted;
 };
 

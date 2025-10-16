@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __OBD_CKSUM
@@ -80,7 +80,7 @@ static inline enum cksum_types obd_cksum_types_supported_client(void)
 	if (cfs_crypto_hash_speed(cksum_obd2cfs(OBD_CKSUM_CRC32)) > 0)
 		ret |= OBD_CKSUM_CRC32;
 
-	/* Client support all kinds of T10 checksum */
+	
 	ret |= OBD_CKSUM_T10_ALL;
 
 	return ret;
@@ -162,7 +162,7 @@ static inline void obd_t10_cksum2dif(enum cksum_types cksum_type,
 	default:
 		break;
 	}
-#endif /* CONFIG_CRC_T10DIF */
+#endif 
 }
 
 enum obd_t10_cksum_type {
@@ -174,4 +174,4 @@ enum obd_t10_cksum_type {
 	OBD_T10_CKSUM_MAX
 };
 
-#endif /* __OBD_H */
+#endif 

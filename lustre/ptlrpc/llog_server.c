@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * remote api for llog - server side
  *
@@ -30,7 +30,7 @@ static int llog_origin_close(const struct lu_env *env, struct llog_handle *lgh)
 		return llog_close(env, lgh);
 }
 
-/* Only open is supported, no new llog can be created remotely */
+
 int llog_origin_handle_open(struct ptlrpc_request *req)
 {
 	struct obd_export	*exp = req->rq_export;

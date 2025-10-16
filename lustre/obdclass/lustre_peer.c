@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_RPC
@@ -28,7 +28,7 @@ struct uuid_nid_data {
 	struct lnet_nid		un_nids[MTI_NIDS_MAX];
 };
 
-/* FIXME: This should probably become more elegant than a global linked list */
+
 static LIST_HEAD(g_uuid_list);
 static DEFINE_SPINLOCK(g_uuid_lock);
 
@@ -63,7 +63,7 @@ int class_add_uuid(const char *uuid, struct lnet_nid *nid)
 	int found = 0;
 	int rc = 0;
 
-	LASSERT(nid->nid_type != 0);  /* valid newconfig NID is never zero */
+	LASSERT(nid->nid_type != 0);  
 
 	if (strlen(uuid) > UUID_MAX - 1)
 		return -EOVERFLOW;
@@ -103,7 +103,7 @@ int class_add_uuid(const char *uuid, struct lnet_nid *nid)
 	if (rc) {
 		CWARN("%s: can't add NID %s: rc = %d\n", uuid,
 		       libcfs_nidstr(nid), rc);
-		/* continue with already added NIDs */
+		
 	}
 
 	if (found) {
@@ -120,7 +120,7 @@ int class_add_uuid(const char *uuid, struct lnet_nid *nid)
 }
 EXPORT_SYMBOL(class_add_uuid);
 
-/* Delete the nids for one uuid if specified, otherwise delete all */
+
 int class_del_uuid(const char *uuid)
 {
 	struct uuid_nid_data *data;
@@ -207,7 +207,7 @@ int class_add_nids_to_uuid(struct obd_uuid *uuid, struct lnet_nid *nidlist,
 }
 EXPORT_SYMBOL(class_add_nids_to_uuid);
 
-/* check if @nid exists in nid list of @uuid */
+
 int class_check_uuid(struct obd_uuid *uuid, struct lnet_nid *nid)
 {
 	struct uuid_nid_data *entry;
@@ -225,7 +225,7 @@ int class_check_uuid(struct obd_uuid *uuid, struct lnet_nid *nid)
 		if (!obd_uuid_equals(&entry->un_uuid, uuid))
 			continue;
 
-		/* found the uuid, check if it has @nid */
+		
 		for (i = 0; i < entry->un_nid_count; i++) {
 			if (nid_same(&entry->un_nids[i], nid)) {
 				found = 1;

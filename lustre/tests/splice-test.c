@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /*
  * Copyright (c) 2019 RedHat Inc.  All Rights Reserved.
  * Author: Andreas Gruenbacher <agruenba@redhat.com>
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 		case 'd':
 			open_flags &= ~O_DIRECT;
 			break;
-		default:  /* '?' */
+		default:  
 			usage(argv[0]);
 		}
 	}

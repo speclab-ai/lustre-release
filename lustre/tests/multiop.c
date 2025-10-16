@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,11 +6,11 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _GNU_SOURCE
-#define _GNU_SOURCE /* pull in O_DIRECTORY in bits/fcntl.h */
+#define _GNU_SOURCE 
 #endif
 #include <errno.h>
 #include <fcntl.h>
@@ -284,7 +284,7 @@ int main(int argc, char **argv)
 
 	memset(&st, 0, sizeof(st));
 	sem_init(&sem, 0, 0);
-	/* use sigaction instead of signal to avoid SA_ONESHOT semantics */
+	
 	sigaction(SIGUSR1,
 		  &(const struct sigaction){.sa_handler = &usr1_handler}, NULL);
 
@@ -308,7 +308,7 @@ int main(int argc, char **argv)
 			}
 			len = atoi(commands + 1);
 			if (len <= 0)
-				len = 3600; /* 1 hour */
+				len = 3600; 
 			ts.tv_sec = time(NULL) + len;
 			ts.tv_nsec = 0;
 			while (sem_timedwait(&sem, &ts) < 0 && errno == EINTR)
@@ -409,7 +409,7 @@ int main(int argc, char **argv)
 			if (flags != LL_LEASE_UNLCK)
 				break;
 
-			/* F_UNLCK, interpret return code */
+			
 			if (rc > 0) {
 				const char *str = "unknown";
 
@@ -744,7 +744,7 @@ int main(int argc, char **argv)
 		case 'V':
 			len = get_flags(commands + 1, &flags);
 			commands += len;
-			len = -1; /* mdt index */
+			len = -1; 
 			if (commands[1] >= '0' && commands[1] <= '9')
 				len = atoi(commands + 1);
 			fd = llapi_create_volatile_idx(fname, len, flags);
@@ -801,7 +801,7 @@ int main(int argc, char **argv)
 				else if (unaligned)
 					buf_align = buf;
 
-				/* fill the buffer with our string */
+				
 				while (total_bytes < bufsize) {
 					/* msg_len does not include the
 					 * terminating nul, deliberately,

@@ -120,7 +120,7 @@ mydaemon(int nochdir, int noclose)
 			exit(1);
 		exit (0);
 	}
-	/* Child.	*/
+	
 	close(pipefds[0]);
 	setsid ();
 	if (nochdir == 0) {
@@ -171,9 +171,9 @@ release_parent()
 static void
 sig_die(int signal)
 {
-	/* cleanup allocated strings for realms */
+	
 	gssd_cleanup_realms();
-	/* remove socket */
+	
 	unlink(GSS_SOCKET_PATH);
 	printerr(LL_WARN, "exiting on signal %d\n", signal);
 	if (signal == SIGTERM)
@@ -185,7 +185,7 @@ sig_die(int signal)
 static void
 sig_hup(int signal)
 {
-	/* don't exit on SIGHUP */
+	
 	printerr(LL_WARN, "Received SIGHUP... Ignoring.\n");
 }
 
@@ -295,7 +295,7 @@ main(int argc, char *argv[])
 
 	initerr(progname, verbosity, fg);
 
-	/* For kerberos use gss mechanisms but ignore for sk and null */
+	
 	if (krb_enabled) {
 		int ret;
 

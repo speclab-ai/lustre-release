@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Server (mdd) routines
  *
@@ -61,7 +61,7 @@ static ssize_t atime_diff_store(struct kobject *kobj,
 }
 LUSTRE_RW_ATTR(atime_diff);
 
-/**** changelogs ****/
+
 static int mdd_changelog_current_mask_seq_show(struct seq_file *m, void *data)
 {
 	struct mdd_device *mdd = m->private;
@@ -405,8 +405,8 @@ static ssize_t changelog_max_idle_indexes_store(struct kobject *kobj,
 	if (rc)
 		return rc;
 
-	/* XXX may need to limit/check with reasonable elapsed/idle indexes */
-	/* XXX may better allow to specify a % of full ChangeLogs */
+	
+	
 
 	mdd->mdd_changelog_max_idle_indexes = val;
 
@@ -438,7 +438,7 @@ static ssize_t changelog_min_gc_interval_store(struct kobject *kobj,
 	if (rc)
 		return rc;
 
-	/* XXX may need to limit with reasonable elapsed/interval times */
+	
 	if (val < 1)
 		return -ERANGE;
 
@@ -472,7 +472,7 @@ static ssize_t changelog_min_free_cat_entries_store(struct kobject *kobj,
 	if (rc)
 		return rc;
 
-	/* XXX may need to limit with more reasonable number of free entries */
+	
 	if (val < 1)
 		return -ERANGE;
 
@@ -737,7 +737,7 @@ static ssize_t append_pool_store(struct kobject *kobj, struct attribute *attr,
 	if (mdd->mdd_append_pool[count - 1] == '\n')
 		mdd->mdd_append_pool[count - 1] = '\0';
 
-	/* clears the pool for "none", "inherit" or "ignore" */
+	
 	if (lov_pool_is_reserved(mdd->mdd_append_pool))
 		memset(mdd->mdd_append_pool, 0, LOV_MAXPOOLNAME + 1);
 
@@ -779,7 +779,7 @@ static struct attribute *mdd_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(mdd); /* creates mdd_groups */
+KOBJ_ATTRIBUTE_GROUPS(mdd); 
 
 static void mdd_sysfs_release(struct kobject *kobj)
 {
@@ -809,7 +809,7 @@ int mdd_procfs_init(struct mdd_device *mdd, const char *name)
 	LASSERT(type != NULL);
 	LASSERT(obd  != NULL);
 
-	/* put reference taken by class_search_type */
+	
 	kobject_put(&type->typ_kobj);
 
 	mdd->mdd_ktype.default_groups = KOBJ_ATTR_GROUPS(mdd);
@@ -822,7 +822,7 @@ int mdd_procfs_init(struct mdd_device *mdd, const char *name)
 	if (rc)
 		return rc;
 
-	/* Find the type procroot and add the proc entry for this device */
+	
 	obd->obd_debugfs_vars = ldebugfs_mdd_obd_vars;
 	obd->obd_debugfs_entry = debugfs_create_dir(name,
 						     type->typ_debugfs_entry);

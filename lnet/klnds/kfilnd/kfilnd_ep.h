@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _KFILND_EP_
@@ -52,4 +52,4 @@ int kfilnd_ep_gen_fake_err(struct kfilnd_ep *ep,
 			   const struct kfi_cq_err_entry *err);
 
 
-#endif /* _KFILND_EP_ */
+#endif 

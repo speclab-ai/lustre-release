@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Alex Zhuravlev <bzzz@whamcloud.com>
  * Author: Mike Pershin <tappro@whamcloud.com>
@@ -180,7 +180,7 @@ static inline void osd_it_append_attrs(struct lu_dirent *ent, __u32 attr,
 	const unsigned int align = sizeof(struct luda_type) - 1;
 	struct luda_type *lt;
 
-	/* check if file type is required */
+	
 	if (attr & LUDA_TYPE) {
 		len = (len + align) & ~align;
 
@@ -320,7 +320,7 @@ static int osd_find_parent_by_dnode(const struct lu_env *env,
 	int			 rc;
 
 	ENTRY;
-	/* first of all, get parent dnode from own attributes */
+	
 	rc = osd_sa_handle_get(obj);
 	if (rc != 0)
 		RETURN(rc);
@@ -399,7 +399,7 @@ out:
 	}
 #endif
 
-	/* no LinkEA is found, let's try to find the fid in parent's LMA */
+	
 	if (unlikely(rc != 0))
 		rc = osd_find_parent_by_dnode(env, o, fid, oid);
 
@@ -537,7 +537,7 @@ osd_zfs_consistency_check(const struct lu_env *env, struct osd_device *osd,
 	int rc;
 
 	ENTRY;
-	/* oid == ZFS_NO_OBJECT must be for lookup ".." case */
+	
 	if (oid == ZFS_NO_OBJECT) {
 		rc = osd_sa_handle_get(obj);
 		if (rc)
@@ -558,7 +558,7 @@ again:
 			goto trigger;
 
 		rc = __osd_obj2dnode(osd->od_os, oid, &dn);
-		/* The object has been removed (by race maybe). */
+		
 		if (rc)
 			return;
 
@@ -573,7 +573,7 @@ trigger:
 	if (scrub->os_running) {
 		if (!dn) {
 			rc = __osd_obj2dnode(osd->od_os, oid, &dn);
-			/* The object has been removed (by race maybe). */
+			
 			if (rc)
 				return;
 		}
@@ -904,7 +904,7 @@ static int osd_declare_dir_insert(const struct lu_env *env,
 		}
 	}
 
-	/* This is for inserting dot/dotdot for new created dir. */
+	
 	if (obj->oo_dn == NULL)
 		object = DMU_NEW_OBJECT;
 	else
@@ -947,7 +947,7 @@ int osd_remote_fid(const struct lu_env *env, struct osd_device *osd,
 	struct seq_server_site	*ss = osd_seq_site(osd);
 
 	ENTRY;
-	/* FID seqs not in FLDB, must be local seq */
+	
 	if (unlikely(!fid_seq_in_fldb(fid_seq(fid))))
 		RETURN(0);
 
@@ -958,7 +958,7 @@ int osd_remote_fid(const struct lu_env *env, struct osd_device *osd,
 	if (ss == NULL || ss->ss_server_fld == NULL)
 		RETURN(0);
 
-	/* Only check the local FLDB here */
+	
 	if (osd_seq_exists(env, osd, fid_seq(fid)))
 		RETURN(0);
 
@@ -1043,7 +1043,7 @@ static int osd_dir_insert(const struct lu_env *env, struct dt_object *dt,
 		}
 	} else {
 		if (unlikely(idc->oic_dnode == 0)) {
-			/* for a reason OI cache wasn't filled properly */
+			
 			CERROR("%s: OIC for "DFID" isn't filled\n",
 			       osd_name(osd), PFID(fid));
 			RETURN(-EINVAL);
@@ -1082,12 +1082,12 @@ static int osd_dir_insert(const struct lu_env *env, struct dt_object *dt,
 	if (CFS_FAIL_CHECK(OBD_FAIL_FID_IGIF))
 		num = 1;
 
-	/* Insert (key,oid) into ZAP */
+	
 	rc = osd_zap_add(osd, parent->oo_dn->dn_object, parent->oo_dn,
 			 name, 8, num, (void *)zde, oh->ot_tx);
 	if (unlikely(rc == -EEXIST &&
 		     name[0] == '.' && name[1] == '.' && name[2] == 0))
-		/* Update (key,oid) in ZAP */
+		
 		rc = -zap_update(osd->od_os, parent->oo_dn->dn_object, name, 8,
 				 sizeof(*zde) / 8, (void *)zde, oh->ot_tx);
 
@@ -1131,7 +1131,7 @@ static int osd_declare_dir_delete(const struct lu_env *env,
 	 */
 	osd_tx_hold_zap(oh->ot_tx, zap_dn->dn_object, zap_dn, FALSE, NULL);
 
-	/* For destroying agent object if have. */
+	
 	dmu_tx_hold_bonus(oh->ot_tx, DMU_NEW_OBJECT);
 
 	RETURN(0);
@@ -1195,7 +1195,7 @@ static int osd_dir_delete(const struct lu_env *env, struct dt_object *dt,
 			       name, rc);
 	}
 
-	/* Remove key from the ZAP */
+	
 	rc = osd_zap_remove(osd, zap_dn->dn_object, zap_dn,
 			    (char *)key, oh->ot_tx);
 	if (unlikely(rc))
@@ -1240,11 +1240,11 @@ static int osd_dir_it_get(const struct lu_env *env,
 	LASSERT(it);
 	LASSERT(it->ozi_zc);
 
-	/* reset the cursor */
+	
 	zap_cursor_fini(it->ozi_zc);
 	osd_obj_cursor_init_serialized(it->ozi_zc, obj, 0);
 
-	/* XXX: implementation of the API is broken at the moment */
+	
 	LASSERT(((const char *)key)[0] == 0);
 
 	if (name[0] == 0) {
@@ -1262,7 +1262,7 @@ static int osd_dir_it_get(const struct lu_env *env,
 		}
 	}
 
-	/* neither . nor .. - some real record */
+	
 	it->ozi_pos = OZI_POS_REAL;
 	rc = 1;
 
@@ -1324,7 +1324,7 @@ static int osd_dir_it_next(const struct lu_env *env, struct dt_it *di)
 
 
 	ENTRY;
-	/* temp. storage should be enough for any key supported by ZFS */
+	
 #ifdef ZAP_MAXNAMELEN_NEW
 	LASSERT(za->za_name_len <= sizeof(it->ozi_name));
 #else
@@ -1352,7 +1352,7 @@ static int osd_dir_it_next(const struct lu_env *env, struct dt_it *di)
 	 */
 	rc = osd_index_retrieve_skip_dots(it, za);
 
-	if (rc == -ENOENT) /* end of dir */
+	if (rc == -ENOENT) 
 		RETURN(+1);
 
 	RETURN(rc);
@@ -1493,13 +1493,13 @@ static int osd_dir_it_rec(const struct lu_env *env, const struct dt_it *di,
 		fid_cpu_to_le(&lde->lde_fid,
 			      lu_object_fid(&it->ozi_obj->oo_dt.do_lu));
 		lde->lde_attrs = LUDA_FID;
-		/* append lustre attributes */
+		
 		osd_it_append_attrs(lde, attr, 1, S_DT(S_IFDIR));
 		lde->lde_reclen = cpu_to_le16(lu_dirent_calc_size(1, attr));
 		it->ozi_pos = OZI_POS_DOT;
 		RETURN(0);
 	} else if (it->ozi_pos == OZI_POS_DOTDOT) {
-		/* same as for . above */
+		
 		lde->lde_hash = cpu_to_le64(0);
 		strcpy(lde->lde_name, "..");
 		lde->lde_namelen = cpu_to_le16(2);
@@ -1508,11 +1508,11 @@ static int osd_dir_it_rec(const struct lu_env *env, const struct dt_it *di,
 			fid_cpu_to_le(&lde->lde_fid, fid);
 			lde->lde_attrs = LUDA_FID;
 		} else if (rc != -ENOENT) {
-			/* ENOENT happens at the root of filesystem, ignore */
+			
 			RETURN(rc);
 		}
 
-		/* append lustre attributes */
+		
 		osd_it_append_attrs(lde, attr, 2, S_DT(S_IFDIR));
 		lde->lde_reclen = cpu_to_le16(lu_dirent_calc_size(2, attr));
 		RETURN(0);
@@ -1678,16 +1678,16 @@ static int osd_dir_it_load(const struct lu_env *env,
 	int		   rc;
 
 	ENTRY;
-	/* reset the cursor */
+	
 	zap_cursor_fini(it->ozi_zc);
 	osd_obj_cursor_init_serialized(it->ozi_zc, obj, hash);
 
 	if (hash == 0) {
 		it->ozi_pos = OZI_POS_INIT;
-		rc = 1; /* there will be ./.. at least */
+		rc = 1; 
 	} else {
 		it->ozi_pos = OZI_POS_REAL;
-		/* to return whether the end has been reached */
+		
 		rc = osd_index_retrieve_skip_dots(it, za);
 		if (rc == 0)
 			rc = 1;
@@ -1723,7 +1723,7 @@ const struct dt_index_operations osd_dir_ops = {
  * Primitives for index files using binary keys.
  */
 
-/* key integer_size is 8 */
+
 static int osd_prepare_key_uint64(struct osd_object *o, __u64 *dst,
 				  const struct dt_key *src)
 {
@@ -1732,7 +1732,7 @@ static int osd_prepare_key_uint64(struct osd_object *o, __u64 *dst,
 	LASSERT(dst);
 	LASSERT(src);
 
-	/* align keysize to 64bit */
+	
 	size = (o->oo_keysize + sizeof(__u64) - 1) / sizeof(__u64);
 	size *= sizeof(__u64);
 
@@ -1807,7 +1807,7 @@ static int osd_index_insert(const struct lu_env *env, struct dt_object *dt,
 
 	rc = osd_prepare_key_uint64(obj, k, key);
 
-	/* Insert (key,oid) into ZAP */
+	
 	rc = -zap_add_uint64(osd->od_os, obj->oo_dn->dn_object,
 			     k, rc, obj->oo_recusize, obj->oo_recsize,
 			     (void *)rec, oh->ot_tx);
@@ -1856,7 +1856,7 @@ static int osd_index_delete(const struct lu_env *env, struct dt_object *dt,
 
 	rc = osd_prepare_key_uint64(obj, k, key);
 
-	/* Remove binary key from the ZAP */
+	
 	rc = -zap_remove_uint64(osd->od_os, obj->oo_dn->dn_object,
 				k, rc, oh->ot_tx);
 	RETURN(rc);
@@ -1924,7 +1924,7 @@ static struct dt_key *osd_index_it_key(const struct lu_env *env,
 	if (rc)
 		RETURN(ERR_PTR(rc));
 
-	/* the binary key is stored in the name */
+	
 	memcpy(&it->ozi_key, za->za_name, obj->oo_keysize);
 
 	RETURN((struct dt_key *)&it->ozi_key);
@@ -1982,7 +1982,7 @@ static int osd_index_it_load(const struct lu_env *env, const struct dt_it *di,
 	int                rc;
 
 	ENTRY;
-	/* reset the cursor */
+	
 	zap_cursor_fini(it->ozi_zc);
 	zap_cursor_init_serialized(it->ozi_zc, osd->od_os,
 				   obj->oo_dn->dn_object, hash);
@@ -2073,7 +2073,7 @@ int osd_index_try(const struct lu_env *env, struct dt_object *dt,
 		obj->oo_recsize = feat->dif_recsize_max;
 		obj->oo_recusize = 1;
 
-		/* ZFS prefers to work with array of 64bits */
+		
 		if ((obj->oo_recsize & 7) == 0) {
 			obj->oo_recsize >>= 3;
 			obj->oo_recusize = 8;

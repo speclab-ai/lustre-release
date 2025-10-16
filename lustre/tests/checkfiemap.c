@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright 2013 Xyratex Technology Limited
@@ -69,7 +69,7 @@ static inline void print_extent_flags(unsigned int flags)
 static int check_fiemap(int fd, long long expected_sum,
 			unsigned int *mapped_extents)
 {
-	/* This buffer is enougth for 1MB length file */
+	
 	union { struct fiemap f; char c[4096]; } fiemap_buf;
 	struct fiemap *fiemap = &fiemap_buf.f;
 	struct fiemap_extent *fm_extents = &fiemap->fm_extents[0];

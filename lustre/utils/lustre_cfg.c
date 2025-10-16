@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2016, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lustre_cfg.c
  *
@@ -67,7 +67,7 @@ int lcfg_set_devname(char *name)
 	if (name) {
 		if (lcfg_devname)
 			free(lcfg_devname);
-		/* quietly strip the unnecessary '$' */
+		
 		if (*name == '$' || *name == '%')
 			name++;
 
@@ -81,7 +81,7 @@ int lcfg_set_devname(char *name)
 		}
 
 		if (digit) {
-			/* We can't translate from dev # to name */
+			
 			lcfg_devname = NULL;
 		} else {
 			lcfg_devname = strdup(name);
@@ -306,7 +306,7 @@ int jt_lcfg_del_mount_option(int argc, char **argv)
 
 	lustre_cfg_bufs_reset(&bufs, lcfg_devname);
 
-	/* profile name */
+	
 	lustre_cfg_bufs_set_string(&bufs, 1, argv[1]);
 
 	return jt_lcfg_ioctl(&bufs, argv[0], LCFG_DEL_MOUNTOPT);
@@ -371,13 +371,13 @@ int jt_lcfg_del_conn(int argc, char **argv)
 
 	lustre_cfg_bufs_reset(&bufs, lcfg_devname);
 
-	/* connection uuid */
+	
 	lustre_cfg_bufs_set_string(&bufs, 1, argv[1]);
 
 	return jt_lcfg_ioctl(&bufs, argv[0], LCFG_DEL_MOUNTOPT);
 }
 
-/* Param set locally, directly on target */
+
 int jt_lcfg_param(int argc, char **argv)
 {
 	struct lustre_cfg_bufs bufs;
@@ -463,7 +463,7 @@ int jt_lcfg_setparam_perm(int argc, char **argv, struct param_opts *popt)
 			size_t len;
 
 			len = strlen(buf);
-			/* make sure it always ends with '=' */
+			
 			end_pos = memchr(buf, '=', len - 1);
 			if (!end_pos) {
 				size_t buflen = len + 2;
@@ -494,7 +494,7 @@ static int lcfg_conf_param(const char *func, char *buf, bool del)
 	if (del)
 		lustre_cfg_bufs_set_string(&bufs, 2, "del");
 
-	/* We could put other opcodes here. */
+	
 	lcfg = malloc(lustre_cfg_len(bufs.lcfg_bufcount, bufs.lcfg_buflen));
 	if (!lcfg) {
 		rc = -ENOMEM;
@@ -526,7 +526,7 @@ int jt_lcfg_confparam(int argc, char **argv)
 	bool del = false;
 	char *buf = NULL;
 
-	/* mgs_setparam processes only lctl buf #1 */
+	
 	if ((argc > 3) || (argc <= 1))
 		return CMD_HELP;
 
@@ -546,7 +546,7 @@ int jt_lcfg_confparam(int argc, char **argv)
 		size_t len;
 
 		len = strlen(buf);
-		/* make sure it always ends with '=' */
+		
 		end_pos = memchr(buf, '=', len - 1);
 		if (!end_pos) {
 			size_t buflen = len + 2;
@@ -580,7 +580,7 @@ static void print_obd_line(char *s)
 	glob_t path;
 	char *ptr;
 retry:
-	/* obd device type is the first 3 characters of param name */
+	
 	snprintf(buf, sizeof(buf), " %%*d %%*s %.3s %%%zus %%*s %%*d ",
 		 param, sizeof(obd_name) - 1);
 	if (sscanf(s, buf, obd_name) == 0)
@@ -589,10 +589,10 @@ retry:
 		goto try_mdc;
 	fp = fopen(path.gl_pathv[0], "r");
 	if (!fp) {
-		/* need to free path data before retry */
+		
 		cfs_free_param_data(&path);
 try_mdc:
-		if (param[0] == 'o') { /* failed with osc, try mdc */
+		if (param[0] == 'o') { 
 			param = "mdc/%s/mds_conn_uuid";
 			goto retry;
 		}
@@ -600,7 +600,7 @@ try_mdc:
 		goto fail_print;
 	}
 
-	/* should not ignore fgets(3)'s return value */
+	
 	if (!fgets(buf, sizeof(buf), fp)) {
 		fprintf(stderr, "reading from %s: %s", buf, strerror(errno));
 		goto fail_close;
@@ -610,7 +610,7 @@ fail_close:
 	fclose(fp);
 	cfs_free_param_data(&path);
 
-	/* trim trailing newlines */
+	
 	ptr = strrchr(buf, '\n');
 	if (ptr)
 		*ptr = '\0';
@@ -634,7 +634,7 @@ static int yaml_get_device_index(char *source)
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0)
 		return -EOPNOTSUPP;
@@ -643,7 +643,7 @@ static int yaml_get_device_index(char *source)
 	if (rc == 0)
 		return -EOPNOTSUPP;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	yaml_emitter_initialize(&request);
 	rc = yaml_emitter_set_output_netlink(&request, sk, "lustre",
 					     LUSTRE_GENL_VERSION,
@@ -782,11 +782,11 @@ int yaml_get_limit_uid(const char *config)
 	bool done = false;
 	int rc;
 
-	/* Initialize parser */
+	
 	if (!yaml_parser_initialize(&parser))
 		return -EOPNOTSUPP;
 
-	/* Set input string */
+	
 	yaml_parser_set_input_string(&parser, (const unsigned char *)config,
 				     strlen(config));
 
@@ -820,7 +820,7 @@ int yaml_get_limit_uid(const char *config)
 		yaml_event_delete(&event);
 	}
 
-	rc = -ENOENT; /* Key not found */
+	rc = -ENOENT; 
 
 out:
 	yaml_parser_delete(&parser);
@@ -831,7 +831,7 @@ error:
 	return rc;
 }
 
-/* get device list by netlink or debugfs */
+
 int jt_device_list(int argc, char **argv)
 {
 	static const struct option long_opts[] = {
@@ -872,7 +872,7 @@ int jt_device_list(int argc, char **argv)
 	}
 	optind = 1;
 
-	/* Use YAML to list all devices */
+	
 	rc = llapi_param_display_value("devices", LUSTRE_GENL_VERSION, flags,
 				       stdout);
 	if (rc == 0)
@@ -905,7 +905,7 @@ static int do_name2dev(char *func, char *name, int dev_id)
 	char rawbuf[MAX_IOC_BUFLEN], *buf = rawbuf;
 	int rc;
 
-	/* Use YAML to find device index */
+	
 	rc = yaml_get_device_index(name);
 	if (rc >= 0 || rc != -EOPNOTSUPP)
 		return rc;
@@ -944,7 +944,7 @@ int parse_devname(char *func, char *name, int dev_id)
 	if (!name)
 		return -EINVAL;
 
-	/* Test if its a pure number string */
+	
 	if (strspn(name, "0123456789") != strlen(name)) {
 		if (name[0] == '$' || name[0] == '%')
 			name++;
@@ -1033,7 +1033,7 @@ static enum paramtype construct_param(enum paramtype confset, const char *param,
 		snprintf(buf, bufsize, ".%s%s", device, tmp);
 		return PT_SETPARAM;
 	}
-	/* create for conf_param */
+	
 	if (strlen(device)) {
 		int rc;
 
@@ -1195,6 +1195,6 @@ out_open:
 
 int jt_lcfg_applyyaml(int argc, char **argv)
 {
-	/* the file should be the last argument */
+	
 	return lcfg_apply_param_yaml(argv[0], argv[argc - 1]);
 }

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2015, Cray Inc. All Rights Reserved.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Network Request Scheduler (NRS) Delay policy
  */
@@ -63,6 +63,6 @@ struct nrs_delay_req {
 #define NRS_CTL_DELAY_RD_PCT PTLRPC_NRS_CTL_POL_SPEC_05
 #define NRS_CTL_DELAY_WR_PCT PTLRPC_NRS_CTL_POL_SPEC_06
 
-/** @} delay */
+
 
 #endif

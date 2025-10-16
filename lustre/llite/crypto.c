@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2019, 2020, Whamcloud.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include "llite_internal.h"
@@ -22,7 +22,7 @@ static int ll_get_context(struct inode *inode, void *ctx, size_t len)
 	rc = ll_xattr_list(inode, xattr_for_enc(inode),
 			   XATTR_ENCRYPTION_T, ctx, len, OBD_MD_FLXATTR);
 
-	/* used as encryption unit size */
+	
 	if (S_ISREG(inode->i_mode))
 		inode->i_blkbits = LUSTRE_ENCRYPTION_BLOCKBITS;
 	return rc;
@@ -34,7 +34,7 @@ int ll_set_encflags(struct inode *inode, void *encctx, __u32 encctxlen,
 	unsigned int ext_flags;
 	int rc = 0;
 
-	/* used as encryption unit size */
+	
 	if (S_ISREG(inode->i_mode))
 		inode->i_blkbits = LUSTRE_ENCRYPTION_BLOCKBITS;
 	ext_flags = ll_inode2ext_flags(inode) | LUSTRE_ENCRYPT_FL;
@@ -81,7 +81,7 @@ static int ll_set_context(struct inode *inode, const void *ctx, size_t len,
 		return 0;
 	}
 
-	/* Encrypting the root directory is not allowed */
+	
 	if (is_root_inode(inode))
 		return -EPERM;
 
@@ -125,7 +125,7 @@ int ll_file_open_encrypt(struct inode *inode, struct file *filp)
 	if (rc == -ENOKEY &&
 	    (filp->f_flags & O_CIPHERTEXT) == O_CIPHERTEXT &&
 	    filp->f_flags & O_DIRECT)
-		/* allow open with O_CIPHERTEXT flag when we have O_DIRECT */
+		
 		rc = 0;
 
 	return rc;
@@ -310,7 +310,7 @@ int ll_prepare_lookup(struct inode *dir, struct dentry *de,
 	}
 	if (unlikely(filename_is_volatile(iname.name,
 					  iname.len, NULL))) {
-		/* keep volatile name as-is, matters for server side */
+		
 		memset(fname, 0, sizeof(struct llcrypt_name));
 		fname->disk_name.name = (unsigned char *)iname.name;
 		fname->disk_name.len = iname.len;
@@ -413,7 +413,7 @@ int ll_setup_filename(struct inode *dir, const struct qstr *iname,
 	}
 	if (unlikely(filename_is_volatile(iname->name,
 					  iname->len, NULL))) {
-		/* keep volatile name as-is, matters for server side */
+		
 		memset(fname, 0, sizeof(struct llcrypt_name));
 		fname->disk_name.name = (unsigned char *)iname->name;
 		fname->disk_name.len = iname->len;
@@ -477,7 +477,7 @@ const char *ll_get_symlink(struct inode *inode, const void *caddr,
 	if (rc)
 		return ERR_PTR(rc);
 
-	/* If enc key is available, just call llcrypt function. */
+	
 	if (llcrypt_has_encryption_key(inode))
 		return llcrypt_get_symlink(inode, caddr, max_size, done);
 
@@ -596,7 +596,7 @@ out_buf:
 }
 
 #if !defined(HAVE_FSCRYPT_D_REVALIDATE) || defined(CONFIG_LL_ENCRYPTION)
-/* Copied from llcrypt_d_revalidate, as it is not exported */
+
 /*
  * Validate dentries in encrypted directories to make sure we aren't potentially
  * caching stale dentries after a key has been added.
@@ -640,7 +640,7 @@ int llcrypt_d_revalidate(struct dentry *dentry, unsigned int flags)
 
 	return valid;
 }
-#endif /* !HAVE_FSCRYPT_D_REVALIDATE || CONFIG_LL_ENCRYPTION */
+#endif 
 
 const struct llcrypt_operations lustre_cryptops = {
 	.key_prefix		= "lustre:",
@@ -654,11 +654,11 @@ const struct llcrypt_operations lustre_cryptops = {
 #else
 	.get_dummy_context	= ll_get_dummy_policy,
 #endif
-#endif /* !HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED */
+#endif 
 	.empty_dir		= ll_empty_dir,
 	.max_namelen		= NAME_MAX,
 };
-#else /* !HAVE_LUSTRE_CRYPTO */
+#else 
 int ll_set_encflags(struct inode *inode, void *encctx, __u32 encctxlen,
 		    bool preload)
 {

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 #ifndef _LIBCFS_FORTIFY_STRING_H
 #define _LIBCFS_FORTIFY_STRING_H
@@ -165,7 +165,7 @@ bool fortify_memcpy_chk(__kernel_size_t size,
 		 * buffer sizes are also known at compile time.
 		 */
 
-		/* Error when size is larger than enclosing struct. */
+		
 		if (__compiletime_lessthan(p_size_field, p_size) &&
 		    __compiletime_lessthan(p_size, size))
 			__write_overflow();
@@ -173,7 +173,7 @@ bool fortify_memcpy_chk(__kernel_size_t size,
 		    __compiletime_lessthan(q_size, size))
 			__read_overflow2();
 
-		/* Warn when write size argument larger than dest field. */
+		
 		if (__compiletime_lessthan(p_size_field, size))
 			__write_overflow_field(p_size_field, size);
 		/*
@@ -217,7 +217,7 @@ bool fortify_memcpy_chk(__kernel_size_t size,
 	 * that will appear at run-time, without a way for them to be
 	 * detected at compile-time (as can be done when the destination
 	 * is specifically the flexible array member).
-	 * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101832
+	 * https:
 	 */
 	if (p_size_field != 0 && p_size_field != SIZE_MAX &&
 	    p_size != p_size_field && p_size_field < size)
@@ -271,7 +271,7 @@ bool fortify_memcpy_chk(__kernel_size_t size,
  *	__builtin_object_size(ptr->flex_buf, 1) == SIZE_MAX
  * - the size of ANY array at the end of ptr's obj (gcc and clang bug):
  *	__builtin_object_size(ptr->end_buf, 1) == SIZE_MAX
- *	https://gcc.gnu.org/bugzilla/show_bug.cgi?id=101836
+ *	https:
  *
  * Cases where destination size is currently detected:
  * - the size of non-array members within ptr's object:
@@ -290,13 +290,13 @@ bool fortify_memcpy_chk(__kernel_size_t size,
 		__member_size(p), __member_size(q),			\
 		memcpy)
 
-#endif /* HAVE_LINUX_FORTIFY_STRING_HEADER */
-#endif /* unsafe_memcpy */
+#endif 
+#endif 
 
-/* a catch all to ensure an unsafe_memcpy() exists */
+
 #ifndef unsafe_memcpy
 #define unsafe_memcpy(dst, src, bytes, justification)		\
 	memcpy(dst, src, bytes)
 #endif
 
-#endif /* _LIBCFS_FORTIFY_STRING_H */
+#endif 

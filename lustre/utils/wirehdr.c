@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <errno.h>
@@ -24,9 +24,9 @@
 #ifdef HAVE_STRUCT_POSIX_ACL_XATTR
 # define posix_acl_xattr_header struct posix_acl_xattr_header
 # define posix_acl_xattr_entry  struct posix_acl_xattr_entry
-#endif /* HAVE_STRUCT_POSIX_ACL_XATTR */
-#endif /* CONFIG_FS_POSIX_ACL */
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
+#endif 
+#endif 
 #include <linux/lustre/lustre_cfg.h>
 #include <linux/lustre/lgss.h>
 #include <lustre/lustreapi.h>

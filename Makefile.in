@@ -1,17 +1,6 @@
-# SPDX-License-Identifier: GPL-2.0
-
-#
-# This file is part of Lustre, http://www.lustre.org/
-#
-# Makefile.in
-#
-# Template to generate top-level Makefile
-#
-
 ifneq (@LDISKFS_SUBDIR@,)
 obj-m += @LDISKFS_SUBDIR@/
 endif
 obj-m += libcfs/ lnet/
 obj-m += lustre/
-
 @INCLUDE_RULES@

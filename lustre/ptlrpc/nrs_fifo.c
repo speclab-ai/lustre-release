@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2011, 2014, Intel Corporation.
@@ -235,7 +235,7 @@ struct ptlrpc_nrs_pol_conf nrs_conf_fifo = {
 				  PTLRPC_NRS_FL_REG_START
 };
 
-/** @} fifo */
 
-/** @} nrs */
+
+
 

@@ -1,11 +1,4 @@
-# SPDX-License-Identifier: GPL-2.0
-
-#
-# This file is part of Lustre, http://www.lustre.org/
-#
-
 MODULES := kkfilnd
-
 kkfilnd-objs := \
 	kfilnd.o \
 	kfilnd_modparams.o \
@@ -16,7 +9,5 @@ kkfilnd-objs := \
 	kfilnd_peer.o \
 	kfilnd_cq.o \
 	kfilnd_debugfs.o \
-
 EXTRA_POST_CFLAGS += @KFICPPFLAGS@
-
 @INCLUDE_RULES@

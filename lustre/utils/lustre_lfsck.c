@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
@@ -25,7 +25,7 @@
 #include <linux/lnet/lnetctl.h>
 #include <linux/lustre/lustre_ioctl.h>
 #include <linux/lustre/lustre_lfsck_user.h>
-/* Needs to be last to avoid clashes */
+
 #include <libcfs/util/ioctl.h>
 #include <libcfs/util/param.h>
 

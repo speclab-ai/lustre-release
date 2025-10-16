@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _GNU_SOURCE
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 			printf("Cannot seek %s\n", strerror(errno));
 			return 1;
 		}
-		/* reset all bytes to something nor 0x0 neither 0xab */
+		
 		memset(buf, 0x5e, len);
 		rc = read(fd, buf, len);
 		if (rc != len) {
@@ -139,9 +139,9 @@ int main(int argc, char **argv)
 
 	printf("PASS\n");
 	return 0;
-#else /* !O_DIRECT */
+#else 
 #warning O_DIRECT not defined, directio test will fail
 	printf("O_DIRECT not defined\n");
 	return 1;
-#endif /* !O_DIRECT */
+#endif 
 }

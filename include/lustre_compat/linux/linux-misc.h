@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __LIBCFS_LINUX_MISC_H__
@@ -29,7 +29,7 @@ static inline unsigned long cfs_time_seconds(time64_t seconds)
 	return nsecs_to_jiffies64(seconds * NSEC_PER_SEC);
 }
 
-/* TODO: This will soon be private... */
+
 void *cfs_kallsyms_lookup_name(const char *name);
 int lustre_symbols_init(void);
 
@@ -66,12 +66,12 @@ int lustre_symbols_init(void);
 #define iov_iter_is_pipe(iter)		0
 #define iov_iter_is_discard(iter)	0
 #endif
-#endif /* HAVE_IOV_ITER_TYPE */
+#endif 
 
 #ifndef HAVE_USER_BACKED_ITER
 #define iter_is_ubuf(iter)		0
 #define user_backed_iter(iter)		iter_is_iovec(iter)
-#endif /* HAVE_USER_BACKED_ITER */
+#endif 
 
 #ifndef HAVE_IOV_ITER_IS_ALIGNED
 static inline bool iov_iter_aligned_iovec(const struct iov_iter *i,
@@ -114,7 +114,7 @@ static inline bool iov_iter_is_aligned(const struct iov_iter *i,
 
 	return true;
 }
-#endif /* HAVE_IOV_ITER_IS_ALIGNED */
+#endif 
 
 /*
  * For RHEL6 struct kernel_parm_ops doesn't exist. Also
@@ -126,7 +126,7 @@ static inline bool iov_iter_is_aligned(const struct iov_iter *i,
 #else
 #define cfs_kernel_param_arg_t struct kernel_param_ops
 #define kernel_param_ops kernel_param
-#endif /* ! HAVE_KERNEL_PARAM_OPS */
+#endif 
 
 #ifndef HAVE_KERNEL_PARAM_LOCK
 static inline void kernel_param_unlock(struct module *mod)
@@ -138,18 +138,18 @@ static inline void kernel_param_lock(struct module *mod)
 {
 	__kernel_param_lock();
 }
-#endif /* ! HAVE_KERNEL_PARAM_LOCK */
+#endif 
 
 #ifndef HAVE_MATCH_WILDCARD
 bool match_wildcard(const char *pattern, const char *str);
-#endif /* !HAVE_MATCH_WILDCARD */
+#endif 
 
 #ifndef HAVE_KREF_READ
 static inline int kref_read(const struct kref *kref)
 {
 	return atomic_read(&kref->refcount);
 }
-#endif /* HAVE_KREF_READ */
+#endif 
 
 int cfs_arch_init(void);
 void cfs_arch_exit(void);
@@ -271,9 +271,9 @@ rb_find_add(struct rb_node *node, struct rb_root *tree,
 	rb_insert_color(node, tree);
 	return NULL;
 }
-#endif /* !HAVE_RB_FIND */
+#endif 
 
-/* interval tree */
+
 #ifdef HAVE_INTERVAL_TREE_CACHED
 #define interval_tree_root rb_root_cached
 #define interval_tree_first rb_first_cached
@@ -284,10 +284,10 @@ rb_find_add(struct rb_node *node, struct rb_root *tree,
 #define interval_tree_first rb_first
 #define INTERVAL_TREE_ROOT RB_ROOT
 #define INTERVAL_TREE_EMPTY(_root) RB_EMPTY_ROOT(_root)
-#endif /* HAVE_INTERVAL_TREE_CACHED */
+#endif 
 
 #ifndef memset_startat
-/** from linux 5.19 include/linux/string.h: */
+
 #define memset_startat(obj, v, member)					\
 ({									\
 	u8 *__ptr = (u8 *)(obj);					\
@@ -295,7 +295,7 @@ rb_find_add(struct rb_node *node, struct rb_root *tree,
 	memset(__ptr + offsetof(typeof(*(obj)), member), __val,		\
 	       sizeof(*(obj)) - offsetof(typeof(*(obj)), member));	\
 })
-#endif /* memset_startat() */
+#endif 
 
 #ifndef HAVE_STRSCPY
 static inline ssize_t strscpy(char *s1, const char *s2, size_t sz)
@@ -315,4 +315,4 @@ static inline ssize_t strscpy(char *s1, const char *s2, size_t sz)
 #define KOBJ_ATTRIBUTE_GROUPS(_name)	ATTRIBUTE_GROUPS(_name)
 #endif
 
-#endif /* __LIBCFS_LINUX_MISC_H__ */
+#endif 

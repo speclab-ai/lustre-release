@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
-/* for O_DIRECTORY */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -39,7 +39,7 @@ int main(int argc, char **argv)
 	else
 		dname2 = argv[1];
 
-	/* create the directory */
+	
 	fprintf(stderr, "creating directory %s\n", dname1);
 	rc = mkdir(dname1, 0744);
 	if (rc == -1) {
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* open the dir again */
+	
 	fprintf(stderr, "opening directory\n");
 	fddir1 = open(dname1, O_RDONLY | O_DIRECTORY);
 	if (fddir1 == -1) {
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 		exit(2);
 	}
 
-	/* doesn't matter if the two dirs are the same?? */
+	
 	fddir2 = open(dname2, O_RDONLY | O_DIRECTORY);
 	if (fddir2 == -1) {
 		fprintf(stderr, "open %s fails: %s\n",
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 		exit(3);
 	}
 
-	/* delete the dir */
+	
 	fprintf(stderr, "unlinking %s\n", dname1);
 	rc = rmdir(dname1);
 	if (rc) {
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 		exit(6);
 	}
 
-	/* fchmod the dir */
+	
 	rc = fchmod(fddir1, 0777);
 	if (rc == -1) {
 		fprintf(stderr, "fchmod unlinked dir fails %s\n",
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
 		exit(7);
 	}
 
-	/* fstat two dirs to check if they are the same */
+	
 	rc = fstat(fddir1, &st1);
 	if (rc == -1) {
 		fprintf(stderr, "fstat unlinked dir %s fails %s\n",
@@ -107,7 +107,7 @@ int main(int argc, char **argv)
 		exit(9);
 	}
 
-	if (st1.st_mode != st2.st_mode) {  /* can we do this? */
+	if (st1.st_mode != st2.st_mode) {  
 		fprintf(stderr, "fstat different value on %s and %s\n",
 			dname1, dname2);
 		exit(10);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Wang Di <wangdi@clusterfs.com>
  */
@@ -82,7 +82,7 @@ static int lsm_lmm_verify_v1v3(struct lov_mds_md *lmm, size_t lmm_size,
 		static ktime_t time2_clear_nr;
 		ktime_t now = ktime_get();
 
-		/* limit this message 20 times within 24h */
+		
 		if (ktime_after(now, time2_clear_nr)) {
 			nr = 0;
 			time2_clear_nr = ktime_add_ms(now,
@@ -216,7 +216,7 @@ lsme_unpack(struct lov_obd *lov, struct lov_mds_md *lmm, size_t buf_size,
 	lsme->lsme_pattern = pattern;
 	lsme->lsme_flags = 0;
 	lsme->lsme_stripe_size = le32_to_cpu(lmm->lmm_stripe_size);
-	/* preserve the possible -1 stripe count for uninstantiated component */
+	
 	lsme->lsme_stripe_count = le16_to_cpu(lmm->lmm_stripe_count);
 	lsme->lsme_layout_gen = le16_to_cpu(lmm->lmm_layout_gen);
 
@@ -229,7 +229,7 @@ lsme_unpack(struct lov_obd *lov, struct lov_mds_md *lmm, size_t buf_size,
 			GOTO(out_lsme, rc = pool_name_len);
 	}
 
-	/* with Data-on-MDT set maxbytes to stripe size */
+	
 	if (lsme_is_dom(lsme)) {
 		if (maxbytes) {
 			lov_bytes = lsme->lsme_stripe_size;
@@ -262,7 +262,7 @@ retry_new_ost:
 			     !(tgt = lov_tgt(lov, loi->loi_ost_idx)))) {
 			time64_t now = ktime_get_seconds();
 
-			/* print message on the first hit, error if giving up */
+			
 			if (retry_limit == 0) {
 				level = now > next_print ? D_WARNING : D_INFO;
 				retry_limit = now + RECONNECT_DELAY_MAX;
@@ -272,7 +272,7 @@ retry_new_ost:
 				level = D_INFO;
 			}
 
-			/* log debug every loop, just to see it is trying */
+			
 			CDEBUG_LIMIT(level,
 				     (u32)loi->loi_ost_idx < ltd->ltd_tgts_size ?
 				     "%s: FID "DOSTID" OST index %d/%u missing\n" :
@@ -503,7 +503,7 @@ lsme_unpack_foreign(struct lov_obd *lov, void *buf, size_t buf_size,
 	lsme->lsme_type = type;
 	lsme->lsme_foreign_flags = le32_to_cpu(lfm->lfm_flags);
 
-	/* TODO: Initialize for other kind of foreign layout such as DAOS. */
+	
 	if (lov_hsm_type_supported(type))
 		lov_foreign_hsm_to_cpu(&lsme->lsme_hsm, lfm);
 
@@ -539,7 +539,7 @@ lsme_unpack_comp(struct lov_obd *lov, struct lov_mds_md *lmm,
 
 		return lsme_unpack(lov, lmm, lmm_buf_size, lmm3->lmm_pool_name,
 				   inited, lmm3->lmm_objects, maxbytes);
-	} else { /* LOV_MAGIC_FOREIGN */
+	} else { 
 		return lsme_unpack_foreign(lov, lmm, lmm_buf_size,
 					   inited, maxbytes);
 	}
@@ -680,14 +680,14 @@ lov_stripe_md *lsm_unpackmd_foreign(struct lov_obd *lov, void *buf,
 	lsm->lsm_magic = le32_to_cpu(lfm->lfm_magic);
 	lsm->lsm_foreign_size = lov_foreign_size_le(lfm);
 
-	/* alloc for full foreign EA including format fields */
+	
 	OBD_ALLOC_LARGE(lsme, lsm->lsm_foreign_size);
 	if (lsme == NULL) {
 		OBD_FREE(lsm, lsm_size);
 		RETURN(ERR_PTR(-ENOMEM));
 	}
 
-	/* copy full foreign EA including format fields */
+	
 	memcpy(lsme, buf, lsm->lsm_foreign_size);
 
 	lsm_foreign(lsm) = lsme;

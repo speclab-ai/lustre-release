@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright 2014 Cray Inc, all rights reserved.
@@ -56,15 +56,15 @@
 		cleanup();						\
 	} while (0)
 
-/* Name of file/directory. Will be set once and will not change. */
+
 static char mainpath[PATH_MAX];
 static const char *maindir = "llapi_fid_test_name_9585766";
 
-static char mnt_dir[PATH_MAX];	/* Lustre mountpoint */
+static char mnt_dir[PATH_MAX];	
 static int mnt_fd = -1;
-static char *lustre_dir;		/* Test directory inside Lustre */
+static char *lustre_dir;		
 
-/* Cleanup our test directory. */
+
 static void cleanup(void)
 {
 	char cmd[PATH_MAX];
@@ -101,7 +101,7 @@ static void helper_fid2path(const char *filename, int fd)
 	ASSERTF(rc == 0, "llapi_path2fid failed for '%s': %s",
 		filename, strerror(-rc));
 
-	/* Without braces */
+	
 	snprintf(fidstr, sizeof(fidstr), DFID_NOBRACE, PFID(&fid));
 	recno1 = -1;
 	linkno1 = 0;
@@ -110,7 +110,7 @@ static void helper_fid2path(const char *filename, int fd)
 	ASSERTF(rc == 0, "llapi_fid2path failed for fid %s: %s",
 		fidstr, strerror(-rc));
 
-	/* Same with braces */
+	
 	snprintf(fidstr, sizeof(fidstr), DFID, PFID(&fid));
 	recno2 = -1;
 	linkno2 = 0;
@@ -119,7 +119,7 @@ static void helper_fid2path(const char *filename, int fd)
 	ASSERTF(rc == 0, "llapi_fid2path failed for fid %s: %s",
 		fidstr, strerror(-rc));
 
-	/* Make sure both calls to llapi_fid2path returned the same data. */
+	
 	ASSERTF(strcmp(path1, path2) == 0, "paths are different: '%s' / '%s'",
 		path1, path2);
 	ASSERTF(recno1 == recno2, "recnos are different: %lld / %lld",
@@ -127,7 +127,7 @@ static void helper_fid2path(const char *filename, int fd)
 	ASSERTF(linkno1 == linkno2, "linknos are different: %d / %d",
 		linkno1, linkno2);
 
-	/* Use llapi_fid2path_at() */
+	
 	recno2 = -1;
 	linkno2 = 0;
 	rc = llapi_fid2path_at(mnt_fd, &fid, path2, sizeof(path2),
@@ -135,7 +135,7 @@ static void helper_fid2path(const char *filename, int fd)
 	ASSERTF(rc == 0, "llapi_fid2path failed for fid %s: %s",
 		fidstr, strerror(-rc));
 
-	/* Make sure both calls to llapi_fid2path returned the same data. */
+	
 	ASSERTF(strcmp(path1, path2) == 0, "paths are different: '%s' / '%s'",
 		path1, path2);
 	ASSERTF(recno1 == recno2, "recnos are different: %lld / %lld",
@@ -143,7 +143,7 @@ static void helper_fid2path(const char *filename, int fd)
 	ASSERTF(linkno1 == linkno2, "linknos are different: %d / %d",
 		linkno1, linkno2);
 
-	/* Try fd2fid and check that the result is still the same. */
+	
 	if (fd != -1) {
 		rc = llapi_fd2fid(fd, &fid3);
 		ASSERTF(rc == 0, "llapi_fd2fid failed for '%s': %s",
@@ -153,7 +153,7 @@ static void helper_fid2path(const char *filename, int fd)
 			"fids are different");
 	}
 
-	/* Pass result back to fid2path and ensure the fid stays the same. */
+	
 	rc = snprintf(path3, sizeof(path3), "%s/%s", mnt_dir, path1);
 	ASSERTF((rc > 0 && rc < sizeof(path3)), "invalid name");
 	rc = llapi_path2fid(path3, &fid2);
@@ -162,17 +162,17 @@ static void helper_fid2path(const char *filename, int fd)
 	ASSERTF(memcmp(&fid, &fid2, sizeof(fid)) == 0, "fids are different");
 }
 
-/* Test helper_fid2path */
+
 static void test10(void)
 {
 	int rc;
 	int fd;
 	struct stat statbuf;
 
-	/* Against Lustre root */
+	
 	helper_fid2path(lustre_dir, -1);
 
-	/* Against a regular file */
+	
 	fd = creat(mainpath, 0);
 	ASSERTF(fd >= 0, "creat failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -182,7 +182,7 @@ static void test10(void)
 	ASSERTF(rc == 0, "unlink failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Against a pipe */
+	
 	rc = mkfifo(mainpath, 0);
 	ASSERTF(rc == 0, "mkfifo failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -191,7 +191,7 @@ static void test10(void)
 	ASSERTF(rc == 0, "unlink failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Against a directory */
+	
 	rc = mkdir(mainpath, 0);
 	ASSERTF(rc == 0, "mkdir failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -213,7 +213,7 @@ static void test10(void)
 	ASSERTF(rc == 0, "unlink failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Against a block device device. Reuse same dev. */
+	
 	rc = mknod(mainpath, S_IFBLK, statbuf.st_rdev);
 	ASSERTF(rc == 0, "mknod failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -222,7 +222,7 @@ static void test10(void)
 	ASSERTF(rc == 0, "unlink failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Against a socket. */
+	
 	rc = mknod(mainpath, S_IFSOCK, (dev_t)0);
 	ASSERTF(rc == 0, "mknod failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -232,7 +232,7 @@ static void test10(void)
 		mainpath, strerror(errno));
 }
 
-/* Test against deleted files. */
+
 static void test11(void)
 {
 	int rc;
@@ -243,7 +243,7 @@ static void test11(void)
 	long long recno;
 	int linkno;
 
-	/* Against a regular file */
+	
 	fd = creat(mainpath, 0);
 	ASSERTF(fd >= 0, "creat failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -266,7 +266,7 @@ static void test11(void)
 		fidstr, strerror(-rc));
 }
 
-/* Test volatile file. */
+
 static void test12(void)
 {
 	int rc;
@@ -275,7 +275,7 @@ static void test12(void)
 	int fd3;
 	struct lu_fid fid;
 
-	/* Against a volatile file */
+	
 	rc = mkdir(mainpath, 0);
 	ASSERTF(rc == 0, "mkdir failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -287,14 +287,14 @@ static void test12(void)
 	ASSERTF(rc == 0, "llapi_path2fid failed for '%s': %s",
 		mainpath, strerror(-rc));
 
-	/* No many ways to test, except to open by fid. */
+	
 	fd2 = llapi_open_by_fid(mainpath, &fid, O_RDONLY);
 	ASSERTF(fd2 >= 0, "llapi_open_by_fid for " DFID_NOBRACE ": %s",
 		PFID(&fid), strerror(errno));
 
 	close(fd);
 
-	/* Check the file can still be opened, since fd2 is not closed. */
+	
 	fd3 = llapi_open_by_fid(mainpath, &fid, O_RDONLY);
 	ASSERTF(fd3 >= 0, "llapi_open_by_fid for " DFID_NOBRACE ": %s",
 		PFID(&fid), strerror(errno));
@@ -302,13 +302,13 @@ static void test12(void)
 	close(fd2);
 	close(fd3);
 
-	/* The volatile file is gone now. */
+	
 	fd = llapi_open_by_fid(mainpath, &fid, O_RDONLY);
 	ASSERTF(fd < 0, "llapi_open_by_fid for " DFID_NOBRACE ": %d",
 		PFID(&fid), fd);
 }
 
-/* Test with sub directories */
+
 static void test20(void)
 {
 	char testpath[PATH_MAX];
@@ -343,7 +343,7 @@ static void test20(void)
 		helper_fid2path(testpath, -1);
 	}
 
-	/* And test the last one. */
+	
 	helper_fid2path(testpath, -1);
 
 	/* Make sure we have created enough directories. Even with a
@@ -353,7 +353,7 @@ static void test20(void)
 		dir_created, testpath);
 }
 
-/* Test linkno from fid2path */
+
 static void test30(void)
 {
 	/* Note that since the links are stored in the extended attributes,
@@ -376,12 +376,12 @@ static void test30(void)
 	int linkno;
 	bool past_link_limit = false;
 
-	/* Create the containing directory. */
+	
 	rc = mkdir(mainpath, 0);
 	ASSERTF(rc == 0, "mkdir failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Initializes the link array. */
+	
 	for (i = 0; i < num_links; i++) {
 		rc = snprintf(links[i].filename, sizeof(links[i].filename),
 			      "%s/%s/link%04d", lustre_dir, maindir, i);
@@ -392,7 +392,7 @@ static void test30(void)
 		links[i].seen = false;
 	}
 
-	/* Create the original file. */
+	
 	fd = creat(links[0].filename, 0);
 	ASSERTF(fd >= 0, "create failed for '%s': %s",
 		links[0].filename, strerror(errno));
@@ -403,19 +403,19 @@ static void test30(void)
 		links[0].filename, strerror(-rc));
 	snprintf(fidstr, sizeof(fidstr), DFID_NOBRACE, PFID(&fid));
 
-	/* Create the links */
+	
 	for (i = 1; i < num_links; i++) {
 		rc = link(links[0].filename, links[i].filename);
 		ASSERTF(rc == 0, "link failed for '%s' / '%s': %s",
 			links[0].filename, links[i].filename, strerror(errno));
 	}
 
-	/* Query the links, making sure we got all of them */
+	
 	for (i = 0; i < num_links + 10; i++) {
 		long long recno;
 		bool found;
 
-		/* Without braces */
+		
 		recno = -1;
 		linkno = i;
 		rc = llapi_fid2path(links[0].filename, fidstr, buf,
@@ -426,7 +426,7 @@ static void test30(void)
 		snprintf(buf2, sizeof(buf2), "%s/%s", mnt_dir, buf);
 
 		if (past_link_limit == false) {
-			/* Find the name in the links that were created */
+			
 			found = false;
 			for (j = 0; j < num_links; j++) {
 				if (strcmp(buf2, links[j].filename) == 0) {
@@ -469,7 +469,7 @@ static void test30(void)
 	}
 }
 
-/* Test special FIDs for lustre */
+
 static void test31(void)
 {
 	int fd;
@@ -497,7 +497,7 @@ static void help_test40(void)
 	char buf[PATH_MAX];
 	int rc;
 
-	/* Successful call */
+	
 	memset(buf, 0x55, sizeof(buf));
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, PATH_MAX);
 	ASSERTF(rc == 0, "llapi_path2parent failed for '%s': %s",
@@ -515,7 +515,7 @@ static void help_test40(void)
 	ASSERTF(memcmp(&parent_fid, &fid2, sizeof(fid2)) == 0,
 		"fids are different");
 
-	/* Name too short */
+	
 	rc = llapi_path2parent(mainpath, 0, &parent_fid, buf, 0);
 	ASSERTF(rc == -EOVERFLOW, "llapi_path2parent error: %s", strerror(-rc));
 
@@ -535,7 +535,7 @@ static void test40(void)
 	int fd;
 	int rc;
 
-	/* Against a directory. */
+	
 	rc = mkdir(mainpath, 0);
 	ASSERTF(rc == 0, "mkdir failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -543,7 +543,7 @@ static void test40(void)
 
 	cleanup();
 
-	/* Against a regular file */
+	
 	fd = creat(mainpath, 0);
 	ASSERTF(fd >= 0, "creat failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -551,7 +551,7 @@ static void test40(void)
 	close(fd);
 }
 
-/* Test LL_IOC_GETPARENT directly */
+
 static void test41(void)
 {
 	int rc;
@@ -562,14 +562,14 @@ static void test41(void)
 		char buf[1024];
 	} u;
 
-	/* Against a regular file */
+	
 	fd = creat(mainpath, 0);
 	ASSERTF(fd >= 0, "creat failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Ask a few times */
+	
 	for (i = 0; i < 256; i++) {
-		memset(u.buf, i, sizeof(u.buf)); /* poison */
+		memset(u.buf, i, sizeof(u.buf)); 
 		u.gp.gp_linkno = 0;
 		u.gp.gp_name_size = 100;
 
@@ -605,12 +605,12 @@ static void test42(void)
 	int linkno;
 	struct lu_fid parent_fid;
 
-	/* Create the containing directory. */
+	
 	rc = mkdir(mainpath, 0);
 	ASSERTF(rc == 0, "mkdir failed: for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Initializes the link array. */
+	
 	for (i = 0; i < num_links; i++) {
 		rc = snprintf(links[i].subdir, sizeof(links[i].subdir),
 			      "%s/sub%04d", mainpath, i);
@@ -625,7 +625,7 @@ static void test42(void)
 		links[i].seen = false;
 	}
 
-	/* Create the subdirectories. */
+	
 	for (i = 0; i < num_links; i++) {
 		rc = mkdir(links[i].subdir, 0700);
 		ASSERTF(rc == 0, "mkdir failed for '%s': %s",
@@ -636,7 +636,7 @@ static void test42(void)
 			links[i].subdir, strerror(-rc));
 	}
 
-	/* Create the original file. */
+	
 	rc = snprintf(link0, sizeof(link0), "%s/%s",
 		      links[0].subdir, links[0].filename);
 	ASSERTF((rc > 0 && rc < sizeof(link0)), "invalid name for file");
@@ -645,7 +645,7 @@ static void test42(void)
 	ASSERTF(fd >= 0, "create failed for '%s': %s", link0, strerror(errno));
 	close(fd);
 
-	/* Create the links */
+	
 	for (i = 1; i < num_links; i++) {
 		rc = snprintf(buf, sizeof(buf), "%s/%s",
 			      links[i].subdir, links[i].filename);
@@ -668,7 +668,7 @@ static void test42(void)
 		ASSERTF(rc == 0, "llapi_path2parent failed for '%s': %s",
 			link0, strerror(-rc));
 
-		/* Find the name in the links that were created */
+		
 		found = false;
 		for (i = 0; i < num_links; i++) {
 			if (memcmp(&parent_fid, &links[i].subdir_fid,
@@ -687,7 +687,7 @@ static void test42(void)
 		ASSERTF(found == true, "link '%s' not found", buf);
 	}
 
-	/* check non existent n+1 link */
+	
 	rc = llapi_path2parent(link0, num_links, &parent_fid, buf, sizeof(buf));
 	ASSERTF(rc == -ENODATA, "llapi_path2parent error for '%s': %s",
 		link0, strerror(-rc));
@@ -741,7 +741,7 @@ int main(int argc, char *argv[])
 	 */
 	setvbuf(stdout, NULL, _IOLBF, 0);
 
-	/* Create a test filename and reuse it. Remove possibly old files. */
+	
 	rc = snprintf(mainpath, sizeof(mainpath), "%s/%s", lustre_dir, maindir);
 	ASSERTF((rc > 0 && rc < sizeof(mainpath)), "invalid name for mainpath");
 	cleanup();

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 #ifndef _LINUX_RHASHTABLE_LUSTRE_H
 #define _LINUX_RHASHTABLE_LUSTRE_H
@@ -61,7 +61,7 @@ restart:
 		return he ? container_of(he, struct rhlist_head, rhead) : NULL;
 	}
 
-	/* Ensure we see any new tables. */
+	
 	smp_rmb();
 
 	tbl = rht_dereference_rcu(tbl->future_tbl, ht);
@@ -109,7 +109,7 @@ static inline void rhltable_walk_enter(struct rhltable *hlt,
 {
 	rhashtable_walk_enter(&hlt->ht, iter);
 }
-#endif /* !HAVE_RHLTABLE */
+#endif 
 
 #ifndef HAVE_RHASHTABLE_LOOKUP_GET_INSERT_FAST
 /**
@@ -145,7 +145,7 @@ static inline void *rhashtable_lookup_get_insert_fast(
 	}
 	return ret;
 }
-#endif /* !HAVE_RHASHTABLE_LOOKUP_GET_INSERT_FAST */
+#endif 
 
 #ifndef HAVE_RHASHTABLE_LOOKUP
 /*
@@ -178,7 +178,7 @@ restart:
 		return rht_obj(ht, he);
 	}
 
-	/* Ensure we see any new tables. */
+	
 	smp_rmb();
 
 	tbl = rht_dereference_rcu(tbl->future_tbl, ht);
@@ -187,7 +187,7 @@ restart:
 
 	return NULL;
 }
-#endif /* !HAVE_RHASHTABLE_LOOKUP */
+#endif 
 
 #ifndef HAVE_RHT_BUCKET_VAR
 static inline struct rhash_head __rcu **rht_bucket_var(
@@ -198,7 +198,7 @@ static inline struct rhash_head __rcu **rht_bucket_var(
 #endif
 
 #ifndef HAVE_RHASHTABLE_REPLACE
-/* Internal function, please use rhashtable_replace_fast() instead */
+
 static inline int __rhashtable_replace_fast(
 	struct rhashtable *ht, struct bucket_table *tbl,
 	struct rhash_head *obj_old, struct rhash_head *obj_new,
@@ -279,6 +279,6 @@ static inline int rhashtable_replace_fast(
 
 	return err;
 }
-#endif /* HAVE_RHASHTABLE_REPLACE */
+#endif 
 
-#endif /* _LINUX_RHASHTABLE_LUSTRE_H */
+#endif 

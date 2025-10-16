@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: LGPL-2.1+ */
+
 
 /*
  * Copyright (c) 2015, James Simmons
@@ -22,4 +22,4 @@ static inline void cfs_free_param_data(glob_t *paths)
 int cfs_get_param_paths(glob_t *paths, const char *pattern, ...)
 		       __attribute__((__format__(__printf__, 2, 3)));
 
-#endif /* _LIBCFS_UTIL_PARAM_H_ */
+#endif 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /*
  * This contains functions for filename crypto management
  *
@@ -61,10 +61,10 @@ int fname_encrypt(struct inode *inode, const struct qstr *iname,
 	if (tfm == NULL)
 		return 0;
 
-	/* Initialize the IV */
+	
 	llcrypt_generate_iv(&iv, 0, ci);
 
-	/* Set up the encryption request */
+	
 	req = skcipher_request_alloc(tfm, GFP_NOFS);
 	if (!req)
 		return -ENOMEM;
@@ -74,7 +74,7 @@ int fname_encrypt(struct inode *inode, const struct qstr *iname,
 	sg_init_one(&sg, out, olen);
 	skcipher_request_set_crypt(req, &sg, &sg, olen, &iv);
 
-	/* Do the encryption */
+	
 	res = crypto_wait_req(crypto_skcipher_encrypt(req), &wait);
 	skcipher_request_free(req);
 	if (res < 0) {
@@ -111,7 +111,7 @@ static int fname_decrypt(struct inode *inode,
 		return 0;
 	}
 
-	/* Allocate request */
+	
 	req = skcipher_request_alloc(tfm, GFP_NOFS);
 	if (!req)
 		return -ENOMEM;
@@ -119,10 +119,10 @@ static int fname_decrypt(struct inode *inode,
 		CRYPTO_TFM_REQ_MAY_BACKLOG | CRYPTO_TFM_REQ_MAY_SLEEP,
 		crypto_req_done, &wait);
 
-	/* Initialize IV */
+	
 	llcrypt_generate_iv(&iv, 0, ci);
 
-	/* Create decryption request */
+	
 	sg_init_one(&src_sg, iname->name, iname->len);
 	sg_init_one(&dst_sg, oname->name, oname->len);
 	skcipher_request_set_crypt(req, &src_sg, &dst_sg, iname->len, &iv);

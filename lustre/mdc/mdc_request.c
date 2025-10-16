@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2001, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_MDC
@@ -159,12 +159,12 @@ static int mdc_getattr_common(struct obd_export *exp,
 	int                 rc;
 
 	ENTRY;
-	/* Request message already built. */
+	
 	rc = ptlrpc_queue_wait(req);
 	if (rc != 0)
 		RETURN(rc);
 
-	/* sanity check for the reply */
+	
 	body = req_capsule_server_get(pill, &RMF_MDT_BODY);
 	if (body == NULL)
 		RETURN(-EPROTO);
@@ -215,7 +215,7 @@ static int mdc_getattr(struct obd_export *exp, struct md_op_data *op_data,
 	int rc;
 
 	ENTRY;
-	/* Single MDS without an LMV case */
+	
 	if (op_data->op_flags & MF_GET_MDT_IDX) {
 		op_data->op_mds = 0;
 		RETURN(0);
@@ -232,7 +232,7 @@ static int mdc_getattr(struct obd_export *exp, struct md_op_data *op_data,
 		RETURN(rc);
 	}
 
-	/* LU-15245: avoid deadlock with modifying RPCs on MDS_REQUEST_PORTAL */
+	
 	req->rq_request_portal = MDS_READPAGE_PORTAL;
 
 again:
@@ -366,7 +366,7 @@ int mdc_xattr_common(struct obd_export *exp, const struct req_format *fmt,
 	req_capsule_set_size(&req->rq_pill, &RMF_EADATA, RCL_CLIENT,
 			     input_size);
 
-	/* get SELinux policy info if any */
+	
 	sepol = sptlrpc_sepol_get(req);
 	if (IS_ERR(sepol))
 		GOTO(err_free_rq, rc = PTR_ERR(sepol));
@@ -374,13 +374,13 @@ int mdc_xattr_common(struct obd_export *exp, const struct req_format *fmt,
 	req_capsule_set_size(&req->rq_pill, &RMF_SELINUX_POL, RCL_CLIENT,
 			     sptlrpc_sepol_size(sepol));
 
-	/* Flush local XATTR locks to get rid of a possible cancel RPC */
+	
 	if (opcode == MDS_REINT && fid_is_sane(fid) &&
 	    exp->exp_connect_data.ocd_ibits_known & MDS_INODELOCK_XATTR) {
 		LIST_HEAD(cancels);
 		int count;
 
-		/* Without that packing would fail */
+		
 		if (input_size == 0)
 			req_capsule_set_size(&req->rq_pill, &RMF_EADATA,
 					     RCL_CLIENT, 0);
@@ -442,7 +442,7 @@ int mdc_xattr_common(struct obd_export *exp, const struct req_format *fmt,
 				     RCL_SERVER, output_size);
 	ptlrpc_request_set_replen(req);
 
-	/* make rpc */
+	
 	if (opcode == MDS_REINT)
 		ptlrpc_get_mod_rpc_slot(req);
 
@@ -504,7 +504,7 @@ static int mdc_getxattr(struct obd_export *exp, const struct lu_fid *fid,
 	if (body == NULL)
 		GOTO(out, rc = -EPROTO);
 
-	/* only detect the xattr size */
+	
 	if (buf_size == 0) {
 		/* LU-11109: Older MDTs do not distinguish
 		 * between nonexistent xattrs and zero length
@@ -612,7 +612,7 @@ static int mdc_get_lustre_md(struct obd_export *exp, struct req_capsule *pill,
 				GOTO(out, rc);
 		}
 
-		/* since 2.12.58 intent_getattr fetches default LMV */
+		
 		if (md->body->mbo_valid & OBD_MD_DEFAULT_MEA) {
 			lmv_size = req_capsule_get_size(pill,
 							&RMF_DEFAULT_MDT_MD,
@@ -763,11 +763,11 @@ int mdc_set_open_replay_data(struct obd_export *exp,
 	rec = req_capsule_client_get(&open_req->rq_pill, &RMF_REC_REINT);
 	body = req_capsule_server_get(&open_req->rq_pill, &RMF_MDT_BODY);
 	LASSERT(rec != NULL);
-	/* Incoming message in my byte order (it's been swabbed). */
-	/* Outgoing messages always in my byte order. */
+	
+	
 	LASSERT(body != NULL);
 
-	/* Only if the import is replayable, we set replay_open data */
+	
 	if (och && imp->imp_replayable) {
 		mod = obd_mod_alloc();
 		if (mod == NULL) {
@@ -883,14 +883,14 @@ static int mdc_close(struct obd_export *exp, struct md_op_data *op_data,
 	if (op_data->op_bias & MDS_CLOSE_INTENT) {
 		req_fmt = &RQF_MDS_CLOSE_INTENT;
 		if (op_data->op_bias & MDS_HSM_RELEASE) {
-			/* allocate a FID for volatile file */
+			
 			rc = mdc_fid_alloc(NULL, exp, &op_data->op_fid2,
 					   op_data);
 			if (rc < 0) {
 				CERROR("%s: "DFID" allocating FID: rc = %d\n",
 				       obd->obd_name, PFID(&op_data->op_fid1),
 				       rc);
-				/* save the errcode and proceed to close */
+				
 				saved_rc = rc;
 			}
 		}
@@ -950,7 +950,7 @@ static int mdc_close(struct obd_export *exp, struct md_op_data *op_data,
 
 	ptlrpc_request_set_replen(req);
 
-	/* Ensure that this close's handle is fixed up during replay. */
+	
 	if (likely(mod != NULL)) {
 		LASSERTF(mod->mod_open_req != NULL &&
 			 mod->mod_open_req->rq_type != LI_POISON,
@@ -1058,7 +1058,7 @@ restart_bulk:
 		RETURN(-ENOMEM);
 	}
 
-	/* NB req now owns desc and will free it when it gets freed */
+	
 	for (i = 0; i < npages; i++)
 		desc->bd_frag_ops->add_kiov_frag(desc, pages[i], 0,
 						 PAGE_SIZE);
@@ -1265,18 +1265,18 @@ static void mdc_adjust_dirpages(struct page **pages, int cfs_pgs, int lu_pgs)
 			     end_dirent = ent, ent = lu_dirent_next(ent))
 				;
 
-			/* Advance dp to next lu_dirpage. */
+			
 			dp = (struct lu_dirpage *)((char *)dp + LU_PAGE_SIZE);
 
-			/* Check if we've reached the end of the PAGE. */
+			
 			if (!((unsigned long)dp & ~PAGE_MASK))
 				break;
 
-			/* Save the hash and flags of this lu_dirpage. */
+			
 			hash_end = dp->ldp_hash_end;
 			flags = dp->ldp_flags;
 
-			/* Check if lu_dirpage contains no entries. */
+			
 			if (end_dirent == NULL)
 				break;
 
@@ -1299,9 +1299,9 @@ static void mdc_adjust_dirpages(struct page **pages, int cfs_pgs, int lu_pgs)
 }
 #else
 #define mdc_adjust_dirpages(pages, cfs_pgs, lu_pgs) do {} while (0)
-#endif	/* PAGE_SIZE > LU_PAGE_SIZE */
+#endif	
 
-/* parameters for readdir page */
+
 struct readpage_param {
 	struct md_op_data	*rp_mod;
 	__u64			rp_off;
@@ -1330,7 +1330,7 @@ static int ll_mdc_read_page_remote(void *data, struct page *page0)
 	int max_pages;
 	struct inode *inode;
 	struct lu_fid *fid;
-	int rd_pgs = 0; /* number of pages actually read */
+	int rd_pgs = 0; 
 	int npages;
 	int i;
 	int rc;
@@ -1361,7 +1361,7 @@ static int ll_mdc_read_page_remote(void *data, struct page *page0)
 	rc = mdc_getpage(rp->rp_exp, fid, rp->rp_off, page_pool, npages,
 			 op_data->op_projid, &req);
 	if (rc < 0) {
-		/* page0 is special, which was added into page cache early */
+		
 		cfs_delete_from_page_cache(page0);
 	} else {
 		int lu_pgs;
@@ -1656,7 +1656,7 @@ static int mdc_statfs(const struct lu_env *env,
 
 	if ((flags & OBD_STATFS_SUM) &&
 	    (exp_connect_flags2(exp) & OBD_CONNECT2_SUM_STATFS)) {
-		/* request aggregated states */
+		
 		struct mdt_body *body;
 
 		body = req_capsule_client_get(&req->rq_pill, &RMF_MDT_BODY);
@@ -1668,14 +1668,14 @@ static int mdc_statfs(const struct lu_env *env,
 	ptlrpc_request_set_replen(req);
 
 	if (flags & OBD_STATFS_NODELAY) {
-		/* procfs requests not want stay in wait for avoid deadlock */
+		
 		req->rq_no_resend = 1;
 		req->rq_no_delay = 1;
 	}
 
 	rc = ptlrpc_queue_wait(req);
 	if (rc) {
-		/* check connection error first */
+		
 		if (imp->imp_connect_error)
 			rc = imp->imp_connect_error;
 		GOTO(out, rc);
@@ -1703,7 +1703,7 @@ static int mdc_ioc_fid2path(struct obd_export *exp, struct getinfo_fid2path *gf)
 	if (gf->gf_pathlen < 2)
 		RETURN(-EOVERFLOW);
 
-	/* Key is KEY_FID2PATH + getinfo_fid2path description */
+	
 	keylen = round_up(sizeof(KEY_FID2PATH) + sizeof(*gf) +
 				sizeof(struct lu_fid), 8);
 	OBD_ALLOC(key, keylen);
@@ -1719,7 +1719,7 @@ static int mdc_ioc_fid2path(struct obd_export *exp, struct getinfo_fid2path *gf)
 	if (!fid_is_sane(&gf->gf_fid))
 		GOTO(out, rc = -EINVAL);
 
-	/* Val is struct getinfo_fid2path result plus path */
+	
 	vallen = sizeof(*gf) + gf->gf_pathlen;
 
 	rc = obd_get_info(NULL, exp, keylen, key, &vallen, gf);
@@ -1733,7 +1733,7 @@ static int mdc_ioc_fid2path(struct obd_export *exp, struct getinfo_fid2path *gf)
 
 	CDEBUG(D_IOCTL, "path got "DFID" from %llu #%d: %.*s\n",
 	       PFID(&gf->gf_fid), gf->gf_recno, gf->gf_linkno,
-	       /* only log the first 512 characters of the path */
+	       
 	       512, gf->gf_u.gf_path);
 
 out:
@@ -1757,7 +1757,7 @@ static int mdc_ioc_hsm_progress(struct obd_export *exp,
 
 	mdc_pack_body(&req->rq_pill, NULL, 0, 0, -1, 0, MDT_INVALID_PROJID);
 
-	/* Copy hsm_progress struct */
+	
 	req_hpk = req_capsule_client_get(&req->rq_pill, &RMF_MDS_HSM_PROGRESS);
 	if (req_hpk == NULL)
 		GOTO(out, rc = -EPROTO);
@@ -1963,7 +1963,7 @@ static int mdc_ioc_hsm_state_set(struct obd_export *exp,
 	mdc_pack_body(&req->rq_pill, &op_data->op_fid1, 0, 0,
 		      op_data->op_suppgids[0], 0, op_data->op_projid);
 
-	/* Copy states */
+	
 	req_hss = req_capsule_client_get(&req->rq_pill, &RMF_HSM_STATE_SET);
 	if (req_hss == NULL)
 		GOTO(out, rc = -EPROTO);
@@ -2036,25 +2036,25 @@ static int mdc_ioc_hsm_request(struct obd_export *exp,
 		RETURN(rc);
 	}
 
-	/* Cancel existing locks */
+	
 	count = mdc_hsm_request_lock_to_cancel(exp, hur, &cancels);
 	ldlm_cli_cancel_list(&cancels, count, NULL, NULL, 0);
 	mdc_pack_body(&req->rq_pill, NULL, 0, 0, -1, 0, MDT_INVALID_PROJID);
 
-	/* Copy hsm_request struct */
+	
 	req_hr = req_capsule_client_get(&req->rq_pill, &RMF_MDS_HSM_REQUEST);
 	if (req_hr == NULL)
 		GOTO(out, rc = -EPROTO);
 	*req_hr = hur->hur_request;
 
-	/* Copy hsm_user_item structs */
+	
 	req_hui = req_capsule_client_get(&req->rq_pill, &RMF_MDS_HSM_USER_ITEM);
 	if (req_hui == NULL)
 		GOTO(out, rc = -EPROTO);
 	memcpy(req_hui, hur->hur_user_item,
 	       hur->hur_request.hr_itemcount * sizeof(struct hsm_user_item));
 
-	/* Copy opaque field */
+	
 	req_opaque = req_capsule_client_get(&req->rq_pill, &RMF_GENERIC_DATA);
 	if (req_opaque == NULL)
 		GOTO(out, rc = -EPROTO);
@@ -2278,7 +2278,7 @@ static int mdc_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 	CDEBUG(D_IOCTL, "%s: cmd=%x len=%u karg=%pK uarg=%pK\n",
 	       obd->obd_name, cmd, len, karg, uarg);
 
-	/* handle commands that do not need @karg first */
+	
 	switch (cmd) {
 	case LL_IOC_GET_CONNECT_FLAGS:
 		if (copy_to_user(uarg, exp_connect_flags_ptr(exp),
@@ -2302,7 +2302,7 @@ static int mdc_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 		GOTO(out, rc);
 	case LL_IOC_HSM_CT_START:
 		rc = mdc_ioc_hsm_ct_start(exp, karg);
-		/* ignore if it was already registered on this MDS. */
+		
 		if (rc == -EEXIST)
 			rc = 0;
 		GOTO(out, rc);
@@ -2348,7 +2348,7 @@ static int mdc_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 		if (*((__u32 *) data->ioc_inlbuf2) != 0)
 			GOTO(out, rc = -ENODEV);
 
-		/* copy UUID */
+		
 		if (copy_to_user(data->ioc_pbuf2, obd2cli_tgt(obd),
 				 min((int)data->ioc_plen2,
 				     (int)sizeof(struct obd_uuid))))
@@ -2486,7 +2486,7 @@ static void lustre_swab_hal(struct hsm_action_list *h)
 static void lustre_swab_kuch(struct kuc_hdr *l)
 {
 	__swab16s(&l->kuc_magic);
-	/* __u8 l->kuc_transport */
+	
 	__swab16s(&l->kuc_msgtype);
 	__swab16s(&l->kuc_msglen);
 }
@@ -2506,7 +2506,7 @@ static int mdc_ioc_hsm_ct_start(struct obd_export *exp,
 	       lk->lk_uid, lk->lk_group, lk->lk_flags);
 
 	if (lk->lk_flags & LK_FLG_STOP) {
-		/* Unregister with the coordinator */
+		
 		rc = mdc_ioc_hsm_ct_unregister(imp);
 	} else {
 		__u32 *archives = NULL;
@@ -2551,7 +2551,7 @@ static int mdc_hsm_copytool_send(const struct obd_uuid *uuid,
 	       lh->kuc_magic, lh->kuc_transport, lh->kuc_msgtype,
 	       lh->kuc_msglen, hal->hal_count, hal->hal_fsname);
 
-	/* Broadcast to HSM listeners */
+	
 	rc = libcfs_kkuc_group_put(uuid, KUC_GRP_HSM, lh);
 
 	RETURN(rc);
@@ -2588,7 +2588,7 @@ static int mdc_hsm_ct_reregister(void *data, void *cb_arg)
 	}
 
 	rc = mdc_ioc_hsm_ct_register(imp, kcd->kcd_nr_archives, archives);
-	/* ignore error if the copytool is already registered */
+	
 	return (rc == -EEXIST) ? 0 : rc;
 }
 
@@ -2598,7 +2598,7 @@ static int mdc_kuc_reregister_thread(void *data)
 	int rc;
 
 	ENTRY;
-	/* re-register HSM agents */
+	
 	rc = libcfs_kkuc_group_foreach(&imp->imp_obd->obd_uuid, KUC_GRP_HSM,
 				       mdc_hsm_ct_reregister, imp);
 	if (rc < 0 && rc != -EEXIST)
@@ -2891,7 +2891,7 @@ static int mdc_import_event(struct obd_device *obd, struct obd_import *imp,
 	}
 	case IMP_EVENT_ACTIVE:
 		rc = obd_notify_observer(obd, obd, OBD_NOTIFY_ACTIVE);
-		/* redo the kuc registration after reconnecting */
+		
 		if (rc == 0)
 			rc = mdc_kuc_reregister(imp);
 		break;
@@ -2954,7 +2954,7 @@ static int mdc_cancel_weight(struct ldlm_lock *lock)
 	if (lock->l_policy_data.l_inodebits.bits & MDS_INODELOCK_OPEN)
 		RETURN(0);
 
-	/* Special case for DoM locks, cancel only unused and granted locks */
+	
 	if (ldlm_has_dom(lock) &&
 	    (lock->l_granted_mode != lock->l_req_mode ||
 	     osc_ldlm_weigh_ast(lock) != 0))
@@ -3173,7 +3173,7 @@ static void __exit mdc_exit(void)
 	idr_destroy(&mdc_changelog_minor_idr);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Metadata Client");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

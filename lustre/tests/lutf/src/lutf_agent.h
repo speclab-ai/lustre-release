@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf_agent.h
  *
@@ -199,4 +199,4 @@ lutf_rc_t lutf_send_rpc_rsp(char *agent, char *yaml);
  */
 void agent_init(void);
 
-#endif /* LUTF_AGENTS_H */
+#endif 

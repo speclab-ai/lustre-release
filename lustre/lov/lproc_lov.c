@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -269,7 +269,7 @@ static struct attribute *lov_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(lov); /* creates lov_groups */
+KOBJ_ATTRIBUTE_GROUPS(lov); 
 
 int lov_tunables_init(struct obd_device *obd)
 {
@@ -293,7 +293,7 @@ int lov_tunables_init(struct obd_device *obd)
 		       obd->obd_name, rc);
 		lov->lov_pool_proc_entry = NULL;
 	}
-#endif /* CONFIG_FS_PROC */
+#endif 
 out:
 	return rc;
 }

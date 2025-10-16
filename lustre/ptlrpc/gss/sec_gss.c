@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: BSD-3-Clause
+
 
 /*
  * Modifications for Lustre
@@ -64,7 +64,7 @@ static inline int msg_last_seglen(struct lustre_msg *msg)
 	return msg->lm_buflens[msg_last_segidx(msg)];
 }
 
- /* wire data swabber */
+ 
 static
 void gss_header_swabber(struct gss_header *ghdr)
 {
@@ -134,7 +134,7 @@ static int gss_sign_msg(struct lustre_msg *msg, struct gss_ctx *mechctx,
 
 	LASSERT(msg->lm_bufcount >= 2);
 
-	/* gss hdr */
+	
 	LASSERT(msg->lm_buflens[0] >=
 		sizeof(*ghdr) + (handle ? handle->len : 0));
 	ghdr = lustre_msg_buf(msg, 0, 0);
@@ -146,18 +146,18 @@ static int gss_sign_msg(struct lustre_msg *msg, struct gss_ctx *mechctx,
 	ghdr->gh_seq = seq;
 	ghdr->gh_svc = svc;
 	if (!handle) {
-		/* fill in a fake one */
+		
 		ghdr->gh_handle.len = 0;
 	} else {
 		ghdr->gh_handle.len = handle->len;
 		memcpy(ghdr->gh_handle.data, handle->data, handle->len);
 	}
 
-	/* no actual signature for null mode */
+	
 	if (svc == SPTLRPC_SVC_NULL)
 		return lustre_msg_size_v2(msg->lm_bufcount, msg->lm_buflens);
 
-	/* MIC */
+	
 	mic_idx = msg_last_segidx(msg);
 	max_textcnt = (svc == SPTLRPC_SVC_AUTH) ? 1 : mic_idx;
 
@@ -240,7 +240,7 @@ __u32 gss_unseal_msg(struct gss_ctx *mechctx, struct lustre_msg *msgbuf,
 	if (!clear_buf)
 		RETURN(GSS_S_FAILURE);
 
-	/* buffer objects */
+	
 	hdrobj.len = lustre_msg_buflen(msgbuf, 0);
 	hdrobj.data = lustre_msg_buf(msgbuf, 0, 0);
 	token.len = lustre_msg_buflen(msgbuf, 1);
@@ -256,7 +256,7 @@ __u32 gss_unseal_msg(struct gss_ctx *mechctx, struct lustre_msg *msgbuf,
 	LASSERT(clear_obj.len <= clear_buflen);
 	LASSERT(clear_obj.len <= msgbuf_len);
 
-	/* now the decrypted message */
+	
 	memcpy(msgbuf, clear_obj.data, clear_obj.len);
 	*msg_len = clear_obj.len;
 
@@ -266,7 +266,7 @@ out_free:
 	RETURN(major);
 }
 
-/* gss client context manipulation helpers  */
+
 int cli_ctx_expire(struct ptlrpc_cli_ctx *ctx)
 {
 	LASSERT(atomic_read(&ctx->cc_refcount));
@@ -302,7 +302,7 @@ int cli_ctx_check_death(struct ptlrpc_cli_ctx *ctx)
 	if (ctx->cc_expire == 0)
 		return 0;
 
-	/* check real expiration */
+	
 	if (ctx->cc_expire > ktime_get_real_seconds())
 		return 0;
 
@@ -318,7 +318,7 @@ void gss_cli_ctx_uptodate(struct gss_cli_ctx *gctx)
 	if (lgss_inquire_context(gctx->gc_mechctx, &ctx_expiry)) {
 		CERROR("ctx %p(%u): unable to inquire, expire it now\n",
 		       gctx, ctx->cc_vcred.vc_uid);
-		ctx_expiry = 1; /* make it expired now */
+		ctx_expiry = 1; 
 	}
 
 	ctx->cc_expire = gss_round_ctx_expiry(ctx_expiry,
@@ -343,7 +343,7 @@ void gss_cli_ctx_uptodate(struct gss_cli_ctx *gctx)
 		       ctx->cc_expire,
 		       ctx->cc_expire - ktime_get_real_seconds());
 
-		/* install reverse svc ctx for root context */
+		
 		if (ctx->cc_vcred.vc_uid == 0)
 			gss_sec_install_rctx(ctx->cc_sec->ps_import,
 					     ctx->cc_sec, ctx);
@@ -362,7 +362,7 @@ static void gss_cli_ctx_finalize(struct gss_cli_ctx *gctx)
 	}
 
 	if (!rawobj_empty(&gctx->gc_svc_handle)) {
-		/* forward ctx: mark buddy reverse svcctx soon-expire. */
+		
 		if (!sec_is_reverse(gctx->gc_base.cc_sec) &&
 		    !rawobj_empty(&gctx->gc_svc_handle))
 			gss_svc_upcall_expire_rvs_ctx(&gctx->gc_svc_handle);
@@ -520,7 +520,7 @@ exit:
 	return rc;
 }
 
-/* cred APIs */
+
 static inline int gss_cli_payload(struct ptlrpc_cli_ctx *ctx, int msgsize,
 				  int privacy)
 {
@@ -590,7 +590,7 @@ int gss_cli_ctx_sign(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 	LASSERT(req->rq_reqbuf->lm_bufcount >= 2);
 	LASSERT(req->rq_cli_ctx == ctx);
 
-	/* nothing to do for context negotiation RPCs */
+	
 	if (req->rq_ctx_init)
 		RETURN(0);
 
@@ -653,7 +653,7 @@ int gss_cli_ctx_handle_err_notify(struct ptlrpc_cli_ctx *ctx,
 	      sec_is_reverse(ctx->cc_sec) ? "reverse " : "",
 	      errhdr->gh_major, errhdr->gh_minor);
 
-	/* context fini rpc, let it failed */
+	
 	if (req->rq_ctx_fini) {
 		CWARN("%s: context fini rpc failed: rc = %d\n",
 		      ctx->cc_sec->ps_import->imp_obd->obd_name, -EINVAL);
@@ -747,7 +747,7 @@ int gss_cli_ctx_verify(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 		RETURN(-EPROTO);
 	}
 
-	/* sanity checks */
+	
 	reqhdr = lustre_msg_buf(msg, 0, sizeof(*reqhdr));
 	LASSERT(reqhdr);
 
@@ -803,7 +803,7 @@ int gss_cli_ctx_verify(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 		}
 
 		if (pack_bulk) {
-			/* bulk checksum is right after the lustre msg */
+			
 			if (msg->lm_bufcount < 3) {
 				CERROR("Invalid reply bufcount %u\n",
 				       msg->lm_bufcount);
@@ -851,18 +851,18 @@ int gss_cli_ctx_seal(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 
 	gctx = container_of(ctx, struct gss_cli_ctx, gc_base);
 
-	/* final clear data length */
+	
 	req->rq_clrdata_len = lustre_msg_size_v2(req->rq_clrbuf->lm_bufcount,
 						 req->rq_clrbuf->lm_buflens);
 
-	/* calculate wire data length */
+	
 	buflens[0] = PTLRPC_GSS_HEADER_SIZE;
 	buflens[1] = gss_cli_payload(&gctx->gc_base, req->rq_clrdata_len, 1);
 	wiresize = lustre_msg_size_v2(2, buflens);
 
-	/* allocate wire buffer */
+	
 	if (req->rq_pool) {
-		/* pre-allocated */
+		
 		LASSERT(req->rq_reqbuf);
 		LASSERT(req->rq_reqbuf != req->rq_clrbuf);
 		LASSERT(req->rq_reqbuf_len >= wiresize);
@@ -876,7 +876,7 @@ int gss_cli_ctx_seal(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 	lustre_init_msg_v2(req->rq_reqbuf, 2, buflens, NULL);
 	req->rq_reqbuf->lm_secflvr = req->rq_flvr.sf_rpc;
 
-	/* gss header */
+	
 	ghdr = lustre_msg_buf(req->rq_reqbuf, 0, 0);
 	ghdr->gh_version = PTLRPC_GSS_VERSION;
 	ghdr->gh_sp = (__u8) ctx->cc_sec->ps_part;
@@ -893,7 +893,7 @@ int gss_cli_ctx_seal(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 redo:
 	ghdr->gh_seq = atomic_inc_return(&gctx->gc_seq);
 
-	/* buffer objects */
+	
 	hdrobj.len = PTLRPC_GSS_HEADER_SIZE;
 	hdrobj.data = (__u8 *) ghdr;
 	msgobj.len = req->rq_clrdata_len;
@@ -909,7 +909,7 @@ redo:
 	}
 	LASSERT(token.len <= buflens[1]);
 
-	/* see explain in gss_cli_ctx_sign() */
+	
 	if (unlikely(atomic_read(&gctx->gc_seq) - ghdr->gh_seq >
 		     GSS_SEQ_REPACK_THRESHOLD)) {
 		int behind = atomic_read(&gctx->gc_seq) - ghdr->gh_seq;
@@ -921,7 +921,7 @@ redo:
 		goto redo;
 	}
 
-	/* now set the final wire data length */
+	
 	req->rq_reqdata_len = lustre_shrink_msg(req->rq_reqbuf, 1, token.len,
 						0);
 	RETURN(0);
@@ -957,7 +957,7 @@ int gss_cli_ctx_unseal(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 		RETURN(-EPROTO);
 	}
 
-	/* sanity checks */
+	
 	if (ghdr->gh_version != PTLRPC_GSS_VERSION) {
 		CERROR("gss version %u mismatch, expect %u\n",
 		       ghdr->gh_version, PTLRPC_GSS_VERSION);
@@ -1009,7 +1009,7 @@ int gss_cli_ctx_unseal(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 				RETURN(-EPROTO);
 			}
 
-			/* bulk checksum is the last segment */
+			
 			if (bulk_sec_desc_unpack(msg, msg->lm_bufcount - 1,
 						 swabbed))
 				RETURN(-EPROTO);
@@ -1036,7 +1036,7 @@ int gss_cli_ctx_unseal(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 	RETURN(rc);
 }
 
-/* reverse context installation */
+
 static inline
 int gss_install_rvs_svc_ctx(struct obd_import *imp, struct gss_sec *gsec,
 			    struct gss_cli_ctx *gctx)
@@ -1044,7 +1044,7 @@ int gss_install_rvs_svc_ctx(struct obd_import *imp, struct gss_sec *gsec,
 	return gss_svc_upcall_install_rvs_ctx(imp, gsec, gctx);
 }
 
-/* GSS security APIs */
+
 int gss_sec_create_common(struct gss_sec *gsec,
 			  struct ptlrpc_sec_policy *policy,
 			  struct obd_import *imp,
@@ -1067,7 +1067,7 @@ int gss_sec_create_common(struct gss_sec *gsec,
 	spin_lock_init(&gsec->gs_lock);
 	gsec->gs_rvs_hdl = 0ULL;
 
-	/* initialize upper ptlrpc_sec */
+	
 	sec = &gsec->gs_base;
 	sec->ps_policy = policy;
 	atomic_set(&sec->ps_refcount, 0);
@@ -1083,7 +1083,7 @@ int gss_sec_create_common(struct gss_sec *gsec,
 	} else {
 		LASSERT(sec_is_reverse(sec));
 
-		/* never do gc on reverse sec */
+		
 		sec->ps_gc_interval = 0;
 	}
 
@@ -1140,9 +1140,9 @@ int gss_cli_ctx_init_common(struct ptlrpc_sec *sec, struct ptlrpc_cli_ctx *ctx,
 	INIT_LIST_HEAD(&ctx->cc_req_list);
 	INIT_LIST_HEAD(&ctx->cc_gc_chain);
 
-	/* take a ref on belonging sec, balanced in ctx destroying */
+	
 	atomic_inc(&sec->ps_refcount);
-	/* statistic only */
+	
 	atomic_inc(&sec->ps_nctx);
 
 	CDEBUG(D_SEC, "%s@%p: create ctx %p(%u->%s)\n",
@@ -1274,7 +1274,7 @@ int gss_alloc_reqbuf_intg(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 	req->rq_reqmsg = lustre_msg_buf(req->rq_reqbuf, 1, msgsize);
 	LASSERT(req->rq_reqmsg);
 
-	/* pack user desc here, later we might leave current user's process */
+	
 	if (req->rq_pack_udesc)
 		sptlrpc_pack_user_desc(req->rq_reqbuf, 2);
 
@@ -1309,7 +1309,7 @@ int gss_alloc_reqbuf_priv(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 							   req->rq_bulk_read);
 
 	clearsize = lustre_msg_size_v2(ibufcnt, ibuflens);
-	/* to allow append padding during encryption */
+	
 	clearsize += GSS_MAX_CIPHER_BLOCK;
 
 	/* Wrapper (wire) buffers
@@ -1321,7 +1321,7 @@ int gss_alloc_reqbuf_priv(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 	wiresize = lustre_msg_size_v2(2, wbuflens);
 
 	if (req->rq_pool) {
-		/* rq_reqbuf is preallocated */
+		
 		LASSERT(req->rq_reqbuf);
 		LASSERT(req->rq_reqbuf_len >= wiresize);
 
@@ -1393,7 +1393,7 @@ void gss_free_reqbuf(struct ptlrpc_sec *sec, struct ptlrpc_request *req)
 	if (!req->rq_clrbuf)
 		goto release_reqbuf;
 
-	/* release clear buffer */
+	
 	LASSERT(privacy);
 	LASSERT(req->rq_clrbuf_len);
 
@@ -1476,7 +1476,7 @@ int gss_alloc_repbuf_intg(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 
 	alloc_size = lustre_msg_size_v2(bufcnt, buflens);
 
-	/* add space for early reply */
+	
 	alloc_size += gss_at_reply_off_integ;
 
 	return do_alloc_repbuf(req, alloc_size);
@@ -1491,7 +1491,7 @@ int gss_alloc_repbuf_priv(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 	int             bufcnt;
 	int             alloc_size;
 
-	/* inner buffers */
+	
 	bufcnt = 1;
 	buflens[0] = msgsize;
 
@@ -1502,13 +1502,13 @@ int gss_alloc_repbuf_priv(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 	txtsize = lustre_msg_size_v2(bufcnt, buflens);
 	txtsize += GSS_MAX_CIPHER_BLOCK;
 
-	/* wrapper buffers */
+	
 	bufcnt = 2;
 	buflens[0] = PTLRPC_GSS_HEADER_SIZE;
 	buflens[1] = gss_cli_payload(req->rq_cli_ctx, txtsize, 1);
 
 	alloc_size = lustre_msg_size_v2(bufcnt, buflens);
-	/* add space for early reply */
+	
 	alloc_size += gss_at_reply_off_priv;
 
 	return do_alloc_repbuf(req, alloc_size);
@@ -1597,13 +1597,13 @@ int gss_enlarge_reqbuf_intg(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 	LASSERT(req->rq_reqbuf->lm_bufcount >= 2);
 	LASSERT(lustre_msg_buf(req->rq_reqbuf, 1, 0) == req->rq_reqmsg);
 
-	/* 1. compute new embedded msg size */
+	
 	newmsg_size = get_enlarged_msgsize(req->rq_reqmsg, segment, newsize);
 	LASSERT(newmsg_size >= req->rq_reqbuf->lm_buflens[1]);
 
-	/* 2. compute new wrapper msg size */
+	
 	if (svc == SPTLRPC_SVC_NULL) {
-		/* no signature, get size directly */
+		
 		newbuf_size = get_enlarged_msgsize(req->rq_reqbuf, 1,
 						   newmsg_size);
 	} else {
@@ -1624,7 +1624,7 @@ int gss_enlarge_reqbuf_intg(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 						    sigsize);
 	}
 
-	/* request from pool should always have enough buffer */
+	
 	LASSERT(!req->rq_pool || req->rq_reqbuf_len >= newbuf_size);
 
 	if (req->rq_reqbuf_len < newbuf_size) {
@@ -1655,7 +1655,7 @@ int gss_enlarge_reqbuf_intg(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 			spin_unlock(&req->rq_import->imp_lock);
 	}
 
-	/* do enlargement, from wrapper to embedded, from end to begin */
+	
 	if (svc != SPTLRPC_SVC_NULL)
 		_sptlrpc_enlarge_msg_inplace(req->rq_reqbuf,
 					     msg_last_segidx(req->rq_reqbuf),
@@ -1688,14 +1688,14 @@ int gss_enlarge_reqbuf_priv(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 	LASSERT(req->rq_clrbuf_len > req->rq_reqlen);
 	LASSERT(lustre_msg_buf(req->rq_clrbuf, 0, 0) == req->rq_reqmsg);
 
-	/* compute new embedded msg size */
+	
 	newmsg_size = get_enlarged_msgsize(req->rq_reqmsg, segment, newsize);
 
-	/* compute new clear buffer size */
+	
 	newclrbuf_size = get_enlarged_msgsize(req->rq_clrbuf, 0, newmsg_size);
 	newclrbuf_size += GSS_MAX_CIPHER_BLOCK;
 
-	/* compute new cipher buffer size */
+	
 	buflens[0] = PTLRPC_GSS_HEADER_SIZE;
 	buflens[1] = gss_cli_payload(req->rq_cli_ctx, buflens[0], 0);
 	buflens[2] = gss_cli_payload(req->rq_cli_ctx, newclrbuf_size, 1);
@@ -1715,7 +1715,7 @@ int gss_enlarge_reqbuf_priv(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 
 			if (req->rq_import)
 				spin_lock(&req->rq_import->imp_lock);
-			/* move clear text backward. */
+			
 			src = req->rq_clrbuf;
 			dst = (char *) req->rq_reqbuf + newcipbuf_size;
 
@@ -1728,7 +1728,7 @@ int gss_enlarge_reqbuf_priv(struct ptlrpc_sec *sec, struct ptlrpc_request *req,
 			if (req->rq_import)
 				spin_unlock(&req->rq_import->imp_lock);
 		} else {
-			/* sadly we have to split out the clear buffer */
+			
 			LASSERT(req->rq_reqbuf_len >= newcipbuf_size);
 			LASSERT(req->rq_clrbuf_len < newclrbuf_size);
 		}
@@ -1808,7 +1808,7 @@ int gss_sec_install_rctx(struct obd_import *imp, struct ptlrpc_sec *sec,
 	return rc;
 }
 
-/* server side API */
+
 static inline
 int gss_svc_reqctx_is_special(struct gss_svc_reqctx *grctx)
 {
@@ -1853,7 +1853,7 @@ int gss_svc_sign(struct ptlrpc_request *req, struct ptlrpc_reply_state *rs,
 
 	LASSERT(rs->rs_msg == lustre_msg_buf(rs->rs_repbuf, 1, 0));
 
-	/* embedded lustre_msg might have been shrunk */
+	
 	if (req->rq_replen != rs->rs_repbuf->lm_buflens[1])
 		lustre_shrink_msg(rs->rs_repbuf, 1, req->rq_replen, 1);
 
@@ -1902,7 +1902,7 @@ int gss_pack_err_notify(struct ptlrpc_request *req, __u32 major, __u32 minor)
 		RETURN(rc);
 	}
 
-	/* gss hdr */
+	
 	rs = req->rq_reply_state;
 	LASSERT(rs->rs_repbuf->lm_buflens[1] >= sizeof(*ghdr));
 	ghdr = lustre_msg_buf(rs->rs_repbuf, 0, 0);
@@ -1911,7 +1911,7 @@ int gss_pack_err_notify(struct ptlrpc_request *req, __u32 major, __u32 minor)
 	ghdr->gh_proc = PTLRPC_GSS_PROC_ERR;
 	ghdr->gh_major = major;
 	ghdr->gh_minor = minor;
-	ghdr->gh_handle.len = 0; /* fake context handle */
+	ghdr->gh_handle.len = 0; 
 
 	rs->rs_repdata_len = lustre_msg_size_v2(rs->rs_repbuf->lm_bufcount,
 						rs->rs_repbuf->lm_buflens);
@@ -1961,7 +1961,7 @@ int gss_svc_handle_init(struct ptlrpc_request *req, struct gss_wire_ctx *gw)
 
 	swabbed = req_capsule_req_need_swab(&req->rq_pill);
 
-	/* ctx initiate payload is in last segment */
+	
 	secdata = lustre_msg_buf(reqbuf, reqbuf->lm_bufcount - 1, 0);
 	seclen = reqbuf->lm_buflens[reqbuf->lm_bufcount - 1];
 
@@ -1971,7 +1971,7 @@ int gss_svc_handle_init(struct ptlrpc_request *req, struct gss_wire_ctx *gw)
 		RETURN(rc);
 	}
 
-	/* lustre svc type */
+	
 	lustre_svc = le32_to_cpu(*secdata++);
 	seclen -= 4;
 
@@ -2008,7 +2008,7 @@ int gss_svc_handle_init(struct ptlrpc_request *req, struct gss_wire_ctx *gw)
 		RETURN(rc);
 	}
 
-	/* extract reverse handle */
+	
 	if (rawobj_extract(&rvs_hdl, &secdata, &seclen)) {
 		rc = SECSVC_DROP;
 		CDEBUG(D_SEC, "%s: failed extract reverse handle: rc = %d\n",
@@ -2016,7 +2016,7 @@ int gss_svc_handle_init(struct ptlrpc_request *req, struct gss_wire_ctx *gw)
 		RETURN(rc);
 	}
 
-	/* extract token */
+	
 	if (rawobj_extract(&in_token, &secdata, &seclen)) {
 		rc = SECSVC_DROP;
 		CDEBUG(D_SEC, "%s: can't extract token: rc = %d\n",
@@ -2118,7 +2118,7 @@ int gss_svc_verify_request(struct ptlrpc_request *req,
 verified:
 	swabbed = req_capsule_req_need_swab(&req->rq_pill);
 
-	/* user descriptor */
+	
 	if (gw->gw_flags & LUSTRE_GSS_PACK_USER) {
 		if (msg->lm_bufcount < (offset + 1)) {
 			CERROR("no user desc included\n");
@@ -2135,7 +2135,7 @@ verified:
 		offset++;
 	}
 
-	/* check bulk_sec_desc data */
+	
 	if (gw->gw_flags & LUSTRE_GSS_PACK_BULK) {
 		if (msg->lm_bufcount < (offset + 1)) {
 			CERROR("missing bulk sec descriptor\n");
@@ -2355,7 +2355,7 @@ int gss_svc_accept(struct ptlrpc_sec_policy *policy, struct ptlrpc_request *req)
 		RETURN(SECSVC_DROP);
 	}
 
-	/* sanity checks */
+	
 	if (ghdr->gh_version != PTLRPC_GSS_VERSION) {
 		CERROR("gss version %u, expect %u\n", ghdr->gh_version,
 		       PTLRPC_GSS_VERSION);
@@ -2364,7 +2364,7 @@ int gss_svc_accept(struct ptlrpc_sec_policy *policy, struct ptlrpc_request *req)
 
 	req->rq_sp_from = ghdr->gh_sp;
 
-	/* alloc grctx data */
+	
 	OBD_ALLOC_PTR(grctx);
 	if (!grctx)
 		RETURN(SECSVC_DROP);
@@ -2374,14 +2374,14 @@ int gss_svc_accept(struct ptlrpc_sec_policy *policy, struct ptlrpc_request *req)
 	req->rq_svc_ctx = &grctx->src_base;
 	gw = &grctx->src_wirectx;
 
-	/* save wire context */
+	
 	gw->gw_flags = ghdr->gh_flags;
 	gw->gw_proc = ghdr->gh_proc;
 	gw->gw_seq = ghdr->gh_seq;
 	gw->gw_svc = ghdr->gh_svc;
 	rawobj_from_netobj(&gw->gw_handle, &ghdr->gh_handle);
 
-	/* keep original wire header which subject to checksum verification */
+	
 	if (swabbed)
 		gss_header_swabber(ghdr);
 
@@ -2510,7 +2510,7 @@ int gss_svc_alloc_rs(struct ptlrpc_request *req, int msglen)
 		privacy = (svc == SPTLRPC_SVC_PRIV);
 
 	if (privacy) {
-		/* inner clear buffers */
+		
 		ibufcnt = 1;
 		ibuflens[0] = msglen;
 
@@ -2527,7 +2527,7 @@ int gss_svc_alloc_rs(struct ptlrpc_request *req, int msglen)
 		txtsize = lustre_msg_size_v2(ibufcnt, ibuflens);
 		txtsize += GSS_MAX_CIPHER_BLOCK;
 
-		/* wrapper buffer */
+		
 		bufcnt = 2;
 		buflens[0] = PTLRPC_GSS_HEADER_SIZE;
 		buflens[1] = gss_svc_payload(grctx, early, txtsize, 1);
@@ -2565,7 +2565,7 @@ int gss_svc_alloc_rs(struct ptlrpc_request *req, int msglen)
 	rs = req->rq_reply_state;
 
 	if (rs) {
-		/* pre-allocated */
+		
 		LASSERT(rs->rs_size >= rs_size);
 	} else {
 		OBD_ALLOC_LARGE(rs, rs_size);
@@ -2578,7 +2578,7 @@ int gss_svc_alloc_rs(struct ptlrpc_request *req, int msglen)
 	rs->rs_repbuf = (struct lustre_msg *) (rs + 1);
 	rs->rs_repbuf_len = wmsg_size;
 
-	/* initialize the buffer */
+	
 	if (privacy) {
 		lustre_init_msg_v2(rs->rs_repbuf, ibufcnt, ibuflens, NULL);
 		rs->rs_msg = lustre_msg_buf(rs->rs_repbuf, 0, msglen);
@@ -2625,7 +2625,7 @@ static int gss_svc_seal(struct ptlrpc_request *req,
 		msglen = lustre_msg_size_v2(rs->rs_repbuf->lm_bufcount,
 					    rs->rs_repbuf->lm_buflens);
 
-	/* temporarily use tail of buffer to hold gss header data */
+	
 	LASSERT(msglen + PTLRPC_GSS_HEADER_SIZE <= rs->rs_repbuf_len);
 	ghdr = (struct gss_header *) ((char *) rs->rs_repbuf +
 			rs->rs_repbuf_len - PTLRPC_GSS_HEADER_SIZE);
@@ -2639,7 +2639,7 @@ static int gss_svc_seal(struct ptlrpc_request *req,
 	if (req->rq_pack_bulk)
 		ghdr->gh_flags |= LUSTRE_GSS_PACK_BULK;
 
-	/* allocate temporary cipher buffer */
+	
 	token_buflen = gss_mech_payload(gctx->gsc_mechctx, msglen, 1);
 	OBD_ALLOC_LARGE(token_buf, token_buflen);
 	if (token_buf == NULL)
@@ -2685,14 +2685,14 @@ static int gss_svc_seal(struct ptlrpc_request *req,
 	       PTLRPC_GSS_HEADER_SIZE);
 	memcpy(lustre_msg_buf(rs->rs_repbuf, 1, 0), token.data, token.len);
 
-	/* reply offset */
+	
 	if (req->rq_packed_final &&
 	    (lustre_msghdr_get_flags(req->rq_reqmsg) & MSGHDR_AT_SUPPORT))
 		req->rq_reply_off = gss_at_reply_off_priv;
 	else
 		req->rq_reply_off = 0;
 
-	/* to catch upper layer's further access */
+	
 	rs->rs_msg = NULL;
 	req->rq_repmsg = NULL;
 	req->rq_replen = 0;
@@ -2720,7 +2720,7 @@ int gss_svc_authorize(struct ptlrpc_request *req)
 		RETURN(0);
 	}
 
-	/* early reply could happen in many cases */
+	
 	if (!early && gw->gw_proc != PTLRPC_GSS_PROC_DATA &&
 	    gw->gw_proc != PTLRPC_GSS_PROC_DESTROY) {
 		CERROR("proc %d not support\n", gw->gw_proc);
@@ -2902,7 +2902,7 @@ static void __exit sptlrpc_gss_exit(void)
 	gss_exit_tunables();
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre GSS security policy");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

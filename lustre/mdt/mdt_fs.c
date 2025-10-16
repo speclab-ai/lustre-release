@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Server (MDS) filesystem interface code
  */
@@ -52,7 +52,7 @@ int mdt_export_stats_init(struct obd_device *obd, struct obd_export *exp,
 	rc = lprocfs_exp_setup(exp, client_nid);
 
 	if (rc != 0)
-		/* Mask error for already created /proc entries */
+		
 		RETURN(rc == -EALREADY ? 0 : rc);
 
 	stats = exp->exp_nid_stats;

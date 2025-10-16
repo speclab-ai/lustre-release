@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2016, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <stdbool.h>
@@ -126,7 +126,7 @@ static int compare_gids(const void *v1, const void *v2)
 	return (*(gid_t *)v1 - *(gid_t *)v2);
 }
 
-/** getpwuid() replacement */
+
 static struct passwd *getpwuid_nss(uid_t uid)
 {
 	static struct passwd pw;
@@ -163,7 +163,7 @@ static struct group *getgrent_nss(void)
 	return NULL;
 }
 
-/** endgrent() replacement */
+
 static void endgrent_nss(void)
 {
 	if (grent_mod_no < g_n_nss_modules
@@ -175,7 +175,7 @@ static void endgrent_nss(void)
 	grent_mod_no = -1;
 }
 
-/** lookup symbol in dynamically loaded nss module */
+
 static void *get_nss_sym(struct nss_module *mod, const char *op)
 {
 	void *res;
@@ -195,7 +195,7 @@ static void *get_nss_sym(struct nss_module *mod, const char *op)
 	return res;
 }
 
-/** allocate bigger buffer */
+
 static void enlarge_nss_buffer(void **buf, int *bufsize)
 {
 	free(*buf);
@@ -218,7 +218,7 @@ static int getpwuid_nss_lib(struct nss_module *nss, uid_t uid,
 				nss_pw_buf_len, &tmp_errno);
 		if (err == NSS_STATUS_TRYAGAIN) {
 			if (tmp_errno == ERANGE) {
-				/* buffer too small */
+				
 				enlarge_nss_buffer(&nss_pw_buf,
 						&nss_pw_buf_len);
 			}
@@ -240,7 +240,7 @@ static int getgrent_nss_lib(struct nss_module *nss, struct group *gr)
 				nss_grent_buf_len, &tmp_errno);
 		if (err == NSS_STATUS_TRYAGAIN) {
 			if (tmp_errno == ERANGE) {
-				/* buffer too small */
+				
 				enlarge_nss_buffer(&nss_grent_buf,
 						&nss_grent_buf_len);
 			}
@@ -258,14 +258,14 @@ static void endgrent_nss_lib(struct nss_module *mod)
 	mod->u.lib.l_endgrent();
 }
 
-/** destroy a "shared lib" nss module */
+
 static void fini_nss_lib_module(struct nss_module *mod)
 {
 	if (mod->u.lib.l_ptr)
 		dlclose(mod->u.lib.l_ptr);
 }
 
-/** load and initialize a "shared lib" nss module */
+
 static int init_nss_lib_module(struct nss_module *mod, char *name)
 {
 	char lib_file_name[sizeof(NSS_LIB_NAME_PATTERN) + sizeof(mod->name)];
@@ -344,7 +344,7 @@ static void endgrent_lustre_nss(struct nss_module *mod)
 {
 }
 
-/** initialize module to access local /etc/lustre/passwd,group files */
+
 static int init_lustre_module(struct nss_module *mod)
 {
 	mod->fini = fini_lustre_nss_module;
@@ -364,7 +364,7 @@ static int init_lustre_module(struct nss_module *mod)
 	return 0;
 }
 
-/** load and initialize the "nss" system */
+
 static void init_nss(void)
 {
 	nss_pw_buf_len = sysconf(_SC_GETPW_R_SIZE_MAX);
@@ -390,7 +390,7 @@ static void init_nss(void)
 	}
 }
 
-/** unload "nss" */
+
 static void fini_nss(void)
 {
 	int i;
@@ -405,7 +405,7 @@ static void fini_nss(void)
 	free(nss_grent_buf);
 }
 
-/** get supplementary group info and fill downcall data */
+
 static int get_groups_nss(struct identity_downcall_data *data,
 			  unsigned int maxgroups)
 {
@@ -491,7 +491,7 @@ int get_groups_local(struct identity_downcall_data *data,
 		return -1;
 	}
 
-	/* Do not place user's group ID in to the resulting groups list */
+	
 	for (i = 0; i < ngroups_tmp; i++)
 		if (pw->pw_gid != groups_tmp[i])
 			groups[ngroups++] = groups_tmp[i];
@@ -659,7 +659,7 @@ parse_perm_line(struct identity_downcall_data *data, char *line, size_t size)
 	if (nid != LNET_NID_ANY) {
 		int found = 0;
 
-		/* search for the same nid */
+		
 		for (i = data->idd_nperms - 1; i >= 0; i--) {
 			if (data->idd_perms[i].pdd_nid == nid) {
 				data->idd_perms[i].pdd_perm =
@@ -670,7 +670,7 @@ parse_perm_line(struct identity_downcall_data *data, char *line, size_t size)
 			}
 		}
 
-		/* NOT found, add to tail */
+		
 		if (!found) {
 			data->idd_perms[data->idd_nperms].pdd_nid = nid;
 			data->idd_perms[data->idd_nperms].pdd_perm =
@@ -679,7 +679,7 @@ parse_perm_line(struct identity_downcall_data *data, char *line, size_t size)
 		}
 	} else {
 		if (data->idd_nperms > 0) {
-			/* the first one isn't LNET_NID_ANY, need exchange */
+			
 			if (data->idd_perms[0].pdd_nid != LNET_NID_ANY) {
 				data->idd_perms[data->idd_nperms].pdd_nid =
 					data->idd_perms[0].pdd_nid;
@@ -689,13 +689,13 @@ parse_perm_line(struct identity_downcall_data *data, char *line, size_t size)
 				data->idd_perms[0].pdd_perm = perm & ~noperm;
 				data->idd_nperms++;
 			} else {
-				/* only fix LNET_NID_ANY item */
+				
 				data->idd_perms[0].pdd_perm =
 					(data->idd_perms[0].pdd_perm | perm) &
 					~noperm;
 			}
 		} else {
-			/* it is the first one, only add to head */
+			
 			data->idd_perms[0].pdd_nid = LNET_NID_ANY;
 			data->idd_perms[0].pdd_perm = perm & ~noperm;
 			data->idd_nperms = 1;
@@ -743,7 +743,7 @@ static void do_warn_interval(struct timeval *now)
 			write_warning = true;
 	} else {
 		show_warning = (now->tv_sec - sbuf.st_mtim.tv_sec) > ONE_DAY;
-		write_warning = sbuf.st_size == 0; /* file still empty? */
+		write_warning = sbuf.st_size == 0; 
 	}
 
 	if (write_warning || show_warning) {
@@ -755,19 +755,19 @@ static void do_warn_interval(struct timeval *now)
 		int oflags = O_RDWR | O_CREAT;
 		int fd = open(perm_warning, oflags, mode);
 
-		/* if we cannot rate-limit ... better to be quiet */
+		
 		if (fd == -1)
 			return;
 		if (write_warning) {
 			ssize_t written = write(fd, msg, sizeof(msg));
 
-			/* unlikely, but rate-limiting may be broken */
+			
 			if (written <= 0)
 				goto out_close;
 		}
 		errlog("WARNING: %s", msg);
 
-		/* rate limiting is working */
+		
 		if (show_warning)
 			if (futimens(fd, times) < 0)
 				errlog("Change Timestamp failed: %s\n",
@@ -853,7 +853,7 @@ int get_perms(struct identity_downcall_data *data, struct timeval *start)
 	while (fgets(line, sizeof(line), fp)) {
 		if (comment_line(line))
 			continue;
-		ret = lookup_db_line_nss(line, start); /* lookup parsed */
+		ret = lookup_db_line_nss(line, start); 
 		if (ret == 0)
 			continue;
 		if (parse_perm_line(data, line, sizeof(line))) {
@@ -958,7 +958,7 @@ retry:
 	if (rc)
 		goto downcall;
 
-	/* get groups for uid */
+	
 	rc = get_groups_common(data, maxgroups);
 	if (rc)
 		goto downcall;
@@ -1004,7 +1004,7 @@ downcall:
 	} else {
 		rc = 0;
 	}
-	/* log if it takes more than 20 second to avoid rate limite */
+	
 	if (rc || difftime(fini, start) > 20)
 		errlog("get identity for uid %lu start time %ld.%06ld got time %ld.%06ld end time %ld.%06ld: rc = %d\n",
 		       uid, start.tv_sec, start.tv_usec, idgot.tv_sec,

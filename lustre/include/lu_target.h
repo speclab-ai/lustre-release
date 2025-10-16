@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTRE_LU_TARGET_H
@@ -25,7 +25,7 @@
  * operation, and updates on each MDTs are linked to
  * dtr_sub_list */
 struct distribute_txn_replay_req {
-	/* update record, may be vmalloc'd */
+	
 	struct llog_update_record *dtrq_lur;
 	int			dtrq_lur_size;
 
@@ -36,11 +36,11 @@ struct distribute_txn_replay_req {
 	__u64			dtrq_batchid;
 	__u64			dtrq_xid;
 
-	/* all of sub updates are linked here */
+	
 	struct list_head	dtrq_sub_list;
 	spinlock_t		dtrq_sub_list_lock;
 
-	/* If the local update has been executed during replay */
+	
 	__u32			dtrq_local_update_executed:1;
 };
 
@@ -51,7 +51,7 @@ struct distribute_txn_replay_req {
 struct distribute_txn_replay_req_sub {
 	__u32			dtrqs_mdt_index;
 
-	/* All of cookies for the update will be linked here */
+	
 	spinlock_t		dtrqs_cookie_list_lock;
 	struct list_head	dtrqs_cookie_list;
 	struct list_head	dtrqs_list;
@@ -72,26 +72,26 @@ struct target_distribute_txn_data {
 	struct dt_object	*tdtd_batchid_obj;
 	struct dt_device	*tdtd_dt;
 
-	/* Committed batchid for distribute transaction */
+	
 	__u64                   tdtd_committed_batchid;
 
-	/* List for distribute transaction */
+	
 	struct list_head	tdtd_list;
 
-	/* Threads to manage distribute transaction */
+	
 	struct task_struct	*tdtd_commit_task;
 	atomic_t		tdtd_refcount;
 	struct lu_env		tdtd_env;
 
-	/* recovery update */
+	
 	distribute_txn_replay_handler_t	tdtd_replay_handler;
 	struct list_head		tdtd_replay_list;
 	struct list_head		tdtd_replay_finish_list;
 	spinlock_t			tdtd_replay_list_lock;
-	/* last replay update transno */
+	
 	__u32				tdtd_replay_ready:1;
 
-	/* Manage the llog recovery threads */
+	
 	atomic_t		tdtd_recovery_threads_count;
 	wait_queue_head_t	tdtd_recovery_threads_waitq;
 	target_show_update_logs_retrievers_t
@@ -100,24 +100,24 @@ struct target_distribute_txn_data {
 };
 
 struct tg_grants_data {
-	/* grants: all values in bytes */
-	/* grant lock to protect all grant counters */
+	
+	
 	spinlock_t		 tgd_grant_lock;
-	/* total amount of dirty data reported by clients in incoming obdo */
+	
 	u64			 tgd_tot_dirty;
-	/* sum of filesystem space granted to clients for async writes */
+	
 	u64			 tgd_tot_granted;
-	/* grant used by I/Os in progress (between prepare and commit) */
+	
 	u64			 tgd_tot_pending;
 	/* amount of available space in percentage that is never used for
 	 * grants, used on MDT to always keep space for metadata. */
 	u64			 tgd_reserved_pcnt;
-	/* number of clients using grants */
+	
 	int			 tgd_tot_granted_clients;
 	/* shall we grant space to clients not
 	 * supporting OBD_CONNECT_GRANT_PARAM? */
 	int			 tgd_grant_compat_disable;
-	/* protect all statfs-related counters */
+	
 	spinlock_t		 tgd_osfs_lock;
 	time64_t		 tgd_osfs_age;
 	int			 tgd_blockbits;
@@ -130,7 +130,7 @@ struct tg_grants_data {
 	/* track writes completed while statfs refresh is underway.
 	 * tracking is only effective when ofd_statfs_inflight > 1 */
 	u64			 tgd_osfs_inflight;
-	/* statfs optimization: we cache a bit  */
+	
 	struct obd_statfs	 tgd_osfs;
 };
 
@@ -141,20 +141,20 @@ struct lu_target {
 
 	struct target_distribute_txn_data *lut_tdtd;
 
-	/* supported opcodes and handlers for this target */
+	
 	struct tgt_opc_slice	*lut_slice;
 	__u32			 lut_reply_fail_id;
 	__u32			 lut_request_fail_id;
 
-	/* sptlrpc rules */
+	
 	rwlock_t		 lut_sptlrpc_lock;
 	struct sptlrpc_rule_set	 lut_sptlrpc_rset;
 	spinlock_t		 lut_flags_lock;
 	unsigned int		 lut_syncjournal:1,
 				 lut_sync_lock_cancel:2,
-				 /* e.g. OST node */
+				 
 				 lut_no_reconstruct:1,
-				 /* enforce recovery for local clients */
+				 
 				 lut_local_recovery:1,
 				 lut_cksum_t10pi_enforce:1,
 				 lut_no_create:1,
@@ -162,48 +162,48 @@ struct lu_target {
 				  * against the nodemap mapping rules.
 				  */
 				 lut_enable_resource_id_check:1;
-	/* checksum types supported on this node */
+	
 	enum cksum_types	 lut_cksum_types_supported;
-	/** last_rcvd file */
+	
 	struct dt_object	*lut_last_rcvd;
-	/* transaction callbacks */
+	
 	struct dt_txn_callback	 lut_txn_cb;
-	/** server data in last_rcvd file */
+	
 	struct lr_server_data	 lut_lsd;
-	/** Server last transaction number */
+	
 	__u64			 lut_last_transno;
-	/** Lock protecting last transaction number */
+	
 	spinlock_t		 lut_translock;
-	/** Lock protecting client bitmap */
+	
 	spinlock_t		 lut_client_bitmap_lock;
-	/** Bitmap of known clients */
+	
 	unsigned long		*lut_client_bitmap;
 	/* Number of clients supporting multiple modify RPCs
 	 * recorded in the last_rcvd file
 	 */
 	atomic_t		 lut_num_clients;
-	/* Client generation to identify client slot reuse */
+	
 	atomic_t		 lut_client_generation;
-	/** reply_data file */
+	
 	struct dt_object	*lut_reply_data;
-	/** reply data header */
+	
 	struct lsd_reply_header	 lut_reply_header;
-	/** Bitmap of used slots in the reply data file */
+	
 	unsigned long		**lut_reply_bitmap;
-	/** target sync count, used for debug & test */
+	
 	atomic_t		 lut_sync_count;
 
-	/** cross MDT locks which should trigger Sync-on-Lock-Cancel */
+	
 	spinlock_t		 lut_slc_locks_guard;
 	struct list_head	 lut_slc_locks;
 
-	/* target grants fields */
+	
 	struct tg_grants_data	 lut_tgd;
 
-	/* target tunables */
+	
 	const struct attribute	**lut_attrs;
 
-	/* FMD (file modification data) values */
+	
 	int			 lut_fmd_max_num;
 	time64_t		 lut_fmd_max_age;
 };
@@ -211,7 +211,7 @@ struct lu_target {
 #define LUT_FMD_MAX_NUM_DEFAULT 128
 #define LUT_FMD_MAX_AGE_DEFAULT (obd_timeout + 10)
 
-/* number of slots in reply bitmap */
+
 #define LUT_REPLY_SLOTS_PER_CHUNK (1<<20)
 #define LUT_REPLY_SLOTS_MAX_CHUNKS 16
 
@@ -221,17 +221,17 @@ struct lu_target {
  * Target reply data
  */
 struct tg_reply_data {
-	/** chain of reply data anchored in tg_export_data */
+	
 	struct list_head	trd_list;
-	/** copy of on-disk reply data */
+	
 	struct lsd_reply_data	trd_reply;
-	/** versions for Version Based Recovery */
+	
 	__u64			trd_pre_versions[4];
-	/** slot index in reply_data file */
+	
 	int			trd_index;
-	/** tag the client used */
+	
 	__u16			trd_tag;
-	/** child fid to reconstruct open */
+	
 	struct lu_fid		trd_object;
 };
 
@@ -262,9 +262,9 @@ struct tgt_session_info {
 	struct lu_fid		 tsi_fid;
 	struct ldlm_res_id	 tsi_resid;
 
-	/* object affected by VBR, for last_rcvd_update */
+	
 	struct dt_object	*tsi_vbr_obj;
-	/* open child object, for last_rcvd_update */
+	
 	struct dt_object	*tsi_open_obj;
 	/* opdata for mdt_reint_open(), has the same value as
 	 * ldlm_reply:lock_policy_res1.  The tgt_update_last_rcvd() stores
@@ -278,21 +278,21 @@ struct tgt_session_info {
 	 */
 	int			 tsi_reply_fail_id;
 	bool			 tsi_preprocessed;
-	/* request JobID */
+	
 	char                    *tsi_jobid;
 
-	/* update replay */
+	
 	__u64			tsi_xid;
 	__u32			tsi_result;
 	__u32			tsi_client_gen;
 
-	/* RPC transaction handling */
+	
 	bool			tsi_mult_trans;
 	int			tsi_has_trans;
 
-	/* Batched RPC replay */
+	
 	bool			 tsi_batch_env;
-	/* Sub request index in the batched RPC. */
+	
 	__u32			 tsi_batch_idx;
 	struct tg_reply_data	*tsi_batch_trd;
 };
@@ -382,28 +382,28 @@ enum tgt_handler_flags {
 };
 
 struct tgt_handler {
-	/* The name of this handler. */
+	
 	const char		*th_name;
-	/* Fail id, check at the beginning */
+	
 	int			 th_fail_id;
-	/* Operation code */
+	
 	__u32			 th_opc;
-	/* Flags in enum tgt_handler_flags */
+	
 	__u32			 th_flags;
-	/* Request version for this opcode */
+	
 	enum lustre_msg_version	 th_version;
-	/* Handler function */
+	
 	int			(*th_act)(struct tgt_session_info *tsi);
-	/* Handler function for high priority requests */
+	
 	void			(*th_hp)(struct tgt_session_info *tsi);
-	/* Request format for this request */
+	
 	const struct req_format	*th_fmt;
 };
 
 struct tgt_opc_slice {
-	__u32			 tos_opc_start; /* First op code */
-	__u32			 tos_opc_end; /* Last op code */
-	struct tgt_handler	*tos_hs; /* Registered handler */
+	__u32			 tos_opc_start; 
+	__u32			 tos_opc_end; 
+	struct tgt_handler	*tos_hs; 
 };
 
 static inline struct ptlrpc_request *tgt_ses_req(struct tgt_session_info *tsi)
@@ -433,7 +433,7 @@ static inline bool tgt_is_increasing_xid_client(struct obd_export *exp)
 	return exp_connect_flags2(exp) & OBD_CONNECT2_INC_XID;
 }
 
-/* target/tgt_handler.c */
+
 int tgt_request_handle(struct ptlrpc_request *req);
 char *tgt_name(struct lu_target *tgt);
 void tgt_counter_incr(struct obd_export *exp, int opcode);
@@ -506,7 +506,7 @@ struct tgt_commit_cb {
 
 int tgt_hpreq_handler(struct ptlrpc_request *req);
 
-/* target/tgt_main.c */
+
 void tgt_boot_epoch_update(struct lu_target *lut);
 void tgt_save_slc_lock(struct lu_target *lut, struct ldlm_lock *lock,
 		       __u64 transno);
@@ -535,7 +535,7 @@ int tgt_tunables_init(struct lu_target *lut);
 void tgt_tunables_fini(struct lu_target *lut);
 void tgt_mask_cksum_types(struct lu_target *lut, enum cksum_types *cksum_types);
 
-/* target/tgt_grant.c */
+
 static inline int exp_grant_param_supp(struct obd_export *exp)
 {
 	return !!(exp_connect_flags(exp) & OBD_CONNECT_GRANT_PARAM);
@@ -576,7 +576,7 @@ ssize_t grant_compat_disable_store(struct kobject *kobj,
 				   struct attribute *attr,
 				   const char *buffer, size_t count);
 
-/* FMD */
+
 void tgt_fmd_update(struct obd_export *exp, const struct lu_fid *fid,
 		    __u64 xid);
 bool tgt_fmd_check(struct obd_export *exp, const struct lu_fid *fid,
@@ -587,7 +587,7 @@ void tgt_fmd_drop(struct obd_export *exp, const struct lu_fid *fid);
 #define tgt_fmd_drop(exp, fid) do {} while (0)
 #endif
 
-/* target/update_trans.c */
+
 int distribute_txn_init(const struct lu_env *env,
 			struct lu_target *lut,
 			struct target_distribute_txn_data *tdtd,
@@ -595,7 +595,7 @@ int distribute_txn_init(const struct lu_env *env,
 void distribute_txn_fini(const struct lu_env *env,
 			 struct target_distribute_txn_data *tdtd);
 
-/* target/update_recovery.c */
+
 int insert_update_records_to_replay_list(struct target_distribute_txn_data *,
 					 struct llog_update_record *,
 					 struct llog_cookie *, __u32);
@@ -654,16 +654,16 @@ static inline int is_serious(int rc)
 #define TGT_RPC_HANDLER(base, flags, opc, fn, fmt, version)		\
 	TGT_RPC_HANDLER_HP(base, flags, opc, fn, NULL, fmt, version)
 
-/* MDT Request with a format known in advance */
+
 #define TGT_MDT_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(MDS_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
 			LUSTRE_MDS_VERSION)
-/* Request with a format we do not yet know */
+
 #define TGT_MDT_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(MDS_FIRST_OPC, flags, name, fn, NULL,		\
 			LUSTRE_MDS_VERSION)
 
-/* OST Request with a format known in advance */
+
 #define TGT_OST_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(OST_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
 			LUSTRE_OST_VERSION)
@@ -671,7 +671,7 @@ static inline int is_serious(int rc)
 	TGT_RPC_HANDLER_HP(OST_FIRST_OPC, flags, name, fn, hp,		\
 			   &RQF_ ## name, LUSTRE_OST_VERSION)
 
-/* MGS request with a format known in advance */
+
 #define TGT_MGS_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(MGS_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
 			LUSTRE_MGS_VERSION)
@@ -720,24 +720,24 @@ static inline int is_serious(int rc)
 	TGT_RPC_HANDLER(QUOTA_DQACQ, flags, name, fn, &RQF_ ## name,	\
 			LUSTRE_MDS_VERSION)
 
-/* Sequence service handlers */
+
 #define TGT_SEQ_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(SEQ_QUERY, flags, name, fn, &RQF_ ## name,	\
 			LUSTRE_MDS_VERSION)
 
-/* FID Location Database handlers */
+
 #define TGT_FLD_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(FLD_QUERY, flags, name, fn, NULL,		\
 			LUSTRE_MDS_VERSION)
 
-/* LFSCK handlers */
+
 #define TGT_LFSCK_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(LFSCK_FIRST_OPC, flags, name, fn,		\
 			&RQF_ ## name, LUSTRE_OBD_VERSION)
 
-/* Request with a format known in advance */
+
 #define TGT_UPDATE_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(OUT_UPDATE, flags, name, fn, &RQF_ ## name,	\
 			LUSTRE_MDS_VERSION)
 
-#endif /* __LUSTRE_LU_TARGET_H */
+#endif 

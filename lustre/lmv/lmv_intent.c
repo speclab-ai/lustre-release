@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LMV
@@ -76,7 +76,7 @@ static int lmv_intent_remote(struct obd_export *exp, struct lookup_intent *it,
 		GOTO(out, rc = -ENOMEM);
 
 	op_data->op_fid1 = body->mbo_fid1;
-	/* Sent the parent FID to the remote MDT */
+	
 	if (parent_fid != NULL) {
 		/* The parent fid is only for remote open to
 		 * check whether the open is from OBF,
@@ -90,7 +90,7 @@ static int lmv_intent_remote(struct obd_export *exp, struct lookup_intent *it,
 	CDEBUG(D_INODE, "REMOTE_INTENT with fid="DFID" -> mds #%u\n",
 	       PFID(&body->mbo_fid1), tgt->ltd_index);
 
-	/* ask for security context upon intent */
+	
 	if (it->it_op & (IT_LOOKUP | IT_GETATTR | IT_OPEN) &&
 	    secctx_name_size != 0 && secctx_name != NULL) {
 		op_data->op_file_secctx_name = secctx_name;
@@ -205,7 +205,7 @@ int lmv_revalidate_slaves(struct obd_export *exp,
 		rc = md_intent_lock(tgt->ltd_exp, op_data, &it, &req,
 				    cb_blocking, extra_lock_flags);
 		if (rc == -ENOENT || rc == -ESHUTDOWN) {
-			/* skip stripe that doesn't exist or is inaccessible */
+			
 			rc = 0;
 			continue;
 		}
@@ -215,12 +215,12 @@ int lmv_revalidate_slaves(struct obd_export *exp,
 
 		lockh = (struct lustre_handle *)&it.it_lock_handle;
 		if (rc > 0 && req == NULL) {
-			/* slave inode is still valid */
+			
 			CDEBUG(D_INODE, "slave "DFID" is still valid.\n",
 			       PFID(&fid));
 			rc = 0;
 		} else {
-			/* refresh slave from server */
+			
 			body = req_capsule_server_get(&req->rq_pill,
 						      &RMF_MDT_BODY);
 			if (body == NULL) {
@@ -255,7 +255,7 @@ cleanup:
 	if (req != NULL)
 		ptlrpc_req_put(req);
 
-	/* if all stripes are invalid, return -ENOENT to notify user */
+	
 	if (!rc && !valid_stripe_count)
 		rc = -ENOENT;
 
@@ -282,12 +282,12 @@ static int lmv_intent_open(struct obd_export *exp, struct md_op_data *op_data,
 
 	ENTRY;
 
-	/* do not allow file creation in foreign dir */
+	
 	if ((it->it_op & IT_CREAT) && lmv_dir_foreign(op_data->op_lso1))
 		RETURN(-ENODATA);
 
 	if ((it->it_op & IT_CREAT) && !(flags & MDS_OPEN_BY_FID)) {
-		/* don't allow create under dir with bad hash */
+		
 		if (lmv_dir_bad_hash(op_data->op_lso1))
 			RETURN(-EBADF);
 
@@ -387,7 +387,7 @@ retry:
 	if (body == NULL)
 		RETURN(-EPROTO);
 
-	/* Not cross-ref case, just get out of here. */
+	
 	if (unlikely((body->mbo_valid & OBD_MD_MDS))) {
 		rc = lmv_intent_remote(exp, it, &op_data->op_fid1, reqp,
 				       cb_blocking, extra_lock_flags,
@@ -420,9 +420,9 @@ lmv_intent_lookup(struct obd_export *exp, struct md_op_data *op_data,
 	int rc;
 	ENTRY;
 
-	/* foreign dir is not striped */
+	
 	if (lmv_dir_foreign(op_data->op_lso1)) {
-		/* only allow getattr/lookup for itself */
+		
 		if (op_data->op_name != NULL)
 			RETURN(-ENODATA);
 		RETURN(0);
@@ -452,15 +452,15 @@ retry:
 		op_data->op_name = NULL;
 		op_data->op_namelen = 0;
 
-		/* getattr request is sent to MDT where fid2 inode is */
+		
 		tgt = lmv_fid2tgt(lmv, &op_data->op_fid2);
 	} else if (op_data->op_name) {
-		/* getattr by name */
+		
 		tgt = lmv_locate_tgt(lmv, op_data);
 		if (!fid_is_sane(&op_data->op_fid2))
 			fid_zero(&op_data->op_fid2);
 	} else {
-		/* old way to getattr by FID, parent FID not packed */
+		
 		tgt = lmv_fid2tgt(lmv, &op_data->op_fid1);
 	}
 	if (IS_ERR(tgt))
@@ -513,7 +513,7 @@ retry:
 	if (body == NULL)
 		RETURN(-EPROTO);
 
-	/* Not cross-ref case, just get out of here. */
+	
 	if (unlikely((body->mbo_valid & OBD_MD_MDS))) {
 		rc = lmv_intent_remote(exp, it, NULL, reqp, cb_blocking,
 				       extra_lock_flags,

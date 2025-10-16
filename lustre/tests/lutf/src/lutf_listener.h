@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf_listener.h
  *
@@ -27,4 +27,4 @@ void close_agent_connection(lutf_agent_blk_t *agent);
 
 void release_dead_list_agents(void);
 
-#endif /* LUTF_LISTENER_H */
+#endif 

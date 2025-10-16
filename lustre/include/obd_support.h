@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _OBD_SUPPORT
@@ -29,7 +29,7 @@
 #include <uapi/linux/lustre/lustre_idl.h>
 #include <uapi/linux/lustre/lgss.h>
 
-/* global variables */
+
 extern struct percpu_counter obd_memory;
 
 extern unsigned int obd_debug_peer_on_timeout;
@@ -39,9 +39,9 @@ extern unsigned int obd_lbug_on_eviction;
 /* obd_timeout should only be used for recovery, not for
  * networking / disk / timings affected by load (use Adaptive Timeouts)
  */
-extern unsigned int obd_timeout;          /* seconds */
-extern unsigned int ldlm_timeout;         /* seconds */
-extern unsigned int ping_interval;        /* seconds */
+extern unsigned int obd_timeout;          
+extern unsigned int ldlm_timeout;         
+extern unsigned int ping_interval;        
 extern unsigned int obd_timeout_set;
 extern unsigned int ldlm_timeout_set;
 extern unsigned int bulk_timeout;
@@ -57,7 +57,7 @@ extern char obd_jobid_var[];
 extern bool obd_enable_health_write;
 extern bool obd_enable_fname_encoding;
 
-/* Some hash init argument constants */
+
 #define HASH_NID_STATS_BKT_BITS 5
 #define HASH_NID_STATS_CUR_BITS 7
 #define HASH_NID_STATS_MAX_BITS 12
@@ -71,18 +71,18 @@ extern bool obd_enable_fname_encoding;
 #define HASH_EXP_LOCK_CUR_BITS  7
 #define HASH_EXP_LOCK_MAX_BITS  16
 
-/* Timeout definitions */
+
 #define OBD_TIMEOUT_DEFAULT             100
 #define LDLM_TIMEOUT_DEFAULT            20
 #define MDS_LDLM_TIMEOUT_DEFAULT        6
-/* Time to wait for all clients to reconnect during recovery (hard limit) */
+
 #define OBD_RECOVERY_TIME_HARD          (obd_timeout * 9)
-/* Time to wait for all clients to reconnect during recovery (soft limit) */
-/* Should be very conservative; must catch the first reconnect after reboot */
+
+
 #define OBD_RECOVERY_TIME_SOFT          (obd_timeout * 3)
-/* Change recovery-small 26b time if you change this */
+
 #define PING_INTERVAL ping_interval
-/* a bit more than maximal journal commit time in seconds */
+
 #define PING_INTERVAL_SHORT min(PING_INTERVAL, 7U)
 /* Client may skip 1 ping; we must wait at least 2.5. But for multiple
  * failover targets the client only pings one server at a time, and pings
@@ -91,37 +91,37 @@ extern bool obd_enable_fname_encoding;
  * should be very conservative here.
  */
 #define PING_EVICT_TIMEOUT (PING_INTERVAL * 6)
-#define DISK_TIMEOUT 50          /* Beyond this we warn about disk speed */
-#define CONNECTION_SWITCH_MIN 5U /* Connection switching rate limiter */
+#define DISK_TIMEOUT 50          
+#define CONNECTION_SWITCH_MIN 5U 
  /* Max connect interval for nonresponsive servers; ~50s to avoid building up
   * connect requests in the LND queues, but within obd_timeout so we don't
   * miss the recovery window
   */
 #define CONNECTION_SWITCH_MAX min(50U, max(CONNECTION_SWITCH_MIN, obd_timeout))
-#define CONNECTION_SWITCH_INC 5  /* Connection timeout backoff */
+#define CONNECTION_SWITCH_INC 5  
 /* In general this should be low to have quick detection of a system
  * running on a backup server. (If it's too low, import_select_connection
  * will increase the timeout anyhow.)
  */
 #define INITIAL_CONNECT_TIMEOUT max(CONNECTION_SWITCH_MIN, obd_timeout/20)
-/* The max delay between connects is SWITCH_MAX + SWITCH_INC + INITIAL */
+
 #define RECONNECT_DELAY_MAX (CONNECTION_SWITCH_MAX + CONNECTION_SWITCH_INC + \
 			     INITIAL_CONNECT_TIMEOUT)
-/* The min time a target should wait for clients to reconnect in recovery */
+
 #define OBD_RECOVERY_TIME_MIN	(2*RECONNECT_DELAY_MAX)
 #define OBD_IR_FACTOR_MIN	1
 #define OBD_IR_FACTOR_MAX	10
 #define OBD_IR_FACTOR_DEFAULT	(OBD_IR_FACTOR_MAX/2)
-/* default timeout for the MGS to become IR_FULL */
+
 #define OBD_IR_MGS_TIMEOUT	(4*obd_timeout)
-/* Unlink should happen within this many seconds. */
+
 #define PTLRPC_REQ_LONG_UNLINK	300
 
 /**
  * Time interval of shrink, if the client is "idle" more than this interval,
  * then the ll_grant thread will return the requested grant space to filter
  */
-#define GRANT_SHRINK_INTERVAL            1200/*20 minutes*/
+#define GRANT_SHRINK_INTERVAL            1200
 
 #define OBD_FAIL_MDS				0x100
 #define OBD_FAIL_MDS_HANDLE_UNPACK		0x101
@@ -163,14 +163,14 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_MDS_ALL_REQUEST_NET		0x123
 #define OBD_FAIL_MDS_SYNC_NET			0x124
 #define OBD_FAIL_MDS_SYNC_PACK			0x125
-/*	OBD_FAIL_MDS_DONE_WRITING_NET    0x126 obsolete since 2.8.0 */
-/*	OBD_FAIL_MDS_DONE_WRITING_PACK   0x127 obsolete since 2.8.0 */
+
+
 #define OBD_FAIL_MDS_ALLOC_OBDO			0x128
 #define OBD_FAIL_MDS_PAUSE_OPEN			0x129
 #define OBD_FAIL_MDS_STATFS_LCW_SLEEP		0x12a
 #define OBD_FAIL_MDS_OPEN_CREATE		0x12b
 #define OBD_FAIL_MDS_OST_SETATTR		0x12c
-/*	OBD_FAIL_MDS_QUOTACHECK_NET      0x12d obsolete since 2.4 */
+
 #define OBD_FAIL_MDS_QUOTACTL_NET		0x12e
 #define OBD_FAIL_MDS_CLIENT_ADD			0x12f
 #define OBD_FAIL_MDS_GETXATTR_NET		0x130
@@ -237,9 +237,9 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_MDS_CHANGELOG_IDX_PUMP		0x16d
 #define OBD_FAIL_MDS_DELAY_DELORPHAN		0x16e
 #define OBD_FAIL_MDS_DIR_PAGE_WALK		0x16f
-/* continue at 0x2400, see below */
 
-/* layout lock */
+
+
 #define OBD_FAIL_MDS_NO_LL_GETATTR	 0x170
 #define OBD_FAIL_MDS_NO_LL_OPEN		 0x171
 #define OBD_FAIL_MDS_LL_BLOCK		 0x172
@@ -248,7 +248,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_MDS_DELAY_OPEN		 0x175
 #define OBD_FAIL_MDS_LL_PCCRO		 0x176
 
-/* CMD */
+
 #define OBD_FAIL_MDS_IS_SUBDIR_NET		0x180
 #define OBD_FAIL_MDS_IS_SUBDIR_PACK		0x181
 #define OBD_FAIL_MDS_SET_INFO_NET		0x182
@@ -266,7 +266,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_MDS_HSM_DATA_VERSION_NET	0x18e
 #define OBD_FAIL_MDS_CHANGELOG_FAIL_WRITE	0x18f
 
-/* OI scrub */
+
 #define OBD_FAIL_OSD_SCRUB_DELAY		0x190
 #define OBD_FAIL_OSD_SCRUB_CRASH		0x191
 #define OBD_FAIL_OSD_SCRUB_FATAL		0x192
@@ -314,7 +314,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_OST_ENOSPC			0x215
 #define OBD_FAIL_OST_EROFS			0x216
 #define OBD_FAIL_SRV_ENOENT			0x217
-/*	OBD_FAIL_OST_QUOTACHECK_NET		0x218 obsolete since 2.4 */
+
 #define OBD_FAIL_OST_QUOTACTL_NET		0x219
 #define OBD_FAIL_OST_CHECKSUM_RECEIVE		0x21a
 #define OBD_FAIL_OST_CHECKSUM_SEND		0x21b
@@ -336,7 +336,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_OST_STATFS_EINPROGRESS		0x231
 #define OBD_FAIL_OST_SET_INFO_NET		0x232
 #define OBD_FAIL_OST_NODESTROY			0x233
-/*	OBD_FAIL_OST_READ_SIZE			0x234 obsolete since 2.14 */
+
 #define OBD_FAIL_OST_LADVISE_NET		0x235
 #define OBD_FAIL_OST_PAUSE_PUNCH		0x236
 #define OBD_FAIL_OST_LADVISE_PAUSE		0x237
@@ -409,7 +409,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_LDLM_REPLAY_PAUSE	 0x32e
 #define OBD_FAIL_LDLM_LOCK_STACK         0x32f
 
-/* LOCKLESS IO */
+
 #define OBD_FAIL_LDLM_SET_CONTENTION		0x385
 
 #define OBD_FAIL_OSC				0x400
@@ -423,9 +423,9 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_OSC_CHECKSUM_RECEIVE		0x408
 #define OBD_FAIL_OSC_CHECKSUM_SEND		0x409
 #define OBD_FAIL_OSC_BRW_PREP_REQ2		0x40a
-/* #define OBD_FAIL_OSC_CONNECT_CKSUM		0x40b Obsolete since 2.9 */
+
 #define OBD_FAIL_OSC_CKSUM_ADLER_ONLY		0x40c
-/*#define OBD_FAIL_OSC_DIO_PAUSE		0x40d removed in 2.0 */
+
 #define OBD_FAIL_OSC_OBJECT_CONTENTION		0x40e
 #define OBD_FAIL_OSC_CP_CANCEL_RACE		0x40f
 #define OBD_FAIL_OSC_CP_ENQ_RACE		0x410
@@ -477,12 +477,12 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_PTLRPC_REPLAY_PAUSE	 0x536
 
 #define OBD_FAIL_OBD_PING_NET            0x600
-/*	OBD_FAIL_OBD_LOG_CANCEL_NET      0x601 obsolete since 1.5 */
+
 #define OBD_FAIL_OBD_LOGD_NET            0x602
-/*	OBD_FAIL_OBD_QC_CALLBACK_NET     0x603 obsolete since 2.4 */
+
 #define OBD_FAIL_OBD_DQACQ               0x604
 #define OBD_FAIL_OBD_LLOG_SETUP          0x605
-/*	OBD_FAIL_OBD_LOG_CANCEL_REP      0x606 obsolete since 1.5 */
+
 #define OBD_FAIL_OBD_IDX_READ_NET        0x607
 #define OBD_FAIL_OBD_IDX_READ_BREAK	 0x608
 #define OBD_FAIL_OBD_NO_LRU		 0x609
@@ -503,7 +503,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_TGT_REPLAY_DROP         0x707
 #define OBD_FAIL_TGT_FAKE_EXP            0x708
 #define OBD_FAIL_TGT_REPLAY_DELAY        0x709
-/* #define OBD_FAIL_TGT_LAST_REPLAY         0x710 (obsoleted) */
+
 #define OBD_FAIL_TGT_CLIENT_ADD          0x711
 #define OBD_FAIL_TGT_RCVG_FLAG           0x712
 #define OBD_FAIL_TGT_DELAY_CONDITIONAL	 0x713
@@ -524,7 +524,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_MDC_ENQUEUE_PAUSE       0x801
 #define OBD_FAIL_MDC_OLD_EXT_FLAGS       0x802
 #define OBD_FAIL_MDC_GETATTR_ENQUEUE     0x803
-#define OBD_FAIL_MDC_RPCS_SEM		 0x804 /* deprecated */
+#define OBD_FAIL_MDC_RPCS_SEM		 0x804 
 #define OBD_FAIL_MDC_LIGHTWEIGHT	 0x805
 #define OBD_FAIL_MDC_CLOSE		 0x806
 #define OBD_FAIL_MDC_MERGE		 0x807
@@ -575,15 +575,15 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_SEC_CTX_HDL_PAUSE       0x1204
 
 #define OBD_FAIL_LLOG                               0x1300
-/* was	OBD_FAIL_LLOG_ORIGIN_CONNECT_NET            0x1301 until 2.4 */
+
 #define OBD_FAIL_LLOG_ORIGIN_HANDLE_CREATE_NET      0x1302
-/* was	OBD_FAIL_LLOG_ORIGIN_HANDLE_DESTROY_NET     0x1303 until 2.11 */
+
 #define OBD_FAIL_LLOG_ORIGIN_HANDLE_READ_HEADER_NET 0x1304
 #define OBD_FAIL_LLOG_ORIGIN_HANDLE_NEXT_BLOCK_NET  0x1305
 #define OBD_FAIL_LLOG_ORIGIN_HANDLE_PREV_BLOCK_NET  0x1306
-/* was	OBD_FAIL_LLOG_ORIGIN_HANDLE_WRITE_REC_NET   0x1307 until 2.1 */
-/* was	OBD_FAIL_LLOG_ORIGIN_HANDLE_CLOSE_NET       0x1308 until 1.8 */
-/* was	OBD_FAIL_LLOG_CATINFO_NET                   0x1309 until 2.3 */
+
+
+
 #define OBD_FAIL_MDS_SYNC_CAPA_SL                   0x1310
 #define OBD_FAIL_SEQ_ALLOC                          0x1311
 #define OBD_FAIL_CAT_RECORDS			    0x1312
@@ -649,7 +649,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_FID_LOOKUP	0x1505
 #define OBD_FAIL_FID_NOLMA	0x1506
 
-/* LFSCK */
+
 #define OBD_FAIL_LFSCK_DELAY1		0x1600
 #define OBD_FAIL_LFSCK_DELAY2		0x1601
 #define OBD_FAIL_LFSCK_DELAY3		0x1602
@@ -700,7 +700,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_LFSCK_NOTIFY_NET	0x16f0
 #define OBD_FAIL_LFSCK_QUERY_NET	0x16f1
 
-/* UPDATE */
+
 #define OBD_FAIL_OUT_UPDATE_NET		0x1700
 #define OBD_FAIL_OUT_UPDATE_NET_REP	0x1701
 #define OBD_FAIL_SPLIT_UPDATE_REC	0x1702
@@ -714,19 +714,19 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_OUT_DROP_DESTROY	0x170b
 #define OBD_FAIL_OUT_DROP_PROJID_SET	0x170c
 
-/* MIGRATE */
+
 #define OBD_FAIL_MIGRATE_ENTRIES		0x1801
 #define OBD_FAIL_MIGRATE_BAD_HASH		0x1802
 
-/* LMV */
+
 #define OBD_FAIL_LMV_UNKNOWN_STRIPE		0x1901
 
-/* FLR */
+
 #define OBD_FAIL_FLR_LV_DELAY			0x1A01
-#define OBD_FAIL_FLR_LV_INC			0x1A02 /* unused since 2.15 */
+#define OBD_FAIL_FLR_LV_INC			0x1A02 
 #define OBD_FAIL_FLR_RANDOM_PICK_MIRROR		0x1A03
 
-/* DT */
+
 #define OBD_FAIL_DT_DECLARE_ATTR_GET		0x2000
 #define OBD_FAIL_DT_ATTR_GET			0x2001
 #define OBD_FAIL_DT_DECLARE_ATTR_SET		0x2002
@@ -763,7 +763,7 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_OSP_CON_EVENT_DELAY		0x2107
 #define OBD_FAIL_OSP_FAIL_SEQ_ALLOC		0x2109
 
-/* barrier */
+
 #define OBD_FAIL_MGS_BARRIER_READ_NET		0x2200
 #define OBD_FAIL_MGS_BARRIER_NOTIFY_NET		0x2201
 
@@ -773,12 +773,12 @@ extern bool obd_enable_fname_encoding;
 #define OBD_FAIL_OSD_FAIL_AT_TRUNCATE		0x2301
 #define OBD_FAIL_OSD_MARK_COMPRESSED	 	0x2302
 
-/* continuation of MDS related constants */
+
 #define OBD_FAIL_MDS_PAUSE_CREATE_AFTER_LOOKUP	0x2401
 #define OBD_FAIL_MDS_CONNECT_ACCESS		0x2402
 #define OBD_FAIL_MDS_PAUSE_GETATTR		0x2403
 
-/* PLEASE, KEEP NUMBERS UP TO 0x3000 RESERVED FOR OBD_FAIL_MDS_* */
+
 
 #define LUT_FAIL_CLASS(fail_id)			(((fail_id) >> 8) << 16)
 #define LUT_FAIL_MGT				LUT_FAIL_CLASS(OBD_FAIL_MGS)
@@ -821,14 +821,14 @@ extern __u64 obd_memory_max(void);
 #define OBD_DEBUG_MEMUSAGE (1)
 
 #if OBD_DEBUG_MEMUSAGE
-/* message format here needs to match regexp in lustre/tests/leak_finder.pl */
+
 #define OBD_ALLOC_POST(ptr, size, name)					\
 do {									\
 	obd_memory_add(size);						\
 	LIBCFS_MEM_MSG(ptr, size, name);				\
 } while (0)
 
-/* message format here needs to match regexp in lustre/tests/leak_finder.pl */
+
 #define OBD_FREE_PRE(ptr, size, name)					\
 do {									\
 	if (likely(ptr)) {						\
@@ -837,19 +837,19 @@ do {									\
 	}								\
 } while (0)
 
-#else /* !OBD_DEBUG_MEMUSAGE */
+#else 
 
 #define OBD_ALLOC_POST(ptr, size, name) ((void)0)
 #define OBD_FREE_PRE(ptr, size, name)   ((void)0)
 
-#endif /* !OBD_DEBUG_MEMUSAGE */
+#endif 
 
 #define __OBD_MALLOC_VERBOSE(ptr, cptab, cpt, size, flags)		      \
 do {									      \
 	if (cptab)							      \
 		ptr = cfs_cpt_malloc((cptab), (cpt), (size),		      \
 				     (flags) | __GFP_ZERO | __GFP_NOWARN);    \
-	if (!(cptab) || unlikely(!(ptr))) /* retry without CPT if failure */  \
+	if (!(cptab) || unlikely(!(ptr)))   \
 		ptr = kmalloc(size, (flags) | __GFP_ZERO);		      \
 	if (likely((ptr) != NULL))					      \
 		OBD_ALLOC_POST((ptr), (size), "kmalloced");		      \
@@ -901,7 +901,7 @@ do {									      \
 
 #define OBD_ALLOC_LARGE(ptr, size)                                            \
 do {                                                                          \
-	/* LU-8196 - force large allocations to use vmalloc, not kmalloc */   \
+	   \
 	if ((size) > KMALLOC_MAX_SIZE)                                        \
 		ptr = NULL;                                                   \
 	else								      \
@@ -1050,7 +1050,7 @@ do {						\
 } while (0)
 
 #ifdef HAVE_SERVER_SUPPORT
-/* LUSTRE_LMA_FL_MASKS defines which flags will be stored in LMA */
+
 
 static inline int lma_to_lustre_flags(__u32 lma_flags)
 {
@@ -1063,7 +1063,7 @@ static inline int lustre_to_lma_flags(__u32 la_flags)
 	return (((la_flags & LUSTRE_ORPHAN_FL) ? LMAI_ORPHAN : 0) |
 		((la_flags & LUSTRE_ENCRYPT_FL) ? LMAI_ENCRYPT : 0));
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 /* Convert wire LUSTRE_*_FL to corresponding client local VFS S_* values
  * for the client inode i_flags.  The LUSTRE_*_FL are the Lustre wire
@@ -1102,26 +1102,26 @@ struct obd_heat_instance {
 	__u64 ohi_count;
 };
 
-/** additional filesystem attributes for target device */
+
 struct obd_statfs_info {
-	__u32		os_reserved_mb_low;	/* reserved mb low */
-	__u32		os_reserved_mb_high;	/* reserved mb high */
-	bool		os_enable_pre;		/* enable pre create logic */
+	__u32		os_reserved_mb_low;	
+	__u32		os_reserved_mb_high;	
+	bool		os_enable_pre;		
 };
 
-/* Define a fixed 4096-byte encryption unit size */
+
 #define LUSTRE_ENCRYPTION_BLOCKBITS   12
 #define LUSTRE_ENCRYPTION_UNIT_SIZE   ((size_t)1 << LUSTRE_ENCRYPTION_BLOCKBITS)
 #define LUSTRE_ENCRYPTION_MASK        (~(LUSTRE_ENCRYPTION_UNIT_SIZE - 1))
 
-/* filename encoding */
+
 extern const char *encode_fn_len(const char *fname, size_t namelen);
 static inline const char *encode_fn(const char *fname)
 {
 	return encode_fn_len(fname, fname ? strnlen(fname, PATH_MAX) : 0);
 }
 
-/* for format DNAME "%.*s" */
+
 #define DNAME "%.*s"
 #define encode_fn_dname(len, fname)	(int)(len), encode_fn_len(fname, len)
 #define encode_fn_luname(ln)	\

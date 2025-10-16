@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2013, Trustees of Indiana University
@@ -26,7 +26,7 @@
 
 #define DEFAULT_NODEMAP "default"
 
-/* Copy of config active flag to avoid locking in mapping functions */
+
 bool nodemap_active;
 
 /* Lock protecting the active config, useful primarily when proc and
@@ -172,7 +172,7 @@ static struct cfs_hash_ops nodemap_hash_operations = {
 	.hs_put_locked	= nodemap_hs_put_locked,
 };
 
-/* end of cfs_hash functions */
+
 
 /**
  * nodemap_init_hash() - Initialize nodemap_hash
@@ -255,7 +255,7 @@ static bool check_privs_for_op(struct lu_nodemap *nodemap,
 			       enum nodemap_raise_privs priv, u64 val)
 {
 	u32 prop_val = (u32)(0xffffffff & val);
-	/* only relevant with priv == NODEMAP_RAISE_PRIV_RAISE */
+	
 	u32 rbac_raise = (u32)(val >> 32);
 	kernel_cap_t *newcaps;
 
@@ -372,7 +372,7 @@ struct lu_nodemap *nodemap_classify_nid(struct lnet_nid *nid, bool *out_banned)
 	int rc;
 
 	ENTRY;
-	/* don't use 0@lo, use the first non-lo local NID instead */
+	
 	if (nid_is_lo0(nid)) {
 		struct lnet_processid id;
 		int i = 0;
@@ -391,7 +391,7 @@ struct lu_nodemap *nodemap_classify_nid(struct lnet_nid *nid, bool *out_banned)
 		goto reg_range;
 
 	*out_banned = false;
-	/* first, search in the ban NIDs if interested */
+	
 	range = ban_range_search(active_config, nid);
 	if (range) {
 		nodemap = range->rn_nodemap;
@@ -400,7 +400,7 @@ struct lu_nodemap *nodemap_classify_nid(struct lnet_nid *nid, bool *out_banned)
 	}
 
 reg_range:
-	/* then search in regular NID ranges */
+	
 	range = range_search(active_config, nid);
 	if (range != NULL)
 		nodemap = range->rn_nodemap;
@@ -443,7 +443,7 @@ int nodemap_parse_range(const char *range_str, struct lnet_nid range[2],
 	snprintf(buf, sizeof(buf), "%s", range_str);
 	ptr = buf;
 
-	/* For large NIDs we interpret range_str as a nidmask */
+	
 	if (!cfs_parse_nidlist(buf, strlen(buf), &nidlist)) {
 		*netmask = cfs_nidmask_get_length(&nidlist);
 		if (!*netmask)
@@ -514,7 +514,7 @@ int nodemap_parse_idmap(const char *nodemap_name, char *idmap_str,
 	*sep = '\0';
 	sep++;
 
-	/* see if range is passed in idmap_str */
+	
 	sep_range = strchr(idmap_str, '-');
 	if (sep_range)
 		*sep_range++ = '\0';
@@ -524,7 +524,7 @@ int nodemap_parse_idmap(const char *nodemap_name, char *idmap_str,
 		return -EINVAL;
 	idmap[0] = id;
 
-	/* parse cid range end if it is supplied */
+	
 	if (sep_range) {
 		rc = kstrtoul(sep_range, 10, &id);
 		if (rc)
@@ -544,13 +544,13 @@ int nodemap_parse_idmap(const char *nodemap_name, char *idmap_str,
 		return -EINVAL;
 	idmap[1] = id;
 
-	/* parse fsid range end if it is supplied */
+	
 	if (potential_range) {
 		rc = kstrtoul(potential_range, 10, &id);
 		if (rc)
 			return -ERANGE;
 
-		/* make sure fsid range is equal to cid range */
+		
 		if (id - idmap[1] + 1 != range) {
 			rc = -EINVAL;
 			CERROR("%s: range length mismatch between client id %s-%s and fs id %s-%s: rc = %d\n",
@@ -628,7 +628,7 @@ void nodemap_del_member(struct obd_export *exp)
 
 	ENTRY;
 
-	/* using ac lock to prevent nodemap reclassification while deleting */
+	
 	mutex_lock(&active_config_lock);
 
 	/* use of ted_nodemap is protected by active_config_lock. we take an
@@ -692,7 +692,7 @@ int nodemap_add_idmap_helper(struct lu_nodemap *nodemap,
 		del_map[0] = temp->id_client;
 		idmap_delete(id_type, temp, nodemap);
 		rc = nodemap_idx_idmap_del(nodemap, id_type, del_map);
-		/* In case there is any corrupted idmap */
+		
 		if (!rc || unlikely(rc == -ENOENT)) {
 			temp = idmap_insert(id_type, idmap, nodemap);
 			if (IS_ERR(temp))
@@ -936,12 +936,12 @@ __u32 nodemap_map_id(struct lu_nodemap *nodemap,
 		GOTO(out, found_id);
 	}
 
-	/* if mapping from fs to client id space, start by un-offsetting */
+	
 	if ((offset_start != 0 || offset_limit != 0) &&
 	    tree_type == NODEMAP_FS_TO_CLIENT) {
 		if (found_id < offset_start ||
 		    found_id >= offset_start + offset_limit) {
-			/* If we are outside boundaries, squash id */
+			
 			CDEBUG(D_SEC,
 			       "%s: id %d for type %u is below nodemap start %u, squash\n",
 			       nodemap->nm_name, found_id, id_type,
@@ -1003,7 +1003,7 @@ squash:
 	attempted_squash = true;
 
 offset:
-	/* if mapping from client to fs id space, end with offsetting */
+	
 	if ((offset_start != 0 || offset_limit != 0) &&
 	    tree_type == NODEMAP_CLIENT_TO_FS) {
 		if (found_id >= offset_limit) {
@@ -1064,7 +1064,7 @@ ssize_t nodemap_map_acl(struct lu_nodemap *nodemap, void *buf, size_t size,
 	if (count < 0)
 		RETURN(-EINVAL);
 	if (count == 0)
-		/* if not proper ACL, do nothing and return initial size */
+		
 		RETURN(size);
 
 	for (end = entry + count; entry != end; entry++) {
@@ -1088,7 +1088,7 @@ ssize_t nodemap_map_acl(struct lu_nodemap *nodemap, void *buf, size_t size,
 			break;
 		}
 
-		/* if we skip an ACL, copy the following ones over it */
+		
 		if (new_entry != entry)
 			*new_entry = *entry;
 
@@ -1237,7 +1237,7 @@ static int nodemap_inherit_properties(struct lu_nodemap *dst,
 			if (rc)
 				goto out;
 		}
-		/* only dynamic nodemap inherits fileset from parent */
+		
 		if (dst->nm_dyn) {
 			rc = nodemap_copy_fileset(dst, src);
 			if (rc)
@@ -1349,17 +1349,17 @@ err_parent:
 	}
 	list_add(&range->rn_list, &nodemap->nm_ranges);
 
-	/* nodemaps have no members if they aren't on the active config */
+	
 	if (config == active_config) {
 		nm_member_reclassify_nodemap(config->nmc_default_nodemap);
-		/* for dynamic nodemap, re-assign clients from parent nodemap */
+		
 		if (nodemap->nm_dyn)
 			nm_member_reclassify_nodemap(nodemap->nm_parent_nm);
 	}
 
 	up_write(&config->nmc_range_tree_lock);
 
-	/* if range_id is non-zero, we are loading from disk */
+	
 	if (range_id == 0)
 		rc = nodemap_idx_range_add(nodemap, NM_RANGE_FL_REG, range);
 
@@ -1448,7 +1448,7 @@ int nodemap_del_range(const char *name, const struct lnet_nid nid[2],
 		GOTO(out_putref, rc = -EINVAL);
 	}
 
-	/* Remove banlists that are included in the NID range to delete */
+	
 	down_write(&active_config->nmc_ban_range_tree_lock);
 	list_for_each_entry_safe(banlist, range_temp, &nodemap->nm_ban_ranges,
 				 rn_list) {
@@ -1563,7 +1563,7 @@ new_range:
 	up_write(&config->nmc_ban_range_tree_lock);
 
 	down_read(&active_config->nmc_range_tree_lock);
-	/* nodemaps have no members if they aren't on the active config */
+	
 	if (config == active_config) {
 		nm_member_reclassify_nodemap(config->nmc_default_nodemap);
 		if (nodemap != config->nmc_default_nodemap)
@@ -1571,7 +1571,7 @@ new_range:
 	}
 	up_read(&active_config->nmc_range_tree_lock);
 
-	/* if range_id is non-zero, we are loading from disk */
+	
 	if (range_id == 0)
 		rc = nodemap_idx_range_add(nodemap, NM_RANGE_FL_BAN, range);
 
@@ -1603,7 +1603,7 @@ int nodemap_add_banlist(const char *name, const struct lnet_nid nid[2],
 		if (range)
 			nodemap = range->rn_nodemap;
 		else
-			/* take default nodemap if no ranges match */
+			
 			nodemap = active_config->nmc_default_nodemap;
 		nodemap_getref(nodemap);
 		up_read(&active_config->nmc_range_tree_lock);
@@ -1659,7 +1659,7 @@ int nodemap_del_banlist(const char *name, const struct lnet_nid nid[2],
 		if (range)
 			nodemap = range->rn_nodemap;
 		else
-			/* take default nodemap if no ranges match */
+			
 			nodemap = active_config->nmc_default_nodemap;
 		nodemap_getref(nodemap);
 		up_read(&active_config->nmc_range_tree_lock);
@@ -1733,18 +1733,18 @@ static int check_fileset_add_vs_parent(struct lu_nodemap *nodemap,
 
 	ENTRY;
 
-	/* Not a dynamic nodemap: no constraints on fileset */
+	
 	if (!nodemap->nm_dyn)
 		RETURN(0);
 
-	/* A dynamic nodemap without parent: should not happen */
+	
 	if (!nodemap->nm_parent_nm)
 		RETURN(-EINVAL);
 
 	p_prim = nodemap->nm_parent_nm->nm_fileset_prim;
 	p_prim_len = p_prim ? strlen(p_prim) : 0;
 
-	/* If parent has no fileset of any type, child can set any */
+	
 	if (!p_prim_len && !nodemap->nm_parent_nm->nm_fileset_alt_sz)
 		RETURN(0);
 
@@ -1764,7 +1764,7 @@ static int check_fileset_add_vs_parent(struct lu_nodemap *nodemap,
 				    fileset_path, true))
 		RETURN(0);
 
-	/* any other condition: refused */
+	
 	RETURN(-EPERM);
 }
 
@@ -1789,28 +1789,28 @@ static int check_fileset_del_vs_parent(struct lu_nodemap *nodemap)
 
 	ENTRY;
 
-	/* Not a dynamic nodemap: no constraints on fileset */
+	
 	if (!nodemap->nm_dyn)
 		RETURN(0);
 
-	/* A dynamic nodemap without parent: should not happen */
+	
 	if (!nodemap->nm_parent_nm)
 		RETURN(-EINVAL);
 
-	/* If parent has no fileset of any type, child can delete any */
+	
 	prim = nodemap->nm_parent_nm->nm_fileset_prim;
 	prim_len = prim ? strlen(prim) : 0;
 	if (!prim_len && !nodemap->nm_parent_nm->nm_fileset_alt_sz)
 		RETURN(0);
 
-	/* Do not let the last child fileset be removed. */
+	
 	prim = nodemap->nm_fileset_prim;
 	prim_len = prim ? strlen(prim) : 0;
 	if (nodemap->nm_fileset_alt_sz >= 2 ||
 	    (nodemap->nm_fileset_alt_sz == 1 && prim_len))
 		RETURN(0);
 
-	/* any other condition: refused */
+	
 	RETURN(-EPERM);
 }
 
@@ -1843,15 +1843,15 @@ check_fileset_modify_vs_parent(struct lu_nodemap *nodemap,
 	bool p_prim_ro = false;
 	bool do_convert = false;
 
-	/* Not a dynamic nodemap: no constraints on fileset */
+	
 	if (!nodemap->nm_dyn)
 		RETURN(0);
 
-	/* A dynamic nodemap without parent: should not happen */
+	
 	if (!nodemap->nm_parent_nm)
 		RETURN(-EINVAL);
 
-	/* If fileset is renamed, use new fileset path */
+	
 	if (fset_modify->nfm_fileset)
 		fset = fset_modify->nfm_fileset;
 	else
@@ -1869,7 +1869,7 @@ check_fileset_modify_vs_parent(struct lu_nodemap *nodemap,
 	     fset_modify->nfm_type == FSM_TYPE_ALTERNATE))
 		do_convert = true;
 
-	/* fileset conversion to prim and/or rename */
+	
 	if ((do_convert || fset_modify->nfm_fileset) &&
 	    check_fileset_add_vs_parent(nodemap, fset))
 		RETURN(-EPERM);
@@ -1898,7 +1898,7 @@ check_fileset_modify_vs_parent(struct lu_nodemap *nodemap,
 			RETURN(-EPERM);
 	}
 
-	/* any other condition: permitted */
+	
 	RETURN(0);
 }
 
@@ -2003,12 +2003,12 @@ static int nodemap_fileset_del_alternate(struct lu_nodemap *nodemap,
 	if (!fset)
 		RETURN(-ENOENT);
 
-	/* delete fileset from IAM nodemap records */
+	
 	rc = nodemap_idx_fileset_clear(nodemap, fset->nfa_id);
 	if (rc)
 		RETURN(rc);
 
-	/* delete fileset from rb tree and free memory */
+	
 	rc = fileset_alt_delete(nodemap, fset);
 	if (rc > 0)
 		rc = 0;
@@ -2036,7 +2036,7 @@ static int nodemap_fileset_del(struct lu_nodemap *nodemap,
 	if (!nodemap || !fileset_path || fileset_path[0] != '/')
 		RETURN(-EINVAL);
 
-	/* attempt to delete from primary fileset first */
+	
 	if (nodemap->nm_fileset_prim &&
 	    strcmp(nodemap->nm_fileset_prim, fileset_path) == 0) {
 		rc = check_fileset_del_vs_parent(nodemap);
@@ -2102,7 +2102,7 @@ static int nodemap_fileset_clear(struct lu_nodemap *nodemap, bool force)
 	     node = rb_next(node)) {
 		fileset = rb_entry(node, struct lu_fileset_alt, nfa_rb);
 		rc = nodemap_idx_fileset_clear(nodemap, fileset->nfa_id);
-		/* report errors but don't abort deletion process */
+		
 		if (rc) {
 			CWARN("%s: failed to clear alt fileset %s: rc = %d\n",
 			       nodemap->nm_name, fileset->nfa_path, rc);
@@ -2131,9 +2131,9 @@ static int nodemap_fileset_add_primary(struct lu_nodemap *nodemap,
 	if (!nodemap || !fileset_path || fileset_path[0] != '/')
 		RETURN(-EINVAL);
 
-	/* Check if a primary fileset already exists */
+	
 	if (nodemap->nm_fileset_prim) {
-		/* Silently ignore duplicate primary fileset */
+		
 		if (strcmp(nodemap->nm_fileset_prim, fileset_path) == 0 &&
 		    read_only == nodemap->nm_fileset_prim_ro)
 			RETURN(0);
@@ -2141,7 +2141,7 @@ static int nodemap_fileset_add_primary(struct lu_nodemap *nodemap,
 			RETURN(-EEXIST);
 	}
 
-	/* Check for duplicate alternate fileset */
+	
 	fset_alt_exists = fileset_alt_path_exists(&nodemap->nm_fileset_alt,
 					      fileset_path);
 	if (fset_alt_exists)
@@ -2187,12 +2187,12 @@ static int nodemap_fileset_add_alternate(struct lu_nodemap *nodemap,
 	if (!nodemap || !fileset_path || fileset_path[0] != '/')
 		RETURN(-EINVAL);
 
-	/* check if fileset already exists as primary */
+	
 	if (nodemap->nm_fileset_prim &&
 	    strcmp(nodemap->nm_fileset_prim, fileset_path) == 0)
 		RETURN(-EEXIST);
 
-	/* Silently ignore duplicate alternate fileset as its already set */
+	
 	fset = fileset_alt_search_path(&nodemap->nm_fileset_alt, fileset_path,
 				   false);
 	if (fset) {
@@ -2206,20 +2206,20 @@ static int nodemap_fileset_add_alternate(struct lu_nodemap *nodemap,
 	if (!fset)
 		RETURN(-ENOMEM);
 
-	/* add fileset to in-memory rb tree */
+	
 	rc = fileset_alt_add(nodemap, fset);
 	if (rc) {
 		fileset_alt_destroy(fset);
 		RETURN(rc);
 	}
 
-	/* add fileset to IAM nodemap records */
+	
 	nodemap_idx_fileset_info_init(&fset_info, nodemap->nm_id,
 				      fset->nfa_path, fset->nfa_ro,
 				      fset->nfa_id);
 	rc = nodemap_idx_fileset_add(nodemap, &fset_info);
 	if (rc) {
-		/* remove added fileset from rb tree on IAM error */
+		
 		rc2 = fileset_alt_delete(nodemap, fset);
 		if (rc2 < 0)
 			CERROR("%s: Undo adding fileset '%s' failed. rc = %d : rc2 = %d\n",
@@ -2314,25 +2314,25 @@ nodemap_fileset_modify_prim(struct lu_nodemap *nodemap,
 				      nodemap->nm_fileset_prim_ro,
 				      NODEMAP_FILESET_PRIM_ID);
 
-	/* new access permission? */
+	
 	fset_ro = fset_modify->nfm_access == FSM_ACCESS_NONE ?
 			  fset_info_old.nfi_ro :
 			  (fset_modify->nfm_access == FSM_ACCESS_RO);
 
-	/* nothing to do, return without failing */
+	
 	if (fset_modify->nfm_type != FSM_TYPE_ALTERNATE &&
 	    fset_info_old.nfi_ro == fset_ro &&
 	    (!fset_modify->nfm_fileset ||
 	     strcmp(fset_modify->nfm_fileset, nodemap->nm_fileset_prim) == 0))
 		RETURN(0);
 
-	/* if nodemap is dynamic additional constraints must be checked */
+	
 	rc = check_fileset_modify_vs_parent(nodemap, &fset_info_old,
 					    fset_modify);
 	if (rc)
 		RETURN(rc);
 
-	/* only fileset flag should be changed? */
+	
 	if (!fset_modify->nfm_fileset &&
 	    fset_modify->nfm_type != FSM_TYPE_ALTERNATE &&
 	    fset_modify->nfm_access != FSM_ACCESS_NONE) {
@@ -2349,7 +2349,7 @@ nodemap_fileset_modify_prim(struct lu_nodemap *nodemap,
 		RETURN(rc);
 	}
 
-	/* save old fileset for updating and undo */
+	
 	fset_undo_size = nodemap->nm_fileset_prim_size;
 	OBD_ALLOC(fset_undo, fset_undo_size);
 	if (!fset_undo)
@@ -2358,13 +2358,13 @@ nodemap_fileset_modify_prim(struct lu_nodemap *nodemap,
 	memcpy(fset_undo, nodemap->nm_fileset_prim, fset_undo_size);
 	fset_info_old.nfi_fileset = fset_undo;
 
-	/* new fileset name? */
+	
 	if (fset_modify->nfm_fileset)
 		fset = fset_modify->nfm_fileset;
 	else
 		fset = fset_info_old.nfi_fileset;
 
-	/* update fileset */
+	
 	rc = nodemap_fileset_del_primary(nodemap);
 	if (rc)
 		GOTO(out_cleanup, rc);
@@ -2374,7 +2374,7 @@ nodemap_fileset_modify_prim(struct lu_nodemap *nodemap,
 	else
 		rc = nodemap_fileset_add_primary(nodemap, fset, fset_ro);
 
-	/* undo if new fileset couldn't be added */
+	
 	if (rc) {
 		rc2 = nodemap_fileset_add_primary(nodemap,
 						  fset_info_old.nfi_fileset,
@@ -2409,12 +2409,12 @@ nodemap_fileset_modify_alt(struct lu_nodemap *nodemap,
 	if (!nodemap || !fset_alt || !fset_modify)
 		RETURN(-EINVAL);
 
-	/* if target fileset is primary, it cannot exist */
+	
 	if (fset_modify->nfm_type == FSM_TYPE_PRIMARY &&
 	    nodemap->nm_fileset_prim)
 		RETURN(-EEXIST);
 
-	/* if target fileset is alt and renamed, it cannot exist */
+	
 	if (fset_modify->nfm_fileset &&
 	    strcmp(fset_alt->nfa_path, fset_modify->nfm_fileset) != 0 &&
 	    fileset_alt_path_exists(&nodemap->nm_fileset_alt,
@@ -2425,25 +2425,25 @@ nodemap_fileset_modify_alt(struct lu_nodemap *nodemap,
 				      fset_alt->nfa_path, fset_alt->nfa_ro,
 				      fset_alt->nfa_id);
 
-	/* new access permission? */
+	
 	fset_ro = fset_modify->nfm_access == FSM_ACCESS_NONE ?
 			  fset_info_old.nfi_ro :
 			  (fset_modify->nfm_access == FSM_ACCESS_RO);
 
-	/* nothing to do, return without failing */
+	
 	if (fset_modify->nfm_type != FSM_TYPE_PRIMARY &&
 	    fset_info_old.nfi_ro == fset_ro &&
 	    (!fset_modify->nfm_fileset ||
 	     strcmp(fset_modify->nfm_fileset, fset_alt->nfa_path) == 0))
 		RETURN(0);
 
-	/* if nodemap is dynamic additional constraints must be checked */
+	
 	rc = check_fileset_modify_vs_parent(nodemap, &fset_info_old,
 					    fset_modify);
 	if (rc)
 		RETURN(rc);
 
-	/* only fileset flag should be changed? */
+	
 	if (!fset_modify->nfm_fileset &&
 	    fset_modify->nfm_type != FSM_TYPE_PRIMARY &&
 	    fset_modify->nfm_access != FSM_ACCESS_NONE) {
@@ -2465,7 +2465,7 @@ nodemap_fileset_modify_alt(struct lu_nodemap *nodemap,
 		RETURN(rc);
 	}
 
-	/* save old fileset for updating and undo */
+	
 	fset_undo_size = fset_alt->nfa_path_size;
 	OBD_ALLOC(fset_undo, fset_undo_size);
 	if (!fset_undo)
@@ -2474,18 +2474,18 @@ nodemap_fileset_modify_alt(struct lu_nodemap *nodemap,
 	memcpy(fset_undo, fset_alt->nfa_path, fset_undo_size);
 	fset_info_old.nfi_fileset = fset_undo;
 
-	/* new fileset name? */
+	
 	if (fset_modify->nfm_fileset)
 		fset = fset_modify->nfm_fileset;
 	else
 		fset = fset_info_old.nfi_fileset;
 
-	/* update fileset */
+	
 	rc = nodemap_fileset_del_alternate(nodemap, fset_info_old.nfi_fileset);
 	if (rc)
 		GOTO(out_cleanup, rc);
 
-	/* fset_alt was freed on deletion and should no longer be accessed */
+	
 	fset_alt = NULL;
 
 	if (fset_modify->nfm_type == FSM_TYPE_PRIMARY)
@@ -2493,7 +2493,7 @@ nodemap_fileset_modify_alt(struct lu_nodemap *nodemap,
 	else
 		rc = nodemap_fileset_add_alternate(nodemap, fset, fset_ro);
 
-	/* undo if new fileset couldn't be added */
+	
 	if (rc) {
 		rc2 = nodemap_fileset_add_alternate(nodemap,
 						    fset_info_old.nfi_fileset,
@@ -2603,7 +2603,7 @@ static int nodemap_set_fileset_prim_iam(struct lu_nodemap *nodemap,
 	if (fileset_path[0] != '/')
 		RETURN(-EINVAL);
 
-	/* if fileset is not set, add it instead */
+	
 	if (!nodemap->nm_fileset_prim) {
 		rc = nodemap_fileset_add_primary(nodemap, fileset_path, false);
 		GOTO(out, rc);
@@ -2641,7 +2641,7 @@ static int nodemap_set_fileset_prim_iam(struct lu_nodemap *nodemap,
 			*out_clean_llog_fileset = true;
 	}
 
-	/* Update in-memory nodemap with new fileset */
+	
 	if (!rc) {
 		nodemap_fileset_prim_reset(nodemap);
 		nodemap->nm_fileset_prim = fileset;
@@ -2686,7 +2686,7 @@ static int nodemap_set_fileset_prim_llog(struct lu_nodemap *nodemap,
 	char *fileset_new;
 	int rc = 0;
 
-	/* Abort if the IAM is already in use and a fileset is set */
+	
 	if (nodemap->nm_fileset_prim && nodemap->nmf_fileset_use_iam)
 		RETURN(-EINVAL);
 
@@ -2705,7 +2705,7 @@ static int nodemap_set_fileset_prim_llog(struct lu_nodemap *nodemap,
 			RETURN(rc);
 
 		nodemap_fileset_prim_reset(nodemap);
-		/* back to default value for use_iam flag */
+		
 		rc = nodemap_update_fileset_iam_flag(nodemap, true);
 		RETURN(rc);
 	}
@@ -2725,14 +2725,14 @@ static int nodemap_set_fileset_prim_llog(struct lu_nodemap *nodemap,
 
 	memcpy(fileset_new, fileset_path, fileset_size_new);
 
-	/* free existing fileset first on update */
+	
 	if (nodemap->nm_fileset_prim)
 		nodemap_fileset_prim_reset(nodemap);
 
 	nodemap->nm_fileset_prim = fileset_new;
 	nodemap->nm_fileset_prim_size = fileset_size_new;
 
-	/* Set fileset as llog fileset and update nodemap record */
+	
 	rc = nodemap_update_fileset_iam_flag(nodemap, false);
 
 	return rc;
@@ -2768,7 +2768,7 @@ static int nodemap_copy_fileset(struct lu_nodemap *dst, struct lu_nodemap *src)
 			GOTO(out, rc);
 	}
 
-	/* iterate over all alternate filesets and add them to dst */
+	
 	down_read(&src->nm_fileset_alt_lock);
 	for (node = rb_first(&src->nm_fileset_alt); node;
 	     node = rb_next(node)) {
@@ -2912,7 +2912,7 @@ int nodemap_fileset_get_root(struct lu_nodemap *nodemap,
 
 	down_read(&nodemap->nm_fileset_alt_lock);
 
-	/* 1. If nodemap is inactive or no filesets, return fileset_src as is */
+	
 	if (!nodemap_active || !nodemap_has_any_fileset(nodemap)) {
 		if (fileset_src) {
 			rc = strscpy(fset, fileset_src, fset_size);
@@ -2921,12 +2921,12 @@ int nodemap_fileset_get_root(struct lu_nodemap *nodemap,
 
 			GOTO(out, rc = 0);
 		}
-		/* fileset_src is NULL, return empty fileset */
+		
 		fset[0] = '\0';
 		GOTO(out, rc = 0);
 	}
 
-	/* 2. if fileset_src is empty, return the primary fileset */
+	
 	if (!fileset_src || fileset_src[0] == '\0') {
 		if (!nodemap->nm_fileset_prim ||
 		    nodemap->nm_fileset_prim[0] == '\0') {
@@ -2945,7 +2945,7 @@ int nodemap_fileset_get_root(struct lu_nodemap *nodemap,
 		GOTO(out, rc = 0);
 	}
 
-	/* 3. check if any fileset exists that matches fileset_src */
+	
 	if (nodemap->nm_fileset_prim && nodemap->nm_fileset_prim[0] != '\0') {
 		/* fileset_src starts like primary fileset, and is followed
 		 * by '/' (subdirectory) or '\0' (identical)
@@ -3029,7 +3029,7 @@ static int nodemap_validate_sepol(const char *sepol)
 	if (sepol == NULL)
 		return -EINVAL;
 
-	/* we allow sepol = "" which means clear SELinux policy info */
+	
 	if (sepol[0] == '\0')
 		return 0;
 
@@ -3178,11 +3178,11 @@ int nodemap_set_capabilities(const char *name, char *buffer)
 	rc = kstrtoull(caps_str, 0, &caps);
 	if (rc == -EINVAL) {
 		cap_tmp = libcfs_cap2num(nodemap->nm_capabilities);
-		/* if type is different, capabilities are going to be reset */
+		
 		if (type != nodemap->nmf_caps_type)
 			cap_tmp = libcfs_cap2num(CAP_EMPTY_SET);
 
-		/* the "allmask" is filtered by allowed_cap below */
+		
 		rc = cfs_str2mask(caps_str, libcfs_cap2str, &cap_tmp, 0,
 				  ~0ULL, 0);
 		caps = cap_tmp;
@@ -3190,7 +3190,7 @@ int nodemap_set_capabilities(const char *name, char *buffer)
 	if (rc)
 		GOTO(out_putref, rc);
 
-	/* All of the capabilities that we currently allow/check */
+	
 	if (unlikely(cap_isclear(allowed_cap))) {
 		allowed_cap = CAP_FS_SET;
 		cap_raise(allowed_cap, CAP_SYS_RESOURCE);
@@ -3519,7 +3519,7 @@ int nodemap_idx_cluster_roles_modify(struct lu_nodemap *nodemap,
 		 */
 		rc = nodemap_idx_cluster_roles_add(nodemap);
 	else
-		/* otherwise just update existing NODEMAP_CLUSTER_ROLES idx */
+		
 		rc = nodemap_idx_cluster_roles_update(nodemap);
 
 	return rc;
@@ -3545,7 +3545,7 @@ int nodemap_set_rbac(const char *name, enum nodemap_rbac_roles rbac)
 		GOTO(put, rc = -EINVAL);
 
 	old_rbac = nodemap->nmf_rbac;
-	/* if value does not change, do nothing */
+	
 	if (rbac == old_rbac)
 		GOTO(put, rc = 0);
 
@@ -3694,11 +3694,11 @@ EXPORT_SYMBOL(nodemap_set_squash_projid);
 bool nodemap_can_setquota(struct lu_nodemap *nodemap, __u32 qc_cmd,
 			  __u32 qc_type, __u32 id)
 {
-	/* nodemap is inactive: allow */
+	
 	if (!nodemap_active)
 		return true;
 
-	/* nodemap does not allow root access: forbid */
+	
 	if (!nodemap || !nodemap->nmf_allow_root_access)
 		return false;
 
@@ -3722,7 +3722,7 @@ bool nodemap_can_setquota(struct lu_nodemap *nodemap, __u32 qc_cmd,
 	    !(nodemap->nmf_rbac & NODEMAP_RBAC_POOL_QUOTA_OPS))
 		return false;
 
-	/* deny if local root has not local admin role */
+	
 	if (!is_local_root(nodemap_map_id(nodemap, NODEMAP_UID,
 					  NODEMAP_CLIENT_TO_FS, 0),
 			   nodemap))
@@ -3846,7 +3846,7 @@ int nodemap_set_raise_privs(const char *name, enum nodemap_raise_privs privs,
 
 	old_privs = nodemap->nmf_raise_privs;
 	old_rbac_raise = nodemap->nmf_rbac_raise;
-	/* if value does not change, do nothing */
+	
 	if (privs == old_privs && rbac_raise == old_rbac_raise)
 		GOTO(out_putref, rc = 0);
 
@@ -4004,7 +4004,7 @@ int nodemap_del(const char *nodemap_name, bool *out_clean_llog_fileset)
 		GOTO(out, rc = -ENXIO);
 	}
 
-	/* delete sub-nodemaps first */
+	
 	if (!list_empty(&nodemap->nm_subnodemaps)) {
 		struct lu_nodemap *nm, *nm_temp;
 
@@ -4021,7 +4021,7 @@ int nodemap_del(const char *nodemap_name, bool *out_clean_llog_fileset)
 	}
 	nodemap_putref(nodemap);
 
-	/* we had dropped lock, so fetch nodemap again */
+	
 	mutex_lock(&active_config_lock);
 	nodemap = cfs_hash_del_key(active_config->nmc_nodemap_hash,
 				   nodemap_name);
@@ -4030,7 +4030,7 @@ int nodemap_del(const char *nodemap_name, bool *out_clean_llog_fileset)
 		GOTO(out, rc = -ENOENT);
 	}
 
-	/* erase nodemap from active ranges to prevent client assignment */
+	
 	down_write(&active_config->nmc_range_tree_lock);
 	list_for_each_entry_safe(range, range_temp, &nodemap->nm_ranges,
 				 rn_list) {
@@ -4052,7 +4052,7 @@ int nodemap_del(const char *nodemap_name, bool *out_clean_llog_fileset)
 	}
 	up_write(&active_config->nmc_ban_range_tree_lock);
 
-	/* remove all filesets from the nodemap */
+	
 	if (nodemap->nm_fileset_prim)
 		fileset_prim_exists = true;
 
@@ -4079,7 +4079,7 @@ int nodemap_del(const char *nodemap_name, bool *out_clean_llog_fileset)
 		CWARN("%s: nodemap_del failed to remove all subnodemaps\n",
 		      nodemap_name);
 
-	/* reclassify all member exports from nodemap, so they put their refs */
+	
 	down_read(&active_config->nmc_range_tree_lock);
 	nm_member_reclassify_nodemap(nodemap);
 	up_read(&active_config->nmc_range_tree_lock);
@@ -4195,7 +4195,7 @@ int nodemap_add_offset(const char *nodemap_name, char *offset)
 		GOTO(out_putref, rc = -ENXIO);
 
 	if (nodemap->nm_offset_start_uid) {
-		/* nodemap has already offset  */
+		
 		nm_iterating = nodemap;
 		GOTO(overlap, rc = -ERANGE);
 	}
@@ -4210,7 +4210,7 @@ int nodemap_add_offset(const char *nodemap_name, char *offset)
 		min = nm_iterating->nm_offset_start_uid;
 		max = nm_iterating->nm_offset_start_uid +
 			nm_iterating->nm_offset_limit_uid;
-		if (min == 0 && max == 0) /* nodemaps with no set offset */
+		if (min == 0 && max == 0) 
 			continue;
 		/* seeing if new offset / offset_max overlaps with other
 		 * existing nodemap offsets
@@ -4318,7 +4318,7 @@ int nodemap_activate(const bool value)
 	mutex_lock(&active_config_lock);
 	active_config->nmc_nodemap_is_active = value;
 
-	/* copy active value to global to avoid locking in map functions */
+	
 	nodemap_active = value;
 	rc = nodemap_idx_nodemap_activate(value);
 	mutex_unlock(&active_config_lock);
@@ -4403,7 +4403,7 @@ void nodemap_config_dealloc(struct nodemap_config *config)
 		mutex_lock(&active_config_lock);
 		down_write(&config->nmc_range_tree_lock);
 
-		/* move members to new config, requires ac lock */
+		
 		nm_member_reclassify_nodemap(nodemap);
 		list_for_each_entry_safe(range, range_temp, &nodemap->nm_ranges,
 					 rn_list)
@@ -4416,7 +4416,7 @@ void nodemap_config_dealloc(struct nodemap_config *config)
 		up_write(&config->nmc_ban_range_tree_lock);
 		mutex_unlock(&active_config_lock);
 
-		/* putref must be outside of ac lock if nm could be destroyed */
+		
 		nodemap_putref(nodemap);
 	}
 	OBD_FREE_PTR(config);
@@ -4453,7 +4453,7 @@ void nodemap_config_set_active(struct nodemap_config *config)
 
 	mutex_lock(&active_config_lock);
 
-	/* move proc entries from already existing nms, create for new nms */
+	
 	cfs_hash_for_each_safe(config->nmc_nodemap_hash,
 			       nm_hash_list_cb, &nodemap_list_head);
 	list_for_each_entry_safe(nodemap, tmp, &nodemap_list_head, nm_list) {
@@ -4482,7 +4482,7 @@ void nodemap_config_set_active(struct nodemap_config *config)
 	 */
 	revoke_locks = !config->nmc_nodemap_is_active && nodemap_active;
 
-	/* if new config is inactive, deactivate live config before switching */
+	
 	if (!config->nmc_nodemap_is_active)
 		nodemap_active = false;
 	active_config = config;
@@ -4555,7 +4555,7 @@ void nm_member_revoke_all(void)
 	cfs_hash_for_each_safe(active_config->nmc_nodemap_hash,
 			       nm_hash_list_cb, &nodemap_list_head);
 
-	/* revoke_locks sleeps, so can't call in cfs hash cb */
+	
 	list_for_each_entry_safe(nodemap, tmp, &nodemap_list_head, nm_list)
 		nm_member_revoke_locks_always(nodemap);
 	mutex_unlock(&active_config_lock);
@@ -4700,7 +4700,7 @@ static int cfg_nodemap_fileset_cmd(struct lustre_cfg *lcfg,
 
 	if (lcfg->lcfg_bufcount > 2) {
 		fset = lustre_cfg_string(lcfg, 2);
-		/* fset can be \0 in some operations like nodemap_set_fileset */
+		
 		if (!fset)
 			RETURN(-EINVAL);
 		if (strlen(fset) > PATH_MAX)
@@ -4728,13 +4728,13 @@ static int cfg_nodemap_fileset_cmd(struct lustre_cfg *lcfg,
 	case LCFG_NODEMAP_FILESET_ADD:
 		if (lcfg->lcfg_bufcount != 5)
 			GOTO(out_unlock, rc = -EINVAL);
-		/* check if alternate fileset */
+		
 		param = lustre_cfg_string(lcfg, 3);
 		rc = kstrtobool(param, &fset_alt);
 		if (rc)
 			GOTO(out_unlock, rc);
 
-		/* get read-only flag */
+		
 		param = lustre_cfg_string(lcfg, 4);
 		rc = kstrtobool(param, &fset_ro);
 		if (rc)
@@ -4755,14 +4755,14 @@ static int cfg_nodemap_fileset_cmd(struct lustre_cfg *lcfg,
 		if (lcfg->lcfg_bufcount != 5)
 			GOTO(out_unlock, rc = -EINVAL);
 
-		/* new fileset name */
+		
 		param = lustre_cfg_string(lcfg, 3);
 		if (param[0] != '\0')
 			fset_modify.nfm_fileset = param;
 
 		param = lustre_cfg_string(lcfg, 4);
 
-		/* Parse type and access flags in <type>:<access> format */
+		
 		colon_pos = strchr(param, ':');
 		if (!colon_pos)
 			GOTO(out_unlock, rc = -EINVAL);
@@ -4771,7 +4771,7 @@ static int cfg_nodemap_fileset_cmd(struct lustre_cfg *lcfg,
 		type_new = param;
 		access_new = colon_pos + 1;
 
-		/* Parse fileset type */
+		
 		fset_modify.nfm_type = FSM_TYPE_NONE;
 		if (strcmp(type_new, "prim") == 0)
 			fset_modify.nfm_type = FSM_TYPE_PRIMARY;
@@ -4780,7 +4780,7 @@ static int cfg_nodemap_fileset_cmd(struct lustre_cfg *lcfg,
 		else if (strlen(type_new) > 0)
 			GOTO(out_unlock, rc = -EINVAL);
 
-		/* Parse fileset access */
+		
 		fset_modify.nfm_access = FSM_ACCESS_NONE;
 		if (strcmp(access_new, "rw") == 0)
 			fset_modify.nfm_access = FSM_ACCESS_RW;

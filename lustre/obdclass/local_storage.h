@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2012, 2014, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Local storage for file/objects with fid generation. Works on top of OSD.
  *
@@ -22,13 +22,13 @@
 
 struct ls_device {
 	struct dt_device	 ls_top_dev;
-	/* all initialized ls_devices on this node linked by this */
+	
 	struct list_head	 ls_linkage;
-	/* how many handle's reference this local storage */
+	
 	struct kref		 ls_refcount;
-	/* underlaying OSD device */
+	
 	struct dt_device	*ls_osd;
-	/* list of all local OID storages */
+	
 	struct list_head	 ls_los_list;
 	struct mutex		 ls_los_mutex;
 };

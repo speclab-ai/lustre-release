@@ -1,4 +1,4 @@
-/* SPDX License Identifier: GPL-2.0 */
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +34,7 @@ struct test_tbl_entry {
 	{ .tte_fn = &test ## num, .tte_desc = T ## num ## _DESC, .tte_num = num}
 #define TEST_REGISTER_END { .tte_fn = NULL }
 
-extern char fsmountdir[PATH_MAX];	/* Lustre mountpoint */
+extern char fsmountdir[PATH_MAX];	
 
 /* Run all tests declared in @tst_tbl until a NULL entry is found.
  * The tests are run by forking the process.  That way, if test segfaults,
@@ -43,6 +43,6 @@ extern char fsmountdir[PATH_MAX];	/* Lustre mountpoint */
  */
 int run_tests(const char *lustre_dir, struct test_tbl_entry *tst_tbl);
 
-/* 'str_tests' are the tests to be skipped/run, such as "1,3,4,.." */
+
 void set_tests_to_skip(const char *str_tests, struct test_tbl_entry *tst_tbl);
 void set_tests_to_run(const char *str_tests, struct test_tbl_entry *tst_tbl);

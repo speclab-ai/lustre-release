@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lshowmount.h
  *
@@ -68,16 +68,16 @@ int main(int argc, char **argv)
 	while ((opt = getopt_long(argc, argv, OPTIONS, long_opts,
 				  &optidx)) != -1) {
 		switch (opt) {
-		case 'e':	/* --enumerate */
+		case 'e':	
 			eopt = 1;
 			break;
-		case 'l':	/* --lookup */
+		case 'l':	
 			lopt = 1;
 			break;
-		case 'v':	/* --verbose */
+		case 'v':	
 			vopt = 1;
 			break;
-		case 'h':	/* --help */
+		case 'h':	
 		default:
 			usage();
 		}

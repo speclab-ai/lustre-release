@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright (C) 2013, DataDirect Networks, Inc.
@@ -44,7 +44,7 @@ static void usage(char *prog)
 struct file_handle {
 	__u32 handle_bytes;
 	int handle_type;
-	/* file identifier */
+	
 	unsigned char f_handle[];
 };
 
@@ -103,7 +103,7 @@ static int debug_mark(const char *msg)
 	return system(cmd);
 }
 
-/* verify a file contents */
+
 static int check_access(const char *filename,
 		 int mnt_fd, struct file_handle *fh, struct stat *st_orig)
 {
@@ -112,7 +112,7 @@ static int check_access(const char *filename,
 	char *readbuf = NULL;
 
 	debug_mark("before open by handle");
-	/* Open the file handle */
+	
 	fd2 = open_by_handle_at(mnt_fd, fh, O_RDONLY |
 				(S_ISDIR(st_orig->st_mode) ? O_DIRECTORY : 0));
 	debug_mark("after open by handle");
@@ -125,7 +125,7 @@ static int check_access(const char *filename,
 		goto out_f_handle;
 	}
 
-	/* Get file size */
+	
 	bzero(&st, sizeof(struct stat));
 	debug_mark("before stat");
 	rc = fstat(fd2, &st);
@@ -137,7 +137,7 @@ static int check_access(const char *filename,
 		goto out_fd2;
 	}
 
-	/* we can't check a ctime due unlink update */
+	
 	if (st_orig->st_size != st.st_size ||
 	    st_orig->st_ino != st.st_ino ||
 	    st_orig->st_mode != st.st_mode ||
@@ -159,7 +159,7 @@ static int check_access(const char *filename,
 		}
 
 		for (offset = 0; offset < st.st_size; offset += len) {
-			/* read from the file */
+			
 			rc = read(fd2, readbuf, len);
 			if (rc < 0) {
 				fprintf(stderr, "read(%s) error: %s\n",
@@ -211,7 +211,7 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
-	/* Get file stats using fd1 from traditional open */
+	
 	bzero(&st, sizeof(struct stat));
 	debug_mark("before first stat");
 	rc = fstat(fd1, &st);
@@ -223,7 +223,7 @@ int main(int argc, char **argv)
 		goto out_fd1;
 	}
 
-	/* Open mount point directory */
+	
 	debug_mark("before directory open");
 	mnt_fd = open(argv[2], O_DIRECTORY);
 	debug_mark("after directory open");
@@ -234,7 +234,7 @@ int main(int argc, char **argv)
 		goto out_fd1;
 	}
 
-	/* Allocate memory for file handle */
+	
 	fh = malloc(sizeof(struct file_handle) + MAX_HANDLE_SZ);
 	if (!fh) {
 		fprintf(stderr, "malloc(%d) error: %s\n", MAX_HANDLE_SZ,
@@ -244,7 +244,7 @@ int main(int argc, char **argv)
 	}
 	fh->handle_bytes = MAX_HANDLE_SZ;
 
-	/* Convert name to handle */
+	
 	debug_mark("before get handle");
 	ret = name_to_handle_at(AT_FDCWD, file, fh, &mnt_id,
 				AT_SYMLINK_FOLLOW);
@@ -256,7 +256,7 @@ int main(int argc, char **argv)
 		goto out_f_handle;
 	}
 
-	/* Print out the contents of the file handle */
+	
 	fprintf(stdout, "file: %s\nfh_bytes: %u\nfh_type: %d\nfh_data: ",
 		file, fh->handle_bytes, fh->handle_type);
 	for (i = 0; i < fh->handle_bytes; i++)

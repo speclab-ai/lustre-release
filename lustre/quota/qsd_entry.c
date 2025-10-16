@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -24,7 +24,7 @@ static void qsd_lqe_init(struct lquota_entry *lqe, void *arg)
 {
 	LASSERT(!lqe_is_master(lqe));
 
-	/* initialize slave parameters */
+	
 	rwlock_init(&lqe->lqe_lock);
 	memset(&lqe->lqe_lockh, 0, sizeof(lqe->lqe_lockh));
 	lqe->lqe_pending_write = 0;
@@ -61,7 +61,7 @@ static int qsd_lqe_read(const struct lu_env *env, struct lquota_entry *lqe,
 
 	switch(rc) {
 	case -ENOENT:
-		/* no such entry, assume quota isn't enforced for this user */
+		
 		lqe->lqe_enforced = false;
 		break;
 	case 0:
@@ -100,7 +100,7 @@ static int qsd_lqe_read(const struct lu_env *env, struct lquota_entry *lqe,
 		struct lquota_entry *lqe_def;
 		union lquota_id qid = { {0} };
 
-		/* ensure the lqe storing the default quota setting loaded */
+		
 		lqe_def = lqe_locate(env, qqi->qqi_site, &qid);
 
 		lqe->lqe_is_default = true;
@@ -132,10 +132,10 @@ static int qsd_lqe_read(const struct lu_env *env, struct lquota_entry *lqe,
 		return rc;
 	}
 
-	/* don't know what the qunit value is yet */
+	
 	qsd_set_qunit(lqe, 0);
 
-	/* read current disk-usage from disk */
+	
 	rc = qsd_refresh_usage(env, lqe);
 	if (rc)
 		return rc;
@@ -214,7 +214,7 @@ int qsd_refresh_usage(const struct lu_env *env, struct lquota_entry *lqe)
 
 	LASSERT(qqi->qqi_acct_obj);
 
-	/* read disk usage */
+	
 	rc = lquota_disk_read(env, qqi->qqi_acct_obj, &lqe->lqe_id,
 			      (struct dt_rec *)rec);
 	switch(rc) {
@@ -265,23 +265,23 @@ int qsd_update_index(const struct lu_env *env, struct qsd_qtype_info *qqi,
 
 	obj = global ? qqi->qqi_glb_obj : qqi->qqi_slv_obj;
 
-	/* allocate transaction */
+	
 	th = dt_trans_create(env, qqi->qqi_qsd->qsd_dev);
 	if (IS_ERR(th))
 		RETURN(PTR_ERR(th));
 
-	/* reserve enough credits to update record in index file */
+	
 	rc = lquota_disk_declare_write(env, th, obj, qid);
 	if (rc)
 		GOTO(out, rc);
 
-	/* start local transaction */
+	
 	rc = dt_trans_start_local(env, qqi->qqi_qsd->qsd_dev, th);
 	if (rc)
 		GOTO(out, rc);
 
 	if (global) {
-		/* Update record in global index copy */
+		
 		struct lquota_glb_rec *glb_rec = (struct lquota_glb_rec *)rec;
 
 		CDEBUG(D_QUOTA, "%s: updating global index hardlimit: %llu, "
@@ -289,7 +289,7 @@ int qsd_update_index(const struct lu_env *env, struct qsd_qtype_info *qqi,
 		       qqi->qqi_qsd->qsd_svname, glb_rec->qbr_hardlimit,
 		       glb_rec->qbr_softlimit, qid->qid_uid);
 	} else {
-		/* Update record in slave index copy */
+		
 		struct lquota_slv_rec *slv_rec = (struct lquota_slv_rec *)rec;
 
 		CDEBUG(D_QUOTA, "%s: update granted to %llu for id %llu"
@@ -302,7 +302,7 @@ int qsd_update_index(const struct lu_env *env, struct qsd_qtype_info *qqi,
 		flags = LQUOTA_SET_VER;
 	}
 
-	/* write new record to index file */
+	
 	rc = lquota_disk_write(env, th, obj, qid, (struct dt_rec *)rec, flags,
 			       new_verp);
 	EXIT;
@@ -337,7 +337,7 @@ int qsd_update_lqe(const struct lu_env *env, struct lquota_entry *lqe,
 	LASSERT(lqe != NULL);
 	LASSERT(!lqe_is_master(lqe));
 
-	/* updating lqe is always serialized, no locking needed. */
+	
 	if (global) {
 		struct lquota_glb_rec *glb_rec = (struct lquota_glb_rec *)rec;
 
@@ -351,7 +351,7 @@ int qsd_update_lqe(const struct lu_env *env, struct lquota_entry *lqe,
 			     " default quota flag");
 		lqe->lqe_is_default = false;
 
-		/* change enforcement status based on new hard/soft limit */
+		
 		if (lqe->lqe_id.qid_uid != 0 && (glb_rec->qbr_hardlimit != 0 ||
 		    glb_rec->qbr_softlimit != 0))
 			lqe->lqe_enforced = true;

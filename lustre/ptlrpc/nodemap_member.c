@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2013, Trustees of Indiana University
@@ -30,20 +30,20 @@ void nm_member_del(struct lu_nodemap *nodemap, struct obd_export *exp)
 {
 	ENTRY;
 
-	/* because all changes to ted_nodemap are with active_config_lock */
+	
 	LASSERT(exp->exp_target_data.ted_nodemap == nodemap);
 
-	/* protected by nm_member_list_lock */
+	
 	list_del_init(&exp->exp_target_data.ted_nodemap_member);
 
 	spin_lock(&exp->exp_target_data.ted_nodemap_lock);
 	exp->exp_target_data.ted_nodemap = NULL;
 	spin_unlock(&exp->exp_target_data.ted_nodemap_lock);
 
-	/* ref formerly held by ted_nodemap */
+	
 	nodemap_putref(nodemap);
 
-	/* ref formerly held by ted_nodemap_member */
+	
 	class_export_put(exp);
 
 	EXIT;
@@ -94,11 +94,11 @@ int nm_member_add(struct lu_nodemap *nodemap, struct obd_export *exp)
 	    !list_empty(&exp->exp_target_data.ted_nodemap_member)) {
 		mutex_unlock(&nodemap->nm_member_list_lock);
 
-		/* export is already member of nodemap */
+		
 		if (exp->exp_target_data.ted_nodemap == nodemap)
 			RETURN(0);
 
-		/* possibly reconnecting while about to be reclassified */
+		
 		CWARN("export %p %s already hashed, failed to add to "
 		      "nodemap %s already member of %s\n", exp,
 		      exp->exp_client_uuid.uuid,
@@ -110,7 +110,7 @@ int nm_member_add(struct lu_nodemap *nodemap, struct obd_export *exp)
 
 	class_export_get(exp);
 	nodemap_getref(nodemap);
-	/* ted_nodemap changes also require ac lock, member_list_lock */
+	
 	spin_lock(&exp->exp_target_data.ted_nodemap_lock);
 	exp->exp_target_data.ted_nodemap = nodemap;
 	spin_unlock(&exp->exp_target_data.ted_nodemap_lock);
@@ -165,7 +165,7 @@ void nm_member_reclassify_nodemap(struct lu_nodemap *nodemap)
 		struct lnet_nid *nid;
 		bool banned;
 
-		/* if no conn assigned to this exp, reconnect will reclassify */
+		
 		spin_lock(&exp->exp_lock);
 		if (exp->exp_connection) {
 			nid = &exp->exp_connection->c_peer.nid;
@@ -211,7 +211,7 @@ void nm_member_reclassify_nodemap(struct lu_nodemap *nodemap)
 			 */
 			list_del_init(&exp->exp_target_data.ted_nodemap_member);
 
-			/* keep the new_nodemap ref from classify */
+			
 			spin_lock(&exp->exp_target_data.ted_nodemap_lock);
 			exp->exp_target_data.ted_nodemap = new_nodemap;
 			spin_unlock(&exp->exp_target_data.ted_nodemap_lock);

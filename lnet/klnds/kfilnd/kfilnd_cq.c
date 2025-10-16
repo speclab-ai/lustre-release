@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd completion queue.
  */
@@ -143,7 +143,7 @@ static void kfilnd_cq_process_completion(struct work_struct *work)
 	ssize_t rc;
 	bool done = false;
 
-	/* Drain the KFI completion queue of all events and errors. */
+	
 	while (!done) {
 		rc = kfi_cq_read(cq, &event, 1);
 		if (rc == -KFI_EAVAIL) {

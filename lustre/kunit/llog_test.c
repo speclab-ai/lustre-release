@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -9,7 +9,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/kunit/llog_test.c
  *
@@ -58,7 +58,7 @@ static int verify_handle(char *test, struct llog_handle *llh, int num_recs)
 		}
 	}
 
-	/* check the llog is sane at first, llh_count and lgh_last_idx*/
+	
 	if (llh->lgh_hdr->llh_count != active_recs) {
 		CERROR("%s: handle->count is %d, but there are %d recs found\n",
 		       test, llh->lgh_hdr->llh_count, active_recs);
@@ -74,7 +74,7 @@ static int verify_handle(char *test, struct llog_handle *llh, int num_recs)
 		RETURN(-ERANGE);
 	}
 
-	/* finally checks against expected value from the caller */
+	
 	if (active_recs != num_recs) {
 		CERROR("%s: expected %d active recs after write, found %d\n",
 		       test, num_recs, active_recs);
@@ -84,7 +84,7 @@ static int verify_handle(char *test, struct llog_handle *llh, int num_recs)
 	RETURN(0);
 }
 
-/* Test named-log create/open, close */
+
 static int llog_test_1(const struct lu_env *env,
 		       struct obd_device *obd, char *name)
 {
@@ -131,7 +131,7 @@ static int test_2_cancel_cb(const struct lu_env *env, struct llog_handle *llh,
 	return LLOG_DEL_RECORD;
 }
 
-/* Test named-log reopen; returns opened log on success */
+
 static int llog_test_2(const struct lu_env *env, struct obd_device *obd,
 		       char *name, struct llog_handle **llh)
 {
@@ -180,18 +180,18 @@ static int llog_test_2(const struct lu_env *env, struct obd_device *obd,
 	lmr.lmr_hdr.lrh_len = lmr.lmr_tail.lrt_len = LLOG_MIN_REC_SIZE;
 	lmr.lmr_hdr.lrh_type = LLOG_OP_MAGIC;
 
-	/* Check llog header values are correct after record add/cancel */
+	
 	CWARN("2b: write 1 llog records, check llh_count\n");
 	rc = llog_write(env, lgh, &lmr.lmr_hdr, LLOG_NEXT_IDX);
 	if (rc < 0)
 		GOTO(out_close, rc);
 
-	/* in-memory values after record addition */
+	
 	rc = verify_handle("2b", lgh, 2);
 	if (rc < 0)
 		GOTO(out_close, rc);
 
-	/* re-open llog to read on-disk values */
+	
 	llog_close(env, lgh);
 
 	CWARN("2c: re-open the log by LOGID and verify llh_count\n");
@@ -207,7 +207,7 @@ static int llog_test_2(const struct lu_env *env, struct obd_device *obd,
 		GOTO(out_close, rc);
 	}
 
-	/* check values just read from disk */
+	
 	rc = verify_handle("2c", lgh, 2);
 	if (rc < 0)
 		GOTO(out_close, rc);
@@ -216,12 +216,12 @@ static int llog_test_2(const struct lu_env *env, struct obd_device *obd,
 	if (rc < 0)
 		GOTO(out_close, rc);
 
-	/* in-memory values */
+	
 	rc = verify_handle("2c", lgh, 1);
 	if (rc < 0)
 		GOTO(out_close, rc);
 
-	/* re-open llog to get on-disk values */
+	
 	llog_close(env, lgh);
 
 	rc = llog_open(env, ctxt, &lgh, &logid, NULL, LLOG_OPEN_EXISTS);
@@ -236,7 +236,7 @@ static int llog_test_2(const struct lu_env *env, struct obd_device *obd,
 		GOTO(out_close, rc);
 	}
 
-	/* on-disk values after llog re-open */
+	
 	rc = verify_handle("2c", lgh, 1);
 	if (rc < 0)
 		GOTO(out_close, rc);
@@ -298,7 +298,7 @@ static int test3_check_n_add_cb(const struct lu_env *env,
 		if (lgh->lgh_cur_offset != test_3_rec_off) {
 			__u64 tmp = lgh->lgh_cur_offset;
 
-			/* there can be padding record */
+			
 			if ((do_div(tmp, chunk_size) == 0) &&
 			    (lgh->lgh_cur_offset - test_3_rec_off <
 			     rec->lrh_len + LLOG_MIN_REC_SIZE)) {
@@ -320,7 +320,7 @@ static int test3_check_n_add_cb(const struct lu_env *env,
 		CERROR("Record with wrong index was read: %u, expected %u\n",
 		       rec->lrh_index, cur_idx);
 
-	/* modify all records in place */
+	
 	lgr->lgr_gen.conn_cnt = rec->lrh_index;
 	rc = llog_write(env, lgh, rec, rec->lrh_index);
 	if (rc < 0)
@@ -341,7 +341,7 @@ static int test3_check_n_add_cb(const struct lu_env *env,
 	return rc;
 }
 
-/* Check in-place modifications were done for all records*/
+
 static int test3_check_cb(const struct lu_env *env, struct llog_handle *lgh,
 			  struct llog_rec_hdr *rec, void *data)
 {
@@ -361,7 +361,7 @@ static int llog_test3_process(const struct lu_env *env,
 			      llog_cb_t cb, int start)
 {
 	struct llog_process_cat_data cd;
-	int last_idx; /* new record will be injected here */
+	int last_idx; 
 	int rc = 0;
 
 	CWARN("test3: processing records from index %d to the end\n",
@@ -379,14 +379,14 @@ static int llog_test3_process(const struct lu_env *env,
 	return test_3_rec_num;
 }
 
-/* Test plain llog functionality */
+
 static int llog_test_3(const struct lu_env *env, struct obd_device *obd,
 		       struct llog_handle *llh)
 {
 	char buf[128];
 	struct llog_rec_hdr *hdr = (void *)buf;
 	int rc, i;
-	int num_recs = 1; /* 1 for the header */
+	int num_recs = 1; 
 	int expected;
 
 	ENTRY;
@@ -437,7 +437,7 @@ static int llog_test_3(const struct lu_env *env, struct obd_device *obd,
 	if (rc < 0)
 		RETURN(rc);
 
-	/* extra record is created during llog_process() */
+	
 	if (rc != expected) {
 		CERROR("3a: process total %d records but expect %d\n",
 		       rc, expected);
@@ -446,7 +446,7 @@ static int llog_test_3(const struct lu_env *env, struct obd_device *obd,
 
 	num_recs += 2;
 
-	/* test modification in place */
+	
 	rc = llog_test3_process(env, llh, test3_check_cb, test_3_start_idx);
 	if (rc < 0)
 		RETURN(rc);
@@ -517,7 +517,7 @@ static int llog_test_3(const struct lu_env *env, struct obd_device *obd,
 
 	num_recs += 2;
 
-	/* test modification in place */
+	
 	rc = llog_test3_process(env, llh, test3_check_cb, test_3_start_idx);
 	if (rc < 0)
 		RETURN(rc);
@@ -559,7 +559,7 @@ static int llog_test_3(const struct lu_env *env, struct obd_device *obd,
 	RETURN(rc);
 }
 
-/* Test catalogue additions */
+
 static int llog_test_4(const struct lu_env *env, struct obd_device *obd)
 {
 	struct llog_handle *cath, *llh;
@@ -646,7 +646,7 @@ static int llog_test_4(const struct lu_env *env, struct obd_device *obd)
 		num_recs++;
 	}
 
-	/* make sure new plain llog appears */
+	
 	rc = verify_handle("4d", cath, 3);
 	if (rc)
 		GOTO(out, rc);
@@ -752,7 +752,7 @@ static int llog_cancel_rec_cb(const struct lu_env *env,
 	RETURN(0);
 }
 
-/* Test log and catalogue processing */
+
 static int llog_test_5(const struct lu_env *env, struct obd_device *obd)
 {
 	struct llog_handle *llh = NULL;
@@ -862,7 +862,7 @@ out_put:
 	RETURN(rc);
 }
 
-/* Test client api; open log by name and process */
+
 static int llog_test_6(const struct lu_env *env, struct obd_device *obd,
 		       char *name)
 {
@@ -888,7 +888,7 @@ static int llog_test_6(const struct lu_env *env, struct obd_device *obd,
 	}
 
 	rc = obd_connect(NULL, &exp, mgc_obd, &uuid,
-			 NULL /* obd_connect_data */, NULL);
+			 NULL , NULL);
 	if (rc != -EALREADY) {
 		CERROR("6a: connect on connected MGC (%s) failed to return"
 		       " -EALREADY\n", mgc_obd->obd_name);
@@ -910,7 +910,7 @@ static int llog_test_6(const struct lu_env *env, struct obd_device *obd,
 		GOTO(parse_out, rc);
 	}
 
-	plain_counter = 1; /* llog header is first record */
+	plain_counter = 1; 
 	CWARN("6b: process log %s using client API\n", name);
 	rc = llog_process(env, llh, plain_print_cb, NULL, NULL);
 	if (rc)
@@ -921,7 +921,7 @@ static int llog_test_6(const struct lu_env *env, struct obd_device *obd,
 	if (rc)
 		GOTO(parse_out, rc);
 
-	plain_counter = 1; /* llog header is first record */
+	plain_counter = 1; 
 	CWARN("6c: process log %s reversely using client API\n", name);
 	rc = llog_reverse_process(env, llh, plain_print_cb, NULL, NULL);
 	if (rc)
@@ -947,15 +947,15 @@ ctxt_release:
 }
 
 static union {
-	struct llog_rec_hdr		lrh;   /* common header */
-	struct llog_logid_rec		llr;   /* LLOG_LOGID_MAGIC */
-	struct llog_unlink64_rec	lur;   /* MDS_UNLINK64_REC */
-	struct llog_setattr64_rec	lsr64; /* MDS_SETATTR64_REC */
-	struct llog_setattr64_rec_v2	lsr64_v2; /* MDS_SETATTR64_REC */
-	struct llog_size_change_rec	lscr;  /* OST_SZ_REC */
-	struct llog_changelog_rec	lcr;   /* CHANGELOG_REC */
-	struct llog_changelog_user_rec2	lcur;  /* CHANGELOG_USER_REC2 */
-	struct llog_gen_rec		lgr;   /* LLOG_GEN_REC */
+	struct llog_rec_hdr		lrh;   
+	struct llog_logid_rec		llr;   
+	struct llog_unlink64_rec	lur;   
+	struct llog_setattr64_rec	lsr64; 
+	struct llog_setattr64_rec_v2	lsr64_v2; 
+	struct llog_size_change_rec	lscr;  
+	struct llog_changelog_rec	lcr;   
+	struct llog_changelog_user_rec2	lcur;  
+	struct llog_gen_rec		lgr;   
 } llog_records;
 
 static int test_7_print_cb(const struct lu_env *env, struct llog_handle *llh,
@@ -976,7 +976,7 @@ static int test_7_cancel_cb(const struct lu_env *env, struct llog_handle *llh,
 			    struct llog_rec_hdr *rec, void *data)
 {
 	plain_counter++;
-	/* test LLOG_DEL_RECORD is working */
+	
 	return LLOG_DEL_RECORD;
 }
 
@@ -1064,7 +1064,7 @@ out_close:
 	RETURN(rc);
 }
 
-/* Test all llog records writing and processing */
+
 static int llog_test_7(const struct lu_env *env, struct obd_device *obd)
 {
 	struct llog_ctxt *ctxt;
@@ -1119,7 +1119,7 @@ static int llog_test_7(const struct lu_env *env, struct obd_device *obd)
 	}
 
 	CWARN("7e: test llog_changelog_rec\n");
-	/* Direct access to cr_do_not_use: peculiar case for this test */
+	
 	llog_records.lcr.cr_hdr.lrh_len = sizeof(llog_records.lcr);
 	llog_records.lcr.cr_do_not_use.lrt_len = sizeof(llog_records.lcr);
 	llog_records.lcr.cr_hdr.lrh_type = CHANGELOG_REC;
@@ -1257,7 +1257,7 @@ static int llog_test_8(const struct lu_env *env, struct obd_device *obd)
 	ctxt = llog_get_context(obd, LLOG_TEST_ORIG_CTXT);
 	LASSERT(ctxt);
 
-	/* simulate generic llog records with 256-bytes size */
+	
 	ltr.ltr_hdr.lrh_len = ltr.ltr_tail.lrt_len = reclen;
 	ltr.ltr_hdr.lrh_type = LLOG_OP_MAGIC;
 
@@ -1292,9 +1292,9 @@ static int llog_test_8(const struct lu_env *env, struct obd_device *obd)
 	CWARN("8b: first llog "DFID"\n",
 	      PFID(lu_object_fid(&llh->u.chd.chd_current_log->lgh_obj->do_lu)));
 
-	/* get llog index in catalog to clear it later */
+	
 	plain_pos = (llh->lgh_last_idx - 1) * sizeof(struct llog_logid_rec);
-	/* destroy plain llog to don't leave it orphaned */
+	
 	list_del_init(&llh->u.chd.chd_current_log->u.phd.phd_entry);
 	llog_destroy(env, llh->u.chd.chd_current_log);
 	llog_close(env, llh->u.chd.chd_current_log);
@@ -1326,13 +1326,13 @@ static int llog_test_8(const struct lu_env *env, struct obd_device *obd)
 			GOTO(out, rc);
 		}
 	}
-	/* grab the current plain llog, we'll corrupt it later */
+	
 	obj = llh->u.chd.chd_current_log->lgh_obj;
 	LASSERT(obj);
 	lu_object_get(&obj->do_lu);
 	CWARN("8b: pin llog "DFID"\n", PFID(lu_object_fid(&obj->do_lu)));
 
-	/* must lost all 20 records */
+	
 	CWARN("8b: clean first llog record in catalog\n");
 	llog_fill_bytes(env, llh->lgh_obj, 8192 + plain_pos,
 			8192 + plain_pos + sizeof(struct llog_logid_rec), 0x5a);
@@ -1343,10 +1343,10 @@ static int llog_test_8(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out_put, rc);
 	}
 
-	/* lost 28 records, from 5 to 32 in block */
+	
 	CWARN("8c: corrupt first chunk in the middle\n");
 	llog_fill_bytes(env, obj, 8192 + reclen * 4, 8192 + reclen * 10, 0xff);
-	/* lost whole chunk - 32 records */
+	
 	CWARN("8c: corrupt second chunk at start\n");
 	llog_fill_bytes(env, obj, 16384, 16384 + reclen, 0x01);
 
@@ -1423,7 +1423,7 @@ static int llog_test_9_sub(const struct lu_env *env, struct llog_ctxt *ctxt)
 		CERROR("9_sub: write recs failed at #1: %d\n", rc);
 		GOTO(out_close, rc);
 	}
-	/* The below message is checked in sanity.sh test_60a (run-llog.sh) */
+	
 	CWARN("9_sub: record type %x in log "DFID_NOBRACE"\n",
 	      llog_records.lrh.lrh_type, PFID(&fid));
 out_close:
@@ -1431,7 +1431,7 @@ out_close:
 	RETURN(rc);
 }
 
-/* Prepare different types of llog records for llog_reader test*/
+
 static int llog_test_9(const struct lu_env *env, struct obd_device *obd)
 {
 	struct llog_ctxt *ctxt;
@@ -1464,7 +1464,7 @@ static int llog_test_9(const struct lu_env *env, struct obd_device *obd)
 	}
 
 	CWARN("9c: test llog_changelog_rec\n");
-	/* Direct access to cr_do_not_use: peculiar case for this test */
+	
 	llog_records.lcr.cr_hdr.lrh_len = sizeof(llog_records.lcr);
 	llog_records.lcr.cr_do_not_use.lrt_len = sizeof(llog_records.lcr);
 	llog_records.lcr.cr_hdr.lrh_type = CHANGELOG_REC;
@@ -1554,7 +1554,7 @@ static int cat_check_old_cb(const struct lu_env *env, struct llog_handle *llh,
 	RETURN(0);
 }
 
-/* test catalog wrap around */
+
 static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 {
 	struct llog_handle *cath;
@@ -1602,7 +1602,7 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc);
 	}
 
-	/* force catalog wrap for 5th plain LLOG */
+	
 	cfs_fail_loc = CFS_FAIL_SKIP|OBD_FAIL_CAT_RECORDS;
 	cfs_fail_val = 4;
 
@@ -1616,7 +1616,7 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		}
 	}
 
-	/* make sure 2 new plain llog appears in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10b", cath, 3);
 	if (rc)
 		GOTO(out, rc);
@@ -1642,7 +1642,7 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		}
 	}
 
-	/* make sure 2 new plain llog appears in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10c", cath, 5);
 	if (rc)
 		GOTO(out, rc);
@@ -1693,12 +1693,12 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 	CWARN("10c: wrote %d records then %d failed with ENOSPC\n", eok,
 	      enospc);
 
-	/* make sure no new record in Catalog */
+	
 	rc = verify_handle("10c", cath, 5);
 	if (rc)
 		GOTO(out, rc);
 
-	/* Catalog should have reached its max size for test */
+	
 	rc = dt_attr_get(env, cath->lgh_obj, &la);
 	if (rc) {
 		CERROR("10c: failed to get catalog attrs: %d\n", rc);
@@ -1736,7 +1736,7 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* verify one down in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10d", cath, 4);
 	if (rc)
 		GOTO(out, rc);
@@ -1796,12 +1796,12 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* make sure 1 new plain llog appears in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10e", cath, 5);
 	if (rc)
 		GOTO(out, rc);
 
-	/* verify catalog has wrap around */
+	
 	if (cath->lgh_last_idx > cath->lgh_hdr->llh_cat_idx) {
 		CERROR("10e: catalog failed to wrap around\n");
 		GOTO(out, rc = -EINVAL);
@@ -1864,7 +1864,7 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* verify one down in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10f", cath, 4);
 	if (rc)
 		GOTO(out, rc);
@@ -1911,12 +1911,12 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 	CWARN("10f: wrote %d records then %d failed with ENOSPC\n", eok,
 	      enospc);
 
-	/* make sure 1 new plain llog appears in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10f", cath, 5);
 	if (rc)
 		GOTO(out, rc);
 
-	/* verify lgh_last_idx = llh_cat_idx = 2 now */
+	
 	if (cath->lgh_last_idx != cath->lgh_hdr->llh_cat_idx ||
 	    cath->lgh_last_idx != 2) {
 		CERROR("10f: lgh_last_idx = %d vs 2, llh_cat_idx = %d vs 2\n",
@@ -1948,14 +1948,14 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc);
 	}
 
-	/* will llh_cat_idx also successfully wrap ? */
+	
 
 	/*
 	 * cancel all records in the plain LLOGs referenced by 2 last indexes in
 	 * Catalog
 	 */
 
-	/* cancel more records to free one more slot in Catalog */
+	
 	CWARN("10g: Cancel %d records, see one log zapped\n", llog_test_recnum);
 	cancel_count = 0;
 	rc = llog_cat_process(env, cath, llog_cancel_rec_cb, "foobar", 0, 0);
@@ -1981,7 +1981,7 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* verify one down in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10g", cath, 4);
 	if (rc)
 		GOTO(out, rc);
@@ -1997,7 +1997,7 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc);
 	}
 
-	/* cancel more records to free one more slot in Catalog */
+	
 	CWARN("10g: Cancel %d records, see one log zapped\n", llog_test_recnum);
 	cancel_count = 0;
 	rc = llog_cat_process(env, cath, llog_cancel_rec_cb, "foobar", 0, 0);
@@ -2025,12 +2025,12 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* verify one down in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10g", cath, 3);
 	if (rc)
 		GOTO(out, rc);
 
-	/* verify lgh_last_idx = 2 and llh_cat_idx = 0 now */
+	
 	if (cath->lgh_hdr->llh_cat_idx != 0 ||
 	    cath->lgh_last_idx != 2) {
 		CERROR("10g: lgh_last_idx = %d vs 2, llh_cat_idx = %d vs 0\n",
@@ -2049,7 +2049,7 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc);
 	}
 
-	/* cancel more records to free one more slot in Catalog */
+	
 	CWARN("10g: Cancel %d records, see one log zapped\n", llog_test_recnum);
 	cancel_count = 0;
 	rc = llog_cat_process(env, cath, llog_cancel_rec_cb, "foobar", 0, 0);
@@ -2077,12 +2077,12 @@ static int llog_test_10(const struct lu_env *env, struct obd_device *obd)
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* verify one down in catalog (+1 with hdr) */
+	
 	rc = verify_handle("10g", cath, 2);
 	if (rc)
 		GOTO(out, rc);
 
-	/* verify lgh_last_idx = 2 and llh_cat_idx = 1 now */
+	
 	if (cath->lgh_hdr->llh_cat_idx != 1 ||
 	    cath->lgh_last_idx != 2) {
 		CERROR("10g: lgh_last_idx = %d vs 2, llh_cat_idx = %d vs 1\n",
@@ -2317,7 +2317,7 @@ static int llog_test_device_init(const struct lu_env *env, struct lu_device *lu,
 	struct lu_env _env;
 	int rc;
 
-	/* disk obd */
+	
 	tgt = class_name2obd(lldev->llog_target_name);
 	if (!tgt || !test_bit(OBDF_ATTACHED, tgt->obd_flags) ||
 	    !test_bit(OBDF_SET_UP, tgt->obd_flags)) {
@@ -2341,7 +2341,7 @@ static int llog_test_device_init(const struct lu_env *env, struct lu_device *lu,
 	if (rc)
 		GOTO(cleanup_env, rc);
 
-	/* use MGS llog dir for tests */
+	
 	ctxt = llog_get_context(tgt, LLOG_CONFIG_ORIG_CTXT);
 	LASSERT(ctxt);
 	o = ctxt->loc_dir;
@@ -2395,7 +2395,7 @@ static void __exit llog_test_exit(void)
 	class_unregister_type(LUSTRE_TEST_LLOG_DEVICE);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Log test module");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

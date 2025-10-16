@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2016, Intel Corporation.
@@ -157,7 +157,7 @@ static int qsd_intent_interpret(const struct lu_env *env,
 				   aa->aa_lvb, sizeof(*(aa->aa_lvb)),
 				   lockh, rc, false);
 	if (rc < 0) {
-		/* the lock has been destroyed, forget about the lock handle */
+		
 		memset(lockh, 0, sizeof(*lockh));
 		/*
 		 * To avoid the server being fullfilled by LDLM locks, server
@@ -245,22 +245,22 @@ int qsd_intent_lock(const struct lu_env *env, struct obd_export *exp,
 
 	switch(it_op) {
 	case IT_QUOTA_CONN:
-		/* build resource name associated with global index */
+		
 		fid_build_reg_res_name(&qbody->qb_fid, &qti->qti_resid);
 
-		/* copy einfo template and fill ei_cbdata with qqi pointer */
+		
 		memcpy(&qti->qti_einfo, &qsd_glb_einfo, sizeof(qti->qti_einfo));
 		qti->qti_einfo.ei_cbdata = qqi;
 
-		/* don't cancel global lock on memory pressure */
+		
 		flags |= LDLM_FL_NO_LRU;
 		break;
 	case IT_QUOTA_DQACQ:
-		/* build resource name associated for per-ID quota lock */
+		
 		fid_build_quota_res_name(&qbody->qb_fid, &qbody->qb_id,
 					 &qti->qti_resid);
 
-		/* copy einfo template and fill ei_cbdata with lqe pointer */
+		
 		memcpy(&qti->qti_einfo, &qsd_id_einfo, sizeof(qti->qti_einfo));
 		qti->qti_einfo.ei_cbdata = arg;
 		break;
@@ -268,7 +268,7 @@ int qsd_intent_lock(const struct lu_env *env, struct obd_export *exp,
 		LASSERTF(0, "invalid it_op %d\n", it_op);
 	}
 
-	/* build lock enqueue request */
+	
 	rc = ldlm_cli_enqueue(exp, &req, &qti->qti_einfo, &qti->qti_resid, NULL,
 			      &flags, (void *)lvb, sizeof(*lvb), LVB_T_LQUOTA,
 			      &qti->qti_lockh, 1);
@@ -277,14 +277,14 @@ int qsd_intent_lock(const struct lu_env *env, struct obd_export *exp,
 		GOTO(out, rc);
 	}
 
-	/* grab reference on backend structure for the new lock */
+	
 	switch(it_op) {
 	case IT_QUOTA_CONN:
-		/* grab reference on qqi for new lock */
+		
 		qqi_getref(qqi);
 		break;
 	case IT_QUOTA_DQACQ:
-		/* grab reference on lqe for new lock */
+		
 		lqe_getref((struct lquota_entry *)arg);
 		/* all acquire/release request are sent with no_resend and
 		 * no_delay flag */
@@ -303,12 +303,12 @@ int qsd_intent_lock(const struct lu_env *env, struct obd_export *exp,
 	lustre_handle_copy(&aa->aa_lockh, &qti->qti_lockh);
 
 	if (sync) {
-		/* send lock enqueue request and wait for completion */
+		
 		rc = ptlrpc_queue_wait(req);
 		rc = qsd_intent_interpret(env, req, aa, rc);
 		ptlrpc_req_put(req);
 	} else {
-		/* queue lock request and return */
+		
 		req->rq_interpret_reply = qsd_intent_interpret;
 		ptlrpcd_add_req(req);
 	}
@@ -358,7 +358,7 @@ int qsd_fetch_index(const struct lu_env *env, struct obd_export *exp,
 	req->rq_request_portal = MDS_READPAGE_PORTAL;
 	ptlrpc_at_set_req_timeout(req);
 
-	/* allocate bulk descriptor */
+	
 	desc = ptlrpc_prep_bulk_imp(req, npages, 1,
 				    PTLRPC_BULK_PUT_SINK,
 				    MDS_BULK_PORTAL,
@@ -366,18 +366,18 @@ int qsd_fetch_index(const struct lu_env *env, struct obd_export *exp,
 	if (desc == NULL)
 		GOTO(out, rc = -ENOMEM);
 
-	/* req now owns desc and will free it when it gets freed */
+	
 	for (i = 0; i < npages; i++)
 		desc->bd_frag_ops->add_kiov_frag(desc, pages[i], 0,
 						 PAGE_SIZE);
 
-	/* pack index information in request */
+	
 	req_ii = req_capsule_client_get(&req->rq_pill, &RMF_IDX_INFO);
 	*req_ii = *ii;
 
 	ptlrpc_request_set_replen(req);
 
-	/* send request to master and wait for RPC to complete */
+	
 	rc = ptlrpc_queue_wait(req);
 	if (rc)
 		GOTO(out, rc);

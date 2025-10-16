@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lctl_thread.c
  *
@@ -33,7 +33,7 @@ int spwq_init(struct sp_workq *wq, struct param_opts *popt)
 	memset(wq, 0, sizeof(*wq));
 	wq->spwq_popt = popt;
 
-	/* pthread_mutex_init returns 0 for success, or errno for failure */
+	
 	return -pthread_mutex_init(&wq->spwq_mutex, NULL);
 }
 
@@ -58,12 +58,12 @@ int spwq_destroy(struct sp_workq *wq)
 		for (i = 0; i < wq->spwq_len; i++) {
 			free(wq->spwq_items[i].spwi_path);
 			free(wq->spwq_items[i].spwi_param_name);
-			/* wq->spwq_items[i].spwi_value was not malloc'd */
+			
 		}
 		free(wq->spwq_items);
 	}
 
-	/* pthread_mutex_destroy returns 0 for success, or errno for failure */
+	
 	rc = -pthread_mutex_destroy(&wq->spwq_mutex);
 
 	memset(wq, 0, sizeof(*wq));
@@ -91,13 +91,13 @@ int spwq_expand(struct sp_workq *wq, size_t num_items)
 
 	space = wq->spwq_size - wq->spwq_len;
 
-	/* First check if there's already enough room. */
+	
 	if (space >= num_items)
 		return 0;
 
 	new_size = wq->spwq_len + num_items;
 
-	/* When spwq_items is NULL, realloc behaves like malloc */
+	
 	tmp = realloc(wq->spwq_items, new_size * sizeof(struct sp_work_item));
 
 	if (!tmp)
@@ -257,11 +257,11 @@ int sp_run_threads(struct sp_workq *wq)
 			break;
 	}
 
-	/* check if we failed to create any threads at all */
+	
 	if (i == 0)
 		goto out_free;
 
-	/* ignore thread creation errors if at least one was created */
+	
 	rc = 0;
 
 	for (j = 0; j < i; j++) {
@@ -272,7 +272,7 @@ int sp_run_threads(struct sp_workq *wq)
 		if (join_rc && rc == 0)
 			rc = join_rc;
 		if (res)
-			/* this error takes priority over join errors */
+			
 			rc = (long int)res;
 	}
 
@@ -281,4 +281,4 @@ out_free:
 	return rc;
 }
 
-#endif /* HAVE_LIBPTHREAD */
+#endif 

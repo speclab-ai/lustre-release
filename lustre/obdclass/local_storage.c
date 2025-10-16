@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Local storage for file/objects with fid generation. Works on top of OSD.
  *
@@ -16,7 +16,7 @@
 
 #include "local_storage.h"
 
-/* all initialized local storages on this node are linked on this */
+
 static LIST_HEAD(ls_list_head);
 static DEFINE_MUTEX(ls_list_mutex);
 
@@ -118,7 +118,7 @@ struct ls_device *ls_device_init(struct dt_device *dev)
 	ls->ls_top_dev.dd_lu_dev.ld_ops = &ls_lu_dev_ops;
 	ls->ls_top_dev.dd_lu_dev.ld_site = dev->dd_lu_dev.ld_site;
 
-	/* finally add ls to the list */
+	
 	list_add(&ls->ls_linkage, &ls_list_head);
 out_ls:
 	RETURN(ls);
@@ -131,7 +131,7 @@ struct ls_device *ls_device_find_or_init(struct dt_device *dev)
 	ENTRY;
 
 	mutex_lock(&ls_list_mutex);
-	/* find */
+	
 	list_for_each_entry(ls, &ls_list_head, ls_linkage) {
 		if (ls->ls_osd == dev) {
 			kref_get(&ls->ls_refcount);
@@ -139,11 +139,11 @@ struct ls_device *ls_device_find_or_init(struct dt_device *dev)
 			break;
 		}
 	}
-	/* found */
+	
 	if (ret)
 		GOTO(out_ls, ret);
 
-	/* not found, then create */
+	
 	ls = ls_device_init(dev);
 out_ls:
 	mutex_unlock(&ls_list_mutex);
@@ -181,7 +181,7 @@ int local_object_fid_generate(const struct lu_env *env,
 	LASSERT(los->los_dev);
 	LASSERT(los->los_obj);
 
-	/* take next OID */
+	
 
 	/* to make it unique after reboot we store
 	 * the latest generated fid atomically with
@@ -207,7 +207,7 @@ int local_object_declare_create(const struct lu_env *env,
 
 	ENTRY;
 
-	/* update fid generation file */
+	
 	if (los != NULL) {
 		LASSERT(dt_object_exists(los->los_obj));
 		dti->dti_lb.lb_buf = NULL;
@@ -368,7 +368,7 @@ static struct dt_object *__local_file_create(const struct lu_env *env,
 
 		rec->rec_type = S_IFDIR;
 		rec->rec_fid = fid;
-		/* Add "." and ".." for newly created dir */
+		
 		rc = dt_insert(env, dto, (const struct dt_rec *)rec,
 			       (const struct dt_key *)".", th);
 		if (rc != 0)
@@ -450,7 +450,7 @@ struct dt_object *local_file_find_or_create(const struct lu_env *env,
 	if (rc)
 		return ERR_PTR(rc);
 
-	/* create the object */
+	
 	dti->dti_attr.la_valid = LA_MODE;
 	dti->dti_attr.la_mode = mode;
 	dti->dti_dof.dof_type = dt_mode_to_dft(mode & S_IFMT);
@@ -486,7 +486,7 @@ struct dt_object *local_file_find_or_create_with_fid(const struct lu_env *env,
 		if (IS_ERR(ls)) {
 			dto = ERR_CAST(ls);
 		} else {
-			/* create the object */
+			
 			dti->dti_attr.la_valid	= LA_MODE;
 			dti->dti_attr.la_mode	= mode;
 			dti->dti_dof.dof_type	= dt_mode_to_dft(mode & S_IFMT);
@@ -525,7 +525,7 @@ struct dt_object *local_index_find_or_create(const struct lu_env *env,
 
 	rc = dt_lookup_dir(env, parent, name, &dti->dti_fid);
 	if (rc == 0) {
-		/* name is found, get the object */
+		
 		dto = ls_locate(env, dt2ls_dev(los->los_dev),
 				&dti->dti_fid, NULL);
 	} else if (rc != -ENOENT) {
@@ -535,7 +535,7 @@ struct dt_object *local_index_find_or_create(const struct lu_env *env,
 		if (rc < 0) {
 			dto = ERR_PTR(rc);
 		} else {
-			/* create the object */
+			
 			dti->dti_attr.la_valid		= LA_MODE;
 			dti->dti_attr.la_mode		= mode;
 			dti->dti_dof.dof_type		= DFT_INDEX;
@@ -567,7 +567,7 @@ local_index_find_or_create_with_fid(const struct lu_env *env,
 
 	rc = dt_lookup_dir(env, parent, name, &dti->dti_fid);
 	if (rc == 0) {
-		/* name is found, get the object */
+		
 		if (!lu_fid_eq(fid, &dti->dti_fid))
 			dto = ERR_PTR(-EINVAL);
 		else
@@ -581,7 +581,7 @@ local_index_find_or_create_with_fid(const struct lu_env *env,
 		if (IS_ERR(ls)) {
 			dto = ERR_CAST(ls);
 		} else {
-			/* create the object */
+			
 			dti->dti_attr.la_valid		= LA_MODE;
 			dti->dti_attr.la_mode		= mode;
 			dti->dti_dof.dof_type		= DFT_INDEX;
@@ -738,13 +738,13 @@ static int lastid_compat_check(const struct lu_env *env, struct dt_device *dev,
 	if (IS_ERR(root))
 		return PTR_ERR(root);
 
-	/* find old last_id file */
+	
 	snprintf(dti->dti_buf, sizeof(dti->dti_buf), "seq-%#llx-lastid",
 		 lastid_seq);
 	rc = dt_lookup_dir(env, root, dti->dti_buf, &dti->dti_fid);
 	dt_object_put_nocache(env, root);
 	if (rc == -ENOENT) {
-		/* old llog lastid accessed by FID only */
+		
 		if (lastid_seq != FID_SEQ_LLOG)
 			return 0;
 		dti->dti_fid.f_seq = FID_SEQ_LLOG;
@@ -768,7 +768,7 @@ static int lastid_compat_check(const struct lu_env *env, struct dt_device *dev,
 		if (IS_ERR(o))
 			return PTR_ERR(o);
 	}
-	/* let's read seq-NNNNNN-lastid file value */
+	
 	LASSERT(dt_object_exists(o));
 	dti->dti_off = 0;
 	dti->dti_lb.lb_buf = &losd;
@@ -832,7 +832,7 @@ int local_oid_storage_init(const struct lu_env *env, struct dt_device *dev,
 	if (*los != NULL)
 		GOTO(out, rc = 0);
 
-	/* not found, then create */
+	
 	OBD_ALLOC_PTR(*los);
 	if (*los == NULL)
 		GOTO(out, rc = -ENOMEM);

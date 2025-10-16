@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2011 Intel Corporation
@@ -52,11 +52,11 @@ binheap_grow(struct binheap *h)
 	struct binheap_node  **frag2;
 	int hwm = h->cbh_hwm;
 
-	/* need a whole new chunk of pointers */
+	
 	LASSERT((h->cbh_hwm & CBH_MASK) == 0);
 
 	if (hwm == 0) {
-		/* first use of single indirect */
+		
 		CBH_ALLOC(h->cbh_elements1, h);
 		if (h->cbh_elements1 == NULL)
 			return -ENOMEM;
@@ -66,13 +66,13 @@ binheap_grow(struct binheap *h)
 
 	hwm -= CBH_SIZE;
 	if (hwm < CBH_SIZE * CBH_SIZE) {
-		/* not filled double indirect */
+		
 		CBH_ALLOC(frag2, h);
 		if (frag2 == NULL)
 			return -ENOMEM;
 
 		if (hwm == 0) {
-			/* first use of double indirect */
+			
 			CBH_ALLOC(h->cbh_elements2, h);
 			if (h->cbh_elements2 == NULL) {
 				CBH_FREE(frag2);
@@ -87,7 +87,7 @@ binheap_grow(struct binheap *h)
 	hwm -= CBH_SIZE * CBH_SIZE;
 #if (CBH_SHIFT * 3 < 32)
 	if (hwm >= CBH_SIZE * CBH_SIZE * CBH_SIZE) {
-		/* filled triple indirect */
+		
 		return -ENOMEM;
 	}
 #endif
@@ -96,7 +96,7 @@ binheap_grow(struct binheap *h)
 		return -ENOMEM;
 
 	if (((hwm >> CBH_SHIFT) & CBH_MASK) == 0) {
-		/* first use of this 2nd level index */
+		
 		CBH_ALLOC(frag1, h);
 		if (frag1 == NULL) {
 			CBH_FREE(frag2);
@@ -105,7 +105,7 @@ binheap_grow(struct binheap *h)
 	}
 
 	if (hwm == 0) {
-		/* first use of triple indirect */
+		
 		CBH_ALLOC(h->cbh_elements3, h);
 		if (h->cbh_elements3 == NULL) {
 			CBH_FREE(frag2);
@@ -169,7 +169,7 @@ binheap_create(struct binheap_ops *ops, unsigned int flags,
 	h->cbh_cptab	  = cptab;
 	h->cbh_cptid	  = cptid;
 
-	while (h->cbh_hwm < count) { /* preallocate */
+	while (h->cbh_hwm < count) { 
 		if (binheap_grow(h) != 0) {
 			binheap_destroy(h);
 			return NULL;
@@ -472,4 +472,4 @@ binheap_relocate(struct binheap *h, struct binheap_node *e)
 		binheap_sink(h, e);
 }
 EXPORT_SYMBOL(binheap_relocate);
-/** @} heap */
+

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
@@ -86,7 +86,7 @@ static int out_update_header_pack(const struct lu_env *env,
 	if (reply_size  >= LNET_MTU)
 		return -EINVAL;
 
-	/* Check whether the packing exceeding the maxima update length */
+	
 	update_size = sizeof(*update);
 	for (i = 0; i < param_count; i++)
 		update_size += round_up(sizeof(*param) + param_sizes[i], 8);
@@ -357,7 +357,7 @@ int out_index_lookup_pack(const struct lu_env *env,
 	const void	*name = key;
 	__u16		size = strlen((char *)name) + 1;
 
-	/* XXX: this shouldn't be hardcoded */
+	
 	return out_update_pack(env, update, max_update_size, OUT_INDEX_LOOKUP,
 			       fid, 1, &size, &name, 256);
 }
@@ -425,7 +425,7 @@ static int tx_extend_args(struct thandle_exec_args *ta, int new_alloc_ta)
 
 	for (i = 0; i < new_alloc_ta; i++) {
 		if (i < ta->ta_alloc_args) {
-			/* copy the old args to new one */
+			
 			new_ta[i] = ta->ta_args[i];
 		} else {
 			OBD_ALLOC_PTR(new_ta[i]);
@@ -434,7 +434,7 @@ static int tx_extend_args(struct thandle_exec_args *ta, int new_alloc_ta)
 		}
 	}
 
-	/* free the old args */
+	
 	if (ta->ta_args != NULL)
 		OBD_FREE_PTR_ARRAY(ta->ta_args, ta->ta_alloc_args);
 
@@ -576,7 +576,7 @@ int out_create_add_exec(const struct lu_env *env, struct dt_object *obj,
 	struct tx_arg *arg;
 	int rc;
 
-	/* LU-13653: ignore quota for DNE directory creation */
+	
 	if (dof->dof_type == DFT_DIR)
 		th->th_ignore_quota = 1;
 
@@ -589,7 +589,7 @@ int out_create_add_exec(const struct lu_env *env, struct dt_object *obj,
 	if (IS_ERR(arg))
 		return PTR_ERR(arg);
 
-	/* release the object in out_trans_stop */
+	
 	lu_object_get(&obj->do_lu);
 	arg->object = obj;
 	arg->u.create.attr = *attr;

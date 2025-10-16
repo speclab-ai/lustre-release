@@ -159,7 +159,7 @@ int qword_print(FILE *f, const char *str)
 
 	qword_add(&bp, &len, str);
 	sret = fwrite(qword_buf, bp-qword_buf, 1, f);
-	/* XXX: */
+	
 	memcpy(tmp_buf, qword_buf, bp-qword_buf);
 	tmp_buf[bp-qword_buf] = '\0';
 	printerr(2, "%s", tmp_buf);
@@ -175,7 +175,7 @@ int qword_printhex(FILE *f, char *str, int slen)
 
 	qword_addhex(&bp, &len, str, slen);
 	sret = fwrite(qword_buf, bp-qword_buf, 1, f);
-	/* XXX: */
+	
 	memcpy(tmp_buf, qword_buf, bp-qword_buf);
 	tmp_buf[bp-qword_buf] = '\0';
 	printerr(2, "%s", tmp_buf);
@@ -203,14 +203,14 @@ int qword_eol(FILE *f)
 #define isodigit(c) (isdigit(c) && c <= '7')
 int qword_get(char **bpp, char *dest, int bufsize)
 {
-	/* return bytes copied, or -1 on error */
+	
 	char *bp = *bpp;
 	int len = 0;
 
 	while (*bp == ' ') bp++;
 
 	if (bp[0] == '\\' && bp[1] == 'x') {
-		/* HEX STRING */
+		
 		bp += 2;
 		while (isxdigit(bp[0]) && isxdigit(bp[1]) && len < bufsize) {
 			int byte = isdigit(*bp) ? *bp-'0' : toupper(*bp)-'A'+10;
@@ -222,7 +222,7 @@ int qword_get(char **bpp, char *dest, int bufsize)
 			len++;
 		}
 	} else {
-		/* text with \nnn octal quoting */
+		
 		while (*bp != ' ' && *bp != '\n' && *bp && len < bufsize-1) {
 			if (*bp == '\\' &&
 			    isodigit(bp[1]) && (bp[1] <= '3') &&
@@ -245,8 +245,8 @@ int qword_get(char **bpp, char *dest, int bufsize)
 		return -1;
 	while (*bp == ' ') bp++;
 	*bpp = bp;
-// why should we clear *dest???
-//	*dest = '\0';
+
+
 	return len;
 }
 

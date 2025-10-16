@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Top-level entry points into osd module
  *
@@ -85,18 +85,18 @@ int osd_scrub_refresh_mapping(const struct lu_env *env,
 	case DTO_INDEX_UPDATE:
 		zde->zde_pad = 0;
 		zde->zde_dnode = oid;
-		zde->zde_type = 0; /* The type in OI mapping is useless. */
+		zde->zde_type = 0; 
 		rc = -zap_update(dev->od_os, zapid, buf, 8, sizeof(*zde) / 8,
 				 zde, tx);
 		if (unlikely(rc == -ENOENT)) {
-			/* Some unlink thread may removed the OI mapping. */
+			
 			rc = 1;
 		}
 		break;
 	case DTO_INDEX_INSERT:
 		zde->zde_pad = 0;
 		zde->zde_dnode = oid;
-		zde->zde_type = 0; /* The type in OI mapping is useless. */
+		zde->zde_type = 0; 
 		rc = osd_zap_add(dev, zapid, dn, buf, 8, sizeof(*zde) / 8,
 				 zde, tx);
 		if (unlikely(rc == -EEXIST))
@@ -170,7 +170,7 @@ osd_scrub_check_update(const struct lu_env *env, struct osd_device *dev,
 zget:
 		rc = __osd_obj2dnode(dev->od_os, oid, &dn);
 		if (rc) {
-			/* Someone removed the object by race. */
+			
 			if (rc == -ENOENT || rc == -EEXIST)
 				rc = 0;
 			GOTO(out, rc);
@@ -296,7 +296,7 @@ cleanup:
 	RETURN(sf->sf_param & SP_FAILOUT ? rc : 0);
 }
 
-/* iteration engine */
+
 
 static inline int
 osd_scrub_wakeup(struct lustre_scrub *scrub, struct osd_otable_it *it)
@@ -450,7 +450,7 @@ static int osd_scrub_exec(const struct lu_env *env, struct osd_device *dev,
 	if (rc) {
 		CDEBUG(D_LFSCK, "%s: fail to checkpoint, pos = %llu: rc = %d\n",
 		       scrub->os_name, scrub->os_pos_current, rc);
-		/* Continue, as long as the scrub itself can go ahead. */
+		
 	}
 
 	return 0;
@@ -576,13 +576,13 @@ noenv:
 	scrub->os_running = 0;
 	spin_unlock(&scrub->os_lock);
 	if (xchg(&scrub->os_task, NULL) == NULL)
-		/* scrub_stop is waiting, we need to synchronize */
+		
 		wait_var_event(scrub, kthread_should_stop());
 	wake_up_var(scrub);
 	return rc;
 }
 
-/* initial OI scrub */
+
 
 struct osd_lf_map;
 
@@ -611,9 +611,9 @@ struct osd_lf_map {
 	handle_dirent_t		 olm_handle_dirent;
 };
 
-/* Add the new introduced local files in the list in the future. */
+
 static const struct osd_lf_map osd_lf_maps[] = {
-	/* CONFIGS */
+	
 	{
 		.olm_name		= MOUNT_CONFIGS_DIR,
 		.olm_fid		= {
@@ -625,7 +625,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_handle_dirent	= osd_ios_varfid_hd,
 	},
 
-	/* NIDTBL_VERSIONS */
+	
 	{
 		.olm_name		= MGS_NIDTBL_DIR,
 		.olm_flags		= OLF_SCAN_SUBITEMS,
@@ -633,12 +633,12 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_handle_dirent	= osd_ios_varfid_hd,
 	},
 
-	/* PENDING */
+	
 	{
 		.olm_name		= MDT_ORPHAN_DIR,
 	},
 
-	/* ROOT */
+	
 	{
 		.olm_name		= "ROOT",
 		.olm_fid		= {
@@ -649,7 +649,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_scan_dir		= osd_ios_ROOT_sd,
 	},
 
-	/* fld */
+	
 	{
 		.olm_name		= "fld",
 		.olm_fid		= {
@@ -658,17 +658,17 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		},
 	},
 
-	/* changelog_catalog */
+	
 	{
 		.olm_name		= CHANGELOG_CATALOG,
 	},
 
-	/* changelog_users */
+	
 	{
 		.olm_name		= CHANGELOG_USERS,
 	},
 
-	/* quota_master */
+	
 	{
 		.olm_name		= QMT_DIR,
 		.olm_flags		= OLF_SCAN_SUBITEMS,
@@ -676,7 +676,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_handle_dirent	= osd_ios_varfid_hd,
 	},
 
-	/* quota_slave */
+	
 	{
 		.olm_name		= QSD_DIR,
 		.olm_flags		= OLF_SCAN_SUBITEMS,
@@ -684,7 +684,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_handle_dirent	= osd_ios_varfid_hd,
 	},
 
-	/* LFSCK */
+	
 	{
 		.olm_name		= LFSCK_DIR,
 		.olm_flags		= OLF_SCAN_SUBITEMS | OLF_NOT_BACKUP,
@@ -692,17 +692,17 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_handle_dirent	= osd_ios_varfid_hd,
 	},
 
-	/* lfsck_bookmark */
+	
 	{
 		.olm_name		= LFSCK_BOOKMARK,
 	},
 
-	/* lfsck_layout */
+	
 	{
 		.olm_name		= LFSCK_LAYOUT,
 	},
 
-	/* lfsck_namespace */
+	
 	{
 		.olm_name		= LFSCK_NAMESPACE,
 	},
@@ -712,7 +712,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 	 * for more details.
 	 */
 
-	/* update_log */
+	
 	{
 		.olm_name		= "update_log",
 		.olm_fid		= {
@@ -721,7 +721,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_flags		= OLF_IDX_IN_FID,
 	},
 
-	/* update_log_dir */
+	
 	{
 		.olm_name		= "update_log_dir",
 		.olm_fid	= {
@@ -732,17 +732,17 @@ static const struct osd_lf_map osd_lf_maps[] = {
 		.olm_handle_dirent	= osd_ios_uld_hd,
 	},
 
-	/* hsm_actions */
+	
 	{
 		.olm_name		= HSM_ACTIONS,
 	},
 
-	/* nodemap */
+	
 	{
 		.olm_name		= LUSTRE_NODEMAP_NAME,
 	},
 
-	/* index_backup */
+	
 	{
 		.olm_name		= INDEX_BACKUP_DIR,
 		.olm_fid		= {
@@ -759,9 +759,9 @@ static const struct osd_lf_map osd_lf_maps[] = {
 	}
 };
 
-/* Add the new introduced files under .lustre/ in the list in the future. */
+
 static const struct osd_lf_map osd_dl_maps[] = {
-	/* .lustre/fid */
+	
 	{
 		.olm_name		= "fid",
 		.olm_fid		= {
@@ -770,7 +770,7 @@ static const struct osd_lf_map osd_dl_maps[] = {
 		},
 	},
 
-	/* .lustre/lost+found */
+	
 	{
 		.olm_name		= "lost+found",
 		.olm_fid		= {
@@ -876,7 +876,7 @@ static void osd_ios_index_register(const struct lu_env *env,
 	zap_cursor_init_serialized(zc, osd->od_os, oid, 0);
 	rc = -zap_cursor_retrieve(zc, za);
 	if (rc)
-		/* Skip empty index object */
+		
 		GOTO(fini, rc = (rc == -ENOENT ? 1 : rc));
 
 	if (zc->zc_zap->zap_ismicro ||
@@ -1021,7 +1021,7 @@ static int osd_ios_scan_one(const struct lu_env *env, struct osd_device *dev,
 
 	if (rc == -ENODATA) {
 		if (!fid) {
-			/* Skip the object without FID-in-LMA */
+			
 			CDEBUG(D_LFSCK, "%s: %llu has no FID-in-LMA, skip it\n",
 			       osd_name(dev), oid);
 
@@ -1091,11 +1091,11 @@ static int osd_ios_uld_hd(const struct lu_env *env, struct osd_device *dev,
 	int rc;
 
 	ENTRY;
-	/* skip any non-DFID format name */
+	
 	if (name[0] != '[')
 		RETURN(0);
 
-	/* skip the start '[' */
+	
 	sscanf(&name[1], SFID, RFID(&tfid));
 	if (fid_is_sane(&tfid))
 		rc = osd_ios_scan_one(env, dev, &tfid, parent, oid, name, 0);
@@ -1133,7 +1133,7 @@ static int osd_ios_general_sd(const struct lu_env *env, struct osd_device *dev,
 		if (rc)
 			GOTO(log, rc = (rc == -ENOENT ? 0 : rc));
 
-		/* skip the entry started with '.' */
+		
 		if (likely(za->za_name[0] != '.')) {
 			rc = osd_zap_lookup(dev, parent, NULL, za->za_name,
 					za->za_integer_length,
@@ -1212,7 +1212,7 @@ static int osd_ios_ROOT_sd(const struct lu_env *env, struct osd_device *dev,
 				CWARN("%s: initial OI scrub failed to find the entry %s under .lustre: rc = %d\n",
 				      osd_name(dev), map->olm_name, rc);
 			else if (!fid_is_zero(&map->olm_fid))
-				/* Try to remove the stale OI mapping. */
+				
 				osd_scrub_refresh_mapping(env, dev,
 						&map->olm_fid, 0,
 						DTO_INDEX_DELETE, true,
@@ -1246,7 +1246,7 @@ static void osd_initial_OI_scrub(const struct lu_env *env,
 				CWARN("%s: initial OI scrub failed to find the entry %s: rc = %d\n",
 				      osd_name(dev), map->olm_name, rc);
 			else if (!fid_is_zero(&map->olm_fid))
-				/* Try to remove the stale OI mapping. */
+				
 				osd_scrub_refresh_mapping(env, dev,
 						&map->olm_fid, 0,
 						DTO_INDEX_DELETE, true,
@@ -1302,7 +1302,7 @@ static void osd_initial_OI_scrub(const struct lu_env *env,
 	EXIT;
 }
 
-/* OI scrub start/stop */
+
 
 int osd_scrub_start(const struct lu_env *env, struct osd_device *dev,
 		    __u32 flags)
@@ -1313,7 +1313,7 @@ int osd_scrub_start(const struct lu_env *env, struct osd_device *dev,
 	if (dev->od_dt_dev.dd_rdonly)
 		RETURN(-EROFS);
 
-	/* od_otable_sem: prevent concurrent start/stop */
+	
 	down(&dev->od_otable_sem);
 	rc = scrub_start(osd_scrub_main, &dev->od_scrub, dev, flags);
 	up(&dev->od_otable_sem);
@@ -1326,7 +1326,7 @@ void osd_scrub_stop(struct osd_device *dev)
 	struct lustre_scrub *scrub = &dev->od_scrub;
 
 	ENTRY;
-	/* od_otable_sem: prevent concurrent start/stop */
+	
 	down(&dev->od_otable_sem);
 	spin_lock(&scrub->os_lock);
 	scrub->os_paused = 1;
@@ -1337,7 +1337,7 @@ void osd_scrub_stop(struct osd_device *dev)
 	EXIT;
 }
 
-/* OI scrub setup/cleanup */
+
 
 static const char osd_scrub_name[] = "OI_scrub";
 
@@ -1427,7 +1427,7 @@ int osd_scrub_setup(const struct lu_env *env, struct osd_device *dev,
 			GOTO(cleanup_obj, rc);
 	}
 
-	/* Initialize OI files. */
+	
 	rc = osd_oi_init(env, dev, resetoi);
 	if (rc < 0)
 		GOTO(cleanup_obj, rc);
@@ -1476,7 +1476,7 @@ void osd_scrub_cleanup(const struct lu_env *env, struct osd_device *dev)
 		osd_oi_fini(env, dev);
 }
 
-/* object table based iteration APIs */
+
 
 static struct dt_it *osd_otable_it_init(const struct lu_env *env,
 				       struct dt_object *dt, __u32 attr)
@@ -1493,7 +1493,7 @@ static struct dt_it *osd_otable_it_init(const struct lu_env *env,
 	if (dev->od_dt_dev.dd_rdonly)
 		RETURN(ERR_PTR(-EROFS));
 
-	/* od_otable_sem: prevent concurrent init/fini */
+	
 	down(&dev->od_otable_sem);
 	if (dev->od_otable_it)
 		GOTO(out, it = ERR_PTR(-EALREADY));
@@ -1553,7 +1553,7 @@ static void osd_otable_it_fini(const struct lu_env *env, struct dt_it *di)
 	struct osd_otable_it *it = (struct osd_otable_it *)di;
 	struct osd_device *dev = it->ooi_dev;
 
-	/* od_otable_sem: prevent concurrent init/fini */
+	
 	down(&dev->od_otable_sem);
 	scrub_stop(&dev->od_scrub);
 	LASSERT(dev->od_otable_it == it);
@@ -1753,14 +1753,14 @@ static int osd_otable_it_load(const struct lu_env *env,
 	int rc;
 
 	ENTRY;
-	/* Forbid to set iteration position after iteration started. */
+	
 	if (it->ooi_user_ready)
 		RETURN(-EPERM);
 
 	if (hash > OSD_OTABLE_MAX_HASH)
 		hash = OSD_OTABLE_MAX_HASH;
 
-	/* The hash is the last checkpoint position, start from the next one. */
+	
 	it->ooi_pos = hash + 1;
 	it->ooi_prefetched = 0;
 	it->ooi_prefetched_dnode = 0;
@@ -1768,7 +1768,7 @@ static int osd_otable_it_load(const struct lu_env *env,
 	if (!scrub->os_full_speed)
 		wake_up_var(scrub);
 
-	/* Unplug OSD layer iteration by the first next() call. */
+	
 	rc = osd_otable_it_next(env, (struct dt_it *)it);
 
 	RETURN(rc);
@@ -1789,7 +1789,7 @@ const struct dt_index_operations osd_otable_ops = {
 	}
 };
 
-/* high priority inconsistent items list APIs */
+
 
 int osd_oii_insert(const struct lu_env *env, struct osd_device *dev,
 		   const struct lu_fid *fid, uint64_t oid, bool insert)

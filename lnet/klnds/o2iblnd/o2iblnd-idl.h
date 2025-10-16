@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Author: Eric Barton <eric@bartonsoftware.com>
  */
@@ -28,56 +28,56 @@ struct kib_connparams {
 } __packed;
 
 struct kib_immediate_msg {
-	struct lnet_hdr_nid4	ibim_hdr;	/* portals header */
-	char			ibim_payload[]; /* piggy-backed payload */
+	struct lnet_hdr_nid4	ibim_hdr;	
+	char			ibim_payload[]; 
 } __packed;
 
 struct kib_rdma_frag {
-	u32			rf_nob;		/* # bytes this frag */
-	u64			rf_addr;	/* CAVEAT EMPTOR: misaligned!! */
+	u32			rf_nob;		
+	u64			rf_addr;	
 } __packed;
 
 struct kib_rdma_desc {
-	u32			rd_key;		/* local/remote key */
-	u32			rd_nfrags;	/* # fragments */
-	struct kib_rdma_frag	rd_frags[];	/* buffer frags */
+	u32			rd_key;		
+	u32			rd_nfrags;	
+	struct kib_rdma_frag	rd_frags[];	
 } __packed;
 
 struct kib_putreq_msg {
-	struct lnet_hdr_nid4	ibprm_hdr;	/* portals header */
-	u64			ibprm_cookie;	/* opaque completion cookie */
+	struct lnet_hdr_nid4	ibprm_hdr;	
+	u64			ibprm_cookie;	
 } __packed;
 
 struct kib_putack_msg {
-	u64			ibpam_src_cookie;/* reflected completion cookie */
-	u64			ibpam_dst_cookie;/* opaque completion cookie */
-	struct kib_rdma_desc	ibpam_rd;	/* sender's sink buffer */
+	u64			ibpam_src_cookie;
+	u64			ibpam_dst_cookie;
+	struct kib_rdma_desc	ibpam_rd;	
 } __packed;
 
 struct kib_get_msg {
-	struct lnet_hdr_nid4	ibgm_hdr;	/* portals header */
-	u64			ibgm_cookie;	/* opaque completion cookie */
-	struct kib_rdma_desc	ibgm_rd;	/* rdma descriptor */
+	struct lnet_hdr_nid4	ibgm_hdr;	
+	u64			ibgm_cookie;	
+	struct kib_rdma_desc	ibgm_rd;	
 } __packed;
 
 struct kib_completion_msg {
-	u64			ibcm_cookie;	/* opaque completion cookie */
-	s32			ibcm_status;    /* < 0 failure: >= 0 length */
+	u64			ibcm_cookie;	
+	s32			ibcm_status;    
 } __packed;
 
 struct kib_msg {
-	/* First 2 fields fixed FOR ALL TIME */
-	u32			ibm_magic;	/* I'm an ibnal message */
-	u16			ibm_version;	/* this is my version number */
+	
+	u32			ibm_magic;	
+	u16			ibm_version;	
 
-	u8			ibm_type;	/* msg type */
-	u8			ibm_credits;	/* returned credits */
-	u32			ibm_nob;	/* # bytes in whole message */
-	u32			ibm_cksum;	/* checksum (0 == no checksum) */
-	u64			ibm_srcnid;	/* sender's NID */
-	u64			ibm_srcstamp;	/* sender's incarnation */
-	u64			ibm_dstnid;	/* destination's NID */
-	u64			ibm_dststamp;	/* destination's incarnation */
+	u8			ibm_type;	
+	u8			ibm_credits;	
+	u32			ibm_nob;	
+	u32			ibm_cksum;	
+	u64			ibm_srcnid;	
+	u64			ibm_srcstamp;	
+	u64			ibm_dstnid;	
+	u64			ibm_dststamp;	
 
 	union {
 		struct kib_connparams		connparams;
@@ -89,47 +89,47 @@ struct kib_msg {
 	} __packed ibm_u;
 } __packed;
 
-#define IBLND_MSG_MAGIC LNET_PROTO_IB_MAGIC     /* unique magic */
+#define IBLND_MSG_MAGIC LNET_PROTO_IB_MAGIC     
 
 #define IBLND_MSG_VERSION_1	0x11
 #define IBLND_MSG_VERSION_2	0x12
 #define IBLND_MSG_VERSION	IBLND_MSG_VERSION_2
 
-#define IBLND_MSG_CONNREQ	0xc0	/* connection request */
-#define IBLND_MSG_CONNACK	0xc1	/* connection acknowledge */
-#define IBLND_MSG_NOOP		0xd0	/* nothing (just credits) */
-#define IBLND_MSG_IMMEDIATE	0xd1	/* immediate */
-#define IBLND_MSG_PUT_REQ	0xd2	/* putreq (src->sink) */
-#define IBLND_MSG_PUT_NAK	0xd3	/* completion (sink->src) */
-#define IBLND_MSG_PUT_ACK	0xd4	/* putack (sink->src) */
-#define IBLND_MSG_PUT_DONE	0xd5	/* completion (src->sink) */
-#define IBLND_MSG_GET_REQ	0xd6	/* getreq (sink->src) */
-#define IBLND_MSG_GET_DONE	0xd7	/* completion (src->sink: all OK) */
+#define IBLND_MSG_CONNREQ	0xc0	
+#define IBLND_MSG_CONNACK	0xc1	
+#define IBLND_MSG_NOOP		0xd0	
+#define IBLND_MSG_IMMEDIATE	0xd1	
+#define IBLND_MSG_PUT_REQ	0xd2	
+#define IBLND_MSG_PUT_NAK	0xd3	
+#define IBLND_MSG_PUT_ACK	0xd4	
+#define IBLND_MSG_PUT_DONE	0xd5	
+#define IBLND_MSG_GET_REQ	0xd6	
+#define IBLND_MSG_GET_DONE	0xd7	
 
 struct kib_rej {
-	u32			ibr_magic;	/* sender's magic */
-	u16			ibr_version;	/* sender's version */
-	u8			ibr_why;	/* reject reason */
-	u8			ibr_padding;	/* padding */
-	u64			ibr_incarnation;/* incarnation of peer_ni */
-	struct kib_connparams	ibr_cp;		/* connection parameters */
+	u32			ibr_magic;	
+	u16			ibr_version;	
+	u8			ibr_why;	
+	u8			ibr_padding;	
+	u64			ibr_incarnation;
+	struct kib_connparams	ibr_cp;		
 } __packed;
 
-/* connection rejection reasons */
-#define IBLND_REJECT_CONN_RACE       1          /* You lost connection race */
-#define IBLND_REJECT_NO_RESOURCES    2          /* Out of memory/conns etc */
-#define IBLND_REJECT_FATAL           3          /* Anything else */
 
-#define IBLND_REJECT_CONN_UNCOMPAT   4          /* incompatible version peer_ni */
-#define IBLND_REJECT_CONN_STALE      5          /* stale peer_ni */
+#define IBLND_REJECT_CONN_RACE       1          
+#define IBLND_REJECT_NO_RESOURCES    2          
+#define IBLND_REJECT_FATAL           3          
 
-/* peer_ni's rdma frags doesn't match mine */
+#define IBLND_REJECT_CONN_UNCOMPAT   4          
+#define IBLND_REJECT_CONN_STALE      5          
+
+
 #define IBLND_REJECT_RDMA_FRAGS      6
-/* peer_ni's msg queue size doesn't match mine */
+
 #define IBLND_REJECT_MSG_QUEUE_SIZE  7
 #define IBLND_REJECT_INVALID_SRV_ID  8
-#define IBLND_REJECT_EARLY	     9		/* NI not initialized yet */
+#define IBLND_REJECT_EARLY	     9		
 
-/***********************************************************************/
 
-#endif /* __LNET_O2IBLND_IDL_H__ */
+
+#endif 

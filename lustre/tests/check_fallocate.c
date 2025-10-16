@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright (C) 2014, DataDirect Networks, Inc.
@@ -29,7 +29,7 @@
 #define WRITE_BLOCKS	10
 #define HOLE_BLOCKS	10
 
-/* global */
+
 loff_t	blksize;
 
 static void usage(char *prog)
@@ -92,7 +92,7 @@ static int post_fallocate_checks(int fd, int mode, loff_t offset, loff_t len,
 	struct stat st;
 	int rc = 0;
 
-	/* check the new size */
+	
 	rc = get_stat(fd, &st);
 	if (rc != 0)
 		goto out;
@@ -165,7 +165,7 @@ static int test_prealloc_nonsparse(int fd)
 	if (rc != 0)
 		goto out;
 
-	/* test default mode */
+	
 	mode = 0;
 	offset = lseek(fd, 0, SEEK_END);
 	expected_new_size = WRITE_BLOCKS * blksize + blksize;
@@ -196,7 +196,7 @@ static int test_prealloc_sparse(int fd)
 	if (rc != 0)
 		goto out;
 
-	/* test default mode */
+	
 	mode = 0;
 	offset = lseek(fd, (WRITE_BLOCKS + HOLE_BLOCKS / 2) * blksize,
 		       SEEK_SET);

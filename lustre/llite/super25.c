@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,12 +8,12 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LLITE
 
-#define D_MOUNT (D_SUPER | D_CONFIG/*|D_WARNING */)
+#define D_MOUNT (D_SUPER | D_CONFIG)
 
 #include <linux/module.h>
 #include <linux/types.h>
@@ -96,7 +96,7 @@ static int ll_show_devname(struct seq_file *m, struct dentry *root)
 	return 0;
 }
 
-/* exported operations */
+
 const struct super_operations lustre_super_operations = {
 	.alloc_inode   = ll_alloc_inode,
 	.destroy_inode = ll_destroy_inode,
@@ -154,7 +154,7 @@ static int lustre_fill_super(struct super_block *sb, void *lmd2_data,
 	 */
 	obd_zombie_barrier();
 
-	/* Figure out the lmd from the mount options */
+	
 	if (lmd_parse(lmd2_data, lmd)) {
 		lustre_put_lsi(sb);
 		GOTO(out, rc = -EINVAL);
@@ -185,7 +185,7 @@ static int lustre_fill_super(struct super_block *sb, void *lmd2_data,
 		lustre_common_put_super(sb);
 		GOTO(out, rc);
 	}
-	/* Connect and start */
+	
 	rc = ll_fill_super(sb);
 	/* ll_file_super will call lustre_common_put_super on failure,
 	 * which takes care of the module reference.
@@ -205,7 +205,7 @@ out:
 	return rc;
 }
 
-/***************** FS registration ******************/
+
 static struct dentry *lustre_mount(struct file_system_type *fs_type, int flags,
 				   const char *devname, void *data)
 {
@@ -222,7 +222,7 @@ static void lustre_kill_super(struct super_block *sb)
 	kill_anon_super(sb);
 }
 
-/* Register the "lustre" fs type */
+
 static struct file_system_type lustre_fs_type = {
 	.owner		= THIS_MODULE,
 	.name		= "lustre",
@@ -344,7 +344,7 @@ static void __exit lustre_exit(void)
 	kmem_cache_destroy(quota_iter_slab);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Client File System");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

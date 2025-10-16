@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2014, Intel Corporation.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Network Request Scheduler (NRS) Object-based Round Robin and Target-based
  * Round Robin (ORR and TRR) policies
@@ -66,9 +66,9 @@ enum nrs_orr_supp {
  */
 struct nrs_orr_key {
 	union {
-		/** object FID for ORR */
+		
 		struct lu_fid	ok_fid;
-		/** OST index for TRR */
+		
 		__u32		ok_idx;
 	};
 };
@@ -213,5 +213,5 @@ struct nrs_orr_req {
 	unsigned int			or_physical_set:1;
 };
 
-/** @} ORR/TRR */
+
 #endif

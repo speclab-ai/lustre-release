@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTRE_COMPAT_H
@@ -108,7 +108,7 @@ static inline struct bio *cfs_bio_alloc(struct block_device *bdev,
 		bio_set_dev(bio, bdev);
 		bio->bi_opf = op;
 	}
-#endif /* HAVE_BIO_ALLOC_WITH_BDEV */
+#endif 
 	return bio;
 }
 
@@ -170,11 +170,11 @@ static inline int ll_vfs_getattr(struct path *path, struct kstat *st,
 	int rc;
 
 #if defined(HAVE_USER_NAMESPACE_ARG) || defined(HAVE_INODEOPS_ENHANCED_GETATTR)
-#ifdef AT_GETATTR_NOSEC /* added in v6.7-rc1-1-g8a924db2d7b5 */
+#ifdef AT_GETATTR_NOSEC 
 	if (flags & AT_GETATTR_NOSEC)
 		rc = vfs_getattr_nosec(path, st, request_mask, flags);
 	else
-#endif /* AT_GETATTR_NOSEC */
+#endif 
 	rc = vfs_getattr(path, st, request_mask, flags);
 #else
 	rc = vfs_getattr(path, st);
@@ -248,7 +248,7 @@ static inline int __must_check PTR_ERR_OR_ZERO(__force const void *ptr)
 #define ll_setxattr     generic_setxattr
 #define ll_getxattr     generic_getxattr
 #define ll_removexattr  generic_removexattr
-#endif /* HAVE_IOP_XATTR */
+#endif 
 
 #ifndef HAVE_POSIX_ACL_VALID_USER_NS
 #define posix_acl_valid(a, b)		posix_acl_valid(b)
@@ -276,7 +276,7 @@ static inline int posix_acl_update_mode(struct inode *inode, umode_t *mode_p,
 	*mode_p = mode;
 	return 0;
 }
-#endif /* HAVE_POSIX_ACL_UPDATE_MODE */
+#endif 
 #endif
 #endif
 
@@ -365,9 +365,9 @@ static inline struct timespec current_time(struct inode *inode)
 
 #endif
 
-/* kernel version less than 4.2, smp_store_mb is not defined, use set_mb */
+
 #ifndef smp_store_mb
-#define smp_store_mb(var, value) set_mb(var, value) /* set full mem barrier */
+#define smp_store_mb(var, value) set_mb(var, value) 
 #endif
 
 #ifndef HAVE_IN_COMPAT_SYSCALL
@@ -447,22 +447,22 @@ static inline int ll_vfs_removexattr(struct dentry *dentry, struct inode *inode,
 #endif
 }
 
-/* until v3.19-rc5-3-gb4caecd48005 */
+
 #ifndef BDI_CAP_MAP_COPY
 #define BDI_CAP_MAP_COPY		0
 #endif
 
-/* from v4.1-rc2-56-g89e9b9e07a39, until v5.9-rc3-161-gf56753ac2a90 */
+
 #ifndef BDI_CAP_CGROUP_WRITEBACK
 #define BDI_CAP_CGROUP_WRITEBACK	0
 #endif
 
-/* from v5.9-rc3-161-gf56753ac2a90 */
+
 #ifndef BDI_CAP_WRITEBACK
 #define BDI_CAP_WRITEBACK		0
 #endif
 
-/* from v5.9-rc3-161-gf56753ac2a90 */
+
 #ifndef BDI_CAP_WRITEBACK_ACCT
 #define BDI_CAP_WRITEBACK_ACCT		0
 #endif
@@ -471,15 +471,15 @@ static inline int ll_vfs_removexattr(struct dentry *dentry, struct inode *inode,
 				 BDI_CAP_WRITEBACK | BDI_CAP_WRITEBACK_ACCT)
 
 #ifndef FALLOC_FL_COLLAPSE_RANGE
-#define FALLOC_FL_COLLAPSE_RANGE 0x08 /* remove a range of a file */
+#define FALLOC_FL_COLLAPSE_RANGE 0x08 
 #endif
 
 #ifndef FALLOC_FL_ZERO_RANGE
-#define FALLOC_FL_ZERO_RANGE 0x10 /* convert range to zeros */
+#define FALLOC_FL_ZERO_RANGE 0x10 
 #endif
 
 #ifndef FALLOC_FL_INSERT_RANGE
-#define FALLOC_FL_INSERT_RANGE 0x20 /* insert space within file */
+#define FALLOC_FL_INSERT_RANGE 0x20 
 #endif
 
 #ifndef raw_cpu_ptr
@@ -506,7 +506,7 @@ static inline ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i,
 {
 	ssize_t result = 0;
 
-	/* iov_iter_get_pages_alloc is non advancing version of alloc2 */
+	
 	result = iov_iter_get_pages_alloc(i, pages, maxsize, start);
 	if (result > 0 && user_backed_iter(i))
 		iov_iter_advance(i, result);
@@ -531,22 +531,22 @@ static inline const char *shrinker_debugfs_path(struct shrinker *shrinker)
  #else
 	struct ll_shrinker *s = shrinker->private_data;
  #endif
-#else /* !CONFIG_SHRINKER_DEBUG */
+#else 
 	struct shrinker *s = shrinker;
-#endif /* CONFIG_SHRINKER_DEBUG */
+#endif 
 
 	return s->debugfs_entry->d_name.name;
 }
 
 #ifndef fallthrough
 # if defined(__GNUC__) && __GNUC__ >= 7
-#  define fallthrough  __attribute__((fallthrough)) /* fallthrough */
+#  define fallthrough  __attribute__((fallthrough)) 
 # else
-#  define fallthrough do {} while (0)  /* fallthrough */
+#  define fallthrough do {} while (0)  
 # endif
 #endif
 
-#ifdef VERIFY_WRITE /* removed in kernel commit v4.20-10979-g96d4f267e40f */
+#ifdef VERIFY_WRITE 
 #define ll_access_ok(ptr, len) access_ok(VERIFY_WRITE, ptr, len)
 #else
 #define ll_access_ok(ptr, len) access_ok(ptr, len)
@@ -558,7 +558,7 @@ static inline const char *shrinker_debugfs_path(struct shrinker *shrinker)
 
 #ifdef HAVE_SEC_RELEASE_SECCTX_1ARG
 #ifndef HAVE_LSMCONTEXT_INIT
-/* Ubuntu 5.19 */
+
 static inline void lsmcontext_init(struct lsm_context *cp, char *context,
 				   u32 size, int slot)
 {
@@ -668,12 +668,12 @@ static inline struct page *ll_read_cache_page(struct address_space *mapping,
 #ifdef HAVE_READ_CACHE_PAGE_WANTS_FILE
 	struct file dummy_file;
 
-	dummy_file.f_ra.ra_pages = 32; /* unused, modified on ra error */
+	dummy_file.f_ra.ra_pages = 32; 
 	dummy_file.private_data = data;
 	return read_cache_page(mapping, index, filler, &dummy_file);
 #else
 	return read_cache_page(mapping, index, filler, data);
-#endif /* HAVE_READ_CACHE_PAGE_WANTS_FILE */
+#endif 
 }
 
 #if defined(HAVE_FOLIO_BATCH) && defined(HAVE_FILEMAP_GET_FOLIOS)
@@ -690,7 +690,7 @@ static inline void folio_batch_reinit(struct folio_batch *fbatch)
 {
 	fbatch->nr = 0;
 }
-# endif /* HAVE_FOLIO_BATCH_REINIT */
+# endif 
 
 static inline pgoff_t folio_index_page(struct page *page)
 {
@@ -699,7 +699,7 @@ static inline pgoff_t folio_index_page(struct page *page)
 	return _f->index + folio_page_idx(_f, page);
 }
 
-#else /* !HAVE_FOLIO_BATCH && !HAVE_FILEMAP_GET_FOLIOS */
+#else 
 
 # ifdef HAVE_PAGEVEC
 #  define folio_batch			pagevec
@@ -729,7 +729,7 @@ static inline pgoff_t folio_index_page(struct page *page)
 # define fbatch_at_pg(pvec, n, pg)	((pvec)->pages[(n)])
 # define folio_index_page(pg)		((pg)->index)
 
-#endif /* HAVE_FOLIO_BATCH && HAVE_FILEMAP_GET_FOLIOS */
+#endif 
 
 #ifndef HAVE_FLUSH___WORKQUEUE
 #define __flush_workqueue(wq)	flush_scheduled_work()
@@ -755,7 +755,7 @@ static inline struct timespec64 inode_set_ctime(struct inode *inode,
 
 	return inode_set_ctime_to_ts(inode, ts);
 }
-#endif /* !HAVE_INODE_GET_CTIME */
+#endif 
 
 #ifndef HAVE_INODE_GET_MTIME_SEC
 
@@ -784,10 +784,10 @@ static inline struct timespec64 inode_set_mtime(struct inode *inode,
 				 .tv_nsec = nsec };
 	return inode_set_mtime_to_ts(inode, ts);
 }
-#endif  /* !HAVE_INODE_GET_MTIME_SEC */
+#endif  
 
 #ifdef HAVE_WRITE_BEGIN_FOLIO
-/* .write_begin is passed **folio which is put with .write_end *folio */
+
 #define wbe_folio			folio
 #define wbe_page_folio(page)		page_folio((page))
 static inline struct page *wbe_folio_page(struct folio *folio)
@@ -796,7 +796,7 @@ static inline struct page *wbe_folio_page(struct folio *folio)
 	return folio_page(folio, 0);
 }
 #else
-/* .write_begin is passed **page which is put with .write_end *page */
+
 #define wbe_folio			page
 #define wbe_page_folio(page)		(page)
 #define wbe_folio_page(page)		(page)
@@ -824,14 +824,14 @@ static inline int folio_mapcount_page(struct page *page)
 
 	return mapcount;
 }
-#else /* !HAVE_FOLIO_MAPCOUNT */
+#else 
 #define folio_mapcount_page(pg)			page_mapcount((pg))
-#endif /* HAVE_FOLIO_MAPCOUNT */
+#endif 
 
 #ifdef HAVE_RADIX_TREE_REPLACE_SLOT_3ARGS
 # define radix_tree_rcu	__rcu
-#else /* !HAVE_RADIX_TREE_REPLACE_SLOT_3ARGS */
+#else 
 # define radix_tree_rcu
-#endif /* HAVE_RADIX_TREE_REPLACE_SLOT_3ARGS */
+#endif 
 
-#endif /* _LUSTRE_COMPAT_H */
+#endif 

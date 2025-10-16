@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre user identity mapping.
  *
@@ -62,7 +62,7 @@ void lustre_groups_from_list(struct group_info *ginfo, gid_t *glist)
 	int i;
 	int count = ginfo->ngroups;
 
-	/* fill group_info from gid array */
+	
 	for (i = 0; i < ginfo->nblocks && count > 0; i++) {
 		int cp_count = min(CFS_NGROUPS_PER_BLOCK, count);
 		int off = i * CFS_NGROUPS_PER_BLOCK;
@@ -83,7 +83,7 @@ void lustre_list_from_groups(gid_t *glist, struct group_info *ginfo)
 	int i;
 	int count = ginfo->ngroups;
 
-	/* fill in gid array from group_info */
+	
 	for (i = 0; i < ginfo->nblocks && count > 0; i++) {
 		int cp_count = min(CFS_NGROUPS_PER_BLOCK, count);
 		int off = i * CFS_NGROUPS_PER_BLOCK;
@@ -96,15 +96,15 @@ void lustre_list_from_groups(gid_t *glist, struct group_info *ginfo)
 }
 EXPORT_SYMBOL(lustre_list_from_groups);
 
-/* groups_sort() is copied from linux kernel! */
-/* a simple shell-metzner sort */
+
+
 void lustre_groups_sort(struct group_info *group_info)
 {
 	int base, max, stride;
 	int gidsetsize = group_info->ngroups;
 
 	for (stride = 1; stride < gidsetsize; stride = 3 * stride + 1)
-		; /* nothing */
+		; 
 	stride /= 3;
 
 	while (stride) {

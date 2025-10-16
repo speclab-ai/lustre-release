@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * cl code used by vvp (and other Lustre clients in the future).
  */
@@ -94,7 +94,7 @@ int cl_ocd_update(struct obd_device *host, struct obd_device *watched,
 		       lco->lco_flags, flags);
 		mutex_lock(&lco->lco_lock);
 		lco->lco_flags &= flags;
-		/* for each osc event update ea size */
+		
 		if (lco->lco_dt_exp)
 			cl_init_ea_size(lco->lco_md_exp, lco->lco_dt_exp);
 
@@ -136,7 +136,7 @@ int cl_get_grouplock(struct cl_object *obj, unsigned long gid, int nonblock,
 	if (rc != 0) {
 		cl_io_fini(env, io);
 		cl_env_put(env, &refcheck);
-		/* Does not make sense to take GL for released layout */
+		
 		if (rc > 0)
 			rc = -EOPNOTSUPP;
 		return rc;

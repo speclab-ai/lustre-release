@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
+
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _OBDCTL_H_
@@ -18,7 +18,7 @@
 
 #define PATH_FORMAT "/etc/lustre/mount.%s.params"
 
-/* ptlctl.a */
+
 int ptl_initialize(int argc, char **argv);
 int jt_ptl_network(int argc, char **argv);
 int jt_ptl_list_nids(int argc, char **argv);
@@ -49,7 +49,7 @@ int jt_ptl_delay_del(int argc, char **argv);
 int jt_ptl_delay_reset(int argc, char **argv);
 int jt_ptl_delay_list(int argc, char **argv);
 
-/* debug.c */
+
 int dbg_initialize(int argc, char **argv);
 int jt_dbg_filter(int argc, char **argv);
 int jt_dbg_show(int argc, char **argv);
@@ -61,7 +61,7 @@ int jt_dbg_clear_debug_buf(int argc, char **argv);
 int jt_dbg_mark_debug_buf(int argc, char **argv);
 int jt_dbg_modules(int argc, char **argv);
 
-/* obd.c */
+
 int do_disconnect(char *func, int verbose);
 int obd_initialize(int argc, char **argv);
 void obd_finalize(int argc, char **argv);
@@ -119,7 +119,7 @@ int lcfg_mgs_ioctl(const char *func, int dev_id, struct lustre_cfg *lcfg);
 int parse_devname(char *func, char *name, int dev_id);
 const char *jt_cmdname(const char *func);
 
-/* lustre_param.c */
+
 struct param_opts;
 struct param;
 struct param_dir;
@@ -130,7 +130,7 @@ int jt_lcfg_listparam(int argc, char **argv);
 int jt_lcfg_setparam_client(int argc, char **argv, struct param_opts *popt);
 int jt_lctl_findparam(int argc, char **argv);
 
-/* lustre_cfg.c */
+
 int lcfg_set_devname(char *name);
 char *lcfg_get_devname(void);
 int jt_lcfg_device(int argc, char **argv);
@@ -162,7 +162,7 @@ int jt_snapshot_modify(int argc, char **argv);
 int jt_snapshot_list(int argc, char **argv);
 int jt_snapshot_mount(int argc, char **argv);
 int jt_snapshot_umount(int argc, char **argv);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 int jt_nodemap_activate(int argc, char **argv);
 int jt_nodemap_add(int argc, char **argv);
 int jt_nodemap_del(int argc, char **argv);
@@ -192,10 +192,10 @@ int jt_pcc_clear(int argc, char **argv);
 int jt_pcc_list(int argc, char **argv);
 
 #ifdef HAVE_SERVER_SUPPORT
-/* lustre_lfsck.c */
+
 int jt_lfsck_start(int argc, char **argv);
 int jt_lfsck_stop(int argc, char **argv);
 int jt_lfsck_query(int argc, char **argv);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 #endif

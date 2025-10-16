@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * There are two APIs:
  *  1. APIs that take the actual parameters expanded.  This is for other
@@ -369,7 +369,7 @@ int lustre_lnet_parse_interfaces(char *intf_str,
 			}
 		}
 
-		/* Extract net id if its a NID string */
+		
 		net = strchr(cur, '@');
 		if (net)
 			nw_descr->nw_id = libcfs_str2net(net + 1);
@@ -498,7 +498,7 @@ int yaml_lnet_configure(int flags, const char **msg)
 	struct nl_sock *sk;
 	int rc;
 
-	/* Initialize configuration parser */
+	
 	rc = yaml_parser_initialize(&setup);
 	if (rc == 0) {
 		yaml_parser_log_error(&setup, stderr, err);
@@ -516,14 +516,14 @@ int yaml_lnet_configure(int flags, const char **msg)
 	}
 	yaml_parser_delete(&setup);
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk) {
 		yaml_document_delete(&results);
 		return -EOPNOTSUPP;
 	}
 
-	/* Setup parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		yaml_document_delete(&results);
@@ -539,7 +539,7 @@ int yaml_lnet_configure(int flags, const char **msg)
 	rc = yaml_emitter_set_output_netlink(&request, sk, LNET_GENL_NAME,
 					     LNET_GENL_VERSION,
 					     LNET_CMD_CONFIGURE, flags);
-	if (rc == 1) /* 1 is success */
+	if (rc == 1) 
 		rc = yaml_emitter_dump(&request, &results);
 	if (rc == 0) {
 		yaml_emitter_log_error(&request, stderr);
@@ -671,12 +671,12 @@ int yaml_lnet_fault_rule(yaml_document_t *results, __u32 opc, char *src,
 		return rc;
 
 skip_options:
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -885,7 +885,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 	if (data == NULL)
 		goto out;
 
-	/* create struct cYAML root object */
+	
 	root = cYAML_create_object(NULL, NULL);
 	if (root == NULL)
 		goto out;
@@ -909,7 +909,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 		src = LNET_NID_ANY;
 	}
 
-	/* tokenise each nid in string ping_nids */
+	
 	token = strtok(ping_nids, ",");
 
 	do {
@@ -920,7 +920,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 		if (first_seq == NULL)
 			first_seq = item;
 
-		/* check if '-' is a part of NID, token */
+		
 		if (token != NULL)
 			sep = strchr(token, '-');
 		else
@@ -952,7 +952,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 			else
 				id.pid = strtoul(token, &end, 0);
 
-			/* assuming '-' is part of hostname */
+			
 			if (end != sep) {
 				id.pid = LNET_PID_ANY;
 				id.nid = libcfs_str2nid(token);
@@ -1180,7 +1180,7 @@ replace_sep(char *str, char sep, char newsep)
 	if (!str)
 		return;
 	for (i = 0; i < strlen(str); i++) {
-		/* don't replace ',' within [] */
+		
 		if (str[i] == '[')
 			bracket++;
 		else if (str[i] == ']')
@@ -1388,7 +1388,7 @@ int lustre_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 		}
 
 	} else {
-		/* show all routes without filtering on net */
+		
 		net = LNET_NET_ANY;
 	}
 
@@ -1402,7 +1402,7 @@ int lustre_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 			goto out;
 		}
 	} else
-		/* show all routes with out filtering on gateway */
+		
 		gateway_nid = LNET_NID_ANY;
 
 	if ((hops < 1 && hops != -1) || hops > 255) {
@@ -1414,7 +1414,7 @@ int lustre_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 		goto out;
 	}
 
-	/* create struct cYAML root object */
+	
 	root = cYAML_create_object(NULL, NULL);
 	if (root == NULL)
 		goto out;
@@ -1436,7 +1436,7 @@ int lustre_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 			break;
 		}
 
-		/* filter on provided data */
+		
 		if (net != LNET_NET_ANY &&
 		    net != data.cfg_net)
 			continue;
@@ -1453,7 +1453,7 @@ int lustre_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 		    prio != data.cfg_config_u.cfg_route.rtr_priority)
 			continue;
 
-		/* default rc to -1 incase we hit the goto */
+		
 		rc = -1;
 		exist = true;
 
@@ -1503,7 +1503,7 @@ int lustre_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 		}
 	}
 
-	/* print output iff show_rc is not provided */
+	
 	if (show_rc == NULL)
 		cYAML_print_tree(root);
 
@@ -1701,13 +1701,13 @@ static int lustre_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 		goto out;
 	}
 
-	/* look at the other interfaces */
+	
 	list_for_each_entry(intf, &nw->nw_intflist, intf_on_network) {
 		if (LNET_NETTYP(nw->nw_id) == EFALND) {
 			(*nids)[i] = LNET_MKNID(nw->nw_id, LNET_ADDR_ANY);
 			i++;
 		} else if (LNET_NETTYP(nw->nw_id) == PTL4LND) {
-			/* handle LNDs with numeric interface name */
+			
 			num = strtoul(intf->intf_name, &endp, 0);
 			if (endp == intf->intf_name || *endp != '\0') {
 				rc = LUSTRE_CFG_RC_BAD_PARAM;
@@ -1719,7 +1719,7 @@ static int lustre_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 			(*nids)[i] = LNET_MKNID(nw->nw_id, num);
 			i++;
 		} else {
-			/* handle LNDs with ip interface name */
+			
 			rc = lustre_lnet_queryip(intf, &ip);
 			if (rc != LUSTRE_CFG_RC_NO_ERR) {
 				snprintf(err_str, str_len,
@@ -1892,7 +1892,7 @@ static int lustre_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 		}
 
 		if (!rc) {
-			/* no match for this interface */
+			
 			list_del(&intf_descr->intf_on_network);
 			free_intf_descr(intf_descr);
 		}
@@ -1982,7 +1982,7 @@ static int unroll_nid_range_scan(struct nid_node *list, const char *nid,
 				return -E2BIG;
 			num[off++] = *range++;
 		} else if (*range == ':') {
-			/* skip ':' for IPv6 and IB GUID */
+			
 			range++;
 		} else if (*range == '-') {
 			range++;
@@ -2002,7 +2002,7 @@ static int unroll_nid_range_scan(struct nid_node *list, const char *nid,
 				return -ERANGE;
 			}
 
-			/* Don't lose last number. This should be the very last item */
+			
 			if (strlen(num)) {
 				last = strtoul(num, NULL, base);
 				memset(num, 0, sizeof(num));
@@ -2061,7 +2061,7 @@ static int unroll_nid_range_scan(struct nid_node *list, const char *nid,
 					}
 					first += inc;
 				}
-				/* reset slash / hyphen handing */
+				
 				hyphen = false;
 				slash = false;
 				inc = 1;
@@ -2810,7 +2810,7 @@ create_local_udsp_info(struct lnet_ioctl_construct_udsp_info *udsp_info,
 	struct cYAML *pref;
 	int i;
 
-	/* add the UDSP info */
+	
 	udsp_net = cYAML_create_object(net_node, "udsp info");
 	if (!udsp_net)
 		return LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -2855,7 +2855,7 @@ create_remote_udsp_info(struct lnet_ioctl_construct_udsp_info *udsp_info,
 	struct cYAML *pref;
 	int i;
 
-	/* add the UDSP info */
+	
 	udsp_nid = cYAML_create_object(nid_node, "udsp info");
 	if (!udsp_nid)
 		return LUSTRE_CFG_RC_OUT_OF_MEM;
@@ -2982,16 +2982,16 @@ int lustre_lnet_show_net(char *nw, int detail, int seq_no,
 
 		rc_net = LNET_NIDNET(ni_data->lic_nid);
 
-		/* filter on provided data */
+		
 		if (net != LNET_NET_ANY &&
 		    net != rc_net)
 			continue;
 
-		/* if we're backing up don't store lo */
+		
 		if (backup && LNET_NETTYP(rc_net) == LOLND)
 			continue;
 
-		/* default rc to -1 in case we hit the goto */
+		
 		rc = -1;
 		exist = true;
 
@@ -3019,7 +3019,7 @@ int lustre_lnet_show_net(char *nw, int detail, int seq_no,
 			new_net = false;
 		}
 
-		/* create the tree to be printed. */
+		
 		item = cYAML_create_seq_item(tmp);
 		if (item == NULL)
 			goto out;
@@ -3132,7 +3132,7 @@ continue_without_udsp_info:
 
 			LIBCFS_IOC_INIT_V2(hstats, hlni_hdr);
 			hstats.hlni_nid = ni_data->lic_nid;
-			/* grab health stats */
+			
 			rc = l_ioctl(LNET_DEV_ID,
 				     IOC_LIBCFS_GET_LOCAL_HSTATS,
 				     &hstats);
@@ -3212,7 +3212,7 @@ continue_without_msg_stats:
 						ni_data->lic_dev_cpt) == NULL)
 				goto out;
 
-			/* out put the CPTs in the format: "[x,x,x,...]" */
+			
 			pos = str_buf;
 			limit = str_buf + str_buf_len - 3;
 			pos += scnprintf(pos, limit - pos, "\"[");
@@ -3233,7 +3233,7 @@ continue_without_msg_stats:
 		}
 	}
 
-	/* Print out the net information only if show_rc is not provided */
+	
 	if (show_rc == NULL)
 		cYAML_print_tree(root);
 
@@ -3422,7 +3422,7 @@ int lustre_lnet_config_lnd_timeout(int timeout, __u32 net, int seq_no,
 		rc = -EINVAL;
 	}
 
-	/* Check return code from writing sysfs file */
+	
 	if (rc)
 		snprintf(err_str, sizeof(err_str),
 			 "\"Failed to set LND timeout for net %s\"",
@@ -3609,7 +3609,7 @@ int lustre_lnet_config_buffers(int tiny, int small, int large, int seq_no,
 	int rc = LUSTRE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 
-	/* -1 indicates to ignore changes to this field */
+	
 	if (tiny < -1 || small < -1 || large < -1) {
 		snprintf(err_str,
 			 sizeof(err_str),
@@ -3737,7 +3737,7 @@ int lustre_lnet_show_routing(int seq_no, struct cYAML **show_rc,
 			goto out;
 
 calculate_buffers:
-		/* create the tree  and print */
+		
 		for (j = 0; j < LNET_NRBPOOLS; j++) {
 			if (!backup) {
 				type_node = cYAML_create_object(cpt, pools[j]);
@@ -3874,7 +3874,7 @@ int lustre_lnet_show_peer(char *knid, int detail, int seq_no,
 	void *lpni_data;
 	bool exist = false;
 
-	/* create struct cYAML root object */
+	
 	root = cYAML_create_object(NULL, NULL);
 	if (root == NULL)
 		goto out;
@@ -4157,7 +4157,7 @@ continue_without_udsp_info:
 		}
 	}
 
-	/* print output iff show_rc is not provided */
+	
 	if (show_rc == NULL)
 		cYAML_print_tree(root);
 
@@ -4212,7 +4212,7 @@ int lustre_lnet_list_peer(int seq_no,
 
 	memset(&peer_info, 0, sizeof(peer_info));
 
-	/* create struct cYAML root object */
+	
 	root = cYAML_create_object(NULL, NULL);
 	if (root == NULL)
 		goto out;
@@ -4257,7 +4257,7 @@ int lustre_lnet_list_peer(int seq_no,
 		}
 	}
 
-	/* count is now the actual number of ids in the list. */
+	
 	for (i = 0; i < count; i++) {
 		if (cYAML_create_string(list_root, "nid",
 					libcfs_nid2str(list[i].nid))
@@ -4265,7 +4265,7 @@ int lustre_lnet_list_peer(int seq_no,
 			goto out;
 	}
 
-	/* print output iff show_rc is not provided */
+	
 	if (show_rc == NULL)
 		cYAML_print_tree(root);
 
@@ -4624,7 +4624,7 @@ int lustre_lnet_setup_mrrouting(struct cYAML **err_rc)
 
 		rc_net = LNET_NIDNET(ni_data->lic_nid);
 
-		/* only need to setup routing for tcp */
+		
 		if (LNET_NETTYP(rc_net) != SOCKLND)
 			continue;
 
@@ -5244,7 +5244,7 @@ static int yaml_copy_intf_info(struct cYAML *intf_tree,
 	if (intf_tree == NULL || nw_descr == NULL)
 		return LUSTRE_CFG_RC_BAD_PARAM;
 
-	/* now grab all the interfaces and their cpts */
+	
 	child = intf_tree->cy_child;
 	while (child != NULL) {
 		if (child->cy_valuestring == NULL) {
@@ -5376,7 +5376,7 @@ static int handle_yaml_config_ni(struct cYAML *tree, struct cYAML **show_rc,
 	bool found = false;
 
 	memset(&tunables, 0, sizeof(tunables));
-	/* Use LND defaults */
+	
 	tunables.lt_cmn.lct_peer_timeout = -1;
 	tunables.lt_cmn.lct_peer_tx_credits = -1;
 	tunables.lt_cmn.lct_peer_rtr_credits = -1;
@@ -5473,7 +5473,7 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 
 	memset(&tunables, 0, sizeof(tunables));
 
-	/* initialize all lists */
+	
 	INIT_LIST_HEAD(&ip2nets.ip2nets_ip_ranges);
 	INIT_LIST_HEAD(&ip2nets.ip2nets_net.network_on_rule);
 	INIT_LIST_HEAD(&ip2nets.ip2nets_net.nw_intflist);
@@ -5485,7 +5485,7 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 	if (net != NULL && net->cy_valuestring == NULL)
 		return LUSTRE_CFG_RC_BAD_PARAM;
 
-	/* assign the network id */
+	
 	ip2nets.ip2nets_net.nw_id = libcfs_str2net(net->cy_valuestring);
 	if (ip2nets.ip2nets_net.nw_id == LNET_NET_ANY)
 		return LUSTRE_CFG_RC_BAD_PARAM;
@@ -5619,7 +5619,7 @@ static int yaml_nids2nidstr(struct cYAML *nids_entry, char **nidstr,
 	if (cYAML_is_sequence(nids_entry)) {
 		while (cYAML_get_next_seq_item(nids_entry, &child)) {
 			entry = cYAML_get_object_item(child, "nid");
-			/* don't count an empty entry */
+			
 			if (!entry || !entry->cy_valuestring)
 				continue;
 
@@ -5649,14 +5649,14 @@ static int yaml_nids2nidstr(struct cYAML *nids_entry, char **nidstr,
 
 	if (num_strs == 0 && !prim_nid)
 		return LUSTRE_CFG_RC_MISSING_PARAM;
-	else if (num_strs == 0) /* Only the primary nid was given to add/del */
+	else if (num_strs == 0) 
 		return LUSTRE_CFG_RC_NO_ERR;
 
 	buffer = malloc(nidstr_len);
 	if (!buffer)
 		return LUSTRE_CFG_RC_OUT_OF_MEM;
 
-	/* now grab all the nids */
+	
 	rc = 0;
 	buf_pos = 0;
 	buf_size = nidstr_len;
@@ -5713,7 +5713,7 @@ static int handle_yaml_peer_common(struct cYAML *tree, struct cYAML **show_rc,
 
 	prim_nidstr = prim_nid->cy_valuestring;
 
-	/* if the provided primary NID is bad, no need to go any further */
+	
 	pnid = libcfs_str2nid(prim_nidstr);
 	if (pnid == LNET_NID_ANY) {
 		rc = LUSTRE_CFG_RC_BAD_PARAM;
@@ -6037,7 +6037,7 @@ static int handle_yaml_config_global_settings(struct cYAML *tree,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 	max_intf = cYAML_get_object_item(tree, "max_interfaces");
-	if (!max_intf) /* try legacy name */
+	if (!max_intf) 
 		max_intf = cYAML_get_object_item(tree, "max_intf");
 	if (max_intf)
 		rc = lustre_lnet_config_max_intf(max_intf->cy_valueint,
@@ -6127,7 +6127,7 @@ static int handle_yaml_del_global_settings(struct cYAML *tree,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 	max_intf = cYAML_get_object_item(tree, "max_interfaces");
-	if (!max_intf) /* try legacy name */
+	if (!max_intf) 
 		max_intf = cYAML_get_object_item(tree, "max_intf");
 	if (max_intf)
 		rc = lustre_lnet_config_max_intf(LNET_INTERFACES_MAX_DEFAULT,
@@ -6142,7 +6142,7 @@ static int handle_yaml_del_global_settings(struct cYAML *tree,
 							: -1,
 						   err_rc);
 
-	/* peer discovery is enabled by default */
+	
 	discovery = cYAML_get_object_item(tree, "discovery");
 	if (discovery)
 		rc = lustre_lnet_config_discovery(1,
@@ -6150,7 +6150,7 @@ static int handle_yaml_del_global_settings(struct cYAML *tree,
 							: -1,
 						  err_rc);
 
-	/* asymmetrical route messages are accepted by default */
+	
 	drop_asym_route = cYAML_get_object_item(tree, "drop_asym_route");
 	if (drop_asym_route)
 		rc = lustre_lnet_config_drop_asym_route(
@@ -6170,7 +6170,7 @@ static int handle_yaml_show_global_settings(struct cYAML *tree,
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 	max_intf = cYAML_get_object_item(tree, "max_interfaces");
-	if (!max_intf) /* try legacy name */
+	if (!max_intf) 
 		max_intf = cYAML_get_object_item(tree, "max_intf");
 	if (max_intf)
 		rc = lustre_lnet_show_max_intf(seq_no ? seq_no->cy_valueint

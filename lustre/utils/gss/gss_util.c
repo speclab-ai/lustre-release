@@ -1,6 +1,6 @@
 /*
  *  Adapted in part from MIT Kerberos 5-1.2.1 slave/kprop.c and from
- *  http://docs.sun.com/?p=/doc/816-1331/6m7oo9sms&a=view
+ *  http:
  *
  *  Copyright (c) 2002 The Regents of the University of Michigan.
  *  All rights reserved.
@@ -86,7 +86,7 @@
 #define GSSD_SERVICE_MDS			"lustre_mds"
 #define GSSD_SERVICE_OSS			"lustre_oss"
 
-/* Global gssd_credentials handle */
+
 gss_cred_id_t  gssd_cred_mgs;
 gss_cred_id_t  gssd_cred_mds;
 gss_cred_id_t  gssd_cred_oss;
@@ -118,7 +118,7 @@ display_status_1(char *m, u_int32_t code, int type, const gss_OID mech)
 		break;
 	default:
 		return;
-		/* NOTREACHED */
+		
 	}
 
 	for (;;) {
@@ -153,7 +153,7 @@ display_status_2(char *m, u_int32_t major, u_int32_t minor, const gss_OID mech)
 	char *maj, *min;
 	u_int32_t msg_ctx = 0;
 
-	/* Get major status message */
+	
 	maj_stat1 = gss_display_status(&min_stat1, major,
 		GSS_C_GSS_CODE, mech, &msg_ctx, &maj_gss_buf);
 
@@ -164,7 +164,7 @@ display_status_2(char *m, u_int32_t major, u_int32_t minor, const gss_OID mech)
 		maj = maj_gss_buf.value;
 	}
 
-	/* Get minor status message */
+	
 	maj_stat2 = gss_display_status(&min_stat2, minor,
 		GSS_C_MECH_CODE, mech, &msg_ctx, &min_gss_buf);
 

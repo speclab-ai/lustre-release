@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LOV
@@ -29,7 +29,7 @@ u64 stripe_width(struct lov_stripe_md *lsm, unsigned int index)
 	return (u64)entry->lsme_stripe_size * entry->lsme_stripe_count;
 }
 
-/* compute object size given "stripeno" and the ost size */
+
 u64 lov_stripe_size(struct lov_stripe_md *lsm, int index, u64 ost_size,
 		    int stripeno)
 {
@@ -193,7 +193,7 @@ loff_t lov_size_to_stripe(struct lov_stripe_md *lsm, int index, u64 file_size,
 
 	this_stripe = (u64)stripeno * ssize;
 	if (stripe_off < this_stripe) {
-		/* Move to end of previous stripe, or zero */
+		
 		if (file_size > 0) {
 			file_size--;
 			stripe_off = ssize;
@@ -204,7 +204,7 @@ loff_t lov_size_to_stripe(struct lov_stripe_md *lsm, int index, u64 file_size,
 		stripe_off -= this_stripe;
 
 		if (stripe_off >= ssize) {
-			/* Clamp to end of this stripe */
+			
 			stripe_off = ssize;
 		}
 	}
@@ -270,7 +270,7 @@ int lov_stripe_intersects(struct lov_stripe_md *lsm, int index, int stripeno,
 	return 1;
 }
 
-/* compute which stripe number "lov_off" will be written into */
+
 int lov_stripe_number(struct lov_stripe_md *lsm, int index, u64 lov_off)
 {
 	unsigned long ssize = lsm->lsm_entries[index]->lsme_stripe_size;
@@ -281,7 +281,7 @@ int lov_stripe_number(struct lov_stripe_md *lsm, int index, u64 lov_off)
 
 	lov_off = div64_u64_rem(lov_off, swidth, &stripe_off);
 
-	/* Puts stripe_off/ssize result into stripe_off */
+	
 	stripe_off = div_u64(stripe_off, ssize);
 
 	return (int) stripe_off;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_SEC
@@ -41,10 +41,10 @@ static struct kobject *gss_kobj_lk;
  */
 static struct {
 	spinlock_t	oos_lock;
-	atomic_t	oos_cli_count;		/* client occurrence */
-	int		oos_cli_behind;		/* client max seqs behind */
-	atomic_t	oos_svc_replay[3];	/* server replay detected */
-	atomic_t	oos_svc_pass[3];	/* server verified ok */
+	atomic_t	oos_cli_count;		
+	int		oos_cli_behind;		
+	atomic_t	oos_svc_replay[3];	
+	atomic_t	oos_svc_pass[3];	
 } gss_stat_oos = {
 	.oos_cli_count	= ATOMIC_INIT(0),
 	.oos_cli_behind	= 0,
@@ -157,7 +157,7 @@ static ssize_t gss_check_upcall_ns_store(struct kobject *kobj,
 	return count;
 }
 LUSTRE_RW_ATTR(gss_check_upcall_ns);
-#endif /* HAVE_GSS_KEYRING */
+#endif 
 
 static ssize_t rsi_upcall_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -232,7 +232,7 @@ again:
 			GOTO(out, rc = -EINVAL);
 		}
 
-		rc = param->sid_len; /* save sid_len */
+		rc = param->sid_len; 
 		OBD_FREE_LARGE(param, size);
 		size = offsetof(struct rsi_downcall_data, sid_val[rc]);
 		goto again;
@@ -341,7 +341,7 @@ again:
 			GOTO(out, rc = -EINVAL);
 		}
 
-		rc = param->scd_len; /* save scd_len */
+		rc = param->scd_len; 
 		OBD_FREE_LARGE(param, size);
 		size = offsetof(struct rsc_downcall_data, scd_val[rc]);
 		goto again;
@@ -371,7 +371,7 @@ again:
 	}
 	rsc.sc_handle.data = handle_buf;
 
-	/* create cache entry on-the-fly */
+	
 	rscp = rsc_entry_get(rsccache, &rsc);
 	__rsc_free(&rsc);
 

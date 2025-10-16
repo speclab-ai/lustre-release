@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Phil Schwan <phil@clusterfs.com>
  */
@@ -32,7 +32,7 @@
 # include <netdb.h>
 #endif
 
-/* max value for numeric network address */
+
 #define MAX_NUMERIC_VALUE 0xffffffff
 
 #define IPSTRING_LENGTH 16
@@ -110,7 +110,7 @@ libcfs_ip_str2addr(const char *str, int nob, __u32 *addr)
 	int n = nob;
 	int rc = 0;
 
-	/* numeric IP? */
+	
 	if (sscanf(str, "%u.%u.%u.%u%n", &a, &b, &c, &d, &n) >= 4 &&
 	    n == nob &&
 	    (a & ~0xff) == 0 && (b & ~0xff) == 0 &&
@@ -119,7 +119,7 @@ libcfs_ip_str2addr(const char *str, int nob, __u32 *addr)
 		return 1;
 	}
 
-	/* known hostname? */
+	
 	if (('a' <= str[0] && str[0] <= 'z') ||
 	    ('A' <= str[0] && str[0] <= 'Z')) {
 		char *tmp = NULL;
@@ -172,7 +172,7 @@ libcfs_ip_str2addr_size(const char *str, int nob,
 	if (inet_pton(AF_INET, tmp, (struct in_addr *)addr) == 1) {
 		struct in_addr *ipv4 = (struct in_addr *)addr;
 
-		/* Don't allow using loopback */
+		
 		if (ipv4->s_addr != htonl(INADDR_LOOPBACK))
 			*alen = 4;
 		goto out;
@@ -192,7 +192,7 @@ libcfs_ip_str2addr_size(const char *str, int nob,
 		goto out;
 	}
 
-	/* known hostname? */
+	
 	if (('a' <= str[0] && str[0] <= 'z') ||
 	    ('A' <= str[0] && str[0] <= 'Z')) {
 		struct addrinfo *ai = NULL;
@@ -203,7 +203,7 @@ libcfs_ip_str2addr_size(const char *str, int nob,
 
 		if (getaddrinfo(tmp, NULL, &hints, &ai) == 0) {
 			struct addrinfo *a;
-			/* First look for an AF_INET address */
+			
 			for (a = ai; a; a = a->ai_next) {
 				if (a->ai_family == AF_INET && a->ai_addr) {
 					struct sockaddr_in *sin =
@@ -215,7 +215,7 @@ libcfs_ip_str2addr_size(const char *str, int nob,
 					goto out;
 				}
 			}
-			/* Now consider AF_INET6 */
+			
 			for (a = ai; a; a = a->ai_next) {
 				if (a->ai_family == AF_INET6 && a->ai_addr) {
 					struct sockaddr_in6 *sin6 =
@@ -447,7 +447,7 @@ cfs_ip_addr_range_gen_recurse(__u32 *ip_list, int *count, int shift,
 					 */
 					if (*count == -1)
 						return -1;
-					/* add ip to the list */
+					
 					ip_list[*count] = value;
 					(*count)--;
 				}
@@ -899,7 +899,7 @@ libcfs_nidstr_r(const struct lnet_nid *nid, char *buf, size_t buf_size)
 	nf = libcfs_lnd2netstrfns(lnd);
 	if (nf) {
 		size_t addr_len;
-		/* Avoid take address in packed array */
+		
 		__u32 addr[4] = { nid->nid_addr[0], nid->nid_addr[1],
 				 nid->nid_addr[2], nid->nid_addr[3]};
 
@@ -951,7 +951,7 @@ libcfs_str2net_internal(const char *str, __u32 *net)
 	if (strlen(str) == (unsigned int)nob) {
 		netnum = 0;
 	} else {
-		if (nf->nf_type == LOLND) /* net number not allowed */
+		if (nf->nf_type == LOLND) 
 			return NULL;
 
 		str += nob;
@@ -1030,7 +1030,7 @@ libcfs_strnid(struct lnet_nid *nid, const char *str)
 					  addr, &asize))
 			return -EINVAL;
 
-		/* Avoid take address in packed array */
+		
 		nid->nid_addr[0] = addr[0];
 		nid->nid_addr[1] = addr[1];
 		nid->nid_addr[2] = addr[2];
@@ -1153,31 +1153,31 @@ struct nidrange {
  * Structure to represent \<netmask\> token of the syntax
  */
 struct nidmask {
-	/* Link to nidrange::nr_nidmasks */
+	
 	struct list_head nm_link;
 
-	/* This is the base address that was parsed */
+	
 	union {
 		struct in_addr ipv4;
 		struct in6_addr ipv6;
 	} nm_addr;
 
-	/* Netmask derived from the prefix length */
+	
 	union {
 		struct in_addr ipv4;
 		struct in6_addr ipv6;
 	} nm_netmask;
 
-	/* Network address derived from the base address and the netmask */
+	
 	union {
 		struct in_addr ipv4;
 		struct in6_addr ipv6;
 	} nm_netaddr;
 
-	/* Address family */
+	
 	sa_family_t nm_family;
 
-	/* Prefix length */
+	
 	__u8 nm_prefix_len;
 };
 
@@ -1264,11 +1264,11 @@ parse_prefix_len(char *str)
 	unsigned int prefix_len;
 	char *slash = strchr(str, '/');
 
-	/* IPv4 netmask must include an explicit prefix length */
+	
 	if (!(slash || strchr(str, ':')))
 		return 0;
 
-	/* We treat an IPv6 address without a prefix length as having /128 */
+	
 	if (!slash)
 		return 128;
 
@@ -1299,7 +1299,7 @@ parse_nidmask(char *str, struct nidrange *nr)
 		return -ENOMEM;
 	}
 
-	/* Add to nr_nidmasks so that our caller can free us on error */
+	
 	list_add_tail(&nm->nm_link, &nr->nr_nidmasks);
 
 	nm->nm_prefix_len = parse_prefix_len(str);
@@ -1358,7 +1358,7 @@ add_nidrange(char *str, struct list_head *nidlist)
 
 	end = str + strlen(nf->nf_name);
 	if (!*end) {
-		/* network name only, e.g. "elan" or "tcp" */
+		
 		netnum = 0;
 	} else {
 		/* e.g. "elan25" or "tcp23", refuse to parse if
@@ -1425,7 +1425,7 @@ parse_nidrange(char *str, struct list_head *nidlist)
 		return -EINVAL;
 	}
 
-	/* Check for an IPv6 address or a '/' outside of '[]' */
+	
 	slash = strchr(addrrange, '/');
 	if (strchr(addrrange, ':') || (slash && !strchr(slash, ']')))
 		rc = parse_nidmask(addrrange, nr);
@@ -1493,7 +1493,7 @@ parse_net_range(char *str, __u32 len, struct list_head *net_num,
 	bracket = strchr(next.ls_str, '[');
 	star = strchr(next.ls_str, '*');
 
-	/* "*[" pattern not allowed */
+	
 	if (bracket && star && star < bracket)
 		return -EINVAL;
 
@@ -1505,7 +1505,7 @@ parse_net_range(char *str, __u32 len, struct list_head *net_num,
 		next.ls_len = strlen(bracket);
 	}
 
-	/* if there is no net number just return */
+	
 	if (next.ls_len == 0)
 		return 0;
 
@@ -1550,14 +1550,14 @@ cfs_parse_nid_parts(char *str, struct list_head *addr,
 		return -EINVAL;
 
 	if (!next.ls_str) {
-		/* only net is present */
+		
 		next.ls_str = str;
 		next.ls_len = strlen(str);
 	} else {
 		found = true;
 	}
 
-	/* assume only net is present */
+	
 	rc = parse_net_range(next.ls_str, next.ls_len, net_num, net_type);
 
 	/*
@@ -1901,7 +1901,7 @@ static int cfs_ip_ar_min_max(struct addrrange *ar, __u32 *min_nid,
 		int re_count = 0;
 
 		list_for_each_entry(range, &expr_list->el_exprs, re_link) {
-			/* XXX: add support for multiple & non-contig. re's */
+			
 			if (re_count > 0)
 				return -EINVAL;
 
@@ -2191,7 +2191,7 @@ char *cfs_nidstr_find_delimiter(char *nidstr)
 	int hex_count = 0;
 	bool is_ipv6 = true;
 
-	/* address parsing */
+	
 	while (*delimiter != ',' && *delimiter != ' ' && *delimiter != '\0') {
 		/* Need to skip : in IPv6 / GUID NIDs. Lustre also uses
 		 * ':' as a separator, which makes this complicated.
@@ -2202,14 +2202,14 @@ char *cfs_nidstr_find_delimiter(char *nidstr)
 				delimiter++;
 			break;
 		}
-		/* IPv6 addresses are in 0-4 hex digit groups */
+		
 		else if ((isxdigit(*delimiter) || *delimiter == ':') &&
 			 hex_count <= 4 && is_ipv6) {
 			if (*delimiter == ':')
 				hex_count = 0;
 			else
 				hex_count++;
-		} else { /* NID is not IPv6 */
+		} else { 
 			is_ipv6 = false;
 			if (*delimiter == ':')
 				break;

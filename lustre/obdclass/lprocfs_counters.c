@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre lprocfs counter routines
  *
@@ -60,7 +60,7 @@ void lprocfs_counter_add(struct lprocfs_stats *stats, int idx, long amount)
 		if (amount > percpu_cntr->lc_max)
 			percpu_cntr->lc_max = amount;
 	}
-	/* no counter in interrupt has historgram for now */
+	
 	hist = stats->ls_cnt_header[idx].lc_hist;
 	if (hist != NULL) {
 		unsigned int val = 0;
@@ -110,4 +110,4 @@ void lprocfs_counter_sub(struct lprocfs_stats *stats, int idx, long amount)
 	lprocfs_stats_unlock(stats, LPROCFS_GET_SMP_ID, &flags);
 }
 EXPORT_SYMBOL(lprocfs_counter_sub);
-#endif  /* CONFIG_PROC_FS */
+#endif  

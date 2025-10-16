@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /* Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2013, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Low-level ioctl data structures. Kernel ioctl functions declared here,
  * and user space functions are in libcfs/util/ioctl.h.
@@ -33,7 +33,7 @@ struct libcfs_ioctl_hdr {
 	__u32 ioc_version;
 };
 
-/** max size to copy from userspace */
+
 #define LIBCFS_IOC_DATA_MAX	(128 * 1024)
 
 struct libcfs_ioctl_data {
@@ -52,9 +52,9 @@ struct libcfs_ioctl_data {
 	__u32 ioc_inllen2;
 	char *ioc_inlbuf2;
 
-	__u32 ioc_plen1; /* buffers in userspace */
+	__u32 ioc_plen1; 
 	void __user *ioc_pbuf1;
-	__u32 ioc_plen2; /* buffers in userspace */
+	__u32 ioc_plen2; 
 	void __user *ioc_pbuf2;
 
 	char ioc_bulk[];
@@ -64,13 +64,13 @@ struct libcfs_ioctl_data {
 
 #define IOC_LIBCFS_TYPE				      ('e')
 #define IOC_LIBCFS_MIN_NR			      30
-/* libcfs ioctls */
+
 /* XXX: all of these ioctl definitions are broken, the first parameter
  * should be IOCTL_LIBCFS_TYPE and the last parameter is the struct size.
  */
 #define IOC_LIBCFS_CLEAR_DEBUG             _IOWR('e', 31, IOCTL_LIBCFS_TYPE)
 #define IOC_LIBCFS_MARK_DEBUG              _IOWR('e', 32, IOCTL_LIBCFS_TYPE)
-/* lnet ioctls */
+
 #define IOC_LIBCFS_GET_NI		   _IOWR('e', 50, IOCTL_LIBCFS_TYPE)
 #define IOC_LIBCFS_FAIL_NID		   _IOWR('e', 51, IOCTL_LIBCFS_TYPE)
 #define IOC_LIBCFS_NOTIFY_ROUTER	   _IOWR('e', 55, IOCTL_LIBCFS_TYPE)
@@ -81,7 +81,7 @@ struct libcfs_ioctl_data {
 #define IOC_LIBCFS_PING_PEER               _IOWR('e', 62, IOCTL_LIBCFS_TYPE)
 #define IOC_LIBCFS_LNETST		   _IOWR('e', 63, IOCTL_LIBCFS_TYPE)
 #define IOC_LIBCFS_LNET_FAULT		   _IOWR('e', 64, IOCTL_LIBCFS_TYPE)
-/* lnd ioctls */
+
 #define IOC_LIBCFS_REGISTER_MYNID	   _IOWR('e', 70, IOCTL_LIBCFS_TYPE)
 #define IOC_LIBCFS_CLOSE_CONNECTION	   _IOWR('e', 71, IOCTL_LIBCFS_TYPE)
 #define IOC_LIBCFS_PUSH_CONNECTION	   _IOWR('e', 72, IOCTL_LIBCFS_TYPE)
@@ -136,4 +136,4 @@ struct libcfs_ioctl_data {
 #define IOC_LIBCFS_SET_PEER		   _IOWR(IOC_LIBCFS_TYPE, 112, IOCTL_CONFIG_SIZE)
 #define IOC_LIBCFS_MAX_NR					  112
 
-#endif /* __UAPI_LIBCFS_IOCTL_H__ */
+#endif 

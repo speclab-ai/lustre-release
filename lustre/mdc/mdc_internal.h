@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _MDC_INTERNAL_H
@@ -55,7 +55,7 @@ void mdc_migrate_pack(struct req_capsule *pill, struct md_op_data *op_data,
 			const char *name, size_t namelen);
 void mdc_close_pack(struct req_capsule *pill, struct md_op_data *op_data);
 
-/* mdc/mdc_locks.c */
+
 int mdc_set_lock_data(struct obd_export *exp,
 		      const struct lustre_handle *lockh,
 		      void *data, enum mds_ibits_locks *bits);
@@ -85,7 +85,7 @@ int mdc_resource_cancel_unused_res(struct obd_export *exp,
 int mdc_resource_cancel_unused(struct obd_export *exp, const struct lu_fid *fid,
 			       struct list_head *cancels, enum ldlm_mode mode,
 			       __u64 bits);
-/* mdc/mdc_request.c */
+
 int mdc_fid_alloc(const struct lu_env *env, struct obd_export *exp,
 		  struct lu_fid *fid, struct md_op_data *op_data);
 int mdc_setup(struct obd_device *obd, struct lustre_cfg *cfg);
@@ -174,7 +174,7 @@ static inline void mdc_body2lvb(struct mdt_body *body, struct ost_lvb *lvb)
 	lvb->lvb_size = body->mbo_dom_size;
 }
 
-/* mdc_dev.c */
+
 extern struct lu_device_type mdc_device_type;
 int mdc_ldlm_blocking_ast(struct ldlm_lock *dlmlock,
 			  struct ldlm_lock_desc *new, void *data, int flag);
@@ -187,7 +187,7 @@ int mdc_finish_enqueue(struct obd_export *exp,
 		       struct lookup_intent *it,
 		       struct lustre_handle *lockh, int rc);
 
-/* the minimum inline repsize should be PAGE_SIZE at least */
+
 #define MDC_DOM_DEF_INLINE_REPSIZE max(8192UL, PAGE_SIZE)
 #define MDC_DOM_MAX_INLINE_REPSIZE XATTR_SIZE_MAX
 

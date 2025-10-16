@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -10,7 +10,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * all fid manipulation functions go here
  *
@@ -26,40 +26,40 @@
 #include <linux/types.h>
 #include <linux/lustre/lustre_idl.h>
 
-/** Special fid for root directory */
+
 static const struct lu_fid LU_ROOT_FID = {
 	.f_seq = FID_SEQ_ROOT,
 	.f_oid = FID_OID_ROOT,
 	.f_ver = 0x0000000000000000
 };
 
-/** Special fid for ".lustre" directory */
+
 static const struct lu_fid LU_DOT_LUSTRE_FID = {
 	.f_seq = FID_SEQ_DOT_LUSTRE,
 	.f_oid = FID_OID_DOT_LUSTRE,
 	.f_ver = 0x0000000000000000
 };
 
-/** Special fid for "fid" special object in .lustre */
+
 static const struct lu_fid LU_OBF_FID = {
 	.f_seq = FID_SEQ_DOT_LUSTRE,
 	.f_oid = FID_OID_DOT_LUSTRE_OBF,
 	.f_ver = 0x0000000000000000
 };
 
-/** returns fid object sequence */
+
 static inline __u64 fid_seq(const struct lu_fid *fid)
 {
 	return fid->f_seq;
 }
 
-/** returns fid object id */
+
 static inline __u32 fid_oid(const struct lu_fid *fid)
 {
 	return fid->f_oid;
 }
 
-/** returns fid object version */
+
 static inline __u32 fid_ver(const struct lu_fid *fid)
 {
 	return fid->f_ver;
@@ -102,7 +102,7 @@ static inline bool fid_seq_is_llog(__u64 seq)
 
 static inline bool fid_is_llog(const struct lu_fid *fid)
 {
-	/* file with OID == 0 is not llog but contains last oid */
+	
 	return fid_seq_is_llog(fid_seq(fid)) && fid_oid(fid) > 0;
 }
 
@@ -240,13 +240,13 @@ static inline bool fid_is_update_log_dir(const struct lu_fid *fid)
 	return fid_seq_is_update_log_dir(fid_seq(fid));
 }
 
-/* convert an OST objid into an IDIF FID SEQ number */
+
 static inline __u64 fid_idif_seq(__u64 id, __u32 ost_idx)
 {
 	return FID_SEQ_IDIF | (ost_idx << 16) | ((id >> 32) & 0xffff);
 }
 
-/* convert a packed IDIF FID into an OST objid */
+
 static inline __u64 fid_idif_id(__u64 seq, __u32 oid, __u32 ver)
 {
 	return ((__u64)ver << 48) | ((seq & 0xffff) << 32) | oid;
@@ -257,13 +257,13 @@ static inline __u32 idif_ost_idx(__u64 seq)
 	return (seq >> 16) & 0xffff;
 }
 
-/* extract ost index from IDIF FID */
+
 static inline __u32 fid_idif_ost_idx(const struct lu_fid *fid)
 {
 	return idif_ost_idx(fid_seq(fid));
 }
 
-/* Check whether the fid is for LAST_ID */
+
 static inline bool fid_is_last_id(const struct lu_fid *fid)
 {
 	if (fid_oid(fid) != 0)

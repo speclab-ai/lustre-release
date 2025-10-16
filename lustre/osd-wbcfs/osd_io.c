@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2025-2026, DDN/Whamcloud, Inc.
@@ -18,7 +18,7 @@
 
 #include "osd_internal.h"
 
-/* Copied from osd-ldiskfs */
+
 static int osd_map_remote_to_local(loff_t offset, ssize_t len, int *nrpages,
 				   struct niobuf_local *lnb, int maxlnb)
 {
@@ -84,7 +84,7 @@ static int osd_get_page(const struct lu_env *env, struct dt_object *dt,
 		 * Otherwise, reading on a large sparse file may hit OOM.
 		 */
 		page = find_lock_page(inode->i_mapping, index);
-		/* fallocated page? */
+		
 		if (page && !PageUptodate(page)) {
 			unlock_page(page);
 			put_page(page);
@@ -130,7 +130,7 @@ static int osd_bufs_put(const struct lu_env *env, struct dt_object *dt,
 		if (page == NULL)
 			continue;
 
-		/* If the page is not cached in the memory FS, then free it. */
+		
 		if (PagePrivate2(page)) {
 			LASSERT(lnb[i].lnb_hole);
 			LASSERT(PageLocked(page));
@@ -187,7 +187,7 @@ static int osd_bufs_get(const struct lu_env *env, struct dt_object *dt,
 	if (rc)
 		RETURN(rc);
 
-	/* this could also try less hard for DT_BUFS_TYPE_READAHEAD pages */
+	
 	gfp_mask = rw & DT_BUFS_TYPE_LOCAL ? (GFP_NOFS | __GFP_HIGHMEM) :
 					     GFP_HIGHUSER;
 	for (i = 0; i < npages; i++, lnb++) {
@@ -216,7 +216,7 @@ static ssize_t osd_read(const struct lu_env *env, struct dt_object *dt,
 
 	ENTRY;
 
-	/* TODO: Specially handling for symlink. */
+	
 	if (S_ISLNK(dt->do_lu.lo_header->loh_attr))
 		RETURN(-EOPNOTSUPP);
 
@@ -243,7 +243,7 @@ static ssize_t osd_write(const struct lu_env *env, struct dt_object *dt,
 
 	ENTRY;
 
-	/* TODO: Specially handling for symlink. */
+	
 	if (S_ISLNK(dt->do_lu.lo_header->loh_attr))
 		RETURN(-EOPNOTSUPP);
 
@@ -258,7 +258,7 @@ static ssize_t osd_write(const struct lu_env *env, struct dt_object *dt,
 	RETURN(result);
 }
 
-/* Can we move all osd_read_prep() codes into osd_bufs_get() ? */
+
 static int osd_read_prep(const struct lu_env *env, struct dt_object *dt,
 			 struct niobuf_local *lnb, int npages)
 {
@@ -369,7 +369,7 @@ static int osd_write_commit(const struct lu_env *env, struct dt_object *dt,
 	LASSERT(inode);
 
 	for (i = 0; i < npages; i++) {
-		if (lnb[i].lnb_rc) { /* ENOSPC, network RPC error, etc. */
+		if (lnb[i].lnb_rc) { 
 			LASSERT(lnb[i].lnb_page);
 			generic_error_remove_folio(inode->i_mapping,
 						   page_folio(lnb[i].lnb_page));
@@ -386,7 +386,7 @@ static int osd_write_commit(const struct lu_env *env, struct dt_object *dt,
 
 		LASSERT(PageLocked(lnb[i].lnb_page));
 		LASSERT(!PageWriteback(lnb[i].lnb_page));
-		/* LASSERT(!PageDirty(lnb[i].lnb_page)); */
+		
 
 		SetPageUptodate(lnb[i].lnb_page);
 #ifdef HAVE_DIRTY_FOLIO
@@ -405,19 +405,19 @@ static int osd_write_commit(const struct lu_env *env, struct dt_object *dt,
 
 	CDEBUG(D_INFO, "Size after write: i_size=%lld user_size=%llu\n",
 	       i_size_read(inode), user_size);
-	/* No transno is needed for in-memory FS. */
+	
 	th->th_local = 1;
 	RETURN(0);
 }
 
-/* TODO: Implement punch operation. */
+
 static int osd_punch(const struct lu_env *env, struct dt_object *dt,
 		     __u64 start, __u64 end, struct thandle *th)
 {
 	RETURN(0);
 }
 
-/* TODO: Implemented lseek operation.  */
+
 static loff_t osd_lseek(const struct lu_env *env, struct dt_object *dt,
 			loff_t offset, int whence)
 {

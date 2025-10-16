@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2017, Intel Corporation.
  *
@@ -44,14 +44,14 @@ enum snapshot_role {
 
 struct snapshot_target {
 	struct list_head	 st_list;
-	/* Target node name. */
+	
 	char			*st_host;
 	char			*st_fhost;
-	/* Where the pool is */
+	
 	char			*st_dir;
-	/* The target pool name on the target node. */
+	
 	char			*st_pool;
-	/* The backend filesystem name against the target pool. */
+	
 	char			*st_filesystem;
 	int			 st_role;
 	unsigned int		 st_index;
@@ -155,7 +155,7 @@ static int snapshot_exec(const char *cmd)
 	 * result. Especially, if the @cmd is remote command, we may cannot know
 	 * the real failure. */
 	rc = system(cmd);
-	/* fork()/exec() error */
+	
 	if (rc == -1)
 		return errno != 0 ? -errno : -1;
 
@@ -166,7 +166,7 @@ static int snapshot_exec(const char *cmd)
 	} else if (WIFSIGNALED(rc)) {
 		rc = -EINTR;
 	} else {
-		/* all other known or unknown cases. */
+		
 		rc = -EFAULT;
 	}
 
@@ -206,7 +206,7 @@ static int snapshot_load_conf_ldev(struct snapshot_instance *si, char *buf,
 	}
 
 	ptr1 = strrchr(ptr, '/');
-	/* "ptr1 - ptr + 1 == strlen(ptr)" means '/' is at the tail. */
+	
 	if (!ptr1 || ptr1 == ptr || ptr1 - ptr + 1 == strlen(ptr)) {
 		rc = -EINVAL;
 		goto out;
@@ -245,7 +245,7 @@ static int snapshot_load_conf_ldev(struct snapshot_instance *si, char *buf,
 	ptr = strrchr(label, '-');
 	if (ptr) {
 		if (strncmp(si->si_fsname, label, ptr - label) != 0) {
-			/* This line is NOT for current filesystem .*/
+			
 			rc = -EAGAIN;
 			goto out;
 		}
@@ -356,15 +356,15 @@ static int snapshot_load_conf_one(struct snapshot_instance *si,
 	memset(snapshot_path, 0, sizeof(snapshot_path));
 	snprintf(snapshot_path, sizeof(snapshot_path) - 1, "PATH='%s'", path);
 
-	/* filter out space */
+	
 	while (isspace(*buf))
 		buf++;
 
-	/* skip empty line */
+	
 	if (*buf == '\0')
 		return 0;
 
-	/* skip comment line */
+	
 	if (*buf == '#')
 		return 0;
 
@@ -396,7 +396,7 @@ static int snapshot_load_conf_one(struct snapshot_instance *si,
 	if (strncasecmp(role, "MGS", 3) == 0) {
 		st->st_role = SR_MGS;
 		if (role[3] == ',') {
-			/* MGS,MDT */
+			
 			if (strncasecmp(&role[4], "MDT", 3) != 0) {
 				rc = -EINVAL;
 				goto out;
@@ -407,7 +407,7 @@ static int snapshot_load_conf_one(struct snapshot_instance *si,
 	} else if (strncasecmp(role, "MDT", 3) == 0) {
 		st->st_role = SR_MDT;
 		if (role[3] == ',') {
-			/* MDT,MGS */
+			
 			if (strncasecmp(&role[4], "MGS", 3) != 0) {
 				rc = -EINVAL;
 				goto out;
@@ -572,7 +572,7 @@ static int snapshot_load_conf(struct snapshot_instance *si, int lock_mode)
 		goto out;
 	}
 
-	/* By default, the MGS is on the MDT0 if it is not specified. */
+	
 	if (!si->si_mgs) {
 		si->si_mgs = si->si_mdt0;
 		si->si_mgs->st_role |= SR_MGS;
@@ -829,7 +829,7 @@ static int __snapshot_wait(struct snapshot_instance *si,
 				*err = rc;
 
 			st->st_pid = 0;
-			/* continue to wait for next */
+			
 			continue;
 		}
 
@@ -983,7 +983,7 @@ again:
 		if (!ptr)
 			continue;
 
-		ptr += strlen(fullname) + 1; /* mount point */
+		ptr += strlen(fullname) + 1; 
 		if (ptr >= buf + strlen(buf))
 			continue;
 
@@ -1162,7 +1162,7 @@ again:
 		 DRSH" \""DIMPORT"; "DZFS
 		 " get all "DFSNAME" | grep lustre: | grep local$ | "
 		 "awk '{ \\$1=\\\"\\\"; \\$NF=\\\"\\\"; print \\$0 }' | "
-		 "sed -e 's/^ //'\" 2>/dev/null",
+		 "sed -e 's/^ 
 		 PRSH(si, st, foreign), PIMPORT(st), PZFS(st), PFSNAME(st));
 	fp = popen(buf, "r");
 	if (!fp) {
@@ -1268,7 +1268,7 @@ static int __snapshot_create(struct snapshot_instance *si,
 			return pid;
 		}
 
-		/* child */
+		
 		if (pid == 0) {
 			char cmd[MAX_BUF_SIZE];
 			int len;
@@ -1322,7 +1322,7 @@ again:
 					      fsname, st->st_index, mgsnode,
 					      PSSNAME(si, st));
 			else if (!(st->st_role & SR_MGS) ||
-				/* MGS is on MDT0 */
+				
 				 si->si_mdt0 == si->si_mgs)
 				rc = snprintf(cmd + len, sizeof(cmd) - len - 1,
 					      "-o lustre:svname=%s-MDT%04x "
@@ -1331,7 +1331,7 @@ again:
 					      fsname, st->st_index, mgsnode,
 					      PSSNAME(si, st));
 			else
-				/* separated MGS */
+				
 				rc = snprintf(cmd + len, sizeof(cmd) - len - 1,
 					      DSSNAME"' 2>/dev/null",
 					      PSSNAME(si, st));
@@ -1352,9 +1352,9 @@ again:
 			}
 
 			exit(rc);
-		} /* end of child */
+		} 
 
-		/* parent continue to run more snapshot commands in parallel. */
+		
 		st->st_pid = pid;
 	}
 
@@ -1390,7 +1390,7 @@ static int snapshot_create(struct snapshot_instance *si)
 		return rc;
 
 	__argv[1] = si->si_fsname;
-	/* 1. Get barrier */
+	
 	if (si->si_barrier) {
 		char tbuf[8];
 
@@ -1408,7 +1408,7 @@ static int snapshot_create(struct snapshot_instance *si)
 		}
 	}
 
-	/* 2. Fork config llog on MGS */
+	
 	__argv[0] = "fork_lcfg";
 	__argv[2] = new_fsname;
 	rc = jt_lcfg_fork(3, __argv);
@@ -1419,19 +1419,19 @@ static int snapshot_create(struct snapshot_instance *si)
 		goto out;
 	}
 
-	/* 3.1 Create snapshot on every MDT */
+	
 	rc = __snapshot_create(si, &si->si_mdts_list, new_fsname, buf,
 			       tv.tv_sec);
 	if (!rc)
-		/* 3.2 Create snapshot on every OST */
+		
 		rc = __snapshot_create(si, &si->si_osts_list, new_fsname, buf,
 				       tv.tv_sec);
 
-	/* 4. Wait for all children, even though part of them maybe failed */
+	
 	snapshot_wait(si, &rc1);
 
 out:
-	/* 5. Put barrier */
+	
 	if (si->si_barrier) {
 		if (!rc && !rc1) {
 			struct barrier_ctl bc;
@@ -1456,7 +1456,7 @@ out:
 					 "rc = %d\n", si->si_fsname, rc2);
 	}
 
-	/* cleanup */
+	
 	if (rc || rc1) {
 		si->si_force = true;
 		__snapshot_destroy(si, &si->si_osts_list);
@@ -1565,17 +1565,17 @@ again1:
 			return pid;
 		}
 
-		/* child */
+		
 		if (pid == 0) {
 			rc = snapshot_exists_check(si, st);
 			if (!rc)
-				/* The snapshot piece does not exist */
+				
 				exit(-ESRCH);
 
 			exit(rc == -EEXIST ? 0: rc);
-		} /* end of child */
+		} 
 
-		/* parent continue to run more snapshot commands in parallel. */
+		
 		st->st_pid = pid;
 	}
 
@@ -1642,7 +1642,7 @@ static int __snapshot_destroy(struct snapshot_instance *si,
 			return pid;
 		}
 
-		/* child */
+		
 		if (pid == 0) {
 			char cmd[MAX_BUF_SIZE * 2];
 			int foreign = 0;
@@ -1677,9 +1677,9 @@ again:
 			}
 
 			exit(rc);
-		} /* end of child */
+		} 
 
-		/* parent continue to run more snapshot commands in parallel. */
+		
 		st->st_pid = pid;
 	}
 
@@ -1702,7 +1702,7 @@ static int snapshot_destroy(struct snapshot_instance *si)
 	if (rc)
 		return rc;
 
-	/* 1.1 Destroy snapshot on every OST */
+	
 	rc = __snapshot_destroy(si, &si->si_osts_list);
 	if (!si->si_force) {
 		if (rc)
@@ -1713,15 +1713,15 @@ static int snapshot_destroy(struct snapshot_instance *si)
 			return rc;
 	}
 
-	/* 1.2 Destroy snapshot on every MDT */
+	
 	rc1 = __snapshot_destroy(si, &si->si_mdts_list);
 
-	/* 2 Wait for all children, even though part of them maybe failed */
+	
 	snapshot_wait(si, &rc2);
 	if (rc2 == -ENOENT && si->si_force)
 		rc2 = 0;
 
-	/* 3. Erase config llog from MGS */
+	
 	if ((!rc && !rc1 && !rc2) || si->si_force) {
 		char *__argv[3];
 
@@ -1857,7 +1857,7 @@ static int __snapshot_modify(struct snapshot_instance *si,
 			return pid;
 		}
 
-		/* child */
+		
 		if (pid == 0) {
 			char cmd[MAX_BUF_SIZE * 5];
 			int foreign = 0;
@@ -1916,9 +1916,9 @@ again:
 			}
 
 			exit(rc);
-		} /* end of child */
+		} 
 
-		/* parent continue to run more snapshot commands in parallel. */
+		
 		st->st_pid = pid;
 	}
 
@@ -1937,13 +1937,13 @@ static int snapshot_modify(struct snapshot_instance *si)
 
 	time(&tt);
 
-	/* Modify snapshot on every MDT */
+	
 	rc = __snapshot_modify(si, &si->si_mdts_list, (__u64)tt);
 	if (!rc)
-		/* Modify snapshot on every OST */
+		
 		rc = __snapshot_modify(si, &si->si_osts_list, (__u64)tt);
 
-	/* Wait for all children, even though part of them maybe failed */
+	
 	snapshot_wait(si, &rc1);
 
 	return rc ? rc : rc1;
@@ -2025,7 +2025,7 @@ again:
 		 DRSH" \""DIMPORT"; "DZFS
 		 " get all "DSSNAME" | grep lustre: | grep local$ | "
 		 "awk '{ \\$1=\\\"\\\"; \\$NF=\\\"\\\"; print \\$0 }' | "
-		 "sed -e 's/^ //'\" 2>/dev/null",
+		 "sed -e 's/^ 
 		 PRSH(si, st, foreign), PIMPORT(st), PZFS(st),
 		 PSSNAME(si, st));
 	fp = popen(buf, "r");
@@ -2349,13 +2349,13 @@ static int __snapshot_mount(struct snapshot_instance *si,
 			return pid;
 		}
 
-		/* child */
+		
 		if (pid == 0) {
 			rc = snapshot_mount_target(si, st, "");
 			exit(rc);
 		}
 
-		/* parent continue to run more snapshot commands in parallel. */
+		
 		st->st_pid = pid;
 	}
 
@@ -2384,7 +2384,7 @@ static int snapshot_mount(struct snapshot_instance *si)
 		return rc;
 	}
 
-	/* 1. MGS is not mounted yet, mount the MGS firstly */
+	
 	si->si_mgs->st_ignored = 0;
 	si->si_mgs->st_pid = 0;
 	if (!mgs_running) {
@@ -2407,7 +2407,7 @@ static int snapshot_mount(struct snapshot_instance *si)
 		si->si_mgs->st_ignored = 1;
 	}
 
-	/* 2. Mount MDT0 if it is not combined with the MGS. */
+	
 	if (!mdt0_mounted) {
 		si->si_mdt0->st_ignored = 0;
 		si->si_mdt0->st_pid = 0;
@@ -2420,13 +2420,13 @@ static int snapshot_mount(struct snapshot_instance *si)
 			goto cleanup;
 	}
 
-	/* 3.1 Mount other MDTs in parallel */
+	
 	rc = __snapshot_mount(si, &si->si_mdts_list);
 	if (!rc)
-		/* 3.2 Mount OSTs in parallel */
+		
 		rc = __snapshot_mount(si, &si->si_osts_list);
 
-	/* Wait for all children, even though part of them maybe failed */
+	
 	failed = snapshot_wait(si, &rc1);
 
 	list_for_each_entry(st, &si->si_mdts_list, st_list) {
@@ -2549,7 +2549,7 @@ static int __snapshot_umount(struct snapshot_instance *si,
 			return pid;
 		}
 
-		/* child */
+		
 		if (pid == 0) {
 			char cmd[MAX_BUF_SIZE];
 			int foreign = 0;
@@ -2574,7 +2574,7 @@ again:
 			exit(rc);
 		}
 
-		/* parent continue to run more snapshot commands in parallel. */
+		
 		st->st_pid = pid;
 	}
 

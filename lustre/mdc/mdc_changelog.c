@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Commissariat a l'Energie Atomique et aux Energies
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Henri Doreau <henri.doreau@cea.fr>
  */
@@ -43,41 +43,41 @@ static LIST_HEAD(chlg_registered_devices);
 
 
 struct chlg_registered_dev {
-	/* Device name of the form "changelog-{MDTNAME}" */
+	
 	char			 ced_name[32];
-	/* changelog char device */
+	
 	struct cdev		 ced_cdev;
 	struct device		 ced_device;
-	/* OBDs referencing this device (multiple mount point) */
+	
 	struct list_head	 ced_obds;
-	/* Reference counter for proper deregistration */
+	
 	struct kref		 ced_refs;
-	/* Link within the global chlg_registered_devices */
+	
 	struct list_head	 ced_link;
 };
 
 struct chlg_reader_state {
-	/* Shortcut to the corresponding OBD device */
+	
 	struct obd_device	   *crs_obd;
-	/* the corresponding chlg_registered_dev */
+	
 	struct chlg_registered_dev *crs_ced;
-	/* Producer thread (if any) */
+	
 	struct task_struct	   *crs_prod_task;
-	/* An error occurred that prevents from reading further */
+	
 	int			    crs_err;
-	/* EOF, no more records available */
+	
 	bool			    crs_eof;
-	/* Desired start position */
+	
 	__u64			    crs_start_offset;
-	/* Wait queue for the catalog processing thread */
+	
 	wait_queue_head_t	    crs_waitq_prod;
-	/* Wait queue for the record copy threads */
+	
 	wait_queue_head_t	    crs_waitq_cons;
-	/* Mutex protecting crs_rec_count and crs_rec_queue */
+	
 	struct mutex		    crs_lock;
-	/* Number of item in the list */
+	
 	__u64			    crs_rec_count;
-	/* List of prefetched enqueued_record::enq_linkage_items */
+	
 	struct list_head	    crs_rec_queue;
 	unsigned int		    crs_last_catidx;
 	unsigned int		    crs_last_idx;
@@ -85,16 +85,16 @@ struct chlg_reader_state {
 };
 
 struct chlg_rec_entry {
-	/* Link within the chlg_reader_state::crs_rec_queue list */
+	
 	struct list_head	enq_linkage;
-	/* Data (enq_record) field length */
+	
 	__u64			enq_length;
-	/* Copy of a changelog record (see struct llog_changelog_rec) */
+	
 	struct changelog_rec	enq_record[];
 };
 
 enum {
-	/* Number of records to prefetch locally. */
+	
 	CDEV_CHLG_MAX_PREFETCH = 1024,
 };
 
@@ -212,12 +212,12 @@ static int chlg_read_cat_process_cb(const struct lu_env *env,
 		RETURN(rc);
 	}
 
-	/* Check if we can skip the entire llog plain */
+	
 	if (llog_is_plain_skipable(llh->lgh_hdr, hdr, rec->cr.cr_index,
 				   crs->crs_start_offset))
 		RETURN(LLOG_SKIP_PLAIN);
 
-	/* Skip undesired records */
+	
 	if (rec->cr.cr_index < crs->crs_start_offset)
 		RETURN(0);
 
@@ -517,7 +517,7 @@ static loff_t chlg_llseek(struct file *file, loff_t off, int whence)
 		return -EINVAL;
 	}
 
-	/* We cannot go backward */
+	
 	if (pos < file->f_pos)
 		return -EINVAL;
 
@@ -558,7 +558,7 @@ static int chlg_clear(struct chlg_reader_state *crs, __u32 reader, __u64 record)
 	return rc;
 }
 
-/** Maximum changelog control command size */
+
 #define CHLG_CONTROL_CMD_MAX	64
 
 /**
@@ -732,7 +732,7 @@ static void get_target_name(char *name, size_t name_len, struct obd_device *obd)
 
 	snprintf(name, name_len, "%s", obd->obd_name);
 
-	/* Find the 2nd '-' from the end and truncate on it */
+	
 	for (i = 0; i < 2; i++) {
 		char *p = strrchr(name, '-');
 
@@ -830,14 +830,14 @@ int mdc_changelog_cdev_init(struct obd_device *obd)
 	if (rc)
 		GOTO(out_minor, rc);
 
-	/* Register new character device */
+	
 	cdev_init(&entry->ced_cdev, &chlg_fops);
 	entry->ced_cdev.owner = THIS_MODULE;
 	rc = cdev_device_add(&entry->ced_cdev, &entry->ced_device);
 	if (rc)
 		GOTO(out_device_name, rc);
 
-	entry = NULL;	/* prevent it from being freed below */
+	entry = NULL;	
 	GOTO(out_unlock, rc = 0);
 
 out_device_name:

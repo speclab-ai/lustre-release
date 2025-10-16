@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Client Extent Lock.
  *
@@ -90,7 +90,7 @@ int cl_lock_init(const struct lu_env *env, struct cl_lock *lock,
 	int result = 0;
 	ENTRY;
 
-	/* Make sure cl_lock::cll_descr is initialized. */
+	
 	LASSERT(obj != NULL);
 
 	INIT_LIST_HEAD(&lock->cll_layers);
@@ -219,7 +219,7 @@ int cl_lock_request(const struct lu_env *env, struct cl_io *io,
 	if (anchor != NULL) {
 		int rc2;
 
-		/* drop the reference count held at initialization time */
+		
 		cl_sync_io_note(env, anchor, 0);
 		rc2 = cl_sync_io_wait(env, anchor, 0);
 		if (rc2 < 0 && rc == 0)

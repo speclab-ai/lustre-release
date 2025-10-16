@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
@@ -398,15 +398,15 @@ static int tgt_handle_request0(struct tgt_session_info *tsi,
 		     CFS_FAIL_CHECK(OBD_FAIL_MDS_REINT_MULTI_NET)))
 		RETURN(0);
 
-	/* drop OUT_UPDATE rpc */
+	
 	if (unlikely(lustre_msg_get_opc(req->rq_reqmsg) == OUT_UPDATE &&
 		     CFS_FAIL_CHECK(OBD_FAIL_OUT_UPDATE_DROP)))
 		RETURN(0);
 
 	rc = tgt_request_preprocess(tsi, h, req);
-	/* pack reply if reply format is fixed */
+	
 	if (rc == 0 && h->th_flags & HAS_REPLY) {
-		/* Pack reply */
+		
 		if (req_capsule_has_field(tsi->tsi_pill, &RMF_MDT_MD,
 					  RCL_SERVER))
 			req_capsule_set_size(tsi->tsi_pill, &RMF_MDT_MD,
@@ -499,7 +499,7 @@ static int tgt_filter_recovery_request(struct ptlrpc_request *req,
 		*process = 1;
 		RETURN(0);
 	case MDS_CLOSE:
-	case MDS_SYNC: /* used in unmounting */
+	case MDS_SYNC: 
 	case OBD_PING:
 	case MDS_REINT:
 	case OUT_UPDATE:
@@ -571,7 +571,7 @@ static int tgt_handle_recovery(struct ptlrpc_request *req, int reply_fail_id)
 	 * last xid, however it could for a committed, but still retained,
 	 * open. */
 
-	/* Check for aborted recovery... */
+	
 	if (unlikely(test_bit(OBDF_RECOVERING, req->rq_export->exp_obd->obd_flags))) {
 		int rc;
 		int should_process;
@@ -590,14 +590,14 @@ static int tgt_handle_recovery(struct ptlrpc_request *req, int reply_fail_id)
 	RETURN(+1);
 }
 
-/* Initial check for request, it is validation mostly */
+
 static struct tgt_handler *tgt_handler_find_check(struct ptlrpc_request *req)
 {
 	struct tgt_handler	*h;
 	struct tgt_opc_slice	*s;
 	struct lu_target	*tgt;
 	__u32			 opc = lustre_msg_get_opc(req->rq_reqmsg);
-	/* don't spew error messages for unhandled RPCs */
+	
 	static bool		 printed;
 
 	ENTRY;
@@ -613,7 +613,7 @@ static struct tgt_handler *tgt_handler_find_check(struct ptlrpc_request *req)
 		if (s->tos_opc_start <= opc && opc < s->tos_opc_end)
 			break;
 
-	/* opcode was not found in slice */
+	
 	if (unlikely(s->tos_hs == NULL)) {
 		if (!printed) {
 			CERROR("%s: no handler for opcode 0x%x from %s\n",
@@ -666,7 +666,7 @@ static int process_req_last_xid(struct ptlrpc_request *req)
 
 	if (need_lock)
 		mutex_lock(&ted->ted_lcd_lock);
-	/* check request's xid is consistent with export's last_xid */
+	
 	last_xid = lustre_msg_get_last_xid(req->rq_reqmsg);
 	if (last_xid > exp->exp_last_xid)
 		exp->exp_last_xid = last_xid;
@@ -717,7 +717,7 @@ static int process_req_last_xid(struct ptlrpc_request *req)
 		GOTO(out, rc = -ESTALE);
 	}
 
-	/* try to release in-memory reply data */
+	
 	if (tgt_is_multimodrpcs_client(exp)) {
 		tgt_handle_received_xid(exp, last_xid);
 		rc = tgt_handle_tag(req);
@@ -769,7 +769,7 @@ int tgt_request_handle(struct ptlrpc_request *req)
 			rc = ptlrpc_error(req);
 			GOTO(out, rc);
 		}
-		/* recovery-small test 18c asks to drop connect reply */
+		
 		if (unlikely(opc == OST_CONNECT &&
 			     CFS_FAIL_CHECK(OBD_FAIL_OST_CONNECT_NET2)))
 			GOTO(out, rc = 0);
@@ -836,7 +836,7 @@ int tgt_request_handle(struct ptlrpc_request *req)
 	 * being processed by recovery thread. */
 	obd = class_exp2obd(req->rq_export);
 	if (is_connect) {
-		/* reset the exp_last_xid on each connection. */
+		
 		req->rq_export->exp_last_xid = 0;
 	} else if (obd->obd_recovery_data.trd_processing_task !=
 		   current->pid) {
@@ -894,7 +894,7 @@ out:
 }
 EXPORT_SYMBOL(tgt_request_handle);
 
-/** Assign high priority operations to the request if needed. */
+
 int tgt_hpreq_handler(struct ptlrpc_request *req)
 {
 	struct tgt_session_info	*tsi = tgt_ses_info(req->rq_svc_thread->t_env);
@@ -950,7 +950,7 @@ int tgt_connect_check_sptlrpc(struct ptlrpc_request *req, struct obd_export *exp
 	LASSERT(tgt->lut_obd);
 	LASSERT(tgt->lut_slice);
 
-	/* always allow ECHO client */
+	
 	if (unlikely(strcmp(exp->exp_obd->obd_type->typ_name,
 			    LUSTRE_ECHO_NAME) == 0)) {
 		exp->exp_flvr.sf_rpc = SPTLRPC_FLVR_ANY;
@@ -1253,7 +1253,7 @@ static int tgt_obd_idx_read(struct tgt_session_info *tsi)
 	memset(rdpg, 0, sizeof(*rdpg));
 	req_capsule_set(tsi->tsi_pill, &RQF_OBD_IDX_READ);
 
-	/* extract idx_info buffer from request & reply */
+	
 	req_ii = req_capsule_client_get(tsi->tsi_pill, &RMF_IDX_INFO);
 	if (req_ii == NULL || req_ii->ii_magic != IDX_INFO_MAGIC)
 		RETURN(err_serious(-EPROTO));
@@ -1267,18 +1267,18 @@ static int tgt_obd_idx_read(struct tgt_session_info *tsi)
 		RETURN(err_serious(-EFAULT));
 	rep_ii->ii_magic = IDX_INFO_MAGIC;
 
-	/* extract hash to start with */
+	
 	rdpg->rp_hash = req_ii->ii_hash_start;
 
-	/* extract requested attributes */
+	
 	rdpg->rp_attrs = req_ii->ii_attrs;
 
-	/* check that fid packed in request is valid and supported */
+	
 	if (!fid_is_sane(&req_ii->ii_fid))
 		RETURN(-EINVAL);
 	rep_ii->ii_fid = req_ii->ii_fid;
 
-	/* copy flags */
+	
 	rep_ii->ii_flags = req_ii->ii_flags;
 
 	/* compute number of pages to allocate, ii_count is the number of 4KB
@@ -1289,7 +1289,7 @@ static int tgt_obd_idx_read(struct tgt_session_info *tsi)
 			       exp_max_brw_size(tsi->tsi_exp));
 	rdpg->rp_npages = (rdpg->rp_count + PAGE_SIZE - 1) >> PAGE_SHIFT;
 
-	/* allocate pages to store the containers */
+	
 	OBD_ALLOC_PTR_ARRAY(rdpg->rp_pages, rdpg->rp_npages);
 	if (rdpg->rp_pages == NULL)
 		GOTO(out, rc = -ENOMEM);
@@ -1299,7 +1299,7 @@ static int tgt_obd_idx_read(struct tgt_session_info *tsi)
 			GOTO(out, rc = -ENOMEM);
 	}
 
-	/* populate pages with key/record pairs */
+	
 	rc = dt_index_read(tsi->tsi_env, tsi->tsi_tgt->lut_bottom, rep_ii, rdpg);
 	if (rc < 0)
 		GOTO(out, rc);
@@ -1307,7 +1307,7 @@ static int tgt_obd_idx_read(struct tgt_session_info *tsi)
 	LASSERTF(rc <= rdpg->rp_count, "dt_index_read() returned more than "
 		 "asked %d > %d\n", rc, rdpg->rp_count);
 
-	/* send pages to client */
+	
 	rc = tgt_sendpage(tsi, rdpg, rc);
 	if (rc)
 		GOTO(out, rc);
@@ -1335,7 +1335,7 @@ int tgt_sync(const struct lu_env *env, struct lu_target *tgt,
 
 	ENTRY;
 
-	/* if no objid is specified, it means "sync whole filesystem" */
+	
 	if (obj == NULL) {
 		rc = dt_sync(env, tgt->lut_bottom);
 	} else if (dt_version_get(env, obj) >
@@ -1498,7 +1498,7 @@ int tgt_cp_callback(struct tgt_session_info *tsi)
 	return err_serious(-EOPNOTSUPP);
 }
 
-/* generic LDLM target handler */
+
 struct tgt_handler tgt_dlm_handlers[] = {
 TGT_DLM_HDL(HAS_KEY, LDLM_ENQUEUE, tgt_enqueue),
 TGT_DLM_HDL(HAS_KEY, LDLM_CONVERT, tgt_convert),
@@ -1558,7 +1558,7 @@ int tgt_llog_prev_block(struct tgt_session_info *tsi)
 }
 EXPORT_SYMBOL(tgt_llog_prev_block);
 
-/* generic llog target handler */
+
 struct tgt_handler tgt_llog_handlers[] = {
 TGT_LLOG_HDL    (0,	LLOG_ORIGIN_HANDLE_CREATE,	tgt_llog_open),
 TGT_LLOG_HDL    (0,	LLOG_ORIGIN_HANDLE_NEXT_BLOCK,	tgt_llog_next_block),
@@ -1570,7 +1570,7 @@ EXPORT_SYMBOL(tgt_llog_handlers);
 /*
  * sec context handlers
  */
-/* XXX: Implement based on mdt_sec_ctx_handle()? */
+
 static int tgt_sec_ctx_handle(struct tgt_session_info *tsi)
 {
 	return 0;
@@ -1625,7 +1625,7 @@ void tgt_register_lfsck_query(int (*query)(const struct lu_env *,
 }
 EXPORT_SYMBOL(tgt_register_lfsck_query);
 
-/* LFSCK request handlers */
+
 static int tgt_handle_lfsck_notify(struct tgt_session_info *tsi)
 {
 	const struct lu_env	*env = tsi->tsi_env;
@@ -1785,7 +1785,7 @@ static int tgt_data_lock(const struct lu_env *env, struct obd_export *exp,
 	struct ldlm_namespace *ns = exp->exp_obd->obd_namespace;
 	__u64 flags = 0;
 
-	/* MDT IO for data-on-mdt */
+	
 	if (exp->exp_connect_data.ocd_connect_flags & OBD_CONNECT_IBITS)
 		return tgt_mdt_data_lock(ns, res_id, lh, mode, &flags);
 
@@ -2382,10 +2382,10 @@ int tgt_brw_read(struct tgt_session_info *tsi)
 		RETURN(0);
 
 	ioo = req_capsule_client_get(tsi->tsi_pill, &RMF_OBD_IOOBJ);
-	LASSERT(ioo != NULL); /* must exists after tgt_ost_body_unpack */
+	LASSERT(ioo != NULL); 
 
 	remote_nb = req_capsule_client_get(&req->rq_pill, &RMF_NIOBUF_REMOTE);
-	LASSERT(remote_nb != NULL); /* must exists after tgt_ost_body_unpack */
+	LASSERT(remote_nb != NULL); 
 
 	local_nb = tbc->local;
 
@@ -2439,7 +2439,7 @@ int tgt_brw_read(struct tgt_session_info *tsi)
 					    &ptlrpc_bulk_kiov_nopin_ops);
 		if (desc == NULL)
 			GOTO(out_commitrw, rc = -ENOMEM);
-		/* client may have MD handling requirements  */
+		
 		desc->bd_md_offset = ioobj_page_interop_offset(ioo);
 	}
 
@@ -2454,7 +2454,7 @@ int tgt_brw_read(struct tgt_session_info *tsi)
 		}
 
 		nob += page_rc;
-		if (page_rc != 0 && desc != NULL) { /* some data! */
+		if (page_rc != 0 && desc != NULL) { 
 			LASSERT(local_nb[i].lnb_page != NULL);
 			CDEBUG(D_INODE,
 			       "lnb %d, at offset %llu, hole %d\n", i,
@@ -2466,10 +2466,10 @@ int tgt_brw_read(struct tgt_session_info *tsi)
 			   page_rc);
 		}
 
-		if (page_rc != local_nb[i].lnb_len) { /* short read */
+		if (page_rc != local_nb[i].lnb_len) { 
 			local_nb[i].lnb_len = page_rc;
 			npages_read = i + (page_rc != 0 ? 1 : 0);
-			/* All subsequent pages should be 0 */
+			
 			while (++i < npages)
 				LASSERT(local_nb[i].lnb_rc == 0);
 			break;
@@ -2509,7 +2509,7 @@ int tgt_brw_read(struct tgt_session_info *tsi)
 	}
 	if (body->oa.o_valid & OBD_MD_FLGRANT)
 		repbody->oa.o_valid |= OBD_MD_FLGRANT;
-	/* We're finishing using body->oa as an input variable */
+	
 
 	/* Check if client was evicted while we were doing i/o before touching
 	 * network */
@@ -2543,7 +2543,7 @@ int tgt_brw_read(struct tgt_session_info *tsi)
 	}
 
 out_commitrw:
-	/* Must commit after prep above in all cases */
+	
 	rc = obd_commitrw(tsi->tsi_env, OBD_BRW_READ, exp, &repbody->oa, 1, ioo,
 			  remote_nb, npages, local_nb, rc, nob, kstart);
 out_lock:
@@ -2558,7 +2558,7 @@ out_lock:
 		ptlrpc_lprocfs_brw(req, nob);
 	} else if (no_reply) {
 		req->rq_no_reply = 1;
-		/* reply out callback would free */
+		
 		ptlrpc_req_drop_rs(req);
 		LCONSOLE_WARN("%s: Bulk IO read error with %s (at %s), "
 			      "client will retry: rc %d\n",
@@ -2576,7 +2576,7 @@ out_lock:
 		rc = sptlrpc_svc_wrap_bulk(req, desc);
 		if (OCD_HAS_FLAG(&exp->exp_connect_data, BULK_MBITS))
 			req->rq_mbits = lustre_msg_get_mbits(req->rq_reqmsg);
-		else /* old version, bulk matchbits is rq_xid */
+		else 
 			req->rq_mbits = req->rq_xid;
 
 		req->rq_status = rc;
@@ -2683,7 +2683,7 @@ int tgt_brw_write(struct tgt_session_info *tsi)
 	struct tgt_thread_big_cache *tbc = req->rq_svc_thread->t_data;
 	bool wait_sync = false;
 	const char *obd_name = exp->exp_obd->obd_name;
-	/* '1' for consistency with code that checks !mpflag to restore */
+	
 	unsigned int mpflags = 1;
 	ktime_t kstart;
 	int nob = 0;
@@ -2727,11 +2727,11 @@ int tgt_brw_write(struct tgt_session_info *tsi)
 		}
 	}
 
-	/* pause before transaction has been started */
+	
 	CFS_FAIL_TIMEOUT(OBD_FAIL_OST_BRW_PAUSE_BULK, cfs_fail_val > 0 ?
 			 cfs_fail_val : (obd_timeout + 1) / 4);
 
-	/* Delay write commit to show stale size information */
+	
 	CFS_FAIL_TIMEOUT(OBD_FAIL_OSC_NO_SIZE_DATA, cfs_fail_val);
 
 	/* There must be big cache in current thread to process this request
@@ -2749,7 +2749,7 @@ int tgt_brw_write(struct tgt_session_info *tsi)
 
 
 	ioo = req_capsule_client_get(&req->rq_pill, &RMF_OBD_IOOBJ);
-	LASSERT(ioo != NULL); /* must exists after tgt_ost_body_unpack */
+	LASSERT(ioo != NULL); 
 
 	objcount = req_capsule_get_size(&req->rq_pill, &RMF_OBD_IOOBJ,
 					RCL_CLIENT) / sizeof(*ioo);
@@ -2758,7 +2758,7 @@ int tgt_brw_write(struct tgt_session_info *tsi)
 		niocount += ioo[i].ioo_bufcnt;
 
 	remote_nb = req_capsule_client_get(&req->rq_pill, &RMF_NIOBUF_REMOTE);
-	LASSERT(remote_nb != NULL); /* must exists after tgt_ost_body_unpack */
+	LASSERT(remote_nb != NULL); 
 	if (niocount != req_capsule_get_size(&req->rq_pill,
 					     &RMF_NIOBUF_REMOTE, RCL_CLIENT) /
 			sizeof(*remote_nb))
@@ -2769,7 +2769,7 @@ int tgt_brw_write(struct tgt_session_info *tsi)
 	    LNetIsPeerLocal(&exp->exp_connection->c_peer.nid))
 		mpflags = memalloc_noreclaim_save();
 
-	/* it is incorrect to return ENOSPC when granted space has been used */
+	
 	if (unlikely(!(remote_nb[0].rnb_flags & OBD_BRW_FROM_GRANT))) {
 		if (CFS_FAIL_CHECK(OBD_FAIL_OST_ENOSPC_VALID))
 			RETURN(err_serious(-ENOSPC));
@@ -2838,7 +2838,7 @@ int tgt_brw_write(struct tgt_session_info *tsi)
 		CDEBUG(D_INFO, "Client use short io for data transfer,"
 			       " size = %d\n", short_io_size);
 
-		/* Copy short io buf to pages */
+		
 		rc = tgt_shortio2pages(local_nb, npages, short_io_buf,
 				       short_io_size);
 		desc = NULL;
@@ -2849,10 +2849,10 @@ int tgt_brw_write(struct tgt_session_info *tsi)
 					    &ptlrpc_bulk_kiov_nopin_ops);
 		if (desc == NULL)
 			GOTO(skip_transfer, rc = -ENOMEM);
-		/* client may have MD handling requirements  */
+		
 		desc->bd_md_offset = ioobj_page_interop_offset(ioo);
 
-		/* NB Having prepped, we must commit... */
+		
 		for (i = 0; i < npages; i++)
 			desc->bd_frag_ops->add_kiov_frag(desc,
 					local_nb[i].lnb_page,
@@ -2917,10 +2917,10 @@ out_commitrw:
 		nob += len;
 	}
 
-	/* multiple transactions can be assigned during write commit */
+	
 	tsi->tsi_mult_trans = 1;
 
-	/* Must commit after prep above in all cases */
+	
 	rc = obd_commitrw(tsi->tsi_env, OBD_BRW_WRITE, exp, &repbody->oa,
 			  objcount, ioo, remote_nb, npages, local_nb, rc, nob,
 			  kstart);
@@ -2945,7 +2945,7 @@ out_commitrw:
 	repbody->oa.o_valid &= ~(OBD_MD_FLMTIME | OBD_MD_FLATIME);
 
 	if (rc == 0) {
-		/* set per-requested niobuf return codes */
+		
 		for (i = j = 0; i < niocount; i++) {
 			int len = remote_nb[i].rnb_len;
 
@@ -2969,7 +2969,7 @@ out_lock:
 out:
 	if (unlikely(no_reply || (exp->exp_obd->obd_no_transno && wait_sync))) {
 		req->rq_no_reply = 1;
-		/* reply out callback would free */
+		
 		ptlrpc_req_drop_rs(req);
 		if (!exp->exp_obd->obd_no_transno)
 			LCONSOLE_WARN("%s: Bulk IO write error with %s (at %s),"

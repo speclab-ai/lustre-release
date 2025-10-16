@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2013, 2015, Trustees of Indiana University
@@ -75,7 +75,7 @@ static
 __u32 gss_inquire_context_null(struct gss_ctx *gss_context,
 			       time64_t *endtime)
 {
-	/* quick timeout for testing purposes */
+	
 	*endtime = ktime_get_real_seconds() + 60;
 	return GSS_S_COMPLETE;
 }
@@ -174,7 +174,7 @@ static struct subflavor_desc gss_null_sfs[] = {
 };
 
 static struct gss_api_mech gss_null_mech = {
-	/* .gm_owner uses default NULL value for THIS_MODULE */
+	
 	.gm_name        = "gssnull",
 	.gm_oid         = (rawobj_t) {
 		12,

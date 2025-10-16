@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Console framework rpcs
  *
@@ -40,23 +40,23 @@ lstcon_rpc_done(struct srpc_client_rpc *rpc)
 		 */
 		spin_unlock(&rpc->crpc_lock);
 
-		/* release it */
+		
 		lstcon_rpc_put(crpc);
 		return;
 	}
 
-	/* not an orphan RPC */
+	
 	crpc->crp_finished = 1;
 
 	if (crpc->crp_stamp_ns == 0) {
-		/* not aborted */
+		
 		LASSERT(crpc->crp_status == 0);
 
 		crpc->crp_stamp_ns = ktime_get_ns();
 		crpc->crp_status = rpc->crpc_status;
 	}
 
-	/* wakeup (transaction)thread if I'm the last RPC in the transaction */
+	
 	if (atomic_dec_and_test(&crpc->crp_trans->tas_remaining))
 		wake_up(&crpc->crp_trans->tas_waitq);
 
@@ -137,7 +137,7 @@ lstcon_rpc_put(struct lstcon_rpc *crpc)
 	srpc_client_rpc_decref(crpc->crp_rpc);
 
 	if (crpc->crp_embedded) {
-		/* embedded RPC, don't recycle it */
+		
 		memset(crpc, 0, sizeof(*crpc));
 		crpc->crp_embedded = 1;
 
@@ -150,7 +150,7 @@ lstcon_rpc_put(struct lstcon_rpc *crpc)
 		spin_unlock(&console_session.ses_rpc_lock);
 	}
 
-	/* RPC is not alive now */
+	
 	atomic_dec(&console_session.ses_rpc_counter);
 }
 
@@ -214,13 +214,13 @@ lstcon_rpc_trans_prep(struct list_head *translist, int transop,
 
 	if (translist != NULL) {
 		list_for_each_entry(trans, translist, tas_link) {
-			/* Can't enqueue two private transaction on same obj */
+			
 			if ((trans->tas_opc & transop) == LST_TRANS_PRIVATE)
 				return -EPERM;
 		}
 	}
 
-	/* create a trans group */
+	
 	LIBCFS_ALLOC(trans, sizeof(*trans));
 	if (trans == NULL)
 		return -ENOMEM;
@@ -265,8 +265,8 @@ lstcon_rpc_trans_abort(struct lstcon_rpc_trans *trans, int error)
 
 		spin_lock(&rpc->crpc_lock);
 
-		if (!crpc->crp_posted || /* not posted */
-		    crpc->crp_stamp_ns != 0) { /* rpc done or aborted already */
+		if (!crpc->crp_posted || 
+		    crpc->crp_stamp_ns != 0) { 
 			if (crpc->crp_stamp_ns == 0) {
 				crpc->crp_stamp_ns = ktime_get_ns();
 				crpc->crp_status = -EINTR;
@@ -298,7 +298,7 @@ static int
 lstcon_rpc_trans_check(struct lstcon_rpc_trans *trans)
 {
 	if (console_session.ses_shutdown &&
-	    !list_empty(&trans->tas_olink)) /* Not an end session RPC */
+	    !list_empty(&trans->tas_olink)) 
 		return 1;
 
 	return (atomic_read(&trans->tas_remaining) == 0) ? 1 : 0;
@@ -319,7 +319,7 @@ lstcon_rpc_trans_postwait(struct lstcon_rpc_trans *trans, int timeout)
 	CDEBUG(D_NET, "Transaction %s started\n",
 	lstcon_rpc_trans_name(trans->tas_opc));
 
-	/* post all requests */
+	
 	list_for_each_entry(crpc, &trans->tas_rpcs_list, crp_link) {
 		LASSERT(!crpc->crp_posted);
 
@@ -340,7 +340,7 @@ lstcon_rpc_trans_postwait(struct lstcon_rpc_trans *trans, int timeout)
 		rc = -ESHUTDOWN;
 
 	if (rc != 0 || atomic_read(&trans->tas_remaining) != 0) {
-		/* treat short timeout as canceled */
+		
 		if (rc == -ETIMEDOUT && timeout < LST_TRANS_MIN_TIMEOUT * 2)
 			rc = -EINTR;
 
@@ -490,7 +490,7 @@ lstcon_rpc_trans_interpreter(struct lstcon_rpc_trans *trans,
 		if (error != 0)
 			continue;
 
-		/* RPC is done */
+		
 		rep = (struct srpc_generic_reply *)&msg->msg_body.reply;
 
 		if (copy_to_user(&ent->rpe_sid,
@@ -523,7 +523,7 @@ lstcon_rpc_trans_destroy(struct lstcon_rpc_trans *trans)
 
 		spin_lock(&rpc->crpc_lock);
 
-		/* free it if not posted or finished already */
+		
 		if (!crpc->crp_posted || crpc->crp_finished) {
 			spin_unlock(&rpc->crpc_lock);
 
@@ -677,7 +677,7 @@ lstcon_statrpc_prep(struct lstcon_node *nd, unsigned int feats,
 	srq->str_sid.ses_stamp = console_session.ses_id.ses_stamp;
 	srq->str_sid.ses_nid =
 		lnet_nid_to_nid4(&console_session.ses_id.ses_nid);
-	srq->str_type = 0; /* XXX remove it */
+	srq->str_type = 0; 
 
 	return 0;
 }
@@ -734,7 +734,7 @@ lstcon_dstnodes_prep(struct lstcon_group *grp, int idx,
 		i++;
 	}
 
-	if (start <= end)	/* done */
+	if (start <= end)	
 		return 0;
 
 	list_for_each_entry(ndl, &grp->grp_ndl_list, ndl_link) {
@@ -764,7 +764,7 @@ lstcon_pingrpc_prep(struct lst_test_ping_param *param,
 		prq->png_size   = 0;
 		prq->png_flags  = 0;
 	}
-	/* TODO dest */
+	
 	return 0;
 }
 
@@ -937,7 +937,7 @@ lstcon_sesnew_stat_reply(struct lstcon_rpc_trans *trans,
 
 	if (!trans->tas_feats_updated) {
 		spin_lock(&console_session.ses_rpc_lock);
-		if (!trans->tas_feats_updated) { /* recheck with lock */
+		if (!trans->tas_feats_updated) { 
 			trans->tas_feats_updated = 1;
 			trans->tas_features = reply->msg_ses_feats;
 		}
@@ -952,7 +952,7 @@ lstcon_sesnew_stat_reply(struct lstcon_rpc_trans *trans,
 	}
 
 	if (status == 0) {
-		/* session timeout on remote node */
+		
 		nd->nd_timeout = mksn_rep->mksn_timeout;
 	}
 
@@ -983,7 +983,7 @@ lstcon_rpc_stat_reply(struct lstcon_rpc_trans *trans, struct srpc_msg *msg,
 
 	case LST_TRANS_SESEND:
 		rmsn_rep = &msg->msg_body.rmsn_reply;
-		/* ESRCH is not an error for end session */
+		
 		if (rmsn_rep->rmsn_status == 0 ||
 		    rmsn_rep->rmsn_status == ESRCH) {
 			lstcon_sesop_stat_success(stat, 1);
@@ -1090,7 +1090,7 @@ lstcon_rpc_trans_ndlist(struct list_head *ndlist,
 	unsigned int feats;
 	int rc;
 
-	/* Creating session RPG for list of nodes */
+	
 
 	rc = lstcon_rpc_trans_prep(translist, transop, &trans);
 	if (rc != 0) {
@@ -1202,7 +1202,7 @@ lstcon_rpc_pinger(void *arg)
 		nd = ndl->ndl_node;
 
 		if (console_session.ses_expired) {
-			/* idle console, end session on all nodes */
+			
 			if (nd->nd_state != LST_NODE_ACTIVE)
 				continue;
 
@@ -1230,7 +1230,7 @@ lstcon_rpc_pinger(void *arg)
 			LASSERT(crpc->crp_posted);
 
 			if (!crpc->crp_finished) {
-				/* in flight */
+				
 				spin_unlock(&crpc->crp_rpc->crpc_lock);
 				continue;
 			}
@@ -1333,7 +1333,7 @@ lstcon_rpc_cleanup_wait(void)
 	struct list_head *pacer;
 	LIST_HEAD(zlist);
 
-	/* Called with hold of global mutex */
+	
 
 	LASSERT(console_session.ses_shutdown);
 

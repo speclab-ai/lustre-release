@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -11,7 +11,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Sonia Sharma
  */
@@ -180,12 +180,12 @@ copy_ioc_udsp_descr(struct lnet_ud_nid_descr *nid_descr, char *type,
 	if (remaining_size < 0)
 		return -EINVAL;
 
-	/* the number of expressions for the NID. IE 4 for IP, 1 for GNI */
+	
 	expr_count = ioc_nid->iud_src_hdr.ud_descr_count;
-	/* point tmp to the beginning of the NID expressions */
+	
 	tmp += size;
 	for (i = 0; i < expr_count; i++) {
-		/* get the number of ranges per expression */
+		
 		exprs = tmp;
 		range_count += exprs->le_count;
 		size = (range_expr_s * exprs->le_count) + lnet_exprs_s;
@@ -197,23 +197,23 @@ copy_ioc_udsp_descr(struct lnet_ud_nid_descr *nid_descr, char *type,
 
 	*bulk_size = remaining_size;
 
-	/* copy over the net type */
+	
 	nid_descr->ud_net_id.udn_net_type = ioc_nid->iud_net.ud_net_type;
 
-	/* allocate the total memory required to copy this NID descriptor */
+	
 	alloc_size = (sizeof(struct cfs_expr_list) * (expr_count + 1)) +
 		     (sizeof(struct cfs_range_expr) * (range_count));
 	buf = calloc(alloc_size, 1);
 	if (!buf)
 		return -ENOMEM;
 
-	/* copy over the net number range */
+	
 	range_count = ioc_nid->iud_net.ud_net_num_expr.le_count;
 	*bulk += sizeof(*ioc_nid);
 	copy_range_info(bulk, &buf, &nid_descr->ud_net_id.udn_net_num_range,
 			range_count);
 
-	/* copy over the NID descriptor */
+	
 	for (i = 0; i < expr_count; i++)
 		copy_range_info(bulk, &buf, &nid_descr->ud_addr_range, -1);
 
@@ -294,7 +294,7 @@ lnet_size_marshaled_nid_descr(struct lnet_ud_nid_descr *descr)
 		range_count = lnet_get_list_len(&expr->el_exprs);
 	}
 
-	/* count the number of cfs_range_expr in the address expressions */
+	
 	list_for_each_entry(expr, &descr->ud_addr_range, el_link) {
 		expr_count++;
 		range_count += lnet_get_list_len(&expr->el_exprs);
@@ -325,7 +325,7 @@ copy_exprs(struct cfs_expr_list *expr, void __user **bulk,
 	struct cfs_range_expr *range;
 	struct lnet_range_expr range_expr;
 
-	/* copy over the net range expressions to the bulk */
+	
 	list_for_each_entry(range, &expr->el_exprs, re_link) {
 		range_expr.re_lo = range->re_lo;
 		range_expr.re_hi = range->re_hi;
@@ -361,7 +361,7 @@ copy_nid_range(struct lnet_ud_nid_descr *nid_descr, char *type,
 
 	expr_count = lnet_get_list_len(&nid_descr->ud_addr_range);
 
-	/* copy the net information */
+	
 	if (!list_empty(&nid_descr->ud_net_id.udn_net_num_range)) {
 		expr = list_first_entry(&nid_descr->ud_net_id.udn_net_num_range,
 					struct cfs_expr_list, el_link);
@@ -370,22 +370,22 @@ copy_nid_range(struct lnet_ud_nid_descr *nid_descr, char *type,
 		net_expr_count = 0;
 	}
 
-	/* set the total expression count */
+	
 	ioc_udsp_descr.iud_src_hdr.ud_descr_count = expr_count;
 	ioc_udsp_descr.iud_net.ud_net_type =
 		nid_descr->ud_net_id.udn_net_type;
 	ioc_udsp_descr.iud_net.ud_net_num_expr.le_count = net_expr_count;
 
-	/* copy over the header info to the bulk */
+	
 	memcpy(*bulk, &ioc_udsp_descr, sizeof(ioc_udsp_descr));
 	*bulk += sizeof(ioc_udsp_descr);
 	*bulk_size -= sizeof(ioc_udsp_descr);
 
-	/* copy over the net num expression if it exists */
+	
 	if (net_expr_count)
 		copy_exprs(expr, bulk, bulk_size);
 
-	/* copy the address range */
+	
 	list_for_each_entry(expr, &nid_descr->ud_addr_range, el_link) {
 		ioc_expr.le_count = lnet_get_list_len(&expr->el_exprs);
 		memcpy(*bulk, &ioc_expr, sizeof(ioc_expr));
@@ -504,7 +504,7 @@ int lustre_lnet_add_udsp(char *src, char *dst, char *rte,
 	udsp->udsp_idx = idx;
 	udsp->udsp_action_type = action_type;
 
-	/* a priority of -1 will result in the lowest possible priority */
+	
 	if (action_type == EN_LNET_UDSP_ACTION_PRIORITY)
 		udsp->udsp_action.udsp_priority = action->udsp_priority;
 
@@ -622,7 +622,7 @@ static int lustre_lnet_nid_descr2str(struct lnet_ud_nid_descr *d,
 	char *net;
 	bool addr_found = false;
 
-	/* criteria not defined */
+	
 	if (d->ud_net_id.udn_net_type == 0) {
 		strncat(str, "NA", left - 1);
 		return 0;
@@ -633,10 +633,10 @@ static int lustre_lnet_nid_descr2str(struct lnet_ud_nid_descr *d,
 		return left;
 	net = libcfs_net2str(LNET_MKNET(d->ud_net_id.udn_net_type, 0));
 	if (left < size) {
-		len = strlen(net) + 2; /* account for @ and NULL termination */
+		len = strlen(net) + 2; 
 		addr_found = true;
 	} else {
-		len = strlen(net) + 1; /* account for NULL termination */
+		len = strlen(net) + 1; 
 	}
 
 	if (left - len < 0)
@@ -753,7 +753,7 @@ int lustre_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 		rc = -EINVAL;
 		exist = true;
 
-		/* create the tree to be printed. */
+		
 		item = cYAML_create_seq_item(udsp_node);
 		if (item == NULL)
 			goto out;
@@ -801,12 +801,12 @@ int lustre_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 			free(ioctl_buf);
 		if (udsp)
 			lnet_udsp_free(udsp, true);
-		/* did we show the given index? */
+		
 		if (idx != -1)
 			break;
 	}
 
-	/* Print out the net information only if show_rc is not provided */
+	
 	if (show_rc == NULL)
 		cYAML_print_tree(root);
 

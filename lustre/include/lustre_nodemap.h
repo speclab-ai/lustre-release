@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (C) 2013, Trustees of Indiana University
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Joshua Walgenbach <jjw@iu.edu>
  */
@@ -63,7 +63,7 @@ static const struct nodemap_priv_name {
 	{ NODEMAP_RAISE_PRIV_TRUSTED,		"trusted"		},
 	{ NODEMAP_RAISE_PRIV_DENY_UNKN,		"deny_unknown"		},
 	{ NODEMAP_RAISE_PRIV_RO,		"readonly_mount"	},
-	/* NODEMAP_RAISE_PRIV_RBAC uses the rbac roles directly */
+	
 	{ NODEMAP_RAISE_PRIV_FORBID_ENC,	"forbid_encryption"	},
 	{ NODEMAP_RAISE_PRIV_CAPS,		"caps"	},
 	{ NODEMAP_RAISE_PRIV_DENY_MNT,		"deny_mount"		},
@@ -82,7 +82,7 @@ enum fileset_modify_access {
 };
 
 struct lu_nodemap_fileset_modify {
-	/* the renamed fileset path */
+	
 	char				*nfm_fileset;
 	enum fileset_modify_type	nfm_type;
 	enum fileset_modify_access	nfm_access;
@@ -94,9 +94,9 @@ struct lu_nodemap_fileset_modify {
  */
 
 struct lu_nodemap {
-	/* human readable ID */
+	
 	char			 nm_name[LUSTRE_NODEMAP_NAME_LENGTH + 1];
-	/* flags to govern nodemap behavior */
+	
 	bool			 nmf_trust_client_ids:1,
 				 nmf_deny_unknown:1,
 				 nmf_allow_root_access:1,
@@ -105,85 +105,85 @@ struct lu_nodemap {
 				 nmf_readonly_mount:1,
 				 nmf_deny_mount:1,
 				 nmf_fileset_use_iam:1;
-	/* bitmap for mapping type */
+	
 	enum nodemap_mapping_modes nmf_map_mode;
-	/* bitmap for rbac, enum nodemap_rbac_roles */
+	
 	enum nodemap_rbac_roles	 nmf_rbac;
-	/* bitmap for privilege raise, enum nodemap_raise_privs */
+	
 	enum nodemap_raise_privs nmf_raise_privs;
-	/* bitmap for rbac raise, enum nodemap_rbac_roles */
+	
 	enum nodemap_rbac_roles nmf_rbac_raise;
-	/* bitmap for capabilities type */
+	
 	enum nodemap_cap_type	 nmf_caps_type;
-	/* unique ID set by MGS */
+	
 	unsigned int		 nm_id;
-	/* nodemap ref counter */
+	
 	refcount_t		 nm_refcount;
-	/* UID to squash unmapped UIDs */
+	
 	uid_t			 nm_squash_uid;
-	/* GID to squash unmapped GIDs */
+	
 	gid_t			 nm_squash_gid;
-	/* PROJID to squash unmapped PROJIDs */
+	
 	projid_t		 nm_squash_projid;
-	/* NID range list */
+	
 	struct list_head	 nm_ranges;
-	/* Banned NID range list */
+	
 	struct list_head	 nm_ban_ranges;
-	/* lock for idmap red/black trees */
+	
 	struct rw_semaphore	 nm_idmap_lock;
-	/* UID map keyed by local UID */
+	
 	struct rb_root		 nm_fs_to_client_uidmap;
-	/* UID map keyed by remote UID */
+	
 	struct rb_root		 nm_client_to_fs_uidmap;
-	/* GID map keyed by local UID */
+	
 	struct rb_root		 nm_fs_to_client_gidmap;
-	/* GID map keyed by remote UID */
+	
 	struct rb_root		 nm_client_to_fs_gidmap;
-	/* PROJID map keyed by local UID */
+	
 	struct rb_root		 nm_fs_to_client_projidmap;
-	/* PROJID map keyed by remote UID */
+	
 	struct rb_root		 nm_client_to_fs_projidmap;
-	/* attached client members of this nodemap */
+	
 	struct mutex		 nm_member_list_lock;
 	struct list_head	 nm_member_list;
-	/* access by nodemap name */
+	
 	struct hlist_node	 nm_hash;
 	struct nodemap_pde	*nm_pde_data;
-	/* primary fileset this nodemap is restricted to */
+	
 	char			 *nm_fileset_prim;
 	unsigned int		 nm_fileset_prim_size;
 	bool			 nm_fileset_prim_ro;
-	/* lock for fileset red/black tree */
+	
 	struct rw_semaphore	 nm_fileset_alt_lock;
-	/* alternate fileset map */
+	
 	struct rb_root		 nm_fileset_alt;
-	/* alternate fileset map size (# elements) */
+	
 	unsigned int		 nm_fileset_alt_sz;
-	/* information about the expected SELinux policy on the nodes */
+	
 	char			 nm_sepol[LUSTRE_NODEMAP_SEPOL_LENGTH + 1];
-	/* used when loading/unloading nodemaps */
+	
 	struct list_head	 nm_list;
-	/* is a dynamic nodemap */
+	
 	bool			 nm_dyn;
-	/* value to start UID offset */
+	
 	unsigned int		 nm_offset_start_uid;
-	/* number of values allocated to UID offset */
+	
 	unsigned int		 nm_offset_limit_uid;
-	/* value to start GID offset */
+	
 	unsigned int		 nm_offset_start_gid;
-	/* number of values allocated to GID offset */
+	
 	unsigned int		 nm_offset_limit_gid;
-	/* value to start PROJID offset */
+	
 	unsigned int		 nm_offset_start_projid;
-	/* number of values allocated to PROJID offset */
+	
 	unsigned int		 nm_offset_limit_projid;
-	/* list of sub-nodemaps */
+	
 	struct list_head	 nm_subnodemaps;
-	/* list entry for parent nodemap */
+	
 	struct list_head	 nm_parent_entry;
-	/* link to parent nodemap */
+	
 	struct lu_nodemap	*nm_parent_nm;
-	/* user capabilities */
+	
 	kernel_cap_t		 nm_capabilities;
 };
 
@@ -288,19 +288,19 @@ struct nodemap_range_tree {
 };
 
 struct nodemap_config {
-	/* Highest numerical lu_nodemap.nm_id defined */
+	
 	unsigned int nmc_nodemap_highest_id;
 
-	/* Simple flag to determine if nodemaps are active */
+	
 	bool nmc_nodemap_is_active;
 
-	/* Pointer to default nodemap as it is needed more often */
+	
 	struct lu_nodemap *nmc_default_nodemap;
 
-	/* list of netmask + address prefix for regular nid ranges */
+	
 	struct list_head nmc_netmask_setup;
 
-	/* list of netmask + address prefix for banned nid ranges */
+	
 	struct list_head nmc_ban_netmask_setup;
 
 	/**
@@ -330,20 +330,20 @@ void nodemap_config_set_active_mgc(struct nodemap_config *config);
 int nodemap_process_idx_pages(struct nodemap_config *config, union lu_page *lip,
 			      struct lu_nodemap **recent_nodemap);
 
-#else /* disable nodemap processing in MGC of non-servers */
+#else 
 static inline int nodemap_process_idx_pages(void *config,
 					    union lu_page *lip,
 					    struct lu_nodemap **recent_nodemap)
 { return 0; }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 int nodemap_get_config_req(struct obd_device *mgs_obd,
 			   struct ptlrpc_request *req);
 
-/* Return true if id corresponds to local root */
+
 static inline bool is_local_root(__u32 id, struct lu_nodemap *nodemap)
 {
-	/* Plain root is also local root */
+	
 	if (id == 0)
 		return true;
 
@@ -367,4 +367,4 @@ static inline bool is_local_root(__u32 id, struct lu_nodemap *nodemap)
 	return nodemap->nmf_rbac & NODEMAP_RBAC_LOCAL_ADMIN;
 }
 
-#endif	/* _LUSTRE_NODEMAP_H */
+#endif	

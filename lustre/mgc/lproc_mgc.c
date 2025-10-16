@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -49,7 +49,7 @@ static struct ldebugfs_vars ldebugfs_mgc_obd_vars[] = {
 	  .fops	=	&mgc_ir_state_fops	},
 	{ NULL }
 };
-#endif /* CONFIG_PROC_FS */
+#endif 
 
 LUSTRE_ATTR(mgs_conn_uuid, 0444, conn_uuid_show, NULL);
 LUSTRE_RO_ATTR(conn_uuid);

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Extention of lu_object.h for metadata objects
  */
@@ -18,7 +18,7 @@
 
 #ifndef HAVE_SERVER_SUPPORT
 # error "client code should not depend on md_object.h"
-#endif /* !HAVE_SERVER_SUPPORT */
+#endif 
 
 /* md Sub-class of lu_object with methods common for "meta-data" objects in MDT
  * stack.
@@ -39,7 +39,7 @@ struct md_device_operations;
 struct md_object;
 struct obd_export;
 
-/** metadata attributes */
+
 enum ma_valid {
 	MA_INODE	= BIT(0),
 	MA_LOV		= BIT(1),
@@ -51,7 +51,7 @@ enum ma_valid {
 	MA_PFID		= BIT(7),
 	MA_LMV_DEF	= BIT(8),
 	MA_SOM		= BIT(9),
-	MA_FORCE_LOG	= BIT(10), /* forced close logged in mdt_mfd_close */
+	MA_FORCE_LOG	= BIT(10), 
 	MA_DIRENT_CNT	= BIT(11),
 };
 
@@ -61,7 +61,7 @@ typedef enum {
 	MDT_PDO_LOCK = BIT(1),
 } mdl_type_t;
 
-/* lfs rgetfacl permission check */
+
 #define MAY_RGETFACL	BIT(14)
 
 /* memory structure for hsm attributes
@@ -105,59 +105,59 @@ struct md_attr {
 	int			 ma_enable_chprojid_gid;
 };
 
-/** Additional parameters for create */
+
 struct md_op_spec {
 	union {
-		/** symlink target */
+		
 		struct lu_name sp_symname;
-		/** eadata for regular files */
+		
 		struct md_spec_reg {
 			void *eadata;
 			int  eadatalen;
 		} sp_ea;
 	} u;
 
-	/** Open flags from client: such as MDS_OPEN_CREAT, and others. */
+	
 	enum mds_open_flags      sp_cr_flags;
 
-	/* File security context for creates. */
-	const char	*sp_cr_file_secctx_name; /* (security) xattr name */
-	void		*sp_cr_file_secctx; /* xattr value */
-	size_t		 sp_cr_file_secctx_size; /* xattr value size */
+	
+	const char	*sp_cr_file_secctx_name; 
+	void		*sp_cr_file_secctx; 
+	size_t		 sp_cr_file_secctx_size; 
 
-	/* File encryption context for creates. */
-	void		*sp_cr_file_encctx; /* enc ctx value */
-	size_t		 sp_cr_file_encctx_size; /* enc ctx size */
+	
+	void		*sp_cr_file_encctx; 
+	size_t		 sp_cr_file_encctx_size; 
 
-	/* Archive ID used for auto PCC attach when create newly files. */
+	
 	__u32		 sp_archive_id;
 
-	/** don't create lov objects or llog cookie - this replay */
+	
 	unsigned int no_create:1,
-		     sp_cr_lookup:1, /* do lookup sanity check or not. */
-		     sp_rm_entry:1,  /* only remove name entry */
-		     sp_permitted:1, /* do not check permission */
-		     sp_migrate_close:1, /* close the file during migrate */
-		     sp_migrate_nsonly:1, /* migrate dirent only */
-		     sp_dmv_imp_inherit:1, /* implicit default LMV inherit */
-		     sp_replay:1; /* replay, op may be partially executed */
+		     sp_cr_lookup:1, 
+		     sp_rm_entry:1,  
+		     sp_permitted:1, 
+		     sp_migrate_close:1, 
+		     sp_migrate_nsonly:1, 
+		     sp_dmv_imp_inherit:1, 
+		     sp_replay:1; 
 
-	/** to create directory */
+	
 	const struct dt_index_features *sp_feat;
 
-	/* name of xattr used to store jobid in inode, or empty if disabled */
+	
 	char sp_cr_job_xattr[XATTR_JOB_MAX_LEN];
 };
 
 enum md_layout_opc {
 	MD_LAYOUT_NOP	= 0,
-	MD_LAYOUT_WRITE,	/* FLR: write the file */
-	MD_LAYOUT_RESYNC,	/* FLR: resync starts */
-	MD_LAYOUT_RESYNC_DONE,	/* FLR: resync done */
-	MD_LAYOUT_ATTACH,	/* attach stripes */
-	MD_LAYOUT_DETACH,	/* detach stripes */
-	MD_LAYOUT_SHRINK,	/* shrink striped directory (destroy stripes) */
-	MD_LAYOUT_SPLIT,	/* split directory (allocate new stripes) */
+	MD_LAYOUT_WRITE,	
+	MD_LAYOUT_RESYNC,	
+	MD_LAYOUT_RESYNC_DONE,	
+	MD_LAYOUT_ATTACH,	
+	MD_LAYOUT_DETACH,	
+	MD_LAYOUT_SHRINK,	
+	MD_LAYOUT_SPLIT,	
 	MD_LAYOUT_MAX,
 };
 
@@ -174,19 +174,19 @@ struct md_layout_change {
 			struct lustre_som_attrs	 mlc_som;
 			size_t			 mlc_resync_count;
 			__u32			*mlc_resync_ids;
-		}; /* file */
+		}; 
 		struct {
-			/* parent obj in plain dir split */
+			
 			struct md_object	*mlc_parent;
-			/* target obj in plain dir split */
+			
 			struct md_object	*mlc_target;
-			/* target attr in plain dir split */
+			
 			struct lu_attr		*mlc_attr;
-			/* target name in plain dir split */
+			
 			const struct lu_name	*mlc_name;
-			/* dir split spec */
+			
 			struct md_op_spec	*mlc_spec;
-		}; /* dir */
+		}; 
 	};
 };
 
@@ -218,12 +218,12 @@ struct md_object_operations {
 	int (*moo_xattr_del)(const struct lu_env *env, struct md_object *obj,
 			     const char *name);
 
-	/** This method is used to swap the layouts between 2 objects */
+	
 	int (*moo_swap_layouts)(const struct lu_env *env,
 			       struct md_object *obj1, struct md_object *obj2,
 			       __u64 dv1, __u64 dv2, __u64 flags);
 
-	/** \retval number of bytes actually read upon success */
+	
 	int (*moo_readpage)(const struct lu_env *env, struct md_object *obj,
 			    const struct lu_rdpg *rdpg);
 
@@ -305,7 +305,7 @@ struct md_dir_operations {
 			  struct md_op_spec *spec,
 			  struct md_attr *ma);
 
-	/** This method is used for creating data object for this meta object*/
+	
 	int (*mdo_create_data)(const struct lu_env *env, struct md_object *p,
 			  struct md_object *o, const struct md_op_spec *spec,
 			  struct md_attr *ma);
@@ -330,7 +330,7 @@ struct md_dir_operations {
 };
 
 struct md_device_operations {
-	/* meta-data device related handlers. */
+	
 	int (*mdo_root_get)(const struct lu_env *env, struct md_device *m,
 			    struct lu_fid *f);
 
@@ -393,7 +393,7 @@ static inline struct md_object *md_object_find_slice(const struct lu_env *env,
 }
 
 
-/** md operations */
+
 static inline int mo_permission(const struct lu_env *env, struct md_object *p,
 				struct md_object *c, struct md_attr *at,
 				unsigned int may_mask)
@@ -487,7 +487,7 @@ static inline int mo_layout_change(const struct lu_env *env,
 				   struct md_object *m,
 				   struct md_layout_change *layout)
 {
-	/* need instantiate objects which in the access range */
+	
 	LASSERT(m->mo_ops->moo_layout_change);
 	return m->mo_ops->moo_layout_change(env, m, layout);
 }
@@ -704,4 +704,4 @@ int lu_ucred_global_init(void);
 
 void lu_ucred_global_fini(void);
 
-#endif /* _LINUX_MD_OBJECT_H */
+#endif 

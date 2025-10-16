@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * (Un)packing of OST requests
  */
@@ -47,7 +47,7 @@ int lustre_swab_object_update_request(struct object_update_request *our,
 	__swab16s(&our->ourq_count);
 	__swab16s(&our->ourq_padding);
 
-	/* Don't need to calculate request size if len is 0. */
+	
 	if (len > 0) {
 		size = sizeof(struct object_update_request);
 		for (i = 0; i < our->ourq_count; i++) {

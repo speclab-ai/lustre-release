@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Nathan Rutman <nathan@clusterfs.com>
  * Author: Alex Zhuravlev <bzzz@whamcloud.com>
@@ -98,7 +98,7 @@ static int mgs_set_info(struct tgt_session_info *tsi)
 	if (param_len == 0 || param_len == sizeof(msp->mgs_param))
 		RETURN(-EINVAL);
 
-	/* We only allow '*.lov.stripe{size,count,offset}=*' from an RPC. */
+	
 	s = strchr(msp->mgs_param, '.');
 	if (s == NULL)
 		RETURN(-EINVAL);
@@ -108,7 +108,7 @@ static int mgs_set_info(struct tgt_session_info *tsi)
 	    !str_starts_with(s + 1, "lov.stripeoffset="))
 		RETURN(-EINVAL);
 
-	/* do nothing */
+	
 	CDEBUG(D_MGS, "%s: ignoring set info '%s'\n",
 	       tgt_name(tsi->tsi_tgt), msp->mgs_param);
 	RETURN(0);
@@ -143,7 +143,7 @@ static int mgs_completion_ast_generic(struct ldlm_lock *lock, __u64 flags,
 
 			switch (type) {
 			case AST_CONFIG:
-				/* clear the bit before lock put */
+				
 				clear_bit(FSDB_REVOKING_LOCK,
 					  &fsdb->fsdb_flags);
 				break;
@@ -251,7 +251,7 @@ void mgs_revoke_lock(struct mgs_device *mgs, struct fs_db *fsdb,
 				clear_bit(FSDB_REVOKING_PARAMS,
 					  &fsdb->fsdb_flags);
 		}
-		/* lock has been cancelled in completion_ast. */
+		
 	}
 
 	RETURN_EXIT;
@@ -280,14 +280,14 @@ static int mgs_check_target(const struct lu_env *env,
 		mti->mti_flags |= LDD_F_WRITECONF;
 		rc = 1;
 	} else {
-		/* Index is correctly marked as used */
+		
 		rc = 0;
 	}
 
 	RETURN(rc);
 }
 
-/* Ensure this is not a failover node that is connecting first*/
+
 static int mgs_check_failover_reg(struct mgs_target_info *mti)
 {
 	struct lnet_nid nid;
@@ -325,7 +325,7 @@ static int mgs_check_failover_reg(struct mgs_target_info *mti)
 	return 0;
 }
 
-/* Called whenever a target starts up.  Flags indicate first connect, etc. */
+
 static int mgs_target_reg(struct tgt_session_info *tsi)
 {
 	struct obd_device *obd = tsi->tsi_exp->exp_obd;
@@ -333,8 +333,8 @@ static int mgs_target_reg(struct tgt_session_info *tsi)
 	struct mgs_target_info *mti, *reply_mti, *request_mti;
 	struct mgs_target_nidlist *mtn = NULL;
 	struct ptlrpc_bulk_desc *desc = NULL;
-	struct fs_db *b_fsdb = NULL; /* barrier fsdb */
-	struct fs_db *c_fsdb = NULL; /* config fsdb */
+	struct fs_db *b_fsdb = NULL; 
+	struct fs_db *c_fsdb = NULL; 
 	char barrier_name[20];
 	size_t mti_buflen, mti_alloc = 0;
 	int opc;
@@ -359,12 +359,12 @@ static int mgs_target_reg(struct tgt_session_info *tsi)
 	mti_buflen = req_capsule_get_size(tsi->tsi_pill, &RMF_MGS_TARGET_INFO,
 					  RCL_CLIENT);
 
-	/* Compatibility code for older targets, process mti as is */
+	
 	if (!nidlist || !target_supports_large_nid(request_mti)) {
 		int limit;
 
 		mti = request_mti;
-		/* sanity check for mti_nid_count */
+		
 		if (mti_buflen > sizeof(*mti))
 			limit = (mti_buflen - sizeof(*mti)) / MTN_NIDSTR_SIZE;
 		else
@@ -385,7 +385,7 @@ static int mgs_target_reg(struct tgt_session_info *tsi)
 		RETURN(err_serious(-EPROTO));
 	}
 
-	/* new protocol with nidlist */
+	
 	mtn = req_capsule_client_get(tsi->tsi_pill, &RMF_MGS_TARGET_NIDLIST);
 	mti_alloc = sizeof(*mti) + NIDLIST_SIZE(mtn->mtn_nids);
 	OBD_ALLOC_LARGE(mti, mti_alloc);
@@ -425,7 +425,7 @@ static int mgs_target_reg(struct tgt_session_info *tsi)
 	mti->mti_flags |= LDD_F_LARGE_NID;
 
 process:
-	/* at this point all NIDs are in mti */
+	
 	down_read(&mgs->mgs_barrier_rwsem);
 
 	if (OCD_HAS_FLAG(&tsi->tsi_exp->exp_connect_data, IMP_RECOV))
@@ -446,7 +446,7 @@ process:
 		GOTO(out_norevoke, rc);
 	}
 
-	/* Do not support unregistering right now. */
+	
 	if (opc != LDD_F_OPC_REG)
 		GOTO(out_norevoke, rc = -EINVAL);
 
@@ -486,13 +486,13 @@ process:
 		mti->mti_flags |= LDD_F_WRITECONF;
 
 	if (!(mti->mti_flags & (LDD_F_WRITECONF | LDD_F_UPDATE))) {
-		/* We're just here as a startup ping. */
+		
 		CDEBUG(D_MGS, "Server %s is running on %s\n",
 		       mti->mti_svname, obd_export_nid2str(tsi->tsi_exp));
 		rc = mgs_check_target(tsi->tsi_env, mgs, mti);
-		/* above will set appropriate mti flags */
+		
 		if (rc <= 0)
-			/* Nothing wrong, or fatal error */
+			
 			GOTO(out_norevoke, rc);
 	} else if (!(mti->mti_flags & LDD_F_NO_PRIMNODE)) {
 		rc = mgs_check_failover_reg(mti);
@@ -560,7 +560,7 @@ process:
 		CDEBUG(D_MGS, "updating %s, index=%d\n", mti->mti_svname,
 		       mti->mti_stripe_index);
 
-		/* create/update target log and update the client/mdt logs */
+		
 		rc = mgs_write_log_target(tsi->tsi_env, mgs, mti, c_fsdb);
 		if (rc) {
 			CERROR("Failed to write %s log (%d)\n",
@@ -597,7 +597,7 @@ out_norevoke:
 
 	CDEBUG(D_MGS, "replying with %s, index=%d, rc=%d\n", mti->mti_svname,
 	       mti->mti_stripe_index, rc);
-	 /* An error flag is set in the mti reply rather than an error code */
+	 
 	if (rc)
 		mti->mti_flags |= LDD_F_ERROR;
 
@@ -616,7 +616,7 @@ out_norevoke:
 	reply_mti = req_capsule_server_get(tsi->tsi_pill, &RMF_MGS_TARGET_INFO);
 	*reply_mti = *mti;
 
-	/* Flush logs to disk */
+	
 	dt_sync(tsi->tsi_env, mgs->mgs_bottom);
 
 out_fsdb:
@@ -633,7 +633,7 @@ out_mti_free:
 	RETURN(rc);
 }
 
-/* Called whenever a target cleans up. */
+
 static int mgs_target_del(struct tgt_session_info *tsi)
 {
 	ENTRY;
@@ -719,7 +719,7 @@ static int mgs_llog_open(struct tgt_session_info *tsi)
 				LCONSOLE_WARN("%s: non-config logname received: %s\n",
 					      tgt_name(tsi->tsi_tgt),
 					      logname);
-			/* not error, this can be llog test name */
+			
 		} else {
 			strncpy(mgi->mgi_fsname, logname, len);
 			mgi->mgi_fsname[len] = 0;
@@ -746,7 +746,7 @@ static inline int mgs_init_export(struct obd_export *exp)
 {
 	struct mgs_export_data *data = &exp->u.eu_mgs_data;
 
-	/* init mgs_export_data for fsc */
+	
 	spin_lock_init(&data->med_lock);
 	INIT_LIST_HEAD(&data->med_clients);
 
@@ -754,7 +754,7 @@ static inline int mgs_init_export(struct obd_export *exp)
 	exp->exp_connecting = 1;
 	spin_unlock(&exp->exp_lock);
 
-	/* self-export doesn't need client data and ldlm initialization */
+	
 	if (unlikely(obd_uuid_equals(&exp->exp_obd->obd_uuid,
 				     &exp->exp_client_uuid)))
 		return 0;
@@ -783,32 +783,32 @@ static int mgs_extract_fs_pool(char *arg, char *fsname, char *poolname)
 	char *ptr;
 
 	ENTRY;
-	/* Validate name */
+	
 	for (ptr = arg; *ptr != '\0'; ptr++) {
 		if (!isalnum(*ptr) && *ptr != '_' && *ptr != '-' && *ptr != '.')
 			return -EINVAL;
 	}
 
-	/* Test for fsname.poolname format. strlen test if poolname is empty */
+	
 	ptr = strchr(arg, '.');
 	if (!ptr || !strlen(ptr))
 		return -EINVAL;
 	ptr++;
 
-	/* Check pool name validity. */
+	
 	if (ptr[0] == '\0' || lov_pool_is_reserved(ptr))
 		return -EINVAL;
-	/* Also make sure poolname is not to long. */
+	
 	if (strlen(ptr) > LOV_MAXPOOLNAME)
 		return -ENAMETOOLONG;
 	strscpy(poolname, ptr, LOV_MAXPOOLNAME + 1);
 
-	/* Test if fsname is empty */
+	
 	len = strlen(arg) - strlen(ptr) - 1;
 	if (!len)
 		return -EINVAL;
 
-	/* or too long */
+	
 	if (len > LUSTRE_MAXFSNAME)
 		return -ENAMETOOLONG;
 
@@ -856,7 +856,7 @@ static int __llog_fileset_cleanup_apply(const struct lu_env *env,
 	if (!bufs)
 		GOTO(out_cleanup, rc = -ENOMEM);
 
-	/* lcfg for all targets */
+	
 	lustre_cfg_bufs_reset(bufs, LUSTRE_CFG_ALL_TARGETS);
 	lustre_cfg_bufs_set_string(bufs, 1, lcfg_param);
 
@@ -874,7 +874,7 @@ out_cleanup:
 	if (lcfg)
 		OBD_FREE(lcfg, lustre_cfg_len(lcfg->lcfg_bufcount,
 					      lcfg->lcfg_buflens));
-	/* lustre_cfg maintains its own buffers */
+	
 	OBD_FREE_PTR(bufs);
 	OBD_FREE(lcfg_param, lcfg_param_size);
 
@@ -958,7 +958,7 @@ static int mgs_iocontrol_nodemap(const struct lu_env *env,
 	if (dynamic)
 		GOTO(out, rc);
 
-	/* A llog fileset entry might still exist and needs to be removed */
+	
 	if (clean_llog_fileset) {
 		int rc2;
 
@@ -972,7 +972,7 @@ static int mgs_iocontrol_nodemap(const struct lu_env *env,
 			      mgs->mgs_obd->obd_name, rc2);
 	}
 
-	/* revoke nodemap lock */
+	
 	rc = mgs_find_or_make_fsdb(env, mgs, LUSTRE_NODEMAP_NAME, &fsdb);
 	if (rc < 0) {
 		CWARN("%s: cannot make nodemap fsdb: rc = %d\n",
@@ -1024,7 +1024,7 @@ static int mgs_iocontrol_pool(const struct lu_env *env,
 	if (lcfg->lcfg_bufcount < 2)
 		GOTO(out_lcfg, rc = -EINVAL);
 
-	/* first arg is always <fsname>.<poolname> */
+	
 	rc = mgs_extract_fs_pool(lustre_cfg_string(lcfg, 1), mgi->mgi_fsname,
 				 poolname);
 	if (rc)
@@ -1072,7 +1072,7 @@ out_pool:
 	RETURN(rc);
 }
 
-/* from mdt_iocontrol */
+
 static int mgs_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 			 void *karg, void __user *uarg)
 {
@@ -1160,7 +1160,7 @@ out_free:
 			break;
 		}
 
-		/* replace nids in llog */
+		
 		rc = mgs_replace_nids(&env, mgs, data->ioc_inlbuf1,
 				      data->ioc_inlbuf2);
 		if (rc)
@@ -1188,7 +1188,7 @@ out_free:
 			break;
 		}
 
-		/* remove records marked SKIP from config logs */
+		
 		rc = mgs_clear_configs(&env, mgs, data->ioc_inlbuf1);
 		if (rc)
 			CERROR("%s: error clearing config log: rc = %d\n",
@@ -1379,7 +1379,7 @@ static int mgs_init0(const struct lu_env *env, struct mgs_device *mgs,
 
 	obd_obt_init(obd);
 
-	/* namespace for mgs llog */
+	
 	obd->obd_namespace = ldlm_namespace_new(obd, "MGS",
 						LDLM_NAMESPACE_SERVER,
 						LDLM_NAMESPACE_MODEST,
@@ -1392,7 +1392,7 @@ static int mgs_init0(const struct lu_env *env, struct mgs_device *mgs,
 		GOTO(err_ops, rc);
 	}
 
-	/* No recovery for MGCs */
+	
 	obd->obd_replayable = 0;
 
 	rc = tgt_init(env, &mgs->mgs_lut, obd, mgs->mgs_bottom,
@@ -1421,7 +1421,7 @@ static int mgs_init0(const struct lu_env *env, struct mgs_device *mgs,
 	ctxt->loc_dir = mgs->mgs_configs_dir;
 	llog_ctxt_put(ctxt);
 
-	/* Internal mgs setup */
+	
 	mgs_init_fsdb_list(mgs);
 	mutex_init(&mgs->mgs_mutex);
 	mgs->mgs_start_time = ktime_get_real_seconds();
@@ -1445,11 +1445,11 @@ static int mgs_init0(const struct lu_env *env, struct mgs_device *mgs,
 	 */
 	rc = mgs_params_fsdb_setup(env, mgs);
 	if (rc)
-		/* params fsdb and log can be setup later */
+		
 		CERROR("%s: %s fsdb and log setup failed: rc = %d\n",
 		       obd->obd_name, PARAMS_FILENAME, rc);
 
-	/* Setup _mgs fsdb, useful for srpc */
+	
 	mgs__mgs_fsdb_setup(env, mgs);
 
 	ptlrpc_init_client(LDLM_CB_REQUEST_PORTAL, LDLM_CB_REPLY_PORTAL,
@@ -1478,7 +1478,7 @@ static int mgs_init0(const struct lu_env *env, struct mgs_device *mgs,
 		},
 	};
 
-	/* Start the service threads */
+	
 	mgs->mgs_service = ptlrpc_register_service(&conf, &obd->obd_kset,
 						   obd->obd_debugfs_entry);
 	if (IS_ERR(mgs->mgs_service)) {
@@ -1492,7 +1492,7 @@ static int mgs_init0(const struct lu_env *env, struct mgs_device *mgs,
 
 	CDEBUG(D_INFO, "MGS %s started\n", obd->obd_name);
 
-	/* device stack is not yet fully setup to keep no objects behind */
+	
 	lu_site_purge(env, mgs2lu_dev(mgs)->ld_site, ~0);
 	RETURN(0);
 err_lproc:
@@ -1507,7 +1507,7 @@ err_llog:
 err_tgt:
 	tgt_fini(env, &mgs->mgs_lut);
 err_fs:
-	/* No extra cleanup needed for llog_init_commit_thread() */
+	
 	mgs_fs_cleanup(env, mgs);
 err_ns:
 	ldlm_namespace_free(obd->obd_namespace, NULL, 0);
@@ -1554,7 +1554,7 @@ static int mgs_object_init(const struct lu_env *env, struct lu_object *o,
 
 	ENTRY;
 
-	/* do no set .do_ops as mgs calls to bottom osd directly */
+	
 	CDEBUG(D_INFO, "object init, fid = "DFID"\n",
 			PFID(lu_object_fid(o)));
 
@@ -1699,7 +1699,7 @@ static struct lu_device *mgs_device_fini(const struct lu_env *env,
 	RETURN(NULL);
 }
 
-/* context key constructor/destructor: mgs_key_init, mgs_key_fini */
+
 LU_KEY_INIT_FINI(mgs, struct mgs_thread_info);
 
 LU_TYPE_INIT_FINI(mgs, &mgs_thread_key);
@@ -1817,7 +1817,7 @@ static int mgs_health_check(const struct lu_env *env, struct obd_device *obd)
 	return rc != 0 ? 1 : 0;
 }
 
-/* use obd ops to offer management infrastructure */
+
 static const struct obd_ops mgs_obd_device_ops = {
 	.o_owner		= THIS_MODULE,
 	.o_connect		= mgs_obd_connect,
@@ -1846,7 +1846,7 @@ static void __exit mgs_exit(void)
 	class_unregister_type(LUSTRE_MGS_NAME);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Management Server (MGS)");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Directory code for lustre client.
  */
@@ -21,7 +21,7 @@
 #include <linux/user_namespace.h>
 #include <linux/uidgid.h>
 #include <linux/uaccess.h>
-#include <linux/buffer_head.h>   // for wait_on_buffer
+#include <linux/buffer_head.h>   
 #include <linux/pagevec.h>
 
 #define DEBUG_SUBSYSTEM S_LLITE
@@ -139,7 +139,7 @@ struct page *ll_get_dir_page(struct inode *dir, struct md_op_data *op_data,
 	unsigned long idx = hash_x_index(offset, hash64);
 	int rc;
 
-	/* check page first */
+	
 	page = find_get_page(dir->i_mapping, idx);
 	if (page) {
 		wait_on_page_locked(page);
@@ -231,11 +231,11 @@ int ll_dir_read(struct inode *inode, __u64 *ppos, struct md_op_data *op_data,
 			__u64          ino;
 
 			hash = le64_to_cpu(ent->lde_hash);
-			if (hash < pos) /* Skip until we find target hash */
+			if (hash < pos) 
 				continue;
 
 			namelen = le16_to_cpu(ent->lde_namelen);
-			if (namelen == 0) /* Skip dummy record */
+			if (namelen == 0) 
 				continue;
 
 			if (is_api32 && is_hash64)
@@ -255,7 +255,7 @@ int ll_dir_read(struct inode *inode, __u64 *ppos, struct md_op_data *op_data,
 				done = !dir_emit(ctx, ent->lde_name, namelen,
 						 ino, type);
 			} else {
-				/* Directory is encrypted */
+				
 				int save_len = lltr.len;
 				struct llcrypt_str de_name =
 					LLTR_INIT(ent->lde_name, namelen);
@@ -294,7 +294,7 @@ int ll_dir_read(struct inode *inode, __u64 *ppos, struct md_op_data *op_data,
 		next = le64_to_cpu(dp->ldp_hash_end);
 		pos = next;
 		if (pos == MDS_DIR_END_OFF) {
-			/* End of directory reached. */
+			
 			done = 1;
 			if (kaddr) {
 				kunmap(kmap_to_page(kaddr));
@@ -304,7 +304,7 @@ int ll_dir_read(struct inode *inode, __u64 *ppos, struct md_op_data *op_data,
 		} else {
 			u32 flags = le32_to_cpu(dp->ldp_flags);
 
-			/* Normal case: continue to the next page.*/
+			
 			if (kaddr) {
 				kunmap(kmap_to_page(kaddr));
 				kaddr = NULL;
@@ -338,7 +338,7 @@ static int ll_readdir(struct file *filp, void *cookie, filldir_t filldir)
 	struct md_op_data *op_data;
 	struct lu_fid pfid = { 0 };
 	ktime_t kstart = ktime_get();
-	/* result of possible partial readdir */
+	
 	int partial_readdir_rc = 0;
 	__u64 pos;
 	int rc;
@@ -360,14 +360,14 @@ static int ll_readdir(struct file *filp, void *cookie, filldir_t filldir)
 	}
 
 	if (pos == MDS_DIR_END_OFF)
-		/* end-of-file. */
+		
 		GOTO(out, rc = 0);
 
 	if (unlikely(ll_dir_striped(inode))) {
 		struct dentry *parent = dget_parent(file_dentry(filp));
 		struct inode *i_dir = d_inode(parent);
 
-		/* Only needed for striped dir to fill ..see lmv_read_page() */
+		
 		if (i_dir) {
 			struct obd_export *exp = ll_i2mdexp(i_dir);
 			enum mds_ibits_locks ibits = MDS_INODELOCK_LOOKUP;
@@ -377,7 +377,7 @@ static int ll_readdir(struct file *filp, void *cookie, filldir_t filldir)
 		}
 		dput(parent);
 
-		/* If it can not find in cache, do lookup on the master obj */
+		
 		if (fid_is_zero(&pfid)) {
 			rc = ll_dir_get_parent_fid(inode, &pfid);
 			if (rc != 0)
@@ -390,7 +390,7 @@ static int ll_readdir(struct file *filp, void *cookie, filldir_t filldir)
 	if (IS_ERR(op_data))
 		GOTO(out, rc = PTR_ERR(op_data));
 
-	/* foreign dirs are browsed out of Lustre */
+	
 	if (unlikely(lmv_dir_foreign(op_data->op_lso1))) {
 		ll_finish_md_op_data(op_data);
 		RETURN(-ENODATA);
@@ -687,7 +687,7 @@ int ll_dir_setstripe(struct inode *inode, struct lov_user_md *lump,
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
-	/* swabbing is done in lov_setstripe() on server side */
+	
 	rc = md_setattr(sbi->ll_md_exp, op_data, lump, lum_size, &req);
 	ll_finish_md_op_data(op_data);
 	ptlrpc_req_put(req);
@@ -697,7 +697,7 @@ int ll_dir_setstripe(struct inode *inode, struct lov_user_md *lump,
 	RETURN(rc);
 }
 
-/* get default LMV from client cache */
+
 static int ll_dir_get_default_lmv(struct inode *inode, struct lmv_user_md *lum)
 {
 	struct ll_inode_info *lli = ll_i2info(inode);
@@ -810,7 +810,7 @@ int ll_dir_get_default_layout(struct inode *inode, void **plmm, int *plmm_size,
 	 * little endian.  We convert it to host endian before
 	 * passing it to userspace.
 	 */
-	/* We don't swab objects for directories */
+	
 	switch (le32_to_cpu(lmm->lmm_magic)) {
 	case LOV_MAGIC_V1:
 	case LOV_MAGIC_V3:
@@ -996,7 +996,7 @@ static int ll_ioc_copy_start(struct super_block *sb, struct hsm_copy *copy)
 	int rc2;
 
 	ENTRY;
-	/* Forge a hsm_progress based on data from copy. */
+	
 	hpk.hpk_fid = copy->hc_hai.hai_fid;
 	hpk.hpk_cookie = copy->hc_hai.hai_cookie;
 	hpk.hpk_extent.offset = copy->hc_hai.hai_extent.offset;
@@ -1006,21 +1006,21 @@ static int ll_ioc_copy_start(struct super_block *sb, struct hsm_copy *copy)
 	hpk.hpk_data_version = 0;
 
 
-	/* For archive request, we need to read the current file version. */
+	
 	if (copy->hc_hai.hai_action == HSMA_ARCHIVE) {
 		struct inode	*inode;
 		__u64		 data_version = 0;
 
-		/* Get inode for this fid */
+		
 		inode = search_inode_for_lustre(sb, &copy->hc_hai.hai_fid);
 		if (IS_ERR(inode)) {
 			hpk.hpk_flags |= HP_FLAG_RETRY;
-			/* hpk_errval is >= 0 */
+			
 			hpk.hpk_errval = -PTR_ERR(inode);
 			GOTO(progress, rc = PTR_ERR(inode));
 		}
 
-		/* Read current file data version */
+		
 		rc = ll_data_version(inode, &data_version, LL_DV_RD_FLUSH);
 		iput(inode);
 		if (rc != 0) {
@@ -1030,7 +1030,7 @@ static int ll_ioc_copy_start(struct super_block *sb, struct hsm_copy *copy)
 				      PFID(&copy->hc_hai.hai_fid), rc,
 				      copy->hc_hai.hai_cookie);
 			hpk.hpk_flags |= HP_FLAG_RETRY;
-			/* hpk_errval must be >= 0 */
+			
 			hpk.hpk_errval = -rc;
 			GOTO(progress, rc);
 		}
@@ -1042,14 +1042,14 @@ static int ll_ioc_copy_start(struct super_block *sb, struct hsm_copy *copy)
 	}
 
 progress:
-	/* On error, the request should be considered as completed */
+	
 	if (hpk.hpk_errval > 0)
 		hpk.hpk_flags |= HP_FLAG_COMPLETED;
 
 	rc2 = obd_iocontrol(LL_IOC_HSM_PROGRESS, sbi->ll_md_exp, sizeof(hpk),
 			    &hpk, NULL);
 
-	/* Return first error */
+	
 	RETURN(rc != 0 ? rc : rc2);
 }
 
@@ -1077,12 +1077,12 @@ static int ll_ioc_copy_end(struct super_block *sb, struct hsm_copy *copy)
 	int rc2;
 
 	ENTRY;
-	/* If you modify the logic here, also check llapi_hsm_copy_end(). */
+	
 	/* Take care: copy->hc_hai.hai_action, len, gid and data are not
 	 * initialized if copy_end was called with copy == NULL.
 	 */
 
-	/* Forge a hsm_progress based on data from copy. */
+	
 	hpk.hpk_fid = copy->hc_hai.hai_fid;
 	hpk.hpk_cookie = copy->hc_hai.hai_cookie;
 	hpk.hpk_extent = copy->hc_hai.hai_extent;
@@ -1101,11 +1101,11 @@ static int ll_ioc_copy_end(struct super_block *sb, struct hsm_copy *copy)
 		struct inode	*inode;
 		__u64		 data_version = 0;
 
-		/* Get lsm for this fid */
+		
 		inode = search_inode_for_lustre(sb, &copy->hc_hai.hai_fid);
 		if (IS_ERR(inode)) {
 			hpk.hpk_flags |= HP_FLAG_RETRY;
-			/* hpk_errval must be >= 0 */
+			
 			hpk.hpk_errval = -PTR_ERR(inode);
 			GOTO(progress, rc = PTR_ERR(inode));
 		}
@@ -1144,7 +1144,7 @@ static int ll_ioc_copy_end(struct super_block *sb, struct hsm_copy *copy)
 			 */
 			hpk.hpk_flags &= ~HP_FLAG_RETRY;
 			rc = -EBUSY;
-			/* hpk_errval must be >= 0 */
+			
 			hpk.hpk_errval = -rc;
 			GOTO(progress, rc);
 		}
@@ -1155,7 +1155,7 @@ progress:
 	rc2 = obd_iocontrol(LL_IOC_HSM_PROGRESS, sbi->ll_md_exp, sizeof(hpk),
 			    &hpk, NULL);
 
-	/* Return first error */
+	
 	RETURN(rc != 0 ? rc : rc2);
 }
 
@@ -1170,7 +1170,7 @@ static int copy_and_ct_start(int cmd, struct obd_export *exp,
 	int i;
 	int rc;
 
-	/* copy data from userspace to get numbers of archive_id */
+	
 	OBD_ALLOC(lk, size);
 	if (lk == NULL)
 		return -ENOMEM;
@@ -1185,11 +1185,11 @@ static int copy_and_ct_start(int cmd, struct obd_export *exp,
 		__u32 archive_mask = lk->lk_data_count;
 		int count;
 
-		/* old hsm agent to old MDS */
+		
 		if (!exp_connect_archive_id_array(exp))
 			goto do_ioctl;
 
-		/* old hsm agent to new MDS */
+		
 		lk->lk_flags |= LK_FLG_DATANR;
 
 		if (archive_mask == 0)
@@ -1217,7 +1217,7 @@ static int copy_and_ct_start(int cmd, struct obd_export *exp,
 		goto do_ioctl;
 	}
 
-	/* new hsm agent to new mds */
+	
 	if (lk->lk_data_count > 0) {
 		new_size = offsetof(struct lustre_kernelcomm,
 				    lk_data[lk->lk_data_count]);
@@ -1233,7 +1233,7 @@ static int copy_and_ct_start(int cmd, struct obd_export *exp,
 			GOTO(out_lk, rc = -EFAULT);
 	}
 
-	/* new hsm agent to old MDS */
+	
 	if (!exp_connect_archive_id_array(exp)) {
 		__u32 archives = 0;
 
@@ -1287,12 +1287,12 @@ struct kmem_cache *quota_iter_slab;
 static DEFINE_MUTEX(quotactl_iter_lock);
 
 struct ll_quotactl_iter_list {
-	__u64		 lqil_mark;	 /* iter identifier */
-	__u32		 lqil_flags;	 /* what has been done */
-	pid_t		 lqil_pid;	 /* debug calling task */
-	time64_t	 lqil_iter_time; /* the time to iter */
-	struct list_head lqil_sbi_list;	 /* list on ll_sb_info */
-	struct list_head lqil_quotactl_iter_list; /* list of quota iters */
+	__u64		 lqil_mark;	 
+	__u32		 lqil_flags;	 
+	pid_t		 lqil_pid;	 
+	time64_t	 lqil_iter_time; 
+	struct list_head lqil_sbi_list;	 
+	struct list_head lqil_quotactl_iter_list; 
 };
 
 void ll_quota_iter_check_and_cleanup(struct ll_sb_info *sbi, bool check)
@@ -1325,7 +1325,7 @@ void ll_quota_iter_check_and_cleanup(struct ll_sb_info *sbi, bool check)
 		mutex_unlock(&quotactl_iter_lock);
 }
 
-/* iterate the quota usage from all QSDs */
+
 static int quotactl_iter_acct(struct list_head *quota_list, void *buffer,
 			      __u64 size, __u64 *count, __u32 qtype, bool is_md)
 {
@@ -1390,7 +1390,7 @@ static int quotactl_iter_acct(struct list_head *quota_list, void *buffer,
 	RETURN(rc);
 }
 
-/* iterate all quota settings from QMT */
+
 static int quotactl_iter_glb(struct list_head *quota_list, void *buffer,
 			     __u64 size, __u64 *count, __u32 qtype, bool is_md)
 {
@@ -1669,7 +1669,7 @@ static int quotactl_getallquota(struct ll_sb_info *sbi,
 		OBD_SLAB_FREE_PTR(iter, quota_iter_slab);
 	}
 
-	/* cleanup in case of error */
+	
 	while ((iter = list_first_entry_or_null(
 					&ll_iter->lqil_quotactl_iter_list,
 					struct if_quotactl_iter, qci_link))) {
@@ -1809,7 +1809,7 @@ int quotactl_ioctl(struct super_block *sb, struct if_quotactl *qctl)
 			oqctl_tmp->qc_id = oqctl->qc_id;
 			oqctl_tmp->qc_type = oqctl->qc_type;
 
-			/* collect space usage from OSTs */
+			
 			oqctl_tmp->qc_dqblk.dqb_curspace = 0;
 			rc = obd_quotactl(sbi->ll_dt_exp, oqctl_tmp);
 			if (!rc || rc == -EREMOTEIO) {
@@ -1818,7 +1818,7 @@ int quotactl_ioctl(struct super_block *sb, struct if_quotactl *qctl)
 				oqctl->qc_dqblk.dqb_valid |= QIF_SPACE;
 			}
 
-			/* collect space & inode usage from MDTs */
+			
 			oqctl_tmp->qc_cmd = Q_GETOQUOTA;
 			oqctl_tmp->qc_dqblk.dqb_curspace = 0;
 			oqctl_tmp->qc_dqblk.dqb_curinodes = 0;
@@ -1851,17 +1851,17 @@ static int ll_rmfid(struct file *file, void __user *arg)
 	struct fid_array *lfa = NULL, *lfa_new = NULL;
 	int i, rc, *rcs = NULL;
 	unsigned int nr;
-	bool lfa_flag = false; /* lfa already free'ed */
+	bool lfa_flag = false; 
 	size_t size;
 
 	ENTRY;
 	if (!capable(CAP_DAC_READ_SEARCH) &&
 	    !test_bit(LL_SBI_USER_FID2PATH, ll_i2sbi(inode)->ll_flags))
 		RETURN(-EPERM);
-	/* Only need to get the buflen */
+	
 	if (get_user(nr, &ufa->fa_nr))
 		RETURN(-EFAULT);
-	/* DoS protection */
+	
 	if (nr > OBD_MAX_FIDS_IN_ARRAY)
 		RETURN(-E2BIG);
 
@@ -1951,7 +1951,7 @@ static int ll_rmfid(struct file *file, void __user *arg)
 	if (lfa->fa_nr == 0)
 		GOTO(free_rcs, rc = rcs[nr - 1]);
 
-	/* Call mdc_iocontrol */
+	
 	rc = md_rmfid(ll_i2mdexp(file_inode(file)), lfa, rcs, NULL);
 	lfa->fa_nr = nr;
 	if (!rc) {
@@ -2016,8 +2016,8 @@ static long ll_dir_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 	CDEBUG(D_VFSTRACE|D_IOCTL, "VFS Op:inode="DFID"(%pK) cmd=%x arg=%lx\n",
 	       PFID(ll_inode2fid(inode)), inode, cmd, arg);
 
-	/* asm-ppc{,64} declares TCGETS, et. al. as type 't' not 'T' */
-	if (_IOC_TYPE(cmd) == 'T' || _IOC_TYPE(cmd) == 't') /* tty ioctls */
+	
+	if (_IOC_TYPE(cmd) == 'T' || _IOC_TYPE(cmd) == 't') 
 		return -ENOTTY;
 
 	ll_stats_ops_tally(ll_i2sbi(inode), LPROC_LL_IOCTL, 1);
@@ -2137,7 +2137,7 @@ lmv_out_free:
 		BUILD_BUG_ON(sizeof(struct lov_user_md_v3) <=
 			     sizeof(struct lov_comp_md_v1));
 		BUILD_BUG_ON(sizeof(*lumv3) != sizeof(*lumv3p));
-		/* first try with v1 which is smaller than v3 */
+		
 		if (copy_from_user(&lumv1, lumv1p, sizeof(lumv1)))
 			RETURN(-EFAULT);
 
@@ -2163,7 +2163,7 @@ lmv_out_free:
 			GOTO(out, rc = -EOPNOTSUPP);
 		}
 
-		/* in v1 and v3 cases lumv1 points to data */
+		
 		rc = ll_dir_setstripe(inode, lumv1_ptr, set_default);
 out:
 		OBD_FREE(lumv3, lum_size);
@@ -2187,7 +2187,7 @@ out:
 		if (copy_from_user(&lum, ulmv, sizeof(*ulmv)))
 			RETURN(-EFAULT);
 
-		/* get default LMV */
+		
 		if (lum.lum_magic == LMV_USER_MAGIC &&
 		    lum.lum_type != LMV_TYPE_RAW) {
 			rc = ll_dir_get_default_lmv(inode, &lum);
@@ -2217,14 +2217,14 @@ out:
 		if (rc != 0)
 			GOTO(finish_req, rc);
 
-		/* get default LMV in raw mode */
+		
 		if (lum.lum_magic == LMV_USER_MAGIC) {
 			if (copy_to_user(ulmv, lmm, lmmsize))
 				GOTO(finish_req, rc = -EFAULT);
 			GOTO(finish_req, rc);
 		}
 
-		/* if foreign LMV case, fake stripes number */
+		
 		if (lmm->lmv_magic == LMV_MAGIC_FOREIGN) {
 			struct lmv_foreign_md *lfm;
 
@@ -2251,7 +2251,7 @@ out:
 			GOTO(finish_req, rc = -E2BIG);
 		}
 
-		/* enough room on user side and foreign case */
+		
 		if (lmm->lmv_magic == LMV_MAGIC_FOREIGN) {
 			struct lmv_foreign_md *lfm;
 			__u32 size;
@@ -2570,7 +2570,7 @@ out_quotactl:
 		if (copy_from_user(&count, uarg, sizeof(count)))
 			RETURN(-EFAULT);
 
-		/* get ost count when count is zero, get mdt count otherwise */
+		
 		exp = count ? sbi->ll_md_exp : sbi->ll_dt_exp;
 		vallen = sizeof(count);
 		rc = obd_get_info(NULL, exp, sizeof(KEY_TGT_COUNT),
@@ -2596,7 +2596,7 @@ out_quotactl:
 		if (copy_from_user(&fid, uarg, sizeof(fid)))
 			RETURN(-EFAULT);
 
-		/* Call mdc_iocontrol */
+		
 		rc = obd_iocontrol(LL_IOC_FID2MDTIDX, exp, sizeof(fid), &fid,
 				   (__u32 __user *)&index);
 		if (rc != 0)
@@ -2612,19 +2612,19 @@ out_quotactl:
 		if (hur == NULL)
 			RETURN(-ENOMEM);
 
-		/* We don't know the true size yet; copy the fixed-size part */
+		
 		if (copy_from_user(hur, uarg, sizeof(*hur))) {
 			OBD_FREE_PTR(hur);
 			RETURN(-EFAULT);
 		}
 
-		/* Compute the whole struct size */
+		
 		totalsize = hur_len(hur);
 		OBD_FREE_PTR(hur);
 		if (totalsize < 0)
 			RETURN(-E2BIG);
 
-		/* Final size will be more than double totalsize */
+		
 		if (totalsize >= MDS_MAXREQSIZE / 3)
 			RETURN(-E2BIG);
 
@@ -2632,7 +2632,7 @@ out_quotactl:
 		if (hur == NULL)
 			RETURN(-ENOMEM);
 
-		/* Copy the whole struct */
+		
 		if (copy_from_user(hur, uarg, totalsize))
 			GOTO(out_hur, rc = -EFAULT);
 
@@ -2803,7 +2803,7 @@ migrate_free:
 				GOTO(out_ladvise, rc = -EINVAL);
 			}
 
-			/* Currently we only support stat-ahead operations. */
+			
 			if (!(ladvise->lla_access_flags & ACCESS_FL_STAT)) {
 				CDEBUG(D_VFSTRACE,
 				       "%s: Invalid access flags (%x) for %s\n",
@@ -2847,7 +2847,7 @@ out_ladvise:
 			GOTO(out_state_free, rc = -EINVAL);
 		}
 
-		/* Get Child from dcache first. */
+		
 		qstr.hash = ll_full_name_hash(parent, name, namelen);
 		qstr.name = name;
 		qstr.len = namelen;
@@ -3013,7 +3013,7 @@ static int ll_dir_release(struct inode *inode, struct file *file)
 	RETURN(ll_file_release(inode, file));
 }
 
-/* notify error if partially read striped directory */
+
 static int ll_dir_flush(struct file *file, fl_owner_t id)
 {
 	struct ll_file_data *lfd = file->private_data;

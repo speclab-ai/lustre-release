@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * MDS data structures.
  * See also lustre_idl.h for wire formats of requests.
@@ -25,7 +25,7 @@
 
 #define CFS_GROUP_AT(gi, i) ((gi)->gid[(i)])
 
-#else  /* !HAVE_GROUP_INFO_GID */
+#else  
 
 #define CFS_NGROUPS_PER_BLOCK   ((int)(PAGE_SIZE / sizeof(gid_t)))
 
@@ -33,7 +33,7 @@
 	((gi)->blocks[(i) / CFS_NGROUPS_PER_BLOCK][(i) % \
 	 CFS_NGROUPS_PER_BLOCK])
 
-#endif /* HAVE_GROUP_INFO_GID */
+#endif 
 
 #include <linux/cred.h>
 
@@ -46,6 +46,6 @@ extern int lustre_groups_search(struct group_info *group_info, gid_t grp);
 extern int lustre_in_group_p(struct lu_ucred *mu, gid_t grp);
 extern int has_proper_groups(struct lu_ucred *ucred);
 
-/** @} idmap */
+
 
 #endif

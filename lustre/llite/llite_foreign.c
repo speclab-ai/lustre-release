@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2020 Intel Corporation.
@@ -57,7 +57,7 @@ int ll_manage_foreign(struct inode *inode, struct lustre_md *lmd)
 	int rc = 0;
 
 	ENTRY;
-	/* apply any foreign file/dir policy */
+	
 	if (S_ISREG((inode)->i_mode)) {
 		struct ll_inode_info *lli = ll_i2info(inode);
 		struct cl_object *obj = lli->lli_clob;
@@ -114,7 +114,7 @@ out:
 	RETURN(rc);
 }
 
-/* dentry must be spliced to inode (dentry->d_inode != NULL) !!! */
+
 bool ll_foreign_is_openable(struct dentry *dentry, unsigned int flags)
 {
 	/* check for faked symlink here as they should not be opened (unless
@@ -134,7 +134,7 @@ bool ll_foreign_is_openable(struct dentry *dentry, unsigned int flags)
 static bool should_preserve_foreign_file(struct lov_foreign_md *lfm,
 					 struct ll_inode_info *lli, bool unset)
 {
-	/* for now, only avoid foreign fake symlink file removal */
+	
 
 	if (unset)
 		if (lfm->lfm_type == LU_FOREIGN_TYPE_SYMLINK) {
@@ -151,7 +151,7 @@ static bool should_preserve_foreign_file(struct lov_foreign_md *lfm,
 static bool should_preserve_foreign_dir(struct lmv_foreign_md *lfm,
 					struct ll_inode_info *lli, bool unset)
 {
-	/* for now, only avoid foreign fake symlink dir removal */
+	
 
 	if (unset)
 		if (lfm->lfm_type == LU_FOREIGN_TYPE_SYMLINK) {
@@ -230,7 +230,7 @@ bool ll_foreign_is_removable(struct dentry *dentry, bool unset)
 			       "unable to check if file (%.*s, "DFID") is foreign...\n",
 			       name->len, name->name,
 			       PFID(ll_inode2fid(inode)));
-			/* XXX should we prevent removal ?? */
+			
 		}
 	} else if (S_ISDIR(inode->i_mode)) {
 		struct ll_inode_info *lli = ll_i2info(inode);

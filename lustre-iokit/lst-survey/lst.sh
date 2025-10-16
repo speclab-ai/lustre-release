@@ -1,17 +1,10 @@
 #!/bin/bash
-# SPDX-License-Identifier: GPL-2.0
-
-#
-# This file is part of Lustre, http://www.lustre.org/
-#
-
 print_help() {
 	cat <<EOF
 Usage:
-${0##*/} -f "nid1[ nid2...]" -t "nidA[ nidB...]" -m read|write|rw|ping [options]
+${0
 or
-${0##*/} -H -f "host1[ host2...]" -t "hostA[ hostB...]" -m read|write|rw|ping [options]
-
+${0
 Options:
 	-b batch_name
 	   Creates a batch test called <batch_name> rather than using the
@@ -72,13 +65,9 @@ Options:
 	   be used to override the stat output.
 	   Examples:
 	     Show only RPC rate stats:
-		# lst.sh -S rate ...
 	     Show only bandwidth stats:
-		# lst.sh -S bw ...
 	     Show both bandwidth and RPC rate stats:
-		# lst.sh -S "rate bw" ...
 		or
-		# lst.sh -S "bw rate" ...
 	-t "nid1[ nid2...]"
 	   Space-separated list of LNet NIDs to place in the "servers" group.
 	   When '-H' flag is specified, the '-t' argument is a space-separated
@@ -88,41 +77,29 @@ Options:
 EOF
 	exit
 }
-
 stop_lst() {
 	local rc=0
-
 	if ${LST_BATCH_STARTED}; then
 		$LCTL mark "lst stop ${BATCH_NAME}"
-
 		[[ -n ${ALL_HOSTS} ]] &&
 			$PDSH "${ALL_HOSTS}" "$LCTL mark 'lst stop ${BATCH_NAME}'"
-
 		lst stop "${BATCH_NAME}" || rc=$?
 		LST_BATCH_STARTED=false
 	fi
-
 	if ${LST_SESSION_CREATED}; then
 		$LCTL mark "Stop LST $MODE"
 		echo "Stop LST $MODE - $(date)"
-
 		[[ -n ${ALL_HOSTS} ]] &&
 			$PDSH "${ALL_HOSTS}" "$LCTL mark 'Stop LST $MODE'"
-
 		lst end_session || rc=$((rc + $?))
 		LST_SESSION_CREATED=false
 	fi
-
 	return $rc
 }
-
 exit_handler() {
 	local rc=${1:-0}
-
 	trap "" EXIT
-
 	stop_lst || rc=$((rc + $?))
-
 	if ${LOAD_MODULES}; then
 		echo "Attempting to 'modprobe -r lnet-selftest' on all hosts (30 second timeout)..."
 		$PDSH "${ALL_HOSTS}" -u 30 \
@@ -137,13 +114,10 @@ exit_handler() {
 			rc=$((rc + $?))
 		fi
 	fi
-
 	return $rc
 }
-
-LST_SESSION_CREATED=false # Whether 'lst new_session' was executed
-LST_BATCH_STARTED=false # Whether 'lst run <batch>' was executed
-
+LST_SESSION_CREATED=false
+LST_BATCH_STARTED=false
 PDSH="pdsh -S -Rssh -w"
 BATCH_NAME=""
 CONCURRENCY=16
@@ -190,18 +164,14 @@ while getopts "b:C:c:d:D:ef:g:hHl:Lm:Mn:o:s:S:t:" flag ; do
 		   exit 1;;
 	esac
 done
-
-# find where 'lctl' binary is installed on this system
-if [[ -x "$LCTL" ]]; then	# full pathname specified
-	: # echo "LCTL=$LCTL"
+if [[ -x "$LCTL" ]]; then
+	:
 elif [[ -n "$LUSTRE" && -x "$LUSTRE/utils/lctl" ]]; then
 	LCTL=$LUSTRE/utils/lctl
-else				# hope that it is in the PATH
+else
 	LCTL=${LCTL:-lctl}
 fi
-#echo "using LCTL='$LCTL' lustre_root='$lustre_root' LUSTRE='$LUSTRE'"
 [[ -n "$(which $LCTL)" ]] || { echo "error: lctl not found"; exit 99; }
-
 if [[ -z $CLIENTS ]]; then
 	echo "Must specify \"clients\" group (-f)"
 	exit 1
@@ -221,7 +191,6 @@ elif ${LOAD_MODULES} && ! ${HOST_MODE}; then
 	echo "Module loading ('-L') is only available in host mode ('-H')"
 	exit 1
 fi
-
 for stat_opt in ${STAT_OPTS}; do
 	if [[ $stat_opt == rate ]]; then
 		STAT_OPT_RATE=true
@@ -232,35 +201,29 @@ for stat_opt in ${STAT_OPTS}; do
 		print_help
 	fi
 done
-
 if [[ -z $STAT_GROUP ]]; then
 	STAT_GROUP="clients servers"
 elif ! [[ $STAT_GROUP =~ clients|servers ]]; then
 	echo "Stat group must be either \"clients\" or \"servers\". Found \"$STAT_GROUP\""
 	exit 1
 fi
-
 if [[ -n ${LOOPS} && ${LOOPS} -eq 0 ]]; then
 	echo "Loops must be -1 or > 0. Found \"${LOOPS}\""
 	exit 1
 fi
-
 if ! ${LOAD_MODULES} && ! lsmod | grep -q lnet_selftest; then
 	echo "lnet-selftest module is not loaded on local host."
 	echo "Please ensure lnet-selftest module is loaded on the local host and all test nodes."
 	exit 1
 fi
-
 ALL_HOSTS=""
 if ${HOST_MODE}; then
 	which pdsh &>/dev/null || { echo "Need pdsh for host mode"; exit; }
 	which ssh &>/dev/null || { echo "Need ssh for host mode"; exit; }
-
 	ALL_HOSTS="${SERVERS} ${CLIENTS}"
-	ALL_HOSTS=${ALL_HOSTS## }
+	ALL_HOSTS=${ALL_HOSTS
 	ALL_HOSTS=${ALL_HOSTS%% }
 	ALL_HOSTS="${ALL_HOSTS// /,}"
-
 	if ${LOAD_MODULES}; then
 		echo "Loading lnet-selftest on test nodes"
 		$PDSH "${ALL_HOSTS}" \
@@ -274,7 +237,6 @@ if ${HOST_MODE}; then
 			echo "Failed to load lnet-selftest module on test nodes"
 			exit "$rc"
 		fi
-
 		if ! lsmod | grep -q lnet_selftest; then
 			modprobe lnet-selftest
 			rc=$?
@@ -284,7 +246,6 @@ if ${HOST_MODE}; then
 			fi
 		fi
 	fi
-
 	idx=0
 	opts=( -o NumberOfPasswordPrompts=0 -o ConnectTimeout=5 )
 	for host in ${SERVERS//,/ }; do
@@ -295,7 +256,6 @@ if ${HOST_MODE}; then
 		fi
 		idx=$((idx + 1))
 	done
-
 	idx=0
 	for host in ${CLIENTS//,/ }; do
 		c_nids[idx]=$(ssh "${opts[@]}" "${host}" "$LCTL list_nids | head -n 1")
@@ -305,14 +265,12 @@ if ${HOST_MODE}; then
 		fi
 		idx=$((idx + 1))
 	done
-
 	SERVER_NIDS=( "${s_nids[@]}" )
 	CLIENT_NIDS=( "${c_nids[@]}" )
 else
 	IFS=" " read -r -a SERVER_NIDS <<< "${SERVERS}"
 	IFS=" " read -r -a CLIENT_NIDS <<< "${CLIENTS}"
 fi
-
 if ! grep -q '\[' <<<"${SERVER_NIDS[@]}" && which lnetctl &>/dev/null; then
 	echo "Discover server NIDs"
 	lnetctl discover "${SERVER_NIDS[@]}" 1>/dev/null
@@ -322,7 +280,6 @@ if ! grep -q '\[' <<<"${SERVER_NIDS[@]}" && which lnetctl &>/dev/null; then
 		exit $rc
 	fi
 fi
-
 if ! grep -q '\[' <<<"${CLIENT_NIDS[@]}" && which lnetctl &>/dev/null; then
 	echo "Discover client NIDs"
 	lnetctl discover "${CLIENT_NIDS[@]}" 1>/dev/null
@@ -332,35 +289,27 @@ if ! grep -q '\[' <<<"${CLIENT_NIDS[@]}" && which lnetctl &>/dev/null; then
 		exit $rc
 	fi
 fi
-
 [[ -n $ALL_HOSTS ]] &&
 	$PDSH "$ALL_HOSTS" "$LCTL mark 'Start LST $MODE'"
-
 $LCTL mark "Start LST $MODE"
 echo "Start LST $MODE - $(date)"
-
 trap 'exit_handler' EXIT
-
 export LST_SESSION=$$
 echo "LST_SESSION=$LST_SESSION"
 lst new_session lnet_session || { echo "new_session failed $?"; exit; }
 LST_SESSION_CREATED=true
-
 echo "Adding clients: ${CLIENT_NIDS[*]}"
 lst add_group clients "${CLIENT_NIDS[@]}" || exit
 echo "Adding servers: ${SERVER_NIDS[*]}"
 lst add_group servers "${SERVER_NIDS[@]}" || exit
-
 if [[ -z ${BATCH_NAME} ]]; then
 	BATCH_NAME="brw_${MODE}"
 fi
 lst add_batch "${BATCH_NAME}" || exit
-
 test_opts+=( --batch "${BATCH_NAME}" --concurrency "${CONCURRENCY}" )
 test_opts+=( --from clients --to servers --distribute "${DISTRIBUTION}" )
 [[ -n ${LOOPS} ]] &&
 	test_opts+=( --loop "${LOOPS}" )
-
 if [[ $MODE == ping ]]; then
 	test_opts+=( ping )
 elif [[ $MODE == rw ]]; then
@@ -382,7 +331,6 @@ else
 		test_opts+=( check="$CHECK" )
 	test_opts+=( size="$IOSIZE" )
 fi
-
 stat_opts=( --count "${COUNT}" --delay "${DELAY}" )
 if [[ -n $STAT_OPTS ]]; then
 	if ${STAT_OPT_RATE}; then
@@ -396,11 +344,9 @@ elif [[ $MODE == ping ]]; then
 else
 	stat_opts+=( --bw "${BW_UNITS}" )
 fi
-
 for g in ${STAT_GROUP}; do
 	stat_opts+=( "${g}" )
 done
-
 if [[ $MODE == rw ]]; then
 	echo "Test: ${read_opts[*]}"
 	echo "Test: ${write_opts[*]}"
@@ -412,15 +358,10 @@ else
 	echo "Stat: ${stat_opts[*]}"
 	lst add_test "${test_opts[@]}" || exit
 fi
-
 lst run "${BATCH_NAME}" || exit
-
 LST_BATCH_STARTED=true
-
 lst stat "${stat_opts[@]}"
-
 if ${SHOW_ERRORS}; then
 	lst show_error --session servers clients
 fi
-
 exit

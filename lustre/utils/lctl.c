@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lctl.c
  *
@@ -336,19 +336,19 @@ JT_SUBCMD(lfsck);
 #endif
 
 command_t cmdlist[] = {
-	/* Metacommands */
+	
 	{"===== metacommands =======", NULL, 0, "metacommands"},
 	{"--device", jt_opt_device, 0,
 	 "run <command> after connecting to device <devno>\n"
 	 "--device <devno> <command [args ...]>"},
 
-	/* User interface commands */
+	
 	{"======== control =========", NULL, 0, "control commands"},
 	{"lustre_build_version", jt_get_version, 0,
 	 "print version of Lustre modules\n"
 	 "usage: lustre_build_version"},
 
-	/* Network configuration commands */
+	
 	{"===== network config =====", NULL, 0, "network config"},
 	{"--net", jt_opt_net, 0, "run <command> after selecting network <net>\n"
 	 "usage: --net <tcp/o2ib/...> <command>"},
@@ -414,7 +414,7 @@ command_t cmdlist[] = {
 	 "usage: net_delay_list"},
 	{"net_delay", jt_net_delay, net_delay_cmdlist, ""},
 
-	/* Device selection commands */
+	
 	{"==== obd device selection ====", NULL, 0, "device selection"},
 	{"device", jt_obd_device, 0,
 	 "set current device to <name|devno>\n"
@@ -427,7 +427,7 @@ command_t cmdlist[] = {
 	{"dl", jt_device_list, 0, "show all devices, same as 'device_list'\n"
 	 "usage: dl [--target|-t] [--yaml|-y]"},
 
-	/* Device operations */
+	
 	{"==== obd device operations ====", NULL, 0, "device operations"},
 	{"activate", jt_obd_activate, 0, "activate an import\n"},
 	{"deactivate", jt_obd_deactivate, 0, "deactivate an import. "
@@ -487,7 +487,7 @@ command_t cmdlist[] = {
 	 "usage: del_ost [--dryrun] --target FSNAME-OSTxxxx\n"
 	 "Cancel the config records for a specific OST to forget about it.\n"},
 
-	/* Debug commands */
+	
 	{"==== debugging control ====", NULL, 0, "debug"},
 	{"debug_daemon", jt_dbg_debug_daemon, 0,
 	 "debug daemon control and dump to a file\n"
@@ -519,7 +519,7 @@ command_t cmdlist[] = {
 	 "provide gdb-friendly module information\n"
 	 "usage: modules <path>"},
 
-	/* Pool commands */
+	
 	{"===  Pools ==", NULL, 0, "pool management"},
 	{"pool_new", jt_pool_cmd, 0,
 	 "add a new pool\n"
@@ -538,7 +538,7 @@ command_t cmdlist[] = {
 	 "usage: pool_list  <fsname>[.<poolname>] | <pathname>"},
 
 #ifdef HAVE_SERVER_SUPPORT
-	/* Barrier commands */
+	
 	{"===  Barrier ==", NULL, 0, "barrier management"},
 	{"barrier_freeze", jt_barrier_freeze, 0,
 	 "freeze write barrier on MDTs\n"
@@ -554,7 +554,7 @@ command_t cmdlist[] = {
 	 "usage: barrier_rescan FSNAME [TIMEOUT_SECONDS]"},
 	{"barrier", jt_barrier, barrier_cmdlist, ""},
 
-	/* Snapshot commands */
+	
 	{"===  Snapshot ==", NULL, 0, "Snapshot management"},
 	{"snapshot_create", jt_snapshot_create, 0,
 	 "create the snapshot\n"
@@ -592,8 +592,8 @@ command_t cmdlist[] = {
 	 "			 {-n | --name SSNAME}\n"
 	 "			 [-r | --rsh REMOTE_SHELL]"},
 	{"snapshot", jt_snapshot, snapshot_cmdlist, ""},
-#endif /* HAVE_SERVER_SUPPORT */
-	/* Nodemap commands */
+#endif 
+	
 	{"=== Nodemap ===", NULL, 0, "nodemap management"},
 	{"nodemap_activate", jt_nodemap_activate, 0,
 	 "activate nodemap idmapping functions\n"
@@ -661,7 +661,7 @@ command_t cmdlist[] = {
 	 "usage: nodemap_info --list --name NODEMAP_NAME --property PROPERTY_NAME"},
 	{"nodemap", jt_nodemap, nodemap_cmdlist, ""},
 
-	/* Changelog commands */
+	
 	{"===  Changelogs ==", NULL, 0, "changelog user management"},
 	{"changelog_register", jt_changelog_register, 0,
 	 "register a new persistent changelog user, returns id\n"
@@ -676,7 +676,7 @@ command_t cmdlist[] = {
 	 "						 [--user|-u USERNAME]"},
 	{"changelog", jt_changelog, changelog_cmdlist, ""},
 
-	/* Persistent Client Cache (PCC) commands */
+	
 	{"=== Persistent Client Cache ===", NULL, 0, "PCC user management"},
 	{"pcc", jt_pcc, pcc_cmdlist,
 	 "lctl commands used to interact with PCC features:\n"
@@ -685,7 +685,7 @@ command_t cmdlist[] = {
 	 "lctl pcc clear  - remove all PCC backends on a client\n"
 	 "lctl pcc list   - list all PCC backends on a client\n"},
 
-	/* Device configuration commands */
+	
 	{"== device setup (these are not normally used post 1.4) ==",
 		NULL, 0, "device config"},
 	{"attach", jt_lcfg_attach, 0,
@@ -701,7 +701,7 @@ command_t cmdlist[] = {
 	 "usage: cleanup [force | failover]"},
 
 #ifdef HAVE_SERVER_SUPPORT
-	/* LFSCK commands */
+	
 	{"==== LFSCK ====", NULL, 0, "LFSCK"},
 	{"lfsck_start", jt_lfsck_start, 0, "start LFSCK\n"
 	 "usage: lfsck_start [--device|-M [MDT,OST]_device]\n"
@@ -722,7 +722,7 @@ command_t cmdlist[] = {
 	 "		     [--wait|-w]"},
 	{"lfsck", jt_lfsck, lfsck_cmdlist, ""},
 
-	/* Llog operations */
+	
 	{"==== LLOG ====", NULL, 0, "LLOG"},
 	{"llog_catlist", jt_llog_catlist, 0,
 	 "list all catalog files on current device. If current device is not\n"
@@ -761,10 +761,10 @@ command_t cmdlist[] = {
 	 "permanently erase configuration logs for the named filesystem\n"
 	 "usage: erase_lcfg FSNAME"},
 	{"erase_lcfg", jt_lcfg_erase, 0, "alias for 'lcfg_erase'\n"},
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 	{"==== obsolete (DANGEROUS) ====", NULL, 0, "obsolete (DANGEROUS)"},
-	/* network operations */
+	
 	{"add_interface", jt_ptl_add_interface, 0, "add interface entry\n"
 	 "usage: add_interface ip [netmask]"},
 	{"del_interface", jt_ptl_del_interface, 0, "del interface entry\n"
@@ -779,7 +779,7 @@ command_t cmdlist[] = {
 	 "enable/disable routes via gateway in the LNet routing table\n"
 	 "usage: set_route <gateway> <up/down> [<time>]"},
 
-	/* Test only commands */
+	
 	{"==== testing (DANGEROUS) ====", NULL, 0, "testing (DANGEROUS)"},
 	{"--threads", jt_opt_threads, 0,
 	 "run <threads> separate instances of <command> on device <devno>\n"
@@ -816,7 +816,7 @@ command_t cmdlist[] = {
 	 "otherwise fail 'count' messages.\n"
 	 "usage: fail nid|_all_ [count]"},
 
-	/* Test commands for echo client */
+	
 	{"test_create", jt_obd_test_create, 0,
 	 "create files on MDT by echo client\n"
 	 "usage: test_create [-d parent_basedir] <-D parent_count> "

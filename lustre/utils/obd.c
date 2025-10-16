@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/obd.c
  *
@@ -146,7 +146,7 @@ static int get_mgs_device(void)
 	return mgs_device;
 }
 
-/* Returns 0 on success, -errno on failure */
+
 int lcfg_mgs_ioctl(const char *func, int dev_id, struct lustre_cfg *lcfg)
 {
 	struct obd_ioctl_data data;
@@ -223,7 +223,7 @@ static int be_verbose(int verbose, struct timeval *next_time,
 	if (next_time)
 		gettimeofday(&now, NULL);
 
-	/* A positive verbosity means to print every X iterations */
+	
 	if (verbose > 0 && (num >= *next_num || num >= num_total)) {
 		*next_num += verbose;
 		if (next_time) {
@@ -233,7 +233,7 @@ static int be_verbose(int verbose, struct timeval *next_time,
 		return 1;
 	}
 
-	/* A negative verbosity means to print at most each X seconds */
+	
 	if (verbose < 0 && next_time && difftime(&now, next_time) >= 0.0) {
 		next_time->tv_sec = now.tv_sec - verbose;
 		next_time->tv_usec = now.tv_usec;
@@ -290,7 +290,7 @@ static int shmem_setup(void)
 	if (shared_data)
 		return 0;
 
-	/* Create new segment */
+	
 	shmid = shmget(IPC_PRIVATE, sizeof(*shared_data), 0600);
 	if (shmid == -1) {
 		fprintf(stderr, "Can't create shared data: %s\n",
@@ -298,7 +298,7 @@ static int shmem_setup(void)
 		return errno;
 	}
 
-	/* Attatch to new segment */
+	
 	shared_data = (struct shared_data *)shmat(shmid, NULL, 0);
 
 	if (shared_data == (struct shared_data *)(-1)) {
@@ -443,7 +443,7 @@ static void shmem_snap(int total_threads, int live_threads)
 	}
 
 	secs = difftime(&this_time, &prev_time);
-	if (prev_valid && secs > 1.0) {   /* someone screwed with the time? */
+	if (prev_valid && secs > 1.0) {   
 		printf("%d/%d Total: %f/second\n", non_zero, total_threads,
 		       total / secs);
 
@@ -453,7 +453,7 @@ static void shmem_snap(int total_threads, int live_threads)
 	}
 	if (!prev_valid && running == total_threads) {
 		prev_valid = 1;
-		/* drop counters when all threads were started */
+		
 		memcpy(counter_snapshot[1], counter_snapshot[0],
 		       total_threads * sizeof(counter_snapshot[0][0]));
 		prev_time = this_time;
@@ -671,7 +671,7 @@ int jt_opt_threads(int argc, char **argv)
 		rc = 0;
 	}
 
-	if (!thread) {          /* parent process */
+	if (!thread) {          
 		int live_threads = threads;
 
 		sigemptyset(&sigset);
@@ -686,7 +686,7 @@ int jt_opt_threads(int argc, char **argv)
 			int status;
 			pid_t ret;
 
-			if (verbose < 0)        /* periodic stats */
+			if (verbose < 0)        
 				alarm(-verbose);
 
 			sigsuspend(&sigset);
@@ -725,7 +725,7 @@ int jt_opt_threads(int argc, char **argv)
 				}
 			}
 
-			/* Show stats while all threads running */
+			
 			if (verbose < 0) {
 				shmem_snap(threads, live_threads);
 				if (report_count > 0 && --report_count == 0)
@@ -797,7 +797,7 @@ static bool is_mds(void)
 	glob_t path;
 	int rc;
 
-	rc = cfs_get_param_paths(&path, "mdt/*-MDT*/exports");
+	rc = cfs_get_param_paths(&path, "mdtexports");
 	if (!rc) {
 		cfs_free_param_data(&path);
 		return true;
@@ -811,7 +811,7 @@ static bool is_oss(void)
 	glob_t path;
 	int rc;
 
-	rc = cfs_get_param_paths(&path, "obdfilter/*-OST*/exports");
+	rc = cfs_get_param_paths(&path, "obdfilterexports");
 	if (!rc) {
 		cfs_free_param_data(&path);
 		return true;
@@ -973,7 +973,7 @@ int jt_obd_abort_recovery_mdt(int argc, char **argv)
 
 static int lcfg_get_nm_offset_limit(char *nodemap)
 {
-	/* buffer to contain nodemap/<nodemap name>/offset */
+	
 	char param[LUSTRE_NODEMAP_NAME_LENGTH + 16 + 1];
 	char *buf = NULL;
 	size_t buflen;
@@ -996,7 +996,7 @@ free_all:
 	llapi_param_paths_free(&paths);
 	return rc;
 }
-#else /* ! HAVE_SERVER_SUPPORT */
+#else 
 int jt_obd_no_transno(int argc, char **argv)
 {
 	if (argc != 1)
@@ -1036,7 +1036,7 @@ int jt_obd_abort_recovery_mdt(int argc, char **argv)
 		jt_cmdname(argv[0]));
 	return -EOPNOTSUPP;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 int jt_get_version(int argc, char **argv)
 {
@@ -1269,7 +1269,7 @@ int jt_obd_md_common(int argc, char **argv, int cmd)
 
 	if (thread) {
 		shmem_lock();
-		/* threads interleave */
+		
 		if (parent_base_id != -1)
 			parent_base_id += (thread - 1) % parent_count;
 
@@ -1293,7 +1293,7 @@ int jt_obd_md_common(int argc, char **argv, int cmd)
 				"parent_basedir or name must be indicated!\n");
 			return CMD_HELP;
 		}
-		/*Get directory and name from name*/
+		
 		last_lash = strrchr(name, '/');
 		if (!last_lash || name[0] != '/') {
 			fprintf(stderr, "Can not locate %s\n", name);
@@ -1362,7 +1362,7 @@ int jt_obd_md_common(int argc, char **argv, int cmd)
 		}
 
 		if (cmd == ECHO_MD_CREATE || cmd == ECHO_MD_MKDIR) {
-			/*Allocate fids for the create */
+			
 			rc = jt_obd_alloc_fids(&fid_space, &fid,
 					       &data.ioc_count);
 			if (rc) {
@@ -2041,7 +2041,7 @@ int jt_obd_test_brw(int argc, char **argv)
 	if (argc >= 3) {
 		if (argv[2][0] == 'w' || argv[2][0] == '1')
 			write = 1;
-		/* else it's a read */
+		
 
 		if (argv[2][0] != 0)
 			for (i = 1; argv[2][i] != 0; i++)
@@ -2114,11 +2114,11 @@ int jt_obd_test_brw(int argc, char **argv)
 
 	if (argc >= 7) {
 		switch (argv[6][0]) {
-		case 'g': /* plug and unplug */
+		case 'g': 
 			data.ioc_pbuf1 = (void *)2;
 			data.ioc_plen1 = strtoull(argv[6] + 1, &end, 0);
 			break;
-		case 'p': /* prep and commit */
+		case 'p': 
 			data.ioc_pbuf1 = (void *)3;
 			data.ioc_plen1 = strtoull(argv[6] + 1, &end, 0);
 			break;
@@ -2149,7 +2149,7 @@ int jt_obd_test_brw(int argc, char **argv)
 	if (thread) {
 		shmem_lock();
 		if (nthr_per_obj != 0) {
-			/* threads interleave */
+			
 			obj_idx = (thread - 1) / nthr_per_obj;
 			objid += obj_idx;
 			stride *= nthr_per_obj;
@@ -2159,7 +2159,7 @@ int jt_obd_test_brw(int argc, char **argv)
 			}
 			thr_offset += ((thread - 1) % nthr_per_obj) * len;
 		} else {
-			/* threads disjoint */
+			
 			thr_offset += (thread - 1) * len;
 		}
 
@@ -2234,7 +2234,7 @@ int jt_obd_test_brw(int argc, char **argv)
 			}
 #else
 			data.ioc_offset += len;
-			obj_idx = 0; /* avoids an unused var warning */
+			obj_idx = 0; 
 #endif
 		}
 	}
@@ -2277,7 +2277,7 @@ static int do_activate(int argc, char **argv, int flag)
 	if (argc != 1)
 		return CMD_HELP;
 
-	/* reuse offset for 'active' */
+	
 	data.ioc_offset = flag;
 
 	memset(buf, 0, sizeof(rawbuf));
@@ -2570,7 +2570,7 @@ int jt_lcfg_erase(int argc, char **argv)
 
 	return rc;
 }
-#else /* !HAVE_SERVER_SUPPORT */
+#else 
 int jt_lcfg_clear(int argc, char **argv)
 {
 	if (argc != 2)
@@ -2600,7 +2600,7 @@ int jt_lcfg_erase(int argc, char **argv)
 		jt_cmdname(argv[0]));
 	return -EOPNOTSUPP;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 enum llog_default_dev_op {
 	LLOG_DFLT_MGS_SET = 0,
@@ -2682,7 +2682,7 @@ int jt_llog_catlist(int argc, char **argv)
 int jt_llog_info(int argc, char **argv)
 {
 	const struct option long_opts[] = {
-	/* Allow optional "--catalog" for compatibility with llog commands. */
+	
 	{ .val = 'c',	.name = "catalog",	.has_arg = required_argument },
 	{ .val = 'h',	.name = "help",		.has_arg = no_argument },
 	{ .name = NULL } };
@@ -2704,7 +2704,7 @@ int jt_llog_info(int argc, char **argv)
 	}
 	argc -= optind;
 	argv += optind;
-	/* support "logname" positional parameter */
+	
 	if (argc == 1) {
 		if (catalog) {
 			fprintf(stderr,
@@ -2717,7 +2717,7 @@ int jt_llog_info(int argc, char **argv)
 		return CMD_HELP;
 	}
 
-	/* Manage default device */
+	
 	if (llog_default_device(LLOG_DFLT_MGS_SET))
 		return CMD_INCOMPLETE;
 
@@ -2819,7 +2819,7 @@ int jt_llog_print_iter(char *logname, long start, long end,
 	long rec;
 	int rc = 0;
 
-	/* default end of indexes is max indexes in a llog bitmap */
+	
 	if (end == -1)
 		end = LLOG_MIN_CHUNK_SIZE * 8 - 1;
 
@@ -2846,7 +2846,7 @@ retry:
 			 end < rec + inc - 1 ? end : rec + inc - 1);
 
 		data.ioc_u32_1 = raw ? 1 : 0;
-		/* start and end record numbers are passed as ASCII digits */
+		
 		data.ioc_inlbuf2 = startbuf;
 		data.ioc_inllen2 = strlen(startbuf) + 1;
 		data.ioc_inlbuf3 = endbuf;
@@ -2876,14 +2876,14 @@ retry:
 			goto out;
 		}
 
-		/* record was not modified -> all indexes are skipped */
+		
 		if (strcmp(record, logname) != 0)
 			rc = llog_process_records(record_cb, record, private,
 						  reverse);
 		if (rc)
 			goto out;
 
-		/* end of llog file ? */
+		
 		if (*is_llog_eof)
 			break;
 	}
@@ -2896,7 +2896,7 @@ static int llog_parse_catalog_options(int *argc, char ***argv, char **catalog,
 				      long *start, long *end, int *raw)
 {
 	const struct option long_opts[] = {
-	/* the --catalog option is not required, just for consistency */
+	
 	{ .val = 'c',	.name = "catalog",	.has_arg = required_argument },
 	{ .val = 'e',	.name = "end",		.has_arg = required_argument },
 	{ .val = 'h',	.name = "help",		.has_arg = no_argument },
@@ -2910,7 +2910,7 @@ static int llog_parse_catalog_options(int *argc, char ***argv, char **catalog,
 	if (!catalog || !start || !end)
 		return -EINVAL;
 
-	/* now process command line arguments*/
+	
 	while ((c = getopt_long(*argc, *argv, "c:e:hrs:",
 				long_opts, NULL)) != -1) {
 		switch (c) {
@@ -3049,7 +3049,7 @@ static int llog_parse_catalog_log_idx(int *argc, char ***argv, const char *opts,
 				      struct obd_ioctl_data *data)
 {
 	const struct option long_opts[] = {
-	/* the --catalog option is not required, just for consistency */
+	
 	{ .val = 'c',	.name = "catalog",	.has_arg = required_argument },
 	{ .val = 'h',	.name = "help",		.has_arg = no_argument },
 	{ .val = 'i',	.name = "log_idx",	.has_arg = required_argument },
@@ -3057,13 +3057,13 @@ static int llog_parse_catalog_log_idx(int *argc, char ***argv, const char *opts,
 	{ .name = NULL } };
 	int c;
 
-	/* sanity check */
+	
 	if (!data || *argc <= 1)
 		return -1;
 
 	data->ioc_dev = cur_device;
 
-	/* now process command line arguments*/
+	
 	while ((c = getopt_long(*argc, *argv, opts, long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'c':
@@ -3090,7 +3090,7 @@ static int llog_parse_catalog_log_idx(int *argc, char ***argv, const char *opts,
 	*argc -= optind;
 	*argv += optind;
 
-	/* Allow catalog to be specified as first option without --catalog */
+	
 	if (!data->ioc_inlbuf1 && *argc > 0) {
 		data->ioc_inlbuf1 = (*argv)[0];
 		data->ioc_inllen1 = strlen((*argv)[0]) + 1;
@@ -3108,11 +3108,11 @@ int jt_llog_cancel(int argc, char **argv)
 	char *cmd = argv[0];
 	int rc;
 
-	/* Manage default device */
+	
 	if (llog_default_device(LLOG_DFLT_MGS_SET))
 		return CMD_INCOMPLETE;
 
-	/* Parse catalog file (in inlbuf1) and named parameters */
+	
 	rc = llog_parse_catalog_log_idx(&argc, &argv, "c:hi:l:", &data);
 
 	/*
@@ -3132,7 +3132,7 @@ int jt_llog_cancel(int argc, char **argv)
 	}
 
 	if (!data.ioc_inlbuf1 || !data.ioc_inlbuf3) {
-		/* missing mandatory parameters */
+		
 		rc = CMD_HELP;
 		goto err;
 	}
@@ -3182,7 +3182,7 @@ int jt_llog_check(int argc, char **argv)
 
 	snprintf(startbuf, sizeof(startbuf), "%lu", start);
 	snprintf(endbuf, sizeof(endbuf), "%lu", end);
-	/* start and end record numbers are passed as ASCII digits */
+	
 	data.ioc_inllen2 = strlen(startbuf) + 1;
 	data.ioc_inlbuf2 = startbuf;
 	data.ioc_inllen3 = strlen(endbuf) + 1;
@@ -3277,7 +3277,7 @@ void obd_finalize(int argc, char **argv)
 {
 	struct sigaction sigact;
 
-	/* sigact initialization */
+	
 	sigact.sa_handler = signal_server;
 	sigfillset(&sigact.sa_mask);
 	sigact.sa_flags = SA_RESTART;
@@ -3351,7 +3351,7 @@ static char *get_event_filter(__u32 cmd)
 
 	event_name = get_llog_event_name(cmd);
 	if (event_name) {
-		/* 9 bytes for "event: , " */
+		
 		len = 9 + strlen(event_name);
 		filter = malloc(len + 1);
 		if (!filter)
@@ -3580,11 +3580,11 @@ static int check_pool_cmd_result(enum lcfg_command_type cmd, char *fsname,
 	int cpt;
 	int rc = 0;
 
-	/* mgs is standalone -> no client to wait */
+	
 	if (!combined_mgs_mds(fsname))
 		return 0;
 
-	/* max time to wait a client */
+	
 	cpt = 2 * get_mgc_requeue_timeout_min() + 2;
 
 	switch (cmd) {
@@ -3678,8 +3678,8 @@ static int check_and_complete_ostname(char *fsname, char *ostname)
 	if (strlen(ostname) >= sizeof(real_ostname))
 		return -ENAMETOOLONG;
 
-	/* if OST name does not start with fsname, we add it */
-	/* if not check if the fsname is the right one */
+	
+	
 	ptr = strchr(ostname, '-');
 	if (!ptr) {
 		len = snprintf(real_ostname, sizeof(real_ostname), "%s-%s",
@@ -3694,14 +3694,14 @@ static int check_and_complete_ostname(char *fsname, char *ostname)
 		strncpy(real_ostname, ostname, sizeof(real_ostname));
 	}
 
-	/* real_ostname is fsname-????? */
+	
 	ptr = real_ostname + strlen(fsname) + 1;
 	if (strncmp(ptr, "OST", 3) != 0) {
 		fprintf(stderr, "%s does not start by %s-OST nor OST\n",
 			ostname, fsname);
 		return -EINVAL;
 	}
-	/* real_ostname is fsname-OST????? */
+	
 	ptr += 3;
 	for (i = 0; i < 4; i++) {
 		if (!isxdigit(*ptr)) {
@@ -3712,8 +3712,8 @@ static int check_and_complete_ostname(char *fsname, char *ostname)
 		}
 		ptr++;
 	}
-	/* real_ostname is fsname-OSTXXXX????? */
-	/* if OST name does not end with _UUID, we add it */
+	
+	
 	if (*ptr == '\0') {
 		len = sizeof(real_ostname) - strlen(real_ostname) - 1;
 		if (sizeof("_UUID") - 1 > len)
@@ -3725,12 +3725,12 @@ static int check_and_complete_ostname(char *fsname, char *ostname)
 			"ostname %s does not end with _UUID\n", ostname);
 		return -EINVAL;
 	}
-	/* real_ostname is fsname-OSTXXXX_UUID */
+	
 	strcpy(ostname, real_ostname);
 	return 0;
 }
 
-/* returns 0 or -errno */
+
 static int pool_cmd(enum lcfg_command_type cmd, char *cmdname,
 		    char *fullpoolname, char *fsname, char *ostname)
 {
@@ -4867,7 +4867,7 @@ int jt_nodemap_fileset_modify(int argc, char **argv)
 	if (!nodemap_name || !fileset_name)
 		return CMD_HELP;
 
-	/* Check for conflicting options and abort */
+	
 	if (type_conflict) {
 		fprintf(stderr, "cannot specify both --alt and --primary\n");
 		return CMD_HELP;
@@ -4884,7 +4884,7 @@ int jt_nodemap_fileset_modify(int argc, char **argv)
 		return CMD_HELP;
 	}
 
-	/* Format flags as <type>:<access> */
+	
 	rc = snprintf(flags, sizeof(flags), "%s:%s", type_new, access_new);
 	if (rc < 0 || rc >= sizeof(flags)) {
 		fprintf(stderr, "cannot format fileset flags\n");
@@ -5097,12 +5097,12 @@ int jt_nodemap_modify(int argc, char **argv)
 			break;
 		case 'p':
 			param = optarg;
-			/* check for property=value format */
+			
 			delimiter = strchr(param, '=');
 			if (!value && delimiter) {
 				*delimiter = '\0';
 				value = delimiter + 1;
-				/* reset if empty value */
+				
 				if (*value == '\0')
 					value = NULL;
 			} else if (value && delimiter) {
@@ -5302,7 +5302,7 @@ int jt_nodemap_info(int argc, char **argv)
 		return CMD_HELP;
 	}
 
-	/* Legacy positional arguments are handled here */
+	
 	if (optind < argc) {
 #if LUSTRE_VERSION_CODE > OBD_OCD_VERSION(2, 17, 53, 0)
 		fprintf(stdout,
@@ -5351,9 +5351,9 @@ int jt_nodemap_info(int argc, char **argv)
 		return rc;
 	}
 
-	/* Handle -l argument here */
+	
 	if (list) {
-		/* Get nodemap active state */
+		
 		rc = cfs_get_param_paths(&param, "nodemap/active");
 		if (rc) {
 			fprintf(stderr,
@@ -5377,7 +5377,7 @@ int jt_nodemap_info(int argc, char **argv)
 		free(active_str);
 		cfs_free_param_data(&param);
 
-		/* list all nodemaps */
+		
 		printf("\nDefined nodemaps:\n");
 		rc = cfs_get_param_paths(&param, "nodemap/*");
 		if (rc) {
@@ -5387,16 +5387,16 @@ int jt_nodemap_info(int argc, char **argv)
 		}
 
 		for (i = 0; i < param.gl_pathc; i++) {
-			/* move to last '/' to skip nodemap prefix */
+			
 			nodemap_name = strrchr(param.gl_pathv[i], '/');
-			/* skip '/' and check nodemap isn't empty or "active" */
+			
 			if (nodemap_name && *(++nodemap_name) &&
 			    strcmp(nodemap_name, "active") != 0)
 				printf("\t%s\n", nodemap_name);
 		}
 		cfs_free_param_data(&param);
 
-		/* list all nodemap parameters */
+		
 		printf("\nAvailable nodemap parameters:\n");
 		for (i = 0; i < ARRAY_SIZE(param_desc); i++) {
 			printf("\t%-20s %s\n", param_desc[i].param,
@@ -5405,7 +5405,7 @@ int jt_nodemap_info(int argc, char **argv)
 		return rc;
 	}
 
-	/* Handle -n and -p arguments and default case here */
+	
 	if (nodemap_name && property) {
 		rc = snprintf(pattern, sizeof(pattern), "nodemap.%s.%s",
 			      nodemap_name, property);
@@ -5502,12 +5502,12 @@ int jt_nodemap_add_offset(int argc, char **argv)
 		return CMD_HELP;
 	}
 
-	/* user warnings for setting offset to 0 or less than 65536 */
+	
 	if (offset < 65536)
 		fprintf(stderr,
 			"Warning: it is not recommended to have an offset before 65536 as the nobody/squash ids will not be mapped properly.\n");
 
-	/* user warning for setting limit to less than 65536 */
+	
 	if (limit < 65536)
 		fprintf(stderr,
 			"Warning: it is not recommended to have a limit below 65536 as the nobody/squash ids will not be mapped properly.\n");
@@ -5728,7 +5728,7 @@ int jt_nodemap_del_idmap(int argc, char **argv)
 	}
 	return rc;
 }
-#else /* !HAVE_SERVER_SUPPORT */
+#else 
 int jt_nodemap_activate(int argc, char **argv)
 {
 	fprintf(stderr, "error: %s: invalid ioctl\n",
@@ -5868,7 +5868,7 @@ int jt_nodemap_info(int argc, char **argv)
 		jt_cmdname(argv[0]));
 	return -EOPNOTSUPP;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 /*
  * this function tranforms a rule [start-end/step] into an array
@@ -5902,15 +5902,15 @@ static int get_array_idx(char *rule, char *format, int **array)
 	*end = '\0';
 	end++;
 	start++;
-	/* put in format the printf format (the rule without the range) */
+	
 	sprintf(format, "%s%%.4x%s", rule, end);
 
 	array_idx = 0;
 	array_sz = 0;
 	*array = NULL;
-	/* loop on , separator */
+	
 	do {
-		/* extract the 3 fields */
+		
 		rc = sscanf(start, "%x-%x/%u", &lo, &hi, &step);
 		switch (rc) {
 		case 0:
@@ -5929,7 +5929,7 @@ static int get_array_idx(char *rule, char *format, int **array)
 		}
 		case 2: {
 			step = 1;
-			/* do not break to share code with case 3: */
+			
 		}
 		case 3: {
 			void *tmp;
@@ -6027,7 +6027,7 @@ static int llog_poollist_cb(const char *record, void *data)
 		lpld->lpld_exists = true;
 		if (strstr(record, new_record)) {
 			name = strstr(record, type);
-			/* 2 bytes for " }" */
+			
 			name_len = strlen(name) - type_len - 2;
 			if (name_len <= 0 || name_len > sizeof(tmp->lpn_name)) {
 				rc = -EINVAL;
@@ -6054,7 +6054,7 @@ static int llog_poollist_cb(const char *record, void *data)
 				}
 			}
 		}
-		/* verify if the specified pool still exists */
+		
 		if (lpld->lpld_poolname[0] && strstr(record, del_pool))
 			lpld->lpld_exists = false;
 	}
@@ -6265,7 +6265,7 @@ int extract_ost_list(int argc, char **argv, char *fsname,
 	if (argc < 1)
 		return -EINVAL;
 
-	/* generate full list of OSTs */
+	
 	for (i = 0; i < argc; i++) {
 		int j, start;
 		struct pool_ost_cmd *tmp;
@@ -6361,7 +6361,7 @@ int jt_pool_cmd(int argc, char **argv)
 			rc = cmds[i].rc ? cmds[i].rc : rc;
 		}
 
-		/* check results */
+		
 		for (i = 0; i < cmds_nr && rc != -EFAULT; i++) {
 			if (!rc && wait_client)
 				check_pool_cmd_result(cmd, fsname, poolname,
@@ -6662,7 +6662,7 @@ int jt_barrier_rescan(int argc, char **argv)
 
 	return rc;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 int jt_get_obj_version(int argc, char **argv)
 {
@@ -6871,13 +6871,13 @@ int jt_changelog_deregister(int argc, char **argv)
 	}
 
 	if (1 == optind && argc > 1) {
-		/* first check if pure ID was passed */
+		
 		id = atoi(argv[optind]);
-		/* nameless cl<ID> format or cl<ID>-... format, only ID matters */
+		
 		if (id == 0)
 			sscanf(argv[optind], CHANGELOG_USER_PREFIX"%d", &id);
 
-		/* no valid ID was parsed */
+		
 		if (id <= 0) {
 			rc = -EINVAL;
 			fprintf(stderr,
@@ -6920,7 +6920,7 @@ int jt_changelog_deregister(int argc, char **argv)
 
 	return 0;
 }
-#else /* !HAVE_SERVER_SUPPORT */
+#else 
 int jt_changelog_register(int argc, char **argv)
 {
 	fprintf(stderr, "error: %s: invalid ioctl\n",
@@ -6934,7 +6934,7 @@ int jt_changelog_deregister(int argc, char **argv)
 		jt_cmdname(argv[0]));
 	return -EOPNOTSUPP;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 int jt_pcc_add(int argc, char **argv)
 {
@@ -7030,7 +7030,7 @@ int jt_pcc_del(int argc, char **argv)
 		return rc;
 	}
 
-	/* Set llapi message level */
+	
 	llapi_msg_set_level(verbose);
 	rc = llapi_pcc_del(mntpath, pccpath, flags);
 	if (rc < 0)
@@ -7085,7 +7085,7 @@ int jt_pcc_clear(int argc, char **argv)
 		return rc;
 	}
 
-	/* Set llapi message level */
+	
 	llapi_msg_set_level(verbose);
 	rc = llapi_pcc_clear(mntpath, flags);
 	if (rc < 0)

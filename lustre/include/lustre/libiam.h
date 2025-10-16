@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * iam user level library
  *
@@ -15,7 +15,7 @@
  * Author: Fan Yong <fanyong@clusterfs.com>
  */
 
-/* lustre/libiam.h */
+
 #ifndef __IAM_ULIB_H__
 #define __IAM_ULIB_H__
 
@@ -55,8 +55,8 @@ struct iam_leaf_head {
 } __attribute__((packed));
 
 struct lvar_leaf_header {
-	u_int16_t vlh_magic; /* magic number IAM_LVAR_LEAF_MAGIC */
-	u_int16_t vlh_used;  /* used bytes, including header */
+	u_int16_t vlh_magic; 
+	u_int16_t vlh_used;  
 } __attribute__((packed));
 
 /*
@@ -64,8 +64,8 @@ struct lvar_leaf_header {
  */
 struct iam_idle_head {
 	__le16 iih_magic;
-	__le16 iih_count; /* how many idle blocks in this head */
-	__le32 iih_next; /* next head for idle blocks */
+	__le16 iih_count; 
+	__le32 iih_next; 
 	__le32 iih_blks[];
 } __attribute__((packed));
 

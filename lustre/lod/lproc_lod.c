@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright  2008 Sun Microsystems, Inc. All rights reserved
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -41,7 +41,7 @@ static ssize_t dom_stripesize_show(struct kobject *kobj,
 static inline int dom_stripesize_max_kb_update(struct lod_device *lod,
 					       __u64 val)
 {
-	/* 1GB is the limit */
+	
 	if (val > (1ULL << 20))
 		return -ERANGE;
 
@@ -82,10 +82,10 @@ static ssize_t dom_stripesize_store(struct kobject *kobj,
 	return count;
 }
 
-/* Old attribute name is still supported */
+
 LUSTRE_RW_ATTR(dom_stripesize);
 
-/* Show DoM maximum allowed stripe size. */
+
 static ssize_t dom_stripesize_max_kb_show(struct kobject *kobj,
 					  struct attribute *attr,
 					  char *buf)
@@ -97,7 +97,7 @@ static ssize_t dom_stripesize_max_kb_show(struct kobject *kobj,
 			 lod->lod_dom_stripesize_max_kb);
 }
 
-/* Set DoM maximum allowed stripe size. */
+
 static ssize_t dom_stripesize_max_kb_store(struct kobject *kobj,
 					   struct attribute *attr,
 					   const char *buffer, size_t count)
@@ -118,7 +118,7 @@ static ssize_t dom_stripesize_max_kb_store(struct kobject *kobj,
 }
 LUSTRE_RW_ATTR(dom_stripesize_max_kb);
 
-/* Show DoM default stripe size. */
+
 static ssize_t dom_stripesize_cur_kb_show(struct kobject *kobj,
 					  struct attribute *attr,
 					  char *buf)
@@ -132,7 +132,7 @@ static ssize_t dom_stripesize_cur_kb_show(struct kobject *kobj,
 
 LUSTRE_RO_ATTR(dom_stripesize_cur_kb);
 
-/* Show DoM threshold. */
+
 static ssize_t dom_threshold_free_mb_show(struct kobject *kobj,
 					  struct attribute *attr, char *buf)
 {
@@ -143,7 +143,7 @@ static ssize_t dom_threshold_free_mb_show(struct kobject *kobj,
 			 lod->lod_dom_threshold_free_mb);
 }
 
-/* Set DoM default stripe size. */
+
 static ssize_t dom_threshold_free_mb_store(struct kobject *kobj,
 					   struct attribute *attr,
 					   const char *buffer, size_t count)
@@ -201,7 +201,7 @@ static ssize_t stripesize_store(struct kobject *kobj, struct attribute *attr,
 
 LUSTRE_RW_ATTR(stripesize);
 
-/* Show default stripe offset. */
+
 static ssize_t stripeoffset_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
 {
@@ -297,7 +297,7 @@ static ssize_t max_mdt_stripecount_store(struct kobject *kobj,
 	if (rc)
 		return rc;
 
-	if (val < 0 || val > LMV_MAX_STRIPE_COUNT) /* any limitation? */
+	if (val < 0 || val > LMV_MAX_STRIPE_COUNT) 
 		return -ERANGE;
 
 	lod->lod_max_mdt_stripecount = val;
@@ -329,7 +329,7 @@ static ssize_t max_stripes_per_mdt_store(struct kobject *kobj,
 	if (rc)
 		return rc;
 
-	if (val < 1 || val > LMV_MAX_STRIPES_PER_MDT) /* any limitation? */
+	if (val < 1 || val > LMV_MAX_STRIPES_PER_MDT) 
 		return -ERANGE;
 
 	lod->lod_max_stripes_per_mdt = val;
@@ -340,7 +340,7 @@ static ssize_t max_stripes_per_mdt_store(struct kobject *kobj,
 LUSTRE_RW_ATTR(max_stripes_per_mdt);
 
 
-/* Show default striping pattern (LOV_PATTERN_*). */
+
 static ssize_t __stripetype_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf, bool is_mdt)
 {
@@ -365,7 +365,7 @@ static ssize_t stripetype_show(struct kobject *kobj, struct attribute *attr,
 	return __stripetype_show(kobj, attr, buf, false);
 }
 
-/* Set default striping pattern (a number, not a human-readable string). */
+
 static ssize_t __stripetype_store(struct kobject *kobj, struct attribute *attr,
 				  const char *buffer, size_t count, bool is_mdt)
 {
@@ -408,7 +408,7 @@ static ssize_t stripetype_store(struct kobject *kobj,
 LUSTRE_RW_ATTR(mdt_stripetype);
 LUSTRE_RW_ATTR(stripetype);
 
-/* Show default number of stripes. */
+
 static ssize_t __stripecount_show(struct kobject *kobj, struct attribute *attr,
 				  char *buf, bool is_mdt)
 {
@@ -434,7 +434,7 @@ static ssize_t stripecount_show(struct kobject *kobj, struct attribute *attr,
 	return __stripecount_show(kobj, attr, buf, false);
 }
 
-/* Set default number of stripes. */
+
 static ssize_t __stripecount_store(struct kobject *kobj, struct attribute *attr,
 				   const char *buffer, size_t count,
 				   bool is_mdt)
@@ -477,7 +477,7 @@ static ssize_t stripecount_store(struct kobject *kobj,
 LUSTRE_RW_ATTR(mdt_stripecount);
 LUSTRE_RW_ATTR(stripecount);
 
-/* Show number of targets. */
+
 static ssize_t __numobd_show(struct kobject *kobj, struct attribute *attr,
 			     char *buf, bool is_mdt)
 {
@@ -506,7 +506,7 @@ static ssize_t numobd_show(struct kobject *kobj, struct attribute *attr,
 LUSTRE_RO_ATTR(mdt_numobd);
 LUSTRE_RO_ATTR(numobd);
 
-/* Show number of active targets. */
+
 static ssize_t __activeobd_show(struct kobject *kobj, struct attribute *attr,
 				char *buf, bool is_mdt)
 {
@@ -535,7 +535,7 @@ static ssize_t activeobd_show(struct kobject *kobj, struct attribute *attr,
 LUSTRE_RO_ATTR(mdt_activeobd);
 LUSTRE_RO_ATTR(activeobd);
 
-/* Show UUID of LOD device. */
+
 static ssize_t desc_uuid_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
 {
@@ -604,7 +604,7 @@ static ssize_t __qos_prio_free_store(struct kobject *kobj,
 	unsigned int val;
 	int rc;
 
-	/* "100%\n\0" should be largest string */
+	
 	if (count >= sizeof(buf))
 		return -ERANGE;
 
@@ -644,7 +644,7 @@ static ssize_t qos_prio_free_store(struct kobject *kobj, struct attribute *attr,
 LUSTRE_RW_ATTR(mdt_qos_prio_free);
 LUSTRE_RW_ATTR(qos_prio_free);
 
-/* Show threshold for "same space on all OSTs" rule. */
+
 static ssize_t __qos_threshold_rr_show(struct kobject *kobj,
 				       struct attribute *attr, char *buf,
 				       bool is_mdt)
@@ -695,7 +695,7 @@ static ssize_t __qos_threshold_rr_store(struct kobject *kobj,
 	unsigned int val;
 	int rc;
 
-	/* "100%\n\0" should be largest string */
+	
 	if (count >= sizeof(buf))
 		return -ERANGE;
 
@@ -762,7 +762,7 @@ static ssize_t qos_maxage_show(struct kobject *kobj, struct attribute *attr,
 	return __qos_maxage_show(kobj, attr, buf, true);
 }
 
-/* Set expiration period used to refresh cached statfs data. */
+
 static ssize_t __qos_maxage_store(struct kobject *kobj, struct attribute *attr,
 				  const char *buffer, size_t count, bool is_mdt)
 {
@@ -838,7 +838,7 @@ static void *lod_tgts_seq_start(struct seq_file *p, loff_t *pos, bool is_mdt)
 
 	LASSERT(obd != NULL);
 
-	lod_getref(ltd); /* released in lod_tgts_seq_stop */
+	lod_getref(ltd); 
 	if (*pos >= ltd->ltd_tgts_size)
 		return NULL;
 
@@ -934,7 +934,7 @@ static int lod_tgts_seq_show(struct seq_file *p, void *v)
 	if (!next)
 		return -EINVAL;
 
-	/* XXX: should be non-NULL env, but it's very expensive */
+	
 	active = 1;
 	rc = dt_statfs(NULL, next, &tgt->ltd_statfs);
 	if (rc == -ENOTCONN) {
@@ -991,7 +991,7 @@ static int lod_osts_seq_open(struct inode *inode, struct file *file)
 	return 0;
 }
 
-/* Show whether special failout mode for testing is enabled or not. */
+
 static ssize_t lmv_failout_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
 {
@@ -1179,7 +1179,7 @@ static int lod_spill_check_loop(struct lod_device *lod,
 	while (1) {
 		tgt = lod_pool_find(lod, dest);
 		if (!tgt) {
-			/* no more steps, we're fine */
+			
 			break;
 		}
 
@@ -1228,7 +1228,7 @@ lod_spill_target_seq_write(struct file *file, const char __user *buffer,
 		return -ENODEV;
 	}
 
-	/* serialize all checks to protect against racing settings */
+	
 	mutex_lock(&lod_spill_loop_mutex);
 
 	rc = lod_spill_check_loop(lod, pool->pool_name, tgt_name);
@@ -1381,7 +1381,7 @@ static struct attribute *lod_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(lod); /* creates lod_groups from lod_attrs */
+KOBJ_ATTRIBUTE_GROUPS(lod); 
 
 int lod_tgt_weights_seq_show(struct seq_file *m, struct lod_device *lod,
 			     struct lu_tgt_pool *tgts, bool is_mdt)
@@ -1590,7 +1590,7 @@ int lod_procfs_init(struct lod_device *lod)
 	if (!type->typ_procroot)
 		RETURN(0);
 
-	/* for compatibility we link old procfs's LOV entries to lod ones */
+	
 	lod->lod_symlink = lprocfs_add_symlink(obd->obd_name,
 					       type->typ_procroot,
 					       "../lod/%s", obd->obd_name);
@@ -1637,4 +1637,4 @@ void lod_procfs_fini(struct lod_device *lod)
 	dt_tunables_fini(&lod->lod_dt_dev);
 }
 
-#endif /* CONFIG_PROC_FS */
+#endif 

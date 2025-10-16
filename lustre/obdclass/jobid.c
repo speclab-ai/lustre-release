@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -10,7 +10,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Store PID->JobID mappings
  *
@@ -44,7 +44,7 @@ char obd_jobid_name[LUSTRE_JOBID_SIZE] = "%e.%u";
 struct jobid_pid_map {
 	struct hlist_node	jp_hash;
 	time64_t		jp_time;
-	spinlock_t		jp_lock; /* protects jp_jobid */
+	spinlock_t		jp_lock; 
 	char			jp_jobid[LUSTRE_JOBID_SIZE];
 	unsigned int		jp_joblen;
 	struct kref		jp_refcount;
@@ -118,7 +118,7 @@ int jobid_set_current(char *jobid)
 						   &sj->sj_linkage,
 						   jobid_params);
 	if (origsj == NULL) {
-		/* successful insert */
+		
 		rcu_read_unlock();
 		jobid_prune_expedite();
 		return 0;
@@ -195,7 +195,7 @@ static void jobid_prune(struct work_struct *work)
 
 static void jobid_prune_expedite(void)
 {
-	/* submit the work only once */
+	
 	if (!cmpxchg(&jobid_prune_expedited, 0, 1))
 		mod_delayed_work(system_wq, &jobid_prune_work,
 				 cfs_time_seconds(JOBID_EXPEDITED_CLEAN));
@@ -221,7 +221,7 @@ static int cfs_access_process_vm(struct task_struct *tsk,
 	if (!mmap_read_trylock(mm))
 		return -EDEADLK;
 
-	/* ignore errors, just check how much was successfully transferred */
+	
 	while (len) {
 		int bytes, rc, offset;
 		void *maddr;
@@ -266,7 +266,7 @@ static int cfs_access_process_vm(struct task_struct *tsk,
 	return buf - old_buf;
 }
 
-/* Read the environment variable of current process specified by @key. */
+
 static int cfs_get_environ(const char *key, char *value, int *val_len)
 {
 	struct mm_struct *mm;
@@ -338,7 +338,7 @@ static int cfs_get_environ(const char *key, char *value, int *val_len)
 			entry_len = env_end - env_start;
 			CDEBUG(D_INFO, "key: %s, entry: %s\n", key, entry);
 
-			/* Key length + length of '=' */
+			
 			if (entry_len > key_len + 1 &&
 			    entry[key_len] == '='  &&
 			    !memcmp(entry, key, key_len)) {
@@ -443,7 +443,7 @@ static int jobid_should_free_item(void *obj, void *data)
 	}
 
 	spin_lock(&pidmap->jp_lock);
-	/* prevent newly inserted items from deleting */
+	
 	if (jobid[0] == '\0' && kref_read(&pidmap->jp_refcount) == 1)
 		rc = 1;
 	else if (ktime_get_real_seconds() - pidmap->jp_time > DELETE_INTERVAL)
@@ -482,10 +482,10 @@ static void jobid_pidmap_gc(struct work_struct *work)
 	cfs_hash_putref(hash);
 }
 
-/* scan hash periodically to remove old PID entries from cache */
+
 static inline void jobid_pidmap_gc_start(void)
 {
-	/* submit the work only once */
+	
 	if (!cmpxchg(&jobid_pidmap_gc_started, 0, 1))
 		schedule_delayed_work(&jobid_pidmap_gc_work,
 				      cfs_time_seconds(DELETE_INTERVAL));
@@ -556,7 +556,7 @@ static int jobid_get_from_cache(char *jobid, size_t joblen)
 
 	LASSERT(jobid_hash != NULL);
 
-	/* first try to find PID in the hash and use that value */
+	
 	pidmap = cfs_hash_lookup(jobid_hash, &pid);
 	if (pidmap == NULL) {
 		struct jobid_pid_map *pidmap2;
@@ -618,7 +618,7 @@ static int jobid_get_from_cache(char *jobid, size_t joblen)
 				sizeof(pidmap->jp_jobid));
 			rc = 0;
 		} else if (rc == -ENOENT) {
-			/* It might have been deleted, clear out old entry */
+			
 			pidmap->jp_joblen = 0;
 			pidmap->jp_jobid[0] = '\0';
 		}
@@ -703,7 +703,7 @@ static int jobid_interpret_string(const char *jobfmt, char *jobid,
 		char *p;
 		int l;
 
-		if (isspace(c)) /* Don't allow embedded spaces */
+		if (isspace(c)) 
 			continue;
 
 		if (c != '%') {
@@ -726,18 +726,18 @@ static int jobid_interpret_string(const char *jobfmt, char *jobid,
 		}
 
 		switch (*jobfmt++) {
-		case 'e': /* executable name */
+		case 'e': 
 			l = jobid_print_current_comm(jobid, width);
 			break;
-		case 'g': /* group ID */
+		case 'g': 
 			l = snprintf(jobid, width, "%u",
 				     from_kgid(&init_user_ns, current_fsgid()));
 			break;
-		case 'h': /* hostname */
+		case 'h': 
 			l = snprintf(jobid, width, "%s",
 				     init_utsname()->nodename);
 			break;
-		case 'H': /* short hostname. Cut at first dot */
+		case 'H': 
 			l = snprintf(jobid, width, "%s",
 				     init_utsname()->nodename);
 			p = strnchr(jobid, width, '.');
@@ -746,7 +746,7 @@ static int jobid_interpret_string(const char *jobfmt, char *jobid,
 				l = p - jobid;
 			}
 			break;
-		case 'j': /* jobid stored in process environment */
+		case 'j': 
 			l = jobid_get_from_cache(jobid, width);
 			if (l < 0)
 				l = 0;
@@ -757,17 +757,17 @@ static int jobid_interpret_string(const char *jobfmt, char *jobid,
 					jobfmt += 3;
 			}
 			break;
-		case 'p': /* process ID */
+		case 'p': 
 			l = snprintf(jobid, width, "%u", current->pid);
 			break;
-		case 'u': /* user ID */
+		case 'u': 
 			l = snprintf(jobid, width, "%u",
 				     from_kuid(&init_user_ns, current_fsuid()));
 			break;
-		case '\0': /* '%' at end of format string */
+		case '\0': 
 			l = 0;
 			goto out;
-		default: /* drop unknown %x format strings */
+		default: 
 			l = 0;
 			break;
 		}
@@ -946,13 +946,13 @@ int lustre_get_jobid(char *jobid, size_t joblen)
 	}
 
 	if (strcmp(obd_jobid_var, JOBSTATS_DISABLE) == 0) {
-		/* Jobstats isn't enabled */
+		
 		memset(jobid, 0, joblen);
 		RETURN(0);
 	}
 
 	if (strcmp(obd_jobid_var, JOBSTATS_NODELOCAL) == 0) {
-		/* Whole node dedicated to single job */
+		
 		rc = jobid_interpret_string(obd_jobid_name, jobid, len);
 	} else if (strcmp(obd_jobid_var, JOBSTATS_PROCNAME_UID) == 0) {
 		rc = jobid_interpret_string("%e.%u", jobid, len);
@@ -968,7 +968,7 @@ int lustre_get_jobid(char *jobid, size_t joblen)
 		if (!strnstr(obd_jobid_name, "%j", joblen))
 			rc = jobid_get_from_cache(jobid, len);
 
-		/* fall back to jobid_name if jobid_var not available */
+		
 		if (rc < 0) {
 			int rc2 = jobid_interpret_string(obd_jobid_name,
 							 jobid, len);
@@ -996,7 +996,7 @@ void lustre_jobid_clear(const char *find_jobid)
 		return;
 
 	strscpy(jobid, find_jobid, sizeof(jobid));
-	/* trim \n off the end of the incoming jobid */
+	
 	end = strchr(jobid, '\n');
 	if (end && *end == '\n')
 		*end = '\0';

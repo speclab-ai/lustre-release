@@ -194,10 +194,10 @@ int gss_OID_equal(gss_OID_desc *oid1, gss_OID_desc *oid2)
 
 #ifndef fallthrough
 # if defined(__GNUC__) && __GNUC__ >= 7
-#  define fallthrough  __attribute__((fallthrough)) /* fallthrough */
+#  define fallthrough  __attribute__((fallthrough)) 
 # else
-#  define fallthrough do {} while (0)  /* fallthrough */
+#  define fallthrough do {} while (0)  
 # endif
 #endif
 
-#endif /* LGSS_UTILS_H */
+#endif 

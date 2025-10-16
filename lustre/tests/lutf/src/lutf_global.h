@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf_global.h
  *
@@ -14,7 +14,7 @@
 
 #include "lutf_common.h"
 
-/* accessor functions to get global information */
+
 
 char *get_lutf_path(void);
 char *get_py_path(void);
@@ -33,4 +33,4 @@ char *get_lutf_results_file_path(void);
 char *get_lutf_cfg_file_path(void);
 char *get_lutf_tmp_dir(void);
 
-#endif /* LUTF_CONNECT_H */
+#endif 

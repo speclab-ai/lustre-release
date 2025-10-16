@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -106,7 +106,7 @@ static ssize_t qos_prio_free_store(struct kobject *kobj,
 	unsigned int val;
 	int rc;
 
-	/* "100%\n\0" should be largest string */
+	
 	if (count >= sizeof(buf))
 		return -ERANGE;
 
@@ -155,7 +155,7 @@ static ssize_t qos_threshold_rr_store(struct kobject *kobj,
 	unsigned int val;
 	int rc;
 
-	/* "100%\n\0" should be largest string */
+	
 	if (count >= sizeof(buf))
 		return -ERANGE;
 
@@ -244,7 +244,7 @@ static ssize_t qos_exclude_seq_write_internal(struct file *file,
 	bool pruned = false;
 	bool again = false;
 
-	/* one extra char to ensure buf ends with '\0' */
+	
 	OBD_ALLOC(buf, count + 1);
 	if (!buf)
 		return -ENOMEM;
@@ -459,7 +459,7 @@ static struct attribute *lmv_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(lmv); /* creates lmv_groups */
+KOBJ_ATTRIBUTE_GROUPS(lmv); 
 
 int lmv_tunables_init(struct obd_device *obd)
 {
@@ -476,7 +476,7 @@ int lmv_tunables_init(struct obd_device *obd)
 		lprocfs_obd_cleanup(obd);
 		goto out_failed;
 	}
-#endif /* CONFIG_PROC_FS */
+#endif 
 	debugfs_create_file("target_obd", 0444, obd->obd_debugfs_entry,
 			    obd, &lmv_debugfs_target_fops);
 out_failed:

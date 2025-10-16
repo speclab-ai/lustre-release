@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
  * alternatives
@@ -6,7 +6,7 @@
  * Copyright (c) 2017, 2021, DDN Storage Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * library for file layout exchange used by HSM, FLR, migration to
  * transparently migrate data from one layout to another.

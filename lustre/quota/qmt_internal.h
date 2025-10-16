@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -21,12 +21,12 @@
  * That's the structure MDT0 connects to in mdt_quota_init().
  */
 struct qmt_device {
-	/* Super-class. dt_device/lu_device for this master target */
+	
 	struct dt_device	qmt_dt_dev;
 
-	/* service name of this qmt */
+	
 	char			qmt_svname[MAX_OBD_NAME];
-	/* root directory for this qmt */
+	
 	struct dt_object	*qmt_root;
 
 	/* Reference to the next device in the side stack
@@ -35,29 +35,29 @@ struct qmt_device {
 	struct obd_export	*qmt_child_exp;
 	struct dt_device	*qmt_child;
 
-	/* pointer to ldlm namespace to be used for quota locks */
+	
 	struct ldlm_namespace	*qmt_ns;
 
-	/* List of pools managed by this master target */
+	
 	struct list_head	 qmt_pool_list;
-	/* rw semaphore to protect pool list */
+	
 	struct rw_semaphore	 qmt_pool_lock;
 
-	/* procfs root directory for this qmt */
+	
 	struct proc_dir_entry	*qmt_proc;
 
-	/* dedicated thread in charge of space rebalancing */
+	
 	struct task_struct	*qmt_reba_task;
 
-	/* list of lqe entry which need space rebalancing */
+	
 	struct list_head	 qmt_reba_list;
 
-	/* lock protecting rebalancing list */
+	
 	spinlock_t		 qmt_reba_lock;
 
 	struct workqueue_struct *qmt_lvbo_free_wq;
 
-	unsigned long		 qmt_stopping:1; /* qmt is stopping */
+	unsigned long		 qmt_stopping:1; 
 
 };
 
@@ -66,7 +66,7 @@ struct qmt_pool_info;
 #define qmt_pool_global(qpi) \
 	(!strncmp(qpi->qpi_name, GLB_POOL_NAME, \
 		  strlen(GLB_POOL_NAME) + 1) ? true : false)
-/* Draft for mdt pools */
+
 union qmt_sarray {
 	struct lu_tgt_pool	osts;
 };
@@ -84,7 +84,7 @@ enum qmt_stype {
 	 stype == QMT_STYPE_MDT) ? true : false)
 
 enum {
-	/* set while recalc_thread is working */
+	
 	QPI_FLAG_RECALC_OFFSET,
 	QPI_FLAG_STATE_INITED,
 };
@@ -96,22 +96,22 @@ enum {
  * We currently only support the default data pool and default metadata pool.
  */
 struct qmt_pool_info {
-	/* chained list of all pools managed by the same qmt */
+	
 	struct list_head	 qpi_linkage;
 
-	/* Could be  LQUOTA_RES_MD or LQUOTA_RES_DT */
+	
 	int			 qpi_rtype;
 	char			 qpi_name[QPI_MAXNAME];
 
 	union qmt_sarray	 qpi_sarr;
-	/* recalculation thread pointer */
+	
 	struct task_struct	*qpi_recalc_task;
 	/* rw semaphore to avoid acquire/release during
 	 * pool recalculation. */
 	struct rw_semaphore	 qpi_recalc_sem;
 	unsigned long		 qpi_flags;
 
-	/* track users of this pool instance */
+	
 	atomic_t		 qpi_ref;
 
 	/* back pointer to master target
@@ -127,21 +127,21 @@ struct qmt_pool_info {
 	 */
 	struct lquota_site	*qpi_site[LL_MAXQUOTAS];
 
-	/* number of slaves registered for each quota types */
+	
 	int			 qpi_slv_nr[QMT_STYPE_CNT][LL_MAXQUOTAS];
 
-	/* reference on lqe (ID 0) storing grace time. */
+	
 	struct lquota_entry	*qpi_grace_lqe[LL_MAXQUOTAS];
 
-	/* procfs root directory for this pool */
+	
 	struct proc_dir_entry	*qpi_proc;
 
 	/* pool directory where all indexes related to this pool instance are
 	 * stored */
 	struct dt_object	*qpi_root;
 
-	/* Global quota parameters which apply to all quota type */
-	/* the least value of qunit */
+	
+	
 	unsigned long		 qpi_least_qunit;
 
 	/* Least value of qunit when soft limit is exceeded.
@@ -184,14 +184,14 @@ static inline int qpi_slv_nr_by_rtype(struct qmt_pool_info *pool, int qtype)
  * Helper routines and prototypes
  */
 
-/* helper routine to find qmt_pool_info associated a lquota_entry */
+
 static inline struct qmt_pool_info *lqe2qpi(struct lquota_entry *lqe)
 {
 	LASSERT(lqe_is_master(lqe));
 	return (struct qmt_pool_info *)lqe->lqe_site->lqs_parent;
 }
 
-/* return true if someone holds either a read or write lock on the lqe */
+
 static inline bool lqe_is_locked(struct lquota_entry *lqe)
 {
 	LASSERT(lqe_is_master(lqe));
@@ -201,7 +201,7 @@ static inline bool lqe_is_locked(struct lquota_entry *lqe)
 	return false;
 }
 
-/* value to be restored if someone wrong happens during lqe writeback */
+
 struct qmt_lqe_restore {
 	__u64	qlr_hardlimit;
 	__u64	qlr_softlimit;
@@ -211,7 +211,7 @@ struct qmt_lqe_restore {
 };
 
 #define QMT_MAX_POOL_NUM	16
-/* Common data shared by qmt handlers */
+
 struct qmt_thread_info {
 	union lquota_rec	 qti_rec;
 	union lquota_id		 qti_id;
@@ -230,20 +230,20 @@ struct qmt_thread_info {
 		 * qti_pools_cnt > QMT_MAX_POOL_NUM. */
 		struct qmt_pool_info	**qti_pools;
 	};
-	/* The number of pools in qti_pools */
+	
 	int			 qti_pools_cnt;
 	/* Maximum number of elements in qti_pools array.
 	 * By default it is QMT_MAX_POOL_NUM. */
 	int			 qti_pools_num;
 	int			 qti_glbl_lqe_idx;
-	/* The same is for lqe ... */
+	
 	union {
 		struct lquota_entry	*qti_lqes_small[QMT_MAX_POOL_NUM];
 		/* Pointer to an array of lqes in case when
 		 * qti_lqes_cnt > QMT_MAX_POOL_NUM. */
 		struct lquota_entry	**qti_lqes;
 	};
-	/* The number of lqes in qti_lqes */
+	
 	int			 qti_lqes_cnt;
 	/* Maximum number of elements in qti_lqes array.
 	 * By default it is QMT_MAX_POOL_NUM. */
@@ -252,7 +252,7 @@ struct qmt_thread_info {
 
 extern struct lu_context_key qmt_thread_key;
 
-/* helper function to extract qmt_thread_info from current environment */
+
 static inline
 struct qmt_thread_info *qmt_info(const struct lu_env *env)
 {
@@ -275,13 +275,13 @@ struct qmt_thread_info *qmt_info(const struct lu_env *env)
 #define qti_lqe_granted(env, i)	(qti_lqes(env)[i]->lqe_granted)
 #define qti_lqe_qunit(env, i)	(qti_lqes(env)[i]->lqe_qunit)
 
-/* helper routine to convert a lu_device into a qmt_device */
+
 static inline struct qmt_device *lu2qmt_dev(struct lu_device *ld)
 {
 	return container_of_safe(lu2dt_dev(ld), struct qmt_device, qmt_dt_dev);
 }
 
-/* helper routine to convert a qmt_device into lu_device */
+
 static inline struct lu_device *qmt2lu_dev(struct qmt_device *qmt)
 {
 	return &qmt->qmt_dt_dev.dd_lu_dev;
@@ -290,7 +290,7 @@ static inline struct lu_device *qmt2lu_dev(struct qmt_device *qmt)
 #define LQE_ROOT(lqe)    (lqe2qpi(lqe)->qpi_root)
 #define LQE_GLB_OBJ(lqe) (lqe2qpi(lqe)->qpi_glb_obj[lqe_qtype(lqe)])
 
-/* helper function returning grace time to use for a given lquota entry */
+
 static inline __u64 qmt_lqe_grace(struct lquota_entry *lqe)
 {
 	struct qmt_pool_info	*pool = lqe2qpi(lqe);
@@ -331,7 +331,7 @@ static inline void qmt_restore_lqes(const struct lu_env *env)
 		(slv) -= (cnt);              \
 	} while (0)
 
-/* helper routine returning true when reached hardlimit */
+
 static inline bool qmt_hard_exhausted(struct lquota_entry *lqe)
 {
 	if (lqe->lqe_hardlimit != 0 && lqe->lqe_granted >= lqe->lqe_hardlimit)
@@ -339,7 +339,7 @@ static inline bool qmt_hard_exhausted(struct lquota_entry *lqe)
 	return false;
 }
 
-/* helper routine returning true when reached softlimit */
+
 static inline bool qmt_soft_exhausted(struct lquota_entry *lqe, __u64 now)
 {
 	if (lqe->lqe_softlimit != 0 && lqe->lqe_granted > lqe->lqe_softlimit &&
@@ -368,7 +368,7 @@ static inline bool qmt_space_exhausted_lqes(const struct lu_env *env, __u64 now)
 	return exhausted;
 }
 
-/* helper routine clearing the default quota setting  */
+
 static inline void qmt_lqe_clear_default(struct lquota_entry *lqe)
 {
 	lqe->lqe_is_default = false;
@@ -380,7 +380,7 @@ static inline void qmt_lqe_clear_default(struct lquota_entry *lqe)
  * rebalancing */
 #define QMT_REBA_TIMEOUT 2
 
-/* qmt_pool.c */
+
 
 void qmt_pool_free(const struct lu_env *, struct qmt_pool_info *);
 /*
@@ -448,7 +448,7 @@ int qmt_pool_del(struct obd_device *obd, char *poolname);
 int qmt_sarr_get_idx(struct qmt_pool_info *qpi, int arr_idx);
 unsigned int qmt_sarr_count(struct qmt_pool_info *qpi);
 
-/* qmt_entry.c */
+
 extern const struct lquota_entry_operations qmt_lqe_ops;
 int qmt_lqe_set_default(const struct lu_env *env, struct qmt_pool_info *pool,
 			struct lquota_entry *lqe, bool create_record);
@@ -506,7 +506,7 @@ void qmt_setup_lqe_gd(const struct lu_env *,  struct qmt_device *,
 void qmt_seed_glbe_all(const struct lu_env *, struct lqe_glbl_data *,
 		       bool, bool, bool);
 
-/* qmt_handler.c */
+
 int qmt_set_with_lqe(const struct lu_env *env, struct qmt_device *qmt,
 		     struct lquota_entry *lqe, __u64 hard, __u64 soft,
 		     __u64 time, __u32 valid, bool is_default, bool is_updated);
@@ -514,7 +514,7 @@ int qmt_dqacq0(const struct lu_env *, struct qmt_device *, struct obd_uuid *,
 	       __u32, __u64, __u64, struct quota_body *, int);
 enum qmt_stype qmt_uuid2idx(struct obd_uuid *, int *);
 
-/* qmt_lock.c */
+
 int qmt_intent_policy(const struct lu_env *, struct lu_device *,
 		      struct ptlrpc_request *, struct ldlm_lock **, int);
 int qmt_lvbo_init(struct lu_device *, struct ldlm_resource *);
@@ -527,4 +527,4 @@ int qmt_start_reba_thread(struct qmt_device *);
 void qmt_stop_reba_thread(struct qmt_device *);
 void qmt_glb_lock_notify(const struct lu_env *, struct lquota_entry *, __u64);
 void qmt_id_lock_notify(struct qmt_device *, struct lquota_entry *);
-#endif /* _QMT_INTERNAL_H */
+#endif 

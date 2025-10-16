@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2016, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for layout calls for interacting with the layout of
  * Lustre files while hiding details of the internal data structures
@@ -38,7 +38,7 @@
 struct llapi_layout_comp {
 	uint64_t	llc_pattern;
 	union {
-		struct { /* For plain layout. */
+		struct { 
 			uint64_t	llc_stripe_size;
 			uint64_t	llc_stripe_count;
 			uint64_t	llc_stripe_offset;
@@ -54,7 +54,7 @@ struct llapi_layout_comp {
 			uint32_t	llc_objects_count;
 			struct lov_user_ost_data_v1 *llc_objects;
 		};
-		struct { /* For FOREIGN/HSM layout. */
+		struct { 
 			uint32_t	 llc_length;
 			uint32_t	 llc_type;
 			uint32_t	 llc_hsm_flags;
@@ -65,11 +65,11 @@ struct llapi_layout_comp {
 		};
 	};
 
-	/* fields used only for composite layouts */
-	struct lu_extent	llc_extent;	/* [start, end) of component */
-	uint32_t		llc_id;		/* unique ID of component */
-	uint32_t		llc_flags;	/* LCME_FL_* flags */
-	uint64_t		llc_timestamp;	/* snapshot timestamp */
+	
+	struct lu_extent	llc_extent;	
+	uint32_t		llc_id;		
+	uint32_t		llc_flags;	
+	uint64_t		llc_timestamp;	
 	struct list_head	llc_list;	/* linked to the llapi_layout
 						   components list */
 	bool		llc_ondisk;
@@ -83,12 +83,12 @@ struct llapi_layout_comp {
  * An Opaque data type abstracting the layout of a Lustre file.
  */
 struct llapi_layout {
-	uint32_t	llot_magic; /* LLAPI_LAYOUT_MAGIC */
+	uint32_t	llot_magic; 
 	uint32_t	llot_gen;
 	uint32_t	llot_flags;
 	bool		llot_is_composite;
 	uint16_t	llot_mirror_count;
-	/* Cursor pointing to one of the components in llot_comp_list */
+	
 	struct llapi_layout_comp *llot_cur_comp;
 	struct list_head	  llot_comp_list;
 };
@@ -289,7 +289,7 @@ static struct llapi_layout_comp *__llapi_comp_alloc(unsigned int num_stripes)
 		return NULL;
 	}
 
-	/* Set defaults. */
+	
 	comp->llc_pattern = LLAPI_LAYOUT_DEFAULT;
 	comp->llc_stripe_size = LLAPI_LAYOUT_DEFAULT;
 	comp->llc_stripe_count = LLAPI_LAYOUT_DEFAULT;
@@ -389,7 +389,7 @@ static struct llapi_layout *__llapi_layout_alloc(void)
 		return NULL;
 	}
 
-	/* Set defaults. */
+	
 	layout->llot_magic = LLAPI_LAYOUT_MAGIC;
 	layout->llot_gen = 0;
 	layout->llot_flags = 0;
@@ -533,7 +533,7 @@ struct llapi_layout *llapi_layout_get_by_xattr(void *lov_xattr,
 		return NULL;
 	}
 
-	/* Return an error if we got back a partial layout. */
+	
 	if (llapi_layout_lum_truncated(lov_xattr, lov_xattr_size)) {
 		errno = ERANGE;
 		return NULL;
@@ -698,7 +698,7 @@ struct llapi_layout *llapi_layout_get_by_xattr(void *lov_xattr,
 			lumv3 = (struct lov_user_md_v3 *)v1;
 			rc = snprintf(comp->llc_pool_name, size,
 				      "%s", lumv3->lmm_pool_name);
-			/* Avoid GCC 7 format-truncation warning. */
+			
 			if (rc > size)
 				comp->llc_pool_name[size - 1] = 0;
 
@@ -834,7 +834,7 @@ llapi_layout_to_lum(const struct llapi_layout *layout)
 		return NULL;
 	}
 
-	/* Allocate header of lov_comp_md_v1 if necessary */
+	
 	if (layout->llot_is_composite) {
 		int comp_cnt = 0;
 
@@ -1049,7 +1049,7 @@ __llapi_layout_cur_comp(const struct llapi_layout *layout)
 		errno = EINVAL;
 		return NULL;
 	}
-	/* Verify data consistency */
+	
 	list_for_each_entry(comp, &layout->llot_comp_list, llc_list)
 		if (comp == layout->llot_cur_comp)
 			return comp;
@@ -1255,7 +1255,7 @@ static struct llapi_layout *llapi_layout_expected(const char *path)
 		}
 	}
 
-	/* Inherit layout from the filesystem root. */
+	
 	rc = llapi_search_mounts(path, 0, donor_path, NULL);
 	if (rc < 0)
 		return NULL;
@@ -1292,15 +1292,15 @@ struct llapi_layout *llapi_layout_get_by_path(const char *path,
 	if (flags & LLAPI_LAYOUT_GET_EXPECTED)
 		return llapi_layout_expected(path);
 
-	/* Always get layout in O_DIRECT */
-	/* Allow fetching layout even without the key on encrypted files */
+	
+	
 	open_flags = O_RDONLY | O_DIRECT | O_CIPHERTEXT;
 do_open:
 	fd = open(path, open_flags);
 	if (fd < 0) {
 		if (errno != EINVAL || failed)
 			return layout;
-		/* EINVAL is because a directory cannot be opened in O_DIRECT */
+		
 		open_flags = O_RDONLY | O_CIPHERTEXT;
 		failed = true;
 		goto do_open;
@@ -1470,7 +1470,7 @@ static int layout_stripe_size_get(const struct llapi_layout *layout,
 		return -1;
 	}
 
-	/* FIXME: return a component rather than FOREIGN/HSM component. */
+	
 	if (comp->llc_pattern == LLAPI_LAYOUT_FOREIGN) {
 		errno = EINVAL;
 		return -1;
@@ -1670,7 +1670,7 @@ int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,
 			return -1;
 		}
 
-		/* Preallocate a few more stripes to avoid realloc() overhead.*/
+		
 		if (__llapi_comp_objects_realloc(comp,
 				stripe_number_roundup(stripe_number)) < 0)
 			return -1;
@@ -1700,7 +1700,7 @@ static int reset_index_cb(struct llapi_layout *layout, void *cbdata)
 
 	rc = llapi_layout_ost_index_set(layout, 0, LLAPI_LAYOUT_DEFAULT);
 
-	/* save the first error returned, but try to reset all components */
+	
 	if (rc && !*save_errno)
 		*save_errno = errno;
 
@@ -1874,7 +1874,7 @@ int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
 	}
 
 	if (layout) {
-		/* Make sure we are on a Lustre file system */
+		
 		if (comp != NULL && comp->llc_pool_name[0] != '\0' &&
 		    !lov_pool_is_ignored(comp->llc_pool_name)) {
 			rc = llapi_search_fsname(path, fsname);
@@ -1914,7 +1914,7 @@ int llapi_layout_file_open(const char *path, int open_flags, mode_t mode,
 
 		lum_size = get_lum_size(lum);
 
-		/* caller usually prints error, but doesn't know xattr size */
+		
 		if (errno == ENOSPC)
 			llapi_error(LLAPI_MSG_ERROR, errno,
 				    "error setting %zd-byte layout on '%s'\n",
@@ -2015,8 +2015,8 @@ static struct {
 	{ LOV_PATTERN_RAID0,		"raid0" },
 	{ LOV_PATTERN_RAID1,		"raid1" },
 	{ LOV_PATTERN_MDT,		"mdt" },
-	{ LOV_PATTERN_OVERSTRIPING,	"overstriped" },  /* getstripe */
-	{ LOV_PATTERN_OVERSTRIPING,	"overstriping" }, /* setstripe compat */
+	{ LOV_PATTERN_OVERSTRIPING,	"overstriped" },  
+	{ LOV_PATTERN_OVERSTRIPING,	"overstriping" }, 
 	{ LOV_PATTERN_BAD,		"bad" },
 	{ LOV_PATTERN_FOREIGN,		"foreign" },
 	{ LOV_PATTERN_COMPRESS,		"compress" },
@@ -2470,7 +2470,7 @@ int llapi_layout_comp_use_id(struct llapi_layout *layout, uint32_t comp_id)
 
 	comp = __llapi_layout_cur_comp(layout);
 	if (comp == NULL)
-		return -1; /* use previously set errno */
+		return -1; 
 
 	if (!layout->llot_is_composite) {
 		errno = EINVAL;
@@ -2673,7 +2673,7 @@ int llapi_layout_file_comp_del(const char *path, uint32_t id, uint32_t flags)
 		return -1;
 	}
 
-	/* Can only specify ID or flags, not both, not none. */
+	
 	if ((id != LCME_ID_INVAL && flags != 0) ||
 	    (id == LCME_ID_INVAL && flags == 0)) {
 		errno = EINVAL;
@@ -2741,7 +2741,7 @@ int llapi_layout_file_comp_del(const char *path, uint32_t id, uint32_t flags)
 			continue;
 
 		rc = llapi_layout_comp_del(existing_layout);
-		/* the layout position is moved to previous one, adjust */
+		
 		comp = next;
 	}
 	if (rc < 0) {
@@ -2775,7 +2775,7 @@ out:
 	return rc;
 }
 
-/* Internal utility function to apply flags for sanity checking */
+
 static void llapi_layout_comp_apply_flags(struct llapi_layout_comp *comp,
 					  uint32_t flags)
 {
@@ -2814,7 +2814,7 @@ static int llapi_layout_apply_flags_cb(struct llapi_layout *layout,
 	return LLAPI_LAYOUT_ITER_CONT;
 }
 
-/* Apply flags to the layout for sanity checking */
+
 static int llapi_layout_apply_flags(struct llapi_layout *layout, uint32_t *ids,
 				    uint32_t *flags, int count)
 {
@@ -2883,7 +2883,7 @@ int llapi_layout_file_comp_set(const char *path, uint32_t *ids, uint32_t *flags,
 			return -1;
 		}
 
-		/* do not allow to set or clear INIT flag */
+		
 		if (flags[i] & LCME_FL_INIT) {
 			errno = EINVAL;
 			return -1;
@@ -2962,7 +2962,7 @@ int llapi_layout_file_comp_set(const char *path, uint32_t *ids, uint32_t *flags,
 
 	lum_size = ((struct lov_comp_md_v1 *)lum)->lcm_size;
 
-	/* flush cached pages from clients */
+	
 	rc = llapi_file_flush(fd);
 	if (rc) {
 		tmp_errno = -rc;
@@ -3036,7 +3036,7 @@ int llapi_layout_comp_iterate(struct llapi_layout *layout,
 		rc = llapi_layout_comp_use(layout, LLAPI_LAYOUT_COMP_USE_NEXT);
 		if (rc < 0)
 			return rc;
-		else if (rc == 1)	/* reached the last comp */
+		else if (rc == 1)	
 			return LLAPI_LAYOUT_ITER_CONT;
 	}
 
@@ -3140,10 +3140,10 @@ int llapi_layout_get_last_init_comp(struct llapi_layout *layout)
 	if (head == NULL)
 		return -EINVAL;
 	if (head->llc_id == 0 && !(head->llc_flags & LCME_FL_INIT))
-		/* a directory */
+		
 		return -EISDIR;
 
-	/* traverse the components from the tail to find the last init one */
+	
 	comp = list_last_entry(&layout->llot_comp_list, typeof(*comp),
 			       llc_list);
 	while (comp != head) {
@@ -3181,7 +3181,7 @@ int llapi_layout_mirror_inherit(struct llapi_layout *f_layout,
 	if (m_comp == NULL)
 		return -EINVAL;
 
-	/* DoM component does not inherit stripe size */
+	
 	if (m_comp->llc_pattern != LLAPI_LAYOUT_MDT)
 		m_comp->llc_stripe_size = f_comp->llc_stripe_size;
 	m_comp->llc_stripe_count = f_comp->llc_stripe_count;
@@ -3240,7 +3240,7 @@ int llapi_mirror_find_stale(struct llapi_layout *layout,
 					break;
 			}
 
-			/* not in the specified mirror */
+			
 			if (j == ids_nr)
 				goto next;
 		} else if (flags & LCME_FL_NOSYNC) {
@@ -3257,7 +3257,7 @@ int llapi_mirror_find_stale(struct llapi_layout *layout,
 		if (rc < 0)
 			goto error;
 
-		/* pack this component into @comp array */
+		
 		comp[idx].lrc_id = id;
 		comp[idx].lrc_mirror_id = mirror_id;
 		comp[idx].lrc_start = start;
@@ -3281,7 +3281,7 @@ error:
 	return rc < 0 ? rc : idx;
 }
 
-/* locate @layout to a valid component covering file [file_start, file_end) */
+
 int llapi_mirror_find(struct llapi_layout *layout, uint64_t file_start,
 		      uint64_t file_end, uint64_t *endp)
 {
@@ -3345,7 +3345,7 @@ int llapi_mirror_resync_many_params(int fd, struct llapi_layout *layout,
 				    uint64_t bandwidth_bytes_sec)
 {
 	struct stat stbuf;
-	size_t buflen = 64 << 20; /* 64M */
+	size_t buflen = 64 << 20; 
 	ssize_t page_size;
 	void *buf;
 	uint64_t pos = start;
@@ -3366,7 +3366,7 @@ int llapi_mirror_resync_many_params(int fd, struct llapi_layout *layout,
 	if (rc < 0)
 		return -errno;
 
-	/* estimate is too big for sparse file, but good enough for % done */
+	
 	if (bandwidth_bytes_sec > 0 || stats_interval_sec) {
 		for (i = 0; i < comp_size; i++) {
 			write_estimation_bytes +=
@@ -3375,7 +3375,7 @@ int llapi_mirror_resync_many_params(int fd, struct llapi_layout *layout,
 		}
 	}
 
-	/* limit transfer size to what can be sent in one second */
+	
 	if (bandwidth_bytes_sec && bandwidth_bytes_sec < buflen)
 		buflen = (bandwidth_bytes_sec + ONE_MB - 1) & ~(ONE_MB - 1);
 
@@ -3411,14 +3411,14 @@ int llapi_mirror_resync_many_params(int fd, struct llapi_layout *layout,
 					goto out_free;
 				}
 				src = rc;
-				/* restrict mirror end by resync end */
+				
 				mirror_end = MIN(end, mirror_end);
 			}
 
 			tmp_off = llapi_mirror_data_seek(fd, src, pos,
 							 &data_size);
 			if (tmp_off < 0) {
-				/* switch to full copy */
+				
 				to_read = mirror_end - pos;
 				goto do_read;
 			}
@@ -3428,7 +3428,7 @@ int llapi_mirror_resync_many_params(int fd, struct llapi_layout *layout,
 			data_off = MIN(data_off, mirror_end);
 			data_end = MIN(data_end, mirror_end);
 
-			/* align by page, if there is data block to copy */
+			
 			if (data_size)
 				data_off &= ~(page_size - 1);
 		}
@@ -3439,7 +3439,7 @@ int llapi_mirror_resync_many_params(int fd, struct llapi_layout *layout,
 				size_t to_punch;
 				uint32_t mid = comp_array[i].lrc_mirror_id;
 
-				/* skip non-overlapped component */
+				
 				if (pos >= comp_array[i].lrc_end ||
 				    data_off <= comp_array[i].lrc_start)
 					continue;
@@ -3471,7 +3471,7 @@ int llapi_mirror_resync_many_params(int fd, struct llapi_layout *layout,
 				if (!rc && data_off == data_end && !data_size)
 					rc = llapi_mirror_truncate(fd,
 								mid, data_end);
-				/* if failed then read failed hole range */
+				
 				if (rc < 0) {
 					rc = 0;
 					pos = cur_pos;
@@ -3497,7 +3497,7 @@ do_read:
 		to_read = ((to_read - 1) | (page_size - 1)) + 1;
 		bytes_read = llapi_mirror_read(fd, src, buf, to_read, pos);
 		if (bytes_read == 0) {
-			/* end of file */
+			
 			break;
 		}
 		if (bytes_read < 0) {
@@ -3509,7 +3509,7 @@ do_read:
 		}
 		total_bytes_read += bytes_read;
 
-		/* round up to page align to make direct IO happy. */
+		
 		to_write = ((bytes_read - 1) | (page_size - 1)) + 1;
 
 		for (i = 0; i < comp_size; i++) {
@@ -3517,7 +3517,7 @@ do_read:
 			off_t pos2 = pos;
 			size_t to_write2 = to_write;
 
-			/* skip non-overlapped component */
+			
 			if (pos >= comp_array[i].lrc_end ||
 			    pos + to_write <= comp_array[i].lrc_start)
 				continue;
@@ -3570,13 +3570,13 @@ out_free:
 	free(buf);
 
 	if (rc < 0) {
-		/* fatal error happens */
+		
 		for (i = 0; i < comp_size; i++)
 			comp_array[i].lrc_synced = false;
 		return rc;
 	}
 
-	/* Output at least one log, regardless of stats_interval */
+	
 	if (stats_interval_sec) {
 		clock_gettime(CLOCK_MONOTONIC, &now);
 		llapi_stats_log(&now, &start_time,
@@ -3693,7 +3693,7 @@ struct llapi_layout_sanity_args {
 	char *fsname;
 };
 
-/* Inline function to verify the pool name */
+
 static inline int verify_pool_name(char *fsname, struct llapi_layout *layout)
 {
 	struct llapi_layout_comp *comp;
@@ -3707,7 +3707,7 @@ static inline int verify_pool_name(char *fsname, struct llapi_layout *layout)
 	if (comp->llc_pool_name[0] == '\0' ||
 	    lov_pool_is_ignored(comp->llc_pool_name))
 		return 0;
-	/* check if the pool name exist */
+	
 	if (llapi_search_ost(fsname, comp->llc_pool_name, NULL) < 0)
 		return -1;
 	return 0;
@@ -3746,7 +3746,7 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 	else
 		next = NULL;
 
-	/* Start of zero implies a new mirror */
+	
 	if (comp->llc_extent.e_start == 0) {
 		first_comp = true;
 		/* Most checks apply only within one mirror, this is an
@@ -3762,8 +3762,8 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 	if (next && next->llc_extent.e_start == 0)
 		next = NULL;
 
-	/* Flag sanity checks */
-	/* No adjacent extension components */
+	
+	
 	if ((comp->llc_flags & LCME_FL_EXTENSION) && next &&
 	    (next->llc_flags & LCME_FL_EXTENSION)) {
 		args->lsa_rc = LSE_ADJACENT_EXTENSION;
@@ -3795,21 +3795,21 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 	if (args->lsa_rc)
 		goto out_err;
 
-	/* DoM sanity checks */
+	
 	if (!(comp->llc_pattern & LLAPI_LAYOUT_INVALID) &&
 	    (comp->llc_pattern & (LLAPI_LAYOUT_MDT | LOV_PATTERN_MDT))) {
-		/* DoM components can't be extension components */
+		
 		if (comp->llc_flags & LCME_FL_EXTENSION) {
 			args->lsa_rc = LSE_DOM_EXTENSION;
 			goto out_err;
 		}
-		/* DoM components cannot be followed by an extension comp */
+		
 		if (next && (next->llc_flags & LCME_FL_EXTENSION)) {
 			args->lsa_rc = LSE_DOM_EXTENSION_FOLLOWING;
 			goto out_err;
 		}
 
-		/* DoM should be the first component in a mirror */
+		
 		if (!first_comp) {
 			args->lsa_rc = LSE_DOM_FIRST;
 			errno = EINVAL;
@@ -3819,15 +3819,15 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 
 	if (comp->llc_pattern == LLAPI_LAYOUT_FOREIGN ||
 	    comp->llc_pattern == LOV_PATTERN_FOREIGN) {
-		/* FOREING/HSM components can't be extension components */
+		
 		if (comp->llc_flags & LCME_FL_EXTENSION) {
 			args->lsa_rc = LSE_FOREIGN_EXTENSION;
 			goto out_err;
 		}
 	}
 
-	/* Extent sanity checks */
-	/* Must set previous component extent before adding another */
+	
+	
 	if (prev && prev->llc_extent.e_start == 0 &&
 	    prev->llc_extent.e_end == 0) {
 		args->lsa_rc = LSE_SET_COMP_START;
@@ -3846,20 +3846,20 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 			goto out_err;
 		}
 
-		/* End must come after end of previous comp */
+		
 		if (prev && comp->llc_extent.e_end < prev->llc_extent.e_end) {
 			args->lsa_rc = LSE_END_NOT_GREATER;
 			goto out_err;
 		}
 
-		/* Components not followed by ext space must have length > 0. */
+		
 		if (comp->llc_extent.e_start == comp->llc_extent.e_end &&
 		    (next == NULL || !(next->llc_flags & LCME_FL_EXTENSION))) {
 			args->lsa_rc = LSE_ZERO_LENGTH_NORMAL;
 			goto out_err;
 		}
 
-		/* The component end must be aligned by the stripe size */
+		
 		if ((comp->llc_flags & LCME_FL_EXTENSION) &&
 		    (prev->llc_stripe_size != LLAPI_LAYOUT_DEFAULT)) {
 			if (comp->llc_extent.e_end != LUSTRE_EOF &&
@@ -3884,14 +3884,14 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 		}
 	}
 
-	/* Components must have start == prev->end */
+	
 	if (prev && comp->llc_extent.e_start != 0 &&
 	    comp->llc_extent.e_start != prev->llc_extent.e_end) {
 		args->lsa_rc = LSE_NOT_ADJACENT_PREV;
 		goto out_err;
 	}
 
-	/* Components must have start <= end */
+	
 	if (comp->llc_extent.e_start > comp->llc_extent.e_end) {
 		args->lsa_rc = LSE_START_GT_END;
 		goto out_err;
@@ -3904,7 +3904,7 @@ out_err:
 	return LLAPI_LAYOUT_ITER_STOP;
 }
 
-/* Print explanation of layout error */
+
 void llapi_layout_sanity_perror(int error)
 {
 	if (error >= LSE_LAST || error < 0)
@@ -3975,13 +3975,13 @@ int llapi_layout_v2_sanity(struct llapi_layout *layout,
 	if (!curr)
 		return 0;
 
-	/* Set up args */
+	
 	args.lsa_rc = 0;
 	args.lsa_flr = flr;
 	args.lsa_incomplete = incomplete;
 	args.fsname = fsname;
 
-	/* When we modify an existing layout, this tells us if it's FLR */
+	
 	if (mirror_id_of(curr->llc_id) > 0)
 		args.lsa_flr = true;
 
@@ -4064,7 +4064,7 @@ int llapi_get_lum_file_fd(int dir_fd, const char *fname, __u64 *valid,
 	if (lum && lumsize < sizeof(*lum))
 		return -EINVAL;
 
-	/* If a file name is provided, it is relative to the parent directory */
+	
 	if (fname) {
 		parent_fd = dir_fd;
 		dir_fd = -1;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <linux/module.h>
@@ -118,7 +118,7 @@ static int proc_dobitmasks(const struct ctl_table *table,
 			return PTR_ERR(tmpstr);
 
 		rc = libcfs_debug_str2mask(mask, strim(tmpstr), is_subsys);
-		/* Always print LBUG/LASSERT to console, so keep this mask */
+		
 		if (is_printk)
 			*mask |= D_EMERG;
 	}
@@ -127,8 +127,8 @@ static int proc_dobitmasks(const struct ctl_table *table,
 	return rc;
 }
 
-static int min_watchdog_ratelimit;		/* disable ratelimiting */
-static int max_watchdog_ratelimit = (24*60*60); /* limit to once per day */
+static int min_watchdog_ratelimit;		
+static int max_watchdog_ratelimit = (24*60*60); 
 
 static int proc_dump_kernel(const struct ctl_table *table,
 			    int write, void __user *buffer, size_t *lenp,
@@ -564,7 +564,7 @@ void lnet_insert_debugfs(const struct ctl_table *table,
 	if (!lnet_debugfs_root)
 		lnet_debugfs_root = debugfs_create_dir("lnet", NULL);
 
-	/* Even if we cannot create, just ignore it altogether) */
+	
 	if (IS_ERR_OR_NULL(lnet_debugfs_root))
 		return;
 
@@ -677,7 +677,7 @@ static void __exit libcfs_exit(void)
 {
 	int rc;
 
-	/* Remove everthing */
+	
 	debugfs_remove_recursive(lnet_debugfs_root);
 	lnet_debugfs_root = NULL;
 
@@ -686,7 +686,7 @@ static void __exit libcfs_exit(void)
 	CDEBUG(D_MALLOC, "before Portals cleanup: kmem %lld\n",
 	       libcfs_kmem_read());
 
-	/* the below message is checked in test-framework.sh check_mem_leak() */
+	
 	if (libcfs_kmem_read() != 0)
 		CERROR("Portals memory leaked: %lld bytes\n",
 		       libcfs_kmem_read());
@@ -699,7 +699,7 @@ static void __exit libcfs_exit(void)
 	cfs_arch_exit();
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre helper library");
 MODULE_VERSION(LIBCFS_VERSION);
 MODULE_LICENSE("GPL");

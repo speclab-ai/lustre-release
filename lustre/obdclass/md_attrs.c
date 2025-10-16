@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Johann Lombardi <johann.lombardi@intel.com>
  */
@@ -140,17 +140,17 @@ int lustre_buf2hsm(void *buf, int rc, struct md_hsm *mh)
 	ENTRY;
 
 	if (rc == 0 ||  rc == -ENODATA)
-		/* no HSM attributes */
+		
 		RETURN(-ENODATA);
 
 	if (rc < 0)
-		/* error hit while fetching xattr */
+		
 		RETURN(rc);
 
-	/* unpack HSM attributes */
+	
 	lustre_hsm_swab(attrs);
 
-	/* fill md_hsm structure */
+	
 	mh->mh_compat   = attrs->hsm_compat;
 	mh->mh_flags    = attrs->hsm_flags;
 	mh->mh_arch_id  = attrs->hsm_arch_id;
@@ -171,13 +171,13 @@ void lustre_hsm2buf(void *buf, const struct md_hsm *mh)
 	struct hsm_attrs *attrs = (struct hsm_attrs *)buf;
 	ENTRY;
 
-	/* copy HSM attributes */
+	
 	attrs->hsm_compat   = mh->mh_compat;
 	attrs->hsm_flags    = mh->mh_flags;
 	attrs->hsm_arch_id  = mh->mh_arch_id;
 	attrs->hsm_arch_ver = mh->mh_arch_ver;
 
-	/* pack xattr */
+	
 	lustre_hsm_swab(attrs);
 }
 EXPORT_SYMBOL(lustre_hsm2buf);

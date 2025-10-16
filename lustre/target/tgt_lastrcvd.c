@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Unified Target
  * These are common function to work with last_received file
@@ -22,10 +22,10 @@
 
 #include "tgt_internal.h"
 
-/** version recovery epoch */
+
 #define LR_EPOCH_BITS	32
 
-/* Allocate a bitmap for a chunk of reply data slots */
+
 static int tgt_bitmap_chunk_alloc(struct lu_target *lut, int chunk)
 {
 	unsigned long *bm;
@@ -38,7 +38,7 @@ static int tgt_bitmap_chunk_alloc(struct lu_target *lut, int chunk)
 	spin_lock(&lut->lut_client_bitmap_lock);
 
 	if (lut->lut_reply_bitmap[chunk] != NULL) {
-		/* someone else already allocated the bitmap for this chunk */
+		
 		spin_unlock(&lut->lut_client_bitmap_lock);
 		OBD_FREE_LARGE(bm, BITS_TO_LONGS(LUT_REPLY_SLOTS_PER_CHUNK) *
 			 sizeof(long));
@@ -65,7 +65,7 @@ static int tgt_find_free_reply_slot(struct lu_target *lut)
 	int b;
 
 	for (chunk = 0; chunk < LUT_REPLY_SLOTS_MAX_CHUNKS; chunk++) {
-		/* allocate the bitmap chunk if necessary */
+		
 		if (unlikely(lut->lut_reply_bitmap[chunk] == NULL)) {
 			rc = tgt_bitmap_chunk_alloc(lut, chunk);
 			if (rc != 0)
@@ -73,13 +73,13 @@ static int tgt_find_free_reply_slot(struct lu_target *lut)
 		}
 		bmp = lut->lut_reply_bitmap[chunk];
 
-		/* look for an available slot in this chunk */
+		
 		do {
 			b = find_first_zero_bit(bmp, LUT_REPLY_SLOTS_PER_CHUNK);
 			if (b >= LUT_REPLY_SLOTS_PER_CHUNK)
 				break;
 
-			/* found one */
+			
 			if (test_and_set_bit(b, bmp) == 0)
 				return chunk * LUT_REPLY_SLOTS_PER_CHUNK + b;
 		} while (true);
@@ -104,14 +104,14 @@ static int tgt_set_reply_slot(struct lu_target *lut, int idx)
 	LASSERT(chunk < LUT_REPLY_SLOTS_MAX_CHUNKS);
 	LASSERT(b < LUT_REPLY_SLOTS_PER_CHUNK);
 
-	/* allocate the bitmap chunk if necessary */
+	
 	if (unlikely(lut->lut_reply_bitmap[chunk] == NULL)) {
 		rc = tgt_bitmap_chunk_alloc(lut, chunk);
 		if (rc != 0)
 			return rc;
 	}
 
-	/* mark the slot 'used' in this chunk */
+	
 	if (test_and_set_bit(b, lut->lut_reply_bitmap[chunk]) != 0) {
 		CERROR("%s: slot %d already set in bitmap\n",
 		       tgt_name(lut), idx);
@@ -159,7 +159,7 @@ static int tgt_clear_reply_slot(struct lu_target *lut, int idx)
 }
 
 
-/* Read header of reply_data file of target @tgt into structure @lrh */
+
 static int tgt_reply_header_read(const struct lu_env *env,
 				 struct lu_target *tgt,
 				 struct lsd_reply_header *lrh)
@@ -189,7 +189,7 @@ static int tgt_reply_header_read(const struct lu_env *env,
 	return 0;
 }
 
-/* Write header into replay_data file of target @tgt from structure @lrh */
+
 static int tgt_reply_header_write(const struct lu_env *env,
 				  struct lu_target *tgt,
 				  struct lsd_reply_header *lrh)
@@ -351,10 +351,10 @@ static void tgt_release_reply_data(struct lu_target *lut,
 	 * of target recovery
 	 */
 	if (trd->trd_reply.lrd_transno == ted->ted_lcd->lcd_last_transno) {
-		/* free previous retained reply */
+		
 		if (ted->ted_reply_last != NULL)
 			tgt_free_reply_data(lut, ted, ted->ted_reply_last);
-		/* retain the reply */
+		
 		list_del_init(&trd->trd_list);
 		ted->ted_reply_last = trd;
 	} else {
@@ -399,7 +399,7 @@ int tgt_client_alloc(struct obd_export *exp)
 	OBD_ALLOC_PTR(exp->exp_target_data.ted_lcd);
 	if (exp->exp_target_data.ted_lcd == NULL)
 		RETURN(-ENOMEM);
-	/* Mark that slot is not yet valid, 0 doesn't work here */
+	
 	exp->exp_target_data.ted_lr_idx = -1;
 	INIT_LIST_HEAD(&exp->exp_target_data.ted_reply_list);
 	mutex_init(&exp->exp_target_data.ted_lcd_lock);
@@ -420,7 +420,7 @@ void tgt_client_free(struct obd_export *exp)
 
 	tgt_fmd_cleanup(exp);
 
-	/* free reply data */
+	
 	mutex_lock(&ted->ted_lcd_lock);
 	list_for_each_entry_safe(trd, tmp, &ted->ted_reply_list, trd_list) {
 		tgt_release_reply_data(lut, ted, trd);
@@ -446,7 +446,7 @@ void tgt_client_free(struct obd_export *exp)
 	    ted->ted_lr_idx < 0)
 		return;
 
-	/* Clear bit when lcd is freed */
+	
 	LASSERT(lut && lut->lut_client_bitmap);
 	LASSERTF(test_and_clear_bit(ted->ted_lr_idx, lut->lut_client_bitmap),
 		 "%s: client %u bit already clear in bitmap\n",
@@ -614,7 +614,7 @@ static int tgt_client_data_update(const struct lu_env *env,
 	 */
 	rc = tgt_new_client_cb_add(th, exp);
 	if (rc) {
-		/* can't add callback, do sync now */
+		
 		th->th_sync = 1;
 	} else {
 		spin_lock(&exp->exp_lock);
@@ -695,7 +695,7 @@ int tgt_server_data_update(const struct lu_env *env, struct lu_target *tgt,
 	       tgt->lut_lsd.lsd_uuid, obd2obt(tgt->lut_obd)->obt_mount_count,
 	       tgt->lut_last_transno);
 
-	/* Always save latest transno to keep it fresh */
+	
 	spin_lock(&tgt->lut_translock);
 	tgt->lut_lsd.lsd_last_transno = tgt->lut_last_transno;
 	spin_unlock(&tgt->lut_translock);
@@ -775,7 +775,7 @@ static void tgt_client_epoch_update(const struct lu_env *env,
 	struct lu_target	*tgt = class_exp2tgt(exp);
 
 	LASSERT(tgt && tgt->lut_bottom);
-	/** VBR: set client last_epoch to current epoch */
+	
 	if (lcd->lcd_last_epoch >= tgt->lut_lsd.lsd_start_epoch)
 		return;
 	lcd->lcd_last_epoch = tgt->lut_lsd.lsd_start_epoch;
@@ -872,7 +872,7 @@ void tgt_boot_epoch_update(struct lu_target *tgt)
 		if (!req->rq_export->exp_vbr_failed)
 			tgt_client_epoch_update(&env, req->rq_export);
 	}
-	/** return list back at once */
+	
 	spin_lock(&tgt->lut_obd->obd_recovery_task_lock);
 	list_splice_init(&client_list, &tgt->lut_obd->obd_final_req_queue);
 	spin_unlock(&tgt->lut_obd->obd_recovery_task_lock);
@@ -884,7 +884,7 @@ void tgt_boot_epoch_update(struct lu_target *tgt)
 	if (atomic_read(&tgt->lut_num_clients) == 0)
 		tgt->lut_lsd.lsd_feature_incompat &= ~OBD_INCOMPAT_MULTI_RPCS;
 
-	/** update server epoch */
+	
 	tgt_server_data_update(&env, tgt, 1);
 	tgt_reply_data_upgrade_check(&env, tgt);
 	lu_env_fini(&env);
@@ -916,7 +916,7 @@ static void tgt_cb_last_committed(struct lu_env *env, struct thandle *th,
 		       th->th_reserved_quota.lqi_id.qid_gid,
 		       th->th_reserved_quota.lqi_space);
 
-		/* env can be NULL for freeing reserved quota */
+		
 		th->th_reserved_quota.lqi_space *= -1;
 		dt_reserve_or_free_quota(NULL, th->th_dev,
 					 &th->th_reserved_quota);
@@ -985,7 +985,7 @@ static int tgt_last_commit_cb_add(struct thandle *th, struct lu_target *tgt,
 	}
 
 	if (exp_connect_flags(exp) & OBD_CONNECT_LIGHTWEIGHT)
-		/* report failure to force synchronous operation */
+		
 		return -EPERM;
 
 	/* if exp_need_sync is set, return non-zero value to force
@@ -1080,7 +1080,7 @@ repeat:
 			}
 		}
 
-		/* assign client slot generation */
+		
 		ted->ted_lcd->lcd_generation =
 				atomic_inc_return(&tgt->lut_client_generation);
 	} else {
@@ -1166,7 +1166,7 @@ int tgt_client_del(const struct lu_env *env, struct obd_export *exp)
 		RETURN(-EINVAL);
 	}
 
-	/* XXX if lcd_uuid were a real obd_uuid, I could use obd_uuid_equals */
+	
 	if (!strcmp((char *)ted->ted_lcd->lcd_uuid,
 		    (char *)tgt->lut_obd->obd_uuid.uuid) ||
 	    exp_connect_flags(exp) & OBD_CONNECT_LIGHTWEIGHT ||
@@ -1191,7 +1191,7 @@ int tgt_client_del(const struct lu_env *env, struct obd_export *exp)
 		 "%s: client %u: bit already clear in bitmap!!\n",
 		 tgt->lut_obd->obd_name, ted->ted_lr_idx);
 
-	/* Do not erase record for recoverable client. */
+	
 	if (exp->exp_flags & OBD_OPT_FAILOVER)
 		RETURN(0);
 
@@ -1209,7 +1209,7 @@ int tgt_client_del(const struct lu_env *env, struct obd_export *exp)
 		RETURN(rc);
 	}
 
-	/* Race between an eviction and a disconnection ?*/
+	
 	mutex_lock(&ted->ted_lcd_lock);
 	if (ted->ted_lcd->lcd_uuid[0] == '\0') {
 		mutex_unlock(&ted->ted_lcd_lock);
@@ -1264,7 +1264,7 @@ static int tgt_add_reply_data(const struct lu_env *env, struct lu_target *tgt,
 	int rc;
 
 	lrd = &trd->trd_reply;
-	/* update export last transno */
+	
 	mutex_lock(&ted->ted_lcd_lock);
 	if (lrd->lrd_transno > ted->ted_lcd->lcd_last_transno)
 		ted->ted_lcd->lcd_last_transno = lrd->lrd_transno;
@@ -1285,7 +1285,7 @@ static int tgt_add_reply_data(const struct lu_env *env, struct lu_target *tgt,
 	}
 
 	if (i == -1) {
-		/* find a empty slot */
+		
 		i = tgt_find_free_reply_slot(tgt);
 		if (unlikely(i < 0)) {
 			CERROR("%s: couldn't find a slot for reply data: rc = %d\n",
@@ -1299,7 +1299,7 @@ static int tgt_add_reply_data(const struct lu_env *env, struct lu_target *tgt,
 		struct lsd_reply_header *lrh = &tgt->lut_reply_header;
 		loff_t	off;
 
-		/* write reply data to disk */
+		
 		off = lrh->lrh_header_size + lrh->lrh_reply_size * i;
 		rc = tgt_reply_data_write(env, tgt, lrd, off, th);
 		if (unlikely(rc != 0)) {
@@ -1310,7 +1310,7 @@ static int tgt_add_reply_data(const struct lu_env *env, struct lu_target *tgt,
 	}
 
 add_reply_data:
-	/* add reply data to target export's reply list */
+	
 	mutex_lock(&ted->ted_lcd_lock);
 	if (req != NULL) {
 		int exclude = tgt_is_increasing_xid_client(req->rq_export) ?
@@ -1388,7 +1388,7 @@ int tgt_mk_reply_data(const struct lu_env *env,
 		INIT_LIST_HEAD(&trd->trd_list);
 	}
 
-	/* fill reply data information */
+	
 	lrd = &trd->trd_reply;
 	lrd->lrd_transno = transno;
 	if (tsi && tsi->tsi_batch_env) {
@@ -1475,7 +1475,7 @@ static int tgt_last_rcvd_update(const struct lu_env *env, struct lu_target *tgt,
 	if (req != NULL)
 		tti->tti_transno = lustre_msg_get_transno(req->rq_reqmsg);
 	else
-		/* From update replay, tti_transno should be set already */
+		
 		LASSERT(tti->tti_transno != 0);
 
 	spin_lock(&tgt->lut_translock);
@@ -1487,13 +1487,13 @@ static int tgt_last_rcvd_update(const struct lu_env *env, struct lu_target *tgt,
 	} else if (tti->tti_transno == 0) {
 		tti->tti_transno = ++tgt->lut_last_transno;
 	} else {
-		/* should be replay */
+		
 		if (tti->tti_transno > tgt->lut_last_transno)
 			tgt->lut_last_transno = tti->tti_transno;
 	}
 	spin_unlock(&tgt->lut_translock);
 
-	/** VBR: set new versions */
+	
 	if (th->th_result == 0 && obj != NULL) {
 		struct dt_object *dto = dt_object_locate(obj, th->th_dev);
 
@@ -1502,7 +1502,7 @@ static int tgt_last_rcvd_update(const struct lu_env *env, struct lu_target *tgt,
 			dt_data_version_set(env, dto, tti->tti_transno, th);
 	}
 
-	/* filling reply data */
+	
 	CDEBUG(D_INODE, "transno = %llu, last_committed = %llu\n",
 	       tti->tti_transno, tgt->lut_obd->obd_last_committed);
 
@@ -1511,11 +1511,11 @@ static int tgt_last_rcvd_update(const struct lu_env *env, struct lu_target *tgt,
 		lustre_msg_set_transno(req->rq_repmsg, tti->tti_transno);
 	}
 
-	/* if can't add callback, do sync write */
+	
 	th->th_sync |= !!tgt_last_commit_cb_add(th, tgt, exp, tti->tti_transno);
 
 	if (nolcd) {
-		/* store transno in the last_rcvd header */
+		
 		spin_lock(&tgt->lut_translock);
 		if (tti->tti_transno > tgt->lut_lsd.lsd_last_transno) {
 			tgt->lut_lsd.lsd_last_transno = tti->tti_transno;
@@ -1534,13 +1534,13 @@ static int tgt_last_rcvd_update(const struct lu_env *env, struct lu_target *tgt,
 		RETURN(-EINVAL);
 	}
 
-	/* Target that supports multiple reply data */
+	
 	if (tgt_is_multimodrpcs_client(exp)) {
 		return tgt_mk_reply_data(env, tgt, ted, req, opdata, th,
 					 !!(req != NULL), tti->tti_transno);
 	}
 
-	/* Enough for update replay, let's return */
+	
 	if (req == NULL)
 		RETURN(rc);
 
@@ -1551,7 +1551,7 @@ static int tgt_last_rcvd_update(const struct lu_env *env, struct lu_target *tgt,
 		ted->ted_lcd->lcd_last_close_xid = req->rq_xid;
 		ted->ted_lcd->lcd_last_close_result = th->th_result;
 	} else {
-		/* VBR: save versions in last_rcvd for reconstruct. */
+		
 		__u64 *pre_versions = lustre_msg_get_versions(req->rq_repmsg);
 
 		if (pre_versions) {
@@ -1568,7 +1568,7 @@ static int tgt_last_rcvd_update(const struct lu_env *env, struct lu_target *tgt,
 		ted->ted_lcd->lcd_last_data = opdata;
 	}
 
-	/* Update transno in slot only if non-zero number, i.e. no errors */
+	
 	if (likely(tti->tti_transno != 0)) {
 		/* Don't overwrite bigger transaction number with lower one.
 		 * That is not sign of problem in all cases, but in any case
@@ -1633,11 +1633,11 @@ static int tgt_last_rcvd_update_echo(const struct lu_env *env,
 		tti->tti_transno = ++tgt->lut_last_transno;
 	spin_unlock(&tgt->lut_translock);
 
-	/** VBR: set new versions */
+	
 	if (th->th_result == 0 && obj != NULL)
 		dt_version_set(env, obj, tti->tti_transno, th);
 
-	/* if can't add callback, do sync write */
+	
 	th->th_sync |= !!tgt_last_commit_cb_add(th, tgt, exp,
 						tti->tti_transno);
 
@@ -1698,7 +1698,7 @@ static int tgt_clients_data_init(const struct lu_env *env,
 			       "%llu: rc = %d\n", tgt_name(tgt), LAST_RCVD,
 			       cl_idx, off, rc);
 			rc = 0;
-			break; /* read error shouldn't cause startup to fail */
+			break; 
 		}
 
 		if (lcd->lcd_uuid[0] == '\0') {
@@ -1720,7 +1720,7 @@ static int tgt_clients_data_init(const struct lu_env *env,
 		exp = class_new_export(obd, (struct obd_uuid *)lcd->lcd_uuid);
 		if (IS_ERR(exp)) {
 			if (PTR_ERR(exp) == -EALREADY) {
-				/* export already exists, zero out this one */
+				
 				CERROR("%s: Duplicate export %s!\n",
 				       tgt_name(tgt), lcd->lcd_uuid);
 				continue;
@@ -1732,8 +1732,8 @@ static int tgt_clients_data_init(const struct lu_env *env,
 		*ted->ted_lcd = *lcd;
 
 		rc = tgt_client_add(env, exp, cl_idx);
-		LASSERTF(rc == 0, "rc = %d\n", rc); /* can't fail existing */
-		/* VBR: set export last committed version */
+		LASSERTF(rc == 0, "rc = %d\n", rc); 
+		
 		exp->exp_last_committed = last_transno;
 		spin_lock(&exp->exp_lock);
 		exp->exp_connecting = 0;
@@ -1744,9 +1744,9 @@ static int tgt_clients_data_init(const struct lu_env *env,
 		if (tgt_is_multimodrpcs_record(tgt, lcd)) {
 			atomic_inc(&tgt->lut_num_clients);
 
-			/* compute the highest valid client generation */
+			
 			generation = max(generation, lcd->lcd_generation);
-			/* fill client_generation <-> export hash table */
+			
 			rc = cfs_hash_add_unique(hash, &lcd->lcd_generation,
 						 &exp->exp_gen_hash);
 			if (rc != 0) {
@@ -1760,7 +1760,7 @@ static int tgt_clients_data_init(const struct lu_env *env,
 
 		class_export_put(exp);
 
-		/* Need to check last_rcvd even for duplicated exports. */
+		
 		CDEBUG(D_OTHER, "client at idx %d has last_transno = %llu\n",
 		       cl_idx, last_transno);
 
@@ -1770,7 +1770,7 @@ static int tgt_clients_data_init(const struct lu_env *env,
 		spin_unlock(&tgt->lut_translock);
 	}
 
-	/* record highest valid client generation */
+	
 	atomic_set(&tgt->lut_client_generation, generation);
 
 err_out:
@@ -1821,7 +1821,7 @@ int tgt_server_data_init(const struct lu_env *env, struct lu_target *tgt)
 
 	last_rcvd_size = (unsigned long)tti->tti_attr.la_size;
 
-	/* ensure padding in the struct is the correct size */
+	
 	BUILD_BUG_ON(offsetof(struct lr_server_data, lsd_padding) +
 		     sizeof(lsd->lsd_padding) != LR_SERVER_SIZE);
 
@@ -1831,7 +1831,7 @@ int tgt_server_data_init(const struct lu_env *env, struct lu_target *tgt)
 		       tgt_name(tgt), rc);
 		RETURN(rc);
 	}
-	/* server_name2index() returns type */
+	
 	type = rc;
 	if (type != LDD_F_SV_TYPE_MDT && type != LDD_F_SV_TYPE_OST) {
 		CERROR("%s: unknown target type %x\n", tgt_name(tgt), type);
@@ -1906,7 +1906,7 @@ int tgt_server_data_init(const struct lu_env *env, struct lu_target *tgt)
 		       lsd->lsd_feature_rocompat & ~tgt_scd[type].rocompat);
 		RETURN(-EINVAL);
 	}
-	/** Interop: evict all clients at first boot with 1.8 last_rcvd */
+	
 	if (type == LDD_F_SV_TYPE_MDT &&
 	    !(lsd->lsd_feature_compat & OBD_COMPAT_20)) {
 		if (last_rcvd_size > lsd->lsd_client_start) {
@@ -1919,7 +1919,7 @@ int tgt_server_data_init(const struct lu_env *env, struct lu_target *tgt)
 				RETURN(rc);
 			last_rcvd_size = lsd->lsd_client_start;
 		}
-		/** set 2.0 flag to upgrade/downgrade between 1.8 and 2.0 */
+		
 		lsd->lsd_feature_compat |= OBD_COMPAT_20;
 	}
 
@@ -1972,7 +1972,7 @@ int tgt_server_data_init(const struct lu_env *env, struct lu_target *tgt)
 	obd2obt(tgt->lut_obd)->obt_mount_count = lsd->lsd_mount_count;
 	obd2obt(tgt->lut_obd)->obt_instance = (__u32)lsd->lsd_mount_count;
 
-	/* save it, so mount count and last_transno is current */
+	
 	rc = tgt_server_data_update(env, tgt, 0);
 	if (rc < 0)
 		GOTO(err_client, rc);
@@ -1984,7 +1984,7 @@ err_client:
 	return rc;
 }
 
-/* add credits for last_rcvd update */
+
 int tgt_txn_start_cb(const struct lu_env *env, struct thandle *th,
 		     void *cookie)
 {
@@ -2009,7 +2009,7 @@ int tgt_txn_start_cb(const struct lu_env *env, struct thandle *th,
 
 	LASSERT(tgt->lut_last_rcvd);
 	tsi = tgt_ses_info(env);
-	/* OFD may start transaction without export assigned */
+	
 	if (tsi->tsi_exp == NULL)
 		return 0;
 
@@ -2048,7 +2048,7 @@ int tgt_txn_start_cb(const struct lu_env *env, struct thandle *th,
 	return rc;
 }
 
-/* Update last_rcvd records with latests transaction data */
+
 int tgt_txn_stop_cb(const struct lu_env *env, struct thandle *th,
 		    void *cookie)
 {
@@ -2063,7 +2063,7 @@ int tgt_txn_stop_cb(const struct lu_env *env, struct thandle *th,
 		return 0;
 
 	tsi = tgt_ses_info(env);
-	/* OFD may start transaction without export assigned */
+	
 	if (tsi->tsi_exp == NULL)
 		return 0;
 
@@ -2085,7 +2085,7 @@ int tgt_txn_stop_cb(const struct lu_env *env, struct thandle *th,
 			 * data loss.
 			 */
 		}
-		/* we need new transno to be assigned */
+		
 		tti->tti_transno = 0;
 	}
 
@@ -2097,7 +2097,7 @@ int tgt_txn_stop_cb(const struct lu_env *env, struct thandle *th,
 		obj = tsi->tsi_vbr_obj;
 	}
 
-	if (unlikely(echo_client)) /* echo client special case */
+	if (unlikely(echo_client)) 
 		rc = tgt_last_rcvd_update_echo(env, tgt, obj, th,
 					       tsi->tsi_exp);
 	else
@@ -2197,7 +2197,7 @@ int tgt_reply_data_init(const struct lu_env *env, struct lu_target *tgt)
 		if (trd == NULL)
 			GOTO(out, rc = -ENOMEM);
 
-		/* Load reply_data from disk */
+		
 		for (idx = 0, off = lrh->lrh_header_size;
 		     off < reply_data_size; idx++, off += recsz) {
 			rc = tgt_reply_data_read(env, tgt, lrd, off, lrh);
@@ -2209,7 +2209,7 @@ int tgt_reply_data_init(const struct lu_env *env, struct lu_target *tgt)
 
 			exp = cfs_hash_lookup(hash, &lrd->lrd_client_gen);
 			if (exp == NULL) {
-				/* old reply data from a disconnected client */
+				
 				continue;
 			}
 			ted = &exp->exp_target_data;
@@ -2241,7 +2241,7 @@ int tgt_reply_data_init(const struct lu_env *env, struct lu_target *tgt)
 			       lrd->lrd_transno, lrd->lrd_client_gen,
 			       trd->trd_index);
 
-			/* update export last committed transation */
+			
 			exp->exp_last_committed = max(exp->exp_last_committed,
 						      lrd->lrd_transno);
 			/* Update lcd_last_transno as well for check in
@@ -2255,7 +2255,7 @@ int tgt_reply_data_init(const struct lu_env *env, struct lu_target *tgt)
 			mutex_unlock(&ted->ted_lcd_lock);
 			class_export_put(exp);
 
-			/* update target last committed transaction */
+			
 			spin_lock(&tgt->lut_translock);
 			tgt->lut_last_transno = max(tgt->lut_last_transno,
 						    lrd->lrd_transno);

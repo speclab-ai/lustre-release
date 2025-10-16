@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre LFSCK userspace interfaces.
  *
@@ -63,13 +63,13 @@ enum lfsck_status {
 	 */
 	LS_SCANNING_PHASE2	= 2,
 
-	/* The LFSCK processing has completed for all objects. */
+	
 	LS_COMPLETED		= 3,
 
-	/* The LFSCK exited automatically for failure, will not auto restart. */
+	
 	LS_FAILED		= 4,
 
-	/* The LFSCK is stopped manually, will not auto restart. */
+	
 	LS_STOPPED		= 5,
 
 	/* LFSCK is paused automatically when umount,
@@ -82,16 +82,16 @@ enum lfsck_status {
 	 */
 	LS_CRASHED		= 7,
 
-	/* Some OST/MDT failed during the LFSCK, or not join the LFSCK. */
+	
 	LS_PARTIAL		= 8,
 
-	/* The LFSCK is failed because its controller is failed. */
+	
 	LS_CO_FAILED		= 9,
 
-	/* The LFSCK is stopped because its controller is stopped. */
+	
 	LS_CO_STOPPED		= 10,
 
-	/* The LFSCK is paused because its controller is paused. */
+	
 	LS_CO_PAUSED		= 11,
 
 	LS_MAX
@@ -121,45 +121,45 @@ static inline const char *lfsck_status2name(int status)
 }
 
 enum lfsck_param_flags {
-	/* Reset LFSCK iterator position to the device beginning. */
+	
 	LPF_RESET		= 0x0001,
 
-	/* Exit when fail. */
+	
 	LPF_FAILOUT		= 0x0002,
 
-	/* Dryrun mode, only check without modification */
+	
 	LPF_DRYRUN		= 0x0004,
 
-	/* LFSCK runs on all targets. */
+	
 	LPF_ALL_TGT		= 0x0008,
 
-	/* Broadcast the command to other MDTs. Only valid on the sponsor MDT */
+	
 	LPF_BROADCAST		= 0x0010,
 
-	/* Handle orphan OST-objects. */
+	
 	LPF_OST_ORPHAN		= 0x0020,
 
-	/* Create OST-object for dangling LOV EA. */
+	
 	LPF_CREATE_OSTOBJ	= 0x0040,
 
-	/* Create MDT-object for dangling name entry. */
+	
 	LPF_CREATE_MDTOBJ	= 0x0080,
 
-	/* Do not return until the LFSCK not running. */
+	
 	LPF_WAIT		= 0x0100,
 
-	/* Delay to create OST-object for dangling LOV EA. */
+	
 	LPF_DELAY_CREATE_OSTOBJ	= 0x0200,
 };
 
 enum lfsck_type {
-	/* For MDT and OST internal OSD consistency check/repair. */
+	
 	LFSCK_TYPE_SCRUB	= 0x0000,
 
-	/* For MDT-OST (layout, object) consistency check/repair. */
+	
 	LFSCK_TYPE_LAYOUT	= 0x0001,
 
-	/* For MDT (FID-in-dirent, linkEA) consistency check/repair. */
+	
 	LFSCK_TYPE_NAMESPACE	= 0x0004,
 	LFSCK_TYPES_SUPPORTED	= (LFSCK_TYPE_SCRUB | LFSCK_TYPE_LAYOUT |
 				   LFSCK_TYPE_NAMESPACE),
@@ -186,31 +186,31 @@ enum lfsck_start_valid {
 	LSV_DELAY_CREATE_OSTOBJ	= 0x00000040,
 };
 
-/* Arguments for starting lfsck. */
+
 struct lfsck_start {
-	/* Which arguments are valid, see 'enum lfsck_start_valid'. */
+	
 	__u32   ls_valid;
 
-	/* How many items can be scanned at most per second. */
+	
 	__u32   ls_speed_limit;
 
-	/* For compatibility between user space tools and kernel service. */
+	
 	__u16   ls_version;
 
-	/* Which LFSCK components to be (have been) started. */
+	
 	__u16   ls_active;
 
-	/* Flags for the LFSCK, see 'enum lfsck_param_flags'. */
+	
 	__u16   ls_flags;
 
-	/* The windows size for async requests pipeline. */
+	
 	__u16   ls_async_windows;
 };
 
 struct lfsck_stop {
 	__u32	ls_status;
 	__u16	ls_flags;
-	__u16	ls_padding_1; /* For 64-bits aligned. */
+	__u16	ls_padding_1; 
 	__u64	ls_padding_2;
 };
 
@@ -222,4 +222,4 @@ struct lfsck_query {
 	__u64	lu_repaired[LFSCK_TYPE_BITS];
 };
 
-#endif /* _LUSTRE_LFSCK_USER_H */
+#endif 

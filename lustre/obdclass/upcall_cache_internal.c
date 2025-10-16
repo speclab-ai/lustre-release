@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2023, Whamcloud.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_SEC
@@ -71,10 +71,10 @@ restart:
 	if (identity->mi_ginfo && identity->mi_ginfo->ngroups)
 		ginfo_ngroups = identity->mi_ginfo->ngroups;
 
-	/* check if provided supp groups are already in cache */
+	
 	for (i = 0; i < 2 && uc->uc_suppgids[i] != inval; i++) {
 		if (unlikely(uc->uc_suppgids[i] == uc->uc_fsuid)) {
-			/* Do not place user's group ID in group list */
+			
 			supp_in_ginfo[i] = true;
 		} else if (ginfo_ngroups) {
 			upcall_group_usage_inc(identity->mi_ginfo);

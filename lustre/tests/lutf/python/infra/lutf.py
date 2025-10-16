@@ -79,8 +79,6 @@ class YamlResults:
 			shadow.append(entry.get())
 		return shadow
 
-# subtest_result = YamlResults
-# global_test_resutls['lutf-dlc']['script-name'] = rc
 class YamlGlobalTestResults:
 	def __init__(self, desc=None):
 		if not desc:
@@ -888,7 +886,6 @@ class Myself:
 		method_name = ''
 		rc = {}
 
-		#rpc_str = rpc_yaml.decode('utf-8')
 		y = yaml.load(rpc_yaml, Loader=yaml.FullLoader)
 		# check to see if this is for me
 		target = y['rpc']['dst']

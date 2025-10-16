@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * The OI scrub is used for checking and (re)building Object Index files
  * that are usually backend special. Here are some general scrub related
@@ -148,18 +148,18 @@ int scrub_file_load(const struct lu_env *env, struct lustre_scrub *scrub)
 	int rc;
 
 	rc = dt_read(env, scrub->os_obj, &buf, &pos);
-	/* failure */
+	
 	if (rc < 0) {
 		CERROR("%s: fail to load scrub file: rc = %d\n",
 		       scrub->os_name, rc);
 		return rc;
 	}
 
-	/* empty */
+	
 	if (!rc)
 		return -ENOENT;
 
-	/* corrupted */
+	
 	if (rc < buf.lb_len) {
 		CDEBUG(D_LFSCK, "%s: fail to load scrub file, "
 		       "expected = %d: rc = %d\n",
@@ -196,7 +196,7 @@ int scrub_file_store(const struct lu_env *env, struct lustre_scrub *scrub)
 	int rc;
 	ENTRY;
 
-	/* Skip store under rdonly mode. */
+	
 	if (dev->dd_rdonly)
 		RETURN(0);
 
@@ -433,7 +433,7 @@ int scrub_start(int (*threadfn)(void *data), struct lustre_scrub *scrub,
 	}
 	spin_lock(&scrub->os_lock);
 	if (scrub->os_task) {
-		/* Lost a race */
+		
 		spin_unlock(&scrub->os_lock);
 		kthread_stop(task);
 		RETURN(-EALREADY);
@@ -722,7 +722,7 @@ static void lustre_index_degister(struct list_head *head, spinlock_t *lock,
 	spin_lock(lock);
 	list_for_each_entry_reverse(libu, head, libu_link) {
 		rc = lu_fid_cmp(&libu->libu_fid, fid);
-		/* NOT registered. */
+		
 		if (rc < 0)
 			break;
 
@@ -1038,7 +1038,7 @@ void lustre_index_backup(const struct lu_env *env, struct dt_device *dev,
 	if (list_empty(head))
 		RETURN_EXIT;
 
-	/* Handle kinds of failures during mount process. */
+	
 	if (!dev->dd_lu_dev.ld_site || !dev->dd_lu_dev.ld_site->ls_top_dev)
 		backup = false;
 
@@ -1187,7 +1187,7 @@ int lustre_index_restore(const struct lu_env *env, struct dt_device *dev,
 	feat->dif_recsize_min = feat->dif_recsize_max = recsize;
 	feat->dif_ptrsize = 4;
 
-	/* T1: remove old name entry and destroy old index. */
+	
 	th = dt_trans_create(env, dev);
 	if (IS_ERR(th))
 		GOTO(out, rc = PTR_ERR(th));
@@ -1232,7 +1232,7 @@ int lustre_index_restore(const struct lu_env *env, struct dt_device *dev,
 	ent.rec_type = S_IFREG;
 	ent.rec_fid = tgt_fid;
 
-	/* Drop cache before re-create it. */
+	
 	dt_object_put_nocache(env, tgt_obj);
 	tgt_obj = lu2dt(lu_object_find_slice(env, &dev->dd_lu_dev,
 					     tgt_fid, &conf));
@@ -1241,7 +1241,7 @@ int lustre_index_restore(const struct lu_env *env, struct dt_device *dev,
 
 	LASSERT(!dt_object_exists(tgt_obj));
 
-	/* T2: create new index and insert new name entry. */
+	
 	th = dt_trans_create(env, dev);
 	if (IS_ERR(th))
 		GOTO(out, rc = PTR_ERR(th));
@@ -1275,7 +1275,7 @@ int lustre_index_restore(const struct lu_env *env, struct dt_device *dev,
 	if (rc)
 		GOTO(out, rc);
 
-	/* The new index will register via index_try. */
+	
 	rc = tgt_obj->do_ops->do_index_try(env, tgt_obj, feat);
 	if (rc)
 		GOTO(out, rc);
@@ -1299,7 +1299,7 @@ int lustre_index_restore(const struct lu_env *env, struct dt_device *dev,
 			void *key = &buf[i * pairsize];
 			void *rec = &buf[i * pairsize + keysize];
 
-			/* Tn: restore the records. */
+			
 			th = dt_trans_create(env, dev);
 			if (!th)
 				GOTO(out, rc = -ENOMEM);
@@ -1327,7 +1327,7 @@ int lustre_index_restore(const struct lu_env *env, struct dt_device *dev,
 stop:
 	dt_trans_stop(env, dev, th);
 	if (rc && registered)
-		/* Degister the index to avoid overwriting the backup. */
+		
 		lustre_index_degister(head, lock, tgt_fid);
 
 out:

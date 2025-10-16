@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: LGPL-2.1+ */
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Amir Shehata <amir.shehata@intel.com>
  */
@@ -27,24 +27,24 @@ enum cYAML_object_type {
 };
 
 struct cYAML {
-	/* next/prev allow you to walk array/object chains. */
+	
 	struct cYAML *cy_next, *cy_prev;
 	/* An array or object item will have a child pointer pointing
 	   to a chain of the items in the array/object. */
 	struct cYAML *cy_child;
-	/* The type of the item, as above. */
+	
 	enum cYAML_object_type cy_type;
 
-	/* The item's string, if type==CYAML_TYPE_STRING */
+	
 	char *cy_valuestring;
-	/* The item's number, if type==CYAML_TYPE_NUMBER */
+	
 	int64_t cy_valueint;
-	/* The item's number, if type==CYAML_TYPE_NUMBER */
+	
 	double cy_valuedouble;
 	/* The item's name string, if this item is the child of,
 	   or is in the list of subitems of an object. */
 	char *cy_string;
-	/* user data which might need to be tracked per object */
+	
 	void *cy_user_data;
 };
 
@@ -255,4 +255,4 @@ void cYAML_build_error(int rc, int seq_no, char *cmd,
 			struct cYAML **root);
 
 
-#endif /* CYAML_H */
+#endif 

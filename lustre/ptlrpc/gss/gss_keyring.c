@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Eric Mei <ericm@clusterfs.com>
  */
@@ -62,7 +62,7 @@ static void request_key_unlink(struct key *key, bool fullsearch);
  */
 #define KEYRING_UPCALL_TIMEOUT  (obd_timeout + obd_timeout)
 
-/* Check caller's namespace in gss_keyring upcall */
+
 unsigned int gss_check_upcall_ns = 1;
 
 /****************************************
@@ -161,7 +161,7 @@ struct ptlrpc_cli_ctx *ctx_create_kr(struct ptlrpc_sec *sec,
 
 	ctx->cc_expire = ktime_get_real_seconds() + KEYRING_UPCALL_TIMEOUT;
 	clear_bit(PTLRPC_CTX_NEW_BIT, &ctx->cc_flags);
-	atomic_inc(&ctx->cc_refcount); /* for the caller */
+	atomic_inc(&ctx->cc_refcount); 
 
 	return ctx;
 }
@@ -173,7 +173,7 @@ static void ctx_destroy_kr(struct ptlrpc_cli_ctx *ctx)
 
 	CDEBUG(D_SEC, "destroying ctx %p\n", ctx);
 
-        /* at this time the association with key has been broken. */
+        
         LASSERT(sec);
 	LASSERT(atomic_read(&sec->ps_refcount) > 0);
 	LASSERT(atomic_read(&sec->ps_nctx) > 0);
@@ -266,11 +266,11 @@ static int ctx_unlist_kr(struct ptlrpc_cli_ctx *ctx, int locked)
 	struct ptlrpc_sec	*sec = ctx->cc_sec;
 	struct gss_sec_keyring	*gsec_kr = sec2gsec_keyring(sec);
 
-	/* if hashed bit has gone, leave the job to somebody who is doing it */
+	
 	if (test_and_clear_bit(PTLRPC_CTX_CACHED_BIT, &ctx->cc_flags) == 0)
 		return 0;
 
-	/* drop ref inside spin lock to prevent race with other operations */
+	
 	spin_lock_if(&sec->ps_lock, !locked);
 
 	if (gsec_kr->gsk_root_ctx == ctx)
@@ -331,7 +331,7 @@ static void bind_key_ctx(struct key *key, struct ptlrpc_cli_ctx *ctx)
 	LASSERT(ctx2gctx_keyring(ctx)->gck_key == NULL);
 	LASSERT(!key_get_payload(key, 0));
 
-	/* at this time context may or may not in list. */
+	
 	key_get(key);
 	atomic_inc(&ctx->cc_refcount);
 	ctx2gctx_keyring(ctx)->gck_key = key;
@@ -353,14 +353,14 @@ static void unbind_key_ctx(struct key *key, struct ptlrpc_cli_ctx *ctx)
 		return;
 	}
 
-	/* must invalidate the key, or others may find it during lookup */
+	
 	key_invalidate_locked(key);
 	request_key_unlink(key, false);
 
 	key_set_payload(key, 0, NULL);
 	ctx2gctx_keyring(ctx)->gck_key = NULL;
 
-	/* once ctx get split from key, the timer is meaningless */
+	
 	ctx_clear_timer_kr(ctx);
 
 	ctx_put_kr(ctx, 1);
@@ -489,7 +489,7 @@ struct ptlrpc_cli_ctx * sec_lookup_root_ctx_kr(struct ptlrpc_sec *sec)
 			    (ctx->cc_expire < now &&
 			     tmp->cc_expire > ctx->cc_expire)) {
 				ctx = tmp;
-				/* promote to be root_ctx */
+				
 				gsec_kr->gsk_root_ctx = ctx;
 			}
 		}
@@ -525,16 +525,16 @@ void rvs_sec_install_root_ctx_kr(struct ptlrpc_sec *sec,
 
 	now = ktime_get_real_seconds();
 
-	/* set all existing ctxs short expiry */
+	
 	hlist_for_each_entry_safe(ctx, next, &gsec_kr->gsk_clist, cc_cache) {
 		if (ctx->cc_expire > now + RVS_CTX_EXPIRE_NICE) {
 			ctx->cc_early_expire = 1;
 			ctx->cc_expire = now + RVS_CTX_EXPIRE_NICE;
 		} else if (ctx != gsec_kr->gsk_root_ctx &&
 			   ctx->cc_expire < now) {
-			/* unlist expired context to remove it from gsk_clist */
+			
 			if (ctx_unlist_kr(ctx, 1)) {
-				/* release unlisted ctx to destroy it */
+				
 				set_bit(PTLRPC_CTX_DEAD_BIT, &ctx->cc_flags);
 				ctx_release_kr(ctx, 1);
 			}
@@ -636,7 +636,7 @@ static inline int user_is_root(struct ptlrpc_sec *sec, struct vfs_cred *vcred)
 #ifdef HAVE_LOOKUP_USER_KEY
 
 #ifdef HAVE_KEY_NEED_UNLINK
-/* from Linux security/keys/internal.h: */
+
 #  ifndef KEY_LOOKUP_PARTIAL
 #    define KEY_LOOKUP_PARTIAL 0x2
 #  endif
@@ -646,7 +646,7 @@ static inline int user_is_root(struct ptlrpc_sec *sec, struct vfs_cred *vcred)
 #    define KEY_LOOKUP_FOR_UNLINK 0x4
 #  endif
 #  define KEY_LOOKUP_PARTIAL KEY_LOOKUP_FOR_UNLINK
-#endif /* HAVE_KEY_NEED_UNLINK */
+#endif 
 
 static struct key *_user_key(key_serial_t id)
 {
@@ -705,7 +705,7 @@ static int construct_get_dest_keyring(struct key **_dest_keyring)
 	const struct cred *cred = current_cred();
 
 	if (dest_keyring) {
-		/* the caller supplied one */
+		
 		key_get(dest_keyring);
 		return 0;
 	}
@@ -778,7 +778,7 @@ static void request_key_unlink(struct key *key, bool fullsearch)
 
 	uid = from_kuid(current_user_ns(), kuid_orig);
 	key_uid = from_kuid(&init_user_ns, key->uid);
-	/* unlink key with user's creds if it's a user key */
+	
 	if (key_uid != uid) {
 		new_cred = prepare_creds();
 		if (new_cred == NULL)
@@ -797,7 +797,7 @@ static void request_key_unlink(struct key *key, bool fullsearch)
 		old_cred = override_creds(new_cred);
 	}
 
-	/* User keys are linked to the user keyring. So get it now. */
+	
 	if (key_uid && !fullsearch) {
 		/* Getting a key(ring) normally increases its refcount by 1.
 		 * But if we overrode creds above, calling get_user_keyring()
@@ -815,7 +815,7 @@ search:
 		CDEBUG(D_SEC,
 		       "Unlink key %08x (%p) from keyring %08x: %d\n",
 		       key->serial, key, ring->serial, res);
-		/* matches key_get()/get_user_keyring() above */
+		
 		key_put(ring);
 	} else {
 		CDEBUG(D_SEC,
@@ -869,7 +869,7 @@ struct ptlrpc_cli_ctx * gss_sec_lookup_ctx_kr(struct ptlrpc_sec *sec,
 
 	is_root = user_is_root(sec, vcred);
 
-	/* a little bit optimization for root context */
+	
 	if (is_root) {
 		ctx = sec_lookup_root_ctx_kr(sec);
 		/*
@@ -894,7 +894,7 @@ struct ptlrpc_cli_ctx * gss_sec_lookup_ctx_kr(struct ptlrpc_sec *sec,
 		if (ctx)
 			goto out;
 
-		/* update reverse handle for root user */
+		
 		sec2gsec(sec)->gs_rvs_hdl = gss_get_next_ctx_index();
 
 		switch (sec->ps_part) {
@@ -943,7 +943,7 @@ struct ptlrpc_cli_ctx * gss_sec_lookup_ctx_kr(struct ptlrpc_sec *sec,
 	 * encode real uid/gid into callout info.
 	 */
 
-	/* But first we need to make sure the obd type is supported */
+	
 	if (strcmp(imp->imp_obd->obd_type->typ_name, LUSTRE_MDC_NAME) &&
 	    strcmp(imp->imp_obd->obd_type->typ_name, LUSTRE_OSC_NAME) &&
 	    strcmp(imp->imp_obd->obd_type->typ_name, LUSTRE_MGC_NAME) &&
@@ -978,13 +978,13 @@ struct ptlrpc_cli_ctx * gss_sec_lookup_ctx_kr(struct ptlrpc_sec *sec,
 		else
 			caller_pid = imp->imp_sec_refpid;
 	} else {
-		/* Do not switch namespace in gss keyring upcall. */
+		
 		caller_pid = 0;
 	}
 
 	LNetLocalPrimaryNID(&primary);
 
-	/* FIXME !! Needs to support larger NIDs */
+	
 	snprintf(coinfo, coinfo_size, "%d:%s:%u:%u:%s:%c:%d:%#llx:%s:%#llx:%d",
 		 sec->ps_id, sec2gsec(sec)->gs_mech->gm_name,
 		 vcred->vc_uid, vcred->vc_gid,
@@ -1116,7 +1116,7 @@ static void flush_user_ctx_cache_kr(struct ptlrpc_sec *sec, uid_t uid,
 	struct key *key;
 	char desc[24];
 
-	/* nothing to do for reverse or rootonly sec */
+	
 	if (sec_is_reverse(sec) || sec_is_rootonly(sec))
 		return;
 
@@ -1342,10 +1342,10 @@ int gss_sec_display_kr(struct ptlrpc_sec *sec, struct seq_file *seq)
 static
 int gss_cli_ctx_refresh_kr(struct ptlrpc_cli_ctx *ctx)
 {
-	/* upcall is already on the way */
+	
 	struct gss_cli_ctx *gctx = ctx ? ctx2gctx(ctx) : NULL;
 
-	/* record latest sequence number in buddy svcctx */
+	
 	if (gctx && !rawobj_empty(&gctx->gc_svc_handle) &&
 	    sec_is_reverse(gctx->gc_base.cc_sec)) {
 		return gss_svc_upcall_update_sequence(&gctx->gc_svc_handle,
@@ -1422,7 +1422,7 @@ int sec_install_rctx_kr(struct ptlrpc_sec *sec,
         return 0;
 }
 
-#else /* ! HAVE_REVERSE_CTX_NOKEY */
+#else 
 
 static
 int sec_install_rctx_kr(struct ptlrpc_sec *sec,
@@ -1489,7 +1489,7 @@ err_revoke:
         goto out;
 }
 
-#endif /* HAVE_REVERSE_CTX_NOKEY */
+#endif 
 
 /****************************************
  * service apis                         *
@@ -1634,7 +1634,7 @@ int gss_kt_update(struct key *key, const void *data, size_t datalen)
 
 	ctx_clear_timer_kr(ctx);
 
-	/* don't proceed if already refreshed */
+	
 	if (cli_ctx_is_refreshed(ctx)) {
 		CWARN("ctx already done refresh\n");
 		RETURN(0);
@@ -1717,7 +1717,7 @@ out:
 		cli_ctx_expire(ctx);
 	}
 
-	/* let user space think it's a success */
+	
 	sptlrpc_cli_ctx_put(ctx, 1);
 	RETURN(0);
 }
@@ -1729,7 +1729,7 @@ gss_kt_match(const struct key *key, const void *desc)
 	return strcmp(key->description, (const char *) desc) == 0 &&
 		!test_bit(KEY_FLAG_REVOKED, &key->flags);
 }
-#else /* ! HAVE_KEY_MATCH_DATA */
+#else 
 static bool
 gss_kt_match(const struct key *key, const struct key_match_data *match_data)
 {
@@ -1748,7 +1748,7 @@ static int gss_kt_match_preparse(struct key_match_data *match_data)
 	match_data->cmp = gss_kt_match;
 	return 0;
 }
-#endif /* HAVE_KEY_MATCH_DATA */
+#endif 
 
 static
 void gss_kt_destroy(struct key *key)

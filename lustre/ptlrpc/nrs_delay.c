@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2017, Cray Inc. All Rights Reserved.
@@ -34,11 +34,11 @@
 
 #define NRS_POL_NAME_DELAY	"delay"
 
-/* Default minimum delay in seconds. */
+
 #define NRS_DELAY_MIN_DEFAULT	5
-/* Default maximum delay, in seconds. */
+
 #define NRS_DELAY_MAX_DEFAULT	300
-/* Default percentage of delayed RPCs. */
+
 #define NRS_DELAY_PCT_DEFAULT	100
 
 /**
@@ -231,7 +231,7 @@ static int nrs_delay_req_add(struct ptlrpc_nrs_policy *policy,
 {
 	struct nrs_delay_data *delay_data = policy->pol_private;
 
-	if (delay_data->delay_pct == 0 || /* Not delaying anything */
+	if (delay_data->delay_pct == 0 || 
 	    (delay_data->delay_pct != 100 &&
 	     delay_data->delay_pct < get_random_u32_below(100)))
 		return 1;
@@ -345,7 +345,7 @@ static int nrs_delay_ctl(struct ptlrpc_nrs_policy *policy,
  * debugfs interface
  */
 
-/* nrs_delay_min and nrs_delay_max are bounded by these values */
+
 #define LPROCFS_NRS_DELAY_LOWER_BOUND		0
 #define LPROCFS_NRS_DELAY_UPPER_BOUND		65535
 
@@ -429,7 +429,7 @@ lprocfs_nrs_delay_seq_write_common(const char __user *buffer,
 	if (tmp == NULL)
 		GOTO(free_tmp, rc = -ENOMEM);
 
-	/* look for "reg_<var_name>" in kernbuf */
+	
 	snprintf(tmp, tmpsize, "reg_%s", var_name);
 	count_copy = count;
 	val_str = lprocfs_find_named_value(kernbuf, tmp, &count_copy);
@@ -440,7 +440,7 @@ lprocfs_nrs_delay_seq_write_common(const char __user *buffer,
 		queue |= PTLRPC_NRS_QUEUE_REG;
 	}
 
-	/* look for "hp_<var_name>" in kernbuf */
+	
 	snprintf(tmp, tmpsize, "hp_%s", var_name);
 	count_copy = count;
 	val_str = lprocfs_find_named_value(kernbuf, tmp, &count_copy);
@@ -493,7 +493,7 @@ lprocfs_nrs_delay_seq_write_common(const char __user *buffer,
 			GOTO(free_tmp, rc = rc2);
 	}
 
-	/* If we've reached here then we want to return count */
+	
 	rc = count;
 
 free_tmp:

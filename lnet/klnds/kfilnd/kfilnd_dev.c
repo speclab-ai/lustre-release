@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd device implementation.
  */
@@ -59,14 +59,14 @@ void kfilnd_dev_free(struct kfilnd_dev *dev)
 
 	debugfs_remove_recursive(dev->dev_dir);
 
-	/* Change state to shutting down so TNs stop using it */
+	
 	dev->kfd_state = KFILND_STATE_SHUTTING_DOWN;
 
-	/* Cancel all outstanding RX buffers. */
+	
 	for (i = 0; i < dev->kfd_ni->ni_ncpts; i++)
 		kfilnd_ep_cancel_imm_buffers(dev->kfd_endpoints[i]);
 
-	/* Free all endpoints. */
+	
 	for (i = 0; i < dev->kfd_ni->ni_ncpts; i++)
 		kfilnd_ep_free(dev->kfd_endpoints[i]);
 
@@ -162,7 +162,7 @@ struct kfilnd_dev *kfilnd_dev_alloc(struct lnet_ni *ni,
 
 	dev->nic_addr = ((struct kcxi_addr *)dev_info->src_addr)->nic;
 
-	/* Get the device struct */
+	
 	dev->device = NULL;
 #ifdef HAVE_KFI_CXI_DOM_OPS
 	rc = kfi_open_ops(&dev->dom->domain->fid, KFI_CXI_DOM_OPS_1, 0,
@@ -175,7 +175,7 @@ struct kfilnd_dev *kfilnd_dev_alloc(struct lnet_ni *ni,
 	}
 #endif
 
-	/* Create an AV for this device */
+	
 	av_attr.type = KFI_AV_UNSPEC;
 	av_attr.rx_ctx_bits = KFILND_FAB_RX_CTX_BITS;
 	rc = kfi_av_open(dev->dom->domain, &av_attr, &dev->kfd_av, dev);
@@ -184,32 +184,32 @@ struct kfilnd_dev *kfilnd_dev_alloc(struct lnet_ni *ni,
 		goto err_put_dom;
 	}
 
-	/* Create a scalable endpont to represent the device. */
+	
 	rc = kfi_scalable_ep(dev->dom->domain, dev_info, &dev->kfd_sep, dev);
 	if (rc) {
 		CERROR("Could not create scalable endpoint, rc = %d\n", rc);
 		goto err_free_av;
 	}
 
-	/* Done with info. */
+	
 	kfi_freeinfo(dev_info);
 	dev_info = NULL;
 
-	/* Bind the endpoint to the AV */
+	
 	rc = kfi_scalable_ep_bind(dev->kfd_sep, &dev->kfd_av->fid, 0);
 	if (rc) {
 		CERROR("Could not bind scalable endpoint to AV, rc = %d\n", rc);
 		goto err_free_sep;
 	}
 
-	/* Enable the scalable endpoint */
+	
 	rc = kfi_enable(dev->kfd_sep);
 	if (rc) {
 		CERROR("Could not enable scalable endpoint, rc = %d\n", rc);
 		goto err_free_sep;
 	}
 
-	/* Allocate an array to store all the KFI LND endpoints. */
+	
 	LIBCFS_ALLOC_GFP(dev->kfd_endpoints,
 			 ni->ni_ncpts * sizeof(*dev->kfd_endpoints),
 			 GFP_KERNEL);
@@ -218,7 +218,7 @@ struct kfilnd_dev *kfilnd_dev_alloc(struct lnet_ni *ni,
 		goto err_free_sep;
 	}
 
-	/* Map of all LNet CPTs to endpoints. */
+	
 	lnet_ncpts = cfs_cpt_number(lnet_cpt_table());
 	LIBCFS_ALLOC_GFP(dev->cpt_to_endpoint,
 			 lnet_ncpts * sizeof(*dev->cpt_to_endpoint),
@@ -228,7 +228,7 @@ struct kfilnd_dev *kfilnd_dev_alloc(struct lnet_ni *ni,
 		goto err_free_ep_array;
 	}
 
-	/* Create RX/TX contexts in kfabric for each LNet NI CPT. */
+	
 	for (i = 0; i < ni->ni_ncpts; i++) {
 		cpt = !ni->ni_cpts ? i : ni->ni_cpts[i];
 
@@ -246,13 +246,13 @@ struct kfilnd_dev *kfilnd_dev_alloc(struct lnet_ni *ni,
 
 	kfilnd_peer_init(dev);
 
-	/* Mark that the dev/NI has now been initialized */
+	
 	dev->kfd_state = KFILND_STATE_INITIALIZED;
 
 	ni->ni_data = dev;
 	ni->ni_nid.nid_addr[0] = cpu_to_be32(LNET_NIDADDR(dev->nic_addr));
 
-	/* Initialize debugfs stats. */
+	
 	dev->dev_dir = debugfs_create_dir(libcfs_nidstr(&ni->ni_nid),
 					  kfilnd_debug_dir);
 	dev->initiator_state_stats_file =

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __LIBCFS_LIBCFS_H__
@@ -36,14 +36,14 @@
 
 #define LIBCFS_VERSION	"0.7.1"
 
-/* Sparse annotations */
+
 #if !defined(__must_hold)
 # ifdef __CHECKER__
 #  define __must_hold(x) __attribute__((context(x, 1, 1)))
-# else	/* __CHECKER__ */
+# else	
 #  define __must_hold(x)
-# endif /* !__CHECKER__ */
-#endif /* !__must_hold */
+# endif 
+#endif 
 
 typedef s32 timeout_t;
 
@@ -67,7 +67,7 @@ void lnet_insert_debugfs(const struct ctl_table *table,
 void lnet_remove_debugfs(const struct ctl_table *table);
 void lnet_debugfs_fini(void **statep);
 
-/* helper for sysctl handlers */
+
 int debugfs_doint(const struct ctl_table *table, int write,
 		  void __user *buffer, size_t *lenp, loff_t *ppos);
 
@@ -75,7 +75,7 @@ int debugfs_doint(const struct ctl_table *table, int write,
  * Memory
  */
 #if BITS_PER_LONG == 32
-/* limit to lowmem on 32-bit systems */
+
 #define NUM_CACHEPAGES \
 	min(cfs_totalram_pages(), 1UL << (30 - PAGE_SHIFT) * 3 / 4)
 #else
@@ -100,4 +100,4 @@ do {									\
 	"Struct contains a flexible member, the size of object is checked" \
 	"and can be safely copied in a single memcpy()"
 
-#endif /* _LIBCFS_LIBCFS_H_ */
+#endif 

@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
-/* for O_DIRECTORY */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 
 	dname1 = argv[1];
 
-	/* create the directory */
+	
 	fprintf(stderr, "creating directory %s\n", dname1);
 	rc = mkdir(dname1, 0744);
 	if (rc == -1) {
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 	}
 	close(fd);
 
-	/* open the dir again */
+	
 	fprintf(stderr, "opening directory\n");
 	fddir1 = open(dname1, O_RDONLY | O_DIRECTORY);
 	if (fddir1 == -1) {
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* delete the dir */
+	
 	fprintf(stderr, "unlinking %s\n", dname1);
 	rc = rmdir(dname1);
 	if (rc == 0) {

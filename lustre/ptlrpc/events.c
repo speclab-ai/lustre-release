@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_RPC
@@ -38,7 +38,7 @@ void request_out_callback(struct lnet_event *ev)
 
 	DEBUG_REQ(D_NET, req, "type %d, status %d", ev->type, ev->status);
 
-	/* Do not update imp_next_ping for connection request */
+	
 	if (lustre_msg_get_opc(req->rq_reqmsg) !=
 	    req->rq_import->imp_connect_op)
 		ptlrpc_pinger_sending_on_import(req->rq_import);
@@ -48,7 +48,7 @@ void request_out_callback(struct lnet_event *ev)
 	spin_lock(&req->rq_lock);
 	req->rq_real_sent_ns = ktime_get_real();
 	req->rq_req_unlinked = 1;
-	/* reply_in_callback happened before request_out_callback? */
+	
 	if (req->rq_reply_unlinked)
 		wakeup = true;
 
@@ -115,15 +115,15 @@ void reply_in_callback(struct lnet_event *ev)
 
 	if ((ev->offset == 0) &&
 	    ((lustre_msghdr_get_flags(req->rq_reqmsg) & MSGHDR_AT_SUPPORT))) {
-		/* Early reply */
+		
 		DEBUG_REQ(D_ADAPTTO, req,
 			  "Early reply received, mlen=%u offset=%d replen=%d replied=%d unlinked=%d",
 			  ev->mlength, ev->offset,
 			  req->rq_replen, req->rq_replied, ev->unlinked);
 
-		req->rq_early_count++; /* number received, client side */
+		req->rq_early_count++; 
 
-		/* already got the real reply or buffers are already unlinked */
+		
 		if (req->rq_replied ||
 		    req->rq_reply_unlinked == 1)
 			goto out_wake;
@@ -131,13 +131,13 @@ void reply_in_callback(struct lnet_event *ev)
 		req->rq_early = 1;
 		req->rq_reply_off = ev->offset;
 		req->rq_nob_received = ev->mlength;
-		/* And we're still receiving */
+		
 		req->rq_receiving_reply = 1;
 	} else {
-		/* Real reply */
+		
 		req->rq_rep_swab_mask = 0;
 		req->rq_replied = 1;
-		/* Got reply, no resend required */
+		
 		req->rq_resend = 0;
 		req->rq_reply_off = ev->offset;
 		req->rq_nob_received = ev->mlength;
@@ -200,7 +200,7 @@ void client_bulk_callback(struct lnet_event *ev)
 		desc->bd_nob_transferred += ev->mlength;
 		desc->bd_sender = ev->sender;
 	} else {
-		/* start reconnect and resend if network error hit */
+		
 		spin_lock(&req->rq_lock);
 		req->rq_net_err = 1;
 		spin_unlock(&req->rq_lock);
@@ -243,7 +243,7 @@ static void ptlrpc_req_add_history(struct ptlrpc_service_part *svcpt,
 				   struct ptlrpc_request *req)
 {
 	u64 sec = req->rq_arrival_time.tv_sec;
-	u32 usec = req->rq_arrival_time.tv_nsec / NSEC_PER_USEC / 16; /* usec / 16 */
+	u32 usec = req->rq_arrival_time.tv_nsec / NSEC_PER_USEC / 16; 
 	u64 new_seq;
 
 	/* set sequence ID for request and add it to history list,
@@ -306,7 +306,7 @@ void request_in_callback(struct lnet_event *ev)
 		memset(req, 0, sizeof(*req));
 	} else {
 		LASSERT(ev->type == LNET_EVENT_PUT);
-		if (ev->status != 0) /* We moaned above already... */
+		if (ev->status != 0) 
 			return;
 		req = ptlrpc_request_cache_alloc(GFP_ATOMIC);
 		if (req == NULL) {
@@ -326,7 +326,7 @@ void request_in_callback(struct lnet_event *ev)
 	if (ev->type == LNET_EVENT_PUT && ev->status == 0)
 		req->rq_reqdata_len = ev->mlength;
 	ktime_get_real_ts64(&req->rq_arrival_time);
-	/* Multi-Rail: keep track of both initiator and source NID. */
+	
 	req->rq_peer = ev->initiator;
 	req->rq_source = ev->source;
 	req->rq_self = ev->target.nid;
@@ -356,9 +356,9 @@ void request_in_callback(struct lnet_event *ev)
 			CWARN("All %s request buffers busy\n",
 			      service->srv_name);
 
-		/* req takes over the network's ref on rqbd */
+		
 	} else {
-		/* req takes a ref on rqbd */
+		
 		rqbd->rqbd_refcount++;
 	}
 
@@ -477,7 +477,7 @@ void server_bulk_callback(struct lnet_event *ev)
 
 	if (ev->unlinked) {
 		desc->bd_refs--;
-		/* This is the last callback no matter what... */
+		
 		if (desc->bd_refs == 0)
 			wake_up(&desc->bd_waitq);
 	}
@@ -492,7 +492,7 @@ static void ptlrpc_master_callback(struct lnet_event *ev)
 	struct ptlrpc_cb_id *cbid = ev->md_user_ptr;
 	void (*callback)(struct lnet_event *ev) = cbid->cbid_fn;
 
-	/* Honestly, it's best to find out early. */
+	
 	LASSERT(cbid->cbid_arg != LP_POISON);
 	LASSERT(callback == request_out_callback ||
 		callback == reply_in_callback ||
@@ -525,7 +525,7 @@ int ptlrpc_uuid_to_peer(struct obd_uuid *uuid,
 
 	peer->pid = LNET_PID_LUSTRE;
 
-	/* Choose the matching UUID that's closest */
+	
 	while (lustre_uuid_to_peer(uuid->uuid, &dst_nid, count++) == 0) {
 		if (refnet != LNET_NET_ANY &&
 		    LNET_NID_NET(&dst_nid) != refnet) {
@@ -538,7 +538,7 @@ int ptlrpc_uuid_to_peer(struct obd_uuid *uuid,
 		if (dist < 0)
 			continue;
 
-		if (dist == 0) {		/* local! use loopback LND */
+		if (dist == 0) {		
 			lnet_nid4_to_nid(LNET_NID_LO_0, self);
 			peer->nid = *self;
 			rc = 0;
@@ -596,7 +596,7 @@ static int ptlrpc_ni_init(void)
 	pid = ptl_get_pid();
 	CDEBUG(D_NET, "My pid is: %x\n", pid);
 
-	/* We're not passing any limits yet... */
+	
 	rc = LNetNIInit(pid);
 	if (rc < 0) {
 		CDEBUG(D_NET, "ptlrpc: Can't init network interface: rc = %d\n",

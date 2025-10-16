@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Types used by the library side routines that do not need to be
  * exposed to the user application
@@ -39,9 +39,9 @@ int cfs_match_nid_net(struct lnet_nid *nid, u32 net,
 		      struct list_head *net_num_list,
 		      struct list_head *addr);
 
-/* Structure to represent \<range_expr\> token of the syntax. */
+
 struct cfs_range_expr {
-	/* Link to cfs_expr_list::el_exprs. */
+	
 	struct list_head        re_link;
 	u32                     re_lo;
 	u32                     re_hi;
@@ -62,10 +62,10 @@ int cfs_expr_list_parse(char *str, int len, unsigned int min, unsigned int max,
 void cfs_expr_list_free_list(struct list_head *list);
 #define cfs_expr_list_values_free(values, num)  CFS_FREE_PTR_ARRAY(values, num)
 
-/* Max payload size */
+
 #define LNET_MAX_PAYLOAD	LNET_MTU
 
-/** limit on the number of fragments in discontiguous MDs */
+
 #define LNET_MAX_IOV	256
 
 /*
@@ -75,7 +75,7 @@ void cfs_expr_list_free_list(struct list_head *list);
 #define LNET_MAX_HEALTH_VALUE 1000
 #define LNET_MAX_SELECTION_PRIORITY UINT_MAX
 
-/* forward refs */
+
 struct lnet_libmd;
 
 enum lnet_msg_hstatus {
@@ -94,26 +94,26 @@ enum lnet_msg_hstatus {
 };
 
 struct lnet_rsp_tracker {
-	/* chain on the waiting list */
+	
 	struct list_head rspt_on_list;
-	/* cpt to lock */
+	
 	int rspt_cpt;
-	/* nid of next hop */
+	
 	struct lnet_nid rspt_next_hop_nid;
-	/* deadline of the REPLY/ACK */
+	
 	ktime_t rspt_deadline;
-	/* parent MD */
+	
 	struct lnet_handle_md rspt_mdh;
 };
 
 struct lnet_msg {
 	struct list_head	msg_activelist;
-	struct list_head	msg_list;	/* Q for credits/MD */
+	struct list_head	msg_list;	
 
 	struct lnet_processid	msg_target;
-	/* Primary NID of the source. */
+	
 	struct lnet_nid		msg_initiator;
-	/* where is it from, it's only for building event */
+	
 	struct lnet_nid		msg_from;
 	__u32			msg_type;
 
@@ -130,49 +130,49 @@ struct lnet_msg {
 	 */
 	ktime_t			msg_deadline;
 
-	/* The message health status. */
+	
 	enum lnet_msg_hstatus	msg_health_status;
-	/* This is a recovery message */
+	
 	bool			msg_recovery;
-	/* the number of times a transmission has been retried */
+	
 	int			msg_retry_count;
-	/* flag to indicate that we do not want to resend this message */
+	
 	bool			msg_no_resend;
 
-	/* committed for sending */
+	
 	unsigned int		msg_tx_committed:1;
-	/* CPT # this message committed for sending */
+	
 	unsigned int		msg_tx_cpt:15;
-	/* committed for receiving */
+	
 	unsigned int		msg_rx_committed:1;
-	/* CPT # this message committed for receiving */
+	
 	unsigned int		msg_rx_cpt:15;
-	/* queued for tx credit */
+	
 	unsigned int		msg_tx_delayed:1;
-	/* queued for RX buffer */
+	
 	unsigned int		msg_rx_delayed:1;
-	/* ready for pending on RX delay list */
+	
 	unsigned int		msg_rx_ready_delay:1;
 
-	unsigned int          msg_vmflush:1;      /* VM trying to free memory */
-	unsigned int          msg_target_is_router:1; /* sending to a router */
-	unsigned int          msg_routing:1;      /* being forwarded */
-	unsigned int          msg_ack:1;          /* ack on finalize (PUT) */
-	unsigned int          msg_sending:1;      /* outgoing message */
-	unsigned int          msg_receiving:1;    /* being received */
-	unsigned int          msg_txcredit:1;     /* taken an NI send credit */
-	unsigned int          msg_peertxcredit:1; /* taken a peer send credit */
-	unsigned int          msg_rtrcredit:1;    /* taken a globel router credit */
-	unsigned int          msg_peerrtrcredit:1; /* taken a peer router credit */
-	unsigned int          msg_onactivelist:1; /* on the activelist */
+	unsigned int          msg_vmflush:1;      
+	unsigned int          msg_target_is_router:1; 
+	unsigned int          msg_routing:1;      
+	unsigned int          msg_ack:1;          
+	unsigned int          msg_sending:1;      
+	unsigned int          msg_receiving:1;    
+	unsigned int          msg_txcredit:1;     
+	unsigned int          msg_peertxcredit:1; 
+	unsigned int          msg_rtrcredit:1;    
+	unsigned int          msg_peerrtrcredit:1; 
+	unsigned int          msg_onactivelist:1; 
 	unsigned int	      msg_rdma_get:1;
 
-	struct lnet_peer_ni  *msg_txpeer;         /* peer I'm sending to */
-	struct lnet_peer_ni  *msg_rxpeer;         /* peer I received from */
+	struct lnet_peer_ni  *msg_txpeer;         
+	struct lnet_peer_ni  *msg_rxpeer;         
 
 	void                 *msg_private;
 	struct lnet_libmd    *msg_md;
-	/* the NI the message was sent or received over */
+	
 	struct lnet_ni       *msg_txni;
 	struct lnet_ni       *msg_rxni;
 
@@ -199,7 +199,7 @@ struct lnet_me {
 	int			me_cpt;
 	struct lnet_processid	me_match_id;
 	unsigned int		me_portal;
-	unsigned int		me_pos;		/* hash offset in mt_hash */
+	unsigned int		me_pos;		
 	__u64			me_match_bits;
 	__u64			me_ignore_bits;
 	enum lnet_unlink	me_unlink;
@@ -218,7 +218,7 @@ struct lnet_libmd {
 	int			 md_refcount;
 	unsigned int		 md_options;
 	unsigned int		 md_flags;
-	unsigned int		 md_niov;	/* # frags at end of struct */
+	unsigned int		 md_niov;	
 	void		        *md_user_ptr;
 	struct lnet_rsp_tracker *md_rspt_ptr;
 	lnet_handler_t		 md_handler;
@@ -238,7 +238,7 @@ struct lnet_libmd {
  * call.
  */
 #define LNET_MD_FLAG_HANDLING	 BIT(3)
-#define LNET_MD_FLAG_GPU	 BIT(5) /**< Special mapping needs */
+#define LNET_MD_FLAG_GPU	 BIT(5) 
 
 static inline bool lnet_md_is_gpu(struct lnet_libmd *md)
 {
@@ -246,10 +246,10 @@ static inline bool lnet_md_is_gpu(struct lnet_libmd *md)
 }
 
 struct lnet_test_peer {
-	/* info about peers we are trying to fail */
-	struct list_head	tp_list;	/* ln_test_peers */
-	struct lnet_nid		tp_nid;		/* matching nid */
-	unsigned int		tp_threshold;	/* # failures to simulate */
+	
+	struct list_head	tp_list;	
+	struct lnet_nid		tp_nid;		
+	unsigned int		tp_threshold;	
 };
 
 #define LNET_COOKIE_TYPE_MD    1
@@ -280,11 +280,11 @@ struct netstrfns {
 			      u32 *max_nid);
 };
 
-struct lnet_ni;					 /* forward ref */
+struct lnet_ni;					 
 struct socket;
 
 struct lnet_lnd {
-	/* fields initialized by the LND */
+	
 	__u32			lnd_type;
 
 	int  (*lnd_startup)(struct lnet_ni *ni);
@@ -325,29 +325,29 @@ struct lnet_lnd {
 	int (*lnd_eager_recv)(struct lnet_ni *ni, void *private,
 			      struct lnet_msg *msg, void **new_privatep);
 
-	/* notification of peer down */
+	
 	void (*lnd_notify_peer_down)(struct lnet_nid *peer);
 
-	/* accept a new connection */
+	
 	int (*lnd_accept)(struct lnet_ni *ni, struct socket *sock);
 
-	/* get dma_dev priority */
+	
 	unsigned int (*lnd_get_dev_prio)(struct lnet_ni *ni,
 					 unsigned int dev_idx);
 
-	/* get LND timeout */
+	
 	int (*lnd_get_timeout)(void);
 
-	/* Grab LND tunable from latest module settings */
+	
 	int (*lnd_tun_defaults)(struct lnet_lnd_tunables *tunables,
 				struct lnet_ioctl_config_lnd_cmn_tunables *cmn);
 
-	/* Handle LND specific Netlink handling */
+	
 	int (*lnd_nl_get)(int cmd, struct sk_buff *msg, int type, void *data,
 			  bool export_backup);
 	int (*lnd_nl_set)(int cmd, struct nlattr *attr, int type, void *data);
 
-		/* find cached metadata associated with nid */
+		
 	int (*lnd_get_nid_metadata)(struct lnet_ni *ni,
 				    struct lnet_nid_md_entry *md_entry);
 
@@ -355,29 +355,29 @@ struct lnet_lnd {
 };
 
 struct lnet_tx_queue {
-	int			tq_credits;	/* # tx credits free */
-	int			tq_credits_min;	/* lowest it's been */
-	int			tq_credits_max;	/* total # tx credits */
-	struct list_head	tq_delayed;	/* delayed TXs */
+	int			tq_credits;	
+	int			tq_credits_min;	
+	int			tq_credits_max;	
+	struct list_head	tq_delayed;	
 };
 
 enum lnet_net_state {
-	/* set when net block is allocated */
+	
 	LNET_NET_STATE_INIT = 0,
-	/* set when NIs in net are started successfully */
+	
 	LNET_NET_STATE_ACTIVE,
-	/* set if all NIs in net are in FAILED state */
+	
 	LNET_NET_STATE_INACTIVE,
-	/* set when shutting down a NET */
+	
 	LNET_NET_STATE_DELETING
 };
 
 enum lnet_ni_state {
-	/* initial state when NI is created */
+	
 	LNET_NI_STATE_INIT = 0,
-	/* set when NI is brought up */
+	
 	LNET_NI_STATE_ACTIVE,
-	/* set when NI is being shutdown */
+	
 	LNET_NI_STATE_DELETING,
 };
 
@@ -421,7 +421,7 @@ struct lnet_health_remote_stats {
 };
 
 struct lnet_net {
-	/* chain on the ln_nets */
+	
 	struct list_head	net_list;
 
 	/* net ID, which is composed of
@@ -430,19 +430,19 @@ struct lnet_net {
 	 * lnet/include/lnet/nidstr.h */
 	__u32			net_id;
 
-	/* round robin selection */
+	
 	__u32			net_seq;
 
-	/* total number of CPTs in the array */
+	
 	__u32			net_ncpts;
 
-	/* cumulative CPTs of all NIs in this net */
+	
 	__u32			*net_cpts;
 
-	/* relative net selection priority */
+	
 	__u32			net_sel_priority;
 
-	/* network tunables */
+	
 	struct lnet_ioctl_config_lnd_cmn_tunables net_tunables;
 
 	/*
@@ -451,25 +451,25 @@ struct lnet_net {
 	 */
 	bool			net_tunables_set;
 
-	/* procedural interface */
+	
 	const struct lnet_lnd	*net_lnd;
 
-	/* list of NIs on this net */
+	
 	struct list_head	net_ni_list;
 
-	/* list of NIs being added, but not started yet */
+	
 	struct list_head	net_ni_added;
 
-	/* dying LND instances */
+	
 	struct list_head	net_ni_zombie;
 
-	/* when I was last alive */
+	
 	time64_t		net_last_alive;
 
-	/* protects access to net_last_alive */
+	
 	spinlock_t		net_lock;
 
-	/* list of router nids preferred for this network */
+	
 	struct list_head	net_rtr_pref_nids;
 };
 
@@ -981,7 +981,7 @@ enum lnet_peer_ni_list_health_stats {
 
 #define LNET_PEER_NI_LIST_HEALTH_STATS_ATTR_MAX (__LNET_PEER_NI_LIST_HEALTH_STATS_ATTR_MAX_PLUS_ONE - 1)
 
-/** LNet netlink ping API */
+
 
 /** enum lnet_ping_attr				      - LNet ping netlink properties
  *							attributes to describe ping format
@@ -1197,71 +1197,71 @@ enum lnet_fault_rule_attr {
 #define LNET_FAULT_ATTR_MAX (__LNET_FAULT_ATTR_MAX_PLUS_ONE - 1)
 
 struct lnet_ni {
-	/* chain on the lnet_net structure */
+	
 	struct list_head	ni_netlist;
 
-	/* chain on the recovery queue */
+	
 	struct list_head	ni_recovery;
 
-	/* MD handle for recovery ping */
+	
 	struct lnet_handle_md	ni_ping_mdh;
 
 	spinlock_t		ni_lock;
 
-	/* number of CPTs */
+	
 	int			ni_ncpts;
 
-	/* bond NI on some CPTs */
+	
 	__u32			*ni_cpts;
 
-	/* interface's NID */
+	
 	struct lnet_nid		ni_nid;
 
-	/* instance-specific data */
+	
 	void			*ni_data;
 
-	/* per ni credits */
+	
 	atomic_t		ni_tx_credits;
 
-	/* percpt TX queues */
+	
 	struct lnet_tx_queue	**ni_tx_queues;
 
-	/* percpt reference count */
+	
 	int			**ni_refs;
 
-	/* pointer to parent network */
+	
 	struct lnet_net		*ni_net;
 
-	/* my health status */
+	
 	u32			*ni_status;
 
-	/* NI FSM. Protected by lnet_ni_lock() */
+	
 	enum lnet_ni_state	ni_state;
 
-	/* Recovery state. Protected by lnet_ni_lock() */
+	
 	__u32			ni_recovery_state;
 
-	/* When to send the next recovery ping */
+	
 	time64_t                ni_next_ping;
 	/* How many pings sent during current recovery period did not receive
 	 * a reply. NB: reset whenever _any_ message arrives on this NI
 	 */
 	unsigned int		ni_ping_count;
 
-	/* per NI LND tunables */
+	
 	struct lnet_lnd_tunables ni_lnd_tunables;
 
-	/* lnd tunables set explicitly */
+	
 	bool ni_lnd_tunables_set;
 
-	/* NI statistics */
+	
 	struct lnet_element_stats ni_stats;
 	struct lnet_health_local_stats ni_hstats;
 
-	/* physical device CPT */
+	
 	int			ni_dev_cpt;
 
-	/* sequence number used to round robin over nis within a net */
+	
 	__u32			ni_seq;
 
 	/*
@@ -1280,14 +1280,14 @@ struct lnet_ni {
 	 */
 	atomic_t		ni_fatal_error_on;
 
-	/* the relative selection priority of this NI */
+	
 	__u32			ni_sel_priority;
 
 	/*
 	 * equivalent interface to use
 	 */
 	char			*ni_interface;
-	struct net		*ni_net_ns;     /* original net namespace */
+	struct net		*ni_net_ns;     
 };
 
 #define LNET_PROTO_PING_MATCHBITS	0x8000000000000000LL
@@ -1299,7 +1299,7 @@ struct lnet_ni {
  * area that may be overwritten by network data.
  */
 struct lnet_ping_buffer {
-	int			pb_nbytes;	/* sizeof pb_info */
+	int			pb_nbytes;	
 	struct kref		pb_refcnt;
 	bool			pb_needs_post;
 	struct lnet_ping_info	pb_info;
@@ -1318,7 +1318,7 @@ lnet_ping_sts_size(const struct lnet_nid *nid)
 {
 	int size;
 
-	/* for deciding the size of the ping buffer */
+	
 	if (unlikely(LNET_NID_IS_ANY(nid)))
 		return sizeof(struct lnet_ni_large_status);
 
@@ -1347,7 +1347,7 @@ lnet_ping_at_least_two_entries(const struct lnet_ping_info *pi)
 
 	if ((pi->pi_features & LNET_PING_FEAT_LARGE_ADDR) == 0)
 		return pi->pi_nnis <= 2;
-	/* There is at least 1 large-address entry */
+	
 	if (pi->pi_nnis != 1)
 		return false;
 	lns = (void *)&pi->pi_ni[1];
@@ -1362,185 +1362,185 @@ struct lnet_nid_list {
 };
 
 struct lnet_peer_ni {
-	/* chain on lpn_peer_nis */
+	
 	struct list_head	lpni_peer_nis;
-	/* chain on remote peer list */
+	
 	struct list_head	lpni_on_remote_peer_ni_list;
-	/* chain on recovery queue */
+	
 	struct list_head	lpni_recovery;
-	/* chain on peer hash */
+	
 	struct list_head	lpni_hashlist;
-	/* messages blocking for tx credits */
+	
 	struct list_head	lpni_txq;
-	/* pointer to peer net I'm part of */
+	
 	struct lnet_peer_net	*lpni_peer_net;
-	/* statistics kept on each peer NI */
+	
 	struct lnet_element_stats lpni_stats;
 	struct lnet_health_remote_stats lpni_hstats;
-	/* spin lock protecting credits and lpni_txq */
+	
 	spinlock_t		lpni_lock;
-	/* # tx credits available */
+	
 	int			lpni_txcredits;
-	/* low water mark */
+	
 	int			lpni_mintxcredits;
 	/*
 	 * Each peer_ni in a gateway maintains its own credits. This
 	 * allows more traffic to gateways that have multiple interfaces.
 	 */
-	/* # router credits */
+	
 	int			lpni_rtrcredits;
-	/* low water mark */
+	
 	int			lpni_minrtrcredits;
-	/* bytes queued for sending */
+	
 	long			lpni_txqnob;
-	/* network peer is on */
+	
 	struct lnet_net		*lpni_net;
-	/* peer's NID */
+	
 	struct lnet_nid		lpni_nid;
-	/* # refs */
+	
 	struct kref		lpni_kref;
-	/* health value for the peer */
+	
 	atomic_t		lpni_healthv;
-	/* recovery ping mdh */
+	
 	struct lnet_handle_md	lpni_recovery_ping_mdh;
-	/* When to send the next recovery ping */
+	
 	time64_t		lpni_next_ping;
 	/* How many pings sent during current recovery period did not receive
 	 * a reply. NB: reset whenever _any_ message arrives from this peer NI
 	 */
 	unsigned int		lpni_ping_count;
-	/* CPT this peer attached on */
+	
 	int			lpni_cpt;
-	/* state flags -- protected by lpni_lock */
+	
 	unsigned		lpni_state;
-	/* status of the peer NI as reported by the peer */
+	
 	__u32			lpni_ns_status;
-	/* sequence number used to round robin over peer nis within a net */
+	
 	__u32			lpni_seq;
-	/* sequence number used to round robin over gateways */
+	
 	__u32			lpni_gw_seq;
-	/* returned RC ping features. Protected with lpni_lock */
+	
 	unsigned int		lpni_ping_feats;
-	/* time last message was received from the peer */
+	
 	time64_t		lpni_last_alive;
-	/* preferred local nids: if only one, use lpni_pref.nid */
+	
 	union lpni_pref {
 		struct lnet_nid nid;
 		struct list_head nids;
 	} lpni_pref;
-	/* list of router nids preferred for this peer NI */
+	
 	struct list_head	lpni_rtr_pref_nids;
-	/* The relative selection priority of this peer NI */
+	
 	__u32			lpni_sel_priority;
-	/* number of preferred NIDs in lnpi_pref_nids */
+	
 	__u32			lpni_pref_nnids;
 	/* Whether some thread is processing an lnet_notify() event for this
 	 * peer NI
 	 */
 	bool			lpni_notifying;
-	/* Timestamp of the last lnet_notify() event for this peer NI */
+	
 	time64_t		lpni_timestamp;
-	/* Whether we've received an lnet_notify() event for this peer NI */
+	
 	bool			lpni_notified;
 };
 
-/* Preferred path added due to traffic on non-MR peer_ni */
+
 #define LNET_PEER_NI_NON_MR_PREF	BIT(0)
-/* peer is being recovered. */
+
 #define LNET_PEER_NI_RECOVERY_PENDING	BIT(1)
-/* recovery ping failed */
+
 #define LNET_PEER_NI_RECOVERY_FAILED	BIT(2)
-/* peer is being deleted */
+
 #define LNET_PEER_NI_DELETING		BIT(3)
 
 struct lnet_peer {
-	/* chain on pt_peer_list */
+	
 	struct list_head	lp_peer_list;
 
-	/* list of peer nets */
+	
 	struct list_head	lp_peer_nets;
 
-	/* list of messages pending discovery*/
+	
 	struct list_head	lp_dc_pendq;
 
-	/* chain on router list */
+	
 	struct list_head	lp_rtr_list;
 
-	/* primary NID of the peer */
+	
 	struct lnet_nid		lp_primary_nid;
 
-	/* source NID to use during discovery */
+	
 	struct lnet_nid		lp_disc_src_nid;
-	/* destination NID to use during discovery */
+	
 	struct lnet_nid		lp_disc_dst_nid;
 
-	/* net to perform discovery on */
+	
 	__u32			lp_disc_net_id;
 
-	/* CPT of peer_table */
+	
 	int			lp_cpt;
 
-	/* number of NIDs on this peer */
+	
 	int			lp_nnis;
 
-	/* # refs from lnet_route::lr_gateway */
+	
 	int			lp_rtr_refcount;
 
-	/* messages blocking for router credits */
+	
 	struct list_head	lp_rtrq;
 
-	/* routes on this peer */
+	
 	struct list_head	lp_routes;
 
-	/* reference count */
+	
 	atomic_t		lp_refcount;
 
-	/* lock protecting peer state flags and lpni_rtrq */
+	
 	spinlock_t		lp_lock;
 
-	/* peer state flags */
+	
 	unsigned		lp_state;
 
-	/* buffer for data pushed by peer */
+	
 	struct lnet_ping_buffer	*lp_data;
 
-	/* MD handle for ping in progress */
+	
 	struct lnet_handle_md	lp_ping_mdh;
 
-	/* MD handle for push in progress */
+	
 	struct lnet_handle_md	lp_push_mdh;
 
-	/* number of bytes for sizing pb_info in push data */
+	
 	int			lp_data_bytes;
 
-	/* NI config sequence number of peer */
+	
 	__u32			lp_peer_seqno;
 
-	/* Local NI config sequence number acked by peer */
+	
 	__u32			lp_node_seqno;
 
-	/* Local NI config sequence number sent to peer */
+	
 	__u32			lp_node_seqno_sent;
 
-	/* Ping error encountered during discovery. */
+	
 	int			lp_ping_error;
 
-	/* Push error encountered during discovery. */
+	
 	int			lp_push_error;
 
-	/* Error encountered during discovery. */
+	
 	int			lp_dc_error;
 
-	/* time it was put on the ln_dc_working queue */
+	
 	time64_t		lp_last_queued;
 
-	/* link on discovery-related lists */
+	
 	struct list_head	lp_dc_list;
 
-	/* tasks waiting on discovery of this peer */
+	
 	wait_queue_head_t	lp_dc_waitq;
 
-	/* cached peer aliveness */
+	
 	bool			lp_alive;
 
 	/* sequence number used to round robin traffic to this peer's
@@ -1548,10 +1548,10 @@ struct lnet_peer {
 	 */
 	__u32                   lp_send_seq;
 
-	/* timestamp of primary nid lock */
+	
 	__u64			lp_prim_lock_ts;
 
-	/* merge and assign this NID as primary when discovery completes */
+	
 	struct lnet_nid         lp_merge_primary_nid;
 };
 
@@ -1567,9 +1567,9 @@ struct lnet_peer {
  *
  * A peer is marked ROUTER if it indicates so in the feature bit.
  */
-#define LNET_PEER_MULTI_RAIL		BIT(0)	/* Multi-rail aware */
-#define LNET_PEER_NO_DISCOVERY		BIT(1)	/* Peer disabled discovery */
-#define LNET_PEER_ROUTER_ENABLED	BIT(2)	/* router feature enabled */
+#define LNET_PEER_MULTI_RAIL		BIT(0)	
+#define LNET_PEER_NO_DISCOVERY		BIT(1)	
+#define LNET_PEER_ROUTER_ENABLED	BIT(2)	
 
 /*
  * A peer is marked CONFIGURED if it was configured by DLC.
@@ -1584,42 +1584,42 @@ struct lnet_peer {
  * A peer that was created as the result of inbound traffic will not
  * be marked at all.
  */
-#define LNET_PEER_CONFIGURED		BIT(3)	/* Configured via DLC */
-#define LNET_PEER_DISCOVERED		BIT(4)	/* Peer was discovered */
-#define LNET_PEER_REDISCOVER		BIT(5)	/* Discovery was disabled */
+#define LNET_PEER_CONFIGURED		BIT(3)	
+#define LNET_PEER_DISCOVERED		BIT(4)	
+#define LNET_PEER_REDISCOVER		BIT(5)	
 /*
  * A peer is marked DISCOVERING when discovery is in progress.
  * The other flags below correspond to stages of discovery.
  */
-#define LNET_PEER_DISCOVERING		BIT(6)	/* Discovering */
-#define LNET_PEER_DATA_PRESENT		BIT(7)	/* Remote peer data present */
-#define LNET_PEER_NIDS_UPTODATE		BIT(8)	/* Remote peer info uptodate */
-#define LNET_PEER_PING_SENT		BIT(9)	/* Waiting for REPLY to Ping */
-#define LNET_PEER_PUSH_SENT		BIT(10)	/* Waiting for ACK of Push */
-#define LNET_PEER_PING_FAILED		BIT(11)	/* Ping send failure */
-#define LNET_PEER_PUSH_FAILED		BIT(12)	/* Push send failure */
+#define LNET_PEER_DISCOVERING		BIT(6)	
+#define LNET_PEER_DATA_PRESENT		BIT(7)	
+#define LNET_PEER_NIDS_UPTODATE		BIT(8)	
+#define LNET_PEER_PING_SENT		BIT(9)	
+#define LNET_PEER_PUSH_SENT		BIT(10)	
+#define LNET_PEER_PING_FAILED		BIT(11)	
+#define LNET_PEER_PUSH_FAILED		BIT(12)	
 /*
  * A ping can be forced as a way to fix up state, or as a manual
  * intervention by an admin.
  * A push can be forced in circumstances that would normally not
  * allow for one to happen.
  */
-#define LNET_PEER_FORCE_PING		BIT(13)	/* Forced Ping */
-#define LNET_PEER_FORCE_PUSH		BIT(14)	/* Forced Push */
+#define LNET_PEER_FORCE_PING		BIT(13)	
+#define LNET_PEER_FORCE_PUSH		BIT(14)	
 
-/* force delete even if router */
+
 #define LNET_PEER_RTR_NI_FORCE_DEL	BIT(15)
 
-/* gw undergoing alive discovery */
+
 #define LNET_PEER_RTR_DISCOVERY		BIT(16)
-/* gw has undergone discovery (does not indicate success or failure) */
+
 #define LNET_PEER_RTR_DISCOVERED	BIT(17)
 
-/* peer is marked for deletion */
+
 #define LNET_PEER_MARK_DELETION		BIT(18)
-/* lnet_peer_del()/lnet_peer_del_locked() has been called on the peer */
+
 #define LNET_PEER_MARK_DELETED		BIT(19)
-/* lock primary NID to what's requested by ULP */
+
 #define LNET_PEER_LOCK_PRIMARY		BIT(20)
 /* this is for informational purposes only. It is set if a peer gets
  * configured from Lustre with a primary NID which belongs to another peer
@@ -1628,35 +1628,35 @@ struct lnet_peer {
 #define LNET_PEER_BAD_CONFIG		BIT(21)
 
 struct lnet_peer_net {
-	/* chain on lp_peer_nets */
+	
 	struct list_head	lpn_peer_nets;
 
-	/* list of peer_nis on this network */
+	
 	struct list_head	lpn_peer_nis;
 
-	/* pointer to the peer I'm part of */
+	
 	struct lnet_peer	*lpn_peer;
 
-	/* Net ID */
+	
 	__u32			lpn_net_id;
 
-	/* peer net health */
+	
 	int			lpn_healthv;
 
-	/* time of next router ping on this net */
+	
 	time64_t		lpn_next_ping;
 
-	/* selection sequence number */
+	
 	__u32			lpn_seq;
 
-	/* relative peer net selection priority */
+	
 	__u32			lpn_sel_priority;
 
-	/* reference count */
+	
 	atomic_t		lpn_refcount;
 };
 
-/* peer hash size */
+
 #define LNET_PEER_HASH_BITS	9
 #define LNET_PEER_HASH_SIZE	(1 << LNET_PEER_HASH_BITS)
 
@@ -1675,13 +1675,13 @@ struct lnet_peer_net {
  * pt_zombie lock nests inside lnet_net_lock
  */
 struct lnet_peer_table {
-	int			pt_version;	/* /proc validity stamp */
-	struct list_head	*pt_hash;	/* NID->peer hash */
-	struct list_head	pt_peer_list;	/* peers */
-	int			pt_peers;	/* # peers */
-	struct list_head	pt_zombie_list;	/* zombie peer_ni */
-	int			pt_zombies;	/* # zombie peers_ni */
-	spinlock_t		pt_zombie_lock;	/* protect list and count */
+	int			pt_version;	
+	struct list_head	*pt_hash;	
+	struct list_head	pt_peer_list;	
+	int			pt_peers;	
+	struct list_head	pt_zombie_list;	
+	int			pt_zombies;	
+	spinlock_t		pt_zombie_lock;	
 };
 
 /* peer aliveness is enabled only on routers for peers in a network where the
@@ -1693,17 +1693,17 @@ struct lnet_peer_table {
 	(lp)->lpni_net->net_tunables.lct_peer_timeout > 0)
 
 struct lnet_route {
-	struct list_head	lr_list;	/* chain on net */
-	struct list_head	lr_gwlist;	/* chain on gateway */
-	struct lnet_peer	*lr_gateway;	/* router node */
-	struct lnet_nid		lr_nid;		/* NID used to add route */
-	__u32			lr_net;		/* remote network number */
-	__u32			lr_lnet;	/* local network number */
-	int			lr_seq;		/* sequence for round-robin */
-	__u32			lr_hops;	/* how far I am */
-	unsigned int		lr_priority;	/* route priority */
-	atomic_t		lr_alive;	/* cached route aliveness */
-	bool			lr_single_hop;  /* this route is single-hop */
+	struct list_head	lr_list;	
+	struct list_head	lr_gwlist;	
+	struct lnet_peer	*lr_gateway;	
+	struct lnet_nid		lr_nid;		
+	__u32			lr_net;		
+	__u32			lr_lnet;	
+	int			lr_seq;		
+	__u32			lr_hops;	
+	unsigned int		lr_priority;	
+	atomic_t		lr_alive;	
+	bool			lr_single_hop;  
 };
 
 #define LNET_REMOTE_NETS_HASH_DEFAULT	(1U << 7)
@@ -1711,65 +1711,65 @@ struct lnet_route {
 #define LNET_REMOTE_NETS_HASH_SIZE	(1 << the_lnet.ln_remote_nets_hbits)
 
 struct lnet_remotenet {
-	/* chain on ln_remote_nets_hash */
+	
 	struct list_head	lrn_list;
-	/* routes to me */
+	
 	struct list_head	lrn_routes;
-	/* my net number */
+	
 	__u32			lrn_net;
 };
 
-/** lnet message has credit and can be submitted to lnd for send/receive */
+
 #define LNET_CREDIT_OK		0
-/** lnet message is waiting for credit */
+
 #define LNET_CREDIT_WAIT	1
-/** lnet message is waiting for discovery */
+
 #define LNET_DC_WAIT		2
 
 struct lnet_rtrbufpool {
-	/* my free buffer pool */
+	
 	struct list_head	rbp_bufs;
-	/* messages blocking for a buffer */
+	
 	struct list_head	rbp_msgs;
-	/* # pages in each buffer */
+	
 	int			rbp_npages;
-	/* requested number of buffers */
+	
 	int			rbp_req_nbuffers;
-	/* # buffers actually allocated */
+	
 	int			rbp_nbuffers;
-	/* # free buffers / blocked messages */
+	
 	int			rbp_credits;
-	/* low water mark */
+	
 	int			rbp_mincredits;
 };
 
 struct lnet_rtrbuf {
-	struct list_head	 rb_list;	/* chain on rbp_bufs */
-	struct lnet_rtrbufpool	*rb_pool;	/* owning pool */
-	struct bio_vec		 rb_kiov[];	/* the buffer space */
+	struct list_head	 rb_list;	
+	struct lnet_rtrbufpool	*rb_pool;	
+	struct bio_vec		 rb_kiov[];	
 };
 
-#define LNET_PEER_HASHSIZE   503		/* prime! */
+#define LNET_PEER_HASHSIZE   503		
 
 enum lnet_match_flags {
-	/* Didn't match anything */
+	
 	LNET_MATCHMD_NONE	= BIT(0),
-	/* Matched OK */
+	
 	LNET_MATCHMD_OK		= BIT(1),
-	/* Must be discarded */
+	
 	LNET_MATCHMD_DROP	= BIT(2),
-	/* match and buffer is exhausted */
+	
 	LNET_MATCHMD_EXHAUSTED	= BIT(3),
-	/* match or drop */
+	
 	LNET_MATCHMD_FINISH	= (LNET_MATCHMD_OK | LNET_MATCHMD_DROP),
 };
 
-/* Options for struct lnet_portal::ptl_options */
-#define LNET_PTL_LAZY		BIT(0)
-#define LNET_PTL_MATCH_UNIQUE	BIT(1)	/* unique match, for RDMA */
-#define LNET_PTL_MATCH_WILDCARD	BIT(2)	/* wildcard match, request portal */
 
-/* parameter for matching operations (GET, PUT) */
+#define LNET_PTL_LAZY		BIT(0)
+#define LNET_PTL_MATCH_UNIQUE	BIT(1)	
+#define LNET_PTL_MATCH_WILDCARD	BIT(2)	
+
+
 struct lnet_match_info {
 	__u64			mi_mbits;
 	struct lnet_processid	mi_id;
@@ -1780,7 +1780,7 @@ struct lnet_match_info {
 	unsigned int		mi_roffset;
 };
 
-/* ME hash of RDMA portal */
+
 #define LNET_MT_HASH_BITS		8
 #define LNET_MT_HASH_SIZE		(1 << LNET_MT_HASH_BITS)
 #define LNET_MT_HASH_MASK		(LNET_MT_HASH_SIZE - 1)
@@ -1790,49 +1790,49 @@ struct lnet_match_info {
 /* __u64 has 2^6 bits, so need 2^(LNET_MT_HASH_BITS - LNET_MT_BITS_U64) which
  * is 4 __u64s as bit-map, and add an extra __u64 (only use one bit) for the
  * ME-list with ignore-bits, which is mtable::mt_hash[LNET_MT_HASH_IGNORE] */
-#define LNET_MT_BITS_U64		6	/* 2^6 bits */
+#define LNET_MT_BITS_U64		6	
 #define LNET_MT_EXHAUSTED_BITS		(LNET_MT_HASH_BITS - LNET_MT_BITS_U64)
 #define LNET_MT_EXHAUSTED_BMAP		((1 << LNET_MT_EXHAUSTED_BITS) + 1)
 
-/* portal match table */
+
 struct lnet_match_table {
-	/* reserved for upcoming patches, CPU partition ID */
+	
 	unsigned int		mt_cpt;
-	unsigned int		mt_portal;	/* portal index */
+	unsigned int		mt_portal;	
 	/* match table is set as "enabled" if there's non-exhausted MD
 	 * attached on mt_mhash, it's only valid for wildcard portal */
 	unsigned int		mt_enabled;
-	/* bitmap to flag whether MEs on mt_hash are exhausted or not */
+	
 	__u64			mt_exhausted[LNET_MT_EXHAUSTED_BMAP];
-	struct list_head	*mt_mhash;	/* matching hash */
+	struct list_head	*mt_mhash;	
 };
 
-/* these are only useful for wildcard portal */
-/* Turn off message rotor for wildcard portals */
+
+
 #define	LNET_PTL_ROTOR_OFF	0
-/* round-robin dispatch all PUT messages for wildcard portals */
+
 #define	LNET_PTL_ROTOR_ON	1
-/* round-robin dispatch routed PUT message for wildcard portals */
+
 #define	LNET_PTL_ROTOR_RR_RT	2
-/* dispatch routed PUT message by hashing source NID for wildcard portals */
+
 #define	LNET_PTL_ROTOR_HASH_RT	3
 
 struct lnet_portal {
 	spinlock_t		ptl_lock;
-	unsigned int		ptl_index;	/* portal ID, reserved */
-	/* flags on this portal: lazy, unique... */
+	unsigned int		ptl_index;	
+	
 	unsigned int		ptl_options;
-	/* list of messages which are stealing buffer */
+	
 	struct list_head	ptl_msg_stealing;
-	/* messages blocking for MD */
+	
 	struct list_head	ptl_msg_delayed;
-	/* Match table for each CPT */
+	
 	struct lnet_match_table	**ptl_mtables;
-	/* spread rotor of incoming "PUT" */
+	
 	unsigned int		ptl_rotor;
-	/* # active entries for this portal */
+	
 	int			ptl_mt_nmaps;
-	/* array of active entries' cpu-partition-id */
+	
 	int			ptl_mt_maps[];
 };
 
@@ -1840,27 +1840,27 @@ struct lnet_portal {
 #define LNET_LH_HASH_SIZE	(1ULL << LNET_LH_HASH_BITS)
 #define LNET_LH_HASH_MASK	(LNET_LH_HASH_SIZE - 1)
 
-/* resource container (ME, MD, EQ) */
+
 struct lnet_res_container {
-	unsigned int		rec_type;	/* container type */
-	__u64			rec_lh_cookie;	/* cookie generator */
-	struct list_head	rec_active;	/* active resource list */
-	struct list_head	*rec_lh_hash;	/* handle hash */
+	unsigned int		rec_type;	
+	__u64			rec_lh_cookie;	
+	struct list_head	rec_active;	
+	struct list_head	*rec_lh_hash;	
 };
 
-/* message container */
+
 struct lnet_msg_container {
-	int			msc_init;	/* initialized or not */
-	/* max # threads finalizing */
+	int			msc_init;	
+	
 	int			msc_nfinalizers;
-	/* msgs waiting to complete finalizing */
+	
 	struct list_head	msc_finalizing;
-	/* msgs waiting to be resent */
+	
 	struct list_head	msc_resending;
-	struct list_head	msc_active;	/* active message list */
-	/* threads doing finalization */
+	struct list_head	msc_active;	
+	
 	void			**msc_finalizers;
-	/* threads doing resends */
+	
 	void			**msc_resenders;
 };
 
@@ -1907,26 +1907,26 @@ struct lnet_udsp {
 	} udsp_action;
 };
 
-/* Peer Discovery states */
-#define LNET_DC_STATE_SHUTDOWN		0	/* not started */
-#define LNET_DC_STATE_RUNNING		1	/* started up OK */
-#define LNET_DC_STATE_STOPPING		2	/* telling thread to stop */
 
-/* Router Checker states */
-#define LNET_MT_STATE_SHUTDOWN		0	/* not started */
-#define LNET_MT_STATE_RUNNING		1	/* started up OK */
-#define LNET_MT_STATE_STOPPING		2	/* telling thread to stop */
+#define LNET_DC_STATE_SHUTDOWN		0	
+#define LNET_DC_STATE_RUNNING		1	
+#define LNET_DC_STATE_STOPPING		2	
 
-/* LNet states */
-#define LNET_STATE_SHUTDOWN		0	/* not started */
-#define LNET_STATE_RUNNING		1	/* started up OK */
-#define LNET_STATE_STOPPING		2	/* telling thread to stop */
 
-/* LNet routing states */
-#define LNET_ROUTING_DISABLED		0	/* LNet routing disabled */
-#define LNET_ROUTING_ENABLED		1	/* LNet routing enabled */
-#define LNET_ROUTING_STOPPING		2	/* LNet routing stopping */
-#define LNET_ROUTING_STARTING		3	/* LNet routing starting */
+#define LNET_MT_STATE_SHUTDOWN		0	
+#define LNET_MT_STATE_RUNNING		1	
+#define LNET_MT_STATE_STOPPING		2	
+
+
+#define LNET_STATE_SHUTDOWN		0	
+#define LNET_STATE_RUNNING		1	
+#define LNET_STATE_STOPPING		2	
+
+
+#define LNET_ROUTING_DISABLED		0	
+#define LNET_ROUTING_ENABLED		1	
+#define LNET_ROUTING_STOPPING		2	
+#define LNET_ROUTING_STARTING		3	
 
 #define lnet_routing_disabled() (the_lnet.ln_routing == LNET_ROUTING_DISABLED)
 #define lnet_routing_enabled() (the_lnet.ln_routing != LNET_ROUTING_DISABLED)
@@ -1944,61 +1944,61 @@ struct nid_update_callback_reg {
 };
 
 struct lnet {
-	/* CPU partition table of LNet */
+	
 	struct cfs_cpt_table		*ln_cpt_table;
-	/* number of CPTs in ln_cpt_table */
+	
 	unsigned int			ln_cpt_number;
 	unsigned int			ln_cpt_bits;
 
-	/* protect LNet resources (ME/MD/EQ) */
+	
 	struct cfs_percpt_lock		*ln_res_lock;
-	/* # portals */
+	
 	int				ln_nportals;
-	/* the vector of portals */
+	
 	struct lnet_portal		**ln_portals;
-	/* percpt MD container */
+	
 	struct lnet_res_container	**ln_md_containers;
 
-	/* Event Queue container */
+	
 	struct lnet_res_container	ln_eq_container;
 	spinlock_t			ln_eq_wait_lock;
 
 	unsigned int			ln_remote_nets_hbits;
 
-	/* protect NI, peer table, credits, routers, rtrbuf... */
+	
 	struct cfs_percpt_lock		*ln_net_lock;
-	/* percpt message containers for active/finalizing/freed message */
+	
 	struct lnet_msg_container	**ln_msg_containers;
 	struct lnet_counters		**ln_counters;
 	struct lnet_peer_table		**ln_peer_tables;
-	/* list of peer nis not on a local network */
+	
 	struct list_head		ln_remote_peer_ni_list;
-	/* failure simulation */
+	
 	struct list_head		ln_test_peers;
 	struct list_head		ln_drop_rules;
 	struct list_head		ln_delay_rules;
-	/* LND instances */
+	
 	struct list_head		ln_nets;
-	/* Sequence number used to round robin sends across all nets */
+	
 	__u32				ln_net_seq;
-	/* the loopback NI */
+	
 	struct lnet_ni			*ln_loni;
-	/* network zombie list */
+	
 	struct list_head		ln_net_zombie;
-	/* resend messages list */
+	
 	struct list_head		ln_msg_resend;
-	/* spin lock to protect the msg resend list */
+	
 	spinlock_t			ln_msg_resend_lock;
 
-	/* remote networks with routes to them */
+	
 	struct list_head		*ln_remote_nets_hash;
-	/* validity stamp */
+	
 	__u64				ln_remote_nets_version;
-	/* list of all known routers */
+	
 	struct list_head		ln_routers;
-	/* validity stamp */
+	
 	__u64				ln_routers_version;
-	/* percpt router buffer pools */
+	
 	struct lnet_rtrbufpool		**ln_rtrpools;
 
 	/*
@@ -2024,44 +2024,44 @@ struct lnet {
 	lnet_handler_t			ln_push_target_handler;
 	struct lnet_handle_md		ln_push_target_md;
 	struct lnet_ping_buffer		*ln_push_target;
-	/* bytes needed for pb_info to receive push */
+	
 	int				ln_push_target_nbytes;
 
-	/* discovery event queue handle */
+	
 	lnet_handler_t			ln_dc_handler;
-	/* discovery requests */
+	
 	struct list_head		ln_dc_request;
-	/* discovery working list */
+	
 	struct list_head		ln_dc_working;
-	/* discovery expired list */
+	
 	struct list_head		ln_dc_expired;
-	/* discovery thread wait queue */
+	
 	wait_queue_head_t		ln_dc_waitq;
-	/* discovery startup/shutdown state */
+	
 	int				ln_dc_state;
 
-	/* monitor thread startup/shutdown state */
+	
 	int				ln_mt_state;
-	/* serialise startup/shutdown */
+	
 	struct semaphore		ln_mt_signal;
 
 	struct mutex			ln_api_mutex;
 	struct mutex			ln_lnd_mutex;
-	/* Have I called LNetNIInit myself? */
+	
 	int				ln_niinit_self;
-	/* LNetNIInit/LNetNIFini counter */
+	
 	int				ln_refcount;
-	/* SHUTDOWN/RUNNING/STOPPING */
+	
 	int				ln_state;
 
-	int				ln_routing;	/* am I a router? */
-	lnet_pid_t			ln_pid;		/* requested pid */
-	/* uniquely identifies this ni in this epoch */
+	int				ln_routing;	
+	lnet_pid_t			ln_pid;		
+	
 	__u64				ln_interface_cookie;
-	/* registered LNDs */
+	
 	const struct lnet_lnd		*ln_lnds[NUM_LNDS];
 
-	/* test protocol compatibility flags */
+	
 	unsigned long			ln_testprotocompat;
 
 	/* 0 - load the NIs from the mod params
@@ -2071,7 +2071,7 @@ struct lnet {
 	 */
 	bool				ln_nis_from_mod_params;
 
-	/* Switch to test large NIDs */
+	
 	bool				ln_nis_use_large_nids;
 
 	/*
@@ -2080,11 +2080,11 @@ struct lnet {
 	 */
 	struct completion		ln_mt_wait_complete;
 
-	/* per-cpt resend queues */
+	
 	struct list_head		**ln_mt_resendqs;
-	/* local NIs to recover */
+	
 	struct list_head		ln_mt_localNIRecovq;
-	/* local NIs to recover */
+	
 	struct list_head		ln_mt_peerNIRecovq;
 	/*
 	 * An array of queues for GET/PUT waiting for REPLY/ACK respectively.
@@ -2101,7 +2101,7 @@ struct lnet {
 	 * operations on the MD complete or when LNet has shut down.
 	 */
 	struct list_head		**ln_mt_zombie_rstqs;
-	/* recovery handler */
+	
 	lnet_handler_t			ln_mt_handler;
 
 	/*
@@ -2109,20 +2109,20 @@ struct lnet {
 	 * work loops
 	 */
 	struct completion		ln_started;
-	/* UDSP list */
+	
 	struct list_head		ln_udsp_list;
 
 	struct list_head		ln_nid_update_callbacks;
 
-	/* Number of messages that have exceeded their message deadline */
+	
 	atomic_t			ln_late_msg_count;
-	/* Total amount of time past their deadline for all late ^ messages */
+	
 	atomic64_t			ln_late_msg_nsecs;
 
-	/* for LNDs to signal that ping buffer needs updating */
+	
 	atomic_t                        ln_update_ping_buf;
 
-	/* workqueue for serving lnd ping buffer update requests */
+	
 	struct workqueue_struct		*ln_pb_update_wq;
 	struct work_struct		ln_pb_update_work;
 

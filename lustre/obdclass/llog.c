@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * OST<->MDS recovery logging infrastructure.
  * Invariants in implementation:
@@ -59,7 +59,7 @@ static void llog_free_handle(struct llog_handle *loghandle)
 {
 	LASSERT(loghandle != NULL);
 
-	/* failed llog_init_handle */
+	
 	if (loghandle->lgh_hdr == NULL)
 		goto out;
 
@@ -156,7 +156,7 @@ int llog_destroy(const struct lu_env *env, struct llog_handle *handle)
 		RETURN(-EOPNOTSUPP);
 
 	if (handle->lgh_obj == NULL) {
-		/* if lgh_obj == NULL, then it is from client side destroy */
+		
 		rc = lop->lop_destroy(env, handle, NULL);
 		RETURN(rc);
 	}
@@ -191,7 +191,7 @@ out_trans:
 }
 EXPORT_SYMBOL(llog_destroy);
 
-/* returns negative on error; 0 if success; 1 if success & log destroyed */
+
 int llog_cancel_arr_rec(const struct lu_env *env, struct llog_handle *loghandle,
 			int num, int *index)
 {
@@ -243,7 +243,7 @@ int llog_cancel_arr_rec(const struct lu_env *env, struct llog_handle *loghandle,
 		GOTO(out_trans, rc);
 
 	down_write(&loghandle->lgh_lock);
-	/* clear bitmap */
+	
 	spin_lock(&loghandle->lgh_hdr_lock);
 	for (i = 0; i < num; ++i) {
 		if (index[i] == 0) {
@@ -273,7 +273,7 @@ int llog_cancel_arr_rec(const struct lu_env *env, struct llog_handle *loghandle,
 	/* Pass this index to llog_osd_write_rec(), which will use the index
 	 * to only update the necesary bitmap. */
 	lgi->lgi_cookie.lgc_index = index[0];
-	/* update header */
+	
 	rc = llog_write_rec(env, loghandle, &llh->llh_hdr, (num != 1 ? NULL :
 			    &lgi->lgi_cookie), LLOG_HEADER_IDX, th);
 	lgi->lgi_cookie.lgc_index = tmp_lgc_index;
@@ -287,7 +287,7 @@ int llog_cancel_arr_rec(const struct lu_env *env, struct llog_handle *loghandle,
 	     (loghandle->u.phd.phd_cat_handle != NULL &&
 	      loghandle->u.phd.phd_cat_handle->u.chd.chd_current_log !=
 		loghandle))) {
-		/* never try to destroy it again */
+		
 		llh->llh_flags &= ~LLOG_F_ZAP_WHEN_EMPTY;
 		rc = llog_trans_destroy(env, loghandle, th);
 		if (rc < 0) {
@@ -303,7 +303,7 @@ int llog_cancel_arr_rec(const struct lu_env *env, struct llog_handle *loghandle,
 		rc = LLOG_DEL_PLAIN;
 	}
 
-	/* update for catalog which doesn't happen very often */
+	
 	if (llh->llh_flags & LLOG_F_IS_CAT) {
 		lgi->lgi_attr.la_valid = LA_MTIME;
 		lgi->lgi_attr.la_mtime = ktime_get_real_seconds();
@@ -316,7 +316,7 @@ out_unlock:
 			llh->llh_cat_idx = old_cat;
 			old_cat = -1;
 		}
-		/* restore bitmap while holding a mutex */
+		
 		spin_lock(&loghandle->lgh_hdr_lock);
 		if (subtract_count) {
 			loghandle->lgh_hdr->llh_count += num;
@@ -368,9 +368,9 @@ int llog_read_header(const struct lu_env *env, struct llog_handle *handle,
 	if (rc == LLOG_EEMPTY) {
 		struct llog_log_hdr *llh = handle->lgh_hdr;
 
-		/* lrh_len should be initialized in llog_init_handle */
-		handle->lgh_last_idx = 0; /* header is record with index 0 */
-		llh->llh_count = 1;         /* for the header record */
+		
+		handle->lgh_last_idx = 0; 
+		llh->llh_count = 1;         
 		llh->llh_hdr.lrh_type = LLOG_HDR_MAGIC;
 		LASSERT(handle->lgh_ctxt->loc_chunk_size >=
 						LLOG_MIN_CHUNK_SIZE);
@@ -415,7 +415,7 @@ int llog_init_handle(const struct lu_env *env, struct llog_handle *handle,
 
 	handle->lgh_hdr = llh;
 	handle->lgh_hdr_size = chunk_size;
-	/* first assign flags to use llog_client_ops */
+	
 	llh->llh_flags = flags;
 	rc = llog_read_header(env, handle, uuid);
 	if (rc == 0) {
@@ -437,7 +437,7 @@ int llog_init_handle(const struct lu_env *env, struct llog_handle *handle,
 			 */
 			flags = llh->llh_flags;
 		} else {
-			/* for some reason the llh_flags has no type set */
+			
 			CERROR("llog type is not specified!\n");
 			GOTO(out, rc = -EINVAL);
 		}
@@ -455,7 +455,7 @@ int llog_init_handle(const struct lu_env *env, struct llog_handle *handle,
 		INIT_LIST_HEAD(&handle->u.chd.chd_head);
 		llh->llh_size = sizeof(struct llog_logid_rec);
 		llh->llh_flags |= LLOG_F_IS_FIXSIZE;
-		/* Fixing llh_cat_idx if it has problem */
+		
 		if (rc == 0)
 			llog_cat_set_first_idx(handle, llh->llh_cat_idx);
 	} else if (!(flags & LLOG_F_IS_PLAIN)) {
@@ -511,7 +511,7 @@ static inline int llog_skip_gap(struct llog_rec_hdr *start, char *end)
 {
 	struct llog_rec_hdr *rec = start;
 
-	/* skipping zero gap */
+	
 	while ((rec->lrh_index == 0 || rec->lrh_len == 0) &&
 	       (char *)rec < (char *)end)
 		rec = (typeof(rec))(((char *)rec) + 4);
@@ -564,7 +564,7 @@ static int llog_process_thread(void *arg)
 	lti = llog_info(env);
 
 	cur_offset = chunk_size = llh->llh_hdr.lrh_len;
-	/* expect chunk_size to be power of two */
+	
 	LASSERT(is_power_of_2(chunk_size));
 
 	OBD_ALLOC_LARGE(buf, chunk_size);
@@ -574,7 +574,7 @@ static int llog_process_thread(void *arg)
 	last_index = llog_max_idx(llh);
 	if (cd) {
 		if (cd->lpcd_first_idx >= llog_max_idx(llh))
-			/* End of the indexes -> Nothing to do */
+			
 			GOTO(out, rc = 0);
 
 		index = cd->lpcd_first_idx + 1;
@@ -594,12 +594,12 @@ static int llog_process_thread(void *arg)
 		int lh_last_idx;
 		int synced_idx = 0;
 
-		/* skip records not set in bitmap */
+		
 		while (index <= last_index &&
 		       llog_is_index_skipable(index, llh, cd))
 			++index;
 
-		/* There are no indices prior the last_index */
+		
 		if (index > last_index)
 			break;
 
@@ -607,10 +607,10 @@ static int llog_process_thread(void *arg)
 		       last_index);
 
 repeat:
-		/* get the buf with our target record; avoid old garbage */
+		
 		memset(buf, 0, chunk_size);
-		/* the record index for outdated chunk data */
-		/* it is safe to process buffer until saved lgh_last_idx */
+		
+		
 		lh_last_idx = LLOG_HDR_TAIL(llh)->lrt_index;
 		rc = llog_next_block(env, loghandle, &saved_index,
 				     index, &cur_offset, buf, chunk_size);
@@ -625,7 +625,7 @@ repeat:
 		if (repeated && (chunk_offset + buf_offset) == cur_offset &&
 		    (rc == -EBADR || rc == -EIO))
 			GOTO(out, rc = 0);
-		/* EOF while trying to skip to the next chunk */
+		
 		if (!index && rc == -EBADR)
 			GOTO(out, rc = 0);
 		if (rc != 0)
@@ -662,7 +662,7 @@ repeat:
 			CDEBUG(D_OTHER, "processing rec 0x%px type=%#x idx=%d\n",
 			       rec, rec->lrh_type, rec->lrh_index);
 
-			/* start with first rec if block was skipped */
+			
 			if (!index) {
 				CDEBUG(D_OTHER,
 				       "%s: skipping to the index %u\n",
@@ -707,7 +707,7 @@ repeat:
 			     lh_last_idx != LLOG_HDR_TAIL(llh)->lrt_index) ||
 			    (((char *)rec - buf >= cur_offset - chunk_offset) &&
 			    !repeated)) {
-				/* save offset inside buffer for the re-read */
+				
 				buf_offset = (char *)rec - (char *)buf;
 				cur_offset = chunk_offset;
 				repeated = true;
@@ -747,9 +747,9 @@ repeat:
 					rec->lrh_len = gap_size;
 					goto next_rec;
 				}
-				/* make sure that is always next block */
+				
 				cur_offset = chunk_offset + chunk_size;
-				/* no goal to find, just next block to read */
+				
 				index = 0;
 				break;
 			}
@@ -783,7 +783,7 @@ repeat:
 				loghandle->lgh_cur_offset = (char *)rec -
 						(char *)buf + chunk_offset;
 
-			/* if needed, process the callback on this record */
+			
 			if (!llog_is_index_skipable(index, llh, cd)) {
 				struct llog_cookie *lgc;
 				__u64	tmp_off;
@@ -798,7 +798,7 @@ repeat:
 
 				if (lti != NULL) {
 					lgc = &lti->lgi_cookie;
-					/* store lu_env for recursive calls */
+					
 					tmp_off = lgc->lgc_offset;
 					tmp_idx = lgc->lgc_index;
 
@@ -841,7 +841,7 @@ repeat:
 					GOTO(out, rc = 0);
 			}
 next_rec:
-			/* exit if the last index is reached */
+			
 			if (index >= last_index)
 				GOTO(out, rc = 0);
 			++index;
@@ -1044,7 +1044,7 @@ int llog_reverse_process(const struct lu_env *env,
 		struct llog_rec_hdr *rec;
 		struct llog_rec_tail *tail;
 
-		/* skip records not set in bitmap */
+		
 		while (index >= first_index &&
 		       llog_is_index_skipable(index, llh, cd))
 			--index;
@@ -1053,7 +1053,7 @@ int llog_reverse_process(const struct lu_env *env,
 		if (index == first_index - 1)
 			break;
 
-		/* get the buf with our target record; avoid old garbage */
+		
 		memset(buf, 0, chunk_size);
 		rc = llog_prev_block(env, loghandle, index, buf, chunk_size);
 		if (rc)
@@ -1071,12 +1071,12 @@ int llog_reverse_process(const struct lu_env *env,
 		LASSERT(idx == index);
 		tail = (void *)rec + rec->lrh_len - sizeof(*tail);
 
-		/* process records in buffer, starting where we found one */
+		
 		while ((void *)tail > buf) {
 			if (tail->lrt_index == 0)
-				GOTO(out, rc = 0); /* no more records */
+				GOTO(out, rc = 0); 
 
-			/* if needed, process the callback on this record */
+			
 			if (!llog_is_index_skipable(index, llh, cd)) {
 				rec = (void *)tail - tail->lrt_len +
 				      sizeof(*tail);
@@ -1093,7 +1093,7 @@ int llog_reverse_process(const struct lu_env *env,
                                         GOTO(out, rc);
                         }
 
-                        /* previous record, still in buffer? */
+                        
                         --index;
                         if (index < first_index)
                                 GOTO(out, rc = 0);
@@ -1216,7 +1216,7 @@ int llog_write_rec(const struct lu_env *env, struct llog_handle *handle,
 
 	ENTRY;
 
-	/* API sanity checks */
+	
 	if (handle == NULL) {
 		CERROR("loghandle is missed\n");
 		RETURN(-EPROTO);
@@ -1353,7 +1353,7 @@ int llog_erase(const struct lu_env *env, struct llog_ctxt *ctxt,
 
 	ENTRY;
 
-	/* nothing to erase */
+	
 	if (name == NULL && logid == NULL)
 		RETURN(0);
 
@@ -1462,10 +1462,10 @@ int llog_write_cookie(const struct lu_env *env, struct llog_handle *loghandle,
 	if (need_cookie && !cookie) {
 		struct llog_thread_info *lti = llog_info(env);
 
-		/* cookie comes from llog_process_thread */
+		
 		rc = llog_write_rec(env, loghandle, rec, &lti->lgi_cookie,
 				    rec->lrh_index, th);
-		/* upper layer didn`t pass cookie so change rc */
+		
 		rc = (rc == 1 ? 0 : rc);
 	} else {
 		rc = llog_write_rec(env, loghandle, rec, cookie, idx, th);
@@ -1571,7 +1571,7 @@ out:
 }
 EXPORT_SYMBOL(llog_is_empty);
 
-/* this callback run in raw read mode (canceled record are processed) */
+
 int llog_copy_handler(const struct lu_env *env, struct llog_handle *llh,
 		      struct llog_rec_hdr *rec, void *data)
 {
@@ -1584,17 +1584,17 @@ int llog_copy_handler(const struct lu_env *env, struct llog_handle *llh,
 	if (CFS_FAIL_CHECK(OBD_FAIL_LLOG_BACKUP_ENOSPC))
 		RETURN(-ENOSPC);
 
-	/* Append all records */
+	
 	rc = llog_write(env, copy_llh, rec, LLOG_NEXT_IDX);
 
-	/* Cancel the record if it is canceled on the source */
+	
 	if (!rc && !test_bit_le(idx, LLOG_HDR_BITMAP(llh->lgh_hdr)))
 		rc = llog_cancel_rec(env, copy_llh, copy_llh->lgh_last_idx);
 
 	RETURN(rc);
 }
 
-/* backup plain llog */
+
 int llog_backup(const struct lu_env *env, struct obd_device *obd,
 		struct llog_ctxt *ctxt, struct llog_ctxt *bctxt,
 		char *name, char *backup)
@@ -1605,7 +1605,7 @@ int llog_backup(const struct lu_env *env, struct obd_device *obd,
 
 	ENTRY;
 
-	/* open original log */
+	
 	rc = llog_open(env, ctxt, &llh, NULL, name, LLOG_OPEN_EXISTS);
 	if (rc < 0) {
 		/* the -ENOENT case is also reported to the caller
@@ -1621,12 +1621,12 @@ int llog_backup(const struct lu_env *env, struct obd_device *obd,
 	if (rc)
 		GOTO(out_close, rc);
 
-	/* Make sure there's no old backup log */
+	
 	rc = llog_erase(env, bctxt, NULL, backup);
 	if (rc < 0 && rc != -ENOENT)
 		GOTO(out_close, rc);
 
-	/* open backup log */
+	
 	rc = llog_open_create(env, bctxt, &bllh, NULL, backup);
 	if (rc) {
 		CERROR("%s: failed to open backup logfile %s: rc = %d\n",
@@ -1634,7 +1634,7 @@ int llog_backup(const struct lu_env *env, struct obd_device *obd,
 		GOTO(out_close, rc);
 	}
 
-	/* check that backup llog is not the same object as original one */
+	
 	if (llh->lgh_obj == bllh->lgh_obj) {
 		CERROR("%s: backup llog %s to itself (%s), objects %p/%p\n",
 		       obd->obd_name, name, backup, llh->lgh_obj,
@@ -1647,9 +1647,9 @@ int llog_backup(const struct lu_env *env, struct obd_device *obd,
 	if (rc)
 		GOTO(out_backup, rc);
 
-	/* Read canceled records to have an exact copy */
+	
 	cd.lpcd_read_mode = LLOG_READ_MODE_RAW;
-	/* Copy log record by record */
+	
 	rc = llog_process_or_fork(env, llh, llog_copy_handler, (void *)bllh,
 				  &cd, false);
 	if (rc)
@@ -1663,7 +1663,7 @@ out_close:
 }
 EXPORT_SYMBOL(llog_backup);
 
-/* just count processed records */
+
 static inline int llog_validate_record(const struct lu_env *env,
 				       struct llog_handle *llh,
 				       struct llog_rec_hdr *rec, void *data)
@@ -1674,13 +1674,13 @@ static inline int llog_validate_record(const struct lu_env *env,
 	return 0;
 }
 
-/* validate plain llog by reading all its records */
+
 int llog_validate(const struct lu_env *env, struct llog_ctxt *ctxt, char *name)
 {
 	struct llog_handle *llh;
 	struct llog_process_cat_data cd = { 0 };
 	unsigned int recs;
-	unsigned int processed = 1; /* one for header */
+	unsigned int processed = 1; 
 	int rc;
 
 	ENTRY;
@@ -1713,7 +1713,7 @@ out_close:
 }
 EXPORT_SYMBOL(llog_validate);
 
-/* Get size of llog */
+
 __u64 llog_size(const struct lu_env *env, struct llog_handle *llh)
 {
 	int rc;

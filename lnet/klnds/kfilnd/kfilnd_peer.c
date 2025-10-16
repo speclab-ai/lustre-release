@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd peer management implementation.
  */
@@ -55,7 +55,7 @@ static void kfilnd_peer_del(struct kfilnd_peer *kp)
 
 		rhashtable_remove_fast(&kp->kp_dev->peer_cache, &kp->kp_node,
 				       peer_cache_params);
-		/* Return allocation reference */
+		
 		refcount_dec(&kp->kp_cnt);
 
 		rcu_read_unlock();
@@ -186,7 +186,7 @@ struct kfilnd_peer *kfilnd_peer_get(struct kfilnd_dev *dev, lnet_nid_t nid)
 	struct kfilnd_peer *clash_peer;
 
 again:
-	/* Check the cache for a match. */
+	
 	rcu_read_lock();
 	kp = rhashtable_lookup_fast(&dev->peer_cache, &nid,
 				      peer_cache_params);
@@ -203,7 +203,7 @@ again:
 		return kp;
 	}
 
-	/* Allocate a new peer for the cache. */
+	
 	kp = kzalloc(sizeof(*kp), GFP_KERNEL);
 	if (!kp) {
 		rc = -ENOMEM;
@@ -313,7 +313,7 @@ void kfilnd_peer_alive(struct kfilnd_peer *kp)
 {
 	kp->kp_last_alive = ktime_get_seconds();
 
-	/* Ensure timestamp is committed to memory before used. */
+	
 	smp_mb();
 }
 
@@ -337,7 +337,7 @@ void kfilnd_peer_init(struct kfilnd_dev *dev)
 
 void kfilnd_peer_process_hello(struct kfilnd_peer *kp, struct kfilnd_msg *msg)
 {
-	/* TODO: Support RX count. */
+	
 	LASSERT(msg->proto.hello.rx_count > 0);
 	atomic_set(&kp->kp_rx_base, msg->proto.hello.rx_base);
 

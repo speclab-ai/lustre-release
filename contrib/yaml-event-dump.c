@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0+
+
 /*
  * Copyright (c) 2023 James Simmons <jsimmons@infradead.org>
  *
@@ -6,7 +6,7 @@
  * this application that takes a YAML file and creates pseudo user land
  * libyaml C code. This will speed up development greatly. Note its not
  * 100% promised that the YAML config file that works with the libyaml
- * is valid. Please always test your YAML file with http://www.yamllint.com
+ * is valid. Please always test your YAML file with http:
  *
  * To build this application just run : gcc -lyaml yaml-event-dump.c
  *
@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 	if (!file)
 		return -errno;
 
-	/* Initialize configuration parser */
+	
 	rc = yaml_parser_initialize(&setup);
 	if (rc == 0)
 		return -EINVAL;
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 	puts("\tyaml_event_t event;\n");
 
 	do {
-		/* Get the next event. */
+		
 		if (!yaml_parser_parse(&setup, &event))
 			goto emitter_error;
 
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 			break;
 		case YAML_DOCUMENT_END_EVENT:
 			puts("\tyaml_document_end_event_initialize(&event, 0);");
-			/* YAML_STREAM_END_EVENT will be next */
+			
 			puts("\trc = yaml_emitter_close(&request);");
 			puts("\tif (rc == 0)");
 			puts("\t\tgoto emitter_error;");
@@ -104,8 +104,8 @@ int main(int argc, char **argv)
 			} else {
 				puts("\t\t\t\t     (yaml_char_t *)YAML_STR_TAG,");
 			}
-			//printf("\t\t\t\t     (yaml_char_t *)\"%s\",\n",
-			//       event.data.scalar.tag);
+			
+			
 			printf("\t\t\t\t     (yaml_char_t *)\"%s\",\n", value);
 			printf("\t\t\t\t     strlen(\"%s\"), 1, 0,\n", value);
 
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
 			break;
 		}
 
-		/* Emit the event. */
+		
 		if (!yaml_emitter_emit(&output, &event))
 			goto emitter_error;
 	} while (event.type != YAML_STREAM_END_EVENT);

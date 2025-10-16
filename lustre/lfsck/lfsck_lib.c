@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Fan, Yong <fan.yong@intel.com>
  */
@@ -29,7 +29,7 @@
 
 #define LFSCK_CHECKPOINT_SKIP	1
 
-/* define lfsck thread key */
+
 LU_KEY_INIT(lfsck, struct lfsck_thread_info);
 
 static void lfsck_key_fini(const struct lu_context *ctx,
@@ -247,7 +247,7 @@ again:
 				       ltd_orphan_list);
 		list_del_init(&ltd->ltd_orphan_list);
 		rc = __lfsck_add_target(env, lfsck, ltd, for_ost, true);
-		/* Do not hold the semaphore for too long time. */
+		
 		up_write(&ltds->ltd_rw_sem);
 		if (rc != 0)
 			return rc;
@@ -562,7 +562,7 @@ int lfsck_find_mdt_idx_by_fid(const struct lu_env *env,
 	int rc;
 
 	if (unlikely(fid_seq(fid) == FID_SEQ_LOCAL_FILE)) {
-		/* "ROOT" is always on the MDT0. */
+		
 		if (lu_fid_eq(fid, &lfsck->li_global_root_fid))
 			return 0;
 
@@ -688,7 +688,7 @@ static int lfsck_create_lpf_local(const struct lu_env *env,
 	if (IS_ERR(th))
 		RETURN(PTR_ERR(th));
 
-	/* 1a. create child */
+	
 	rc = dt_declare_create(env, child, la, NULL, dof, th);
 	if (rc != 0)
 		GOTO(stop, rc);
@@ -696,12 +696,12 @@ static int lfsck_create_lpf_local(const struct lu_env *env,
 	if (!dt_try_as_dir(env, child, false))
 		GOTO(stop, rc = -ENOTDIR);
 
-	/* 2a. increase child nlink */
+	
 	rc = dt_declare_ref_add(env, child, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 3a. insert dot into child dir */
+	
 	rec->rec_type = S_IFDIR;
 	rec->rec_fid = cfid;
 	rc = dt_declare_insert(env, child, (const struct dt_rec *)rec,
@@ -709,14 +709,14 @@ static int lfsck_create_lpf_local(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 4a. insert dotdot into child dir */
+	
 	rec->rec_fid = &LU_LPF_FID;
 	rc = dt_declare_insert(env, child, (const struct dt_rec *)rec,
 			       (const struct dt_key *)dotdot, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 5a. insert linkEA for child */
+	
 	lfsck_buf_init(&linkea_buf, ldata.ld_buf->lb_buf,
 		       ldata.ld_leh->leh_len);
 	rc = dt_declare_xattr_set(env, child, NULL, &linkea_buf,
@@ -724,7 +724,7 @@ static int lfsck_create_lpf_local(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 6a. insert name into parent dir */
+	
 	rec->rec_type = S_IFDIR;
 	rec->rec_fid = cfid;
 	rc = dt_declare_insert(env, parent, (const struct dt_rec *)rec,
@@ -732,12 +732,12 @@ static int lfsck_create_lpf_local(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 7a. increase parent nlink */
+	
 	rc = dt_declare_ref_add(env, parent, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 8a. update bookmark */
+	
 	rc = dt_declare_record_write(env, bk_obj,
 				     lfsck_buf_get(env, bk, len), 0, th);
 	if (rc != 0)
@@ -748,38 +748,38 @@ static int lfsck_create_lpf_local(const struct lu_env *env,
 		GOTO(stop, rc);
 
 	dt_write_lock(env, child, 0);
-	/* 1b. create child */
+	
 	rc = dt_create(env, child, la, NULL, dof, th);
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* 2b. increase child nlink */
+	
 	rc = dt_ref_add(env, child, th);
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* 3b. insert dot into child dir */
+	
 	rec->rec_fid = cfid;
 	rc = dt_insert(env, child, (const struct dt_rec *)rec,
 		       (const struct dt_key *)dot, th);
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* 4b. insert dotdot into child dir */
+	
 	rec->rec_fid = &LU_LPF_FID;
 	rc = dt_insert(env, child, (const struct dt_rec *)rec,
 		       (const struct dt_key *)dotdot, th);
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* 5b. insert linkEA for child. */
+	
 	rc = dt_xattr_set(env, child, &linkea_buf,
 			  XATTR_NAME_LINK, 0, th);
 	dt_write_unlock(env, child);
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 6b. insert name into parent dir */
+	
 	rec->rec_fid = cfid;
 	rc = dt_insert(env, parent, (const struct dt_rec *)rec,
 		       (const struct dt_key *)name, th);
@@ -787,7 +787,7 @@ static int lfsck_create_lpf_local(const struct lu_env *env,
 		GOTO(stop, rc);
 
 	dt_write_lock(env, parent, 0);
-	/* 7b. increase parent nlink */
+	
 	rc = dt_ref_add(env, parent, th);
 	dt_write_unlock(env, parent);
 	if (rc != 0)
@@ -796,7 +796,7 @@ static int lfsck_create_lpf_local(const struct lu_env *env,
 	bk->lb_lpf_fid = *cfid;
 	lfsck_bookmark_cpu_to_le(&lfsck->li_bookmark_disk, bk);
 
-	/* 8b. update bookmark */
+	
 	rc = dt_record_write(env, bk_obj,
 			     lfsck_buf_get(env, bk, len), &pos, th);
 
@@ -842,7 +842,7 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	if (rc != 0)
 		RETURN(rc);
 
-	/* Create .lustre/lost+found/MDTxxxx. */
+	
 
 	/* XXX: Currently, cross-MDT create operation needs to create the child
 	 *	object firstly, then insert name into the parent directory. For
@@ -863,14 +863,14 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	 *	repair such inconsistency when LFSCK run next time.
 	 */
 
-	/* Transaction I: locally */
+	
 
 	dev = lfsck_obj2dev(child);
 	th = lfsck_trans_create(env, dev, lfsck);
 	if (IS_ERR(th))
 		RETURN(PTR_ERR(th));
 
-	/* 1a. create child */
+	
 	rc = dt_declare_create(env, child, la, NULL, dof, th);
 	if (rc != 0)
 		GOTO(stop, rc);
@@ -878,12 +878,12 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	if (!dt_try_as_dir(env, child, false))
 		GOTO(stop, rc = -ENOTDIR);
 
-	/* 2a. increase child nlink */
+	
 	rc = dt_declare_ref_add(env, child, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 3a. insert dot into child dir */
+	
 	rec->rec_type = S_IFDIR;
 	rec->rec_fid = cfid;
 	rc = dt_declare_insert(env, child, (const struct dt_rec *)rec,
@@ -891,14 +891,14 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 4a. insert dotdot into child dir */
+	
 	rec->rec_fid = &LU_LPF_FID;
 	rc = dt_declare_insert(env, child, (const struct dt_rec *)rec,
 			       (const struct dt_key *)dotdot, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 5a. insert linkEA for child */
+	
 	lfsck_buf_init(&linkea_buf, ldata.ld_buf->lb_buf,
 		       ldata.ld_leh->leh_len);
 	rc = dt_declare_xattr_set(env, child, NULL, &linkea_buf,
@@ -906,7 +906,7 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 6a. update bookmark */
+	
 	rc = dt_declare_record_write(env, bk_obj,
 				     lfsck_buf_get(env, bk, len), 0, th);
 	if (rc != 0)
@@ -917,17 +917,17 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 		GOTO(stop, rc);
 
 	dt_write_lock(env, child, 0);
-	/* 1b. create child */
+	
 	rc = dt_create(env, child, la, NULL, dof, th);
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* 2b. increase child nlink */
+	
 	rc = dt_ref_add(env, child, th);
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* 3b. insert dot into child dir */
+	
 	rec->rec_type = S_IFDIR;
 	rec->rec_fid = cfid;
 	rc = dt_insert(env, child, (const struct dt_rec *)rec,
@@ -935,14 +935,14 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* 4b. insert dotdot into child dir */
+	
 	rec->rec_fid = &LU_LPF_FID;
 	rc = dt_insert(env, child, (const struct dt_rec *)rec,
 		       (const struct dt_key *)dotdot, th);
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* 5b. insert linkEA for child */
+	
 	rc = dt_xattr_set(env, child, &linkea_buf,
 			  XATTR_NAME_LINK, 0, th);
 	if (rc != 0)
@@ -951,7 +951,7 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	bk->lb_lpf_fid = *cfid;
 	lfsck_bookmark_cpu_to_le(&lfsck->li_bookmark_disk, bk);
 
-	/* 6b. update bookmark */
+	
 	rc = dt_record_write(env, bk_obj,
 			     lfsck_buf_get(env, bk, len), &pos, th);
 
@@ -960,7 +960,7 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	if (rc != 0)
 		RETURN(rc);
 
-	/* Transaction II: remotely */
+	
 
 	dev = lfsck_obj2dev(parent);
 	th = lfsck_trans_create(env, dev, lfsck);
@@ -968,14 +968,14 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 		RETURN(PTR_ERR(th));
 
 	th->th_sync = 1;
-	/* 5a. insert name into parent dir */
+	
 	rec->rec_fid = cfid;
 	rc = dt_declare_insert(env, parent, (const struct dt_rec *)rec,
 			       (const struct dt_key *)name, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 6a. increase parent nlink */
+	
 	rc = dt_declare_ref_add(env, parent, th);
 	if (rc != 0)
 		GOTO(stop, rc);
@@ -984,14 +984,14 @@ static int lfsck_create_lpf_remote(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* 5b. insert name into parent dir */
+	
 	rc = dt_insert(env, parent, (const struct dt_rec *)rec,
 		       (const struct dt_key *)name, th);
 	if (rc != 0)
 		GOTO(stop, rc);
 
 	dt_write_lock(env, parent, 0);
-	/* 6b. increase parent nlink */
+	
 	rc = dt_ref_add(env, parent, th);
 	dt_write_unlock(env, parent);
 
@@ -1155,7 +1155,7 @@ static int lfsck_scan_lpf_bad_entries(const struct lu_env *env,
 		if (name_is_dot_or_dotdot(ent->lde_name, ent->lde_namelen))
 			goto next;
 
-		/* name length must be strlen("MDTxxxx") */
+		
 		if (ent->lde_namelen != 7)
 			goto remove;
 
@@ -1196,7 +1196,7 @@ static int lfsck_update_lpf_entry(const struct lu_env *env,
 	if (type == LVLT_BY_BOOKMARK) {
 		rc = lfsck_update_name_entry(env, lfsck, parent, name,
 					     lfsck_dto2fid(child), S_IFDIR);
-	} else /* if (type == LVLT_BY_NAMEENTRY) */ {
+	} else  {
 		lfsck->li_bookmark_ram.lb_lpf_fid = *lfsck_dto2fid(child);
 		rc = lfsck_bookmark_store(env, lfsck);
 
@@ -1299,7 +1299,7 @@ static int lfsck_verify_lpf_pairs(const struct lu_env *env,
 	}
 
 linkea:
-	/* To prevent rename/unlink race */
+	
 	rc = lfsck_ibits_lock(env, lfsck, child, &lh,
 			      MDS_INODELOCK_UPDATE, LCK_PR);
 	if (rc != 0)
@@ -1327,7 +1327,7 @@ linkea:
 			lfsck->li_lpf_obj = child;
 		}
 
-		/* Update the child's dotdot entry */
+		
 		rc = lfsck_update_name_entry(env, lfsck, child, dotdot,
 					     &LU_LPF_FID, S_IFDIR);
 		if (rc == 0)
@@ -1354,7 +1354,7 @@ linkea:
 		if (type == LVLT_BY_BOOKMARK)
 			GOTO(out_put, rc = 1);
 
-		/* Trust the name entry, update the child's dotdot entry. */
+		
 		rc = lfsck_update_name_entry(env, lfsck, child, dotdot,
 					     &LU_LPF_FID, S_IFDIR);
 
@@ -1362,15 +1362,15 @@ linkea:
 	}
 
 	if (type == LVLT_BY_BOOKMARK) {
-		/* Invalid FID record in the bookmark file, reset it. */
+		
 		fid_zero(&lfsck->li_bookmark_ram.lb_lpf_fid);
 		rc = lfsck_bookmark_store(env, lfsck);
 
 		CDEBUG(D_LFSCK, "%s: reset invalid LPF fid "DFID
 		       " in the bookmark file: rc = %d\n",
 		       lfsck_lfsck2name(lfsck), PFID(lfsck_dto2fid(child)), rc);
-	} else /* if (type == LVLT_BY_NAMEENTRY) */ {
-		/* The name entry is wrong, remove it. */
+	} else  {
+		
 		rc = lfsck_lpf_remove_name_entry(env, lfsck, name);
 	}
 
@@ -1406,9 +1406,9 @@ int lfsck_verify_lpf(const struct lu_env *env, struct lfsck_instance *lfsck)
 	struct lu_fid *cfid = &info->lti_fid2;
 	struct lfsck_bookmark *bk = &lfsck->li_bookmark_ram;
 	struct dt_object *parent;
-	/* child1's FID is in the bookmark file. */
+	
 	struct dt_object *child1 = NULL;
-	/* child2's FID is in the name entry MDTxxxx. */
+	
 	struct dt_object *child2 = NULL;
 	const struct lu_name *cname;
 	char name[8];
@@ -1459,7 +1459,7 @@ int lfsck_verify_lpf(const struct lu_env *env, struct lfsck_instance *lfsck)
 			       lfsck_lfsck2name(lfsck), rc);
 	}
 
-	/* child2 */
+	
 	snprintf(name, 8, "MDT%04x", node);
 	rc = dt_lookup_dir(env, parent, name, cfid);
 	if (rc == -ENOENT) {
@@ -1470,7 +1470,7 @@ int lfsck_verify_lpf(const struct lu_env *env, struct lfsck_instance *lfsck)
 	if (rc != 0)
 		GOTO(put, rc);
 
-	/* Invalid FID in the name entry, remove the name entry. */
+	
 	if (!fid_is_norm(cfid)) {
 		rc = lfsck_lpf_remove_name_entry(env, lfsck, name);
 		if (rc != 0)
@@ -1516,7 +1516,7 @@ find_child1:
 	if (unlikely(!fid_is_norm(&bk->lb_lpf_fid))) {
 		struct lu_fid tfid = bk->lb_lpf_fid;
 
-		/* Invalid FID record in the bookmark file, reset it. */
+		
 		fid_zero(&bk->lb_lpf_fid);
 		rc = lfsck_bookmark_store(env, lfsck);
 
@@ -1539,7 +1539,7 @@ find_child1:
 	if (unlikely(!dt_object_exists(child1) ||
 		     dt_object_remote(child1)) ||
 		     !S_ISDIR(lfsck_object_type(child1))) {
-		/* Invalid FID record in the bookmark file, reset it. */
+		
 		fid_zero(&bk->lb_lpf_fid);
 		rc = lfsck_bookmark_store(env, lfsck);
 
@@ -2535,7 +2535,7 @@ int lfsck_start_assistant(const struct lu_env *env, struct lfsck_component *com,
 		       lfsck_lfsck2name(lfsck), lad->lad_name, rc);
 		lfsck_thread_args_fini(lta);
 	} else if (cmpxchg(&lad->lad_task, NULL, task) != NULL) {
-		/* already running */
+		
 		kthread_stop(task);
 	} else {
 		wake_up_process(task);
@@ -2549,7 +2549,7 @@ void lfsck_stop_assistant(struct lfsck_assistant_data *lad)
 {
 	struct task_struct *task;
 
-	/* called by master thread */
+	
 	LASSERT(current != lad->lad_task);
 	task = xchg(&lad->lad_task, NULL);
 	if (task) {
@@ -2652,13 +2652,13 @@ int lfsck_load_one_trace_file(const struct lu_env *env,
 		obj = *child;
 		rc = obj->do_ops->do_index_try(env, obj, ft);
 		if (rc)
-			/* unlink by force */
+			
 			goto unlink;
 
 		iops = &obj->do_index_ops->dio_it;
 		it = iops->init(env, obj, 0);
 		if (IS_ERR(it))
-			/* unlink by force */
+			
 			goto unlink;
 
 		fid_zero(fid);
@@ -2669,11 +2669,11 @@ int lfsck_load_one_trace_file(const struct lu_env *env,
 		}
 		iops->fini(env, it);
 		if (rc > 0)
-			/* "rc > 0" means the index file is empty. */
+			
 			RETURN(0);
 
 unlink:
-		/* The old index is not empty, remove it firstly. */
+		
 		rc = local_object_unlink(env, lfsck->li_bottom, parent, name);
 		CDEBUG_LIMIT(rc ? D_ERROR : D_LFSCK,
 			     "%s: unlink lfsck sub trace file %s: rc = %d\n",
@@ -2728,7 +2728,7 @@ int lfsck_load_sub_trace_files(const struct lu_env *env,
 	return rc;
 }
 
-/* external interfaces */
+
 int lfsck_get_speed(char *buf, struct dt_device *key)
 {
 	struct lu_env env;
@@ -3078,12 +3078,12 @@ int lfsck_start(const struct lu_env *env, struct dt_device *key,
 
 	CDEBUG(D_LFSCK, "%s: start master thread\n", lfsck_lfsck2name(lfsck));
 
-	/* System is not ready, try again later. */
+	
 	if (unlikely(lfsck->li_namespace == NULL ||
 		     lfsck_dev_site(lfsck)->ss_server_fld == NULL))
 		GOTO(put, rc = -EINPROGRESS);
 
-	/* start == NULL means auto trigger paused LFSCK. */
+	
 	if (!start) {
 		if (list_empty(&lfsck->li_list_scan) ||
 		    CFS_FAIL_CHECK(OBD_FAIL_LFSCK_NO_AUTO))
@@ -3141,7 +3141,7 @@ int lfsck_start(const struct lu_env *env, struct dt_device *key,
 	lfsck->li_new_scanned = 0;
 	lfsck->li_master_ready = 0;
 
-	/* For auto trigger. */
+	
 	if (start == NULL)
 		goto trigger;
 
@@ -3296,7 +3296,7 @@ trigger:
 		GOTO(out, rc = 0);
 	}
 
-	/* release lfsck::li_mutex to avoid deadlock. */
+	
 	mutex_unlock(&lfsck->li_mutex);
 	rc = lfsck_start_all(env, lfsck, start);
 	if (rc != 0) {
@@ -3344,7 +3344,7 @@ int lfsck_stop(const struct lu_env *env, struct dt_device *key,
 	}
 
 	if (!lfsck->li_task)
-		/* no error if LFSCK is stopped, or not started */
+		
 		GOTO(put, rc = 0);
 
 	master_task = xchg(&lfsck->li_task, NULL);
@@ -3741,7 +3741,7 @@ int lfsck_register(const struct lu_env *env, struct dt_device *key,
 	if (rc < 0)
 		GOTO(out, rc);
 
-	/* XXX: more LFSCK components initialization to be added here. */
+	
 
 	rc = lfsck_instance_add(lfsck);
 	if (rc == 0)
@@ -3945,7 +3945,7 @@ void lfsck_tgt_free(struct kref *kref)
 	OBD_FREE_PTR(ltd);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre File System Checker");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: LGPL-2.1+ */
+
 
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTREAPI_H_
@@ -47,9 +47,9 @@ extern "C" {
 
 #ifndef fallthrough
 # if defined(__GNUC__) && __GNUC__ >= 7
-#  define fallthrough  __attribute__((fallthrough)) /* fallthrough */
+#  define fallthrough  __attribute__((fallthrough)) 
 # else
-#  define fallthrough do {} while (0)  /* fallthrough */
+#  define fallthrough do {} while (0)  
 # endif
 #endif
 
@@ -76,7 +76,7 @@ extern bool liblustreapi_initialized;
 typedef void (*llapi_cb_t)(char *obd_type_name, char *obd_name, char *obd_uuid,
 			   void *args);
 
-/* lustreapi message severity level */
+
 enum llapi_message_level {
 	LLAPI_MSG_OFF    = 0,
 	LLAPI_MSG_FATAL  = 1,
@@ -96,7 +96,7 @@ static inline bool llapi_liblustreapi_initialized(void)
 	return liblustreapi_initialized;
 }
 
-/* the bottom three bits reserved for llapi_message_level */
+
 #define LLAPI_MSG_MASK          0x00000007
 #define LLAPI_MSG_NO_ERRNO      0x00000010
 
@@ -129,7 +129,7 @@ struct llapi_stripe_param {
 	char			*lsp_pool;
 	int			lsp_stripe_offset;
 	enum lov_pattern	lsp_stripe_pattern;
-	/* Number of stripes. Size of lsp_osts[] if lsp_specific is true.*/
+	
 	int			lsp_stripe_count;
 	bool			lsp_is_specific;
 	bool			lsp_is_create;
@@ -218,10 +218,10 @@ enum llapi_layout_verbose  {
 };
 
 enum {
-	NEWERXY_ATIME = 0,	/* neweraY */
-	NEWERXY_MTIME = 1,	/* newermY */
-	NEWERXY_CTIME = 2,	/* newercY */
-	NEWERXY_BTIME = 3,	/* newerbY | newerBY */
+	NEWERXY_ATIME = 0,	
+	NEWERXY_MTIME = 1,	
+	NEWERXY_CTIME = 2,	
+	NEWERXY_BTIME = 3,	
 	NEWERXY_MAX,
 };
 
@@ -232,18 +232,18 @@ enum lfs_find_perm {
 	LFS_FIND_PERM_ALL   =  1,
 };
 
-/* struct for buffers and matching info for -xattr arguments to lfs find */
+
 struct xattr_match_info {
-	/* number of -xattr args specified (and size of xattr_regex_ arrays) */
+	
 	int			xattr_regex_count;
-	/* negation (!) can be specified separately for each -xattr arg */
+	
 	bool			*xattr_regex_exclude;
-	/* which regexes have already matched, when multiple specified */
+	
 	bool			*xattr_regex_matched;
 	regex_t			**xattr_regex_name;
 	regex_t			**xattr_regex_value;
-	char			*xattr_name_buf;       /* [XATTR_LIST_MAX] */
-	char			*xattr_value_buf;      /* [XATTR_SIZE_MAX] */
+	char			*xattr_name_buf;       
+	char			*xattr_value_buf;      
 };
 
 /*
@@ -254,7 +254,7 @@ struct find_param {
 	unsigned int		 fp_max_depth;
 	unsigned int		 fp_min_depth;
 	dev_t			 fp_dev;
-	mode_t			 fp_type; /* S_IFIFO,... */
+	mode_t			 fp_type; 
 	uid_t			 fp_uid;
 	gid_t			 fp_gid;
 	mode_t			 fp_perm;
@@ -267,7 +267,7 @@ struct find_param {
 	int			 fp_asign;
 	int			 fp_msign;
 	int			 fp_csign;
-	/* these need to be signed values */
+	
 	int			 fp_size_sign:2,
 				 fp_stripe_size_sign:2,
 				 fp_stripe_count_sign:2,
@@ -281,9 +281,9 @@ struct find_param {
 				 fp_blocks_sign:2,
 				 fp_ext_size_sign:2,
 				 fp_perm_sign:2,
-				 fp_nlink_sign:2,   /* Once used we must add  */
-				 fp_unused3_sign:2, /* a separate flag field  */
-				 fp_unused4_sign:2; /* at end of the struct.  */
+				 fp_nlink_sign:2,   
+				 fp_unused3_sign:2, 
+				 fp_unused4_sign:2; 
 	unsigned long long	 fp_size;
 	unsigned long long	 fp_size_units;
 
@@ -297,22 +297,22 @@ struct find_param {
 				 fp_exclude_uid:1,
 				 fp_check_gid:1,
 				 fp_check_uid:1,
-				 fp_check_pool:1,	/* LOV pool name */
-				 fp_check_size:1,	/* file size */
+				 fp_check_pool:1,	
+				 fp_check_size:1,	
 				 fp_exclude_pool:1,
 				 fp_exclude_size:1,
 				 fp_exclude_atime:1,
 				 fp_exclude_mtime:1,
 				 fp_exclude_ctime:1,
-				 fp_get_lmv:1,	/* get MDT list from LMV */
-				 fp_raw:1,	/* do not fill in defaults */
-				 fp_check_stripe_size:1, /* LOV stripe size */
+				 fp_get_lmv:1,	
+				 fp_raw:1,	
+				 fp_check_stripe_size:1, 
 				 fp_exclude_stripe_size:1,
-				 fp_check_stripe_count:1, /* LOV stripe count */
+				 fp_check_stripe_count:1, 
 				 fp_exclude_stripe_count:1,
 				 fp_check_layout:1,
 				 fp_exclude_layout:1,
-				 fp_get_default_lmv:1, /* Get default LMV */
+				 fp_get_default_lmv:1, 
 				 fp_migrate:1,
 				 fp_check_projid:1,
 				 fp_exclude_projid:1,
@@ -336,26 +336,26 @@ struct find_param {
 				 fp_exclude_mdt_count:1,
 				 fp_check_hash_flag:1,
 				 fp_exclude_hash_type:1,
-				 fp_yaml:1,	/* output layout in YAML */
+				 fp_yaml:1,	
 				 fp_check_blocks:1,
 				 fp_exclude_blocks:1,
 				 fp_check_foreign:1,
 				 fp_exclude_foreign:1,
-				 fp_check_ext_size:1, /* extension size */
+				 fp_check_ext_size:1, 
 				 fp_exclude_ext_size:1,
 				 fp_lazy:1,
 				 fp_newerxy:1,
 				 fp_exclude_btime:1,
 				 fp_exclude_perm:1,
-				 fp_stop_on_error:1, /* stop iteration on err */
-				 fp_exclude_nlink:1, /* Once used, we must add*/
-				 fp_exclude_attrs:1, /* a separate flag field */
-				 fp_unused_bit7:1;   /* at end of struct.  */
+				 fp_stop_on_error:1, 
+				 fp_exclude_nlink:1, 
+				 fp_exclude_attrs:1, 
+				 fp_unused_bit7:1;   
 
 	enum llapi_layout_verbose fp_verbose;
 	int			 fp_quiet;
 
-	/* regular expression */
+	
 	char			*fp_pattern;
 
 	struct  obd_uuid	*fp_obd_uuid;
@@ -410,7 +410,7 @@ struct find_param {
 				 fp_unused_bits:28;
 	unsigned int		 fp_depth;
 	unsigned int		 fp_hash_type;
-	unsigned int		 fp_time_margin; /* time margin in seconds */
+	unsigned int		 fp_time_margin; 
 	__u32			 fp_foreign_type;
 	__u32			 fp_unused_u32;
 	unsigned long long	 fp_ext_size;
@@ -430,7 +430,7 @@ struct find_param {
 	__u8			 fp_unused_byte1;
 	__u8			 fp_unused_byte2;
 	__u8			 fp_unused_byte3;
-	/* Print all information (lfs find only) */
+	
 	char			 *fp_format_printf_str;
 	nlink_t			 fp_nlink;
 	__u64			 fp_attrs;
@@ -446,16 +446,16 @@ struct find_param {
 				 fp_exclude_compr_lvl:1,
 				 fp_check_compr_chunk:1,
 				 fp_exclude_compr_chunk:1,
-				 fp_unused_bit1:1,  /* Fields available to use*/
-				 fp_unused_bit2:1,  /* once used, we must add */
-				 fp_unused_bit3:1,  /* a separate flag field  */
-				 fp_unused_bit4:1,  /* at                     */
-				 fp_unused_bits2:22; /* the end of this struct */
+				 fp_unused_bit1:1,  
+				 fp_unused_bit2:1,  
+				 fp_unused_bit3:1,  
+				 fp_unused_bit4:1,  
+				 fp_unused_bits2:22; 
 
 	long long		 fp_compr_lvl_sign:2,
 				 fp_compr_chunk_sign:2,
-				 fp_unused1_sign:2,  /* add sperarate field */
-				 fp_unused_signs:50; /* once used up. */
+				 fp_unused1_sign:2,  
+				 fp_unused_signs:50; 
 
 	unsigned char		 fp_skip_percent;
 	unsigned long long	 fp_skip_total;
@@ -464,7 +464,7 @@ struct find_param {
 	struct find_work_queue	*fp_queue;
 };
 
-/* Work unit for parallel directory processing */
+
 struct find_work_unit {
 	struct find_work_unit *fwu_next;
 	struct find_param *fwu_param;
@@ -472,7 +472,7 @@ struct find_work_unit {
 	char *fwu_path;
 };
 
-/* Check if we have C11 atomics available */
+
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L && !defined(__STDC_NO_ATOMICS__)
     #include <stdatomic.h>
     #define HAS_STDATOMIC 1
@@ -480,7 +480,7 @@ struct find_work_unit {
     #define HAS_STDATOMIC 0
 #endif
 
-/* Define atomic fetch and add operation */
+
 #if HAS_STDATOMIC
     #define ll_atomic_fetch_add(ptr, val) atomic_fetch_add(ptr, val)
     #define ll_atomic_fetch_sub(ptr, val) atomic_fetch_sub(ptr, val)
@@ -489,19 +489,19 @@ struct find_work_unit {
     #define ll_atomic_fetch_sub(ptr, val) __sync_fetch_and_sub(ptr, val)
 #endif
 
-/* Work queue for managing parallel processing */
+
 struct find_work_queue {
-	struct find_work_unit *fwq_head; /* Take work from head */
-	struct find_work_unit *fwq_tail; /* ... add to tail */
+	struct find_work_unit *fwq_head; 
+	struct find_work_unit *fwq_tail; 
 	pthread_mutex_t fwq_lock;
 	pthread_cond_t fwq_sleep_cond;
-	/* Atomic counter, active work units */
+	
 #if HAS_STDATOMIC
 	atomic_int fwq_active_units;
 #else
 	int fwq_active_units;
 #endif
-	bool fwq_shutdown;		/* Flag to signal shutdown */
+	bool fwq_shutdown;		
 	int fwq_error;
 };
 
@@ -606,7 +606,7 @@ int llapi_get_lum_dir_fd(int dir_fd, __u64 *valid, lstatx_t *statx,
 
 int llapi_fd2fid(int fd, struct lu_fid *fid);
 
-/* get FID of parent dir + the related name of entry in this parent dir */
+
 int llapi_path2parent(const char *path, unsigned int linkno,
 		      struct lu_fid *parent_fid, char *name, size_t name_size);
 int llapi_fd2parent(int fd, unsigned int linkno, struct lu_fid *parent_fid,
@@ -624,7 +624,7 @@ int llapi_open_by_fid_at(int lustre_fd, const struct lu_fid *fid,
 int llapi_open_by_fid(const char *lustre_dir, const struct lu_fid *fid,
 		      int open_flags);
 int llapi_get_version_string(char *version, unsigned int version_size);
-/* llapi_get_version() is deprecated, use llapi_get_version_string() instead */
+
 int llapi_get_version(char *buffer, int buffer_size, char **version)
 	__attribute__((deprecated));
 int llapi_get_data_version(int fd, __u64 *data_version, __u64 flags);
@@ -662,7 +662,7 @@ int llapi_fswap_layouts(int fd1, int fd2, __u64 dv1, __u64 dv2, __u64 flags);
 int llapi_swap_layouts(const char *path1, const char *path2, __u64 dv1,
 		       __u64 dv2, __u64 flags);
 
-/* Changelog interface. priv is private connection state, managed internally */
+
 
 /* Records received are in extended format now, though most of them are still
  * written in disk in changelog_rec format (to save space and time), it's
@@ -671,13 +671,13 @@ int llapi_swap_layouts(const char *path1, const char *path2, __u64 dv1,
 #define HAVE_CHANGELOG_EXTEND_REC 1
 
 enum changelog_send_extra_flag {
-	/* Pack uid/gid into the changelog record */
+	
 	CHANGELOG_EXTRA_FLAG_UIDGID	= CLFE_UIDGID,
-	/* Pack nid into the changelog record */
+	
 	CHANGELOG_EXTRA_FLAG_NID	= CLFE_NID,
-	/* Pack open mode into the changelog record */
+	
 	CHANGELOG_EXTRA_FLAG_OMODE	= CLFE_OPEN,
-	/* Pack xattr name into the changelog record */
+	
 	CHANGELOG_EXTRA_FLAG_XATTR	= CLFE_XATTR,
 };
 
@@ -688,7 +688,7 @@ int llapi_changelog_recv(void *priv, struct changelog_rec **rech);
 int llapi_changelog_in_buf(void *priv);
 int llapi_changelog_free(struct changelog_rec **rech);
 int llapi_changelog_get_fd(void *priv);
-/* Allow records up to endrec to be destroyed; requires registered id. */
+
 int llapi_changelog_clear(const char *mdtname, const char *idstr,
 			  long long endrec);
 int llapi_changelog_set_xflags(void *priv,
@@ -747,13 +747,13 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 		     int stripe_count, enum lov_pattern stripe_pattern,
 		     char *pool_name, struct lu_fid *newfid);
 
-/* HSM user interface */
+
 struct hsm_user_request *llapi_hsm_user_request_alloc(int itemcount,
 						      int data_len);
 int llapi_hsm_request(const char *path, const struct hsm_user_request *request);
 int llapi_hsm_current_action(const char *path, struct hsm_current_action *hca);
 
-/* JSON handling */
+
 enum llapi_json_types {
 	LLAPI_JSON_INTEGER = 1,
 	LLAPI_JSON_BIGNUM,
@@ -784,16 +784,16 @@ int llapi_json_add_item(struct llapi_json_item_list **item_list, char *key,
 			__u32 type, void *val);
 int llapi_json_write_list(struct llapi_json_item_list **item_list, FILE *fp);
 
-/* File lease */
+
 int llapi_lease_acquire(int fd, enum ll_lease_mode mode);
 int llapi_lease_release_intent(int fd, struct ll_ioc_lease *data);
 int llapi_lease_release(int fd);
 int llapi_lease_set(int fd, const struct ll_ioc_lease *data);
 int llapi_lease_check(int fd);
-int llapi_lease_get(int fd, int mode); /* obsoleted */
-int llapi_lease_put(int fd); /* obsoleted */
+int llapi_lease_get(int fd, int mode); 
+int llapi_lease_put(int fd); 
 
-/* Group lock */
+
 int llapi_group_lock(int fd, int gid);
 int llapi_group_unlock(int fd, int gid);
 int llapi_group_lock64(int fd, __u64 gid);
@@ -803,11 +803,11 @@ bool llapi_file_is_sparse(int fd);
 off_t llapi_data_seek(int src_fd, off_t offset, size_t *length);
 int llapi_hole_punch(int fd, off_t start, size_t length);
 
-/* Ladvise */
+
 int llapi_ladvise(int fd, unsigned long long flags, int num_advise,
 		  struct llapi_lu_ladvise *ladvise);
 
-/* PCC */
+
 int llapi_pcc_attach(const char *path, __u32 id, enum lu_pcc_type type);
 int llapi_pcc_attach_fid(const char *mntpath, const struct lu_fid *fid,
 			 __u32 id, enum lu_pcc_type type);
@@ -832,9 +832,9 @@ int llapi_pcc_pin_file(const char *path, __u32 id);
 int llapi_pcc_unpin_file(const char *path, __u32 id);
 int llapi_pcc_backend_id_get(const char *path, enum lu_pcc_type type,
 			     __u32 *id);
-/** @} llapi */
 
-/* llapi_layout user interface */
+
+
 
 /**
  * An array element storing component info to be resynced during mirror
@@ -844,11 +844,11 @@ struct llapi_resync_comp {
 	uint64_t lrc_start;
 	uint64_t lrc_end;
 	uint32_t lrc_mirror_id;
-	uint32_t lrc_id;	/* component id */
+	uint32_t lrc_id;	
 	bool lrc_synced;
 };
 
-/** Opaque data type abstracting the layout of a Lustre file. */
+
 struct llapi_layout;
 
 int llapi_mirror_truncate(int fd, unsigned int id, off_t length);
@@ -875,14 +875,14 @@ int llapi_mirror_resync_many(int fd, struct llapi_layout *layout,
  */
 
 enum llapi_layout_get_flags {
-	/** Replace non-specified values with expected inherited values. */
+	
 	LLAPI_LAYOUT_GET_EXPECTED	= 0x0001,
-	/** Use a temporary buffer to swab and return xattrs. */
+	
 	LLAPI_LAYOUT_GET_COPY		= 0x0002,
-	/** Verify xattr contains sane layout values. */
+	
 	LLAPI_LAYOUT_GET_CHECK		= 0x0004,
 };
-/* compatibility macros for old interfaces */
+
 #define LAYOUT_GET_EXPECTED	LLAPI_LAYOUT_GET_EXPECTED
 #define LLAPI_LXF_COPY		LLAPI_LAYOUT_GET_COPY
 #define LLAPI_LXF_CHECK		LLAPI_LAYOUT_GET_CHECK
@@ -982,7 +982,7 @@ void llapi_layout_free(struct llapi_layout *layout);
 int llapi_layout_merge(struct llapi_layout **dst_layout,
 		       const struct llapi_layout *src_layout);
 
-/** Not a valid stripe size, offset, or RAID pattern. */
+
 #define LLAPI_LAYOUT_INVALID	0x1000000000000001ULL
 
 /**
@@ -996,13 +996,13 @@ int llapi_layout_merge(struct llapi_layout **dst_layout,
  * When specified or returned as the value for stripe count, all
  * available OSTs will be used.
  */
-#define LLAPI_OVERSTRIPE_COUNT_MIN    ((__s16)LOV_ALL_STRIPES)      /*  -1 */
-#define LLAPI_OVERSTRIPE_COUNT_MAX    ((__s16)LOV_ALL_STRIPES_WIDE) /* -32 */
+#define LLAPI_OVERSTRIPE_COUNT_MIN    ((__s16)LOV_ALL_STRIPES)      
+#define LLAPI_OVERSTRIPE_COUNT_MAX    ((__s16)LOV_ALL_STRIPES_WIDE) 
 #define LLAPI_LAYOUT_WIDE_MIN (LLAPI_LAYOUT_DEFAULT - \
 				LLAPI_OVERSTRIPE_COUNT_MIN)
 #define LLAPI_LAYOUT_WIDE_MAX (LLAPI_LAYOUT_DEFAULT - \
 				LLAPI_OVERSTRIPE_COUNT_MAX)
-#define LLAPI_LAYOUT_WIDE     LLAPI_LAYOUT_WIDE_MIN /* backward compatibility */
+#define LLAPI_LAYOUT_WIDE     LLAPI_LAYOUT_WIDE_MIN 
 
 /**
  * When specified as the value for layout pattern, file objects will be
@@ -1028,7 +1028,7 @@ int llapi_layout_merge(struct llapi_layout **dst_layout,
 /**
  * Flags to modify how layouts are retrieved.
  */
-/******************** Stripe Count ********************/
+
 
 /**
  * Store the stripe count of \a layout in \a count.
@@ -1051,7 +1051,7 @@ int llapi_layout_stripe_count_set(struct llapi_layout *layout, uint64_t count);
  * Check if the stripe count \a stripe_count \a is valid.
  */
 bool llapi_layout_stripe_count_is_valid(int64_t stripe_count);
-/******************** Stripe Size ********************/
+
 
 /**
  * Store the stripe size of \a layout in \a size.
@@ -1071,7 +1071,7 @@ int llapi_layout_stripe_size_get(const struct llapi_layout *layout,
 int llapi_layout_stripe_size_set(struct llapi_layout *layout, uint64_t size);
 
 
-/******************** Extension Size ********************/
+
 
 /**
  * Store the extension size of \a layout in \a size.
@@ -1091,7 +1091,7 @@ int llapi_layout_extension_size_get(const struct llapi_layout *layout,
 int llapi_layout_extension_size_set(struct llapi_layout *layout, uint64_t size);
 
 
-/******************** Stripe Pattern ********************/
+
 
 /**
  * Store the stripe pattern of \a layout in \a pattern.
@@ -1110,7 +1110,7 @@ int llapi_layout_pattern_get(const struct llapi_layout *layout,
  */
 int llapi_layout_pattern_set(struct llapi_layout *layout, uint64_t pattern);
 
-/******************** OST Index ********************/
+
 
 /**
  * Store the index of the OST where stripe number \a stripe_number is stored
@@ -1151,7 +1151,7 @@ int llapi_layout_ost_index_set(struct llapi_layout *layout, int stripe_number,
  */
 int llapi_layout_ost_index_reset(struct llapi_layout *layout);
 
-/******************** Pool Name ********************/
+
 
 /**
  * Store up to \a pool_name_len characters of the name of the pool of
@@ -1196,7 +1196,7 @@ int llapi_layout_pool_name_get(const struct llapi_layout *layout,
 int llapi_layout_pool_name_set(struct llapi_layout *layout,
 			       const char *pool_name);
 
-/******************** File Creation ********************/
+
 
 /**
  * Open an existing file at \a path, or create it with the specified
@@ -1297,7 +1297,7 @@ int llapi_layout_comp_extent_get(const struct llapi_layout *layout,
 int llapi_layout_comp_extent_set(struct llapi_layout *layout,
 				 uint64_t start, uint64_t end);
 
-/* PFL component flags table */
+
 static const struct comp_flag_name {
 	enum lov_comp_md_entry_flags cfn_flag;
 	const char *cfn_name;
@@ -1316,7 +1316,7 @@ static const struct comp_flag_name {
 	{ LCME_FL_NOCOMPR,	"nocompr" },
 };
 
-/* HSM component flags table */
+
 static const struct hsm_flag_name {
 	enum hsm_states	 hfn_flag;
 	const char	*hfn_name;
@@ -1390,7 +1390,7 @@ enum llapi_layout_comp_use {
 	LLAPI_LAYOUT_COMP_USE_NEXT = 3,
 	LLAPI_LAYOUT_COMP_USE_PREV = 4,
 
-	/* ensure -fshort-enums keeps u32 size for interop */
+	
 	_LLAPI_LAYOUT_COMP_TYPE_SIZE = (__u32)-1,
 };
 
@@ -1504,27 +1504,27 @@ struct ll_project {
 
 struct ll_project_handle;
 
-/* open project mapping file and maintain state across calls in @hdl */
+
 int llapi_project_open(const char *name, struct ll_project_handle **hdl,
 		       char *mode);
-/* close project mapping file and release state in @hdl */
+
 int llapi_project_close(struct ll_project_handle *hdl);
-/* populate remaining fields in @lprj from open @hdl based on valid fields */
+
 int llapi_project_get(struct ll_project_handle *hdl, struct ll_project *lprj);
-/* free any allocated memory in @lprj */
+
 int llapi_project_put(struct ll_project_handle *hdl, struct ll_project *lprj,
 		      int flags);
-/* populate fields in @lprj based on requested @name from open @hdl */
+
 int llapi_project_fgetnam(struct ll_project_handle *hdl, struct ll_project *prj,
 			  const char *name);
-/* populate fields in @lprj based on requested @name */
+
 int llapi_project_getnam(struct ll_project *prj, const char *name);
-/* populate fields in @lprj based on requested @name from open @hdl */
+
 int llapi_project_fgetprjid(struct ll_project_handle *hdl,
 			    struct ll_project *prj, const unsigned int prjid);
-/* populate fields in @lprj based on requested @prjid */
+
 int llapi_project_getprjid(struct ll_project *prj, __u32 prjid);
-/** @} llapi */
+
 
 #if defined(__cplusplus)
 }

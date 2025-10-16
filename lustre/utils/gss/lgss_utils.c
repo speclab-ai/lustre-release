@@ -10,7 +10,7 @@
 
 /*
  *  Adapted in part from MIT Kerberos 5-1.2.1 slave/kprop.c and from
- *  http://docs.sun.com/?p=/doc/816-1331/6m7oo9sms&a=view
+ *  http:
  *
  *  Copyright (c) 2002 The Regents of the University of Michigan.
  *  All rights reserved.
@@ -226,7 +226,7 @@ int lgss_mutex_unlock(lgss_mutex_id_t mid)
  * GSS OIDs, MECH                       *
  ****************************************/
 
-/* from kerberos source, gssapi_krb5.c */
+
 gss_OID_desc krb5oid = {
 	.length = 9,
 	.elements = "\052\206\110\206\367\022\001\002\002"
@@ -235,7 +235,7 @@ gss_OID_desc spkm3oid = {
 	.length = 7,
 	.elements = "\053\006\001\005\005\001\003"
 };
-/* null and sk come from IU's oid space */
+
 gss_OID_desc nulloid = {
 	.length = 12,
 	.elements = "\053\006\001\004\001\311\146\215\126\001\000\000"
@@ -297,7 +297,7 @@ void __logmsg_gss(loglevel_t level, const char *func, const gss_OID mech,
 	int offset;
 	uint32_t msg_ctx = 0;
 
-	/* Get major status message */
+	
 	maj_stat1 = gss_display_status(&min_stat1, major, GSS_C_GSS_CODE,
 				       mech, &msg_ctx, &maj_gss_buf);
 	if (maj_stat1 != GSS_S_COMPLETE) {
@@ -307,7 +307,7 @@ void __logmsg_gss(loglevel_t level, const char *func, const gss_OID mech,
 		maj_msg = maj_gss_buf.value;
 	}
 
-	/* Get minor status message */
+	
 	maj_stat2 = gss_display_status(&min_stat2, minor, GSS_C_MECH_CODE,
 				       mech, &msg_ctx, &min_gss_buf);
 	if (maj_stat2 != GSS_S_COMPLETE) {
@@ -317,7 +317,7 @@ void __logmsg_gss(loglevel_t level, const char *func, const gss_OID mech,
 		min_msg = min_gss_buf.value;
 	}
 
-	/* arrange & log message */
+	
 	offset = scnprintf(buf, sizeof(buf), "[%d]:%s:%s(): ",
 			   getpid(), log_prefix[level], func);
 
@@ -330,7 +330,7 @@ void __logmsg_gss(loglevel_t level, const char *func, const gss_OID mech,
 
 	syslog(LOG_INFO, "%s", buf);
 
-	/* release buffers */
+	
 	if (maj_gss_buf.length != 0)
 		gss_release_buffer(&min_stat1, &maj_gss_buf);
 	if (min_gss_buf.length != 0)
@@ -543,7 +543,7 @@ int switch_identity(uid_t uid)
 	struct passwd *pw;
 	int rc;
 
-	/* drop list of supp groups for regular user */
+	
 	if (uid) {
 		rc = setgroups(0, NULL);
 		if (rc == -1) {

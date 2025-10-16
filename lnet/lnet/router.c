@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  *
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #define DEBUG_SUBSYSTEM S_LNET
 
@@ -13,12 +13,12 @@
 #include <linux/libcfs/libcfs.h>
 #include <lnet/lib-lnet.h>
 
-#define LNET_NRB_TINY_MIN	512	/* min value for each CPT */
+#define LNET_NRB_TINY_MIN	512	
 #define LNET_NRB_TINY		(LNET_NRB_TINY_MIN * 4)
-#define LNET_NRB_SMALL_MIN	4096	/* min value for each CPT */
+#define LNET_NRB_SMALL_MIN	4096	
 #define LNET_NRB_SMALL		(LNET_NRB_SMALL_MIN * 4)
 #define LNET_NRB_SMALL_PAGES	1
-#define LNET_NRB_LARGE_MIN	256	/* min value for each CPT */
+#define LNET_NRB_LARGE_MIN	256	
 #define LNET_NRB_LARGE		(LNET_NRB_LARGE_MIN * 4)
 #define LNET_NRB_LARGE_PAGES	((LNET_MTU + PAGE_SIZE - 1) >> \
 				  PAGE_SHIFT)
@@ -47,7 +47,7 @@ MODULE_PARM_DESC(auto_down, "Automatically mark peers down on comms error");
 int
 lnet_peer_buffer_credits(struct lnet_net *net)
 {
-	/* NI option overrides LNet default */
+	
 	if (net->net_tunables.lct_peer_rtr_credits > 0)
 		return net->net_tunables.lct_peer_rtr_credits;
 	if (peer_buffer_credits > 0)
@@ -289,7 +289,7 @@ bool lnet_is_route_alive(struct lnet_route *route)
 	struct lnet_peer_net *llpn;
 	struct lnet_peer_net *rlpn;
 
-	/* If the gateway is down then all routes are considered down */
+	
 	if (!gw->lp_alive)
 		return false;
 
@@ -489,11 +489,11 @@ lnet_rtr_addref_locked(struct lnet_peer *lp)
 {
 	LASSERT(lp->lp_rtr_refcount >= 0);
 
-	/* lnet_net_lock must be exclusively locked */
+	
 	lp->lp_rtr_refcount++;
 	if (lp->lp_rtr_refcount == 1) {
 		list_add_tail(&lp->lp_rtr_list, &the_lnet.ln_routers);
-		/* addref for the_lnet.ln_routers */
+		
 		lnet_peer_addref_locked(lp);
 		the_lnet.ln_routers_version++;
 	}
@@ -505,13 +505,13 @@ lnet_rtr_decref_locked(struct lnet_peer *lp)
 	LASSERT(atomic_read(&lp->lp_refcount) > 0);
 	LASSERT(lp->lp_rtr_refcount > 0);
 
-	/* lnet_net_lock must be exclusively locked */
+	
 	lp->lp_rtr_refcount--;
 	if (lp->lp_rtr_refcount == 0) {
 		LASSERT(list_empty(&lp->lp_routes));
 
 		list_del(&lp->lp_rtr_list);
-		/* decref for the_lnet.ln_routers */
+		
 		lnet_peer_decref_locked(lp);
 		the_lnet.ln_routers_version++;
 	}
@@ -549,7 +549,7 @@ static void lnet_shuffle_seed(void)
 	seeded = 1;
 }
 
-/* NB expects LNET_LOCK held */
+
 static void
 lnet_add_route_to_rnet(struct lnet_remotenet *rnet, struct lnet_route *route)
 {
@@ -588,10 +588,10 @@ lnet_add_route_to_rnet(struct lnet_remotenet *rnet, struct lnet_route *route)
 
 	the_lnet.ln_remote_nets_version++;
 
-	/* add the route on the gateway list */
+	
 	list_add(&route->lr_gwlist, &route->lr_gateway->lp_routes);
 
-	/* take a router reference count on the gateway */
+	
 	lnet_rtr_addref_locked(route->lr_gateway);
 }
 
@@ -619,7 +619,7 @@ __must_hold(&the_lnet.ln_api_mutex)
 	    (hops != LNET_UNDEFINED_HOPS && (hops < 1 || hops > 255)))
 		return -EINVAL;
 
-	/* it's a local network */
+	
 	if (lnet_islocalnet(net))
 		return -EEXIST;
 
@@ -630,7 +630,7 @@ __must_hold(&the_lnet.ln_api_mutex)
 		return -EHOSTUNREACH;
 	}
 
-	/* Assume net, route, all new */
+	
 	LIBCFS_ALLOC(route, sizeof(*route));
 	LIBCFS_ALLOC(rnet, sizeof(*rnet));
 	if (route == NULL || rnet == NULL) {
@@ -643,7 +643,7 @@ __must_hold(&the_lnet.ln_api_mutex)
 
 	INIT_LIST_HEAD(&rnet->lrn_routes);
 	rnet->lrn_net = net;
-	/* store the local and remote net that the route represents */
+	
 	route->lr_lnet = LNET_NID_NET(gateway);
 	route->lr_net = net;
 	route->lr_nid = *gateway;
@@ -683,12 +683,12 @@ __must_hold(&the_lnet.ln_api_mutex)
 
 	rnet2 = lnet_find_rnet_locked(net);
 	if (rnet2 == NULL) {
-		/* new network */
+		
 		list_add_tail(&rnet->lrn_list, lnet_net2rnethash(net));
 		rnet2 = rnet;
 	}
 
-	/* Search for a duplicate route (it's a NOOP if it is) */
+	
 	add_route = 1;
 	list_for_each(route_entry, &rnet2->lrn_routes) {
 		struct lnet_route *route2;
@@ -699,7 +699,7 @@ __must_hold(&the_lnet.ln_api_mutex)
 			break;
 		}
 
-		/* our lookups must be true */
+		
 		LASSERT(!nid_same(&route2->lr_gateway->lp_primary_nid,
 				  gateway));
 	}
@@ -742,7 +742,7 @@ __must_hold(&the_lnet.ln_api_mutex)
 	if (rnet != rnet2)
 		LIBCFS_FREE(rnet, sizeof(*rnet));
 
-	/* kick start the monitor thread to handle the added route */
+	
 	complete(&the_lnet.ln_mt_wait_complete);
 
 	return rc;
@@ -1015,7 +1015,7 @@ lnet_update_ni_status_locked(void)
 			goto check_ni_fatal;
 
 		spin_lock(&net->net_lock);
-		/* re-check with lock */
+		
 		if (now < net->net_last_alive + timeout) {
 			spin_unlock(&net->net_lock);
 			goto check_ni_fatal;
@@ -1190,7 +1190,7 @@ rescan:
 
 		now = ktime_get_real_seconds();
 
-		/* find the next local peer net which needs to be ping'd */
+		
 		needs_ping = false;
 		first_lpn = NULL;
 		found_lpn = false;
@@ -1203,7 +1203,7 @@ rescan:
 				break;
 			}
 
-			/* We looped back to the first peer net */
+			
 			if (first_lpn == lpn)
 				break;
 			if (!first_lpn)
@@ -1234,13 +1234,13 @@ rescan:
 			continue;
 
 		spin_lock(&rtr->lp_lock);
-		/* make sure we fully discover the router */
+		
 		rtr->lp_state &= ~LNET_PEER_NIDS_UPTODATE;
 		rtr->lp_state |= LNET_PEER_FORCE_PING | LNET_PEER_FORCE_PUSH |
 			LNET_PEER_RTR_DISCOVERY;
 		spin_unlock(&rtr->lp_lock);
 
-		/* find the peer_ni associated with the primary NID */
+		
 		lpni = lnet_peer_ni_get_locked(rtr, &rtr->lp_primary_nid);
 		if (!lpni) {
 			CDEBUG(D_NET, "Expected to find an lpni for %s, but non found\n",
@@ -1249,15 +1249,15 @@ rescan:
 		}
 		kref_get(&lpni->lpni_kref);
 
-		/* specify the net to use */
+		
 		rtr->lp_disc_net_id = lpn->lpn_net_id;
 
-		/* discover the router */
+		
 		CDEBUG(D_NET, "discover %s, cpt = %d\n",
 		       libcfs_nidstr(&lpni->lpni_nid), cpt);
 		rc = lnet_discover_peer_locked(lpni, cpt, false);
 
-		/* drop ref taken above */
+		
 		lnet_peer_ni_decref_locked(lpni);
 
 		if (!rc)
@@ -1266,9 +1266,9 @@ rescan:
 			CERROR("Failed to discover router %s\n",
 			       libcfs_nidstr(&rtr->lp_primary_nid));
 
-		/* NB cpt lock was dropped in lnet_discover_peer_locked() */
+		
 		if (version != the_lnet.ln_routers_version) {
-			/* the routers list has changed */
+			
 			goto rescan;
 		}
 	}
@@ -1278,7 +1278,7 @@ rescan:
 
 	lnet_net_unlock(cpt);
 
-	/* if the status of the ni changed update the peers */
+	
 	if (push)
 		lnet_push_update_to_peers(1);
 }
@@ -1335,7 +1335,7 @@ lnet_rtrpool_free_bufs(struct lnet_rtrbufpool *rbp, int cpt)
 	struct lnet_rtrbuf *rb;
 	LIST_HEAD(tmp);
 
-	if (rbp->rbp_nbuffers == 0) /* not initialized or already freed */
+	if (rbp->rbp_nbuffers == 0) 
 		return;
 
 	lnet_net_lock(cpt);
@@ -1347,7 +1347,7 @@ lnet_rtrpool_free_bufs(struct lnet_rtrbufpool *rbp, int cpt)
 	rbp->rbp_mincredits = 0;
 	lnet_net_unlock(cpt);
 
-	/* Free buffers on the free list. */
+	
 	while (!list_empty(&tmp)) {
 		rb = list_first_entry(&tmp, struct lnet_rtrbuf, rb_list);
 		list_del(&rb->rb_list);
@@ -1450,7 +1450,7 @@ lnet_rtrpools_free(int keep_pools)
 	struct lnet_rtrbufpool *rtrp;
 	int		  i;
 
-	if (the_lnet.ln_rtrpools == NULL) /* uninitialized or freed */
+	if (the_lnet.ln_rtrpools == NULL) 
 		return;
 
 	cfs_percpt_for_each(rtrp, i, the_lnet.ln_rtrpools) {
@@ -1542,14 +1542,14 @@ lnet_rtrpools_alloc(int im_a_router)
 	int	i;
 
 	if (!strcmp(forwarding, "")) {
-		/* not set either way */
+		
 		if (!im_a_router)
 			return 0;
 	} else if (!strcmp(forwarding, "disabled")) {
-		/* explicitly disabled */
+		
 		return 0;
 	} else if (!strcmp(forwarding, "enabled")) {
-		/* explicitly enabled */
+		
 	} else {
 		rc = -EINVAL;
 		LCONSOLE_ERROR("lnet: forwarding='%s' not set to either 'enabled' or 'disabled': rc = %d\n",
@@ -1762,7 +1762,7 @@ lnet_notify(struct lnet_ni *ni, struct lnet_nid *nid, bool alive, bool reset,
 		return -EINVAL;
 	}
 
-	/* can't do predictions... */
+	
 	if (when > now) {
 		CWARN("Ignoring prediction from %s of %s %s %lld seconds in the future\n",
 			ni ? libcfs_nidstr(&ni->ni_nid) :  "userspace",
@@ -1770,8 +1770,8 @@ lnet_notify(struct lnet_ni *ni, struct lnet_nid *nid, bool alive, bool reset,
 		return -EINVAL;
 	}
 
-	if (ni && !alive &&		/* LND telling me she's down */
-	    !auto_down) {		/* auto-down disabled */
+	if (ni && !alive &&		
+	    !auto_down) {		
 		CDEBUG(D_NET, "Auto-down disabled\n");
 		return 0;
 	}
@@ -1785,7 +1785,7 @@ lnet_notify(struct lnet_ni *ni, struct lnet_nid *nid, bool alive, bool reset,
 
 	lpni = lnet_peer_ni_find_locked(nid);
 	if (!lpni) {
-		/* nid not found */
+		
 		lnet_net_unlock(cpt);
 		CDEBUG(D_NET, "%s not found\n", libcfs_nidstr(nid));
 		return 0;
@@ -1815,7 +1815,7 @@ lnet_notify(struct lnet_ni *ni, struct lnet_nid *nid, bool alive, bool reset,
 	 */
 	if (lp->lp_rtr_refcount) {
 		if (reset)
-			/* reset flag indicates gateway peer went up or down */
+			
 			lp->lp_alive = alive;
 
 		/* If discovery is disabled, locally or on the gateway, then
@@ -1845,7 +1845,7 @@ lnet_notify(struct lnet_ni *ni, struct lnet_nid *nid, bool alive, bool reset,
 	lpni->lpni_ns_status = ns_status;
 
 	while (lpni->lpni_notifying) {
-		/* Previous event is being processed */
+		
 		spin_unlock(&lpni->lpni_lock);
 		lnet_net_unlock(cpt);
 		schedule();

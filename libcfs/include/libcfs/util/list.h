@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 #ifndef __LIBCFS_UTIL_LIST_H__
 #define __LIBCFS_UTIL_LIST_H__
@@ -402,7 +402,7 @@ static inline void hlist_add_head(struct hlist_node *n,
 	n->pprev = &h->first;
 }
 
-/* next must be != NULL */
+
 static inline void hlist_add_before(struct hlist_node *n,
 					struct hlist_node *next)
 {
@@ -553,4 +553,4 @@ static inline void hlist_add_after(struct hlist_node *n,
 	     &pos->member != (head);					\
 	     pos = n, n = list_entry(n->member.prev, typeof(*n), member))
 
-#endif /* __LIBCFS_UTIL_LIST_H__ */
+#endif 

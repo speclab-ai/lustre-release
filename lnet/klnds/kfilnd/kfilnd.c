@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd main interface.
  */
@@ -29,12 +29,12 @@ static int kfilnd_send_cpt(struct kfilnd_dev *dev, lnet_nid_t nid)
 {
 	int cpt;
 
-	/* If the current CPT has is within the LNet NI CPTs, use that CPT. */
+	
 	cpt = lnet_cpt_current();
 	if (dev->cpt_to_endpoint[cpt])
 		return cpt;
 
-	/* Hash to a LNet NI CPT based on target NID. */
+	
 	return  dev->kfd_endpoints[nid % dev->kfd_ni->ni_ncpts]->end_cpt;
 }
 
@@ -44,7 +44,7 @@ int kfilnd_send_hello_request(struct kfilnd_dev *dev, int cpt,
 	struct kfilnd_transaction *tn;
 	int rc;
 
-	/* Only one thread may progress state from NONE -> INIT */
+	
 	if (atomic_cmpxchg(&kp->kp_hello_state, KP_HELLO_NONE, KP_HELLO_INIT) !=
 	    KP_HELLO_NONE) {
 		CDEBUG(D_NET, "Hello already pending to peer %s(%px)\n",
@@ -209,14 +209,14 @@ static int kfilnd_send(struct lnet_ni *ni, void *private, struct lnet_msg *msg)
 	}
 
 	tn->msg_type = lnd_msg_type;
-	tn->tn_lntmsg = msg;	/* finalise msg on completion */
+	tn->tn_lntmsg = msg;	
 	tn->lnet_msg_len = tn->tn_nob;
 
 	KFILND_TN_DEBUG(tn, "%s in %u bytes in %u frags",
 			msg_type_to_str(lnd_msg_type), tn->tn_nob,
 			tn->tn_num_iovec);
 
-	/* Start the state machine processing this transaction */
+	
 	kfilnd_tn_event_handler(tn, event, 0);
 
 	return 0;
@@ -238,7 +238,7 @@ static int kfilnd_recv(struct lnet_ni *ni, void *private, struct lnet_msg *msg,
 	if (mlen > rlen)
 		return -EINVAL;
 
-	/* Transaction must be in receive state */
+	
 	if (tn->tn_state != TN_STATE_IMM_RECV)
 		return -EINVAL;
 
@@ -272,7 +272,7 @@ static int kfilnd_recv(struct lnet_ni *ni, void *private, struct lnet_msg *msg,
 		if (mlen == 0) {
 			event = TN_EVENT_SKIP_TAG_RMA;
 		} else {
-			/* Post the buffer given us as a sink  */
+			
 			tn->sink_buffer = true;
 			rc = kfilnd_tn_set_kiov_buf(tn, kiov, niov, offset,
 						    mlen);
@@ -290,7 +290,7 @@ static int kfilnd_recv(struct lnet_ni *ni, void *private, struct lnet_msg *msg,
 			event = TN_EVENT_SKIP_TAG_RMA;
 			status = -ENODATA;
 		} else {
-			/* Post the buffer given to us as a source  */
+			
 			tn->sink_buffer = false;
 			rc = kfilnd_tn_set_kiov_buf(tn, msg->msg_kiov,
 						    msg->msg_niov,
@@ -306,12 +306,12 @@ static int kfilnd_recv(struct lnet_ni *ni, void *private, struct lnet_msg *msg,
 		break;
 
 	default:
-		/* TODO: TN leaks here. */
+		
 		CERROR("Invalid message type = %d\n", rxmsg->type);
 		return -EINVAL;
 	}
 
-	/* Store relevant fields to generate a bulk response. */
+	
 	if (rxmsg->version == KFILND_MSG_VERSION_1) {
 		tn->tn_response_mr_key = rxmsg->proto.bulk_req.key;
 		tn->tn_response_rx = rxmsg->proto.bulk_req.response_rx;
@@ -345,7 +345,7 @@ kfilnd_tun_defaults(struct lnet_lnd_tunables *tunables,
 {
 	int rc;
 
-	/* sync to latest module settings */
+	
 	rc = kfilnd_tunables_setup(tunables, true, cmn);
 	if (rc < 0)
 		return rc;
@@ -495,7 +495,7 @@ static int kfilnd_startup(struct lnet_ni *ni)
 		goto err;
 	}
 
-	/* Only a single interface is supported. */
+	
 	if (!ni->ni_interface) {
 		rc = -ENODEV;
 		CERROR("No LNet network interface address defined\n");
@@ -519,7 +519,7 @@ static int kfilnd_startup(struct lnet_ni *ni)
 
 	ni->ni_dev_cpt = cpt;
 
-	/* Post a series of immediate receive buffers */
+	
 	rc = kfilnd_dev_post_imm_buffers(kfdev);
 	if (rc) {
 		CERROR("Can't post buffers, rc = %d\n", rc);
@@ -560,7 +560,7 @@ static int __init kfilnd_init(void)
 	if (rc)
 		return rc;
 
-	/* Do any initialization of the transaction system */
+	
 	rc = kfilnd_tn_init();
 	if (rc) {
 		CERROR("Cannot initialize transaction system\n");

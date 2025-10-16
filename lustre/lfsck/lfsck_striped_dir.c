@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Fan, Yong <fan.yong@intel.com>
  */
@@ -536,11 +536,11 @@ static int lfsck_record_lmv(const struct lu_env *env,
 	if (flags != LSLF_BAD_INDEX2)
 		LASSERTF(*depth == 1, "depth = %d\n", *depth);
 
-	/* Handle conflict cases. */
+	
 	switch (lslr->lslr_flags) {
 	case LSLF_NONE:
 	case LSLF_BAD_INDEX2:
-		/* The existing one is a normal valid object. */
+		
 		switch (flags) {
 		case LSLF_NONE:
 			/* The two 'valid' name entries claims the same index,
@@ -583,7 +583,7 @@ no_lmvea:
 
 			break;
 		case LSLF_DANGLING:
-			/* Remove the current dangling name entry. */
+			
 			rc = lfsck_remove_dirent(env, com, dir, fid, index);
 			break;
 		case LSLF_BAD_INDEX1:
@@ -611,7 +611,7 @@ no_lmvea:
 
 		break;
 	case LSLF_NO_LMVEA:
-		/* The existing one has no slave LMV EA. */
+		
 		switch (flags) {
 		case LSLF_NONE:
 
@@ -653,7 +653,7 @@ none:
 		case LSLF_NO_LMVEA:
 			goto no_lmvea;
 		case LSLF_DANGLING:
-			/* Remove the current dangling name entry. */
+			
 			rc = lfsck_remove_dirent(env, com, dir, fid, index);
 			break;
 		case LSLF_BAD_INDEX1:
@@ -678,7 +678,7 @@ none:
 
 		break;
 	case LSLF_DANGLING:
-		/* The existing one is a dangling name entry. */
+		
 		switch (flags) {
 		case LSLF_NONE:
 		case LSLF_BAD_INDEX2:
@@ -734,7 +734,7 @@ none:
 		lmv->lmv_hash_type = lslr->lslr_hash_type;
 		index = lslr->lslr_index;
 
-		/* Existing one has another possible slot, try recursively. */
+		
 		rc = lfsck_record_lmv(env, com, dir, lnr, lmv, index,
 				      LSLF_BAD_INDEX2, flags, depth);
 		*lmv = lrls->lrls_lmv;
@@ -783,7 +783,7 @@ conflict:
 		case LSLF_NO_LMVEA:
 			goto no_lmvea;
 		case LSLF_DANGLING:
-			/* Remove the current dangling name entry. */
+			
 			rc = lfsck_remove_dirent(env, com, dir, fid, index);
 			break;
 		case LSLF_BAD_INDEX1:
@@ -848,7 +848,7 @@ int lfsck_read_stripe_lmv(const struct lu_env *env,
 	struct lmv_foreign_md *lfm;
 	int rc;
 
-	/* use bottom object to avoid reading in shard FIDs */
+	
 	obj = lfsck_object_find_bottom(env, lfsck, lu_object_fid(&obj->do_lu));
 	if (IS_ERR(obj))
 		return PTR_ERR(obj);
@@ -859,7 +859,7 @@ int lfsck_read_stripe_lmv(const struct lu_env *env,
 	rc = dt_xattr_get(env, obj, buf, XATTR_NAME_LMV);
 	if (unlikely(rc == -ERANGE)) {
 		buf = &info->lti_big_buf;
-		/* this may be a foreign LMV */
+		
 		rc = dt_xattr_get(env, obj, &LU_BUF_NULL, XATTR_NAME_LMV);
 		if (rc > sizeof(*lmv)) {
 			int rc1;
@@ -893,19 +893,19 @@ int lfsck_read_stripe_lmv(const struct lu_env *env,
 			       "foreign LMV EA internal size %u does not match EA full size %d for dir "DFID"\n",
 			       value_len, rc, PFID(lfsck_dto2fid(obj)));
 
-		/* no further usage/decode of foreign LMV outside */
+		
 		return -ENODATA;
 	}
 
 	if (rc == sizeof(*lmv)) {
 		rc = 0;
 		lfsck_lmv_header_le_to_cpu(lmv, lmv);
-		/* if LMV is corrupt, return -ENODATA */
+		
 		if (lmv->lmv_magic != LMV_MAGIC_V1 &&
 		    lmv->lmv_magic != LMV_MAGIC_STRIPE)
 			rc = -ENODATA;
 	} else if (rc >= 0) {
-		/* LMV is corrupt */
+		
 		rc = -ENODATA;
 	}
 
@@ -1165,7 +1165,7 @@ static int lfsck_allow_regenerate_master_lmv(const struct lu_env *env,
 	if (unlikely(!dt_try_as_dir(env, obj, true)))
 		RETURN(-ENOTDIR);
 
-	/* Check whether the shard and the master MDT-object matches or not. */
+	
 	snprintf(info->lti_tmpbuf, sizeof(info->lti_tmpbuf), DFID":%u",
 		 PFID(cfid), cidx);
 	rc = dt_lookup(env, obj, (struct dt_rec *)tfid,
@@ -1199,7 +1199,7 @@ static int lfsck_allow_regenerate_master_lmv(const struct lu_env *env,
 		if (rc != 0)
 			GOTO(out, rc);
 
-		/* skip dot and dotdot entries */
+		
 		if (name_is_dot_or_dotdot(ent->lde_name, ent->lde_namelen))
 			goto next;
 
@@ -1476,7 +1476,7 @@ static int lfsck_namespace_set_lmv_master(const struct lu_env *env,
 		if (rc < 0)
 			GOTO(log, rc);
 
-		/* To indicate that the master has ever lost LMV EA. */
+		
 		lmv3->lmv_hash_type |= LMV_HASH_FLAG_LOST_LMV;
 	}
 
@@ -1670,7 +1670,7 @@ int lfsck_namespace_scan_shard(const struct lu_env *env,
 			goto next;
 		}
 
-		/* skip dot and dotdot entries */
+		
 		if (name_is_dot_or_dotdot(ent->lde_name, ent->lde_namelen))
 			goto next;
 
@@ -1686,7 +1686,7 @@ int lfsck_namespace_scan_shard(const struct lu_env *env,
 		if (rc < 0 && bk->lb_param & LPF_FAILOUT)
 			GOTO(out, rc);
 
-		/* Rate control. */
+		
 		lfsck_control_speed(lfsck);
 		if (CFS_FAIL_CHECK(OBD_FAIL_LFSCK_FATAL2))
 			GOTO(out, rc = -EINVAL);
@@ -1789,7 +1789,7 @@ int lfsck_namespace_verify_stripe_slave(const struct lu_env *env,
 		GOTO(out, rc = (rc < 0 ? rc : rc1));
 	}
 
-	/* Unmatched magic or stripe count. */
+	
 	if (unlikely(plmv->lmv_magic != LMV_MAGIC ||
 		     plmv->lmv_stripe_count != clmv->lmv_stripe_count)) {
 		rc = lfsck_namespace_trace_update(env, com, cfid,
@@ -1806,7 +1806,7 @@ int lfsck_namespace_verify_stripe_slave(const struct lu_env *env,
 	    plmv->lmv_hash_type & LMV_HASH_FLAG_BAD_TYPE)
 		GOTO(out, rc = 0);
 
-	/* Unmatched hash type. */
+	
 	if (unlikely((plmv->lmv_hash_type & LMV_HASH_TYPE_MASK) !=
 		     (clmv->lmv_hash_type & LMV_HASH_TYPE_MASK))) {
 		rc = lfsck_namespace_trace_update(env, com, cfid,
@@ -1992,7 +1992,7 @@ int lfsck_namespace_striped_dir_rescan(const struct lu_env *env,
 		bool rename_repaired = false;
 		bool create_repaired = false;
 
-		/* LMV EA hole. */
+		
 		if (fid_is_zero(cfid))
 			continue;
 

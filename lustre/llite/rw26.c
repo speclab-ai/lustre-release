@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Lite I/O page cache routines for the 2.5/2.6 kernel version
  */
@@ -59,7 +59,7 @@ static void ll_invalidate_folio(struct folio *folio, size_t offset, size_t len)
 	    !folio_test_large(folio))
 		return;
 
-	/* Drop the pages from the folio */
+	
 	env = cl_env_percpu_get();
 	LASSERT(!IS_ERR(env));
 
@@ -127,7 +127,7 @@ static void ll_invalidatepage(struct page *vmpage,
 #else
 	if (offset == 0) {
 #endif
-		/* See the comment in ll_releasepage() */
+		
 		env = cl_env_percpu_get();
 		LASSERT(!IS_ERR(env));
 
@@ -213,12 +213,12 @@ static bool ll_release_folio(struct folio *folio, gfp_t wait)
 {
 	struct page *vmpage = folio_page(folio, 0);
 
-	/* folio_nr_pages(folio) == 1 is fixed with grab_cache_page* */
+	
 	BUG_ON(folio_nr_pages(folio) != 1);
 
 	return do_release_page(vmpage, wait);
 }
-#else /* !HAVE_AOPS_RELEASE_FOLIO */
+#else 
 #ifdef HAVE_RELEASEPAGE_WITH_INT
 #define RELEASEPAGE_ARG_TYPE int
 #else
@@ -228,15 +228,15 @@ static int ll_releasepage(struct page *vmpage, RELEASEPAGE_ARG_TYPE gfp_mask)
 {
 	return do_release_page(vmpage, gfp_mask);
 }
-#endif /* HAVE_AOPS_RELEASE_FOLIO */
+#endif 
 
-/* iov_iter_alignment() is introduced in 3.16 similar to HAVE_DIO_ITER */
+
 #if defined(HAVE_DIO_ITER)
 static unsigned long iov_iter_alignment_vfs(const struct iov_iter *i)
 {
 	return iov_iter_alignment(i);
 }
-#else /* copied from alignment_iovec() */
+#else 
 static unsigned long iov_iter_alignment_vfs(const struct iov_iter *i)
 {
 	const struct iovec *iov = i->iov;
@@ -292,7 +292,7 @@ bool ll_iov_iter_is_unaligned(struct iov_iter *i)
 	}
 
 	res = iov_iter_alignment_vfs(i);
-	/* start address is page aligned */
+	
 	if ((res & ~PAGE_MASK) == orig_size)
 		return false;
 
@@ -438,7 +438,7 @@ ll_direct_IO_impl(struct kiocb *iocb, struct iov_iter *iter, int rw)
 	       unaligned ? ", unaligned" : "",
 	       io->ci_hybrid_switched ? ", hybrid" : "");
 
-	/* Check EOF by ourselves */
+	
 	if (rw == READ && file_offset >= i_size_read(inode))
 		RETURN(0);
 
@@ -455,11 +455,11 @@ ll_direct_IO_impl(struct kiocb *iocb, struct iov_iter *iter, int rw)
 	LASSERT(ll_dio_aio);
 	LASSERT(ll_dio_aio->cda_iocb == iocb);
 
-	/* unaligned DIO support can be turned off, so is it on? */
+	
 	if (unaligned && !ll_sbi_has_unaligned_dio(ll_i2sbi(inode)))
 		RETURN(-EINVAL);
 
-	/* unaligned AIO is not supported - see LU-18032 */
+	
 	if (unaligned && ll_dio_aio->cda_is_aio)
 		RETURN(-EINVAL);
 
@@ -527,7 +527,7 @@ ll_direct_IO_impl(struct kiocb *iocb, struct iov_iter *iter, int rw)
 			}
 			GOTO(out, result);
 		}
-		/* now we have the actual bytes, so store it in the sdio */
+		
 		bytes = result;
 		sdio->csd_bytes = bytes;
 
@@ -607,7 +607,7 @@ static ssize_t ll_direct_IO(
 	return ll_direct_IO_impl(iocb, iter, nrw);
 }
 
-#else /* !defined(HAVE_DIO_ITER) */
+#else 
 
 static ssize_t
 ll_direct_IO(int rw, struct kiocb *iocb, const struct iovec *iov,
@@ -619,7 +619,7 @@ ll_direct_IO(int rw, struct kiocb *iocb, const struct iovec *iov,
 	return ll_direct_IO_impl(iocb, &iter, rw);
 }
 
-#endif /* !defined(HAVE_DIO_ITER) */
+#endif 
 
 /**
  * ll_prepare_partial_page() - Prepare partially written-to page for a write.
@@ -672,7 +672,7 @@ static int ll_prepare_partial_page(const struct lu_env *env, struct cl_io *io,
 	if (result)
 		GOTO(out, result);
 
-	/* ll_io_read_page() disowns the page */
+	
 	result = cl_page_own(env, io, pg);
 	if (!result) {
 		if (!PageUptodate(cl_page_vmpage(pg))) {
@@ -680,7 +680,7 @@ static int ll_prepare_partial_page(const struct lu_env *env, struct cl_io *io,
 			result = -EIO;
 		}
 	} else if (result == -ENOENT) {
-		/* page was truncated */
+		
 		result = -EAGAIN;
 	}
 	EXIT;
@@ -691,7 +691,7 @@ out:
 
 static int ll_tiny_write_begin(struct page *vmpage, struct address_space *mapping)
 {
-	/* Page must be present, up to date, dirty, and not in writeback. */
+	
 	if (!vmpage || !PageUptodate(vmpage) || !PageDirty(vmpage) ||
 	    PageWriteback(vmpage) || vmpage->mapping != mapping)
 		return -ENODATA;
@@ -730,7 +730,7 @@ static int ll_write_begin(struct file *file, struct address_space *mapping,
 
 	lcc = ll_cl_find(inode);
 	if (lcc == NULL) {
-		/* do not allocate a page, only find & lock */
+		
 		vmpage = find_lock_page(mapping, index);
 		result = ll_tiny_write_begin(vmpage, mapping);
 		GOTO(out, result);
@@ -761,7 +761,7 @@ static int ll_write_begin(struct file *file, struct address_space *mapping,
 		}
 	}
 again:
-	/* To avoid deadlock, try to lock page first. */
+	
 	vmpage = grab_cache_page_nowait(mapping, index);
 
 	if (unlikely(vmpage == NULL ||
@@ -780,7 +780,7 @@ again:
 			vmpage = NULL;
 		}
 
-		/* commit pages and then wait for page lock */
+		
 		result = vvp_io_write_commit(env, io, IO_PRIO_NORMAL);
 		if (result < 0)
 			GOTO(out, result);
@@ -796,7 +796,7 @@ again:
 		}
 	}
 
-	/* page was truncated */
+	
 	if (mapping != vmpage->mapping) {
 		CDEBUG(D_VFSTRACE, "page: %lu was truncated\n", index);
 		unlock_page(vmpage);
@@ -826,7 +826,7 @@ again:
 			 * to read the data. */
 			result = ll_prepare_partial_page(env, io, page, file);
 			if (result) {
-				/* vmpage should have been unlocked */
+				
 				put_page(vmpage);
 				vmpage = NULL;
 
@@ -843,7 +843,7 @@ out:
 			unlock_page(vmpage);
 			put_page(vmpage);
 		}
-		/* On tiny_write failure, page and io are always null. */
+		
 		if (!IS_ERR_OR_NULL(page)) {
 			cl_page_put(env, page);
 		}
@@ -876,7 +876,7 @@ static int ll_tiny_write_end(struct file *file, struct address_space *mapping,
 	if (copied == 0)
 		goto out;
 
-	/* env_percpu_get cannot fail */
+	
 	env = cl_env_percpu_get();
 
 	/* Update the underlying size information in the OSC/LOV objects this
@@ -886,7 +886,7 @@ static int ll_tiny_write_end(struct file *file, struct address_space *mapping,
 
 	cl_env_percpu_put(env);
 out:
-	/* Must return page unlocked. */
+	
 	unlock_page(vmpage);
 
 	RETURN(rc);
@@ -947,11 +947,11 @@ static int ll_write_end(struct file *file, struct address_space *mapping,
 		spin_unlock(&inode->i_lock);
 #endif
 
-		lcc->lcc_page = NULL; /* page will be queued */
+		lcc->lcc_page = NULL; 
 
-		/* Add it into write queue */
+		
 		cl_page_list_add(plist, page, true);
-		if (plist->pl_nr == 1) /* first page */
+		if (plist->pl_nr == 1) 
 			vio->u.readwrite.vui_from = from;
 		else
 			LASSERT(from == 0);
@@ -962,7 +962,7 @@ static int ll_write_end(struct file *file, struct address_space *mapping,
 		if (PageDirty(vmpage))
 			unplug = true;
 
-		/* We may have one full RPC, commit it soon */
+		
 		if (plist->pl_nr >= PTLRPC_MAX_BRW_PAGES)
 			unplug = true;
 
@@ -974,10 +974,10 @@ static int ll_write_end(struct file *file, struct address_space *mapping,
 		lcc->lcc_page = NULL;
 		cl_page_put(env, page);
 
-		/* page list is not contiguous now, commit it now */
+		
 		unplug = true;
 	}
-	/* the last call into ->write_begin() can unplug the queue */
+	
 	if (io->u.ci_wr.wr_sync && pos + len ==
 	    io->u.ci_rw.crw_pos + io->u.ci_rw.crw_bytes)
 		unplug = true;
@@ -996,7 +996,7 @@ static int ll_migrate_folio(struct address_space *mapping,
 			    struct folio_migr *newpage, struct folio_migr *page,
 			    enum migrate_mode mode)
 {
-	/* Always fail page migration until we have a proper implementation */
+	
 	return -EIO;
 }
 #endif

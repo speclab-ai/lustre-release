@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (C) 2013, Trustees of Indiana University
  *
  * Copyright (c) 2014, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for nodemap calls
  *

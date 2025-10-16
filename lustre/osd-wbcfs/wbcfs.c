@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * lustre/osd-wbcfs/osd_wbcfs.c
@@ -30,7 +30,7 @@
 #define memfs_mknod(ns, dir, dch, mode, rd)	memfs_mknod(dir, dch, mode, rd)
 #define memfs_create_nd(ns, dir, de, mode, ex)	\
 	memfs_create_nd(dir, de, mode, ex)
-#endif /* HAVE_USER_NAMESPCE_ARG */
+#endif 
 
 /*
  * In-memory xattr entry.
@@ -73,7 +73,7 @@ static int mem_xattr_get(struct mem_xattrs *xattrs, const char *name,
 	if (!mxe->mxe_exist)
 		GOTO(out, rc = -ENODATA);
 
-	/* Value length */
+	
 	rc = mxe->mxe_len - sizeof(*mxe) - mxe->mxe_namelen - 1;
 	LASSERT(rc > 0);
 
@@ -124,7 +124,7 @@ static int mem_xattr_add(struct mem_xattrs *xattrs, const char *name,
 		mxe->mxe_exist = false;
 	}
 
-	/* This should be rarely called, just remove old and add new */
+	
 	spin_lock(&xattrs->mex_lock);
 	list_for_each_entry(tmp, &xattrs->mex_xattr_list, mxe_list) {
 		if (namelen == tmp->mxe_namelen &&
@@ -274,7 +274,7 @@ struct inode *memfs_create_inode(struct super_block *sb, struct inode *dir,
 	case S_IFDIR:
 		if (update_link)
 			inc_nlink(inode);
-		/* Some things misbehave if size == 0 on a directory */
+		
 		inode->i_size = 2 * BOGO_DIRENT_SIZE;
 		inode->i_op = &memfs_dir_inode_operations;
 		inode->i_fop = &memfs_dir_operations;
@@ -308,7 +308,7 @@ static int memfs_mknod(struct mnt_idmap *map, struct inode *dir,
 	dir->i_size += BOGO_DIRENT_SIZE;
 	inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
 	d_instantiate(dentry, inode);
-	dget(dentry); /* Extra count - pin the dentry in core */
+	dget(dentry); 
 
 	RETURN(0);
 }
@@ -408,14 +408,14 @@ static int memfs_link(struct dentry *old_dentry, struct inode *dir,
 			      inode_set_ctime_current(inode)));
 	inode_inc_iversion(dir);
 	inc_nlink(inode);
-	ihold(inode);	/* New dentry reference */
-	dget(dentry);	/* Extra pinning count for the created dentry */
+	ihold(inode);	
+	dget(dentry);	
 	d_instantiate(dentry, inode);
 	return 0;
 }
 
 #ifdef HAVE_DENTRY_D_CHILDREN
-/* parent is locked at least shared */
+
 /*
  * Returns an element of siblings' list.
  * We are looking for <count>th positive after <p>; if
@@ -434,7 +434,7 @@ static struct dentry *scan_positives(struct dentry *cursor,
 		struct dentry *d = hlist_entry(*p, struct dentry, d_sib);
 
 		p = &d->d_sib.next;
-		// we must at least skip cursors, to avoid livelocks
+		
 		if (d->d_flags & DCACHE_DENTRY_CURSOR)
 			continue;
 		if (simple_positive(d) && !--count) {
@@ -502,9 +502,9 @@ static int memfs_dcache_readdir(struct file *file, struct dir_context *ctx)
 	return 0;
 }
 
-#else /* !HAVE_DENTRY_D_CHILDREN */
+#else 
 
-/* Relationship between i_mode and the DT_xxx types */
+
 static inline unsigned char dt_type(struct inode *inode)
 {
 	return (inode->i_mode >> 12) & 15;
@@ -526,7 +526,7 @@ static inline int __simple_positive(struct dentry *dentry)
  * found, dentry is grabbed and returned to caller.
  * If no such element exists, NULL is returned.
  */
-/* parent is locked at least shared */
+
 static struct dentry *scan_positives(struct dentry *cursor,
 					struct list_head *p,
 					loff_t count,
@@ -537,7 +537,7 @@ static struct dentry *scan_positives(struct dentry *cursor,
 	spin_lock(&dentry->d_lock);
 	while ((p = p->next) != &dentry->d_subdirs) {
 		struct dentry *d = list_entry(p, struct dentry, d_child);
-		/* We must at least skip cursors, to avoid livelocks */
+		
 		if (d->d_flags & DCACHE_DENTRY_CURSOR)
 			continue;
 		if (__simple_positive(d) && !--count) {
@@ -562,7 +562,7 @@ static struct dentry *scan_positives(struct dentry *cursor,
 	return found;
 }
 
-/* linux/fs/libfs.c: dcache_readdir() */
+
 /*
  * Directory is locked and all positive dentries in it are safe, since
  * for ramfs-type trees they can't go away without unlink() or rmdir(),
@@ -609,7 +609,7 @@ static int memfs_dcache_readdir(struct file *file, struct dir_context *ctx)
 
 	return 0;
 }
-#endif /* HAVE_DENTRY_D_CHILDREN */
+#endif 
 
 /*
  * Copied from @simple_write_end in the kernel.
@@ -623,7 +623,7 @@ static int memfs_write_end(struct file *file, struct address_space *mapping,
 	struct inode *inode = page->mapping->host;
 	loff_t last_pos = pos + copied;
 
-	/* zero the stale part of the page if we did a short copy */
+	
 	if (!PageUptodate(page)) {
 		if (copied < len) {
 			unsigned int from = pos & (PAGE_SIZE - 1);
@@ -646,7 +646,7 @@ static int memfs_write_end(struct file *file, struct address_space *mapping,
 	return copied;
 }
 
-/* TODO: implement file splice read/write interface for MemFS. */
+
 static ssize_t memfs_file_splice_read(struct file *in_file, loff_t *ppos,
 				      struct pipe_inode_info *pipe,
 				      size_t count, unsigned int flags)
@@ -668,7 +668,7 @@ static int memfs_getpage(struct inode *inode, pgoff_t index,
 		return -EFBIG;
 
 	page = find_lock_page(mapping, index);
-	/* fallocated page? */
+	
 	if (page && !PageUptodate(page)) {
 		unlock_page(page);
 		put_page(page);
@@ -679,7 +679,7 @@ static int memfs_getpage(struct inode *inode, pgoff_t index,
 	return 0;
 }
 
-/* linux/mm/shmem.c shmem_file_read_iter() */
+
 static ssize_t memfs_file_read_iter(struct kiocb *iocb,
 				    struct iov_iter *to)
 {
@@ -787,7 +787,7 @@ static ssize_t memfs_file_read_iter(struct kiocb *iocb,
 	return retval ? retval : error;
 }
 
-/* TODO: space limiting for write. */
+
 static ssize_t memfs_file_write_iter(struct kiocb *iocb,
 				     struct iov_iter *iter)
 {
@@ -823,7 +823,7 @@ static int memfs_fill_super(struct super_block *sb, struct fs_context *fc)
 	sbinfo->msi_mode = ctx->meo_mode;
 	sbinfo->msi_max_blocks = ctx->meo_blocks;
 	sbinfo->msi_free_inodes = sbinfo->msi_max_inodes = ctx->meo_inodes;
-	/* Swap space for the larger capacity is not supported. */
+	
 	sbinfo->msi_noswap = true;
 
 	sb->s_maxbytes = MAX_LFS_FILESIZE;
@@ -905,7 +905,7 @@ static void memfs_destroy_callback(struct rcu_head *head)
 	struct inode *inode = container_of(head, struct inode, i_rcu);
 
 	ENTRY;
-	/* TOOD: free symlink name. */
+	
 	kmem_cache_free(memfs_inode_cachep, MEMFS_I(inode));
 	EXIT;
 }
@@ -977,7 +977,7 @@ static int memfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 		buf->f_files = sbinfo->msi_max_inodes;
 		buf->f_ffree = sbinfo->msi_free_inodes;
 	}
-	/* else leave those fields 0 like simple_statfs */
+	
 
 	return 0;
 }

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_RPC
@@ -16,7 +16,7 @@
 #ifdef CONFIG_LUSTRE_FS_POSIX_ACL
 # include <linux/fs.h>
 # include <linux/posix_acl_xattr.h>
-#endif /* CONFIG_LUSTRE_FS_POSIX_ACL */
+#endif 
 
 #include <obd_support.h>
 #include <obd_class.h>

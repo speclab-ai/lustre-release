@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #define DEBUG_SUBSYSTEM S_LNET
 
@@ -104,7 +104,7 @@ lnet_connect_console_error(int rc, struct lnet_nid *peer_nid,
 			   struct sockaddr *sa)
 {
 	switch (rc) {
-	/* "normal" errors */
+	
 	case -ECONNREFUSED:
 		CNETERR("Connection to %s at host %pIScp was refused: check that Lustre is running on that node.\n",
 			libcfs_nidstr(peer_nid), sa);
@@ -191,7 +191,7 @@ static int lnet_acceptor_add_socket(const char *iface, struct sockaddr *addr,
 	strscpy(lsock->liss_iface, iface, IFNAMSIZ);
 	lsock->liss_port = port;
 
-	/* Setup socket callback properly */
+	
 	lnet_acceptor_state.pta_odata = lsock->liss_sock->sk->sk_data_ready;
 	lsock->liss_sock->sk->sk_data_ready = lnet_acceptor_ready;
 
@@ -305,7 +305,7 @@ lnet_connect(struct lnet_nid *peer_nid, int interface,
 	int rc;
 	int port;
 
-	BUILD_BUG_ON(sizeof(cr) > 16); /* not too big to be on the stack */
+	BUILD_BUG_ON(sizeof(cr) > 16); 
 
 	LASSERT(peeraddr->sa_family == AF_INET ||
 		peeraddr->sa_family == AF_INET6);
@@ -320,7 +320,7 @@ lnet_connect(struct lnet_nid *peer_nid, int interface,
 	for (port = LNET_ACCEPTOR_MAX_RESERVED_PORT;
 	     port >= LNET_ACCEPTOR_MIN_RESERVED_PORT;
 	     --port) {
-		/* Iterate through reserved ports. */
+		
 		sock = lnet_sock_connect(interface, port,
 					 (struct sockaddr *)&destaddr, ns);
 		if (IS_ERR(sock)) {
@@ -340,7 +340,7 @@ lnet_connect(struct lnet_nid *peer_nid, int interface,
 			crsize = sizeof(cr1);
 
 			if (the_lnet.ln_testprotocompat) {
-				/* single-shot proto check */
+				
 				if (test_and_clear_bit(
 					    2, &the_lnet.ln_testprotocompat))
 					cr1.acr_version++;
@@ -388,7 +388,7 @@ lnet_accept(struct socket *sock, __u32 magic)
 	struct lnet_ni *ni;
 	char *str;
 
-	LASSERT(sizeof(cr) <= 16);		/* not too big for the stack */
+	LASSERT(sizeof(cr) <= 16);		
 
 	rc = lnet_sock_getaddr(sock, true, &peer);
 	if (rc != 0) {
@@ -493,9 +493,9 @@ lnet_accept(struct socket *sock, __u32 magic)
 	}
 
 	ni = lnet_nid_to_ni_addref(&nid);
-	if (ni == NULL ||               /* no matching net */
+	if (ni == NULL ||               
 	    !nid_same(&ni->ni_nid, &nid)) {
-		/* right NET, wrong NID! */
+		
 		if (ni != NULL)
 			lnet_ni_decref(ni);
 		LCONSOLE_ERROR("Refusing connection from %pISc for %s: No matching NI\n",
@@ -504,7 +504,7 @@ lnet_accept(struct socket *sock, __u32 magic)
 	}
 
 	if (ni->ni_net->net_lnd->lnd_accept == NULL) {
-		/* This catches a request for the loopback LND */
+		
 		lnet_ni_decref(ni);
 		LCONSOLE_ERROR("Refusing connection from %pISc for %s: NI doesn not accept IP connections\n",
 			       &peer, libcfs_nidstr(&nid));
@@ -534,7 +534,7 @@ lnet_acceptor(void *arg)
 
 	init_waitqueue_head(&lnet_acceptor_state.pta_waitq);
 
-	/* set init status and unblock parent */
+	
 	lnet_acceptor_state.pta_shutdown = rc;
 	complete(&lnet_acceptor_state.pta_signal);
 
@@ -645,7 +645,7 @@ failed:
 	}
 	spin_unlock(&socket_lock);
 
-	/* Now safely free all lsocks outside lock */
+	
 	list_for_each_entry_safe(lsock, tmp, &copy_list, liss_tmp_list) {
 		list_del_init(&lsock->liss_tmp_list);
 		sock_release(lsock->liss_sock);
@@ -682,7 +682,7 @@ lnet_acceptor_start(void)
 	long rc2;
 	long secure;
 
-	/* if acceptor is already running return immediately */
+	
 	if (!lnet_acceptor_state.pta_shutdown)
 		return 0;
 
@@ -693,7 +693,7 @@ lnet_acceptor_start(void)
 	if (rc <= 0)
 		return rc;
 
-	if (lnet_count_acceptor_nets() == 0)  /* not required */
+	if (lnet_count_acceptor_nets() == 0)  
 		return 0;
 	if (current->nsproxy && current->nsproxy->net_ns)
 		lnet_acceptor_state.pta_ns = current->nsproxy->net_ns;
@@ -707,11 +707,11 @@ lnet_acceptor_start(void)
 		return -ESRCH;
 	}
 
-	/* wait for acceptor to startup */
+	
 	wait_for_completion(&lnet_acceptor_state.pta_signal);
 
 	if (!lnet_acceptor_state.pta_shutdown)
-		/* started OK */
+		
 		return 0;
 
 	LASSERT(lnet_acceptor_state.pta_sock == NULL);
@@ -722,16 +722,16 @@ lnet_acceptor_start(void)
 void
 lnet_acceptor_stop(void)
 {
-	if (lnet_acceptor_state.pta_shutdown) /* not running */
+	if (lnet_acceptor_state.pta_shutdown) 
 		return;
 
-	/* If still required, return immediately */
+	
 	if (the_lnet.ln_refcount && lnet_count_acceptor_nets() > 0)
 		return;
 
 	lnet_acceptor_state.pta_shutdown = 1;
 	wake_up(&lnet_acceptor_state.pta_waitq);
 
-	/* block until acceptor signals exit */
+	
 	wait_for_completion(&lnet_acceptor_state.pta_signal);
 }

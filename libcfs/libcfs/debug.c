@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Phil Schwan <phil@clusterfs.com>
  */
@@ -57,7 +57,7 @@ static int libcfs_param_debug_mb_set(const char *val,
 	*((unsigned int *)kp->arg) = num;
 	num = cfs_trace_get_debug_mb();
 	if (num)
-		/* This value is more precise */
+		
 		*((unsigned int *)kp->arg) = num;
 
 	return 0;
@@ -108,7 +108,7 @@ static int param_set_delay_minmax(const char *val,
 	if (rc)
 		return -EINVAL;
 
-	/* The sysfs setting is in centiseconds */
+	
 	d = cfs_time_seconds(sec) / 100;
 	if (d < min || d > max)
 		return -EINVAL;
@@ -236,7 +236,7 @@ EXPORT_SYMBOL(libcfs_kmem);
 
 static DECLARE_COMPLETION(debug_complete);
 
-/* We need to pass a pointer here, but elsewhere this must be a const */
+
 char *libcfs_debug_file_path = LIBCFS_DEBUG_FILE_PATH_DEFAULT;
 EXPORT_SYMBOL(libcfs_debug_file_path);
 module_param(libcfs_debug_file_path, charp, 0644);
@@ -245,7 +245,7 @@ MODULE_PARM_DESC(libcfs_debug_file_path,
 
 int libcfs_panic_in_progress;
 
-/* libcfs_debug_token2mask() expects the returned string in lower-case */
+
 static const char *libcfs_debug_subsys2str(int subsys)
 {
 	static const char *const libcfs_debug_subsystems[] =
@@ -257,7 +257,7 @@ static const char *libcfs_debug_subsys2str(int subsys)
 	return libcfs_debug_subsystems[subsys];
 }
 
-/* libcfs_debug_token2mask() expects the returned string in lower-case */
+
 static const char *libcfs_debug_dbg2str(int debug)
 {
 	static const char * const libcfs_debug_masks[] =
@@ -269,7 +269,7 @@ static const char *libcfs_debug_dbg2str(int debug)
 	return libcfs_debug_masks[debug];
 }
 
-/* convert a binary mask to a string of bit names */
+
 int cfs_mask2str(char *str, int size, u64 mask, const char *(*bit2str)(int bit),
 		 char sep)
 {
@@ -277,20 +277,20 @@ int cfs_mask2str(char *str, int size, u64 mask, const char *(*bit2str)(int bit),
 	int len = 0;
 	int i;
 
-	if (mask == 0) {                        /* "0" */
+	if (mask == 0) {                        
 		if (size > 0)
 			str[0] = '0';
 		len = 1;
-	} else {                                /* space-separated tokens */
+	} else {                                
 		for (i = 0; i < 64; i++) {
 			if ((mask & BIT(i)) == 0)
 				continue;
 
 			token = bit2str(i);
-			if (!token)             /* unused bit */
+			if (!token)             
 				continue;
 
-			if (len > 0) {          /* separator? */
+			if (len > 0) {          
 				if (len < size)
 					str[len] = sep;
 				len++;
@@ -305,7 +305,7 @@ int cfs_mask2str(char *str, int size, u64 mask, const char *(*bit2str)(int bit),
 		}
 	}
 
-	/* terminate 'str' */
+	
 	if (len < size)
 		str[len++] = '\n';
 	if (len < size)
@@ -317,7 +317,7 @@ int cfs_mask2str(char *str, int size, u64 mask, const char *(*bit2str)(int bit),
 }
 EXPORT_SYMBOL(cfs_mask2str);
 
-/* Convert a text string to a bitmask */
+
 int cfs_str2mask(const char *str, const char *(*bit2str)(int bit),
 		 u64 *oldmask, u64 minmask, u64 allmask, u64 defmask)
 {
@@ -343,18 +343,18 @@ int cfs_str2mask(const char *str, const char *(*bit2str)(int bit),
 			op = *str++;
 			while (isspace(*str))
 				str++;
-			if (*str == 0)          /* trailing op */
+			if (*str == 0)          
 				return -EINVAL;
 		} else if (!found)
 			newmask = minmask;
 
 
-		/* find token length */
+		
 		for (len = 0; str[len] != 0 && !isspace(str[len]) &&
 		     str[len] != '+' && str[len] != '-' && str[len] != ',';
 		     len++);
 
-		/* match token */
+		
 		found = 0;
 		for (i = 0; i < 32; i++) {
 			debugstr = bit2str(i);
@@ -417,14 +417,14 @@ int libcfs_debug_str2mask(int *mask, const char *str, int is_subsys)
 	int n, t;
 	int rc;
 
-	/* Allow a number for backwards compatibility */
+	
 	for (n = strlen(str); n > 0; n--)
 		if (!isspace(str[n - 1]))
 			break;
 	matched = n;
 	t = sscanf(str, "%i%n", &m, &matched);
 	if (t >= 1 && matched == n) {
-		/* don't print warning for lctl set_param debug=0 or -1 */
+		
 		if (m != 0 && m != -1)
 			CWARN("using a numerical debug mask is deprecated\n");
 		*mask = m;
@@ -459,7 +459,7 @@ static void libcfs_run_debug_log_upcall(char *file)
 	argv[0] = lnet_debug_log_upcall;
 
 	LASSERTF(file, "called on a null filename\n");
-	argv[1] = file; /* only need to pass the path of the file */
+	argv[1] = file; 
 
 	argv[2] = NULL;
 
@@ -544,7 +544,7 @@ lbug_with_loc(struct libcfs_debug_msg_data *msgdata)
 
 	if (in_interrupt()) {
 		panic("LBUG in interrupt.\n");
-		/* not reached */
+		
 	}
 
 	dump_stack();
@@ -556,7 +556,7 @@ lbug_with_loc(struct libcfs_debug_msg_data *msgdata)
 	while (1)
 		schedule();
 #ifndef HAVE_LBUG_WITH_LOC_IN_OBJTOOL
-	/* not reached */
+	
 	panic("LBUG after schedule.");
 #endif
 }
@@ -613,8 +613,8 @@ int libcfs_debug_init(unsigned long bufsize)
 		return 0;
 
 	debug_started = true;
-	if (libcfs_console_max_delay <= 0 || /* not set by user or */
-	    libcfs_console_min_delay <= 0 || /* set to invalid values */
+	if (libcfs_console_max_delay <= 0 || 
+	    libcfs_console_min_delay <= 0 || 
 	    libcfs_console_min_delay >= libcfs_console_max_delay) {
 		libcfs_console_max_delay = CDEBUG_DEFAULT_MAX_DELAY;
 		libcfs_console_min_delay = CDEBUG_DEFAULT_MIN_DELAY;
@@ -655,7 +655,7 @@ int libcfs_debug_clear_buffer(void)
 	return 0;
 }
 
-/* Debug markers, although printed by S_LNET should not be be marked as such. */
+
 #undef DEBUG_SUBSYSTEM
 #define DEBUG_SUBSYSTEM S_UNDEFINED
 int libcfs_debug_mark_buffer(const char *text)

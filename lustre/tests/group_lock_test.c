@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright 2014, 2015 Cray Inc, all rights reserved.
@@ -55,21 +55,21 @@
 		cleanup();						\
 	} while (0)
 
-/* Name of file/directory. Will be set once and will not change. */
+
 static char mainpath[PATH_MAX];
 static const char *maindir = "group_lock_test_name_9585766";
 
-static char fsmountdir[PATH_MAX];	/* Lustre mountpoint */
-static char *lustre_dir;		/* Test directory inside Lustre */
+static char fsmountdir[PATH_MAX];	
+static char *lustre_dir;		
 
-/* Cleanup our test file. */
+
 static void cleanup(void)
 {
 	unlink(mainpath);
 	rmdir(mainpath);
 }
 
-/* Test lock / unlock */
+
 static void test10(void)
 {
 	int rc;
@@ -77,12 +77,12 @@ static void test10(void)
 	int gid;
 	int i;
 
-	/* Create the test file, and open it. */
+	
 	fd = creat(mainpath, 0);
 	ASSERTF(fd >= 0, "creat failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Valid command first. */
+	
 	gid = 1234;
 	rc = ioctl(fd, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s': %s",
@@ -91,7 +91,7 @@ static void test10(void)
 	ASSERTF(rc == 0, "cannot unlock '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Again */
+	
 	gid = 768;
 	for (i = 0; i < 1000; i++) {
 		rc = ioctl(fd, LL_IOC_GROUP_LOCK, gid);
@@ -104,7 +104,7 @@ static void test10(void)
 			mainpath, strerror(errno), i);
 	}
 
-	/* Lock twice. */
+	
 	gid = 97486;
 	rc = ioctl(fd, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s': %s", mainpath, strerror(errno));
@@ -118,13 +118,13 @@ static void test10(void)
 	ASSERTF(rc == -1 && errno == EINVAL, "unexpected unlock retval: %d %s",
 		rc, strerror(errno));
 
-	/* 0 is an invalid gid */
+	
 	gid = 0;
 	rc = ioctl(fd, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == -1 && errno == EINVAL, "unexpected lock retval: %s",
 		strerror(errno));
 
-	/* Lock/unlock with a different gid */
+	
 	gid = 3543;
 	rc = ioctl(fd, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s': %s", mainpath, strerror(errno));
@@ -141,7 +141,7 @@ static void test10(void)
 	close(fd);
 }
 
-/* Test open/lock/close without unlocking */
+
 static void test11(void)
 {
 	int rc;
@@ -149,7 +149,7 @@ static void test11(void)
 	int gid;
 	char buf[10000];
 
-	/* Create the test file. */
+	
 	fd = creat(mainpath, 0);
 	ASSERTF(fd >= 0, "creat failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -209,7 +209,7 @@ static void test11(void)
 	}
 }
 
-/* Lock / unlock a volatile file, with different creation flags */
+
 static void test12(void)
 {
 	int rc;
@@ -287,20 +287,20 @@ static void helper_test20(int fd)
 		"unexpected retval: %d %s", rc, strerror(errno));
 }
 
-/* Test lock / unlock on a directory */
+
 static void test20(void)
 {
 	int fd;
 	int rc;
 	char dname[PATH_MAX];
 
-	/* Try the mountpoint. Should fail. */
+	
 	fd = open(fsmountdir, O_RDONLY | O_DIRECTORY);
 	ASSERTF(fd >= 0, "open failed for '%s': %s", mainpath, strerror(errno));
 	helper_test20(fd);
 	close(fd);
 
-	/* Try .lustre/ . Should fail. */
+	
 	rc = snprintf(dname, sizeof(dname), "%s/.lustre", fsmountdir);
 	ASSERTF(rc < sizeof(dname), "Name too long");
 
@@ -309,7 +309,7 @@ static void test20(void)
 	helper_test20(fd);
 	close(fd);
 
-	/* A regular directory. */
+	
 	rc = mkdir(mainpath, 0600);
 	ASSERTF(rc == 0, "mkdir failed for '%s': %s",
 		mainpath, strerror(errno));
@@ -321,7 +321,7 @@ static void test20(void)
 	close(fd);
 }
 
-/* Test locking between several fds. */
+
 static void test30(void)
 {
 	int fd1;
@@ -330,24 +330,24 @@ static void test30(void)
 	int gid2;
 	int rc;
 
-	/* Create the test file, and open it. */
+	
 	fd1 = creat(mainpath, 0);
 	ASSERTF(fd1 >= 0, "open failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Open a second time in non blocking mode. */
+	
 	fd2 = open(mainpath, O_RDWR | O_NONBLOCK);
 	ASSERTF(fd2 >= 0, "open failed for '%s': %s",
 		mainpath, strerror(errno));
 
-	/* Valid command first. */
+	
 	gid = 1234;
 	rc = ioctl(fd1, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s': %s", mainpath, strerror(errno));
 	rc = ioctl(fd1, LL_IOC_GROUP_UNLOCK, gid);
 	ASSERTF(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(errno));
 
-	/* Lock on one fd, unlock on the other */
+	
 	gid = 6947556;
 	rc = ioctl(fd1, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s': %s", mainpath, strerror(errno));
@@ -357,7 +357,7 @@ static void test30(void)
 	rc = ioctl(fd1, LL_IOC_GROUP_UNLOCK, gid);
 	ASSERTF(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(errno));
 
-	/* Lock from both */
+	
 	gid = 89489665;
 	rc = ioctl(fd1, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s': %s", mainpath, strerror(errno));
@@ -368,7 +368,7 @@ static void test30(void)
 	rc = ioctl(fd1, LL_IOC_GROUP_UNLOCK, gid);
 	ASSERTF(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(errno));
 
-	/* Lock from both. Unlock in reverse order. */
+	
 	gid = 89489665;
 	rc = ioctl(fd1, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s': %s", mainpath, strerror(errno));
@@ -379,7 +379,7 @@ static void test30(void)
 	rc = ioctl(fd2, LL_IOC_GROUP_UNLOCK, gid);
 	ASSERTF(rc == 0, "cannot unlock '%s': %s", mainpath, strerror(errno));
 
-	/* Try to lock with different gids */
+	
 	gid = 89489665;
 	rc = ioctl(fd1, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s': %s", mainpath, strerror(errno));
@@ -402,7 +402,7 @@ static void test30(void)
 	close(fd2);
 }
 
-/* Test locking between several fds. */
+
 static void test40(void)
 {
 	int rc;
@@ -411,12 +411,12 @@ static void test40(void)
 	char buf[10000];
 	int i, j, threads = 40;
 
-	/* Create the test file. */
+	
 	fd = open(mainpath, O_RDWR | O_CREAT | O_TRUNC,
 		  S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP);
 	ASSERTF(fd >= 0, "creat failed for '%s': %s",
 		mainpath, strerror(errno));
-	/* Lock */
+	
 	gid = 1234;
 	rc = ioctl(fd, LL_IOC_GROUP_LOCK, gid);
 	ASSERTF(rc == 0, "cannot lock '%s' gid %d: %s", mainpath, gid,
@@ -430,7 +430,7 @@ static void test40(void)
 			struct iovec io = { .iov_base = buf,
 					    .iov_len = sizeof(buf)};
 
-			/* writing to a fixed offset */
+			
 			memset(buf, i, sizeof(buf));
 			rc = pwritev(fd, &io, 1, sizeof(buf) * i);
 			ASSERTF(rc == sizeof(buf), "write failed for '%s' block %d: %s",
@@ -443,7 +443,7 @@ static void test40(void)
 
 	while ((i = wait(&rc)) > 0);
 
-	/* Check data */
+	
 	for (i = 0; i < threads; i++) {
 		rc = read(fd, buf, sizeof(buf));
 		ASSERTF(rc == sizeof(buf), "read failed for '%s': %s",
@@ -453,7 +453,7 @@ static void test40(void)
 				j, i, buf[j]);
 	}
 
-	/* close unlock group lock */
+	
 	rc = close(fd);
 	ASSERTF(rc == 0, "close failed '%s': %s",
 		mainpath, strerror(errno));
@@ -503,7 +503,7 @@ int main(int argc, char *argv[])
 	 * stream under I/O redirection may appear incorrectly. */
 	setvbuf(stdout, NULL, _IOLBF, 0);
 
-	/* Create a test filename and reuse it. Remove possibly old files. */
+	
 	rc = snprintf(mainpath, sizeof(mainpath), "%s/%s", lustre_dir, maindir);
 	ASSERTF(rc > 0 && rc < sizeof(mainpath), "invalid name for mainpath");
 	cleanup();

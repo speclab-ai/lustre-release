@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -42,7 +42,7 @@ int qmt_intent_policy(const struct lu_env *env, struct lu_device *ld,
 	req_capsule_set_size(&req->rq_pill, &RMF_DLM_LVB, RCL_SERVER,
 			     ldlm_lvbo_size(*lockp));
 
-	/* extract quota body and intent opc */
+	
 	it = req_capsule_client_get(&req->rq_pill, &RMF_LDLM_INTENT);
 	if (it == NULL)
 		RETURN(err_serious(-EFAULT));
@@ -51,7 +51,7 @@ int qmt_intent_policy(const struct lu_env *env, struct lu_device *ld,
 	if (reqbody == NULL)
 		RETURN(err_serious(-EFAULT));
 
-	/* prepare reply */
+	
 	rc = req_capsule_server_pack(&req->rq_pill);
 	if (rc != 0) {
 		CERROR("Can't pack response, rc %d\n", rc);
@@ -76,10 +76,10 @@ int qmt_intent_policy(const struct lu_env *env, struct lu_device *ld,
 		int idx;
 
 		if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] == 0)
-			/* acquire on global lock? something is wrong ... */
+			
 			GOTO(out, rc = -EPROTO);
 
-		/* verify global lock isn't stale */
+		
 		if (!lustre_handle_is_used(&reqbody->qb_glb_lockh))
 			GOTO(out, rc = -ENOLCK);
 
@@ -107,7 +107,7 @@ int qmt_intent_policy(const struct lu_env *env, struct lu_device *ld,
 			GOTO(out, rc);
 		}
 
-		/* acquire quota space */
+		
 		rc = qmt_dqacq0(env, qmt, uuid,
 				reqbody->qb_flags, reqbody->qb_count,
 				reqbody->qb_usage, repbody,
@@ -120,10 +120,10 @@ int qmt_intent_policy(const struct lu_env *env, struct lu_device *ld,
 	}
 
 	case IT_QUOTA_CONN:
-		/* new connection from slave */
+		
 
 		if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] != 0)
-			/* connection on per-ID lock? something is wrong ... */
+			
 			GOTO(out, rc = -EPROTO);
 
 		rc = qmt_pool_new_conn(env, qmt, &reqbody->qb_fid,
@@ -139,7 +139,7 @@ int qmt_intent_policy(const struct lu_env *env, struct lu_device *ld,
 		GOTO(out, rc = -EINVAL);
 	}
 
-	/* on success, pack lvb in reply */
+	
 	lvb = req_capsule_server_get(&req->rq_pill, &RMF_DLM_LVB);
 	lvb_len = ldlm_lvbo_size(*lockp);
 	lvb_len = ldlm_lvbo_fill(*lockp, lvb, &lvb_len);
@@ -180,10 +180,10 @@ int qmt_lvbo_init(struct lu_device *ld, struct ldlm_resource *res)
 	LASSERT(env);
 	qti = qmt_info(env);
 
-	/* extract global index FID and quota identifier */
+	
 	fid_extract_from_quota_res(&qti->qti_fid, &qti->qti_id, &res->lr_name);
 
-	/* sanity check the global index FID */
+	
 	rc = lquota_extract_fid(&qti->qti_fid, &pool_type, &qtype);
 	if (rc) {
 		CERROR("can't extract glb index information from FID "DFID"\n",
@@ -202,7 +202,7 @@ int qmt_lvbo_init(struct lu_device *ld, struct ldlm_resource *res)
 		if (IS_ERR(pool))
 			GOTO(out, rc = -ENOMEM);
 
-		/* Find the quota entry associated with the quota id */
+		
 		lqe = qmt_pool_lqe_lookup(env, qmt, pool_type, qtype,
 					  &qti->qti_id, NULL);
 		if (IS_ERR(lqe)) {
@@ -221,14 +221,14 @@ int qmt_lvbo_init(struct lu_device *ld, struct ldlm_resource *res)
 
 		qmt_setup_lqe_gd(env, qmt, lqe, lgd, pool_type);
 
-		/* store reference to lqe in lr_lvb_data */
+		
 		res->lr_lvb_data = lqe;
 		qpi_putref(env, pool);
 		LQUOTA_DEBUG(lqe, "initialized res lvb");
 	} else {
 		struct dt_object	*obj;
 
-		/* lookup global index */
+		
 		obj = dt_locate(env, qmt->qmt_child, &qti->qti_fid);
 		if (IS_ERR(obj))
 			GOTO(out, rc = PTR_ERR(obj));
@@ -237,7 +237,7 @@ int qmt_lvbo_init(struct lu_device *ld, struct ldlm_resource *res)
 			GOTO(out, rc = -ENOENT);
 		}
 
-		/* store reference to global index object in lr_lvb_data */
+		
 		res->lr_lvb_data = obj;
 		CDEBUG(D_QUOTA, DFID" initialized lvb\n", PFID(&qti->qti_fid));
 	}
@@ -353,7 +353,7 @@ int qmt_lvbo_update(struct lu_device *ld, struct ldlm_resource *res,
 		RETURN(0);
 
 	if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] == 0)
-		/* no need to update lvb for global quota locks */
+		
 		RETURN(0);
 
 	lvb = req_capsule_server_swab_get(&req->rq_pill, &RMF_DLM_LVB,
@@ -368,7 +368,7 @@ int qmt_lvbo_update(struct lu_device *ld, struct ldlm_resource *res,
 	LASSERT(lqe != NULL);
 	lqe_getref(lqe);
 
-	/* allocate environement */
+	
 	env = lu_env_find();
 	LASSERT(env);
 	qti = qmt_info(env);
@@ -400,9 +400,9 @@ int qmt_lvbo_update(struct lu_device *ld, struct ldlm_resource *res,
 
 	need_revoke = qmt_clear_lgeg_arr_nu(lqe, stype, idx);
 	if (lvb->lvb_id_rel == 0) {
-		/* nothing to release */
+		
 		if (lvb->lvb_id_may_rel != 0) {
-			/* but might still release later ... */
+			
 			lqe_write_lock(lqe);
 			lqe->lqe_may_rel += lvb->lvb_id_may_rel;
 			lqe_write_unlock(lqe);
@@ -434,7 +434,7 @@ int qmt_lvbo_update(struct lu_device *ld, struct ldlm_resource *res,
 		LQUOTA_DEBUG(lqe, "releasing:%llu may release:%llu",
 			     lvb->lvb_id_rel, lvb->lvb_id_may_rel);
 
-		/* release quota space */
+		
 		rc = qmt_dqacq0(env, qmt, &exp->exp_client_uuid,
 				QUOTA_DQACQ_FL_REL, lvb->lvb_id_rel,
 				0, &qti->qti_body,
@@ -502,7 +502,7 @@ int qmt_lvbo_fill(struct lu_device *ld, struct ldlm_lock *lock, void *lvb,
 		if (stype < 0)
 			RETURN(stype);
 		qmt = lu2qmt_dev(ld);
-		/* return current qunit value & edquot flags in lvb */
+		
 		lqe_getref(lqe);
 		rc = qmt_pool_lqes_lookup(env, qmt, lqe_rtype(lqe), stype,
 					  lqe_qtype(lqe), &lqe->lqe_id,
@@ -519,10 +519,10 @@ int qmt_lvbo_fill(struct lu_device *ld, struct ldlm_lock *lock, void *lvb,
 		       qlvb->lvb_flags, qlvb->lvb_id_qunit);
 		lqe_putref(lqe);
 	} else {
-		/* global quota lock */
+		
 		struct dt_object *obj = res->lr_lvb_data;
 
-		/* return current version of global index */
+		
 		qlvb->lvb_glb_ver = dt_version_get(env, obj);
 	}
 
@@ -549,7 +549,7 @@ int qmt_lvbo_free(struct lu_device *ld, struct ldlm_resource *res)
 		queue_work(qmt->qmt_lvbo_free_wq, &lqe->lqe_work);
 	} else {
 		struct dt_object *obj = res->lr_lvb_data;
-		/* release object reference */
+		
 		dt_object_put(lu_env_find(), obj);
 	}
 
@@ -602,7 +602,7 @@ again:
 	if (cb)
 		mutex_lock(&lqe->lqe_glbl_data_lock);
 	lock_res(res);
-	/* scan list of granted locks */
+	
 	list_for_each(pos, &res->lr_granted) {
 		struct ldlm_lock *lock;
 		int rc;
@@ -612,7 +612,7 @@ again:
 
 		if (cb != NULL) {
 			rc = cb(lock, arg);
-			/* slave should not be notified */
+			
 			if (rc == 0)
 				continue;
 		}
@@ -663,7 +663,7 @@ static void qmt_setup_id_desc(struct ldlm_lock *lock, union ldlm_gl_desc *desc,
 	stype = qmt_uuid2idx(uuid, &idx);
 	LASSERT(stype >= 0);
 
-	/* DOM case - set global lqe settings */
+	
 	if (qmt_dom(lqe_rtype(lqe), stype)) {
 		edquot = lqe->lqe_edquot;
 		qunit = lqe->lqe_qunit;
@@ -685,7 +685,7 @@ static void qmt_setup_id_desc(struct ldlm_lock *lock, union ldlm_gl_desc *desc,
 		mutex_unlock(&lqe->lqe_glbl_data_lock);
 	}
 
-	/* fill glimpse descriptor with lqe settings */
+	
 	desc->lquota_desc.gl_flags = edquot ? LQUOTA_FL_EDQUOT : 0;
 	desc->lquota_desc.gl_qunit = qunit;
 	CDEBUG(D_QUOTA, "setup desc: stype %d idx %d, edquot %llu qunit %llu\n",
@@ -733,7 +733,7 @@ static int qmt_glimpse_lock(const struct lu_env *env, struct qmt_device *qmt,
 	CDEBUG(D_QUOTA, "found granted locks %lu\n", locks.q_cnt);
 	locks_count = locks.q_cnt;
 
-	/* Use one desc for all works, when called from qmt_glb_lock_notify */
+	
 	if (cb && locks.q_cnt > 1) {
 		/* TODO: think about to store this preallocated descs
 		 * in lqe_global in lqeg_arr as a part of lqe_glbl_entry.
@@ -784,7 +784,7 @@ static int qmt_glimpse_lock(const struct lu_env *env, struct qmt_device *qmt,
 		GOTO(out, rc = 0);
 	}
 
-	/* issue glimpse callbacks to all connected slaves */
+	
 	rc = ldlm_glimpse_locks(res, &gl_list);
 
 	list_for_each_safe(pos, tmp, &gl_list) {
@@ -824,7 +824,7 @@ void qmt_glb_lock_notify(const struct lu_env *env, struct lquota_entry *lqe,
 
 	lquota_generate_fid(&qti->qti_fid, pool->qpi_rtype, lqe_qtype(lqe));
 
-	/* send glimpse callback to notify slaves of new quota settings */
+	
 	qti->qti_gl_desc.lquota_desc.gl_id        = lqe->lqe_id;
 	qti->qti_gl_desc.lquota_desc.gl_flags     = 0;
 	if (lqe->lqe_is_default) {
@@ -855,7 +855,7 @@ void qmt_glb_lock_notify(const struct lu_env *env, struct lquota_entry *lqe,
 	}
 	qti->qti_gl_desc.lquota_desc.gl_ver       = ver;
 
-	/* look up ldlm resource associated with global index */
+	
 	fid_build_reg_res_name(&qti->qti_fid, &qti->qti_resid);
 	res = ldlm_resource_get(pool->qpi_qmt->qmt_ns, &qti->qti_resid,
 				LDLM_PLAIN, 0);
@@ -963,12 +963,12 @@ static void qmt_id_lock_glimpse(const struct lu_env *env,
 		 * replies if needed */
 		lqe->lqe_may_rel = 0;
 
-	/* The rebalance thread is the only thread which can issue glimpses */
+	
 	LASSERT(!lqe->lqe_gl);
 	lqe->lqe_gl = true;
 	lqe_write_unlock(lqe);
 
-	/* issue glimpse callback to slaves */
+	
 	if (lqe->lqe_glbl_data)
 		qmt_glimpse_lock(env, qmt, res, &qti->qti_gl_desc,
 				 qmt_id_lock_cb, lqe);

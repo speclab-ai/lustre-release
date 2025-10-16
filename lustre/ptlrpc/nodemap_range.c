@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2013, Trustees of Indiana University
@@ -68,7 +68,7 @@ struct lu_nid_range *range_create_generic(
 	}
 
 	if (netmask) {
-		/* +4 for '/<prefix_length>' */
+		
 		char nidstr[LNET_NIDSTR_SIZE + 4];
 		char net[LNET_NIDSTR_SIZE];
 		char *c;
@@ -86,7 +86,7 @@ struct lu_nid_range *range_create_generic(
 			return NULL;
 		}
 
-		/* nidstr = <addr>@<net> */
+		
 		snprintf(nidstr, sizeof(nidstr), "%s",
 			 libcfs_nidstr(start_nid));
 
@@ -97,12 +97,12 @@ struct lu_nid_range *range_create_generic(
 			return NULL;
 		}
 
-		/* net = @<net> */
+		
 		strscpy(net, c, sizeof(net));
 
 		*c = '\0';
 
-		/* nidstr = <addr>/<prefix_length> */
+		
 		snprintf(c, sizeof(nidstr) - strlen(nidstr), "/%u", netmask);
 
 		/* nidstr = <addr>/<prefix_length>@<net>
@@ -124,7 +124,7 @@ struct lu_nid_range *range_create_generic(
 		return NULL;
 	}
 
-	/* if we are loading from save, use on disk id num */
+	
 	if (range_id != 0) {
 		if (nm_range_tree->nmrt_range_highest_id < range_id)
 			nm_range_tree->nmrt_range_highest_id = range_id;

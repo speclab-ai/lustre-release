@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
  *     alternatives
@@ -6,7 +6,7 @@
  * Copyright (c) 2013, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * library for heirarchical storage management (HSM) calls
  *
@@ -47,7 +47,7 @@
 
 #define OPEN_BY_FID_PATH dot_lustre_name"/fid"
 
-/****** HSM Copytool API ********/
+
 #define CT_PRIV_MAGIC 0xC0BE2001
 struct hsm_copytool_private {
 	int				 magic;
@@ -97,7 +97,7 @@ enum ct_event {
 	CT_EVENT_MAX
 };
 
-/* initialized in llapi_hsm_register_event_fifo() */
+
 static int llapi_hsm_event_fd = -1;
 static bool created_hsm_event_fifo;
 
@@ -165,7 +165,7 @@ static int llapi_hsm_write_json_event(struct llapi_json_item_list **event)
 	struct tm			time_components;
 	struct llapi_json_item_list	*json_items;
 
-	/* Noop unless the event fd was initialized */
+	
 	if (llapi_hsm_event_fd < 0)
 		return 0;
 
@@ -204,7 +204,7 @@ static int llapi_hsm_write_json_event(struct llapi_json_item_list **event)
 	fclose(buf_file);
 
 	if (write(llapi_hsm_event_fd, json_buf, strlen(json_buf)) < 0) {
-		/* Ignore write failures due to missing reader. */
+		
 		if (errno != EPIPE)
 			return -errno;
 	}
@@ -231,7 +231,7 @@ static int llapi_hsm_log_ct_registration(struct hsm_copytool_private **priv,
 	struct hsm_copytool_private	*ct;
 	struct llapi_json_item_list	*json_items;
 
-	/* Noop unless the event fd was initialized */
+	
 	if (llapi_hsm_event_fd < 0)
 		return 0;
 
@@ -345,7 +345,7 @@ static int llapi_hsm_log_ct_progress(struct hsm_copyaction_private **phcp,
 	struct hsm_copyaction_private	*hcp;
 	struct llapi_json_item_list	*json_items;
 
-	/* Noop unless the event fd was initialized */
+	
 	if (llapi_hsm_event_fd < 0)
 		return 0;
 
@@ -393,8 +393,8 @@ static int llapi_hsm_log_ct_progress(struct hsm_copyaction_private **phcp,
 		goto cancel;
 	}
 
-	/* lustre_path isn't available after a restore completes */
-	/* total_bytes isn't available after a restore or archive completes */
+	
+	
 	if (progress_type != CT_FINISH) {
 		rc = llapi_fid2path_at(hcp->ct_priv->mnt_fd, &hai->hai_dfid,
 				       lustre_path, sizeof(lustre_path),
@@ -462,7 +462,7 @@ int llapi_hsm_register_event_fifo(const char *path)
 	struct sigaction ignore_action;
 	int rc;
 
-	/* Create the FIFO if necessary. */
+	
 	if ((mkfifo(path, 0644) < 0) && (errno != EEXIST)) {
 		llapi_error(LLAPI_MSG_ERROR, errno, "mkfifo(%s) failed", path);
 		return -errno;
@@ -508,7 +508,7 @@ int llapi_hsm_register_event_fifo(const char *path)
 		return rc;
 	}
 
-	/* Ignore SIGPIPEs -- can occur if the reader goes away. */
+	
 	memset(&ignore_action, 0, sizeof(ignore_action));
 	ignore_action.sa_handler = SIG_IGN;
 	sigemptyset(&ignore_action.sa_mask);
@@ -527,7 +527,7 @@ int llapi_hsm_register_event_fifo(const char *path)
  */
 int llapi_hsm_unregister_event_fifo(const char *path)
 {
-	/* Noop unless the event fd was initialized */
+	
 	if (llapi_hsm_event_fd < 0)
 		return 0;
 
@@ -566,7 +566,7 @@ void llapi_hsm_log_error(enum llapi_message_level level, int _rc,
 	va_list				args2;
 	struct llapi_json_item_list	*json_items;
 
-	/* Noop unless the event fd was initialized */
+	
 	if (llapi_hsm_event_fd < 0)
 		return;
 
@@ -748,7 +748,7 @@ int llapi_hsm_copytool_register(struct hsm_copytool_private **priv,
 
 	llapi_hsm_log_ct_registration(&ct, CT_REGISTER);
 
-	/* Only the kernel reference keeps the write side open */
+	
 	close(ct->kuc->lk_wfd);
 	ct->kuc->lk_wfd = LK_NOFD;
 	*priv = ct;
@@ -756,7 +756,7 @@ int llapi_hsm_copytool_register(struct hsm_copytool_private **priv,
 	return 0;
 
 out_kuc:
-	/* cleanup the kuc channel */
+	
 	libcfs_ukuc_stop(ct->kuc);
 
 out_free_kuc:
@@ -801,7 +801,7 @@ int llapi_hsm_copytool_unregister(struct hsm_copytool_private **priv)
 	 * unregister and block on kg_sem. */
 	libcfs_ukuc_stop(ct->kuc);
 
-	/* Tell the kernel to stop sending us messages */
+	
 	ct->kuc->lk_flags = LK_FLG_STOP;
 	ioctl(ct->mnt_fd, LL_IOC_HSM_CT_START, ct->kuc);
 
@@ -862,7 +862,7 @@ repeat:
 	if (rc < 0)
 		goto out_err;
 
-	/* Handle generic messages */
+	
 	if (kuch->kuc_transport == KUC_TRANSPORT_GENERIC &&
 	    kuch->kuc_msgtype == KUC_MSG_SHUTDOWN) {
 		rc = -ESHUTDOWN;
@@ -936,12 +936,12 @@ static int fid_parent(const struct hsm_copytool_private *ct,
 	if (rc < 0)
 		return rc;
 
-	/* fid2path returns a relative path */
+	
 	rc = snprintf(parent, parent_len, "%s/%s", ct->mnt, file);
 	if (rc >= parent_len)
 		return -ENAMETOOLONG;
 
-	/* remove file name */
+	
 	ptr = strrchr(parent, '/');
 	if (ptr == NULL || ptr == parent) {
 		rc = -EINVAL;
@@ -1029,7 +1029,7 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 
 	rc = fid_parent(ct, &hai->hai_fid, parent, sizeof(parent));
 	if (rc < 0) {
-		/* fid_parent() failed, try to keep on going */
+		
 		llapi_error(LLAPI_MSG_ERROR, rc,
 			    "cannot get parent path to restore "DFID" "
 			    "using '%s'", PFID(&hai->hai_fid), ct->mnt);
@@ -1278,7 +1278,7 @@ int llapi_hsm_action_end(struct hsm_copyaction_private **phcp,
 			goto end;
 		}
 
-		/* Set {a,m,c}time of volatile file to that of original. */
+		
 		rc = ioctl(hcp->data_fd, LL_IOC_FUTIMES_3, &lfu);
 		if (rc < 0) {
 			errval = -errno;
@@ -1348,7 +1348,7 @@ int llapi_hsm_action_progress(struct hsm_copyaction_private *hcp,
 	hp.hp_cookie = hai->hai_cookie;
 	hp.hp_flags  = hp_flags;
 
-	/* Progress is made on the data fid */
+	
 	hp.hp_fid = hai->hai_dfid;
 	hp.hp_extent = *he;
 
@@ -1431,7 +1431,7 @@ int llapi_hsm_import(const char *dst, int archive, const struct stat *st,
 	if (stripe_pattern == 0)
 		stripe_pattern = LOV_PATTERN_RAID0;
 
-	/* Create a non-striped file */
+	
 	fd = llapi_file_open_pool(dst, O_CREAT | O_WRONLY, st->st_mode,
 				  stripe_size, stripe_offset, stripe_count,
 				  stripe_pattern | LOV_PATTERN_F_RELEASED,
@@ -1490,7 +1490,7 @@ int llapi_hsm_state_get_fd(int fd, struct hsm_user_state *hus)
 	int rc;
 
 	rc = ioctl(fd, LL_IOC_HSM_STATE_GET, hus);
-	/* If error, save errno value */
+	
 	rc = rc ? -errno : 0;
 
 	return rc;
@@ -1547,7 +1547,7 @@ int llapi_hsm_state_set_fd(int fd, __u64 setmask, __u64 clearmask,
 		hss.hss_archive_id = archive_id;
 	}
 	rc = ioctl(fd, LL_IOC_HSM_STATE_SET, &hss);
-	/* If error, save errno value */
+	
 	rc = rc ? -errno : 0;
 
 	return rc;
@@ -1593,7 +1593,7 @@ int llapi_hsm_current_action(const char *path, struct hsm_current_action *hca)
 		return -errno;
 
 	rc = ioctl(fd, LL_IOC_HSM_ACTION, hca);
-	/* If error, save errno value */
+	
 	rc = rc ? -errno : 0;
 
 	close(fd);
@@ -1636,7 +1636,7 @@ int llapi_hsm_request(const char *path, const struct hsm_user_request *request)
 		return rc;
 
 	rc = ioctl(fd, LL_IOC_HSM_REQUEST, request);
-	/* If error, save errno value */
+	
 	rc = rc ? -errno : 0;
 
 	close(fd);

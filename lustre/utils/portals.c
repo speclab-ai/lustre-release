@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  *
  * Copyright (c) 2013, 2017, Intel Corporation.
  *
- *   This file is part of Lustre, https://wiki.whamcloud.com/
+ *   This file is part of Lustre, https:
  */
 #include <errno.h>
 #include <getopt.h>
@@ -49,7 +49,7 @@ static __u32 g_net;
 static char local_buf[IOC_BUF_SIZE];
 static char *ioc_buf = local_buf;
 
-/* Convert a string boolean to an int; "enable" -> 1 */
+
 static int
 lnet_parse_bool (int *b, char *str)
 {
@@ -83,8 +83,8 @@ lnet_parse_port(int *port, char *str)
 
 	*port = strtol(str, &end, 0);
 
-	if (*end == 0 &&                        /* parsed whole string */
-	    *port > 0 && *port < 65536)         /* minimal sanity check */
+	if (*end == 0 &&                        
+	    *port > 0 && *port < 65536)         
 		return 0;
 
 	return -1;
@@ -146,7 +146,7 @@ lnet_parse_ipaddr(__u32 *ipaddrp, char *str)
 				break;
 			}
 		}
-		/* FIXME: handle AF_INET6 */
+		
 
 		if (!aip) {
 			fprintf(stderr, "failed to get IP address for %s\n",
@@ -195,7 +195,7 @@ lnet_parse_time(time_t *t, char *str)
 	struct tm tm;
 
 	*t = strtol(str, &end, 0);
-	if (*end == 0) /* parsed whole string */
+	if (*end == 0) 
 		return 0;
 
 	memset(&tm, 0, sizeof(tm));
@@ -205,9 +205,9 @@ lnet_parse_time(time_t *t, char *str)
 	if (n != 6)
 		return -1;
 
-	tm.tm_mon--;                    /* convert to 0 == Jan */
-	tm.tm_year -= 1900;             /* y2k quirk */
-	tm.tm_isdst = -1;               /* dunno if it's daylight savings... */
+	tm.tm_mon--;                    
+	tm.tm_year -= 1900;             
+	tm.tm_isdst = -1;               
 
 	*t = mktime(&tm);
 	if (*t == (time_t)-1)
@@ -336,10 +336,10 @@ int jt_ptl_network(int argc, char **argv)
 				errno, strerror(errno));
 		return -1;
 	} else if (!strcmp(argv[1], "configure") || !strcmp(argv[1], "up")) {
-		int flags = NLM_F_CREATE; /* Create, if it does not exist */
+		int flags = NLM_F_CREATE; 
 
 		if (argc == 3 && argv[2] && !strcmp(argv[2], "-l"))
-			flags |= NLM_F_REPLACE; /* Override existing */
+			flags |= NLM_F_REPLACE; 
 
 		rc = yaml_lnet_configure(flags, &msg);
 		if (rc != -EOPNOTSUPP) {
@@ -398,7 +398,7 @@ jt_ptl_list_nids(int argc, char **argv)
 	int rc = 0;
 
 	all = (argc == 2) && (strcmp(argv[1], "all") == 0);
-	/* Hack to pass back value */
+	
 	return_nid = (argc == 2) && (argv[1][0] == 1);
 
 	if ((argc > 2) && !(all || return_nid)) {
@@ -410,7 +410,7 @@ jt_ptl_list_nids(int argc, char **argv)
 	if (!sk)
 		goto old_api;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		yaml_parser_log_error(&reply, stderr, NULL);
@@ -424,7 +424,7 @@ jt_ptl_list_nids(int argc, char **argv)
 		goto old_api;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&request);
 	if (rc == 0) {
 		yaml_parser_log_error(&reply, stderr, NULL);
@@ -463,7 +463,7 @@ jt_ptl_list_nids(int argc, char **argv)
 	if (rc == 0)
 		goto emitter_error;
 
-	/* no net_id */
+	
 	if (!g_net_set || g_net == LNET_NET_ANY) {
 		yaml_scalar_event_initialize(&event, NULL,
 					     (yaml_char_t *)YAML_STR_TAG,
@@ -586,7 +586,7 @@ old_api: {
 
 		if (rc < 0) {
 			if ((count > 0) && (errno == ENOENT))
-				/* We found them all */
+				
 				break;
 			fprintf(stderr, "IOC_LIBCFS_GET_NI error %d: %s\n",
 				errno, strerror(errno));
@@ -631,12 +631,12 @@ jt_ptl_which_nid(int argc, char **argv)
 		return 0;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		goto old_api;
 
-	/* Setup parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0)
 		goto old_api;
@@ -645,7 +645,7 @@ jt_ptl_which_nid(int argc, char **argv)
 	if (rc == 0)
 		goto free_reply;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&request);
 	if (rc == 0)
 		goto free_reply;
@@ -785,13 +785,13 @@ not_scalar:
 
 free_reply:
 	if (rc == 0) {
-		/* yaml_* functions return 0 for error */
+		
 		const char *msg = yaml_parser_get_reader_error(&reply);
 
 		fprintf(stderr, "Unexpected distance: %s\n", msg);
 		rc = -1;
 	} else if (rc == 1) {
-		/* yaml_* functions return 1 for success */
+		
 		rc = 0;
 	}
 
@@ -1007,15 +1007,15 @@ jt_ptl_print_peers(int argc, char **argv)
 			id.pid = data.ioc_u32[4];
 			printf("%-20s [%d]%s->%s:%d #%d\n",
 			       libcfs_id2str(id),
-			       data.ioc_count, /* persistence */
-			       /* my ip */
+			       data.ioc_count, 
+			       
 			       ptl_ipaddr_2_str(data.ioc_u32[2], buffer[0],
 						sizeof(buffer[0]), 1),
-			       /* peer ip */
+			       
 			       ptl_ipaddr_2_str(data.ioc_u32[0], buffer[1],
 						sizeof(buffer[1]), 1),
-			       data.ioc_u32[1], /* peer port */
-			       data.ioc_u32[3]); /* conn_count */
+			       data.ioc_u32[1], 
+			       data.ioc_u32[3]); 
 		} else if (g_net_is_compatible(NULL, GNILND, 0)) {
 			int disconn = data.ioc_flags >> 16;
 			char *state;
@@ -1026,13 +1026,13 @@ jt_ptl_print_peers(int argc, char **argv)
 				state = data.ioc_flags & 0xffff ? "C" : "U";
 
 			printf("%-20s (%d) %s [%d] %ju sq %d/%d tx %d/%d/%d\n",
-			       libcfs_nid2str(data.ioc_nid), /* peer nid */
-			       data.ioc_net, /* gemini device id */
-			       state, /* peer is Connecting, Up, or Down */
-			       data.ioc_count,   /* peer refcount */
-			       (uintmax_t)data.ioc_u64[0], /* peerstamp */
-			       data.ioc_u32[2], data.ioc_u32[3], /* tx and rx seq */
-			       /* fmaq, nfma, nrdma */
+			       libcfs_nid2str(data.ioc_nid), 
+			       data.ioc_net, 
+			       state, 
+			       data.ioc_count,   
+			       (uintmax_t)data.ioc_u64[0], 
+			       data.ioc_u32[2], data.ioc_u32[3], 
+			       
 			       data.ioc_u32[0], data.ioc_u32[1],
 			       data.ioc_u32[4]);
 		} else {
@@ -1182,25 +1182,25 @@ jt_ptl_print_connections(int argc, char **argv)
 			       (data.ioc_u32[3] == SOCKLND_CONN_CONTROL) ? "C" :
 			       (data.ioc_u32[3] == SOCKLND_CONN_BULK_IN) ? "I" :
 			 (data.ioc_u32[3] == SOCKLND_CONN_BULK_OUT) ? "O" : "?",
-			       data.ioc_u32[4], /* scheduler */
-			       /* local IP addr */
+			       data.ioc_u32[4], 
+			       
 			       ptl_ipaddr_2_str(data.ioc_u32[2], buffer[0],
 						sizeof(buffer[0]), 1),
-			       /* remote IP addr */
+			       
 			       ptl_ipaddr_2_str(data.ioc_u32[0], buffer[1],
 						sizeof(buffer[1]), 1),
-			       data.ioc_u32[1],         /* remote port */
-			       data.ioc_count, /* tx buffer size */
-			       data.ioc_u32[5], /* rx buffer size */
+			       data.ioc_u32[1],         
+			       data.ioc_count, 
+			       data.ioc_u32[5], 
 			       data.ioc_flags ? "nagle" : "nonagle");
 		} else if (g_net_is_compatible(NULL, O2IBLND, 0)) {
 			printf("%s mtu %d\n",
 			       libcfs_nid2str(data.ioc_nid),
-			       data.ioc_u32[0]); /* path MTU */
+			       data.ioc_u32[0]); 
 		} else if (g_net_is_compatible(NULL, GNILND, 0)) {
 			printf("%-20s [%d]\n",
 			       libcfs_nid2str(data.ioc_nid),
-			       data.ioc_u32[0] /* device id */);
+			       data.ioc_u32[0] );
 		} else {
 			printf("%s\n", libcfs_nid2str(data.ioc_nid));
 		}
@@ -1327,7 +1327,7 @@ int jt_ptl_ping(int argc, char **argv)
 		else
 			id.pid = strtoul(argv[1], &end, 0);
 
-		if (end != sep) { /* assuming '-' is part of hostname */
+		if (end != sep) { 
 			rc = lnet_parse_nid(argv[1], &id);
 			if (rc != 0)
 				return -EINVAL;
@@ -1350,15 +1350,15 @@ int jt_ptl_ping(int argc, char **argv)
 			return -EINVAL;
 		}
 	} else {
-		timeout = 1000; /* default 1 second timeout */
+		timeout = 1000; 
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk)
 		goto old_api;
 
-	/* Setup parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0)
 		goto old_api;
@@ -1367,7 +1367,7 @@ int jt_ptl_ping(int argc, char **argv)
 	if (rc == 0)
 		goto free_reply;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&request);
 	if (rc == 0)
 		goto free_reply;
@@ -1443,7 +1443,7 @@ int jt_ptl_ping(int argc, char **argv)
 	if (rc == 0)
 		goto emitter_error;
 
-	/* convert NID to string, in case libcfs_str2nid() did name lookup */
+	
 	yaml_scalar_event_initialize(&event, NULL,
 				     (yaml_char_t *)YAML_STR_TAG,
 				     (yaml_char_t *)libcfs_nidstr(&id.nid),
@@ -1482,7 +1482,7 @@ emitter_error:
 	}
 	yaml_emitter_delete(&request);
 
-	/* Now parse the reply results */
+	
 	while (!done) {
 		rc = yaml_parser_parse(&reply, &event);
 		if (rc == 0)
@@ -1499,7 +1499,7 @@ emitter_error:
 				goto free_reply;
 			}
 			if (print) {
-				/* Print 0@lo. Its not sent */
+				
 				printf("12345-0@lo\n");
 				print = false;
 			}
@@ -1515,7 +1515,7 @@ emitter_error:
 			rc = strtol((char *)event.data.scalar.value, NULL, 10);
 			fprintf(stdout, "failed to ping %s: %s\n",
 				argv[1], strerror(-rc));
-			break; /* "rc" is clobbered if loop is run again */
+			break; 
 		}
 skip:
 		done = (event.type == YAML_STREAM_END_EVENT);
@@ -1523,7 +1523,7 @@ skip:
 	}
 free_reply:
 	if (rc == 0) {
-		/* yaml_* functions return 0 for error */
+		
 		const char *msg = yaml_parser_get_reader_error(&reply);
 
 		rc = errno ? -errno : -EHOSTUNREACH;
@@ -1535,7 +1535,7 @@ free_reply:
 				argv[1], strerror(errno));
 		}
 	} else if (rc == 1) {
-		/* yaml_* functions return 1 for success */
+		
 		rc = 0;
 	}
 	yaml_parser_delete(&reply);
@@ -1619,13 +1619,13 @@ int yaml_fail_nid(struct lnet_nid *nid, unsigned int threshold)
 	struct nl_sock *sk;
 	int rc;
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	sk = nl_socket_alloc();
 	if (!sk) {
 		return -EOPNOTSUPP;
 	}
 
-	/* Setup parser to recieve Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		yaml_parser_log_error(&reply, stderr, NULL);
@@ -1828,7 +1828,7 @@ static int ptl_yaml_route_display(yaml_parser_t *reply)
 	yaml_event_t event;
 	int rc;
 
-	/* Now parse the reply results */
+	
 	while (!done) {
 		char *value;
 
@@ -1928,7 +1928,7 @@ static int ptl_yaml_route(char *nw, char *gws, int hops, int prio, bool enable,
 	if (!sk)
 		return -EOPNOTSUPP;
 
-	/* Setup parser to receive Netlink packets */
+	
 	rc = yaml_parser_initialize(&reply);
 	if (rc == 0) {
 		nl_socket_free(sk);
@@ -1941,7 +1941,7 @@ static int ptl_yaml_route(char *nw, char *gws, int hops, int prio, bool enable,
 		goto free_reply;
 	}
 
-	/* Create Netlink emitter to send request to kernel */
+	
 	rc = yaml_emitter_initialize(&output);
 	if (rc == 0) {
 		msg = "failed to initialize emitter";
@@ -2314,7 +2314,7 @@ old_api:
 	LIBCFS_IOC_INIT(data);
 	data.ioc_nid = nid;
 	data.ioc_flags = enable;
-	/* Yeuch; 'cept I need a __u64 on 64 bit machines... */
+	
 	data.ioc_u64[0] = (__u64)when;
 
 	rc = l_ioctl(LNET_DEV_ID, IOC_LIBCFS_NOTIFY_ROUTER, &data);
@@ -2380,7 +2380,7 @@ fault_attr_nid_parse(char *str, lnet_nid_t *nid_p)
 	__u32 net;
 	int rc = 0;
 
-	/* NB: can't support range ipaddress except * and *@net */
+	
 	if (strlen(str) > 2 && str[0] == '*' && str[1] == '@') {
 		net = libcfs_str2net(str + 2);
 		if (net == LNET_NET_ANY)
@@ -2531,15 +2531,15 @@ fault_simul_rule_add(__u32 opc, char *name, int argc, char **argv)
 		case 'o':
 			fa_local_nid = optarg;
 			break;
-		case 's': /* source NID/NET */
+		case 's': 
 			fa_src = optarg;
 			break;
 
-		case 'd': /* dest NID/NET */
+		case 'd': 
 			fa_dst = optarg;
 			break;
 
-		case 'r': /* drop rate */
+		case 'r': 
 			if (opc == LNET_CTL_DROP_ADD)
 				attr.u.drop.da_rate = strtoul(optarg, NULL, 0);
 			else
@@ -2565,7 +2565,7 @@ fault_simul_rule_add(__u32 opc, char *name, int argc, char **argv)
 				attr.u.drop.da_random = true;
 			break;
 
-		case 'i': /* time interval (# seconds) for message drop */
+		case 'i': 
 			if (opc == LNET_CTL_DROP_ADD)
 				attr.u.drop.da_interval = strtoul(optarg,
 								  NULL, 0);
@@ -2574,17 +2574,17 @@ fault_simul_rule_add(__u32 opc, char *name, int argc, char **argv)
 								   NULL, 0);
 			break;
 
-		case 'l': /* seconds to wait before activating rule */
+		case 'l': 
 			attr.u.delay.la_latency = strtoul(optarg, NULL, 0);
 			break;
 
-		case 'p': /* portal to filter */
+		case 'p': 
 			rc = fault_attr_ptl_parse(optarg, &attr.fa_ptl_mask);
 			if (rc != 0)
 				goto getopt_failed;
 			break;
 
-		case 'm': /* message types to filter */
+		case 'm': 
 			rc = fault_attr_msg_parse(optarg, &attr.fa_msg_mask);
 			if (rc != 0)
 				goto getopt_failed;
@@ -2599,7 +2599,7 @@ fault_simul_rule_add(__u32 opc, char *name, int argc, char **argv)
 	optind = 1;
 
 	if (opc == LNET_CTL_DROP_ADD) {
-		/* NB: drop rate and interval are exclusive to each other */
+		
 		if (!((attr.u.drop.da_rate == 0) ^
 		      (attr.u.drop.da_interval == 0))) {
 			fprintf(stderr,

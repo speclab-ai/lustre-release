@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file provides functions of procfs interface for OBD Filter Device (OFD).
  *
@@ -515,7 +515,7 @@ static ssize_t no_create_store(struct kobject *kobj, struct attribute *attr,
 LUSTRE_RW_ATTR(no_create);
 
 #if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
-/* compatibility entry for a few releases */
+
 #define no_precreate_show no_create_show
 #define no_precreate_store no_create_store
 LUSTRE_RW_ATTR(no_precreate);
@@ -1163,7 +1163,7 @@ void ofd_stats_counter_init(struct lprocfs_stats *stats, unsigned int offset,
 			     LPROCFS_TYPE_LATENCY & (~cntr_umask), "prealloc");
 }
 
-/* belongs to export directory */
+
 LDEBUGFS_SEQ_FOPS_RW_TYPE(ofd, nid_stats_clear);
 
 LUSTRE_OBD_UINT_PARAM_ATTR(at_min);
@@ -1213,7 +1213,7 @@ static struct attribute *ofd_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(ofd); /* creates ofd_groups from ofd_attrs */
+KOBJ_ATTRIBUTE_GROUPS(ofd); 
 
 /**
  * Initialize all needed procfs entries for OFD device.
@@ -1289,4 +1289,4 @@ obd_cleanup:
 
 	return rc;
 }
-#endif /* CONFIG_PROC_FS */
+#endif 

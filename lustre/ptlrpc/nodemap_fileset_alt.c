@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Marc Vef <mvef@whamcloud.com>
  */
@@ -25,7 +25,7 @@ struct lu_fileset_alt *fileset_alt_init(unsigned int fileset_size)
 		RETURN(NULL);
 
 	fileset->nfa_path_size = fileset_size;
-	fileset->nfa_id = 0; /* is set later on tree insertion */
+	fileset->nfa_id = 0; 
 	fileset->nfa_ro = false;
 
 	OBD_ALLOC(fileset->nfa_path, fileset->nfa_path_size);
@@ -94,10 +94,10 @@ static unsigned int get_first_free_id(struct rb_root *root)
 {
 	struct rb_node *node;
 	struct lu_fileset_alt *fileset;
-	/* start at 1. 0 is reserved for the prim fileset in another context */
+	
 	unsigned int fset_id = 1;
 
-	/* iterate over the tree and find gaps in the id sequence */
+	
 	for (node = rb_first(root); node; node = rb_next(node)) {
 		fileset = rb_entry(node, struct lu_fileset_alt, nfa_rb);
 		if (fileset->nfa_id != fset_id)
@@ -105,7 +105,7 @@ static unsigned int get_first_free_id(struct rb_root *root)
 		fset_id++;
 	}
 
-	/* no gaps found, return the next id after the last one in the tree */
+	
 	return fset_id;
 }
 
@@ -136,7 +136,7 @@ int fileset_alt_add(struct lu_nodemap *nodemap, struct lu_fileset_alt *fileset)
 	if (fileset->nfa_id > LUSTRE_NODEMAP_FILESET_NUM_MAX - 1)
 		return -ENOSPC;
 
-	/* determine the correct position in the tree */
+	
 	while (*new) {
 		this = rb_entry(*new, struct lu_fileset_alt, nfa_rb);
 		parent = *new;
@@ -148,7 +148,7 @@ int fileset_alt_add(struct lu_nodemap *nodemap, struct lu_fileset_alt *fileset)
 			return -EEXIST;
 	}
 
-	/* insert the new node and rebalance tree */
+	
 	rb_link_node(&fileset->nfa_rb, parent, new);
 	rb_insert_color(&fileset->nfa_rb, root);
 	nodemap->nm_fileset_alt_sz++;
@@ -243,7 +243,7 @@ struct lu_fileset_alt *fileset_alt_search_path(struct rb_root *root,
 	bool found = false;
 	int rc;
 
-	/* search the full tree for a fileset with the given path */
+	
 	for (node = rb_first(root); node; node = rb_next(node)) {
 		fileset = rb_entry(node, struct lu_fileset_alt, nfa_rb);
 		if (prefix_search) {
@@ -295,7 +295,7 @@ void fileset_alt_resize(struct rb_root *root)
 		fset_size_actual = strlen(fileset->nfa_path) + 1;
 		if (fset_size_actual == fset_size_prealloc)
 			continue;
-		/* Shrink fileset size to actual */
+		
 		OBD_ALLOC(fset_tmp, fset_size_actual);
 		if (!fset_tmp) {
 			CERROR("%s: Nodemaps's fileset cannot be resized: rc = %d\n",

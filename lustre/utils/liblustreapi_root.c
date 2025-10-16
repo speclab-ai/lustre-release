@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -8,19 +8,19 @@
  * Copyright (c) 2018, 2022, Data Direct Networks
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for managing the root fd cache for llapi internal use.
  */
 
-/* for O_DIRECTORY and struct file_handle */
+
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
 
 #include <errno.h>
 #include <fcntl.h>
-#include <libgen.h> /* for dirname() */
+#include <libgen.h> 
 #include <mntent.h>
 #include <pthread.h>
 #include <stdio.h>
@@ -28,7 +28,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/sysmacros.h> /* for makedev() */
+#include <sys/sysmacros.h> 
 #include <sys/types.h>
 #include <unistd.h>
 #include <assert.h>
@@ -39,12 +39,12 @@
 #include <linux/lustre/lustre_fid.h>
 #include "lustreapi_internal.h"
 
-/* could have an array of these for a handful of different paths */
+
 static struct root_cache {
 	dev_t	dev;
 	char	fsname[PATH_MAX];
 	char	mnt_dir[PATH_MAX];
-	int	fd; /* cached fd on filesystem root for internal use only */
+	int	fd; 
 } root_cached = { 0 };
 
 static pthread_rwlock_t root_cached_lock = PTHREAD_RWLOCK_INITIALIZER;
@@ -117,7 +117,7 @@ static int get_root_path_fast(int want, char *fsname, int *outfd, char *path,
 	if (root_cached.dev == 0)
 		return rc;
 
-	/* hold a write lock on the cache if fd is going to be updated */
+	
 	if ((want & WANT_FD) && outfd && root_cached.fd <= 0)
 		pthread_rwlock_wrlock(&root_cached_lock);
 	else
@@ -129,15 +129,15 @@ static int get_root_path_fast(int want, char *fsname, int *outfd, char *path,
 	fsnamelen = strlen(root_cached.fsname);
 	mntlen = strlen(root_cached.mnt_dir);
 
-	/* Check the dev for a match, if given */
+	
 	if (!(want & WANT_DEV) && dev && *dev == root_cached.dev) {
 		rc = 0;
-	/* Check the fsname for a match, if given */
+	
 	} else if (!(want & WANT_FSNAME) && fsname &&
 		   strlen(fsname) == fsnamelen &&
 		   (strncmp(root_cached.fsname, fsname, fsnamelen) == 0)) {
 		rc = 0;
-	/* Otherwise find the longest matching path */
+	
 	} else if (path && strlen(path) >= mntlen &&
 		   (strncmp(root_cached.mnt_dir, path, mntlen) == 0) &&
 		   (strlen(path) == mntlen || path[mntlen] == '/')) {
@@ -210,7 +210,7 @@ static int get_root_path_slow(int want, char *fsname, int *outfd, char *path,
 	int rc2;
 	int rc = -ENODEV;
 
-	/* get the mount point */
+	
 	fp = setmntent(PROC_MOUNTS, "r");
 	if (!fp) {
 		rc = -EIO;
@@ -240,12 +240,12 @@ static int get_root_path_slow(int want, char *fsname, int *outfd, char *path,
 
 		fsnamelen = ptr_end - ptr;
 
-		/* avoid stat/statx call if path does not match mountpoint */
+		
 		if (path && (strlen(path) >= mntlen) &&
 		    (strncmp(mnt.mnt_dir, path, mntlen) != 0))
 			continue;
 
-		/* ignore unaccessible filesystem */
+		
 		if (get_file_dev(mnt.mnt_dir, &devmnt))
 			continue;
 
@@ -254,7 +254,7 @@ static int get_root_path_slow(int want, char *fsname, int *outfd, char *path,
 			break;
 		}
 
-		/* Check the fsname for a match, if given */
+		
 		if (!(want & WANT_FSNAME) && fsname &&
 		    strlen(fsname) == fsnamelen &&
 		    (strncmp(ptr, fsname, fsnamelen) == 0)) {
@@ -262,7 +262,7 @@ static int get_root_path_slow(int want, char *fsname, int *outfd, char *path,
 			break;
 		}
 
-		/* Check the dev for a match, if given */
+		
 		if (!(want & WANT_DEV) && dev && *dev == devmnt) {
 			rc = 0;
 			break;
@@ -281,12 +281,12 @@ static int get_root_path_slow(int want, char *fsname, int *outfd, char *path,
 	if (rc)
 		goto out;
 
-	/* Found it */
+	
 	if (!(want & WANT_INDEX)) {
-		/* Cache the mount point information */
+		
 		pthread_rwlock_wrlock(&root_cached_lock);
 
-		/* If the entry matches the saved one -> no update needed */
+		
 		if (strcmp(root_cached.mnt_dir, mnt.mnt_dir) == 0)
 			goto unlock_root_cached;
 
@@ -312,7 +312,7 @@ static int get_root_path_slow(int want, char *fsname, int *outfd, char *path,
 
 		root_cached.dev = devmnt;
 
-		/* if rc, cache was only partially updated and must be reset */
+		
 		if (rc)
 			memset(&root_cached, 0, sizeof(root_cached));
 
@@ -461,7 +461,7 @@ int llapi_search_mounts(const char *pathname, int index, char *mntdir,
 	return get_root_path(want, fsname, NULL, mntdir, idx, NULL, NULL);
 }
 
-/* Given a path, find the corresponding Lustre fsname */
+
 int llapi_search_fsname(const char *pathname, char *fsname)
 {
 	dev_t dev;
@@ -473,7 +473,7 @@ int llapi_search_fsname(const char *pathname, char *fsname)
 		char *parent;
 		int len;
 
-		/* file does not exist try the parent */
+		
 		len = readlink(pathname, tmp, PATH_MAX);
 		if (len != -1)
 			tmp[len] = '\0';

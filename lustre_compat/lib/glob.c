@@ -50,17 +50,17 @@ bool __pure glob_match(char const *pat, char const *str)
 		unsigned char d = *pat++;
 
 		switch (d) {
-		case '?':	/* Wildcard: anything but nul */
+		case '?':	
 			if (c == '\0')
 				return false;
 			break;
-		case '*':	/* Any-length wildcard */
-			if (*pat == '\0')	/* Optimize trailing * case */
+		case '*':	
+			if (*pat == '\0')	
 				return true;
 			back_pat = pat;
-			back_str = --str;	/* Allow zero-length match */
+			back_str = --str;	
 			break;
-		case '[': {	/* Character class */
+		case '[': {	
 			bool match = false, inverted = (*pat == '!');
 			char const *class = pat + inverted;
 			unsigned char a = *class++;
@@ -73,7 +73,7 @@ bool __pure glob_match(char const *pat, char const *str)
 			do {
 				unsigned char b = a;
 
-				if (a == '\0')	/* Malformed */
+				if (a == '\0')	
 					goto literal;
 
 				if (class[0] == '-' && class[1] != ']') {
@@ -83,7 +83,7 @@ bool __pure glob_match(char const *pat, char const *str)
 						goto literal;
 
 					class += 2;
-					/* Any special action if a > b? */
+					
 				}
 				match |= (a <= c && c <= b);
 			} while ((a = *class++) != ']');
@@ -95,8 +95,8 @@ bool __pure glob_match(char const *pat, char const *str)
 			break;
 		case '\\':
 			d = *pat++;
-			/*FALLTHROUGH*/
-		default:	/* Literal character */
+			
+		default:	
 literal:
 			if (c == d) {
 				if (d == '\0')
@@ -105,8 +105,8 @@ literal:
 			}
 backtrack:
 			if (c == '\0' || !back_pat)
-				return false;	/* No point continuing */
-			/* Try again from last *, one character later in str. */
+				return false;	
+			
 			pat = back_pat;
 			str = ++back_str;
 			break;
@@ -114,4 +114,4 @@ backtrack:
 	}
 }
 EXPORT_SYMBOL(glob_match);
-#endif /* ! HAVE_GLOB */
+#endif 

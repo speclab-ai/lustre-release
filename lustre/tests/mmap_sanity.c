@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <sys/types.h>
@@ -71,7 +71,7 @@ static int mmap_initialize(char *myself)
 		return -errno;
 	}
 
-	/* copy myself to lustre for another client */
+	
 	fdr = open(myself, O_RDONLY);
 	if (fdr < 0) {
 		perror(myself);
@@ -117,7 +117,7 @@ static void mmap_finalize(void)
 	unlink(mmap_sanity);
 }
 
-/* basic mmap operation on single node */
+
 static int mmap_tst1(char *mnt)
 {
 	char *ptr, mmap_file[256];
@@ -157,7 +157,7 @@ out_close:
 	return rc;
 }
 
-/* MAP_PRIVATE create a copy-on-write mmap */
+
 static int mmap_tst2(char *mnt)
 {
 	char *ptr, mmap_file[256], buf[256];
@@ -217,7 +217,7 @@ out_close:
 	return rc;
 }
 
-/* concurrent mmap operations on two nodes */
+
 static int mmap_tst3(char *mnt)
 {
 	char *ptr, mmap_file[256];
@@ -254,7 +254,7 @@ static int mmap_tst3(char *mnt)
 		goto out_unmap;
 
 	memset(ptr, 'a', region);
-	sleep(2);       /* wait for remote test finish */
+	sleep(2);       
 out_unmap:
 	munmap(ptr, region);
 out_close:
@@ -360,7 +360,7 @@ static int mmap_tst4(char *mnt)
 		rc = 0;
 	}
 
-	sleep(2);       /* wait for remote test finish */
+	sleep(2);       
 out_unmap:
 	munmap(ptr, region);
 out_close:
@@ -443,7 +443,7 @@ static int cancel_lru_locks(char *filter)
 
 	if (filter)
 		rc = cfs_get_param_paths(&paths,
-					 "ldlm/namespaces/*-%s-*/lru_size",
+					 "ldlm/namespaceslru_size",
 					 filter);
 	else
 		rc = cfs_get_param_paths(&paths,
@@ -513,12 +513,12 @@ static int mmap_tst5(char *mnt)
 	}
 	memset(ptr, 'a', region);
 
-	/* cancel unused locks */
+	
 	rc = cancel_lru_locks("osc");
 	if (rc)
 		goto out_unmap;
 
-	/* read/write region of file and buffer should be overlap */
+	
 	rc = read(fd, ptr + off, off * 2);
 	if (rc != off * 2) {
 		perror("read()");
@@ -539,7 +539,7 @@ out_close:
 	return rc;
 }
 
-/* mmap write to a file form client1 then mmap read from client2 */
+
 static int mmap_tst6(char *mnt)
 {
 	char mmap_file[256], mmap_file2[256];
@@ -646,11 +646,11 @@ static int mmap_tst7_func(char *mnt, int rw)
 		rc = -errno;
 		goto out;
 	}
-	/* ensure the second page isn't mapped */
+	
 	munmap(buf + page_size, page_size);
 	bytes = (rw == 0) ? read(fd, buf, 2 * page_size) :
 		write(fd, buf, 2 * page_size);
-	/* Expected behavior */
+	
 	if (bytes == page_size)
 		goto out;
 
@@ -710,11 +710,11 @@ static int mmap_tst8(char *mnt)
 	}
 
 	pid = fork();
-	if (pid == 0) { /* child */
+	if (pid == 0) { 
 		memcpy(xyz, buf, page_size * 2);
-		/* shouldn't reach here. */
+		
 		exit(0);
-	} else if (pid > 0) { /* parent */
+	} else if (pid > 0) { 
 		int status = 0;
 
 		pid = waitpid(pid, &status, 0);
@@ -985,7 +985,7 @@ static int mmap_tst12(char *mnt)
 	int fd = -1;
 	int rc = 0;
 
-	/* cancel unused locks */
+	
 	rc = cancel_lru_locks("osc");
 	if (rc)
 		goto out;
@@ -1013,7 +1013,7 @@ static int mmap_tst12(char *mnt)
 		goto out;
 	}
 
-	/* read some data */
+	
 	for (off = 0; off + 256 <= st1.st_size; off += 256)
 		memcpy(buffer, off + buf, 256);
 
@@ -1057,11 +1057,11 @@ static int remote_tst(int tc, char *mnt)
 }
 
 struct test_case {
-	int tc;                     /* test case number */
-	char *desc;                 /* test description */
-	int (*test_fn)(char *mnt);  /* test function */
-	int node_cnt;               /* node count */
-	int skipped;                /* skipped by caller */
+	int tc;                     
+	char *desc;                 
+	int (*test_fn)(char *mnt);  
+	int node_cnt;               
+	int skipped;                
 };
 
 struct test_case tests[] = {

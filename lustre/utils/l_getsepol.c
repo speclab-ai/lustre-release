@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 /*
  * Copyright (c) 2016 DDN Storage
@@ -57,12 +57,12 @@ static void errlog(const char *fmt, ...)
 	closelog();
 }
 
-/* Retrieve name of policy loaded, and version */
+
 static int sepol_get_policy_info(char **policyname)
 {
 	char *pol_path;
 
-	/* Name of loaded policy can be retrieved from policy root path */
+	
 	pol_path = strdup(selinux_policy_root());
 
 	if (!pol_path) {
@@ -77,7 +77,7 @@ static int sepol_get_policy_info(char **policyname)
 	return 0;
 }
 
-/* Read binary SELinux policy, and compute hash */
+
 static int sepol_get_policy_data(const char *pol_bin_path,
 				 unsigned char **mdval, unsigned int *mdsize)
 {
@@ -85,10 +85,10 @@ static int sepol_get_policy_data(const char *pol_bin_path,
 	char buffer[1024];
 	ssize_t count = 1024;
 	EVP_MD_CTX *mdctx;
-	const EVP_MD *md = EVP_sha256(); /* use SHA-256 */
+	const EVP_MD *md = EVP_sha256(); 
 	int rc;
 
-	/* Open policy file */
+	
 	fd = open(pol_bin_path, O_RDONLY);
 	if (fd < 0) {
 		errlog("can't open SELinux policy file %s: %s\n", pol_bin_path,
@@ -97,7 +97,7 @@ static int sepol_get_policy_data(const char *pol_bin_path,
 		goto out;
 	}
 
-	/* Read policy file */
+	
 	mdctx = EVP_MD_CTX_create();
 	EVP_DigestInit_ex(mdctx, md, NULL);
 	while (count == 1024) {
@@ -112,7 +112,7 @@ static int sepol_get_policy_data(const char *pol_bin_path,
 		EVP_DigestUpdate(mdctx, buffer, count);
 	}
 
-	/* Close policy file */
+	
 	rc = close(fd);
 	if (rc < 0) {
 		rc = -errno;
@@ -187,7 +187,7 @@ static int get_opts(int argc, char *const argv[])
 	if (sel_mtime) {
 		ref_pol_mtime = (time_t)strtoul(sel_mtime, &res, 0);
 		if (*res != '\0') {
-			/* not a valid number */
+			
 			errlog("invalid sel_mtime\n");
 			return -EINVAL;
 		}
@@ -196,7 +196,7 @@ static int get_opts(int argc, char *const argv[])
 	if (sel_mode) {
 		ref_selinux_mode = sel_mode[0] - '0';
 		if (ref_selinux_mode != 0 && ref_selinux_mode != 1) {
-			/* not a valid enforcing mode */
+			
 			errlog("invalid sel_mode\n");
 			return -EINVAL;
 		}
@@ -260,7 +260,7 @@ static int get_opts(int argc, char *const argv[])
 	\
 	data->sdd_magic = magic; \
 	data->sdd_sepol_mtime = policymtime; \
-	/* Send SELinux policy info to kernelspace */ \
+	 \
 	rc = cfs_get_param_paths(&path, "%s/%s/srpc_sepol", obd_type, \
 				 obd_name); \
 	if (rc != 0) { \
@@ -339,7 +339,7 @@ int main(int argc, char **argv)
 		goto out;
 	}
 
-	/* Max version of loaded policy */
+	
 	policyver = security_policyvers();
 	if (policyver < 0) {
 		errlog("unknown policy version: %s\n", strerror(errno));
@@ -348,11 +348,11 @@ int main(int argc, char **argv)
 	}
 
 	while (policymtime == 0) {
-		/* Path of binary policy file */
+		
 		snprintf(pol_bin_path, sizeof(pol_bin_path), "%s.%d",
 			 selinux_binary_policy_path(), policyver);
 
-		/* Stat binary policy file */
+		
 		if (stat(pol_bin_path, &st)) {
 			if (policyver > 0) {
 				policyver--;
@@ -368,7 +368,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	/* Determine if SELinux is in permissive or enforcing mode */
+	
 	enforce = security_getenforce();
 	if (enforce < 0) {
 		errlog("can't getenforce: %s\n", strerror(errno));
@@ -377,18 +377,18 @@ int main(int argc, char **argv)
 	}
 
 	if (ref_pol_mtime == policymtime && ref_selinux_mode == enforce) {
-		/* Policy has not changed: return immediately */
+		
 		rc = 0;
 		goto out;
 	}
 
-	/* Now we need to calculate SELinux status information */
-	/* Get policy name */
+	
+	
 	rc = sepol_get_policy_info(&policy_type);
 	if (rc < 0)
 		goto out;
 
-	/* Read binary SELinux policy, and compute hash */
+	
 	rc = sepol_get_policy_data(pol_bin_path, &mdval, &mdsize);
 	if (rc < 0)
 		goto out_poltyp;
@@ -396,7 +396,7 @@ int main(int argc, char **argv)
 	sepol_downcall(sepol_downcall_data, SEPOL_DOWNCALL_MAGIC);
 #if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
 	if (rc == -EINVAL)
-		/* try with old magic */
+		
 		sepol_downcall(sepol_downcall_data_old,
 			       SEPOL_DOWNCALL_MAGIC_OLD);
 #endif
@@ -407,7 +407,7 @@ out_poltyp:
 	free(policy_type);
 out:
 	if (isatty(STDIN_FILENO))
-		/* we are called from the command line */
+		
 		return rc < 0 ? -rc : rc;
 	else
 		return rc;

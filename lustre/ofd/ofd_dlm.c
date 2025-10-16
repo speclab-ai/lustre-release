@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file contains OBD Filter Device (OFD) LDLM-related code which is just
  * intent handling for glimpse lock.
@@ -88,7 +88,7 @@ static bool ofd_intent_cb(struct ldlm_lock *lock, struct ofd_intent_args *arg)
 	struct ldlm_glimpse_work *gl_work = NULL;
 	bool rc;
 
-	/* If the interval is lower than the current file size, just break. */
+	
 	if (lock->l_policy_data.l_extent.end <= size)
 		GOTO(out, rc = true);
 
@@ -134,7 +134,7 @@ static bool ofd_intent_cb(struct ldlm_lock *lock, struct ofd_intent_args *arg)
 		GOTO(out, rc = true);
 	}
 
-	/* Populate the gl_work structure. */
+	
 	gl_work->gl_lock = ldlm_lock_get(lock);
 	list_add_tail(&gl_work->gl_list, &arg->gl_list);
 	/* There is actually no need for a glimpse descriptor when glimpsing
@@ -195,7 +195,7 @@ int ofd_intent_policy(const struct lu_env *env, struct ldlm_namespace *ns,
 	struct ldlm_glimpse_work *pos, *tmp;
 	ENTRY;
 
-	/* update stats for intent in intent policy */
+	
 	if (ptlrpc_req2svc(req)->srv_stats != NULL)
 		lprocfs_counter_incr(ptlrpc_req2svc(req)->srv_stats,
 				     PTLRPC_LAST_CNTR + LDLM_GLIMPSE_ENQUEUE);
@@ -246,7 +246,7 @@ int ofd_intent_policy(const struct lu_env *env, struct ldlm_namespace *ns,
 		check_res_locked(res);
 	}
 
-	/* The lock met with no resistance; we're finished. */
+	
 	if (rc == LDLM_ITER_CONTINUE) {
 		if (CFS_FAIL_TIMEOUT(OBD_FAIL_LDLM_GLIMPSE, 2)) {
 			ldlm_resource_unlink_lock(lock);
@@ -303,17 +303,17 @@ int ofd_intent_policy(const struct lu_env *env, struct ldlm_namespace *ns,
 	}
 	unlock_res(res);
 
-	/* There were no PW locks beyond the size in the LVB; finished. */
+	
 	if (list_empty(&arg.gl_list))
 		RETURN(ELDLM_LOCK_ABORTED);
 
 	if (arg.no_glimpse_ast) {
-		/* We are racing with unlink(); just return -ENOENT */
+		
 		rep->lock_policy_res1 = ptlrpc_status_hton(-ENOENT);
 		GOTO(out, ELDLM_LOCK_ABORTED);
 	}
 
-	/* this will update the LVB */
+	
 	ldlm_glimpse_locks(res, &arg.gl_list);
 
 	lock_res(res);

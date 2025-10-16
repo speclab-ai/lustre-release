@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  *  The cYAML tree is constructed as an n-tree.
  *  root -> cmd 1
@@ -83,11 +83,11 @@ enum cYAML_tree_state {
 
 struct cYAML_tree_node {
 	struct cYAML *root;
-	/* cur is the current node we're operating on */
+	
 	struct cYAML *cur;
 	enum cYAML_tree_state state;
 	int from_blk_map_start;
-	/* represents the tree depth */
+	
 	struct list_head ll;
 };
 
@@ -121,7 +121,7 @@ static enum cYAML_handler_error yaml_scalar(yaml_token_t *token,
 static enum cYAML_handler_error yaml_entry_token(yaml_token_t *token,
 					struct cYAML_tree_node *tree);
 
-/* dispatch table */
+
 static yaml_token_handler dispatch_tbl[] = {
 	[YAML_NO_TOKEN] = yaml_no_token,
 	[YAML_STREAM_START_TOKEN] = yaml_stream_start,
@@ -147,7 +147,7 @@ static yaml_token_handler dispatch_tbl[] = {
 	[YAML_SCALAR_TOKEN] = yaml_scalar,
 };
 
-/* dispatch table */
+
 static const char * const token_type_string[] = {
 	[YAML_NO_TOKEN] = "YAML_NO_TOKEN",
 	[YAML_STREAM_START_TOKEN] = "YAML_STREAM_START_TOKEN",
@@ -264,7 +264,7 @@ static int cYAML_tree_init(struct cYAML_tree_node *tree)
 		return -1;
 
 	if (tree->root) {
-		/* append the node */
+		
 		cur = tree->root;
 		while (cur->cy_next != NULL)
 			cur = cur->cy_next;
@@ -278,7 +278,7 @@ static int cYAML_tree_init(struct cYAML_tree_node *tree)
 	tree->cur = obj;
 	tree->state = TREE_STATE_COMPLETE;
 
-	/* free it and start anew */
+	
 	if (!list_empty(&tree->ll))
 		cYAML_ll_free(&tree->ll);
 
@@ -296,7 +296,7 @@ static struct cYAML *create_child(struct cYAML *parent)
 	if (obj == NULL)
 		return NULL;
 
-	/* set the type to OBJECT and let the value change that */
+	
 	obj->cy_type = CYAML_TYPE_OBJECT;
 
 	parent->cy_child = obj;
@@ -315,7 +315,7 @@ static struct cYAML *create_sibling(struct cYAML *sibling)
 	if (obj == NULL)
 		return NULL;
 
-	/* set the type to OBJECT and let the value change that */
+	
 	obj->cy_type = CYAML_TYPE_OBJECT;
 
 	sibling->cy_next = obj;
@@ -333,7 +333,7 @@ static bool parse_number(struct cYAML *item, const char *input)
 	const char *num = input;
 
 	if (!strncmp(input, "0x", 2)) {
-		int64_t hex; /* hex input is always an integer */
+		int64_t hex; 
 		char *invalid = NULL;
 
 		errno = 0;
@@ -388,7 +388,7 @@ static bool parse_number(struct cYAML *item, const char *input)
 	if (num != (input + strlen(input)))
 		return false;
 
-	/* number = +/- number.fraction * 10^+/- exponent */
+	
 	n = sign * n * pow(10.0, (scale + subscale * signsubscale));
 
 	item->cy_valuedouble = n;
@@ -478,7 +478,7 @@ static enum cYAML_handler_error yaml_stream_start(yaml_token_t *token,
 {
 	enum cYAML_handler_error rc;
 
-	/* with each new stream initialize a new tree */
+	
 	rc = cYAML_tree_init(tree);
 
 	if (rc != CYAML_ERROR_NONE)
@@ -508,7 +508,7 @@ yaml_document_start(yaml_token_t *token, struct cYAML_tree_node *tree)
 	if (tree->state != TREE_STATE_INITED)
 		return CYAML_ERROR_UNEXPECTED_STATE;
 
-	/* go to started state since we're expecting more tokens to come */
+	
 	tree->state = TREE_STATE_TREE_STARTED;
 
 	return CYAML_ERROR_NONE;
@@ -547,7 +547,7 @@ static enum cYAML_handler_error yaml_scalar(yaml_token_t *token,
 					    struct cYAML_tree_node *tree)
 {
 	if (tree->state == TREE_STATE_KEY) {
-		/* assign the scalar value to the key that was created */
+		
 		tree->cur->cy_string =
 		  strdup((const char *)token->data.scalar.value);
 
@@ -556,7 +556,7 @@ static enum cYAML_handler_error yaml_scalar(yaml_token_t *token,
 		   tree->state == TREE_STATE_SEQ_START) {
 		if (assign_type_value(tree->cur,
 				      (char *)token->data.scalar.value))
-			/* failed to assign a value */
+			
 			return CYAML_ERROR_BAD_VALUE;
 		tree->state = TREE_STATE_BLK_STARTED;
 	} else {
@@ -634,11 +634,11 @@ yaml_blk_mapping_start(yaml_token_t *token,
 	 * create a child of cur */
 	obj = create_child(tree->cur);
 
-	/* push cur on the stack */
+	
 	if (cYAML_ll_push(tree->cur, NULL, &tree->ll))
 		return CYAML_ERROR_OUT_OF_MEM;
 
-	/* adding the new child to cur */
+	
 	tree->cur = obj;
 
 	tree->state = TREE_STATE_BLK_STARTED;
@@ -1126,7 +1126,7 @@ void cYAML_print_tree(struct cYAML *node)
 	if (cYAML_ll_push(node, &print_info, &list) == 0)
 		print_value(&buf, &list);
 
-	/* buf could've been freed if we ran out of memory */
+	
 	if (buf) {
 		printf("%s", buf);
 		free(buf);
@@ -1152,7 +1152,7 @@ void cYAML_print_tree2file(FILE *f, struct cYAML *node)
 	if (cYAML_ll_push(node, &print_info, &list) == 0)
 		print_value(&buf, &list);
 
-	/* buf could've been freed if we ran out of memory */
+	
 	if (buf) {
 		fprintf(f, "%s", buf);
 		free(buf);
@@ -1264,7 +1264,7 @@ void cYAML_build_error(int rc, int seq_no, char *cmd,
 	if (root == NULL)
 		return;
 
-	/* add to the tail of the root that's passed in */
+	
 	if ((*root) == NULL) {
 		*root = cYAML_create_object(NULL, NULL);
 		if ((*root) == NULL)
@@ -1273,7 +1273,7 @@ void cYAML_build_error(int rc, int seq_no, char *cmd,
 
 	r = *root;
 
-	/* look for the command */
+	
 	cmd_obj = cYAML_get_object_item(r, (const char *)cmd);
 	if (cmd_obj != NULL && cmd_obj->cy_type == CYAML_TYPE_ARRAY)
 		itm = cYAML_create_seq_item(cmd_obj);
@@ -1301,7 +1301,7 @@ void cYAML_build_error(int rc, int seq_no, char *cmd,
 	return;
 
 failed:
-	/* Only reason we get here is if we run out of memory */
+	
 	cYAML_free_tree(r);
 	r = NULL;
 	fprintf(stderr, "error:\n\tfatal: out of memory\n");
@@ -1321,7 +1321,7 @@ cYAML_parser_to_tree(yaml_parser_t *parser, struct cYAML **err_rc, bool debug)
 
 	INIT_LIST_HEAD(&tree.ll);
 
-	/* Read the event sequence. */
+	
 	while (!done) {
 		/*
 		 * Go through the parser and build a cYAML representation
@@ -1346,7 +1346,7 @@ cYAML_parser_to_tree(yaml_parser_t *parser, struct cYAML **err_rc, bool debug)
 					  err_str,
 					  err_rc);
 		}
-		/* Are we finished? */
+		
 		done = (rc != CYAML_ERROR_NONE ||
 			token.type == YAML_STREAM_END_TOKEN);
 
@@ -1390,13 +1390,13 @@ struct cYAML *cYAML_build_tree(char *path,
 	char err_str[256];
 	FILE *input = NULL;
 
-	/* Create the Parser object. */
+	
 	if (yaml_parser_initialize(&parser) == 0)
 		goto out_init;
 
-	/* file always takes precedence */
+	
 	if (path != NULL) {
-		/* Set a file input. */
+		
 		input = fopen(path, "rb");
 		if (input == NULL) {
 			snprintf(err_str, sizeof(err_str),
@@ -1413,13 +1413,13 @@ struct cYAML *cYAML_build_tree(char *path,
 					     (const unsigned char *) yaml_blk,
 					     yaml_blk_size);
 	} else {
-		/* assume that we're getting our input froms stdin */
+		
 		yaml_parser_set_input_file(&parser, stdin);
 	}
 
 	yaml = cYAML_parser_to_tree(&parser, err_rc, debug);
 
-	/* Destroy the Parser object. */
+	
 	yaml_parser_delete(&parser);
 
 	if (input != NULL)

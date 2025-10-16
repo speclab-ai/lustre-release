@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Management Server (MGS) filesystem interface code
  *
@@ -45,7 +45,7 @@ int mgs_export_stats_init(struct obd_device *obd, struct obd_export *exp,
 	ENTRY;
 	rc = lprocfs_exp_setup(exp, client_nid);
 	if (rc != 0)
-		/* Mask error for already created /sysfs entries */
+		
 		RETURN(rc == -EALREADY ? 0 : rc);
 
 	stats = exp->exp_nid_stats;
@@ -63,7 +63,7 @@ int mgs_export_stats_init(struct obd_device *obd, struct obd_export *exp,
 	RETURN(rc);
 }
 
-/* Remove client export data from the MGS */
+
 int mgs_client_free(struct obd_export *exp)
 {
 	return 0;
@@ -84,12 +84,12 @@ int mgs_fs_setup(const struct lu_env *env, struct mgs_device *mgs)
 	OBD_SET_CTXT_MAGIC(&mgs->mgs_obd->obd_lvfs_ctxt);
 	mgs->mgs_obd->obd_lvfs_ctxt.dt = mgs->mgs_bottom;
 
-	/* XXX: fix when support for N:1 layering is implemented */
+	
 	LASSERT(mgs->mgs_dt_dev.dd_lu_dev.ld_site);
 	mgs->mgs_dt_dev.dd_lu_dev.ld_site->ls_top_dev =
 		&mgs->mgs_dt_dev.dd_lu_dev;
 
-	/* Setup the configs dir */
+	
 	fid.f_seq = FID_SEQ_LOCAL_NAME;
 	fid.f_oid = 1;
 	fid.f_ver = 0;
@@ -119,7 +119,7 @@ int mgs_fs_setup(const struct lu_env *env, struct mgs_device *mgs)
 
 	mgs->mgs_configs_dir = o;
 
-	/* colocated MDT will cache config in target root dir */
+	
 	nm_config_file_obj = local_index_find_or_create(env, mgs->mgs_los,
 							mgs->mgs_configs_dir,
 							LUSTRE_NODEMAP_NAME,
@@ -148,7 +148,7 @@ int mgs_fs_setup(const struct lu_env *env, struct mgs_device *mgs)
 	}
 	obd2obt(mgs->mgs_obd)->obt_nodemap_config_file = nm_config_file;
 
-	/* create directory to store nid table versions */
+	
 	o = local_file_find_or_create(env, mgs->mgs_los, root, MGS_NIDTBL_DIR,
 				      S_IFDIR | 0755);
 	if (IS_ERR(o))

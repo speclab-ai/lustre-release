@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LOG
@@ -184,7 +184,7 @@ static inline bool llog_idx_is_eof(struct llog_handle *llh, __u32 cur_idx)
 {
 	__u32 last_idx = llh->lgh_last_idx;
 
-	/* catalog is wrapped ? */
+	
 	if (unlikely(llh->lgh_hdr->llh_flags & LLOG_F_IS_CAT &&
 		     llh->lgh_hdr->llh_cat_idx >= llh->lgh_last_idx &&
 		     llh->lgh_hdr->llh_count > 1))
@@ -436,7 +436,7 @@ int llog_ioctl(const struct lu_env *env, struct llog_ctxt *ctxt,
 
 		rc = llog_process(env, handle, llog_print_cb, &lprd, &cd);
 
-		/* rc == 0 means EOF */
+		
 		data->ioc_u32_2 = !rc;
 		data->ioc_count = bufs - lprd.lprd_left;
 		if (rc == LLOG_PROC_BREAK)
@@ -468,7 +468,7 @@ int llog_ioctl(const struct lu_env *env, struct llog_ctxt *ctxt,
 			GOTO(out_close, rc = -EINVAL);
 		}
 
-		/* catalog but no logid */
+		
 		if (!data->ioc_inlbuf2 || data->ioc_inlbuf2[0] == '\0')
 			GOTO(out_close, rc = -ENOTTY);
 
@@ -492,14 +492,14 @@ int llog_ioctl(const struct lu_env *env, struct llog_ctxt *ctxt,
 		}
 
 		if (data->ioc_inlbuf2) {
-			/* remove indicate log from the catalog */
+			
 			rc = str2logid(&plain, data->ioc_inlbuf2,
 				       data->ioc_inllen2);
 			if (rc)
 				GOTO(out_close, rc);
 			rc = llog_remove_log(env, handle, &plain);
 		} else {
-			/* remove all the log of the catalog */
+			
 			rc = llog_process(env, handle, llog_delete_cb, NULL,
 					  NULL);
 			if (rc)
@@ -536,7 +536,7 @@ int llog_catalog_list(const struct lu_env *env, struct dt_device *d,
 
 	ENTRY;
 
-	if (count == 0) { /* get total number of logs */
+	if (count == 0) { 
 		rc = llog_osd_get_cat_list(env, d, 0, 0, NULL, fid);
 		if (rc < 0)
 			RETURN(rc);
@@ -555,7 +555,7 @@ int llog_catalog_list(const struct lu_env *env, struct dt_device *d,
 
 	out = data->ioc_bulk;
 	remains = data->ioc_inllen1;
-	/* OBD_FAIL: fetch the catalog records from the specified one */
+	
 	if (CFS_FAIL_CHECK(OBD_FAIL_CATLIST))
 		data->ioc_count = cfs_fail_val - 1;
 	for (i = data->ioc_count; i < count; i++) {
@@ -566,7 +566,7 @@ int llog_catalog_list(const struct lu_env *env, struct dt_device *d,
 		remains -= l;
 		if (remains <= 0) {
 			if (remains < 0) {
-				/* the print is not complete */
+				
 				remains += l;
 				data->ioc_bulk[out - data->ioc_bulk - l] = '\0';
 				data->ioc_count = i;

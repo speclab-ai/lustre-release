@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2016, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lustre_param.c
  *
@@ -95,7 +95,7 @@ static int sp_parse_param_value(int argc, char **argv, char **param,
 	*param = argv[0];
 	tmp = strchr(*param, '=');
 	if (tmp) {
-		/* format: set_param a=b */
+		
 		*tmp = '\0';
 		tmp++;
 		if (*tmp == '\0')
@@ -104,7 +104,7 @@ static int sp_parse_param_value(int argc, char **argv, char **param,
 		return 1;
 	}
 
-	/* format: set_param a b */
+	
 	if (argc < 2)
 		return -EINVAL;
 	*value = argv[1];
@@ -139,7 +139,7 @@ static char *format_param(const char *filename, struct stat *st,
 			suffix = "=";
 	}
 
-	/* Take the original filename string and chop off the glob addition */
+	
 	tmp = strstr(filename, "/lustre/");
 	if (!tmp) {
 		tmp = strstr(filename, "/lnet/");
@@ -149,16 +149,16 @@ static char *format_param(const char *filename, struct stat *st,
 		tmp += strlen("/lustre/");
 	}
 
-	/* Allocate return string */
+	
 	param_name = strdup(tmp);
 	if (!param_name)
 		return NULL;
 
-	/* replace '/' with '.' to match conf_param and sysctl */
+	
 	for (tmp = strchr(param_name, '/'); tmp != NULL; tmp = strchr(tmp, '/'))
 		*tmp = '.';
 
-	/* Append the indicator to entries if needed. */
+	
 	if (popt->po_show_type && suffix != NULL) {
 		suffix_len = strlen(suffix);
 
@@ -194,7 +194,7 @@ int jt_clean_path(struct param_opts *popt, char *path)
 	if (popt == NULL || path == NULL || strlen(path) == 0)
 		return -EINVAL;
 
-	/* If path contains a suffix we need to remove it */
+	
 	if (popt->po_show_type) {
 		size_t path_end = strlen(path) - 1;
 
@@ -209,7 +209,7 @@ int jt_clean_path(struct param_opts *popt, char *path)
 		}
 	}
 
-	/* get rid of '\', glob doesn't like it */
+	
 	tmp = strrchr(path, '\\');
 	if (tmp) {
 		char *tail = path + strlen(path);
@@ -223,7 +223,7 @@ int jt_clean_path(struct param_opts *popt, char *path)
 		}
 	}
 
-	/* Does path contain a NID string?  Skip '.->/' replacement for it. */
+	
 	tmp = strchr(path, '@');
 	if (tmp) {
 		/* First find the NID start.  NIDs may have variable (0-4) '.',
@@ -236,12 +236,12 @@ int jt_clean_path(struct param_opts *popt, char *path)
 		else if ((tmp = strstr(path, ".MGC")))
 			nidstart = tmp + 1;
 
-		/* Next, find the end of the NID string. */
+		
 		if (nidstart)
 			nidend = strchrnul(strchr(nidstart, '@'), '.');
 	}
 
-	/* replace param '.' with '/' */
+	
 	for (tmp = strchr(path, '.'); tmp != NULL; tmp = strchr(tmp, '.')) {
 		*tmp++ = '/';
 
@@ -322,7 +322,7 @@ void print_param_internal(struct lctl_param_file *lpf, char *value,
 		char *tmp = value;
 
 		do {
-			/* split at first '\n' if any */
+			
 			nl = strchrnul(tmp, '\n');
 			printf("%s=%.*s", lpf->lpf_name,
 			       (int)(nl-tmp) + 1, tmp);
@@ -335,7 +335,7 @@ void print_param_internal(struct lctl_param_file *lpf, char *value,
 
 		if (!popt->po_only_name && popt->po_show_name) {
 			printf("=");
-			/* put multiline params on newline */
+			
 			if (value && strchr(value, '\n'))
 				printf("\n");
 		}
@@ -388,7 +388,7 @@ void print_param(struct lctl_param_file *lpf, struct param_opts *popt)
 	for (i = 0; i < lpf->lpf_val_c; i++) {
 		if (popt->po_only_name && strcmp(lpf->lpf_val_list[i],
 						 lpf->lpf_val))
-			color = COLOR_DIFF; /* no match on value */
+			color = COLOR_DIFF; 
 		print_param_internal(lpf, lpf->lpf_val_list[i], popt, color);
 	}
 }
@@ -425,7 +425,7 @@ static int read_param(const char *path, char **buf, bool quiet)
 			"error: %s: '%s': %s\n",
 			"read_param", path, strerror(-rc));
 
-	/* remove trailing '\n' for consistency when printing */
+	
 	if (*buf && buflen && (*buf)[buflen - 1] == '\n')
 		(*buf)[buflen - 1] = '\0';
 
@@ -452,7 +452,7 @@ int write_param(const char *path, const char *param_name,
 	if (!value)
 		return -EINVAL;
 
-	/* Write the new value to the file */
+	
 	fd = open(path, O_WRONLY);
 	if (fd < 0) {
 		rc = -errno;
@@ -468,7 +468,7 @@ int write_param(const char *path, const char *param_name,
 			fprintf(stderr, "error: set_param: setting %s=%s: %s\n",
 				path, value, strerror(errno));
 		}
-	} else if (count < strlen(value)) { /* Truncate case */
+	} else if (count < strlen(value)) { 
 		rc = -EINVAL;
 		fprintf(stderr,
 			"error: set_param: setting %s=%s: wrote only %zd\n",
@@ -526,8 +526,8 @@ void dshbak_param(char *param)
 			tmp = strstr(tmp, device_list[i]);
 			if (!tmp || !*(tmp + 1))
 				break;
-			tmp += 3; /* skip "OST" */
-			sep = tmp + 4; /* skip device number */
+			tmp += 3; 
+			sep = tmp + 4; 
 			*tmp = '*';
 			tmp++;
 			memmove(tmp, sep, strlen(sep) + 1);
@@ -539,8 +539,8 @@ void dshbak_param(char *param)
 		tmp = strstr(tmp, "MGC");
 		if (!tmp || !*(tmp + 1))
 			break;
-		tmp += 3; /* skip "MGC" */
-		sep = strchr(tmp, '@'); /* skip IP */
+		tmp += 3; 
+		sep = strchr(tmp, '@'); 
 		if (!sep)
 			break;
 		*tmp = '*';
@@ -591,7 +591,7 @@ int add_val_to_param(struct lctl_param_file *lpf, char *val,
 
 	if (i < lpf->lpf_val_c || (strcmp(lpf->lpf_val, val) == 0 &&
 			       strlen(lpf->lpf_val) == strlen(val))) {
-		free(val); /* found match */
+		free(val); 
 		return 0;
 	}
 
@@ -652,12 +652,12 @@ int add_dir_to_tree(struct lctl_param_dir *root, struct lctl_param_dir **dir,
 		struct lctl_param_dir *child = root->lpd_child_list[i];
 
 		if (strlen((*dir)->lpd_path) == strlen(child->lpd_path)) {
-			/* dup: mds/MDS/mdt/ -> mds/MDS/mdt/ */
+			
 			free_param_dir(*dir);
 			*dir = child;
 			return rc;
 		}
-		/* child: mds/MDS/mdt/ -> mds/ */
+		
 		return add_dir_to_tree(child, dir, popt);
 	}
 
@@ -709,7 +709,7 @@ static int do_param_op(struct param_opts *popt, char *pattern, char *value,
 	}
 
 	if (popt_is_parallel(*popt) && paths.gl_pathc > 1) {
-		/* Allocate space for the glob paths in advance. */
+		
 		rc = spwq_expand(wq, paths.gl_pathc);
 		if (rc < 0)
 			goto out_param;
@@ -722,7 +722,7 @@ static int do_param_op(struct param_opts *popt, char *pattern, char *value,
 	     tmp != NULL && strchr(tmp + 1, '*');
 	     tmp = strchr(tmp + 1, '*')) {}
 	if (tmp)
-		*tmp = '\0'; /* remove trailing '*' */
+		*tmp = '\0'; 
 
 	if (popt->po_dshbak)
 		dshbak_param(pattern);
@@ -778,7 +778,7 @@ paths_loop:
 		char pathname[PATH_MAX], param_dir[PATH_MAX + 2];
 		struct lctl_param_file *lpf;
 		struct stat st;
-		struct stat lst; /* for finding symlinks */
+		struct stat lst; 
 		int rc2;
 		int param_count;
 
@@ -909,7 +909,7 @@ op_switch:
 			continue;
 		}
 
-		/* Turn param_name into file path format */
+		
 		rc2 = jt_clean_path(popt, param_name);
 		if (rc2 < 0) {
 			fprintf(stderr, "error: %s: cleaning '%s': %s\n",
@@ -921,16 +921,16 @@ op_switch:
 			continue;
 		}
 
-		/* Use param_name to grab subdirectory tree from full path */
+		
 		snprintf(param_dir, sizeof(param_dir), "/%s", param_name);
 		tmp = strstr(paths.gl_pathv[i], param_dir);
 
-		/* cleanup param_name now that we are done with it */
+		
 		free(param_name);
 		param_name = NULL;
 		memset(&param_dir, '\0', sizeof(param_dir));
 
-		/* Shouldn't happen but just in case */
+		
 		if (!tmp) {
 			if (!rc)
 				rc = -EINVAL;
@@ -956,7 +956,7 @@ op_switch:
 
 		rc2 = do_param_op(popt, pathname, value, oper, wq);
 		if (!rc2 && rc2 != -ENOENT) {
-			/* errors will be printed by do_param_op() */
+			
 			if (!rc)
 				rc = rc2;
 			continue;
@@ -1006,7 +1006,7 @@ static int param_out_cmdline(int argc, char **argv, struct param_opts *popt,
 			 ((no_color = getenv("NO_COLOR")) == NULL ||
 			  no_color[0] == '\0' || strcmp(no_color, "0") == 0);
 
-	/* reset optind for each getopt_long() in case of multiple calls */
+	
 	optind = 0;
 	while ((ch = getopt_long(argc, argv, opt_list,
 				 long_opts, NULL)) != -1) {
@@ -1294,7 +1294,7 @@ static void setparam_check_deprecated(const char *path)
 		{ .regex = "^nodemap/[^/]+/fileset$",
 		  .message =
 			  "Warning: The parameter '%s' is deprecated. Please use \"lctl nodemap_set_fileset\" instead.\n" },
-		/* Add more deprecated parameters here in the future */
+		
 	};
 
 	for (i = 0; i < ARRAY_SIZE(deprecated_params); i++) {
@@ -1349,7 +1349,7 @@ static int setparam_cmdline(int argc, char **argv, struct param_opts *popt)
 	popt->po_client = 0;
 	opterr = 0;
 
-	/* reset optind for each getopt_long() in case of multiple calls */
+	
 	optind = 0;
 	while ((ch = getopt_long(argc, argv, "C::dFnPt::",
 				 long_opts, NULL)) != -1) {
@@ -1363,7 +1363,7 @@ static int setparam_cmdline(int argc, char **argv, struct param_opts *popt)
 			}
 			popt->po_client = 1;
 			if (optarg)
-				/* remove leading '=' from fsname if present */
+				
 				popt->po_fsname = strdup(optarg +
 							 (optarg[0] == '='));
 			break;
@@ -1472,7 +1472,7 @@ int jt_lcfg_setparam(int argc, char **argv)
 				jt_cmdname(argv[0]), path, strerror(-rc));
 			break;
 		}
-		/* Increment index by the number of arguments consumed. */
+		
 		index += rc;
 
 		rc = jt_clean_path(&popt, path);
@@ -1612,17 +1612,17 @@ static int lcfg_setparam_client(char *func, char *buf, struct param_opts *popt)
 			}
 		}
 
-		/* free line, we do not need anymore */
+		
 		free(line);
 		line = NULL;
 
 		if (found_param_value && !popt->po_delete)
-			goto out_file; /* nothing to change */
+			goto out_file; 
 	}
 
 	if (!found_param_name) {
 		if (popt->po_delete)
-			goto out_file; /* nothing to delete */
+			goto out_file; 
 		mkdir(dir_path, 0644);
 		fd = open(path, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		if (fd < 0) {
@@ -1698,7 +1698,7 @@ static int lcfg_setparam_client(char *func, char *buf, struct param_opts *popt)
 			rc = rename(path, bak_path);
 		}
 
-		/* bak_path can be cleaned up now */
+		
 		free(bak_path);
 
 		if (rc) {
@@ -1711,7 +1711,7 @@ static int lcfg_setparam_client(char *func, char *buf, struct param_opts *popt)
 		while ((line_len = getline(&line, &len, file)) != -1) {
 			if (strstr(line, param_name)) {
 				if (popt->po_delete)
-					continue; /* do not write param */
+					continue; 
 				rc = write(fd, param, strlen(param));
 				if (rc < strlen(param)) {
 					fprintf(stderr,

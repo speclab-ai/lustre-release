@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Utility functions for calling ioctls.
  */
@@ -19,7 +19,7 @@
 #include <stdbool.h>
 #include <linux/types.h>
 
-/* Sparse annotation. */
+
 #define __user
 
 #include <linux/lnet/libcfs_ioctl.h>
@@ -38,7 +38,7 @@ do {							\
 	(data).hdr.ioc_len = sizeof(data);		\
 } while (0)
 
-/* FIXME - rename these to libcfs_ */
+
 int libcfs_ioctl_pack(struct libcfs_ioctl_data *data, char **pbuf, int max);
 void libcfs_ioctl_unpack(struct libcfs_ioctl_data *data, char *pbuf);
 int register_ioc_dev(int dev_id, const char *dev_name);

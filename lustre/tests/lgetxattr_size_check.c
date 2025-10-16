@@ -10,7 +10,7 @@ static void usage(char *prog)
 	printf("Usage: %s <pathname> <xattr name>\n", prog);
 }
 
-/* Simple program to test the lgetxattr return value. */
+
 int main(int argc, char *argv[])
 {
 	char *path, *xattr, *buf;

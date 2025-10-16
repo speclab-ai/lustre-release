@@ -76,7 +76,7 @@ int lgss_krb5_strcasecmp(krb5_data *kstr, const char *str)
                 strncasecmp(kstr->data, str, kstr->length) != 0);
 }
 
-#else /* !HAVE_KRB5 */
+#else 
 
 #define KEYTAB_ENTRY_MATCH(kte, name)                                           \
         (                                                                       \
@@ -98,6 +98,6 @@ int lgss_krb5_strcasecmp(krb5_data *kstr, const char *str)
 #define KRB5_STRCASECMP(str, name)                                              \
         strcmp((str), (name))
 
-#endif /* HAVE_KRB5 */
+#endif 
 
-#endif /* LGSS_KRB5_UTILS_H */
+#endif 

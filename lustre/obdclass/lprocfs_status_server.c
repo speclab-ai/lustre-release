@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -31,12 +31,12 @@ int lprocfs_recovery_stale_clients_seq_show(struct seq_file *m, void *data)
 	if (!test_bit(OBDF_RECOVERING, obd->obd_flags) ||
 	    atomic_read(&obd->obd_connected_clients) >=
 	    atomic_read(&obd->obd_max_recoverable_clients))
-		/* not in recovery */
+		
 		return 0;
 
 	spin_lock(&obd->obd_dev_lock);
 	list_for_each_entry_safe(exp, n, &obd->obd_exports, exp_obd_chain) {
-		/* don't count self-export as client */
+		
 		if (obd_uuid_equals(&exp->exp_client_uuid,
 				    &exp->exp_obd->obd_uuid))
 			continue;
@@ -126,7 +126,7 @@ out:
 EXPORT_SYMBOL(lprocfs_evict_client_seq_write);
 
 #undef BUFLEN
-#endif /* CONFIG_PROC_FS*/
+#endif 
 
 ssize_t eviction_count_show(struct kobject *kobj, struct attribute *attr,
 			 char *buf)
@@ -319,8 +319,8 @@ void lprocfs_free_per_client_stats(struct obd_device *obd)
 	struct nid_stat *stat;
 	ENTRY;
 
-	/* we need extra list - because hash_exit called to early */
-	/* not need locking because all clients is died */
+	
+	
 	while (!list_empty(&obd->obd_nid_stats)) {
 		stat = list_first_entry(&obd->obd_nid_stats,
 					struct nid_stat, nid_list);
@@ -338,13 +338,13 @@ static int ldebugfs_exp_print_nodemap_seq(struct obd_export *exp, void *cb_data)
 	struct seq_file *m = cb_data;
 	struct lu_nodemap *nodemap;
 
-	/* Skip server types that don't initialize ted_nodemap* fields */
+	
 	server_type = exp->exp_obd->obd_type->typ_name;
 	if (strcmp(server_type, LUSTRE_MDT_NAME) != 0 &&
 	    strcmp(server_type, LUSTRE_OST_NAME) != 0)
 		return 0;
 
-	/* Do not call nodemap_get_from_exp() to avoid circular dependency */
+	
 	spin_lock(&exp->exp_target_data.ted_nodemap_lock);
 	nodemap = exp->exp_target_data.ted_nodemap;
 	if (nodemap)
@@ -509,13 +509,13 @@ static int ldebugfs_nid_stats_clear_write_cb(void *obj, void *data)
 
 	CDEBUG(D_INFO, "refcnt %d\n", atomic_read(&stat->nid_exp_ref_count));
 	if (atomic_read(&stat->nid_exp_ref_count) == 1) {
-		/* object has only hash references. */
+		
 		spin_lock(&stat->nid_obd->obd_nid_lock);
 		list_move(&stat->nid_list, data);
 		spin_unlock(&stat->nid_obd->obd_nid_lock);
 		RETURN(1);
 	}
-	/* we has reference to object - only clear data*/
+	
 	if (stat->nid_stats)
 		lprocfs_stats_clear(stat->nid_stats);
 
@@ -663,7 +663,7 @@ int lprocfs_exp_setup(struct obd_export *exp, struct lnet_nid *nid)
 
 	new_stat->nid = *nid;
 	new_stat->nid_obd = exp->exp_obd;
-	/* we need set default refcount to 1 to balance obd_disconnect */
+	
 	atomic_set(&new_stat->nid_exp_ref_count, 1);
 
 	old_stat = cfs_hash_findadd_unique(obd->obd_nid_stats_hash,
@@ -685,7 +685,7 @@ int lprocfs_exp_setup(struct obd_export *exp, struct lnet_nid *nid)
 		GOTO(destroy_new, rc = -EALREADY);
 	}
 
-	/* not found - create */
+	
 	new_stat->nid_debugfs = debugfs_create_dir(nidstr,
 						   obd->obd_debugfs_exports);
 	if (IS_ERR(new_stat->nid_debugfs))
@@ -698,7 +698,7 @@ int lprocfs_exp_setup(struct obd_export *exp, struct lnet_nid *nid)
 	exp->exp_nid_stats = new_stat;
 	spin_unlock(&exp->exp_lock);
 
-	/* protect competitive add to list, not need locking on destroy */
+	
 	spin_lock(&obd->obd_nid_lock);
 	list_add(&new_stat->nid_list, &obd->obd_nid_stats);
 	spin_unlock(&obd->obd_nid_lock);
@@ -820,7 +820,7 @@ static int brw_stats_seq_show(struct seq_file *seq, void *v)
 	struct brw_stats *brw_stats = seq->private;
 	int i;
 
-	/* this sampling races with updates */
+	
 	lprocfs_stats_header(seq, ktime_get_real(), brw_stats->bs_init, 25,
 			     ":", true, "");
 
@@ -910,7 +910,7 @@ int lprocfs_hash_seq_show(struct seq_file *m, void *data)
 	if (obd == NULL)
 		return 0;
 
-	/* header for rhashtable state */
+	
 	seq_printf(m, "%-*s   cur   min        max theta t-min t-max flags  rehash   count  maxdep distribution\n",
 		   HASH_NAME_LEN, "name");
 	ldebugfs_rhash_seq_show("UUID_HASH", &obd->obd_uuid_hash, m);
@@ -948,7 +948,7 @@ int lprocfs_recovery_status_seq_show(struct seq_file *m, void *data)
 			   obd->obd_recovery_end ?
 			   obd->obd_recovery_end - obd->obd_recovery_start :
 			   ktime_get_seconds() - obd->obd_recovery_start);
-		/* Number of clients that have completed recovery */
+		
 		seq_printf(m, "completed_clients: %d/%d\n",
 			   atomic_read(&obd->obd_max_recoverable_clients) -
 			   obd->obd_stale_clients,
@@ -992,7 +992,7 @@ int lprocfs_recovery_status_seq_show(struct seq_file *m, void *data)
 			goto out;
 	}
 
-	/* recovery won't start until the clients connect */
+	
 	if (obd->obd_recovery_start == 0) {
 		seq_printf(m, "WAITING_FOR_CLIENTS\n");
 		goto out;
@@ -1011,7 +1011,7 @@ int lprocfs_recovery_status_seq_show(struct seq_file *m, void *data)
 	seq_printf(m, "connected_clients: %d/%d\n",
 		   atomic_read(&obd->obd_connected_clients),
 		   atomic_read(&obd->obd_max_recoverable_clients));
-	/* Number of clients that have completed recovery */
+	
 	seq_printf(m, "req_replay_clients: %d\n",
 		   atomic_read(&obd->obd_req_replay_clients));
 	seq_printf(m, "lock_repay_clients: %d\n",
@@ -1089,7 +1089,7 @@ lprocfs_checksum_dump_seq_write(struct file *file, const char __user *buffer,
 	return count;
 }
 EXPORT_SYMBOL(lprocfs_checksum_dump_seq_write);
-#endif /* CONFIG_PROC_FS */
+#endif 
 
 ssize_t dt_checksum_dump_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -1132,7 +1132,7 @@ ssize_t dt_checksum_type_show(struct kobject *kobj, struct attribute *attr,
 	int count = 0, i;
 
 	lut = obd2obt(obd)->obt_lut;
-	/* select fastest checksum type on the server */
+	
 	pref = obd_cksum_type_select(obd->obd_name,
 				     lut->lut_cksum_types_supported,
 				     lut->lut_dt_conf.ddp_t10_cksum_type);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2014, Intel Corporation.
  * Use is subject to license terms.
@@ -64,9 +64,9 @@ read:
 
 	close(fd);
 
-	/* Tame the compiler spooked about rc assigned, but not used */
+	
 	if (!rc)
-		return -1; /* Not really important. */
+		return -1; 
 
 	return 0;
 }

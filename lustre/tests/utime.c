@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/utime.c
  *
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 	if (!secname)
 		return 0;
 
-	/* Checking that times in past get updated on another client. */
+	
 	rc = stat(secname, &st2);
 	if (rc) {
 		fprintf(stderr, "%s: second stat(%s) failed: rc %d: %s\n",

@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: GPL-2.0
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
+
 
 #ifndef LNET_RDMA_H
 #define LNET_RDMA_H
@@ -19,7 +19,7 @@
 #else
 
 struct nvfs_dma_rw_ops {
-	unsigned long long ft_bmap; /* feature bitmap */
+	unsigned long long ft_bmap; 
 
 	int (*nvfs_blk_rq_map_sg)(struct request_queue *q,
 				  struct request *req,
@@ -41,7 +41,7 @@ struct nvfs_dma_rw_ops {
 					     unsigned int dev_index);
 };
 
-/* feature list for dma_ops, values indicate bit pos */
+
 enum ft_bits {
 	nvfs_ft_prep_sglist         = 1ULL << 0,
 	nvfs_ft_map_sglist          = 1ULL << 1,
@@ -49,7 +49,7 @@ enum ft_bits {
 	nvfs_ft_device_priority     = 1ULL << 3,
 };
 
-/* check features for use in registration with vendor drivers */
+
 #define NVIDIA_FS_CHECK_FT_SGLIST_PREP(ops) \
 	((ops)->ft_bmap & nvfs_ft_prep_sglist)
 #define NVIDIA_FS_CHECK_FT_SGLIST_DMA(ops) \
@@ -62,7 +62,7 @@ enum ft_bits {
 #define NVFS_IO_ERR			-1
 #define NVFS_CPU_REQ			-2
 
-#endif /* WITH_EXTERNEL_GDS_HEADER */
+#endif 
 
 #define REGSTR2(x) x##_register_nvfs_dma_ops
 #define REGSTR(x)  REGSTR2(x)
@@ -88,10 +88,10 @@ int lnet_rdma_unmap_sg(struct device *dev,
 bool lnet_is_rdma_only_page(struct page *page);
 unsigned int lnet_get_dev_idx(struct page *page);
 
-/* DMA_ATTR_NO_WARN was added to kernel v4.8-11962-ga9a62c9 */
+
 #ifndef DMA_ATTR_NO_WARN
 #define DMA_ATTR_NO_WARN 0
 #endif
 
-#endif /* LNET_RDMA_H */
+#endif 
 

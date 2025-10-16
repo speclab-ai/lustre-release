@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Basic library routines.
  *
@@ -24,4 +24,4 @@ struct workqueue_attrs *compat_alloc_workqueue_attrs(void);
 int compat_apply_workqueue_attrs(struct workqueue_struct *wq,
 				  const struct workqueue_attrs *attrs);
 
-#endif /* __LIBCFS_WORKQUEUE_H__ */
+#endif 

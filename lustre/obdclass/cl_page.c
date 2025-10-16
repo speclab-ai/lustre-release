@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Client Lustre Page.
  *
@@ -36,10 +36,10 @@ do {                                                                    \
 		LASSERT(0);                                             \
 	}                                                               \
 } while (0)
-#else /* !LIBCFS_DEBUG */
+#else 
 #define PASSERT(env, page, exp) \
 	((void)sizeof(env), (void)sizeof(page), (void)sizeof !!(exp))
-#endif /* !LIBCFS_DEBUG */
+#endif 
 
 #ifdef CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK
 # define PINVRNT(env, page, expr)                                       \
@@ -49,12 +49,12 @@ do {                                                                    \
 		LINVRNT(0);                                             \
 	}                                                               \
 } while (0)
-#else /* !CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK */
+#else 
 # define PINVRNT(env, page, exp) \
 	 ((void)sizeof(env), (void)sizeof(page), (void)sizeof !!(exp))
-#endif /* !CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK */
+#endif 
 
-/* Disable page statistic by default due to huge performance penalty. */
+
 static void cs_page_inc(const struct cl_object *obj,
 			enum cache_stats_item item)
 {
@@ -181,7 +181,7 @@ static ssize_t ll_get_iov_memory(int rw, struct iov_iter *iter,
 		if (result >= 0)
 			return -EFAULT;
 
-		/* if result < 0, return the error */
+		
 		return result;
 	}
 	cdp->cdp_page_count = page_count;
@@ -204,17 +204,17 @@ ssize_t cl_dio_pages_init(const struct lu_env *env, struct cl_object *obj,
 	cdp->cdp_from = offset & ~PAGE_MASK;
 	cdp->cdp_to = ((offset + bytes - 1) & ~PAGE_MASK);
 
-	/* these set cdp->page_count, which is used in coo_dio_pages_init */
+	
 	if (!unaligned) {
 		result = ll_get_iov_memory(rw, iter, cdp, bytes);
-		/* ll_get_iov_memory returns bytes in the IO or error*/
+		
 		bytes = result;
 	} else {
-		/* explictly handle the ubuf() case for el9.4 */
+		
 		size_t len = iter_is_ubuf(iter) ? iov_iter_count(iter)
 			   : iter_iov(iter)->iov_len;
 
-		/* same calculation used in ll_get_user_pages */
+		
 		bytes = min_t(size_t, bytes, len);
 		result = ll_allocate_dio_buffer(cdp, bytes);
 		/* allocate_dio_buffer returns number of pages or
@@ -388,8 +388,8 @@ struct cl_page *cl_page_alloc(const struct lu_env *env, struct cl_object *o,
 		/* Please fix cl_page:cp_state/type declaration if
 		 * these assertions fail in the future.
 		 */
-		BUILD_BUG_ON((1 << CP_STATE_BITS) < CPS_NR); /* cp_state */
-		BUILD_BUG_ON((1 << CP_TYPE_BITS) < CPT_NR); /* cp_type */
+		BUILD_BUG_ON((1 << CP_STATE_BITS) < CPS_NR); 
+		BUILD_BUG_ON((1 << CP_TYPE_BITS) < CPT_NR); 
 		refcount_set(&cl_page->cp_ref, 1);
 		cl_page->cp_obj = o;
 		if (type != CPT_TRANSIENT)
@@ -399,7 +399,7 @@ struct cl_page *cl_page_alloc(const struct lu_env *env, struct cl_object *o,
 			cl_page->cp_state = CPS_CACHED;
 		cl_page->cp_type = type;
 		if (type == CPT_TRANSIENT)
-			/* correct inode to be added in ll_direct_rw_pages */
+			
 			cl_page->cp_inode = NULL;
 		else
 			cl_page->cp_inode = page2inode(vmpage);
@@ -465,9 +465,9 @@ struct cl_page *cl_page_find(const struct lu_env *env,
 
 	CDEBUG(D_PAGE, "%lu@"DFID" %p %lx %d\n",
 	       idx, PFID(&hdr->coh_lu.loh_fid), vmpage, vmpage->private, type);
-	/* fast path. */
+	
 	if (type == CPT_CACHEABLE) {
-		/* vmpage lock used to protect the child/parent relationship */
+		
 		LASSERT(PageLocked(vmpage));
 		/*
 		 * cl_vmpage_page() can be called here without any locks as
@@ -485,7 +485,7 @@ struct cl_page *cl_page_find(const struct lu_env *env,
 		}
 	}
 
-	/* allocate and initialize cl_page */
+	
 	page = cl_page_alloc(env, o, idx, vmpage, type);
 	RETURN(page);
 }
@@ -502,31 +502,31 @@ static void __cl_page_state_set(const struct lu_env *env,
 {
 	enum cl_page_state old;
 
-	/* Matrix of allowed state transitions [old][new] for sanity checking */
+	
 	static const int allowed_transitions[CPS_NR][CPS_NR] = {
 		[CPS_CACHED] = {
 			[CPS_CACHED]  = 0,
-			[CPS_OWNED]   = 1, /* io finds existing cached page */
+			[CPS_OWNED]   = 1, 
 			[CPS_PAGEIN]  = 0,
-			[CPS_PAGEOUT] = 1, /* write-out from the cache */
-			[CPS_FREEING] = 1, /* eviction on the memory pressure */
+			[CPS_PAGEOUT] = 1, 
+			[CPS_FREEING] = 1, 
 		},
 		[CPS_OWNED] = {
-			[CPS_CACHED]  = 1, /* release to the cache */
+			[CPS_CACHED]  = 1, 
 			[CPS_OWNED]   = 0,
-			[CPS_PAGEIN]  = 1, /* start read immediately */
-			[CPS_PAGEOUT] = 1, /* start write immediately */
-			[CPS_FREEING] = 1, /* lock invalidation or truncate */
+			[CPS_PAGEIN]  = 1, 
+			[CPS_PAGEOUT] = 1, 
+			[CPS_FREEING] = 1, 
 		},
 		[CPS_PAGEIN] = {
-			[CPS_CACHED]  = 1, /* io completion */
+			[CPS_CACHED]  = 1, 
 			[CPS_OWNED]   = 0,
 			[CPS_PAGEIN]  = 0,
 			[CPS_PAGEOUT] = 0,
 			[CPS_FREEING] = 0,
 		},
 		[CPS_PAGEOUT] = {
-			[CPS_CACHED]  = 1, /* io completion */
+			[CPS_CACHED]  = 1, 
 			[CPS_OWNED]   = 0,
 			[CPS_PAGEIN]  = 0,
 			[CPS_PAGEOUT] = 0,
@@ -602,7 +602,7 @@ void cl_batch_put(const struct lu_env *env, struct cl_page *page,
 		}
 
 		PASSERT(env, page, list_empty(&page->cp_batch));
-		/* Page is no longer reachable by other threads. Tear it down */
+		
 		cl_page_free(env, page, fbatch);
 	}
 
@@ -700,7 +700,7 @@ void __cl_page_disown(const struct lu_env *env, struct cl_page *cp)
 	EXIT;
 }
 
-/* returns true, iff page is owned by the given io. */
+
 int cl_page_is_owned(const struct cl_page *pg, const struct cl_io *io)
 {
 	struct cl_io *top = cl_io_top((struct cl_io *)io);
@@ -1045,7 +1045,7 @@ static enum cl_page_state cl_req_type_state(enum cl_req_type crt)
 static void cl_page_io_start(const struct lu_env *env,
 			     struct cl_page *pg, enum cl_req_type crt)
 {
-	/* Page is queued for IO, change its state. */
+	
 	ENTRY;
 	cl_page_owner_clear(pg);
 	cl_page_state_set(env, pg, cl_req_type_state(crt));
@@ -1195,7 +1195,7 @@ int cl_page_make_ready(const struct lu_env *env, struct cl_page *cp,
 
 	if (clear_page_dirty_for_io(vmpage)) {
 		LASSERT(cp->cp_state == CPS_CACHED);
-		/* This actually clears the dirty bit in the radix tree  */
+		
 		set_page_writeback(vmpage);
 		CL_PAGE_HEADER(D_PAGE, env, cp, "readied\n");
 		rc = 0;
@@ -1293,7 +1293,7 @@ void cl_page_clip(const struct lu_env *env, struct cl_page *cl_page,
 }
 EXPORT_SYMBOL(cl_page_clip);
 
-/* Prints human readable representation of \a pg to the \a f. */
+
 void cl_page_header_print(const struct lu_env *env, void *cookie,
 			  lu_printer_t printer, const struct cl_page *pg)
 {
@@ -1305,7 +1305,7 @@ void cl_page_header_print(const struct lu_env *env, void *cookie,
 }
 EXPORT_SYMBOL(cl_page_header_print);
 
-/* Prints human readable representation of \a cl_page to the \a f. */
+
 void cl_page_print(const struct lu_env *env, void *cookie,
 		   lu_printer_t printer, const struct cl_page *cp)
 {
@@ -1371,7 +1371,7 @@ void cl_page_slice_add(struct cl_page *cl_page, struct cl_page_slice *slice,
 }
 EXPORT_SYMBOL(cl_page_slice_add);
 
-/* Allocate and initialize cl_cache, called by ll_init_sbi(). */
+
 struct cl_client_cache *cl_cache_init(unsigned long lru_page_max)
 {
 	struct cl_client_cache	*cache = NULL;
@@ -1381,7 +1381,7 @@ struct cl_client_cache *cl_cache_init(unsigned long lru_page_max)
 	if (cache == NULL)
 		RETURN(NULL);
 
-	/* Initialize cache data */
+	
 	refcount_set(&cache->ccc_users, 1);
 	cache->ccc_lru_max = lru_page_max;
 	atomic_long_set(&cache->ccc_lru_left, lru_page_max);
@@ -1397,7 +1397,7 @@ struct cl_client_cache *cl_cache_init(unsigned long lru_page_max)
 }
 EXPORT_SYMBOL(cl_cache_init);
 
-/* Increase cl_cache refcount */
+
 void cl_cache_incref(struct cl_client_cache *cache)
 {
 	refcount_inc(&cache->ccc_users);

@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Target (mdt) request handler
  *
@@ -40,21 +40,21 @@
 
 struct mdt_object;
 
-/* file data for open files on MDS */
+
 struct mdt_file_data {
-	/**  portals handle must be first */
+	
 	struct portals_handle	mfd_open_handle;
-	/* export data of portals_handle */
+	
 	const struct mdt_export_data	*mfd_owner;
-	/** open mode provided by client */
+	
 	enum mds_open_flags	mfd_open_flags;
-	/** protected by med_open_lock */
+	
 	struct list_head	mfd_list;
-	/** xid of the open request */
+	
 	__u64			mfd_xid;
-	/** old handle in replay case */
+	
 	struct lustre_handle	mfd_open_handle_old;
-	/** point to opened object */
+	
 	struct mdt_object	*mfd_object;
 };
 
@@ -70,7 +70,7 @@ struct mdt_file_data {
  */
 #define CDT_DEFAULT_POLICY		CDT_NORETRY_ACTION
 
-/* Coordinator states. Keep the cdt_transition table in sync. */
+
 enum cdt_states { CDT_STOPPED = 0,
 		  CDT_INIT,
 		  CDT_RUNNING,
@@ -104,36 +104,36 @@ static inline char *cdt_mdt_state2str(int state)
  * cdt_request_lock
  */
 struct coordinator {
-	refcount_t		 cdt_ref;	     /**< cdt refcount */
-	wait_queue_head_t	 cdt_waitq;	     /**< cdt wait queue */
-	wait_queue_head_t	 cdt_cancel_all;     /**< cancel_all wait */
-	bool			 cdt_event;	     /**< coordinator event */
-	struct task_struct	*cdt_task;	     /**< cdt thread handle */
+	refcount_t		 cdt_ref;	     
+	wait_queue_head_t	 cdt_waitq;	     
+	wait_queue_head_t	 cdt_cancel_all;     
+	bool			 cdt_event;	     
+	struct task_struct	*cdt_task;	     
 	struct lu_env		 cdt_env;	     /**< coordinator lustre
 						      * env */
-	struct lu_context	 cdt_session;	     /** session for lu_ucred */
-	struct dentry		*cdt_debugfs_dir;	/**< cdt debugfs directory */
+	struct lu_context	 cdt_session;	     
+	struct dentry		*cdt_debugfs_dir;	
 	struct completion	 cdt_kobj_unregister;
-	struct kobject		 cdt_hsm_kobj;		/* hsm sysfs object */
-	__u64			 cdt_policy;	     /**< policy flags */
-	enum cdt_states		 cdt_state;	      /**< state */
-	struct mutex		 cdt_state_lock;      /**< cdt_state lock */
+	struct kobject		 cdt_hsm_kobj;		
+	__u64			 cdt_policy;	     
+	enum cdt_states		 cdt_state;	      
+	struct mutex		 cdt_state_lock;      
 	atomic64_t		 cdt_last_cookie;     /**< last cookie
 						       * allocated */
-	struct rw_semaphore	 cdt_agent_lock;      /**< protect agent list */
+	struct rw_semaphore	 cdt_agent_lock;      
 	struct rw_semaphore	 cdt_request_lock;    /**< protect request
 						       * list */
-	timeout_t		 cdt_loop_period;     /**< llog scan period */
+	timeout_t		 cdt_loop_period;     
 	timeout_t		 cdt_grace_delay;     /**< request grace
 						       * delay */
-	timeout_t		 cdt_active_req_timeout; /**< request timeout */
+	timeout_t		 cdt_active_req_timeout; 
 	__u32			 cdt_default_archive_id; /**< archive id used
 						       * when none are
 						       * specified */
 	u64			 cdt_max_requests;    /**< max count of started
 						       * requests */
-	/** Current count of active requests */
-	atomic_t		 cdt_request_count;   /** total */
+	
+	atomic_t		 cdt_request_count;   
 	atomic_t		 cdt_archive_count;
 	atomic_t		 cdt_restore_count;
 	atomic_t		 cdt_remove_count;
@@ -142,7 +142,7 @@ struct coordinator {
 	 * indexed by cookie
 	 */
 	struct cfs_hash		*cdt_request_cookie_hash;
-	/* started requests (struct cdt_agent_req:car_request_list) */
+	
 	struct list_head	 cdt_request_list;
 	struct list_head	 cdt_agents;	      /**< list of register
 						       * agents */
@@ -150,27 +150,27 @@ struct coordinator {
 						       * restore requests
 						       */
 
-	/* Bitmasks indexed by the HSMA_XXX constants. */
+	
 	__u64			 cdt_user_request_mask;
 	__u64			 cdt_group_request_mask;
 	__u64			 cdt_other_request_mask;
 
-	/* Remove archive on last unlink policy */
+	
 	bool			 cdt_remove_archive_on_last_unlink;
 
 	bool			 cdt_wakeup_coordinator;
 	bool			 cdt_idle;
 };
 
-/* mdt state flag bits */
+
 #define MDT_FL_CFGLOG 0
 #define MDT_FL_SYNCED 1
 
-/* possible values for mo_dom_lock */
+
 enum {
 	NO_DOM_LOCK_ON_OPEN = 0,
 	TRYLOCK_DOM_ON_OPEN = 1,
-	/* not used anymore, left here for compatibility */
+	
 	ALWAYS_DOM_LOCK_ON_OPEN = 2,
 	NUM_DOM_LOCK_ON_OPEN_MODES
 };
@@ -192,63 +192,63 @@ struct rename_stats {
 	struct obd_histogram	rs_hist[RENAME_LAST];
 };
 
-/* split directory automatically when sub file count exceeds 50k */
+
 #define DIR_SPLIT_COUNT_DEFAULT	50000
 
-/* directory auto-split allocate delta new stripes each time */
+
 #define DIR_SPLIT_DELTA_DEFAULT	4
 
 struct mdt_dir_restriper {
 	struct lu_env		mdr_env;
 	struct lu_context	mdr_session;
 	struct task_struct     *mdr_task;
-	/* lock for below fields */
+	
 	spinlock_t		mdr_lock;
-	/* auto split when plain dir/shard sub files exceed threshold */
+	
 	u64			mdr_dir_split_count;
-	/* auto split growth delta */
+	
 	u32			mdr_dir_split_delta;
-	/* directories to split */
+	
 	struct list_head	mdr_auto_splitting;
-	/* directories under which sub files are migrating */
+	
 	struct list_head	mdr_migrating;
-	/* directories waiting to update layout after migration */
+	
 	struct list_head	mdr_updating;
-	/* time to update directory layout after migration */
+	
 	time64_t		mdr_update_time;
-	/* lum used in split/migrate/layout_change */
+	
 	union lmv_mds_md	mdr_lmv;
-	/* page used in readdir */
+	
 	struct page	       *mdr_page;
 };
 
 struct mdt_device {
-	/* super-class */
+	
 	struct lu_device	   mdt_lu_dev;
 	struct seq_server_site	   mdt_seq_site;
-	/* DLM name-space for meta-data locks maintained by this server */
+	
 	struct ldlm_namespace     *mdt_namespace;
-	/* ptlrpc handle for MDS->client connections (for lock ASTs). */
+	
 	struct ptlrpc_client      *mdt_ldlm_client;
-	/* underlying device */
+	
 	struct obd_export         *mdt_child_exp;
 	struct md_device          *mdt_child;
 	struct dt_device          *mdt_bottom;
 	struct obd_export	  *mdt_bottom_exp;
 	struct local_oid_storage  *mdt_los;
-	/** target device */
+	
 	struct lu_target           mdt_lut;
-	/* Options bit-fields. */
+	
 	struct {
 		unsigned int       mo_user_xattr:1,
 				   mo_acl:1,
 				   mo_cos:1;
 		unsigned int	   mo_dom_lock;
 	} mdt_opts;
-	/* mdt state flags */
+	
 	unsigned long		   mdt_state;
 
-	/* transaction callbacks */
+	
 	struct dt_txn_callback	   mdt_txn_cb;
 
 	/* these values should be updated from lov if necessary.
@@ -258,10 +258,10 @@ struct mdt_device {
 
 	int			   mdt_max_ea_size;
 
-	/* Max modify RPCs, replaces max_mod_rpcs_per_client module param */
+	
 	unsigned int			   mdt_max_mod_rpcs_in_flight;
 
-	/* preferred BRW size, decided by storage type and capability */
+	
 	__u32			   mdt_brw_size;
 
 	struct upcall_cache	  *mdt_identity_cache;
@@ -271,7 +271,7 @@ struct mdt_device {
 				   mdt_dom_read_open:1,
 				   mdt_migrate_hsm_allowed:1,
 				   mdt_enable_strict_som:1,
-				   /* Enable remote dir on non-MDT0 */
+				   
 				   mdt_enable_dir_migration:1,
 				   mdt_enable_dir_restripe:1,
 				   mdt_enable_dir_auto_split:1,
@@ -284,88 +284,88 @@ struct mdt_device {
 				   mdt_enable_striped_dir:1,
 				   mdt_readonly:1,
 				   mdt_skip_lfsck:1,
-				   /* dir restripe migrate dirent only */
+				   
 				   mdt_dir_restripe_nsonly:1,
 				   /* this is enabled by default, but once an
 				    * old client joins, disable this to handle
 				    * inherited default LMV on server.
 				    */
 				   mdt_enable_dmv_implicit_inherit:1,
-				   /* set dmv by setxattr, off by default */
+				   
 				   mdt_enable_dmv_xattr:1;
 
 				   /* user with gid can create remote/striped
 				    * dir, and set default dir stripe
 				    */
 	gid_t			   mdt_enable_remote_dir_gid;
-				   /* user with this gid can change projid */
+				   
 	gid_t			   mdt_enable_chprojid_gid;
 	kernel_cap_t		   mdt_enable_cap_mask;
-				   /* user with this gid can pin/unpin file */
+				   
 	gid_t			   mdt_enable_pin_gid;
 
-	/* lock for osfs and md_root */
+	
 	spinlock_t		   mdt_lock;
 
-	/* statfs optimization: we cache a bit  */
+	
 	struct mdt_statfs_cache	   mdt_sum_osfs;
 	struct mdt_statfs_cache	   mdt_osfs;
 
-	/* root squash */
+	
 	struct root_squash_info	   mdt_squash;
 
 	struct rename_stats	   mdt_rename_stats;
 	struct lu_fid		   mdt_md_root_fid;
 
-	/* connection to quota master */
+	
 	struct obd_export	  *mdt_qmt_exp;
-	/* quota master device associated with this MDT */
+	
 	struct lu_device	  *mdt_qmt_dev;
 
 	struct coordinator	   mdt_coordinator;
 
-	/* inter-MDT connection count */
+	
 	atomic_t		   mdt_mds_mds_conns;
 
-	/* MDT device async commit count, used for debug and sanity test */
+	
 	atomic_t		   mdt_async_commit_count;
 
 	struct mdt_object	  *mdt_md_root;
 
 	struct mdt_dir_restriper   mdt_restriper;
 
-	/* count of old clients that doesn't support DMV implicite inherit */
+	
 	atomic_t		   mdt_dmv_old_client_count;
 
-	/* name of xattr used to store jobid in mdt inode */
+	
 	char			   mdt_job_xattr[XATTR_JOB_MAX_LEN];
 };
 
 #define MDT_SERVICE_WATCHDOG_FACTOR	(2)
 #define MDT_COS_DEFAULT         (0)
 
-#define ENOENT_VERSION 1	/** 'virtual' version of non-existent object */
+#define ENOENT_VERSION 1	
 
 struct mdt_object {
 	struct lu_object_header	mot_header;
 	struct lu_object	mot_obj;
-	unsigned int		mot_lov_created:1,  /* lov object created */
+	unsigned int		mot_lov_created:1,  
 				mot_cache_attr:1,   /* enable remote object
 						     * attribute cache */
-				mot_restriping:1,   /* dir restriping */
-				/* dir auto-split disabled */
+				mot_restriping:1,   
+				
 				mot_auto_split_disabled:1,
-				mot_lsom_inited:1, /* lsom was inited */
-				mot_discard_done:1; /* discard lock was sent */
+				mot_lsom_inited:1, 
+				mot_discard_done:1; 
 	int			mot_write_count;
 	spinlock_t		mot_write_lock;
-	/* Lock to protect create_data */
+	
 	struct mutex		mot_lov_mutex;
-	/* Lock to protect object's SOM update. */
+	
 	struct mutex		mot_som_mutex;
 	__u64			mot_lsom_size;
 	__u64			mot_lsom_blocks;
-	/* lock to protect read/write stages for Data-on-MDT files */
+	
 	struct rw_semaphore	mot_dom_sem;
 	/* Lock to protect lease open.
 	 * Lease open acquires write lock; normal open acquires read lock
@@ -373,40 +373,40 @@ struct mdt_object {
 	struct rw_semaphore	mot_open_sem;
 	atomic_t		mot_lease_count;
 	atomic_t		mot_open_count;
-	/* directory offset, used in sub file migration in dir restripe */
+	
 	loff_t			mot_restripe_offset;
-	/* link to mdt_restriper auto_splitting/migrating/updating */
+	
 	struct list_head	mot_restripe_linkage;
 };
 
 struct mdt_lock_handle {
-	/* Lock type, reg for cross-ref use or pdo lock. */
+	
 	mdl_type_t		mlh_type;
 
-	/* Regular lock */
+	
 	struct lustre_handle	mlh_reg_lh;
 	enum ldlm_mode		mlh_reg_mode;
 	__u64			mlh_gid;
 
-	/* Pdirops lock */
+	
 	struct lustre_handle	mlh_pdo_lh;
 	enum ldlm_mode		mlh_pdo_mode;
 	unsigned int		mlh_pdo_hash;
 	unsigned int		mlh_pdo_remote:1;
 
-	/* Remote regular lock */
+	
 	struct lustre_handle	mlh_rreg_lh;
 	enum ldlm_mode		mlh_rreg_mode;
 };
 
 enum {
-	MDT_LH_PARENT,	/* parent lockh */
-	MDT_LH_CHILD,	/* child lockh */
-	MDT_LH_OLD,	/* old lockh for rename */
-	MDT_LH_LAYOUT = MDT_LH_OLD, /* layout lock */
-	MDT_LH_NEW,	/* new lockh for rename */
-	MDT_LH_RMT,	/* used for return lh to caller */
-	MDT_LH_LOCAL,	/* local lock never return to client */
+	MDT_LH_PARENT,	
+	MDT_LH_CHILD,	
+	MDT_LH_OLD,	
+	MDT_LH_LAYOUT = MDT_LH_OLD, 
+	MDT_LH_NEW,	
+	MDT_LH_RMT,	
+	MDT_LH_LOCAL,	
 	MDT_LH_LOOKUP,	/* lookup lock for source object in rename/migrate if
 			 * it's remote object */
 	MDT_LH_NR
@@ -459,20 +459,20 @@ struct mdt_thread_info {
 	 */
 	struct req_capsule        *mti_pill;
 
-	/* SUB request pill in a batch request. */
+	
 	struct req_capsule	    mti_sub_pill;
 
 	/* although we have export in req, there are cases when it is not
 	 * available, e.g. closing files upon export destroy
 	 */
 	struct obd_export          *mti_exp;
-	/* A couple of lock handles. */
+	
 	struct mdt_lock_handle     mti_lh[MDT_LH_NR];
 
 	struct mdt_device         *mti_mdt;
 	const struct lu_env       *mti_env;
 
-	/* transaction number of current request */
+	
 	__u64                      mti_transno;
 
 	/*
@@ -482,12 +482,12 @@ struct mdt_thread_info {
 	 * by all requests.
 	 */
 
-	/* Object attributes. */
+	
 	struct md_attr             mti_attr;
-	struct md_attr             mti_attr2; /* mdt_lvb.c */
-	/* Body for "habeo corpus" operations. */
+	struct md_attr             mti_attr2; 
+	
 	const struct mdt_body     *mti_body;
-	/* Host object. This is released at the end of mdt_handler(). */
+	
 	struct mdt_object         *mti_object;
 	/*
 	 * Lock request for "habeo clavis" operations.
@@ -495,12 +495,12 @@ struct mdt_thread_info {
 	const struct ldlm_request *mti_dlm_req;
 
 	__u32                      mti_cross_ref:1,
-	/* big_lmm buffer was used and must be used in reply */
+	
 				   mti_big_lov_used:1,
 				   mti_big_lmv_used:1,
 				   mti_big_acl_used:1,
 				   mti_som_strict:1,
-	/* Batch processing environment */
+	
 				   mti_batch_env:1,
 				   mti_intent_lock:1;
 
@@ -517,11 +517,11 @@ struct mdt_thread_info {
 	 * by reint requests (including mdt_reint_open()).
 	 */
 
-	/* reint record. contains information for reint operations. */
+	
 	struct mdt_reint_record    mti_rr;
 
 	__u64                      mti_ver[PTLRPC_NUM_VERSIONS];
-	/* Operation specification (currently create and lookup) */
+	
 	struct md_op_spec          mti_spec;
 
 	/*
@@ -531,18 +531,18 @@ struct mdt_thread_info {
 	 * They should be initialized explicitly by the user themselves.
 	 */
 
-	/* XXX: If something is in a union, make sure they do not conflict */
+	
 	struct lu_fid			mti_tmp_fid1;
 	struct lu_fid			mti_tmp_fid2;
-	union ldlm_policy_data		mti_policy; /* for mdt_object_lock() */
-	struct ldlm_res_id		mti_res_id; /* and mdt_rename_lock() */
+	union ldlm_policy_data		mti_policy; 
+	struct ldlm_res_id		mti_res_id; 
 	union {
-		struct obd_uuid		uuid[2];    /* for mdt_seq_init_cli() */
-		char			ns_name[48];/* for mdt_init0()        */
-		struct lustre_cfg_bufs	bufs;       /* for mdt_stack_fini()   */
-		struct obd_statfs	osfs;       /* for mdt_statfs()       */
+		struct obd_uuid		uuid[2];    
+		char			ns_name[48];
+		struct lustre_cfg_bufs	bufs;       
+		struct obd_statfs	osfs;       
 		struct {
-			/* for mdt_readpage()      */
+			
 			struct lu_rdpg     mti_rdpg;
 		} rdpg;
 		struct {
@@ -558,24 +558,24 @@ struct mdt_thread_info {
 	struct lu_buf		   mti_buf;
 	struct lu_buf		   mti_big_buf;
 
-	/* Ops object filename */
+	
 	struct lu_name             mti_name;
 	char			   mti_filename[NAME_MAX + 1];
-	/* per-thread values, can be re-used, may be vmalloc'd */
-	void			  *mti_big_lov;  /* was _lmm */
+	
+	void			  *mti_big_lov;  
 	void			  *mti_big_lmv;
 	void			  *mti_big_acl;
 	int			   mti_big_lovsize;
 	int			   mti_big_lmvsize;
 	int			   mti_big_aclsize;
-	/* should be enough to fit lustre_mdt_attrs */
+	
 	char			   mti_xattr_buf[128];
 	struct ldlm_enqueue_info   mti_einfo;
-	/* einfo used by mdt_remote_object_lock_try() */
+	
 	struct ldlm_enqueue_info   mti_remote_einfo;
 	struct tg_reply_data	  *mti_reply_data;
 
-	/* FLR: layout change API */
+	
 	struct md_layout_change	   mti_mlc;
 
 	struct lu_seq_range	   mti_range;
@@ -589,50 +589,50 @@ static inline struct mdt_thread_info *mdt_th_info(const struct lu_env *env)
 }
 
 struct cdt_req_progress {
-	spinlock_t		 crp_lock;	/**< protect tree */
+	spinlock_t		 crp_lock;	
 	struct interval_tree_root crp_root;	/**< tree to track extent
 						 *   moved */
 	__u64			 crp_total;
 };
 
 struct cdt_agent_req {
-	struct hlist_node	 car_cookie_hash;  /**< find req by cookie */
-	struct list_head	 car_request_list; /**< to chain all the req. */
-	struct list_head	 car_scan_list;    /**< list for scan process */
-	struct kref		 car_refcount;     /**< reference counter */
-	struct obd_uuid		 car_uuid;         /**< agent doing the req. */
-	struct hsm_mem_req_rec	*car_hmm;	   /**< llog rec with cookies */
+	struct hlist_node	 car_cookie_hash;  
+	struct list_head	 car_request_list; 
+	struct list_head	 car_scan_list;    
+	struct kref		 car_refcount;     
+	struct obd_uuid		 car_uuid;         
+	struct hsm_mem_req_rec	*car_hmm;	   
 	struct cdt_req_progress	 car_progress;     /**< track data mvt
 						    *   progress */
-	struct cdt_agent_req *car_cancel;	   /**< corresponding cancel */
+	struct cdt_agent_req *car_cancel;	   
 };
-#define car_flags	car_hmm->mr_rec.arr_flags /**< request original flags */
-#define car_archive_id	car_hmm->mr_rec.arr_archive_id /**< archive id */
-#define car_req_update	car_hmm->mr_rec.arr_req_change /**< last update time */
-#define car_hai		car_hmm->mr_rec.arr_hai /**< req. to the agent */
+#define car_flags	car_hmm->mr_rec.arr_flags 
+#define car_archive_id	car_hmm->mr_rec.arr_archive_id 
+#define car_req_update	car_hmm->mr_rec.arr_req_change 
+#define car_hai		car_hmm->mr_rec.arr_hai 
 
 extern struct kmem_cache *mdt_hsm_car_kmem;
 
 struct hsm_agent {
-	struct list_head ha_list;		/* to chain the agents */
-	struct obd_uuid	 ha_uuid;		/* agent uuid */
-	__u32		*ha_archive_id;		/* archive id */
+	struct list_head ha_list;		
+	struct obd_uuid	 ha_uuid;		
+	__u32		*ha_archive_id;		
 	int		 ha_archive_cnt;	/* number of archive entries
 						 *   0 means any archive */
-	atomic_t	 ha_requests;		/* current request count */
-	atomic_t	 ha_success;		/* num of successful actions */
-	atomic_t	 ha_failure;		/* number of failed actions */
+	atomic_t	 ha_requests;		
+	atomic_t	 ha_success;		
+	atomic_t	 ha_failure;		
 };
 
 struct cdt_restore_handle {
-	struct rhash_head	crh_hash;	/**< link to cdt_restore_hash */
-	struct lu_fid		crh_fid;	/**< fid of the object */
-	struct ldlm_extent	crh_extent;	/**< extent of the restore */
-	struct mdt_lock_handle	crh_lh;		/**< lock handle */
-	atomic_t		crh_refc;	/**< crh ref counter */
-	struct rcu_head		crh_rcu;	/**< crh rcu head */
+	struct rhash_head	crh_hash;	
+	struct lu_fid		crh_fid;	
+	struct ldlm_extent	crh_extent;	
+	struct mdt_lock_handle	crh_lh;		
+	atomic_t		crh_refc;	
+	struct rcu_head		crh_rcu;	
 };
-extern struct kmem_cache *mdt_hsm_cdt_kmem;	/** restore handle slab cache */
+extern struct kmem_cache *mdt_hsm_cdt_kmem;	
 
 struct hsm_record_update {
 	__u64 cookie;
@@ -865,7 +865,7 @@ int mdt_object_lock_try(struct mdt_thread_info *info, struct mdt_object *mo,
 			enum mds_ibits_locks *ibits,
 			enum mds_ibits_locks trybits, enum ldlm_mode mode);
 
-/* below three lock functions are used internally */
+
 int mdt_object_lock_internal(struct mdt_thread_info *info,
 			     struct mdt_object *obj, const struct lu_fid *fid,
 			     struct mdt_lock_handle *lh,
@@ -1060,7 +1060,7 @@ static inline bool agent_req_in_final_state(enum agent_req_status ars)
 		(ars == ARS_CANCELED));
 }
 
-/* mdt/mdt_identity.c */
+
 #define MDT_IDENTITY_UPCALL_PATH        "/usr/sbin/l_getidentity"
 #define UC_IDCACHE_HASH_SIZE 128
 extern struct upcall_cache_ops mdt_identity_upcall_cache_ops;
@@ -1074,13 +1074,13 @@ void mdt_flush_identity(struct upcall_cache *cache, int uid);
 
 __u32 mdt_identity_get_perm(struct md_identity *identity, struct lnet_nid *nid);
 
-/* mdt/mdt_recovery.c */
+
 __u64 mdt_req_from_lrd(struct ptlrpc_request *req, struct tg_reply_data *trd);
 
-/* mdt/mdt_batch.c */
+
 int mdt_batch(struct tgt_session_info *tsi);
 
-/* mdt/mdt_hsm.c */
+
 int mdt_hsm_state_get(struct tgt_session_info *tsi);
 int mdt_hsm_state_set(struct tgt_session_info *tsi);
 int mdt_hsm_action(struct tgt_session_info *tsi);
@@ -1090,7 +1090,7 @@ int mdt_hsm_ct_unregister(struct tgt_session_info *tsi);
 int mdt_hsm_request(struct tgt_session_info *tsi);
 int mdt_hsm_data_version(struct tgt_session_info *tsi);
 
-/* mdt/mdt_hsm_cdt_actions.c */
+
 extern const struct file_operations mdt_hsm_actions_fops;
 void dump_llog_agent_req_rec(const char *prefix,
 			     const struct llog_agent_req_rec *larr);
@@ -1103,7 +1103,7 @@ int mdt_agent_record_add(const struct lu_env *env, struct mdt_device *mdt,
 int mdt_hsm_agent_modify_record(const struct lu_env *env,
 				struct mdt_device *mdt,
 				struct hsm_mem_req_rec *hmm);
-/* mdt/mdt_hsm_cdt_agent.c */
+
 extern const struct file_operations mdt_hsm_agent_fops;
 int mdt_hsm_agent_register(struct mdt_thread_info *info,
 			   const struct obd_uuid *uuid,
@@ -1120,7 +1120,7 @@ int mdt_hsm_find_best_agent(struct coordinator *cdt, __u32 archive,
 			    struct obd_uuid *uuid);
 int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 		       bool purge);
-/* mdt/mdt_hsm_cdt_client.c */
+
 int mdt_hsm_add_actions(struct mdt_thread_info *info,
 			struct hsm_action_list *hal);
 int mdt_hsm_get_action(struct mdt_thread_info *mti,
@@ -1130,7 +1130,7 @@ int mdt_hsm_get_action(struct mdt_thread_info *mti,
 		       struct hsm_extent *extent);
 bool mdt_hsm_restore_is_running(struct mdt_thread_info *mti,
 				const struct lu_fid *fid);
-/* mdt/mdt_hsm_cdt_requests.c */
+
 extern struct cfs_hash_ops cdt_request_cookie_hash_ops;
 extern const struct file_operations mdt_hsm_active_requests_fops;
 void __maybe_unused dump_requests(char *prefix, struct coordinator *cdt);
@@ -1144,7 +1144,7 @@ void mdt_cdt_put_request(struct cdt_agent_req *car);
 struct cdt_agent_req *mdt_cdt_update_request(struct coordinator *cdt,
 					 const struct hsm_progress_kernel *pgs);
 int mdt_cdt_remove_request(struct coordinator *cdt, __u64 cookie);
-/* mdt/mdt_coordinator.c */
+
 void mdt_hsm_dump_hal(int level, const char *prefix,
 		      struct hsm_action_list *hal);
 int cdt_restore_handle_add(struct mdt_thread_info *mti, struct coordinator *cdt,
@@ -1156,7 +1156,7 @@ void cdt_restore_handle_del(struct mdt_thread_info *mti,
 			    struct coordinator *cdt, const struct lu_fid *fid);
 int cdt_getref_try(struct coordinator *cdt);
 void cdt_putref(struct coordinator *cdt);
-/* coordinator management */
+
 int mdt_hsm_cdt_init(struct mdt_device *mdt);
 int mdt_hsm_cdt_stop(struct mdt_device *mdt);
 int mdt_hsm_cdt_fini(struct mdt_device *mdt);
@@ -1170,18 +1170,18 @@ static inline void mdt_hsm_cdt_event(struct coordinator *cdt)
 	cdt->cdt_event = true;
 }
 
-/* coordinator control sysfs interface */
+
 ssize_t hsm_control_show(struct kobject *kobj, struct attribute *attr,
 			 char *buf);
 ssize_t hsm_control_store(struct kobject *kobj, struct attribute *attr,
 			  const char *buffer, size_t count);
 int hsm_cdt_tunables_init(struct mdt_device *mdt);
 void hsm_cdt_tunables_fini(struct mdt_device *mdt);
-/* md_hsm helpers */
+
 struct mdt_object *mdt_hsm_get_md_hsm(struct mdt_thread_info *mti,
 				      const struct lu_fid *fid,
 				      struct md_hsm *hsm);
-/* actions/request helpers */
+
 int mdt_hsm_add_hsr(struct mdt_thread_info *mti, struct hsm_scan_request *hsr,
 		    struct obd_uuid *uuid);
 bool mdt_hsm_is_action_compat(const struct hsm_action_item *hai,
@@ -1192,7 +1192,7 @@ int mdt_hsm_update_request_state(struct mdt_thread_info *mti,
 
 extern struct lu_context_key       mdt_thread_key;
 
-/* debug issues helper starts here*/
+
 static inline int mdt_fail_write(const struct lu_env *env,
 				 struct dt_device *dd, int id)
 {
@@ -1200,7 +1200,7 @@ static inline int mdt_fail_write(const struct lu_env *env,
 		CERROR(LUSTRE_MDT_NAME": cfs_fail_loc=%x, fail write ops\n",
 		       id);
 		return dt_ro(env, dd);
-		/* We set FAIL_ONCE because we never "un-fail" a device */
+		
 	}
 
 	return 0;
@@ -1268,7 +1268,7 @@ static int mdt_dom_glimpse_ast(struct ldlm_lock *lock, void *reqp)
 	return -ELDLM_NO_LOCK_DATA;
 }
 
-/* Issues dlm lock on passed @ns, @f stores it lock handle into @lh. */
+
 static inline int mdt_fid_lock(const struct lu_env *env,
 			       struct ldlm_namespace *ns,
 			       struct lustre_handle *lh, enum ldlm_mode mode,
@@ -1295,13 +1295,13 @@ static inline void mdt_fid_unlock(struct lustre_handle *lh, enum ldlm_mode mode)
 	ldlm_lock_decref(lh, mode);
 }
 
-/* this is identical to say this is a DNE system */
+
 static inline bool mdt_slc_is_enabled(struct mdt_device *mdt)
 {
 	return mdt->mdt_lut.lut_sync_lock_cancel == SYNC_LOCK_CANCEL_BLOCKING;
 }
 
-/* mdt_som.c */
+
 int mdt_set_som(struct mdt_thread_info *info, struct mdt_object *obj,
 		enum lustre_som_flags flag, __u64 size, __u64 blocks);
 int mdt_get_som(struct mdt_thread_info *info, struct mdt_object *obj,
@@ -1310,7 +1310,7 @@ int mdt_lsom_downgrade(struct mdt_thread_info *info, struct mdt_object *obj);
 int mdt_lsom_update(struct mdt_thread_info *info, struct mdt_object *obj,
 		    bool truncate);
 
-/* mdt_lvb.c */
+
 extern struct ldlm_valblock_ops mdt_lvbo;
 int mdt_dom_lvb_is_valid(struct ldlm_resource *res);
 int mdt_dom_lvbo_update(struct ldlm_resource *res, struct ldlm_lock *lock,
@@ -1319,7 +1319,7 @@ int mdt_dom_lvbo_update(struct ldlm_resource *res, struct ldlm_lock *lock,
 void mdt_enable_cos(struct mdt_device *dev, bool enable);
 int mdt_cos_is_enabled(struct mdt_device *mdt);
 
-/* lprocfs stuff */
+
 enum mdt_stat_idx {
 	LPROC_MDT_OPEN,
 	LPROC_MDT_CLOSE,
@@ -1356,7 +1356,7 @@ void mdt_stats_counter_init(struct lprocfs_stats *stats, unsigned int offset,
 int mdt_tunables_init(struct mdt_device *mdt, const char *name);
 void mdt_tunables_fini(struct mdt_device *mdt);
 
-/* lustre/mdt_mdt_lproc.c */
+
 int ldebugfs_mdt_open_files_seq_open(struct inode *inode,
 				     struct file *file);
 void mdt_rename_counter_tally(struct mdt_thread_info *info,
@@ -1391,7 +1391,7 @@ static inline char *mdt_req_get_jobid(struct ptlrpc_request *req)
 	return jobid;
 }
 
-/* MDT IO */
+
 #define VALID_FLAGS (LA_TYPE | LA_MODE | LA_SIZE | LA_BLOCKS | \
 		     LA_BLKSIZE | LA_ATIME | LA_MTIME | LA_CTIME)
 
@@ -1439,7 +1439,7 @@ void mdt_hp_punch(struct tgt_session_info *tsi);
 int mdt_data_version_get(struct tgt_session_info *tsi);
 int mdt_io_set_info(struct tgt_session_info *tsi);
 
-/* grants */
+
 long mdt_grant_connect(const struct lu_env *env, struct obd_export *exp,
 		       u64 want, bool conservative);
 extern struct kmem_cache *ldlm_glimpse_work_kmem;
@@ -1452,7 +1452,7 @@ static inline bool mdt_changelog_allow(struct mdt_thread_info *info)
 
 	if (info == NULL || info->mti_body == NULL)
 #if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 3, 0)
-		/* return true in case old client did not send mdt body */
+		
 		return true;
 #else
 		return false;
@@ -1489,7 +1489,7 @@ static inline int mdt_check_enc(struct mdt_thread_info *info,
 		return 0;
 	exp = mdt_info_req(info)->rq_export;
 	if (exp_connect_encrypt(exp))
-		/* client is encryption aware: fine */
+		
 		return 0;
 
 	ma.ma_need = MA_INODE;
@@ -1516,7 +1516,7 @@ int mdt_reint_migrate(struct mdt_thread_info *info,
 		      struct mdt_lock_handle *unused);
 int mdt_dir_layout_update(struct mdt_thread_info *info);
 
-/* directory restripe */
+
 int mdt_restripe_internal(struct mdt_thread_info *info,
 			  struct mdt_object *parent,
 			  struct mdt_object *child,
@@ -1546,4 +1546,4 @@ static inline bool mdt_max_mod_rpcs_changed(struct mdt_device *mdt)
 #define mdt_max_mod_rpcs_changed(mdt) false
 #endif
 
-#endif /* _MDT_INTERNAL_H */
+#endif 

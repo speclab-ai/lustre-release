@@ -7,7 +7,6 @@ from pykdump.API import readSymbol, symbol_exists
 from crashlib.exceptions import *
 
 # --------------------------------------------------------------------------
-# get_wallclock_seconds()
 #
 # There are multiple variants, depending on kernel version.  Attempt to
 # discern the proper method for retrieving the current wall clock time.

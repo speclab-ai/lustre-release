@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
@@ -70,7 +70,7 @@ static int hsm_find_compatible_cb(const struct lu_env *env,
 		 * so extent is always whole file
 		 */
 		hai->hai_cookie = larr->arr_hai.hai_cookie;
-		/* we read the archive number from the request we cancel */
+		
 		if (hai->hai_action == HSMA_CANCEL && hal->hal_archive_id == 0)
 			hal->hal_archive_id = larr->arr_archive_id;
 	}
@@ -97,7 +97,7 @@ static int hsm_find_compatible(const struct lu_env *env, struct mdt_device *mdt,
 
 	hai = hai_first(hal);
 	for (i = 0; i < hal->hal_count; i++, hai = hai_next(hai)) {
-		/* We only support ARCHIVE, RESTORE, REMOVE and CANCEL here. */
+		
 		if (hai->hai_action == HSMA_NONE)
 			RETURN(-EINVAL);
 
@@ -258,16 +258,16 @@ static int mdt_hsm_register_hal(struct mdt_thread_info *mti,
 		int archive_id;
 		__u64 flags;
 
-		/* default archive number is the one explicitly specified */
+		
 		archive_id = hal->hal_archive_id;
 		flags = hal->hal_flags;
 
-		/* by default, data FID is same as Lustre FID */
+		
 		/* the volatile data FID will be created by copy tool and
 		 * send from the agent through the progress call */
 		hai->hai_dfid = hai->hai_fid;
 
-		/* done here to manage first and redundant requests cases */
+		
 		if (hai->hai_action == HSMA_RESTORE)
 			is_restore = true;
 
@@ -275,10 +275,10 @@ static int mdt_hsm_register_hal(struct mdt_thread_info *mti,
 		 * if request redundant or cancel of nothing
 		 * do not record
 		 */
-		/* redundant case */
+		
 		if (hai->hai_action != HSMA_CANCEL && hai->hai_cookie != 0)
 			continue;
-		/* cancel nothing case */
+		
 		if (hai->hai_action == HSMA_CANCEL && hai->hai_cookie == 0)
 			continue;
 
@@ -287,7 +287,7 @@ static int mdt_hsm_register_hal(struct mdt_thread_info *mti,
 		 * if restore, we take the layout lock
 		 */
 
-		/* Get HSM attributes and check permissions. */
+		
 		obj = mdt_hsm_get_md_hsm(mti, &hai->hai_fid, &mh);
 		if (IS_ERR(obj)) {
 			/* In case of REMOVE and CANCEL a Lustre file
@@ -307,7 +307,7 @@ static int mdt_hsm_register_hal(struct mdt_thread_info *mti,
 		if (rc < 0)
 			GOTO(out, rc);
 
-		/* if action is cancel, also no need to check */
+		
 		if (hai->hai_action == HSMA_CANCEL)
 			goto record;
 
@@ -339,13 +339,13 @@ static int mdt_hsm_register_hal(struct mdt_thread_info *mti,
 				archive_id = cdt->cdt_default_archive_id;
 		}
 
-		/* if restore, take an exclusive lock on layout */
+		
 		if (hai->hai_action == HSMA_RESTORE) {
-			/* in V1 only whole file is supported. */
+			
 			if (hai->hai_extent.offset != 0)
 				GOTO(out, rc = -EPROTO);
 
-			/* LU-15132 */
+			
 			CFS_RACE(OBD_FAIL_MDS_HSM_RESTORE_RACE);
 
 			rc = cdt_restore_handle_add(mti, cdt, &hai->hai_fid,
@@ -364,7 +364,7 @@ record:
 		 * See LU-9266 and sanity-hsm_407 for details.
 		 */
 		CFS_FAIL_TIMEOUT(OBD_FAIL_MDS_HSM_CDT_DELAY, cfs_fail_val);
-		/* record request */
+		
 		rc = mdt_agent_record_add(mti->mti_env, mdt, archive_id, flags,
 					  hai);
 		if (rc)
@@ -402,7 +402,7 @@ int mdt_hsm_add_actions(struct mdt_thread_info *mti,
 	int			 rc;
 	ENTRY;
 
-	/* no coordinator started, so we cannot serve requests */
+	
 	if (cdt->cdt_state == CDT_STOPPING || !cdt_getref_try(cdt))
 		RETURN(-EAGAIN);
 
@@ -421,7 +421,7 @@ int mdt_hsm_add_actions(struct mdt_thread_info *mti,
 
 	GOTO(out, rc);
 out:
-	/* if work has been added, signal the coordinator */
+	
 	if (rc == 0 || rc == -ENODATA)
 		mdt_hsm_cdt_event(cdt);
 
@@ -445,7 +445,7 @@ bool mdt_hsm_restore_is_running(struct mdt_thread_info *mti,
 	bool is_running;
 	ENTRY;
 
-	/* the coordinator is not started */
+	
 	if (!cdt_getref_try(cdt))
 		return false;
 
@@ -510,7 +510,7 @@ int mdt_hsm_get_action(struct mdt_thread_info *mti,
 	int rc;
 	ENTRY;
 
-	/* 1st we search in recorded requests */
+	
 	rc = cdt_llog_process(env, mdt, hsm_get_action_cb, &hgad, 0, 0);
 	if (rc < 0)
 		RETURN(rc);

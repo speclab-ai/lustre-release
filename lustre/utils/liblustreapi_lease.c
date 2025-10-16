@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * (C) Copyright 2014 Commissariat a l'energie atomique et aux energies
  *     alternatives
@@ -6,7 +6,7 @@
  * Copyright (c) 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for file leases
  *

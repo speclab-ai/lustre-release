@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Eric Mei <ericm@clusterfs.com>
  */
@@ -55,10 +55,10 @@ static unsigned int plain_at_offset;
 #define PLAIN_FL_BULK                   (0x02)
 
 struct plain_header {
-	__u8 ph_ver;            /* 0 */
+	__u8 ph_ver;            
 	__u8 ph_flags;
-	__u8 ph_sp;             /* source */
-	__u8 ph_bulk_hash_alg;  /* complete flavor desc */
+	__u8 ph_sp;             
+	__u8 ph_bulk_hash_alg;  
 	__u8 ph_pad[4];
 };
 
@@ -153,7 +153,7 @@ static void corrupt_bulk_data(struct ptlrpc_bulk_desc *desc)
 static
 int plain_ctx_refresh(struct ptlrpc_cli_ctx *ctx)
 {
-	/* should never reach here */
+	
 	LBUG();
 	return 0;
 }
@@ -216,7 +216,7 @@ int plain_ctx_verify(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 		RETURN(-EPROTO);
 	}
 
-	/* expect no user desc in reply */
+	
 	if (phdr->ph_flags & PLAIN_FL_USER) {
 		CERROR("Unexpected udesc flag in reply\n");
 		RETURN(-EPROTO);
@@ -327,7 +327,7 @@ int plain_cli_unwrap_bulk(struct ptlrpc_cli_ctx *ctx,
 		return 0;
 	}
 
-	/* fix the actual data size */
+	
 	for (i = 0, nob = 0; i < desc->bd_iov_count; i++) {
 		if (desc->bd_vec[i].bv_len +
 		    nob > desc->bd_nob_transferred) {
@@ -366,7 +366,7 @@ struct ptlrpc_cli_ctx *plain_sec_install_ctx(struct plain_sec *plsec)
 	} else if (ctx_new) {
 		ctx = ctx_new;
 
-		atomic_set(&ctx->cc_refcount, 1);	/* for cache */
+		atomic_set(&ctx->cc_refcount, 1);	
 		ctx->cc_sec = &plsec->pls_base;
 		ctx->cc_ops = &plain_ctx_ops;
 		ctx->cc_expire = 0;
@@ -380,7 +380,7 @@ struct ptlrpc_cli_ctx *plain_sec_install_ctx(struct plain_sec *plsec)
 		atomic_inc(&plsec->pls_base.ps_nctx);
 		atomic_inc(&plsec->pls_base.ps_refcount);
 
-		atomic_inc(&ctx->cc_refcount);	/* for caller */
+		atomic_inc(&ctx->cc_refcount);	
 	}
 
 	write_unlock(&plsec->pls_lock);
@@ -448,7 +448,7 @@ struct ptlrpc_sec *plain_create_sec(struct obd_import *imp,
 	sec->ps_gc_interval = 0;
 	sec->ps_gc_next = 0;
 
-	/* install ctx immediately if this is a reverse sec */
+	
 	if (svc_ctx) {
 		ctx = plain_sec_install_ctx(plsec);
 		if (ctx == NULL) {
@@ -507,7 +507,7 @@ int plain_flush_ctx_cache(struct ptlrpc_sec *sec,
 
 	ENTRY;
 
-	/* do nothing unless caller want to flush for 'all' */
+	
 	if (uid != -1)
 		RETURN(0);
 
@@ -601,7 +601,7 @@ int plain_alloc_repbuf(struct ptlrpc_sec *sec,
 
 	alloc_len = lustre_msg_size_v2(PLAIN_PACK_SEGMENTS, buflens);
 
-	/* add space for early reply */
+	
 	alloc_len += plain_at_offset;
 
 	alloc_len = size_roundup_power2(alloc_len);
@@ -641,21 +641,21 @@ int plain_enlarge_reqbuf(struct ptlrpc_sec *sec,
 	LASSERT(lustre_msg_buf(req->rq_reqbuf, PLAIN_PACK_MSG_OFF, 0) ==
 		req->rq_reqmsg);
 
-	/* compute new embedded msg size.  */
+	
 	oldsize = req->rq_reqmsg->lm_buflens[segment];
 	req->rq_reqmsg->lm_buflens[segment] = newsize;
 	newmsg_size = lustre_msg_size_v2(req->rq_reqmsg->lm_bufcount,
 					 req->rq_reqmsg->lm_buflens);
 	req->rq_reqmsg->lm_buflens[segment] = oldsize;
 
-	/* compute new wrapper msg size.  */
+	
 	oldsize = req->rq_reqbuf->lm_buflens[PLAIN_PACK_MSG_OFF];
 	req->rq_reqbuf->lm_buflens[PLAIN_PACK_MSG_OFF] = newmsg_size;
 	newbuf_size = lustre_msg_size_v2(req->rq_reqbuf->lm_bufcount,
 					 req->rq_reqbuf->lm_buflens);
 	req->rq_reqbuf->lm_buflens[PLAIN_PACK_MSG_OFF] = oldsize;
 
-	/* request from pool should always have enough buffer */
+	
 	LASSERT(!req->rq_pool || req->rq_reqbuf_len >= newbuf_size);
 
 	if (req->rq_reqbuf_len < newbuf_size) {
@@ -798,7 +798,7 @@ int plain_alloc_rs(struct ptlrpc_request *req, int msgsize)
 	rs = req->rq_reply_state;
 
 	if (rs) {
-		/* pre-allocated */
+		
 		LASSERT(rs->rs_size >= rs_size);
 	} else {
 		OBD_ALLOC_LARGE(rs, rs_size);

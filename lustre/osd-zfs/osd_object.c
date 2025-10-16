@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Alex Zhuravlev <bzzz@whamcloud.com>
  * Author: Mike Pershin <tappro@whamcloud.com>
@@ -67,7 +67,7 @@ osd_object_sa_init(struct osd_object *obj, struct osd_device *o)
 	if (rc)
 		return rc;
 
-	/* Cache the xattr object id, valid for the life of the object */
+	
 	rc = -sa_lookup(obj->oo_sa_hdl, SA_ZPL_XATTR(o), &obj->oo_xattr, 8);
 	if (rc == -ENOENT) {
 		obj->oo_xattr = ZFS_NO_OBJECT;
@@ -227,7 +227,7 @@ static int __osd_object_attr_get(const struct lu_env *env, struct osd_device *o,
 	la->la_flags = attrs_zfs2fs(osa->flags);
 	la->la_size = osa->size;
 
-	/* Try to get extra flags from LMA */
+	
 	lma = (struct lustre_mdt_attrs *)osd_oti_get(env)->oti_buf;
 	buf.lb_buf = lma;
 	buf.lb_len = sizeof(osd_oti_get(env)->oti_buf);
@@ -401,13 +401,13 @@ static int osd_object_init0(const struct lu_env *env, struct osd_object *obj)
 	if (rc)
 		RETURN(rc);
 
-	/* cache attrs in object */
+	
 	rc = __osd_object_attr_get(env, osd, obj, &obj->oo_attr);
 	if (rc)
 		RETURN(rc);
 
 	if (likely(!fid_is_acct(fid))) {
-		/* no body operations for accounting objects */
+		
 		obj->oo_dt.do_body_ops = &osd_body_ops;
 
 		if (S_ISREG(obj->oo_attr.la_mode) &&
@@ -471,7 +471,7 @@ static int osd_check_lma(const struct lu_env *env, struct osd_object *obj)
 				lu_object_set_agent_entry(&obj->oo_dt.do_lu);
 		}
 	} else if (rc == -ENODATA) {
-		/* haven't initialize LMA xattr */
+		
 		rc = 0;
 	}
 
@@ -581,7 +581,7 @@ zget:
 	LASSERT(obj->oo_dn == NULL);
 
 	rc = __osd_obj2dnode(osd->od_os, oid, &obj->oo_dn);
-	/* EEXIST will be returned if object is being deleted in ZFS */
+	
 	if (rc == -EEXIST)
 		GOTO(out, rc = 0);
 
@@ -627,7 +627,7 @@ trigger:
 		}
 	}
 
-	/* The case someone triggered the OI scrub already. */
+	
 	if (scrub->os_running) {
 		if (!rc) {
 			LASSERT(remote);
@@ -641,11 +641,11 @@ trigger:
 		GOTO(out, rc);
 	}
 
-	/* The case NOT allow to trigger OI scrub automatically. */
+	
 	if (osd->od_scrub.os_auto_scrub_interval == AS_NEVER)
 		GOTO(out, rc);
 
-	/* It is me to trigger the OI scrub. */
+	
 	rc1 = osd_scrub_start(env, osd, SS_CLEAR_DRYRUN |
 			      SS_CLEAR_FAILOUT | SS_AUTO_FULL);
 	CDEBUG_LIMIT(D_LFSCK | D_CONSOLE | D_WARNING,
@@ -682,7 +682,7 @@ static void osd_object_free(const struct lu_env *env, struct lu_object *l)
 	LASSERT(osd_invariant(obj));
 
 	dt_object_fini(&obj->oo_dt);
-	/* obj doesn't contain an lu_object_header, so we don't need call_rcu */
+	
 	OBD_SLAB_FREE_PTR(obj, osd_object_kmem);
 	if (unlikely(h))
 		lu_object_header_free(h);
@@ -707,7 +707,7 @@ osd_object_unlinked_add(struct osd_object *obj, struct osd_thandle *oh)
 	return rc;
 }
 
-/* Default to max data size covered by a level-1 indirect block */
+
 static unsigned long osd_sync_destroy_max_size =
 	1UL << (DN_MAX_INDBLKSHIFT - SPA_BLKPTRSHIFT + SPA_MAXBLOCKSHIFT);
 module_param(osd_sync_destroy_max_size, ulong, 0444);
@@ -724,7 +724,7 @@ osd_object_set_destroy_type(struct osd_object *obj)
 	if (obj->oo_destroy == OSD_DESTROY_NONE) {
 		if (obj->oo_attr.la_size <= osd_sync_destroy_max_size)
 			obj->oo_destroy = OSD_DESTROY_SYNC;
-		else /* Larger objects are destroyed asynchronously */
+		else 
 			obj->oo_destroy = OSD_DESTROY_ASYNC;
 	}
 	up_write(&obj->oo_guard);
@@ -751,20 +751,20 @@ static int osd_declare_destroy(const struct lu_env *env, struct dt_object *dt,
 
 	dmu_tx_mark_netfree(oh->ot_tx);
 
-	/* declare that we'll remove object from fid-dnode mapping */
+	
 	zapid = osd_get_name_n_idx(env, osd, fid, NULL, 0, &dn);
 	osd_tx_hold_zap(oh->ot_tx, zapid, dn, FALSE, NULL);
 
 	osd_declare_xattrs_destroy(env, obj, oh);
 
-	/* one less inode */
+	
 	rc = osd_declare_quota(env, osd, obj->oo_attr.la_uid,
 			       obj->oo_attr.la_gid, obj->oo_attr.la_projid,
 			       -1, oh, NULL, OSD_QID_INODE);
 	if (rc)
 		RETURN(rc);
 
-	/* data to be truncated */
+	
 	rc = osd_declare_quota(env, osd, obj->oo_attr.la_uid,
 			       obj->oo_attr.la_gid, obj->oo_attr.la_projid,
 			       0, oh, NULL, OSD_QID_BLK);
@@ -779,12 +779,12 @@ static int osd_declare_destroy(const struct lu_env *env, struct dt_object *dt,
 		osd_tx_hold_zap(oh->ot_tx, osd->od_unlinked->dn_object,
 				osd->od_unlinked, TRUE, NULL);
 
-	/* remove agent entry (if have) from remote parent */
+	
 	if (lu_object_has_agent_entry(&obj->oo_dt.do_lu))
 		osd_tx_hold_zap(oh->ot_tx, osd->od_remote_parent_dir,
 				NULL, FALSE, NULL);
 
-	/* will help to find FID->ino when this obj is being added to PENDING */
+	
 	osd_idc_find_and_init(env, osd, obj);
 
 	RETURN(0);
@@ -815,7 +815,7 @@ static int osd_destroy(const struct lu_env *env, struct dt_object *dt,
 	LASSERT(oh != NULL);
 	LASSERT(oh->ot_tx != NULL);
 
-	/* remove obj ref from index dir (it depends) */
+	
 	zapid = osd_get_name_n_idx(env, osd, fid, buf,
 				   sizeof(info->oti_str), &zdn);
 	rc = osd_xattrs_destroy(env, obj, oh);
@@ -848,7 +848,7 @@ static int osd_destroy(const struct lu_env *env, struct dt_object *dt,
 		if (rc)
 			CERROR("%s: failed to free %s/%#llx: rc = %d\n",
 			       osd->od_svname, buf, oid, rc);
-	} else { /* asynchronous destroy */
+	} else { 
 		char *key = info->oti_key;
 
 		rc = osd_object_unlinked_add(obj, oh);
@@ -876,7 +876,7 @@ static int osd_destroy(const struct lu_env *env, struct dt_object *dt,
 	GOTO(out, rc);
 
 out:
-	/* not needed in the cache anymore */
+	
 	set_bit(LU_OBJECT_HEARD_BANSHEE, &dt->do_lu.lo_header->loh_flags);
 	if (rc == 0)
 		obj->oo_destroyed = 1;
@@ -979,7 +979,7 @@ static int osd_attr_get(const struct lu_env *env, struct dt_object *dt,
 		rc = -zap_count(osd->od_os, obj->oo_dn->dn_object,
 				&attr->la_dirent_count);
 	}
-	/* Block size may be not set; suggest maximal I/O transfers. */
+	
 	if (blksize == 0)
 		blksize = spa_maxblocksize(
 			dmu_objset_spa(osd_obj2dev(obj)->od_os));
@@ -1105,7 +1105,7 @@ static int osd_declare_attr_set(const struct lu_env *env, struct dt_object *dt,
 
 	LASSERT(obj->oo_sa_hdl != NULL);
 	LASSERT(oh->ot_tx != NULL);
-	/* regular attributes are part of the bonus buffer */
+	
 	/* let's check whether this object is already part of
 	 * transaction..
 	 */
@@ -1131,7 +1131,7 @@ static int osd_declare_attr_set(const struct lu_env *env, struct dt_object *dt,
 		GOTO(out_sem, rc = 0);
 
 	if (attr->la_valid & LA_FLAGS) {
-		/* punch must be aware we are dealing with an encrypted file */
+		
 		if (attr->la_flags & LUSTRE_ENCRYPT_FL)
 			obj->oo_lma_flags |= LUSTRE_ENCRYPT_FL;
 	}
@@ -1152,7 +1152,7 @@ static int osd_declare_attr_set(const struct lu_env *env, struct dt_object *dt,
 		 */
 		up_read(&obj->oo_guard);
 
-		/* quota enforcement for user */
+		
 		if (attr->la_valid & LA_UID &&
 		    attr->la_uid != obj->oo_attr.la_uid) {
 			rc = qsd_transfer(env, osd_def_qsd(osd),
@@ -1163,7 +1163,7 @@ static int osd_declare_attr_set(const struct lu_env *env, struct dt_object *dt,
 				GOTO(out, rc);
 		}
 
-		/* quota enforcement for group */
+		
 		if (attr->la_valid & LA_GID &&
 		    attr->la_gid != obj->oo_attr.la_gid) {
 			rc = qsd_transfer(env, osd_def_qsd(osd),
@@ -1175,7 +1175,7 @@ static int osd_declare_attr_set(const struct lu_env *env, struct dt_object *dt,
 		}
 
 #ifdef ZFS_PROJINHERIT
-		/* quota enforcement for project */
+		
 		if (attr->la_valid & LA_PROJID &&
 		    attr->la_projid != obj->oo_attr.la_projid) {
 			if (!osd->od_projectused_dn)
@@ -1235,7 +1235,7 @@ static int osd_attr_set(const struct lu_env *env, struct dt_object *dt,
 	LASSERT(obj->oo_sa_hdl);
 
 	oh = container_of(handle, struct osd_thandle, ot_super);
-	/* Assert that the transaction has been assigned to a transaction grp */
+	
 	LASSERT(oh->ot_tx->tx_txg != 0);
 
 	if (CFS_FAIL_CHECK(OBD_FAIL_OSD_FID_MAPPING) && !osd->od_is_ost) {
@@ -1258,7 +1258,7 @@ static int osd_attr_set(const struct lu_env *env, struct dt_object *dt,
 		GOTO(out, rc);
 	}
 
-	/* Only allow set size for regular file */
+	
 	if (!S_ISREG(dt->do_lu.lo_header->loh_attr))
 		valid &= ~(LA_SIZE | LA_BLOCKS);
 
@@ -1371,7 +1371,7 @@ lock:
 				 osa->ctime, 16);
 	}
 	if (valid & LA_MODE) {
-		/* mode is stored along with type, so read it first */
+		
 		obj->oo_attr.la_mode = (obj->oo_attr.la_mode & S_IFMT) |
 			(la->la_mode & ~S_IFMT);
 		osa->mode = obj->oo_attr.la_mode;
@@ -1395,7 +1395,7 @@ lock:
 	}
 	if (valid & LA_FLAGS) {
 		osa->flags = attrs_fs2zfs(la->la_flags);
-		/* many flags not supported by zfs, ensure good cached copy */
+		
 		obj->oo_attr.la_flags = attrs_zfs2fs(osa->flags);
 #ifdef ZFS_PROJINHERIT
 		if (obj->oo_with_projid && osd->od_projectused_dn)
@@ -1439,7 +1439,7 @@ static void osd_ah_init(const struct lu_env *env, struct dt_allocation_hint *ah,
 	ah->dah_parent = parent;
 
 	if (parent != NULL && !dt_object_remote(parent)) {
-		/* will help to find FID->ino at dt_insert("..") */
+		
 		struct osd_object *pobj = osd_dt_obj(parent);
 
 		osd_idc_find_and_init(env, osd_obj2dev(pobj), pobj);
@@ -1478,9 +1478,9 @@ static int osd_declare_create(const struct lu_env *env, struct dt_object *dt,
 	oh = container_of(handle, struct osd_thandle, ot_super);
 	LASSERT(oh->ot_tx != NULL);
 
-	/* this is the minimum set of EAs on every Lustre object */
+	
 	obj->oo_ea_in_bonus = OSD_BASE_EA_IN_BONUS;
-	/* reserve 32 bytes for extra stuff like ACLs */
+	
 	dnode_size = size_roundup_power2(obj->oo_ea_in_bonus + 32);
 
 	switch (dof->dof_type) {
@@ -1488,14 +1488,14 @@ static int osd_declare_create(const struct lu_env *env, struct dt_object *dt,
 		dt->do_index_ops = &osd_dir_ops;
 		fallthrough;
 	case DFT_INDEX:
-		/* for zap create */
+		
 		dmu_tx_hold_zap(oh->ot_tx, DMU_NEW_OBJECT, FALSE, NULL);
 		dmu_tx_hold_sa_create(oh->ot_tx, dnode_size);
 		break;
 	case DFT_REGULAR:
 	case DFT_SYM:
 	case DFT_NODE:
-		/* first, we'll create new object */
+		
 		dmu_tx_hold_sa_create(oh->ot_tx, dnode_size);
 		break;
 
@@ -1504,11 +1504,11 @@ static int osd_declare_create(const struct lu_env *env, struct dt_object *dt,
 		break;
 	}
 
-	/* and we'll add it to some mapping */
+	
 	zapid = osd_get_name_n_idx(env, osd, fid, NULL, 0, &dn);
 	osd_tx_hold_zap(oh->ot_tx, zapid, dn, TRUE, NULL);
 
-	/* will help to find FID->ino mapping at dt_insert() */
+	
 	osd_idc_find_and_init(env, osd, obj);
 
 	rc = osd_declare_quota(env, osd, attr->la_uid, attr->la_gid,
@@ -1624,7 +1624,7 @@ int osd_find_new_dnode(const struct lu_env *env, dmu_tx_t *tx,
 	dmu_tx_hold_t *txh;
 	int rc = 0;
 
-	/* take dnode_t from tx to save on dnode#->dnode_t lookup */
+	
 	for (txh = list_tail(&tx->tx_holds); txh;
 	     txh = list_prev(&tx->tx_holds, txh)) {
 		dnode_t *dn = txh->txh_dnode;
@@ -1710,7 +1710,7 @@ int __osd_object_create(const struct lu_env *env, struct osd_device *osd,
 		     fid_seq_is_local_file(fid_seq(fid))))
 		type = DMU_OTN_UINT8_METADATA;
 
-	/* Create a new DMU object using the default dnode size. */
+	
 	if (obj)
 		size = obj->oo_ea_in_bonus;
 	else
@@ -1742,14 +1742,14 @@ int __osd_zap_create(const struct lu_env *env, struct osd_device *osd,
 {
 	uint64_t oid;
 
-	/* Assert that the transaction has been assigned to a transaction grp */
+	
 	LASSERT(tx->tx_txg != 0);
 	*dnp = NULL;
 
 	oid = osd_zap_create_flags(osd->od_os, 0, flags | ZAP_FLAG_HASH64,
 				   DMU_OT_DIRECTORY_CONTENTS,
-				   14, /* == ZFS fzap_default_blockshift */
-				   DN_MAX_INDBLKSHIFT, /* indirect blockshift */
+				   14, 
+				   DN_MAX_INDBLKSHIFT, 
 				   dnsize, tx);
 
 	la->la_size = 2;
@@ -1944,7 +1944,7 @@ static int osd_create(const struct lu_env *env, struct dt_object *dt,
 	    !dt_object_remote(hint->dah_parent))
 		parent = osd_dt_obj(hint->dah_parent)->oo_dn->dn_object;
 
-	/* we may fix some attributes, better do not change the source */
+	
 	obj->oo_attr = *attr;
 	obj->oo_attr.la_size = 0;
 	obj->oo_attr.la_nlink = 0;
@@ -1986,7 +1986,7 @@ static int osd_create(const struct lu_env *env, struct dt_object *dt,
 
 skip_add:
 	obj->oo_dn = dn;
-	/* Now add in all of the "SA" attributes */
+	
 	rc = osd_sa_handle_get(obj);
 	if (rc)
 		GOTO(out, rc);
@@ -1995,7 +1995,7 @@ skip_add:
 	if (rc)
 		GOTO(out, rc);
 
-	/* initialize LMA */
+	
 	if (fid_is_idif(fid) || (fid_is_norm(fid) && osd->od_is_ost))
 		compat |= LMAC_FID_ON_OST;
 	lustre_lma_init(lma, fid, compat, 0);
@@ -2005,17 +2005,17 @@ skip_add:
 	if (rc)
 		GOTO(out, rc);
 
-	/* configure new osd object */
+	
 	obj->oo_parent = parent != 0 ? parent : zapid;
 	obj->oo_late_attr_set = 1;
 	rc = __osd_sa_xattr_schedule_update(env, obj, oh);
 	if (rc)
 		GOTO(out, rc);
 
-	/* XXX: oo_lma_flags */
+	
 	obj->oo_dt.do_lu.lo_header->loh_attr |= obj->oo_attr.la_mode & S_IFMT;
 	if (likely(!fid_is_acct(lu_object_fid(&obj->oo_dt.do_lu))))
-		/* no body operations for accounting objects */
+		
 		obj->oo_dt.do_body_ops = &osd_body_ops;
 
 	osd_idc_find_and_init(env, osd, obj);
@@ -2126,7 +2126,7 @@ static int osd_object_sync(const struct lu_env *env, struct dt_object *dt,
 
 	txg = osd_db_dirty_txg(osd_dt_obj(dt)->oo_dn->dn_dbuf);
 	if (txg) {
-		/* the object is dirty or being synced */
+		
 		if (osd_object_sync_delay_us < 0)
 			txg_wait_synced(dmu_objset_pool(osd->od_os), txg);
 		else

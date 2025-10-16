@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Top-level entry points into osd module
  *
@@ -28,9 +28,9 @@
 
 #include "osd_dynlocks.h"
 
-/* implication */
+
 #define ergo(a, b) (!(a) || (b))
-/* logical equivalence */
+
 #define equi(a, b) (!!(a) == !!(b))
 
 enum {
@@ -186,9 +186,9 @@ typedef __u32 iam_ptr_t;
  * Index node traversed during tree lookup.
  */
 struct iam_frame {
-        struct buffer_head *bh;    /* buffer holding node data */
-        struct iam_entry *entries; /* array of entries */
-        struct iam_entry *at;      /* target entry, found by binary search */
+        struct buffer_head *bh;    
+        struct iam_entry *entries; 
+        struct iam_entry *at;      
         iam_ptr_t         leaf;    /* (logical) offset of child node found by
                                     * binary search. */
         iam_ptr_t         curidx;  /* (logical) offset of this node. Used to
@@ -208,7 +208,7 @@ struct iam_path;
 struct iam_container;
 
 
-/* leaf node reached by tree lookup */
+
 struct iam_leaf {
         struct iam_path    *il_path;
         struct buffer_head *il_bh;
@@ -218,7 +218,7 @@ struct iam_leaf {
          * Lock on a leaf node.
          */
         struct dynlock_handle *il_lock;
-        iam_ptr_t              il_curidx; /* logical offset of leaf node. */
+        iam_ptr_t              il_curidx; 
         void               *il_descr_data;
 };
 
@@ -324,9 +324,9 @@ struct iam_leaf_operations {
                  * returns true iff leaf is positioned at the last entry.
                  */
         int (*at_end)(const struct iam_leaf *l);
-                /* position leaf at the first entry */
+                
         void (*start)(struct iam_leaf *l);
-                /* more leaf to the next entry. */
+                
         void (*next)(struct iam_leaf *l);
         /*
          * return key of current leaf record. This method may return
@@ -432,8 +432,8 @@ enum {
  */
 struct iam_idle_head {
 	__le16 iih_magic;
-	__le16 iih_count; /* how many idle blocks in this head */
-	__le32 iih_next; /* next head for idle blocks */
+	__le16 iih_count; 
+	__le32 iih_next; 
 	__le32 iih_blks[];
 };
 
@@ -455,13 +455,13 @@ struct iam_container {
          */
         struct iam_descr    *ic_descr;
 	struct dynlock       ic_tree_lock;
-	/* Protect ic_idle_bh */
+	
 	struct mutex	     ic_idle_mutex;
 	/*
 	 * BH for idle blocks
 	 */
 	struct buffer_head  *ic_idle_bh;
-	unsigned int	     ic_idle_failed:1; /* Idle block mechanism failed */
+	unsigned int	     ic_idle_failed:1; 
 };
 
 /*
@@ -529,7 +529,7 @@ struct iam_path_compat {
 #define const_max(p, q) ((p > q) ? p : q)
 
 enum {
-        DX_MAX_IKEY_SIZE   = 32, /* be generous */
+        DX_MAX_IKEY_SIZE   = 32, 
         /*
          * Hack to avoid dynamic allocation and freeing of ipd.
          */
@@ -546,11 +546,11 @@ enum {
  * States of iterator state machine.
  */
 enum iam_it_state {
-        /* initial state */
+        
         IAM_IT_DETACHED,
-        /* iterator is above particular record in the container */
+        
         IAM_IT_ATTACHED,
-        /* iterator is positioned before record  */
+        
         IAM_IT_SKEWED
 };
 
@@ -781,7 +781,7 @@ static inline void iam_reccpy(const struct iam_leaf *leaf,
         iam_leaf_ops(leaf)->rec_get(leaf, rec_dst);
 }
 
-/*XXX These stuff put here, just because they are used by iam.c */
+
 static inline unsigned dx_get_block(struct iam_path *p, struct iam_entry *entry)
 {
         u32 *addr;
@@ -838,7 +838,7 @@ struct dx_root {
         {
                 __le32 reserved_zero;
                 u8 hash_version;
-                u8 info_length; /* 8 */
+                u8 info_length; 
                 u8 indirect_levels;
                 u8 unused_flags;
         }
@@ -1075,7 +1075,7 @@ static inline int ldiskfs_check_dir_entry(const char * function,
 #endif
 */
 
-/* __KERNEL__ */
+
 
 /*
  * User level API. Copy exists in lustre/lustre/tests/iam_ut.c
@@ -1112,5 +1112,5 @@ enum iam_ioctl_cmd {
         IAM_IOC_POLYMORPH = _IOR('i', 9, unsigned long)
 };
 
-/* __LINUX_LUSTRE_IAM_H__ */
+
 #endif

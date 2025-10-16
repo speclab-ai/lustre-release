@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Console rpc
  *
@@ -22,7 +22,7 @@
 #include "rpc.h"
 #include "selftest.h"
 
-/* Console rpc and rpc transaction */
+
 #define LST_TRANS_TIMEOUT       30
 #define LST_TRANS_MIN_TIMEOUT   3
 
@@ -37,34 +37,34 @@ struct lstcon_test;
 struct lstcon_node;
 
 struct lstcon_rpc {
-	struct list_head	 crp_link;	/* chain on rpc transaction */
-	struct srpc_client_rpc	*crp_rpc;	/* client rpc */
-	struct lstcon_node	*crp_node;	/* destination node */
-	struct lstcon_rpc_trans *crp_trans;	/* conrpc transaction */
+	struct list_head	 crp_link;	
+	struct srpc_client_rpc	*crp_rpc;	
+	struct lstcon_node	*crp_node;	
+	struct lstcon_rpc_trans *crp_trans;	
 
-	unsigned int		 crp_posted:1;   /* rpc is posted */
-	unsigned int		 crp_finished:1; /* rpc is finished */
-	unsigned int		 crp_unpacked:1; /* reply is unpacked */
-	/** RPC is embedded in other structure and can't free it */
+	unsigned int		 crp_posted:1;   
+	unsigned int		 crp_finished:1; 
+	unsigned int		 crp_unpacked:1; 
+	
 	unsigned int		 crp_embedded:1;
-        int                      crp_status;     /* console rpc errors */
-	s64			 crp_stamp_ns;	 /* replied time stamp */
+        int                      crp_status;     
+	s64			 crp_stamp_ns;	 
 };
 
 struct lstcon_rpc_trans {
-	/* link chain on owner list */
+	
 	struct list_head	tas_olink;
-	/* link chain on global list */
+	
 	struct list_head	tas_link;
-	/* operation code of transaction */
+	
 	int			tas_opc;
-	/* features mask is uptodate */
+	
 	unsigned		tas_feats_updated;
-	/* test features mask */
+	
 	unsigned		tas_features;
-	wait_queue_head_t	tas_waitq;	/* wait queue head */
-	atomic_t		tas_remaining;	/* # of un-scheduled rpcs */
-	struct list_head	tas_rpcs_list;	/* queued requests */
+	wait_queue_head_t	tas_waitq;	
+	atomic_t		tas_remaining;	
+	struct list_head	tas_rpcs_list;	
 };
 
 #define LST_TRANS_PRIVATE       0x1000

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
@@ -194,7 +194,7 @@ static void mdt_cdt_init_request_tree(struct cdt_req_progress *crp)
 	spin_lock_init(&crp->crp_lock);
 	crp->crp_root = INTERVAL_TREE_ROOT;
 	if (0)
-		/* Silence a warning about unused function */
+		
 		progress_iter_next(NULL, 0, 0);
 }
 
@@ -285,7 +285,7 @@ int mdt_cdt_add_request(struct coordinator *cdt, struct cdt_agent_req *car)
 	int rc;
 	ENTRY;
 
-	/* cancel requests are not kept in memory */
+	
 	LASSERT(car->car_hai.hai_action != HSMA_CANCEL);
 
 	down_write(&cdt->cdt_request_lock);
@@ -376,17 +376,17 @@ int mdt_cdt_remove_request(struct coordinator *cdt, __u64 cookie)
 
 	if (car->car_cancel) {
 		mdt_cdt_put_request(car->car_cancel);
-		/* ref from mdt_hsm_add_hsr()->mdt_cdt_find_request() */
+		
 		mdt_cdt_put_request(car);
 		car->car_cancel = NULL;
 	}
 
-	/* Drop reference from cdt_request_list. */
+	
 	mdt_cdt_put_request(car);
 
 	LASSERT(atomic_read(&cdt->cdt_request_count) >= 1);
 	if (atomic_dec_and_test(&cdt->cdt_request_count)) {
-		/* request count is empty, nudge coordinator for more work */
+		
 		cdt->cdt_wakeup_coordinator = true;
 		wake_up_interruptible(&cdt->cdt_waitq);
 	}
@@ -415,7 +415,7 @@ struct cdt_agent_req *mdt_cdt_update_request(struct coordinator *cdt,
 
 	car->car_req_update = ktime_get_real_seconds();
 
-	/* update data move progress done by copy tool */
+	
 	if (car->car_hai.hai_action != HSMA_REMOVE && pgs->hpk_errval == 0 &&
 	    pgs->hpk_extent.length != 0) {
 		rc = hsm_update_work(&car->car_progress, &pgs->hpk_extent);
@@ -510,7 +510,7 @@ static int mdt_hsm_active_requests_proc_show(struct seq_file *s, void *v)
 		   " data=[%s] canceled=%d uuid=%s done=%llu\n",
 		   PFID(&car->car_hai.hai_fid),
 		   PFID(&car->car_hai.hai_dfid),
-		   0ULL /* compound_id */, car->car_hai.hai_cookie,
+		   0ULL , car->car_hai.hai_cookie,
 		   hsm_copytool_action2name(car->car_hai.hai_action),
 		   car->car_archive_id, car->car_flags,
 		   car->car_hai.hai_extent.offset,
@@ -536,7 +536,7 @@ static void mdt_hsm_active_requests_proc_stop(struct seq_file *s, void *v)
 	EXIT;
 }
 
-/* hsm agent list proc functions */
+
 static const struct seq_operations mdt_hsm_active_requests_proc_ops = {
 	.start		= mdt_hsm_active_requests_proc_start,
 	.next		= mdt_hsm_active_requests_proc_next,
@@ -565,7 +565,7 @@ static int ldebugfs_open_hsm_active_requests(struct inode *inode,
 	RETURN(rc);
 }
 
-/* methods to access hsm request list */
+
 const struct file_operations mdt_hsm_active_requests_fops = {
 	.owner		= THIS_MODULE,
 	.open		= ldebugfs_open_hsm_active_requests,

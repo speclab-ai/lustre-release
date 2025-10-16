@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2017, Intel Corporation.
@@ -53,4 +53,4 @@ struct barrier_ctl {
 	__u32	bc_padding;
 };
 
-#endif /* _LUSTRE_BARRIER_USER_H */
+#endif 

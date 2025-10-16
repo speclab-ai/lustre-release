@@ -74,7 +74,7 @@ struct svc_cred {
 };
 
 struct svc_nego_data {
-	/* kernel data*/
+	
 	uint32_t	lustre_svc;
 	lnet_nid_t	nid;
 	uint64_t	handle_seq;
@@ -86,7 +86,7 @@ struct svc_nego_data {
 	uint32_t	maj_stat;
 	uint32_t	min_stat;
 
-	/* userspace data */
+	
 	gss_OID			mech;
 	gss_ctx_id_t		ctx;
 	gss_buffer_desc		ctx_token;
@@ -335,7 +335,7 @@ get_ids(gss_name_t client_name, gss_OID mech, struct svc_cred *cred,
 			maj_stat, min_stat, mech);
 		return -1;
 	}
-	/* be certain name.length+1 doesn't overflow */
+	
 	if (name.length >= 0xffff ||
 	    !(sname = calloc(name.length + 1, 1))) {
 		printerr(LL_ERR,
@@ -370,7 +370,7 @@ get_ids(gss_name_t client_name, gss_OID mech, struct svc_cred *cred,
 		goto out_free;
 	}
 
-	/* 1. check host part */
+	
 	if (host) {
 		if (lnet_nid2hostname(nid, namebuf, namebuf_size)) {
 			printerr(LL_ERR,
@@ -396,14 +396,14 @@ get_ids(gss_name_t client_name, gss_OID mech, struct svc_cred *cred,
 		}
 	}
 
-	/* 2. check realm and user */
+	
 	switch (lustre_svc) {
 	case LUSTRE_GSS_SVC_MDS:
 		if (strcasecmp(mds_local_realm, realm) != 0) {
-			/* Remote realm case */
+			
 			cred->cr_remote = 1;
 
-			/* Prevent access to unmapped user from remote realm */
+			
 			if (cred->cr_mapped_uid == -1) {
 				printerr(LL_ERR,
 					 "ERROR: %s%s%s@%s from %s is remote but without mapping\n",
@@ -415,7 +415,7 @@ get_ids(gss_name_t client_name, gss_OID mech, struct svc_cred *cred,
 			goto valid;
 		}
 
-		/* Now we know we are dealing with a local realm */
+		
 
 		if (!strcmp(sname, LUSTRE_ROOT_NAME) ||
 		    !strcmp(sname, GSSD_SERVICE_HOST)) {
@@ -524,7 +524,7 @@ static int handle_sk(struct svc_nego_data *snd)
 		goto cleanup_buffers;
 	}
 
-	/* Allowing for a larger length first buffer in the future */
+	
 	if (bufs[SK_INIT_VERSION].length < sizeof(version)) {
 		printerr(LL_ERR, "Invalid version received (wrong size)\n");
 		goto cleanup_buffers;
@@ -538,7 +538,7 @@ static int handle_sk(struct svc_nego_data *snd)
 
 	rc = GSS_S_FAILURE;
 
-	/* target must be a null terminated string */
+	
 	i = bufs[SK_INIT_TARGET].length - 1;
 	target = bufs[SK_INIT_TARGET].value;
 	if (i >= 0 && target[i] != '\0') {
@@ -570,12 +570,12 @@ static int handle_sk(struct svc_nego_data *snd)
 		goto cleanup_buffers;
 	}
 
-	/* Throw out the p from the server and use the wire data */
+	
 	free(skc->sc_p.value);
 	skc->sc_p.value = NULL;
 	skc->sc_p.length = 0;
 
-	/* Take control of all the allocated buffers from decoding */
+	
 	if (bufs[SK_INIT_RANDOM].length !=
 	    sizeof(skc->sc_kctx.skc_peer_random)) {
 		printerr(LL_ERR, "Invalid size for client random\n");
@@ -600,7 +600,7 @@ static int handle_sk(struct svc_nego_data *snd)
 		goto cleanup_partial;
 	}
 
-	/* Check that the cluster hash matches the hash of nodemap name */
+	
 	rc = sk_verify_hash(snd->nm_name, EVP_sha256(), &skc->sc_nodemap_hash);
 	if (rc != GSS_S_COMPLETE) {
 		printerr(LL_ERR, "Cluster hash failed validation: 0x%x\n", rc);
@@ -630,7 +630,7 @@ redo:
 		}
 		skc->sc_pub_key.length = 0;
 		if (skc->sc_dh_shared_key.value) {
-			/* erase secret key before freeing memory */
+			
 			memset(skc->sc_dh_shared_key.value, 0,
 			       skc->sc_dh_shared_key.length);
 			free(skc->sc_dh_shared_key.value);
@@ -644,13 +644,13 @@ redo:
 		goto cleanup_partial;
 	}
 
-	/* Cleanup init buffers we have copied or don't need anymore */
+	
 	free(bufs[SK_INIT_VERSION].value);
 	free(bufs[SK_INIT_RANDOM].value);
 	free(bufs[SK_INIT_TARGET].value);
 	free(bufs[SK_INIT_FLAGS].value);
 
-	/* Server reply contains the servers public key, random,  and HMAC */
+	
 	version = htobe32(SK_MSG_VERSION);
 	bufs[SK_RESP_VERSION].value = &version;
 	bufs[SK_RESP_VERSION].length = sizeof(version);
@@ -690,7 +690,7 @@ redo:
 	       sizeof(snd->handle_seq));
 	snd->maj_stat = GSS_S_COMPLETE;
 
-	/* fix credentials */
+	
 	memset(&cred, 0, sizeof(cred));
 	cred.cr_mapped_uid = -1;
 
@@ -703,7 +703,7 @@ redo:
 
 	do_svc_downcall(&snd->out_handle, &cred, snd->mech, &snd->ctx_token);
 
-	/* cleanup ctx_token, out_tok is cleaned up in handle_channel_request */
+	
 	if (remote_pub_key.length != 0) {
 		free(remote_pub_key.value);
 		remote_pub_key.value = NULL;
@@ -753,9 +753,9 @@ out_err:
 	}
 	sk_free_cred(skc);
 	printerr(LL_DEBUG, "sk returning failure\n");
-#else /* !HAVE_OPENSSL_SSK */
+#else 
 	printerr(LL_ERR, "ERROR: shared key subflavour is not enabled\n");
-#endif /* HAVE_OPENSSL_SSK */
+#endif 
 	return -1;
 }
 
@@ -809,7 +809,7 @@ static int handle_null(struct svc_nego_data *snd)
 
 	do_svc_downcall(&snd->out_handle, &cred, snd->mech, &snd->ctx_token);
 
-	/* cleanup ctx_token, out_tok is cleaned up in handle_channel_req */
+	
 	free(snd->ctx_token.value);
 	snd->ctx_token.length = 0;
 
@@ -844,7 +844,7 @@ static int handle_krb(struct svc_nego_data *snd)
 		printerr(LL_WARN,
 			 "gss_accept_sec_context GSS_S_CONTINUE_NEEDED\n");
 
-		/* Save the context handle for future calls */
+		
 		snd->out_handle.length = sizeof(snd->ctx);
 		memcpy(snd->out_handle.value, &snd->ctx, sizeof(snd->ctx));
 		return 0;
@@ -856,8 +856,8 @@ static int handle_krb(struct svc_nego_data *snd)
 	}
 
 	if (get_ids(client_name, mech, &cred, snd->nid, snd->lustre_svc)) {
-		/* get_ids() prints error msg */
-		snd->maj_stat = GSS_S_BAD_NAME; /* XXX ? */
+		
+		snd->maj_stat = GSS_S_BAD_NAME; 
 		gss_release_name(&ignore_min_stat, &client_name);
 		goto out_err;
 	}
@@ -879,13 +879,13 @@ static int handle_krb(struct svc_nego_data *snd)
 		goto out_err;
 	}
 
-	/* heimdal/MIT implementations do not delete context at all */
+	
 	if (snd->ctx != GSS_C_NO_CONTEXT)
 		gss_delete_sec_context(&ignore_min_stat, &snd->ctx,
 				       &ignore_out_tok);
 
 	do_svc_downcall(&snd->out_handle, &cred, mech, &snd->ctx_token);
-	/* We no longer need the context token */
+	
 	if (snd->ctx_token.length)
 		(void)gss_release_buffer(&ignore_min_stat, &snd->ctx_token);
 	return 0;
@@ -927,7 +927,7 @@ int handle_channel_request(int fd)
 
 	cp = lbuf;
 
-	/* see rsi_do_upcall() for the format of data being input here */
+	
 	rc = gss_u64_read_string(&cp, &hash);
 	if (rc < 0) {
 		printerr(LL_ERR, "ERROR: failed parsing request: hash\n");
@@ -939,7 +939,7 @@ int handle_channel_request(int fd)
 		goto out_err;
 	}
 	snd.lustre_svc = tmp_lustre_svc;
-	/* lustre_svc is the svc and gss subflavor */
+	
 	lustre_mech = (snd.lustre_svc & LUSTRE_GSS_MECH_MASK) >>
 		LUSTRE_GSS_MECH_SHIFT;
 	snd.lustre_svc = snd.lustre_svc & LUSTRE_GSS_SVC_MASK;
@@ -1044,7 +1044,7 @@ int handle_channel_request(int fd)
 	printerr(LL_DEBUG, "in_tok:\n");
 	print_hexl(3, snd.in_tok.value, snd.in_tok.length);
 
-	if (snd.in_handle.length != 0) { /* CONTINUE_INIT case */
+	if (snd.in_handle.length != 0) { 
 		if (snd.in_handle.length != sizeof(snd.ctx)) {
 			printerr(LL_ERR,
 				 "ERROR: input handle has unexpected length %zu\n",
@@ -1070,18 +1070,18 @@ int handle_channel_request(int fd)
 
 out_err:
 	printerr(LL_INFO, "to send response with rc=%d\n", rc ? -EACCES : 0);
-	/* Failures send a null token */
+	
 	rc = send_response(rc, hash, &snd.in_handle, &snd.in_tok,
 			   snd.maj_stat, snd.min_stat,
 			   &snd.out_handle, &snd.out_tok);
 
-	/* cleanup buffers */
+	
 	if (snd.in_tok.value)
 		free(snd.in_tok.value);
 	if (snd.out_tok.value != NULL)
 		gss_release_buffer(&ignore_min_stat, &snd.out_tok);
 
-	/* For junk wire data just ignore */
+	
 ignore:
 	return rc;
 }

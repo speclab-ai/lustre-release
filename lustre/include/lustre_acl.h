@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _LUSTRE_ACL_H
@@ -22,10 +22,10 @@
 # define LUSTRE_POSIX_ACL_MAX_SIZE_OLD					\
 	(sizeof(posix_acl_xattr_header) +				\
 	 LUSTRE_POSIX_ACL_MAX_ENTRIES * sizeof(posix_acl_xattr_entry))
-#endif /* CONFIG_LUSTRE_FS_POSIX_ACL */
+#endif 
 
 #ifndef LUSTRE_POSIX_ACL_MAX_SIZE_OLD
 # define LUSTRE_POSIX_ACL_MAX_SIZE_OLD 0
-#endif /* LUSTRE_POSIX_ACL_MAX_SIZE */
+#endif 
 
 #endif

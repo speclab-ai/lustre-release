@@ -1,6 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0 */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
+
 
 #ifndef __LNET_LNET_COMPAT_H__
 #define __LNET_LNET_COMPAT_H__

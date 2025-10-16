@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #ifndef __UAPI_LNET_TYPES_H__
 #define __UAPI_LNET_TYPES_H__
@@ -33,26 +33,26 @@
  */
 #define LNET_RESERVED_PORTAL	  0
 
-/** wildcard NID that matches any end-point address */
+
 #define LNET_NID_ANY	  (~(lnet_nid_t) 0)
-/** wildcard PID that matches any lnet_pid_t */
+
 #define LNET_PID_ANY	  (~(lnet_pid_t) 0)
 
 static inline int LNET_NID_IS_ANY(const struct lnet_nid *nid)
 {
-	/* A NULL pointer can be used to mean "ANY" */
+	
 	return !nid || nid->nid_type == 0xFF;
 }
 
 #define LNET_ANY_NID ((struct lnet_nid)			\
 		      {0xFF, 0xFF, ~0, {~0, ~0, ~0, ~0} })
 
-#define LNET_PID_RESERVED 0xf0000000 /* reserved bits in PID */
-#define LNET_PID_USERFLAG 0x80000000 /* set in userspace peers */
+#define LNET_PID_RESERVED 0xf0000000 
+#define LNET_PID_USERFLAG 0x80000000 
 #define LNET_PID_LUSTRE 12345
 
-/* how an LNET NID encodes net:address */
-/** extract the address part of an lnet_nid_t */
+
+
 
 static inline __u32 LNET_NIDADDR(lnet_nid_t nid)
 {
@@ -84,7 +84,7 @@ static inline lnet_nid_t LNET_MKNID(__u32 net, __u32 addr)
 	return (((__u64)net) << 32) | addr;
 }
 
-/** The lolnd NID (i.e. myself) */
+
 #define LNET_NID_LO_0 LNET_MKNID(LNET_MKNET(LOLND, 0), 0)
 
 #define LNET_NET_ANY LNET_NIDNET(LNET_NID_ANY)
@@ -96,7 +96,7 @@ static inline bool nid_is_nid4(const struct lnet_nid *nid)
 	return NID_ADDR_BYTES(nid) == 4;
 }
 
-/* check for address set */
+
 static inline bool nid_addr_is_set(const struct lnet_nid *nid)
 {
 	__u8 *addr = (__u8 *)(&nid->nid_addr[0]);
@@ -109,7 +109,7 @@ static inline bool nid_addr_is_set(const struct lnet_nid *nid)
 	return false;
 }
 
-/* LOLND may not be defined yet, so we cannot use an inline */
+
 #define nid_is_lo0(__nid)						\
 	((__nid)->nid_type == LOLND &&					\
 	 nid_is_nid4(__nid) &&						\
@@ -158,7 +158,7 @@ static inline int nid_same(const struct lnet_nid *n1,
 		n1->nid_addr[3] == n2->nid_addr[3];
 }
 
-/* This can be used when we need to hash a nid */
+
 static inline unsigned long nidhash(const struct lnet_nid *nid)
 {
 	int i;
@@ -201,9 +201,9 @@ struct lnet_counters {
  */
 #define LNET_INTERFACES_NUM	16
 
-/* The minimum number of interfaces per node supported by LNet. */
+
 #define LNET_INTERFACES_MIN	16
-/* The default - arbitrary - value of the lnet_max_interfaces tunable. */
+
 #define LNET_INTERFACES_MAX_DEFAULT	200
 
 /**
@@ -241,9 +241,9 @@ static inline int LNetMDHandleIsInvalid(struct lnet_handle_md h)
  * Global process ID.
  */
 struct lnet_process_id {
-	/** node id */
+	
 	lnet_nid_t nid;
-	/** process id */
+	
 	lnet_pid_t pid;
 };
 
@@ -251,9 +251,9 @@ struct lnet_process_id {
  * Global process ID - with large addresses
  */
 struct lnet_processid {
-	/** node id */
+	
 	struct lnet_nid nid;
-	/** process id */
+	
 	lnet_pid_t pid;
 };
 
@@ -274,7 +274,7 @@ lnet_pid_to_pid4(struct lnet_processid *pid)
 	return ret;
 }
 
-/** @} lnet_addr */
+
 
 /** \addtogroup lnet_me
  * @{ */
@@ -296,15 +296,15 @@ enum lnet_unlink {
  * or after the last item in the list.
  */
 enum lnet_ins_pos {
-	/** insert ME before current position or head of the list */
+	
 	LNET_INS_BEFORE	= 0,
-	/** insert ME after current position or tail of the list */
+	
 	LNET_INS_AFTER	= 1,
-	/** attach ME at tail of local CPU partition ME list */
+	
 	LNET_INS_LOCAL	= 2,
 };
 
-/** @} lnet_me */
+
 
 /** \addtogroup lnet_md
  * @{ */
@@ -448,10 +448,10 @@ enum lnet_md_options {
 	LNET_MD_OP_PUT		= 0x0001,
 	LNET_MD_OP_GET		= 0x0002,
 	LNET_MD_MANAGE_REMOTE	= 0x0004,
-	/* unused		= 0x0008, */
+	
 	LNET_MD_TRUNCATE	= 0x0010,
 	LNET_MD_ACK_DISABLE	= 0x0020,
-	/* LNET_MD_IOVEC	= 0x0040 */
+	
 	LNET_MD_MAX_SIZE	= 0x0080,
 	LNET_MD_KIOV		= 0x0100,
 	LNET_MD_BULK_HANDLE	= 0x0200,
@@ -461,10 +461,10 @@ enum lnet_md_options {
 	LNET_MD_GPU_ADDR	= 0x2000,
 };
 
-/** Infinite threshold on MD operations. See struct lnet_md::threshold */
+
 #define LNET_MD_THRESH_INF	(-1)
 
-/** @} lnet_md */
+
 
 /** \addtogroup lnet_eq
  * @{ */
@@ -473,7 +473,7 @@ enum lnet_md_options {
  * Six types of events can be logged in an event queue.
  */
 enum lnet_event_kind {
-	/** An incoming GET operation has completed on the MD. */
+	
 	LNET_EVENT_GET		= 1,
 	/**
 	 * An incoming PUT operation has completed on the MD. The
@@ -486,7 +486,7 @@ enum lnet_event_kind {
 	 * data (if any) from the REPLY has been written into the MD.
 	 */
 	LNET_EVENT_REPLY	= 3,
-	/** An acknowledgment has been received. */
+	
 	LNET_EVENT_ACK		= 4,
 	/**
 	 * An outgoing send (PUT or GET) operation has completed. This event
@@ -516,11 +516,11 @@ enum lnet_event_kind {
  * Information about an event on a MD.
  */
 struct lnet_event {
-	/** The identifier (nid, pid) of the target. */
+	
 	struct lnet_processid	target;
-	/** The identifier (nid, pid) of the initiator. */
+	
 	struct lnet_processid	initiator;
-	/** The source NID on the initiator. */
+	
 	struct lnet_processid	source;
 	/**
 	 * The NID of the immediate sender. If the request has been forwarded
@@ -528,13 +528,13 @@ struct lnet_event {
 	 * same as the source.
 	 */
 	struct lnet_nid	sender;
-	/** Indicates the type of the event. */
+	
 	enum lnet_event_kind	type;
-	/** The portal table index specified in the request */
+	
 	unsigned int		pt_index;
-	/** A copy of the match bits specified in the request. */
+	
 	__u64			match_bits;
-	/** The length (in bytes) specified in the request. */
+	
 	unsigned int		rlength;
 	/**
 	 * The length (in bytes) of the data that was manipulated by the
@@ -604,9 +604,9 @@ struct lnet_event {
  * by which acknowledgments can be disabled for a MD.
  */
 enum lnet_ack_req {
-	/** Request an acknowledgment */
+	
 	LNET_ACK_REQ,
-	/** Request that no acknowledgment should be generated. */
+	
 	LNET_NOACK_REQ
 };
 
@@ -617,13 +617,13 @@ enum lnet_ack_req {
  */
 enum lnet_udsp_action_type {
 	EN_LNET_UDSP_ACTION_NONE = 0,
-	/** assign a priority to matching constructs */
+	
 	EN_LNET_UDSP_ACTION_PRIORITY = 1,
-	/** assign a preferred list of NIDs to matching constructs */
+	
 	EN_LNET_UDSP_ACTION_PREFERRED_LIST = 2,
 };
 
-/** @} lnet_data */
 
-/** @} lnet */
+
+
 #endif

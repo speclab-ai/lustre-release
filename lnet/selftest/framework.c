@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -9,7 +9,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Isaac Huang <isaac@clusterfs.com>
  * Author: Liang Zhen  <liangzhen@clusterfs.com>
@@ -81,21 +81,21 @@ do {                                    \
 #define sfw_batch_active(b)     (atomic_read(&(b)->bat_nactive) != 0)
 
 static struct smoketest_framework {
-	/* RPCs to be recycled */
+	
 	struct list_head	fw_zombie_rpcs;
-	/* stopping sessions */
+	
 	struct list_head	fw_zombie_sessions;
-	/* registered test cases */
+	
 	struct list_head	fw_tests;
-	/* # zombie sessions */
+	
 	atomic_t		fw_nzombies;
-	/* serialise */
+	
 	spinlock_t		fw_lock;
-	/* _the_ session */
+	
 	struct sfw_session	*fw_session;
-	/* shutdown in progress */
+	
 	int			fw_shuttingdown;
-	/* running RPC */
+	
 	struct srpc_server_rpc	*fw_active_srpc;
 } sfw_data;
 
@@ -109,7 +109,7 @@ static struct srpc_service sfw_services[] = {
 	{ .sv_id = 0, }
 };
 
-/* forward ref's */
+
 static int sfw_stop_batch(struct sfw_batch *tsb, int force);
 static void sfw_destroy_session(struct sfw_session *sn);
 
@@ -180,15 +180,15 @@ sfw_del_session_timer(void)
 
 	LASSERT(sn->sn_timeout != 0);
 
-	if (stt_del_timer(&sn->sn_timer)) { /* timer defused */
+	if (stt_del_timer(&sn->sn_timer)) { 
 		sn->sn_timer_active = 0;
 		return 0;
 	}
 
-	return -EBUSY; /* racing with sfw_session_expired() */
+	return -EBUSY; 
 }
 
-/* called with sfw_data.fw_lock held */
+
 static void
 sfw_deactivate_session(void)
 __must_hold(&sfw_data.fw_lock)
@@ -223,7 +223,7 @@ __must_hold(&sfw_data.fw_lock)
 	}
 
 	if (nactive != 0)
-		return;	/* wait for active batches to stop */
+		return;	
 
 	list_del_init(&sn->sn_list);
 	spin_unlock(&sfw_data.fw_lock);
@@ -262,7 +262,7 @@ sfw_init_session(struct sfw_session *sn, struct lst_sid sid,
 	memset(sn, 0, sizeof(struct sfw_session));
 	INIT_LIST_HEAD(&sn->sn_list);
 	INIT_LIST_HEAD(&sn->sn_batches);
-	refcount_set(&sn->sn_refcount, 1); /* +1 for caller */
+	refcount_set(&sn->sn_refcount, 1); 
 	atomic_set(&sn->sn_brw_errors, 0);
 	atomic_set(&sn->sn_ping_errors, 0);
 	strscpy(&sn->sn_name[0], name, sizeof(sn->sn_name));
@@ -279,7 +279,7 @@ sfw_init_session(struct sfw_session *sn, struct lst_sid sid,
 	INIT_LIST_HEAD(&timer->stt_list);
 }
 
-/* completion handler for incoming framework RPCs */
+
 static void
 sfw_server_rpc_done(struct srpc_server_rpc *rpc)
 {
@@ -311,7 +311,7 @@ sfw_client_rpc_fini(struct srpc_client_rpc *rpc)
 
 	spin_lock(&sfw_data.fw_lock);
 
-	/* my callers must finish all RPCs before shutting me down */
+	
 	LASSERT(!sfw_data.fw_shuttingdown);
 	list_add(&rpc->crpc_list, &sfw_data.fw_zombie_rpcs);
 
@@ -456,7 +456,7 @@ sfw_make_session(struct srpc_mksn_reqst *request, struct srpc_mksn_reply *reply)
 		return 0;
 	}
 
-	/* brand new or create by force */
+	
 	LIBCFS_ALLOC(sn, sizeof(*sn));
 	if (sn == NULL) {
 		CERROR("dropping RPC mksn under memory pressure: rc = %d\n",
@@ -544,7 +544,7 @@ sfw_test_rpc_fini(struct srpc_client_rpc *rpc)
 	struct sfw_test_unit *tsu = rpc->crpc_priv;
 	struct sfw_test_instance *tsi = tsu->tsu_instance;
 
-	/* Called with hold of tsi->tsi_lock */
+	
 	LASSERT(list_empty(&rpc->crpc_list));
 	rpc->crpc_wi.swi_state = SWI_STATE_DONE;
 	list_add(&rpc->crpc_list, &tsi->tsi_free_rpcs);
@@ -704,7 +704,7 @@ sfw_unpack_addtest_req(struct srpc_msg *msg)
 	LASSERT(req->tsr_is_client);
 
 	if (msg->msg_magic == SRPC_MSG_MAGIC)
-		return; /* no flipping needed */
+		return; 
 
 	LASSERT(msg->msg_magic == __swab32(SRPC_MSG_MAGIC));
 
@@ -781,7 +781,7 @@ sfw_add_test_instance(struct sfw_batch *tsb, struct srpc_server_rpc *rpc)
 	LASSERT(!sfw_batch_active(tsb));
 
 	if (!tsi->tsi_is_client) {
-		/* it's test server, just add it to tsb */
+		
 		list_add_tail(&tsi->tsi_list, &tsb->bat_tests);
 		return 0;
 	}
@@ -800,7 +800,7 @@ sfw_add_test_instance(struct sfw_batch *tsb, struct srpc_server_rpc *rpc)
 		int j;
 
 		dests = page_address(bk->bk_iovs[i / SFW_ID_PER_PAGE].bv_page);
-		LASSERT(dests != NULL);  /* my pages are within KVM always */
+		LASSERT(dests != NULL);  
 		id = dests[i % SFW_ID_PER_PAGE];
 		if (msg->msg_magic != SRPC_MSG_MAGIC)
 			sfw_unpack_id(id);
@@ -846,7 +846,7 @@ sfw_test_unit_done(struct sfw_test_unit *tsu)
 	if (!atomic_dec_and_test(&tsi->tsi_nactive))
 		return;
 
-	/* the test instance is done */
+	
 	spin_lock(&tsi->tsi_lock);
 
 	tsi->tsi_stopping = 0;
@@ -855,13 +855,13 @@ sfw_test_unit_done(struct sfw_test_unit *tsu)
 
 	spin_lock(&sfw_data.fw_lock);
 
-	if (!atomic_dec_and_test(&tsb->bat_nactive) ||/* tsb still active */
-	    sn == sfw_data.fw_session) {		  /* sn also active */
+	if (!atomic_dec_and_test(&tsb->bat_nactive) ||
+	    sn == sfw_data.fw_session) {		  
 		spin_unlock(&sfw_data.fw_lock);
 		return;
 	}
 
-	LASSERT(!list_empty(&sn->sn_list)); /* I'm a zombie! */
+	LASSERT(!list_empty(&sn->sn_list)); 
 
 	list_for_each_entry(tsb, &sn->sn_batches, bat_list) {
 		if (sfw_batch_active(tsb)) {
@@ -892,12 +892,12 @@ sfw_test_rpc_done(struct srpc_client_rpc *rpc)
 
 	list_del_init(&rpc->crpc_list);
 
-	/* batch is stopping or loop is done or get error */
+	
 	if (tsi->tsi_stopping || tsu->tsu_loop == 0 ||
 	    (rpc->crpc_status != 0 && tsi->tsi_stoptsu_onerr))
 		done = 1;
 
-	/* dec ref for poster */
+	
 	srpc_client_rpc_decref(rpc);
 
 	spin_unlock(&tsi->tsi_lock);
@@ -923,7 +923,7 @@ sfw_create_test_rpc(struct sfw_test_unit *tsu, struct lnet_process_id peer,
 	LASSERT(sfw_test_active(tsi));
 
 	if (!list_empty(&tsi->tsi_free_rpcs)) {
-		/* pick request from buffer */
+		
 		rpc = list_first_entry(&tsi->tsi_free_rpcs,
 				       struct srpc_client_rpc, crpc_list);
 		LASSERT(nblk == rpc->crpc_bulk.bk_niov);
@@ -1022,7 +1022,7 @@ sfw_run_batch(struct sfw_batch *tsb)
 	}
 
 	list_for_each_entry(tsi, &tsb->bat_tests, tsi_list) {
-		if (!tsi->tsi_is_client)	/* skip server instances */
+		if (!tsi->tsi_is_client)	
 			continue;
 
 		LASSERT(!tsi->tsi_stopping);
@@ -1072,7 +1072,7 @@ sfw_stop_batch(struct sfw_batch *tsb, int force)
 			continue;
 		}
 
-		/* abort launched rpcs in the test */
+		
 		list_for_each_entry(rpc, &tsi->tsi_active_rpcs, crpc_list) {
 			spin_lock(&rpc->crpc_lock);
 
@@ -1171,7 +1171,7 @@ sfw_add_test(struct srpc_server_rpc *rpc)
 	}
 
 	if (request->tsr_is_client && rpc->srpc_bulk == NULL) {
-		/* rpc will be resumed later in sfw_bulk_ready */
+		
 		int	len;
 
 		len = sizeof(struct lnet_process_id_packed) *
@@ -1226,7 +1226,7 @@ sfw_control_batch(struct srpc_batch_reqst *request,
 		break;
 
 	default:
-		return -EINVAL; /* drop it */
+		return -EINVAL; 
 	}
 
 	reply->bar_status = (rc < 0) ? -rc : rc;
@@ -1252,7 +1252,7 @@ sfw_handle_server_rpc(struct srpc_server_rpc *rpc)
 		return -ESHUTDOWN;
 	}
 
-	/* Remove timer to avoid racing with it or expiring active session */
+	
 	if (sfw_del_session_timer() != 0) {
 		CERROR("dropping RPC %s from %s: racing with expiry timer: rc = %d\n",
 		       sv->sv_name, libcfs_id2str(rpc->srpc_peer), -EAGAIN);
@@ -1266,7 +1266,7 @@ sfw_handle_server_rpc(struct srpc_server_rpc *rpc)
 	sfw_unpack_message(request);
 	LASSERT(request->msg_type == srpc_service2request(sv->sv_id));
 
-	/* rpc module should have checked this */
+	
 	LASSERT(request->msg_version == SRPC_MSG_VERSION);
 
 	if (sv->sv_id != SRPC_SERVICE_MAKE_SESSION &&
@@ -1407,7 +1407,7 @@ sfw_create_rpc(struct lnet_process_id peer, int service,
 	spin_unlock(&sfw_data.fw_lock);
 
 	if (rpc) {
-		/* Ensure that rpc is done */
+		
 		swi_cancel_workitem(&rpc->crpc_wi);
 		srpc_init_client_rpc(rpc, peer, service, 0, 0,
 				     done, sfw_client_rpc_fini, priv);
@@ -1419,7 +1419,7 @@ sfw_create_rpc(struct lnet_process_id peer, int service,
 					     priv);
 	}
 
-	if (rpc != NULL) /* "session" is concept in framework */
+	if (rpc != NULL) 
 		rpc->crpc_reqstmsg.msg_ses_feats = features;
 
 	return rpc;
@@ -1429,9 +1429,9 @@ void
 sfw_unpack_message(struct srpc_msg *msg)
 {
 	if (msg->msg_magic == SRPC_MSG_MAGIC)
-		return; /* no flipping needed */
+		return; 
 
-	/* srpc module should guarantee I wouldn't get crap */
+	
 	LASSERT(msg->msg_magic == __swab32(SRPC_MSG_MAGIC));
 
 	if (msg->msg_type == SRPC_MSG_STAT_REQST) {
@@ -1681,7 +1681,7 @@ sfw_startup(void)
 			error = rc;
 		}
 
-		/* about to sfw_shutdown, no need to add buffer */
+		
 		if (error)
 			continue;
 

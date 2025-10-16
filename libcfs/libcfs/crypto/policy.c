@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /*
  * Encryption policy functions for per-file encryption support.
  *
@@ -205,11 +205,11 @@ int llcrypt_policy_from_context(union llcrypt_policy *policy_u,
 		return 0;
 	}
 	}
-	/* unreachable */
+	
 	return -EINVAL;
 }
 
-/* Retrieve an inode's encryption policy */
+
 static int llcrypt_get_policy(struct inode *inode, union llcrypt_policy *policy)
 {
 	const struct llcrypt_info *ci;
@@ -219,7 +219,7 @@ static int llcrypt_get_policy(struct inode *inode, union llcrypt_policy *policy)
 
 	ci = (struct llcrypt_info *)READ_ONCE(llcrypt_info_nocast(inode));
 	if (ci) {
-		/* key available, use the cached policy */
+		
 		*policy = ci->ci_policy;
 		return 0;
 	}
@@ -283,7 +283,7 @@ static int set_encryption_policy(struct inode *inode,
 	return lsi->lsi_cop->set_context(inode, &ctx, ctxsize, NULL);
 }
 
-/* Tell if an inode's encryption policy has filename encryption */
+
 bool llcrypt_policy_has_filename_enc(struct inode *inode)
 {
 	union llcrypt_policy policy;
@@ -379,7 +379,7 @@ int llcrypt_ioctl_set_policy(struct file *filp, const void __user *arg)
 	} else if (ret == -EINVAL ||
 		   (ret == 0 && !llcrypt_policies_equal(&policy,
 							&existing_policy))) {
-		/* The file already uses a different encryption policy. */
+		
 		ret = -EEXIST;
 	}
 
@@ -390,7 +390,7 @@ int llcrypt_ioctl_set_policy(struct file *filp, const void __user *arg)
 }
 EXPORT_SYMBOL(llcrypt_ioctl_set_policy);
 
-/* Original ioctl version; can only get the original policy version */
+
 int llcrypt_ioctl_get_policy(struct file *filp, void __user *arg)
 {
 	union llcrypt_policy policy;
@@ -423,7 +423,7 @@ static inline u8 contents2filenames_encmode(u8 contents_encryption_mode)
 	return LLCRYPT_MODE_NULL;
 }
 
-/* Extended ioctl version; can get policies of any version */
+
 int llcrypt_ioctl_get_policy_ex(struct file *filp, void __user *uarg)
 {
 	struct llcrypt_get_policy_ex_arg arg;
@@ -432,7 +432,7 @@ int llcrypt_ioctl_get_policy_ex(struct file *filp, void __user *uarg)
 	struct inode *inode = file_inode(filp);
 	int err;
 
-	/* arg is policy_size, then policy */
+	
 	BUILD_BUG_ON(offsetof(typeof(arg), policy_size) != 0);
 	BUILD_BUG_ON(offsetofend(typeof(arg), policy_size) !=
 		     offsetof(typeof(arg), policy));
@@ -507,16 +507,16 @@ int llcrypt_has_permitted_context(struct inode *parent, struct inode *child)
 	union llcrypt_policy parent_policy, child_policy;
 	int err;
 
-	/* No restrictions on file types which are never encrypted */
+	
 	if (!S_ISREG(child->i_mode) && !S_ISDIR(child->i_mode) &&
 	    !S_ISLNK(child->i_mode))
 		return 1;
 
-	/* No restrictions if the parent directory is unencrypted */
+	
 	if (!IS_ENCRYPTED(parent))
 		return 1;
 
-	/* Encrypted directories must not contain unencrypted files */
+	
 	if (!IS_ENCRYPTED(child))
 		return 0;
 

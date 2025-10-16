@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Top level header file for LProc
  *
@@ -38,16 +38,16 @@ struct lprocfs_vars {
 	const char			*name;
 	const struct proc_ops		*fops;
 	void				*data;
-	/** /proc file mode. */
+	
 	mode_t				 proc_mode;
 };
 
-/** Provide a debugfs container */
+
 struct ldebugfs_vars {
 	const char			*name;
 	const struct file_operations	*fops;
 	void				*data;
-	/** debugfs file mode. */
+	
 	mode_t				 proc_mode;
 };
 
@@ -75,7 +75,7 @@ void obd_connect_seq_flags2str(struct seq_file *m, __u64 flags, __u64 flags2,
 void obd_connect_data_seqprint(struct seq_file *m,
 			       struct obd_connect_data *ocd);
 
-/* if we find more consumers this could be generalized */
+
 #define OBD_HIST_MAX 32
 struct obd_histogram {
 	spinlock_t	oh_lock;
@@ -117,8 +117,8 @@ enum lprocfs_counter_config {
 	LPROCFS_CNTR_STDDEV		= 0x0004,
 	LPROCFS_CNTR_HISTOGRAM		= 0x0008,
 
-	/* counter unit type */
-	LPROCFS_TYPE_REQS		= 0x0000, /* default if config = 0 */
+	
+	LPROCFS_TYPE_REQS		= 0x0000, 
 	LPROCFS_TYPE_BYTES		= 0x0200,
 	LPROCFS_TYPE_PAGES		= 0x0400,
 	LPROCFS_TYPE_LOCKS		= 0x0500,
@@ -140,8 +140,8 @@ enum lprocfs_counter_config {
 
 struct lprocfs_counter_header {
 	enum lprocfs_counter_config	lc_config;
-	const char			*lc_name;   /* must be static */
-	const char			*lc_units;  /* must be static */
+	const char			*lc_name;   
+	const char			*lc_units;  
 	struct obd_histogram		*lc_hist;
 };
 
@@ -158,13 +158,13 @@ struct lprocfs_percpu {
 };
 
 enum lprocfs_stats_lock_ops {
-	LPROCFS_GET_NUM_CPU	= 0x0001, /* number allocated per-CPU stats */
-	LPROCFS_GET_SMP_ID	= 0x0002, /* current stat to be updated */
+	LPROCFS_GET_NUM_CPU	= 0x0001, 
+	LPROCFS_GET_SMP_ID	= 0x0002, 
 };
 
 enum lprocfs_stats_flags {
-	LPROCFS_STATS_FLAG_NONE     = 0x0000, /* per cpu counter */
-	LPROCFS_STATS_FLAG_NOPERCPU = 0x0001, /* need locking(no percpu area) */
+	LPROCFS_STATS_FLAG_NONE     = 0x0000, 
+	LPROCFS_STATS_FLAG_NOPERCPU = 0x0001, 
 };
 
 enum lprocfs_fields_flags {
@@ -178,15 +178,15 @@ enum lprocfs_fields_flags {
 };
 
 struct lprocfs_stats {
-	/* source for the stats */
+	
 	char				ls_source[MAX_OBD_NAME * 4];
-	/* index in Xarray */
+	
 	unsigned int			ls_index;
-	/* # of counters */
+	
 	unsigned short			ls_num;
-	/* track reference */
+	
 	struct kref			ls_refcount;
-	/* 1 + the biggest cpu # whose ls_percpu slot has been allocated */
+	
 	unsigned short			ls_biggest_alloc_num;
 	enum lprocfs_stats_flags	ls_flags;
 	ktime_t				ls_init;
@@ -195,43 +195,43 @@ struct lprocfs_stats {
 	 */
 	spinlock_t			ls_lock;
 
-	/* has ls_num of counter headers */
+	
 	struct lprocfs_counter_header	*ls_cnt_header;
 	struct lprocfs_percpu		*ls_percpu[];
 };
 
 #define OPC_RANGE(seg) (seg ## _LAST_OPC - seg ## _FIRST_OPC)
 
-/* Pack all opcodes down into a single monotonically increasing index */
+
 static inline int opcode_offset(__u32 opc)
 {
 	if (opc < OST_LAST_OPC) {
-		/* OST opcode */
+		
 		return (opc - OST_FIRST_OPC);
 	} else if (opc < MDS_LAST_OPC) {
-		/* MDS opcode */
+		
 		return (opc - MDS_FIRST_OPC +
 			OPC_RANGE(OST));
 	} else if (opc < LDLM_LAST_OPC) {
-		/* LDLM Opcode */
+		
 		return (opc - LDLM_FIRST_OPC +
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
 	} else if (opc < MGS_LAST_OPC) {
-		/* MGS Opcode */
+		
 		return (opc - MGS_FIRST_OPC +
 			OPC_RANGE(LDLM) +
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
 	} else if (opc < OBD_LAST_OPC) {
-		/* OBD Ping */
+		
 		return (opc - OBD_FIRST_OPC +
 			OPC_RANGE(MGS) +
 			OPC_RANGE(LDLM) +
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
 	} else if (opc < LLOG_LAST_OPC) {
-		/* LLOG Opcode */
+		
 		return (opc - LLOG_FIRST_OPC +
 			OPC_RANGE(OBD) +
 			OPC_RANGE(MGS) +
@@ -239,7 +239,7 @@ static inline int opcode_offset(__u32 opc)
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
 	} else if (opc < QUOTA_LAST_OPC) {
-		/* LQUOTA Opcode */
+		
 		return (opc - QUOTA_FIRST_OPC +
 			OPC_RANGE(LLOG) +
 			OPC_RANGE(OBD) +
@@ -248,7 +248,7 @@ static inline int opcode_offset(__u32 opc)
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
 	} else if (opc < SEQ_LAST_OPC) {
-		/* SEQ opcode */
+		
 		return (opc - SEQ_FIRST_OPC +
 			OPC_RANGE(QUOTA) +
 			OPC_RANGE(LLOG) +
@@ -258,7 +258,7 @@ static inline int opcode_offset(__u32 opc)
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
 	} else if (opc < SEC_LAST_OPC) {
-		/* SEC opcode */
+		
 		return (opc - SEC_FIRST_OPC +
 			OPC_RANGE(SEQ) +
 			OPC_RANGE(QUOTA) +
@@ -269,7 +269,7 @@ static inline int opcode_offset(__u32 opc)
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
 	} else if (opc < FLD_LAST_OPC) {
-		/* FLD opcode */
+		
 		return (opc - FLD_FIRST_OPC +
 			OPC_RANGE(SEC) +
 			OPC_RANGE(SEQ) +
@@ -282,7 +282,7 @@ static inline int opcode_offset(__u32 opc)
 			OPC_RANGE(OST));
 #ifdef HAVE_SERVER_SUPPORT
 	} else if (opc < OUT_UPDATE_LAST_OPC) {
-		/* update opcode */
+		
 		return (opc - OUT_UPDATE_FIRST_OPC +
 			OPC_RANGE(FLD) +
 			OPC_RANGE(SEC) +
@@ -295,7 +295,7 @@ static inline int opcode_offset(__u32 opc)
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
 	} else if (opc < LFSCK_LAST_OPC) {
-		/* LFSCK opcode */
+		
 		return (opc - LFSCK_FIRST_OPC +
 			OPC_RANGE(OUT_UPDATE) +
 			OPC_RANGE(FLD) +
@@ -308,9 +308,9 @@ static inline int opcode_offset(__u32 opc)
 			OPC_RANGE(LDLM) +
 			OPC_RANGE(MDS) +
 			OPC_RANGE(OST));
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 	} else {
-		/* Unknown Opcode */
+		
 		return -1;
 	}
 }
@@ -405,10 +405,10 @@ void lprocfs_fini_brw_stats(struct brw_stats *brw_stats);
 
 void ldebugfs_register_brw_stats(struct dentry *parent,
 				 struct brw_stats *brw_stats);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 #define EXTRA_FIRST_OPC LDLM_GLIMPSE_ENQUEUE
-/* class_obd.c */
+
 extern struct proc_dir_entry *proc_lustre_root;
 extern struct dentry *debugfs_lustre_root;
 extern struct kset *lustre_kset;
@@ -422,30 +422,30 @@ struct obd_device;
 #define JOBSTATS_SESSION		"session"
 
 enum ojb_info_flags {
-	OJS_CLEANING,		/* job cleaning is in operation */
-	OJS_HEADER,		/* seq_show() header */
-	OJS_ACTIVE_JOBS,	/* set while ojs_jobs > 0 */
-	OJS_FINI,		/* set at _fini */
+	OJS_CLEANING,		
+	OJS_HEADER,		
+	OJS_ACTIVE_JOBS,	
+	OJS_FINI,		
 };
 
 typedef void (*cntr_init_callback)(struct lprocfs_stats *stats,
 				   unsigned int offset,
 				   enum lprocfs_counter_config cntr_umask);
 struct obd_job_stats {
-	struct rb_root		ojs_idtree;	/* root sorted on js_jobid */
-	struct rb_root		ojs_postree;	/* unique id (temporal) root */
-	atomic64_t		ojs_next_pos;	/* generate next unique id */
-	struct rw_semaphore	ojs_rwsem;	/* rbtree locking */
-	struct list_head	ojs_lru;	/* least recently used */
-	struct llist_head	ojs_deleted;	/* zero-ref to be purged */
-	unsigned long		ojs_flags;	/* see: ojb_info_flags */
-	atomic_t		ojs_readers;	/* active readers */
-	spinlock_t		ojs_lock;	/* protect ojs_lru/js_lru */
-	ktime_t			ojs_cleanup_interval;/* 1/2 expiry seconds */
-	ktime_t			ojs_cleanup_last;/* previous cleanup time */
-	cntr_init_callback	ojs_cntr_init_fn;/* lprocfs_stats initializer */
-	unsigned short		ojs_cntr_num;	/* number of stats in struct */
-	atomic64_t		ojs_jobs;	/* number of jobs */
+	struct rb_root		ojs_idtree;	
+	struct rb_root		ojs_postree;	
+	atomic64_t		ojs_next_pos;	
+	struct rw_semaphore	ojs_rwsem;	
+	struct list_head	ojs_lru;	
+	struct llist_head	ojs_deleted;	
+	unsigned long		ojs_flags;	
+	atomic_t		ojs_readers;	
+	spinlock_t		ojs_lock;	
+	ktime_t			ojs_cleanup_interval;
+	ktime_t			ojs_cleanup_last;
+	cntr_init_callback	ojs_cntr_init_fn;
+	unsigned short		ojs_cntr_num;	
+	atomic64_t		ojs_jobs;	
 };
 
 #ifdef CONFIG_PROC_FS
@@ -565,7 +565,7 @@ extern int lprocfs_stats_register(struct proc_dir_entry *root, const char *name,
 				  struct lprocfs_stats *stats);
 extern const struct file_operations ldebugfs_stats_seq_fops;
 
-/* lprocfs_status.c */
+
 extern void ldebugfs_add_vars(struct dentry *parent, struct ldebugfs_vars *var,
 			      void *data);
 extern struct dentry *ldebugfs_register(const char *name,
@@ -596,7 +596,7 @@ extern void lprocfs_stats_header(struct seq_file *seq, ktime_t now,
 				 bool show_units, const char *prefix);
 extern unsigned int obd_enable_stats_header;
 
-/* Generic callbacks */
+
 extern int lprocfs_server_uuid_seq_show(struct seq_file *m, void *data);
 ssize_t conn_uuid_show(struct kobject *kobj, struct attribute *attr, char *buf);
 extern int lprocfs_import_seq_show(struct seq_file *m, void *data);
@@ -670,7 +670,7 @@ unsigned long lprocfs_oh_counter_pcpu(struct obd_hist_pcpu *oh,
 void lprocfs_stats_collect(struct lprocfs_stats *stats, int idx,
 			   struct lprocfs_counter *cnt);
 
-/* lprocfs_status.c: dump pages on cksum error */
+
 ssize_t checksum_type_show(struct kobject *kobj, struct attribute *attr,
 			   char *buf);
 ssize_t checksum_type_store(struct kobject *kobj, struct attribute *attr,
@@ -689,16 +689,16 @@ ssize_t
 lprocfs_checksum_dump_seq_write(struct file *file, const char __user *buffer,
 				size_t count, loff_t *off);
 
-/* lprocfs_status.c: recovery status */
+
 int lprocfs_recovery_status_seq_show(struct seq_file *m, void *data);
 
-/* lprocfs: display the uuid of stale clients */
+
 int lprocfs_recovery_stale_clients_seq_show(struct seq_file *m, void *data);
 
-/* lprocfs_status.c: hash statistics */
+
 int lprocfs_hash_seq_show(struct seq_file *m, void *data);
 
-/* lprocfs_status.c: IR factor */
+
 ssize_t ir_factor_show(struct kobject *kobj, struct attribute *attr,
 		       char *buf);
 ssize_t ir_factor_store(struct kobject *kobj, struct attribute *attr,
@@ -936,12 +936,12 @@ static ssize_t name##_store(struct kobject *kobj, struct attribute *attr,\
 }									\
 LUSTRE_RW_ATTR(name)
 
-/* lproc_ptlrpc.c */
+
 struct ptlrpc_request;
 extern void target_print_req(void *seq_file, struct ptlrpc_request *req);
 
 #ifdef HAVE_SERVER_SUPPORT
-/* lprocfs_jobstats.c */
+
 int lprocfs_job_stats_log(struct obd_device *obd, char *jobid,
 			  int event, long amount);
 void lprocfs_job_stats_fini(struct obd_device *obd);
@@ -952,7 +952,7 @@ ssize_t job_cleanup_interval_show(struct kobject *kobj, struct attribute *attr,
 ssize_t job_cleanup_interval_store(struct kobject *kobj,
 				   struct attribute *attr,
 				   const char *buffer, size_t count);
-/* lproc_status_server.c */
+
 ssize_t recovery_time_soft_show(struct kobject *kobj, struct attribute *attr,
 				char *buf);
 ssize_t recovery_time_soft_store(struct kobject *kobj,
@@ -966,7 +966,7 @@ ssize_t recovery_time_hard_store(struct kobject *kobj,
 ssize_t instance_show(struct kobject *kobj, struct attribute *attr,
 		      char *buf);
 #endif
-/* lproc_status.c */
+
 ssize_t max_pages_per_rpc_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf);
 ssize_t max_pages_per_rpc_store(struct kobject *kobj, struct attribute *attr,
@@ -983,7 +983,7 @@ int lprocfs_wr_nosquash_nids(const char __user *buffer, unsigned long count,
 			     struct root_squash_info *squash, char *name);
 ssize_t lprocfs_statfs_state(char *buf, size_t buflen, __u32 state);
 
-#else /* !CONFIG_PROC_FS */
+#else 
 
 #define proc_lustre_root NULL
 
@@ -1023,7 +1023,7 @@ static inline __u64 lc_read_helper(struct lprocfs_counter *lc,
 	return 0;
 }
 
-/* NB: we return !NULL to satisfy error checker */
+
 static inline struct lprocfs_stats *
 lprocfs_stats_alloc(unsigned int num, enum lprocfs_stats_flags flags)
 {
@@ -1240,7 +1240,7 @@ u64 lprocfs_stats_collector(struct lprocfs_stats *stats, int idx,
 #define LPROC_SEQ_FOPS_RW_TYPE(name, type)
 #define LPROC_SEQ_FOPS_WR_ONLY(name, type)
 
-/* lprocfs_jobstats.c */
+
 static inline
 int lprocfs_job_stats_log(struct obd_device *obd, char *jobid, int event,
 			  long amount)
@@ -1261,9 +1261,9 @@ int lprocfs_job_stats_init(struct obd_device *obd, int cntr_num,
 }
 
 
-/* lproc_ptlrpc.c */
+
 #define target_print_req NULL
 
-#endif /* CONFIG_PROC_FS */
+#endif 
 
-#endif /* LPROCFS_STATUS_H */
+#endif 

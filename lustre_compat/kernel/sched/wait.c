@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 
 #include <linux/sched.h>
 #ifdef HAVE_SCHED_HEADERS
@@ -44,7 +44,7 @@ long prepare_to_wait_event(wait_queue_head_t *wq_head,
 	return ret;
 }
 EXPORT_SYMBOL(prepare_to_wait_event);
-#endif /* !HAVE_PREPARE_TO_WAIT_EVENT */
+#endif 
 
 #ifndef HAVE_WAIT_WOKEN
 /*
@@ -55,16 +55,16 @@ EXPORT_SYMBOL(prepare_to_wait_event);
  *     if (condition)
  *         break;
  *
- *     // in wait_woken()			// in woken_wake_function()
+ *     
  *
  *     p->state = mode;				wq_entry->flags |= WQ_FLAG_WOKEN;
- *     smp_mb(); // A				try_to_wake_up():
+ *     smp_mb(); 
  *     if (!(wq_entry->flags & WQ_FLAG_WOKEN))	   <full barrier>
  *         schedule()				   if (p->state & mode)
  *     p->state = TASK_RUNNING;			      p->state = TASK_RUNNING;
  *     wq_entry->flags &= ~WQ_FLAG_WOKEN;	~~~~~~~~~~~~~~~~~~
- *     smp_mb(); // B				condition = true;
- * }						smp_mb(); // C
+ *     smp_mb(); 
+ * }						smp_mb(); 
  * remove_wait_queue(&wq_head, &wait);		wq_entry->flags |= WQ_FLAG_WOKEN;
  */
 long wait_woken(struct wait_queue_entry *wq_entry, unsigned int mode,
@@ -76,7 +76,7 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned int mode,
 	 * either we see the store to wq_entry->flags in woken_wake_function()
 	 * or woken_wake_function() sees our store to current->state.
 	 */
-	set_current_state(mode); /* A */
+	set_current_state(mode); 
 	if (!(wq_entry->flags & WQ_FLAG_WOKEN))
 		timeout = schedule_timeout(timeout);
 	__set_current_state(TASK_RUNNING);
@@ -87,7 +87,7 @@ long wait_woken(struct wait_queue_entry *wq_entry, unsigned int mode,
 	 * being true or the store to wq_entry->flags in woken_wake_function()
 	 * follows ours in the coherence order.
 	 */
-	smp_store_mb(wq_entry->flags, wq_entry->flags & ~WQ_FLAG_WOKEN); /* B */
+	smp_store_mb(wq_entry->flags, wq_entry->flags & ~WQ_FLAG_WOKEN); 
 
 	return timeout;
 }
@@ -96,11 +96,11 @@ EXPORT_SYMBOL(wait_woken);
 int woken_wake_function(struct wait_queue_entry *wq_entry, unsigned int mode,
 			int sync, void *key)
 {
-	/* Pairs with the smp_store_mb() in wait_woken(). */
-	smp_mb(); /* C */
+	
+	smp_mb(); 
 	wq_entry->flags |= WQ_FLAG_WOKEN;
 
 	return default_wake_function(wq_entry, mode, sync, key);
 }
 EXPORT_SYMBOL(woken_wake_function);
-#endif /* HAVE_WAIT_WOKEN */
+#endif 

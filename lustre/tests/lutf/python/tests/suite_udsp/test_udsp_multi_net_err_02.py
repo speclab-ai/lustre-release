@@ -105,7 +105,6 @@ def run():
 			return lutfrc(LUTF_TEST_FAIL, "adding UDSP rule failed")
 
 		before_stats_main = main.lh.get_net_stats()
-		#print(before_stats_main)
 
 		for i in range(0, PING_TIMES):
 			rc = main.lh.exec_ping(agent_nids[PING_NID_NUM])
@@ -113,7 +112,6 @@ def run():
 				return lutfrc(LUTF_TEST_FAIL, "ping failed")
 
 		after_stats_main = main.lh.get_net_stats()
-		#print(after_stats_main)
 
 		send_count_before = {}
 		send_count_after = {}
@@ -125,7 +123,6 @@ def run():
 			send_count_after[net_num] = getStatNet(after_stats_main, LOCAL_NETS, net_num, 'send_count')
 			total_send_count_after += send_count_after[net_num]
 
-		#print(send_count_before, send_count_after)
 
 		# Check stats:
 		# 1) expect the total send_count to be no less than the number of pings issued
@@ -143,7 +140,6 @@ def run():
 		main.lh.unconfigure_net(PRIO_NET)
 
 		before_stats_main = main.lh.get_net_stats()
-		#print(before_stats_main)
 
 		for i in range(0, PING_TIMES):
 			rc = main.lh.exec_ping(agent_nids[PING_NID_NUM])
@@ -151,7 +147,6 @@ def run():
 				return lutfrc(LUTF_TEST_FAIL, "ping failed")
 
 		after_stats_main = main.lh.get_net_stats()
-		#print(after_stats_main)
 
 		# Use remaining net
 		USE_NET_NUM[0] = 0
@@ -166,7 +161,6 @@ def run():
 			send_count_after[net_num] = getStatNet(after_stats_main, LOCAL_NETS, net_num, 'send_count')
 			total_send_count_after += send_count_after[net_num]
 
-		#print(send_count_before, send_count_after)
 
 		# Check stats:
 		# 1) expect the total send_count to be no less than the number of pings issued

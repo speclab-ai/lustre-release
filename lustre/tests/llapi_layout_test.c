@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /*
  * Copyright (c) 2016, 2017, Intel Corporation.
  * Copyright (c) 2025, DataDirect Networks, Inc. All rights reserved.
@@ -30,7 +30,7 @@
 
 static char *poolname = "testpool";
 static int num_osts = 2;
-static char lustre_dir[PATH_MAX - 5];	/* Lustre test directory */
+static char lustre_dir[PATH_MAX - 5];	
 
 #define IN_RANGE(value, low, high) ((value >= low) && (value <= high))
 
@@ -64,21 +64,21 @@ static void test0(void)
 	rc = unlink(path);
 	ASSERTF(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 
-	/* stripe count */
+	
 	rc = llapi_layout_stripe_count_set(layout, T0_STRIPE_COUNT);
 	ASSERTF(rc == 0, "errno = %d", errno);
 	rc = llapi_layout_stripe_count_get(layout, &count);
 	ASSERTF(rc == 0 && count == T0_STRIPE_COUNT, "%"PRIu64" != %d", count,
 		T0_STRIPE_COUNT);
 
-	/* stripe size */
+	
 	rc = llapi_layout_stripe_size_set(layout, T0_STRIPE_SIZE);
 	ASSERTF(rc == 0, "errno = %d", errno);
 	rc = llapi_layout_stripe_size_get(layout, &size);
 	ASSERTF(rc == 0 && size == T0_STRIPE_SIZE, "%"PRIu64" != %d", size,
 		T0_STRIPE_SIZE);
 
-	/* pool_name */
+	
 	rc = llapi_layout_pool_name_set(layout, poolname);
 	ASSERTF(rc == 0, "errno = %d", errno);
 	rc = llapi_layout_pool_name_get(layout, mypool, sizeof(mypool));
@@ -86,11 +86,11 @@ static void test0(void)
 	rc = strcmp(mypool, poolname);
 	ASSERTF(rc == 0, "%s != %s", mypool, poolname);
 
-	/* ost_index */
+	
 	rc = llapi_layout_ost_index_set(layout, 0, T0_OST_OFFSET);
 	ASSERTF(rc == 0, "errno = %d", errno);
 
-	/* create */
+	
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
 	ASSERTF(fd >= 0, "path = %s, errno = %d", path, errno);
 	rc = close(fd);
@@ -284,9 +284,9 @@ static void test7(void)
 	uid_t uid;
 
 	snprintf(path, sizeof(path), "%s/%s", lustre_dir, T7FILE);
-	ASSERTF(myuid == 0, "myuid = %d", myuid); /* Need root for this test. */
+	ASSERTF(myuid == 0, "myuid = %d", myuid); 
 
-	/* Create file as root */
+	
 	rc = unlink(path);
 	ASSERTF(rc == 0 || errno == ENOENT, "errno = %d", errno);
 
@@ -295,7 +295,7 @@ static void test7(void)
 	rc = close(fd);
 	ASSERTF(rc == 0, "errno = %d", errno);
 
-	/* Become unprivileged user */
+	
 	if (runas != NULL) {
 		uid = atoi(runas);
 		ASSERTF(uid != 0, "runas = %s", runas);
@@ -357,7 +357,7 @@ static void test8(void)
 	llapi_layout_free(layout);
 }
 
-/* Verify llapi_layout_patter_set() return values for various inputs. */
+
 #define T9_DESC		"verify llapi_layout_pattern_set() return values"
 static void test9(void)
 {
@@ -388,7 +388,7 @@ static void test9(void)
 	llapi_layout_free(layout);
 }
 
-/* Verify stripe_count interfaces return errors as expected */
+
 #define T10_DESC	"stripe_count error handling"
 static void test10(void)
 {
@@ -399,7 +399,7 @@ static void test10(void)
 	layout = llapi_layout_alloc();
 	ASSERTF(layout != NULL, "errno = %d", errno);
 
-	/* invalid stripe count */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_count_set(layout, LLAPI_LAYOUT_INVALID);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
@@ -408,29 +408,29 @@ static void test10(void)
 	rc = llapi_layout_stripe_count_set(layout, -1);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL layout */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_count_set(NULL, 2);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL layout */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_count_get(NULL, &count);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL count */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_count_get(layout, NULL);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* stripe count too large */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_count_set(layout, LOV_MAX_STRIPE_COUNT + 1);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 	llapi_layout_free(layout);
 }
 
-/* Verify stripe_size interfaces return errors as expected */
+
 #define T11_DESC	"stripe_size error handling"
 static void test11(void)
 {
@@ -441,22 +441,22 @@ static void test11(void)
 	layout = llapi_layout_alloc();
 	ASSERTF(layout != NULL, "errno = %d", errno);
 
-	/* negative stripe size */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_size_set(layout, -1);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* invalid stripe size */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_size_set(layout, LLAPI_LAYOUT_INVALID);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* stripe size too big */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_size_set(layout, (1ULL << 33));
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL layout */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_size_set(NULL, 1048576);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
@@ -465,7 +465,7 @@ static void test11(void)
 	rc = llapi_layout_stripe_size_get(NULL, &size);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL size */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_size_get(layout, NULL);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
@@ -473,7 +473,7 @@ static void test11(void)
 	llapi_layout_free(layout);
 }
 
-/* Verify pool_name interfaces return errors as expected */
+
 #define T12_DESC	"pool_name error handling"
 static void test12(void)
 {
@@ -484,27 +484,27 @@ static void test12(void)
 	layout = llapi_layout_alloc();
 	ASSERTF(layout != NULL, "errno = %d", errno);
 
-	/* NULL layout */
+	
 	errno = 0;
 	rc = llapi_layout_pool_name_set(NULL, "foo");
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL pool name */
+	
 	errno = 0;
 	rc = llapi_layout_pool_name_set(layout, NULL);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL layout */
+	
 	errno = 0;
 	rc = llapi_layout_pool_name_get(NULL, mypool, sizeof(mypool));
 	ASSERTF(errno == EINVAL, "poolname = %s, errno = %d", poolname, errno);
 
-	/* NULL buffer */
+	
 	errno = 0;
 	rc = llapi_layout_pool_name_get(layout, NULL, sizeof(mypool));
 	ASSERTF(errno == EINVAL, "poolname = %s, errno = %d", poolname, errno);
 
-	/* Pool name too long*/
+	
 	errno = 0;
 	rc = llapi_layout_pool_name_set(layout, "0123456789abcdef");
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
@@ -512,7 +512,7 @@ static void test12(void)
 	llapi_layout_free(layout);
 }
 
-/* Verify ost_index interface returns errors as expected */
+
 #define T13FILE			"t13"
 #define T13_STRIPE_COUNT	2
 #define T13_DESC		"ost_index error handling"
@@ -529,7 +529,7 @@ static void test13(void)
 	layout = llapi_layout_alloc();
 	ASSERTF(layout != NULL, "errno = %d", errno);
 
-	/* invalid OST index */
+	
 	errno = 0;
 	rc = llapi_layout_ost_index_set(layout, 0, LLAPI_LAYOUT_INVALID);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
@@ -538,7 +538,7 @@ static void test13(void)
 	rc = llapi_layout_ost_index_set(layout, 0, -1);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL layout */
+	
 	errno = 0;
 	rc = llapi_layout_ost_index_set(NULL, 0, 1);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
@@ -547,19 +547,19 @@ static void test13(void)
 	rc = llapi_layout_ost_index_get(NULL, 0, &idx);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* NULL index */
+	
 	errno = 0;
 	rc = llapi_layout_ost_index_get(layout, 0, NULL);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* Layout not read from file so has no OST data. */
+	
 	errno = 0;
 	rc = llapi_layout_stripe_count_set(layout, T13_STRIPE_COUNT);
 	ASSERTF(rc == 0, "errno = %d", errno);
 	rc = llapi_layout_ost_index_get(layout, 0, &idx);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
 
-	/* n greater than stripe count*/
+	
 	rc = unlink(path);
 	ASSERTF(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 	rc = llapi_layout_stripe_count_set(layout, T13_STRIPE_COUNT);
@@ -579,14 +579,14 @@ static void test13(void)
 	llapi_layout_free(layout);
 }
 
-/* Verify llapi_layout_file_create() returns errors as expected */
+
 #define T14_DESC	"llapi_layout_file_create error handling"
 static void test14(void)
 {
 	int rc;
 	struct llapi_layout *layout = llapi_layout_alloc();
 
-	/* NULL path */
+	
 	errno = 0;
 	rc = llapi_layout_file_create(NULL, 0, 0, layout);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d", rc, errno);
@@ -594,7 +594,7 @@ static void test14(void)
 	llapi_layout_free(layout);
 }
 
-/* Can't change striping attributes of existing file. */
+
 #define T15FILE			"t15"
 #define T15_STRIPE_COUNT	2
 #define T15_DESC	"Can't change striping attributes of existing file"
@@ -638,7 +638,7 @@ static void test15(void)
 	llapi_layout_free(layout);
 }
 
-/* Default stripe attributes are applied as expected. */
+
 #define T16FILE		"t16"
 #define T16_DESC	"Default stripe attributes are applied as expected"
 static void test16(void)
@@ -665,7 +665,7 @@ static void test16(void)
 	rc = llapi_layout_stripe_count_get(deflayout, &dcount);
 	ASSERTF(rc == 0, "errno = %d", errno);
 
-	/* First, with a default struct llapi_layout */
+	
 	filelayout = llapi_layout_alloc();
 	ASSERTF(filelayout != NULL, "errno = %d", errno);
 
@@ -690,7 +690,7 @@ static void test16(void)
 	ASSERTF(rc == 0, "errno = %d", errno);
 	ASSERTF(fsize == dsize, "%"PRIu64" != %"PRIu64, fsize, dsize);
 
-	/* NULL layout also implies default layout */
+	
 	rc = unlink(path);
 	ASSERTF(rc == 0 || errno == ENOENT, "errno = %d", errno);
 
@@ -714,7 +714,7 @@ static void test16(void)
 	llapi_layout_free(deflayout);
 }
 
-/* Setting stripe count to LLAPI_LAYOUT_WIDE uses all available OSTs. */
+
 #define T17FILE		"t17"
 #define T17_DESC	"LLAPI_LAYOUT_WIDE is honored"
 static void test17(void)
@@ -740,7 +740,7 @@ static void test17(void)
 	ASSERTF(rc == 0, "errno = %d", errno);
 	llapi_layout_free(layout);
 
-	/* Get number of available OSTs */
+	
 	fd = open(path, O_RDONLY);
 	ASSERTF(fd >= 0, "errno = %d", errno);
 	rc = llapi_lov_get_uuids(fd, NULL, &osts_all);
@@ -757,7 +757,7 @@ static void test17(void)
 	llapi_layout_free(layout);
 }
 
-/* Setting pool with "fsname.pool" notation. */
+
 #define T18FILE		"t18"
 #define T18_DESC	"Setting pool with fsname.pool notation"
 static void test18(void)
@@ -1200,16 +1200,16 @@ static void test29(void)
 	rc = unlink(path);
 	ASSERTF(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 
-	/* set ost index to LLAPI_LAYOUT_IDX_MAX should fail */
+	
 	rc = llapi_layout_ost_index_set(layout, 1, LLAPI_LAYOUT_IDX_MAX);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc = %d, errno = %d\n",
 		rc, errno);
 
-	/* specify ost index partially */
+	
 	rc = llapi_layout_ost_index_set(layout, 1, 0);
 	ASSERTF(rc == 0, "errno = %d", errno);
 
-	/* create a partially specified layout will fail */
+	
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
 	ASSERTF(fd == -1 && errno == EINVAL, "path = %s, fd = %d, errno = %d",
 		path, fd, errno);
@@ -1217,11 +1217,11 @@ static void test29(void)
 	rc = unlink(path);
 	ASSERTF(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 
-	/* specify all stripes */
+	
 	rc = llapi_layout_ost_index_set(layout, 0, 1);
 	ASSERTF(rc == 0, "errno = %d", errno);
 
-	/* create */
+	
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
 	ASSERTF(fd >= 0, "path = %s, fd = %d, errno = %d", path, fd, errno);
 
@@ -1229,7 +1229,7 @@ static void test29(void)
 	ASSERTF(rc == 0, "errno = %d", errno);
 	llapi_layout_free(layout);
 
-	/* get layout from file */
+	
 	layout = llapi_layout_get_by_path(path, 0);
 	ASSERTF(layout != NULL, "errno = %d", errno);
 
@@ -1241,7 +1241,7 @@ static void test29(void)
 	ASSERTF(ost1 == 0, "%"PRIu64" != %d", ost1, 0);
 	llapi_layout_free(layout);
 
-	/* specify more ost indexes to test realloc */
+	
 	nost = 0;
 	layout = llapi_layout_alloc();
 	ASSERTF(layout != NULL, "errno %d", errno);
@@ -1304,9 +1304,9 @@ static void test30(void)
 	char path[PATH_MAX];
 
 	start[0] = 0;
-	end[0] = 64 * 1024 * 1024; /* 64m */
+	end[0] = 64 * 1024 * 1024; 
 	start[1] = end[0];
-	end[1] = 1 * 1024 * 1024 * 1024; /* 1G */
+	end[1] = 1 * 1024 * 1024 * 1024; 
 	start[2] = end[1];
 	end[2] = LUSTRE_EOF;
 
@@ -1336,11 +1336,11 @@ static void test30(void)
 	rc = llapi_layout_comp_add(layout);
 	ASSERTF(rc == 0, "errno %d", errno);
 
-	/* set non-contiguous extent will fail */
+	
 	rc = llapi_layout_comp_extent_set(layout, start[1] * 2, end[1]);
 	ASSERTF(rc == 0, "errno %d", errno);
 	rc = llapi_layout_sanity(layout, false, false);
-	ASSERTF(rc == 12 /*LSE_NOT_ADJACENT_PREV*/, "rc %d", rc);
+	ASSERTF(rc == 12 , "rc %d", rc);
 
 	rc = llapi_layout_comp_extent_set(layout, start[1], end[1]);
 	ASSERTF(rc == 0, "errno %d", errno);
@@ -1351,17 +1351,17 @@ static void test30(void)
 	rc = llapi_layout_comp_extent_set(layout, start[2], end[2]);
 	ASSERTF(rc == 0, "errno %d", errno);
 
-	/* create composite file */
+	
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
 	ASSERTF(fd >= 0, "path = %s, fd = %d, errno = %d", path, fd, errno);
 
 	llapi_layout_free(layout);
 
-	/* traverse & verify all components */
+	
 	layout = llapi_layout_get_by_path(path, 0);
 	ASSERTF(layout != NULL, "errno = %d", errno);
 
-	/* current component should be the tail component */
+	
 	rc = llapi_layout_comp_extent_get(layout, &s, &e);
 	ASSERTF(rc == 0, "errno %d", errno);
 	ASSERTF(s == start[2] && e == end[2],
@@ -1370,7 +1370,7 @@ static void test30(void)
 	rc = llapi_layout_comp_use(layout, LLAPI_LAYOUT_COMP_USE_FIRST);
 	ASSERTF(rc == 0, "rc %d, errno %d", rc, errno);
 
-	/* delete non-tail component will fail */
+	
 	rc = llapi_layout_comp_del(layout);
 	ASSERTF(rc == -1 && errno == EINVAL, "rc %d, errno %d", rc, errno);
 
@@ -1408,7 +1408,7 @@ static void test31(void)
 	char path[PATH_MAX];
 
 	start[0] = 0;
-	end[0] = 64 * 1024 * 1024; /* 64m */
+	end[0] = 64 * 1024 * 1024; 
 	start[1] = end[0];
 	end[1] = LUSTRE_EOF;
 
@@ -1429,7 +1429,7 @@ static void test31(void)
 	rc = llapi_layout_comp_extent_set(layout, start[0], end[0]);
 	ASSERTF(rc == 0, "errno %d", errno);
 
-	/* create composite file */
+	
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
 	ASSERTF(fd >= 0, "path = %s, fd = %d, errno = %d", path, fd, errno);
 	llapi_layout_free(layout);
@@ -1443,12 +1443,12 @@ static void test31(void)
 	rc = llapi_layout_comp_extent_set(layout, start[1], end[1]);
 	ASSERTF(rc == 0, "errno %d", errno);
 
-	/* add comopnent to existing file */
+	
 	rc = llapi_layout_file_comp_add(path, layout);
 	ASSERTF(rc == 0, "errno %d", errno);
 	llapi_layout_free(layout);
 
-	/* verify the composite layout after adding */
+	
 	layout = llapi_layout_get_by_path(path, 0);
 	ASSERTF(layout != NULL, "errno = %d", errno);
 
@@ -1470,7 +1470,7 @@ static void test31(void)
 		i++;
 	} while (rc == 0);
 
-	/* Verify reverse iteration gives the same IDs as forward iteration */
+	
 	rc = llapi_layout_comp_use(layout, LLAPI_LAYOUT_COMP_USE_LAST);
 	ASSERTF(rc == 0, "rc %d, errno %d", rc, errno);
 	do {
@@ -1487,14 +1487,14 @@ static void test31(void)
 
 	llapi_layout_free(layout);
 
-	/* delete non-tail component will fail */
+	
 	rc = llapi_layout_file_comp_del(path, id[0], 0);
 	ASSERTF(rc < 0 && errno == EINVAL, "rc %d, errno %d", rc, errno);
 
 	rc = llapi_layout_file_comp_del(path, id[1], 0);
 	ASSERTF(rc == 0, "rc %d, errno %d", rc, errno);
 
-	/* verify the composite layout after deleting */
+	
 	layout = llapi_layout_get_by_path(path, 0);
 	ASSERTF(layout != NULL, "errno = %d", errno);
 
@@ -1522,7 +1522,7 @@ static void test32(void)
 
 	ASSERTF(layout != NULL, "errno %d", errno);
 
-	/* Maximum possible, to be on the safe side - num_osts could be large */
+	
 	lmdbuf = malloc(XATTR_SIZE_MAX);
 	ASSERTF(lmdbuf != NULL, "errno %d", errno);
 	lmd = lmdbuf;
@@ -1532,7 +1532,7 @@ static void test32(void)
 	rc = unlink(path);
 	ASSERTF(rc >= 0 || errno == ENOENT, "errno = %d", errno);
 
-	/* stripe count */
+	
 	rc = llapi_layout_stripe_count_set(layout, T32_STRIPE_COUNT);
 	ASSERTF(rc == 0, "errno = %d", errno);
 	rc = llapi_layout_stripe_count_get(layout, &count);
@@ -1542,7 +1542,7 @@ static void test32(void)
 	rc = llapi_layout_pattern_set(layout, LLAPI_LAYOUT_OVERSTRIPING);
 	ASSERTF(rc == 0, "errno = %d", errno);
 
-	/* create */
+	
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
 	ASSERTF(fd >= 0, "path = %s, errno = %d", path, errno);
 
@@ -1572,7 +1572,7 @@ static void test33(void)
 	struct lov_user_md *lmd;
 	char path[PATH_MAX];
 
-	/* Maximum possible, to be on the safe side - num_osts could be large */
+	
 	lmdbuf = malloc(XATTR_SIZE_MAX);
 	ASSERTF(lmdbuf != NULL, "errno %d", errno);
 	lmd = lmdbuf;
@@ -1609,11 +1609,11 @@ static void test34(void)
 	char path[PATH_MAX];
 
 	start[0] = 0;
-	end[0] = 10 * 1024 * 1024; /* 10m */
+	end[0] = 10 * 1024 * 1024; 
 	start[1] = end[0];
-	end[1] = 1024 * 1024 * 1024; /* 1G */
+	end[1] = 1024 * 1024 * 1024; 
 	start[2] = end[1];
-	end[2] = 10ull * 1024 * 1024 * 1024; /* 10G */
+	end[2] = 10ull * 1024 * 1024 * 1024; 
 	start[3] = end[2];
 	end[3] = LUSTRE_EOF;
 
@@ -1649,15 +1649,15 @@ static void test34(void)
 	rc = llapi_layout_comp_flags_set(layout, LCME_FL_EXTENSION);
 	ASSERTF(rc == 0, "errno %d", errno);
 
-	/* Invalid size, too small - < 64 MiB */
+	
 	rc = llapi_layout_extension_size_set(layout, 32 << 20);
 	ASSERTF(rc == -1, "errno %d", errno);
 
-	/* too large - > 4 TiB */
+	
 	rc = llapi_layout_extension_size_set(layout, 5ull << 40);
 	ASSERTF(rc == -1, "errno %d", errno);
 
-	/* Valid size, 64 MiB */
+	
 	rc = llapi_layout_extension_size_set(layout, 64 << 20);
 	ASSERTF(rc == 0, "errno %d", errno);
 
@@ -1676,14 +1676,14 @@ static void test34(void)
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
 	ASSERTF(fd = -1, "path = %s, fd = %d, errno = %d", path, fd, errno);
 
-	/* Delete incorrect component */
+	
 	rc = llapi_layout_comp_del(layout);
 	ASSERTF(rc == 0, "errno %d", errno);
 
 	rc = llapi_layout_comp_add(layout);
 	ASSERTF(rc == 0, "errno %d", errno);
 
-	/* Convert this comp to 0-len that can be followed by extension space */
+	
 	rc = llapi_layout_comp_extent_set(layout, start[2], start[2]);
 	ASSERTF(rc == 0, "errno %d", errno);
 
@@ -1696,13 +1696,13 @@ static void test34(void)
 	rc = llapi_layout_comp_flags_set(layout, LCME_FL_EXTENSION);
 	ASSERTF(rc == 0, "errno %d", errno);
 
-	/* create composite file */
+	
 	fd = llapi_layout_file_create(path, 0, 0660, layout);
 	ASSERTF(fd >= 0, "path = %s, fd = %d, errno = %d", path, fd, errno);
 
 	llapi_layout_free(layout);
 
-	/* traverse & verify all components */
+	
 	layout = llapi_layout_get_by_path(path, 0);
 	ASSERTF(layout != NULL, "errno = %d", errno);
 

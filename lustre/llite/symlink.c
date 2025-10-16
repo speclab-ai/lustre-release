@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <linux/fs.h>
@@ -19,7 +19,7 @@
 
 #include "llite_internal.h"
 
-/* Must be called with lli_size_mutex locked */
+
 /* HAVE_IOP_GET_LINK is defined from kernel 4.5, whereas
  * IS_ENCRYPTED is brought by kernel 4.14.
  * So there is no need to handle encryption case otherwise.
@@ -95,7 +95,7 @@ static int ll_readlink_internal(struct inode *inode,
 	if (!*symname ||
 	    (!IS_ENCRYPTED(inode) &&
 	     strnlen(*symname, symlen) != symlen - 1)) {
-		/* not full/NULL terminated */
+		
 		CERROR("%s: inode "DFID": symlink not NULL terminated string of length %d\n",
 		       sbi->ll_fsname,
 		       PFID(ll_inode2fid(inode)), symlen - 1);
@@ -120,7 +120,7 @@ static int ll_readlink_internal(struct inode *inode,
 #endif
 
 	OBD_ALLOC(lli->lli_symlink_name, symlen);
-	/* do not return an error if we cannot cache the symlink locally */
+	
 	if (lli->lli_symlink_name) {
 		memcpy(lli->lli_symlink_name, *symname, symlen);
 		*symname = lli->lli_symlink_name;
@@ -239,8 +239,8 @@ static const char *ll_follow_link(struct dentry *dentry, void **cookie)
 	*cookie = request;
 	RETURN(symname);
 }
-# endif /* HAVE_IOP_GET_LINK */
-#endif /* HAVE_SYMLINK_OPS_USE_NAMEIDATA */
+# endif 
+#endif 
 
 /**
  * ll_getattr_link() - link-specific getattr to set the correct st_size
@@ -303,7 +303,7 @@ static int ll_getattr_link(
 	do_delayed_call(&done);
 	return 0;
 }
-#else /* HAVE_INODEOPS_ENHANCED_GETATTR */
+#else 
 #define ll_getattr_link ll_getattr
 #endif
 

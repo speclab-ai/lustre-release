@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Yury Umanets <umka@clusterfs.com>
  */
@@ -35,7 +35,7 @@ extern struct lu_context_key seq_thread_key;
 
 extern struct ldebugfs_vars seq_server_debugfs_list[];
 
-/* Store API functions. */
+
 struct dt_device;
 
 int seq_store_init(struct lu_server_seq *seq,
@@ -59,9 +59,9 @@ int fid_server_mod_init(void);
 
 void fid_server_mod_exit(void);
 
-# endif /* HAVE_SERVER_SUPPORT */
+# endif 
 
-/* Functions used internally in module. */
+
 int seq_client_alloc_super(struct lu_client_seq *seq,
 			   const struct lu_env *env);
 
@@ -71,4 +71,4 @@ extern struct ldebugfs_vars seq_client_debugfs_list[];
 
 extern const struct file_operations seq_fld_debugfs_seq_fops;
 
-#endif /* __FID_INTERNAL_H */
+#endif 

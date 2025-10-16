@@ -8,11 +8,9 @@ from utility_paths import get_lnetctl, lustre_rmmod, LSMOD, MOUNT, load_lnet
 import lutf
 import lnetconfig
 
-# Collection()
 # Parent class which provides method to keep track of the different elements
 # in a dictionary. Provides method to iterate and set items, much like a
 # dictionary:
-#    ex: dict['key'] = value
 class Collection:
 	def __init__(self, typeof):
 		self.__typeof = typeof
@@ -401,7 +399,6 @@ class LNetRNet:
 		for gw in self.gateways.get():
 			dumps.append(gw.dump())
 		return ''.join(dumps)
-		#return self.gateways.dump()
 
 	def get(self):
 		config = []
@@ -663,7 +660,6 @@ class TheLNet(BaseTest):
 			y = yamlcfg
 		# Test code
 		#with open('cfg.yaml', 'r') as f:
-		#	y = yaml.load(f, Loader=yaml.FullLoader)
 		if 'net' in y:
 			for entry in y['net']:
 				# don't consider the loopback entry

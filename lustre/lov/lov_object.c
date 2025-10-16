@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_object for LOV layer.
  *
@@ -133,7 +133,7 @@ static int lov_init_sub(const struct lu_env *env, struct lov_object *lov,
 	       PFID(lu_object_fid(lov2lu(lov))), hdr, POSTID(&oinfo->loi_oi),
 	       oinfo->loi_ost_idx, oinfo->loi_ost_gen);
 
-	/* reuse ->coh_attr_guard to protect coh_parent change */
+	
 	spin_lock(&subhdr->coh_attr_guard);
 	parent = subhdr->coh_parent;
 	if (parent == NULL) {
@@ -223,7 +223,7 @@ static int lov_init_raid0(const struct lu_env *env, struct lov_device *dev,
 
 		exp = lov_tgt(dev->ld_lov, ost_idx)->ltd_exp;
 		if (likely(exp)) {
-			/* the more fast OSTs the better */
+			
 			if (exp->exp_obd->obd_osfs.os_state & OS_STATFS_NONROT)
 				lle->lle_preference++;
 		}
@@ -239,7 +239,7 @@ static int lov_init_raid0(const struct lu_env *env, struct lov_device *dev,
 
 		result = lov_init_sub(env, lov, stripe, oinfo,
 				      lov_comp_index(index, i));
-		if (result == -EAGAIN) { /* try again */
+		if (result == -EAGAIN) { 
 			--i;
 			result = 0;
 			continue;
@@ -274,7 +274,7 @@ static void lov_subobject_kill(const struct lu_env *env, struct lov_object *lov,
 	wq = lu_site_wq_from_fid(site, &sub->co_lu.lo_header->loh_fid);
 
 	cl_object_kill(env, sub);
-	/* release a reference to the sub-object and ... */
+	
 	cl_object_put(env, sub);
 
 	/* ... wait until it is actually destroyed---sub-object clears its
@@ -445,7 +445,7 @@ static int lov_fld_lookup(struct lov_device *ld, const struct lu_fid *fid,
 	CDEBUG(D_INODE, "FLD lookup got mds #%x for fid="DFID"\n",
 	       mds_idx, PFID(fid));
 
-	/* find proper MDC device in the array */
+	
 	for (i = 0; i < ld->ld_md_tgts_nr; i++) {
 		if (ld->ld_md_tgts[i].ldm_mdc != NULL &&
 		    ld->ld_md_tgts[i].ldm_idx == mds_idx)
@@ -493,7 +493,7 @@ static int lov_init_dom(const struct lu_env *env, struct lov_device *dev,
 
 	ENTRY;
 
-	/* DOM entry may be not zero index due to FLR but must start from 0 */
+	
 	if (unlikely(lle->lle_extent->e_start != 0)) {
 		CERROR("%s: DOM entry must be the first stripe in a mirror\n",
 		       lov2obd(dev->ld_lov)->obd_name);
@@ -501,7 +501,7 @@ static int lov_init_dom(const struct lu_env *env, struct lov_device *dev,
 		RETURN(-EINVAL);
 	}
 
-	/* find proper MDS device */
+	
 	rc = lov_fld_lookup(dev, fid, &idx);
 	if (rc)
 		RETURN(rc);
@@ -509,7 +509,7 @@ static int lov_init_dom(const struct lu_env *env, struct lov_device *dev,
 	LASSERTF(dev->ld_md_tgts[idx].ldm_mdc != NULL,
 		 "LOV md target[%u] is NULL\n", idx);
 
-	/* check lsm is DOM, more checks are needed */
+	
 	LASSERT(lsme->lsme_stripe_count == 0);
 
 	/*
@@ -519,7 +519,7 @@ static int lov_init_dom(const struct lu_env *env, struct lov_device *dev,
 
 	LASSERTF(mdcdev != NULL, "non-initialized mdc subdev\n");
 
-	/* DoM object has no oinfo in LSM entry, create it exclusively */
+	
 	OBD_SLAB_ALLOC_PTR_GFP(loi, lov_oinfo_slab, GFP_NOFS);
 	if (loi == NULL)
 		RETURN(-ENOMEM);
@@ -533,7 +533,7 @@ again:
 		GOTO(out, rc = PTR_ERR(clo));
 
 	rc = lov_init_sub(env, lov, clo, loi, lov_comp_index(index, 0));
-	if (rc == -EAGAIN) /* try again */
+	if (rc == -EAGAIN) 
 		goto again;
 	else if (rc != 0)
 		GOTO(out, rc);
@@ -622,7 +622,7 @@ static int lov_init_composite(const struct lu_env *env, struct lov_device *dev,
 	if (comp->lo_entries == NULL)
 		RETURN(-ENOMEM);
 
-	/* Initiate all entry types and extents data at first */
+	
 	for (i = 0, j = 0, mirror_count = 1; i < entry_count; i++) {
 		int mirror_id = 0;
 
@@ -660,7 +660,7 @@ static int lov_init_composite(const struct lu_env *env, struct lov_device *dev,
 
 			lle->lle_comp_ops = NULL;
 
-			/* limit this message 20 times within 24h */
+			
 			if (ktime_after(now, time2_clear_nr)) {
 				nr = 0;
 				time2_clear_nr = ktime_add_ms(now,
@@ -712,7 +712,7 @@ static int lov_init_composite(const struct lu_env *env, struct lov_device *dev,
 			lre = &comp->lo_mirrors[j];
 		}
 
-		/* entries must be sorted by mirrors */
+		
 		lre->lre_mirror_id = mirror_id;
 		lre->lre_start = lre->lre_end = i;
 		lre->lre_preference = lle->lle_lsme->lsme_flags &
@@ -722,7 +722,7 @@ static int lov_init_composite(const struct lu_env *env, struct lov_device *dev,
 		lre->lre_foreign = lsme_is_foreign(lle->lle_lsme);
 	}
 
-	/* sanity check for FLR */
+	
 	if (mirror_count != comp->lo_mirror_count) {
 		CDEBUG(D_INODE, DFID
 		       " doesn't have the # of mirrors it claims, %u/%u\n",
@@ -781,9 +781,9 @@ static int lov_init_composite(const struct lu_env *env, struct lov_device *dev,
 		if (!lre->lre_valid)
 			continue;
 
-		mirror_count++; /* valid mirror */
+		mirror_count++; 
 
-		/* aggregated preference of all involved OSTs */
+		
 		for (j = lre->lre_start; j <= lre->lre_end; j++) {
 			lre->lre_preference +=
 				comp->lo_entries[j].lle_preference;
@@ -1058,7 +1058,7 @@ static int lov_attr_get_composite(const struct lu_env *env,
 		if (!entry->lle_valid)
 			continue;
 
-		/* PFL: This component has not been init-ed. */
+		
 		if (!lsm_entry_inited(lov->lo_lsm, index))
 			continue;
 
@@ -1078,7 +1078,7 @@ static int lov_attr_get_composite(const struct lu_env *env,
 		       lov_attr->cat_mtime, lov_attr->cat_atime,
 		       lov_attr->cat_ctime, lov_attr->cat_blocks);
 
-		/* merge results */
+		
 		if (lov_attr->cat_kms_valid)
 			attr->cat_kms_valid = 1;
 		attr->cat_blocks += lov_attr->cat_blocks;
@@ -1337,7 +1337,7 @@ static int lov_layout_change(const struct lu_env *unused,
 	CDEBUG(D_INODE, DFID "Apply new layout lov %p, type %d\n",
 	       PFID(lu_object_fid(lov2lu(lov))), lov, llt);
 
-	/* page bufsize fixup */
+	
 	cl_object_header(&lov->lo_cl)->coh_page_bufsize -=
 		lov_page_slice_fixup(lov, NULL);
 
@@ -1350,7 +1350,7 @@ static int lov_layout_change(const struct lu_env *unused,
 		       obd->obd_name, PFID(lu_object_fid(lov2lu(lov))), rc);
 		new_ops->llo_delete(env, lov, state);
 		new_ops->llo_fini(env, lov, state);
-		/* this file becomes an EMPTY file. */
+		
 		lov->lo_type = LLT_EMPTY;
 		GOTO(out, rc);
 	}
@@ -1391,7 +1391,7 @@ static int lov_object_init(const struct lu_env *env, struct lu_object *obj,
 		dump_lsm(D_INODE, lsm);
 	}
 
-	/* no locking is necessary, as object is being created */
+	
 	lov->lo_type = lov_type(lsm);
 	ops = &lov_dispatch[lov->lo_type];
 	rc = ops->llo_init(env, dev, lov, lsm, cconf, set);
@@ -1472,12 +1472,12 @@ retry:
 	     (lov->lo_lsm->lsm_flags == lsm->lsm_flags) &&
 	     (lov->lo_lsm->lsm_entries[0]->lsme_pattern ==
 	      lsm->lsm_entries[0]->lsme_pattern))) {
-		/* same version of layout */
+		
 		clear_bit(LO_LAYOUT_INVALID, &lov->lo_obj_flags);
 		GOTO(out, result = 0);
 	}
 
-	/* will change layout - check if there still exists active IO. */
+	
 	if (atomic_read(&lov->lo_active_ios) > 0) {
 		set_bit(LO_LAYOUT_INVALID, &lov->lo_obj_flags);
 		GOTO(out, result = -EBUSY);
@@ -1515,7 +1515,7 @@ retry:
 						NULL) == 0)
 				inode_size_locked = true;
 
-			/* take lock in order */
+			
 			if (cl_object_inode_ops(
 					env, top, COIO_INODE_LOCK, NULL) == 0)
 				lock_inode = true;
@@ -1629,7 +1629,7 @@ static int lov_attr_update(const struct lu_env *env, struct cl_object *obj,
 static int lov_lock_init(const struct lu_env *env, struct cl_object *obj,
 			 struct cl_lock *lock, const struct cl_io *io)
 {
-	/* No need to lock because we've taken one refcount of layout.  */
+	
 	return LOV_2DISPATCH_NOLOCK(cl2lov(obj), llo_lock_init, env, obj, lock,
 				    io);
 }
@@ -1717,7 +1717,7 @@ static void fiemap_prepare_and_copy_exts(struct fiemap *fiemap,
 		lcl_fm_ext[ext].fe_flags |= FIEMAP_EXTENT_NET;
 	}
 
-	/* Copy fm_extent's from fm_local to return buffer */
+	
 	to = (char *)fiemap + fiemap_count_to_size(current_extent);
 	memcpy(to, lcl_fm_ext, ext_count * sizeof(struct fiemap_extent));
 }
@@ -1781,16 +1781,16 @@ static u64 fiemap_calc_fm_end_offset(struct fiemap *fiemap,
 
 struct fiemap_state {
 	struct fiemap		*fs_fm;
-	struct lu_extent	fs_ext;		/* current entry extent */
+	struct lu_extent	fs_ext;		
 	u64			fs_length;
-	u64			fs_end_offset;	/* last iteration offset */
-	int			fs_cur_extent;	/* collected exts so far */
-	int			fs_cnt_need;	/* # of extents buf can hold */
+	u64			fs_end_offset;	
+	int			fs_cur_extent;	
+	int			fs_cnt_need;	
 	int			fs_start_stripe;
 	int			fs_last_stripe;
-	bool			fs_device_done;	/* enough for this OST */
-	bool			fs_finish_stripe; /* reached fs_last_stripe */
-	bool			fs_enough;	/* enough for this call */
+	bool			fs_device_done;	
+	bool			fs_finish_stripe; 
+	bool			fs_enough;	
 };
 
 static int fiemap_unknown(struct fiemap_state *fs, u64 obd_start, u64 obd_end)
@@ -1820,7 +1820,7 @@ static int fiemap_for_stripe(const struct lu_env *env, struct cl_object *obj,
 	struct cl_object *subobj = NULL;
 	struct fiemap *fsm = fs->fs_fm;
 	struct fiemap_extent *fm_ext = &fsm->fm_extents[0];
-	u64 req_fm_len; /* max requested extent coverage */
+	u64 req_fm_len; 
 	u64 len_mapped_single_call;
 	u64 obd_start;
 	u64 obd_end;
@@ -1828,7 +1828,7 @@ static int fiemap_for_stripe(const struct lu_env *env, struct cl_object *obj,
 	int devnr = 0;
 	int rc = 0;
 
-	/* Find out range of mapping on this stripe */
+	
 	if ((lov_stripe_intersects(lsm, index, stripeno, &fs->fs_ext,
 				   &obd_start, &obd_end)) == 0)
 		return 0;
@@ -1901,7 +1901,7 @@ static int fiemap_for_stripe(const struct lu_env *env, struct cl_object *obj,
 	 * extents we may need to loop on a single OST repeatedly */
 	while (!fs->fs_device_done) {
 		if (fiemap->fm_extent_count > 0) {
-			/* Don't get too many extents. */
+			
 			if (fs->fs_cur_extent + fs->fs_cnt_need >
 			    fiemap->fm_extent_count)
 				fs->fs_cnt_need = fiemap->fm_extent_count -
@@ -1925,7 +1925,7 @@ static int fiemap_for_stripe(const struct lu_env *env, struct cl_object *obj,
 		*buflen = fiemap_count_to_size(fsm->fm_extent_count);
 		rc = cl_object_fiemap(env, subobj, fmkey, fsm, buflen);
 		if (rc) {
-			/* Can we report as UNKNOWN all subdev error? */
+			
 			ext_count = fiemap_unknown(fs, obd_start, obd_end);
 			GOTO(out_unknown, rc);
 		}
@@ -1948,18 +1948,18 @@ static int fiemap_for_stripe(const struct lu_env *env, struct cl_object *obj,
 			RETURN(0);
 		}
 
-		/* If we just need num of extents, got to next device */
+		
 		if (fiemap->fm_extent_count == 0) {
 			fs->fs_cur_extent += ext_count;
 			break;
 		}
 
-		/* prepare to copy retrived map extents */
+		
 		len_mapped_single_call = fm_ext[ext_count - 1].fe_logical +
 					 fm_ext[ext_count - 1].fe_length -
 					 obd_start;
 
-		/* Have we finished mapping on this device? */
+		
 		if (req_fm_len <= len_mapped_single_call)
 			fs->fs_device_done = true;
 
@@ -1980,7 +1980,7 @@ out_unknown:
 					     stripe_last + stripeno);
 		fs->fs_cur_extent += ext_count;
 
-		/* Ran out of available extents? */
+		
 		if (fs->fs_cur_extent >= fiemap->fm_extent_count)
 			fs->fs_enough = true;
 	}
@@ -2030,7 +2030,7 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 
 	lsm = lov_lsm_addref(cl2lov(obj));
 	if (lsm == NULL) {
-		/* no extent: there is no object for mapping */
+		
 		fiemap->fm_mapped_extents = 0;
 		return 0;
 	}
@@ -2072,7 +2072,7 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 		GOTO(out_lsm, rc = 0);
 	}
 
-	/* buffer_size is small to hold fm_extent_count of extents. */
+	
 	if (fiemap_count_to_size(fiemap->fm_extent_count) < buffer_size)
 		buffer_size = fiemap_count_to_size(fiemap->fm_extent_count);
 
@@ -2093,7 +2093,7 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 	fs.fs_cnt_need = fiemap_size_to_count(buffer_size);
 
 	whole_start = fiemap->fm_start;
-	/* whole_start is beyond the end of the file */
+	
 	if (whole_start > fmkey->lfik_oa.o_size)
 		GOTO(out_fm_local, rc = -EINVAL);
 	whole_end = (fiemap->fm_length == OBD_OBJECT_EOF) ?
@@ -2151,11 +2151,11 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 	for (entry = start_entry; entry <= end_entry; entry++) {
 		int stripes;
 
-		/* remeber to update stripe_last accordingly */
+		
 		lsme = lsm->lsm_entries[entry];
 		stripes = lsme_is_dom(lsme) ? 1 : lsme->lsme_stripe_count;
 
-		/* FLR could contain component holes between entries */
+		
 		if (!lsme_inited(lsme)) {
 			stripe_last += stripes;
 			resume = false;
@@ -2168,7 +2168,7 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 			continue;
 		}
 
-		/* prepare for a component entry iteration */
+		
 		if (lsme->lsme_extent.e_start > whole_start)
 			fs.fs_ext.e_start = lsme->lsme_extent.e_start;
 		else
@@ -2178,10 +2178,10 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 		else
 			fs.fs_ext.e_end = lsme->lsme_extent.e_end;
 
-		/* Calculate start stripe, last stripe and length of mapping */
+		
 		if (resume) {
 			fs.fs_start_stripe = start_stripe;
-			/* put stripe_last to the first stripe of the comp */
+			
 			stripe_last -= start_stripe;
 			resume = false;
 		} else {
@@ -2198,7 +2198,7 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 		 * fs.fs_end_offset.
 		 */
 		if (entry > start_entry && lsme->lsme_extent.e_start == 0) {
-			/* new mirror */
+			
 			fs.fs_end_offset = 0;
 		} else {
 			fs.fs_end_offset = fiemap_calc_fm_end_offset(fiemap,
@@ -2206,10 +2206,10 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 						&fs.fs_start_stripe);
 		}
 
-		/* Check each stripe */
+		
 		for (cur_stripe = fs.fs_start_stripe; stripe_count > 0;
 		     --stripe_count, cur_stripe = (cur_stripe + 1) % stripes) {
-			/* reset fs_finish_stripe */
+			
 			fs.fs_finish_stripe = false;
 			rc = fiemap_for_stripe(env, obj, lsm, fiemap, buflen,
 					       fmkey, entry, stripe_last,
@@ -2222,9 +2222,9 @@ static int lov_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 			}
 			if (fs.fs_finish_stripe)
 				break;
-		} /* for each stripe */
+		} 
 		stripe_last += stripes;
-	} /* for covering layout component entry */
+	} 
 
 finish:
 	if (fs.fs_cur_extent > 0)
@@ -2242,7 +2242,7 @@ finish:
 	if (fiemap->fm_extent_count == 0)
 		goto skip_last_device_calc;
 
-	/* done all the processing */
+	
 	if (entry > end_entry ||
 	    (fs.fs_enough && fs.fs_finish_stripe && entry == end_entry))
 		fiemap->fm_extents[cur_ext].fe_flags |= FIEMAP_EXTENT_LAST;
@@ -2299,7 +2299,7 @@ static int lov_object_layout_get(const struct lu_env *env,
 	rc = lov_lsm_pack(lsm, buf->lb_buf, buf->lb_len);
 	lov_lsm_put(lsm);
 
-	/* return error or number of bytes */
+	
 	RETURN(rc);
 }
 
@@ -2363,7 +2363,7 @@ struct lu_object *lov_object_alloc(const struct lu_env *env,
 		obj = lov2lu(lov);
 		lu_object_init(obj, NULL, dev);
 		lov->lo_cl.co_ops = &lov_ops;
-		lov->lo_type = -1; /* invalid, to catch uninitialized type */
+		lov->lo_type = -1; 
 		/*
 		 * object io operation vector (cl_object::co_iop) is installed
 		 * later in lov_object_init(), as different vectors are used
@@ -2451,4 +2451,4 @@ int lov_read_and_clear_async_rc(struct cl_object *clob)
 }
 EXPORT_SYMBOL(lov_read_and_clear_async_rc);
 
-/** @} lov */
+

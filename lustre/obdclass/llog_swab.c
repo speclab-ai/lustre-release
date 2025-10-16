@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Swabbing of llog datatypes (from disk or over the wire).
  *
@@ -260,7 +260,7 @@ void lustre_swab_llog_rec(struct llog_rec_hdr *rec)
 		break;
 	}
 	case OBD_CFG_REC:
-		/* these are swabbed as they are consumed */
+		
 		break;
 	case LLOG_HDR_MAGIC:
 	{
@@ -308,7 +308,7 @@ void lustre_swab_llog_rec(struct llog_rec_hdr *rec)
 		lustre_swab_update_ops(&record->ur_ops,
 				       record->ur_update_count);
 
-		/* Compute tail location. */
+		
 		tail = (struct llog_rec_tail *)((char *)record +
 						update_records_size(record));
 		break;
@@ -360,7 +360,7 @@ void print_lustre_cfg(struct lustre_cfg *lcfg)
 
 	ENTRY;
 
-	if (!(libcfs_debug & D_OTHER)) /* don't loop on nothing */
+	if (!(libcfs_debug & D_OTHER)) 
 		return;
 
 	CDEBUG(D_OTHER, "lustre_cfg: %p\n", lcfg);
@@ -412,7 +412,7 @@ void lustre_swab_lustre_cfg(struct lustre_cfg *lcfg)
 }
 EXPORT_SYMBOL(lustre_swab_lustre_cfg);
 
-/* used only for compatibility with old on-disk cfg_marker data */
+
 struct cfg_marker32 {
 	__u32   cm_step;
 	__u32   cm_flags;

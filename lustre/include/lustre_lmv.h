@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2014, 2016, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre LMV structures and functions.
  *
@@ -228,7 +228,7 @@ static inline void lmv_le_to_cpu(union lmv_mds_md *lmv_dst,
 	}
 }
 
-/* This hash is only for testing purpose */
+
 static inline unsigned int
 lmv_hash_all_chars(unsigned int count, const char *name, int namelen)
 {
@@ -255,7 +255,7 @@ lmv_hash_fnv1a(unsigned int count, const char *name, int namelen)
 
 /*
  * Robert Jenkins' function for mixing 32-bit values
- * http://burtleburtle.net/bob/hash/evahash.html
+ * http:
  * a, b = random bits, c = input and output
  *
  * Mixing inputs to generate an evenly distributed hash.
@@ -288,8 +288,8 @@ static inline __u32 crush_hash(__u32 a, __u32 b)
 	return hash;
 }
 
-/* refer to https://github.com/ceph/ceph/blob/master/src/crush/hash.c and
- * https://www.ssrc.ucsc.edu/Papers/weil-sc06.pdf for details of CRUSH
+/* refer to https:
+ * https:
  * algorithm.
  */
 static inline unsigned int
@@ -480,7 +480,7 @@ static inline bool lmv_user_magic_supported(__u32 lum_magic)
 		"invalid", (lmv)->lmv_migrate_hash,			      \
 	       LOV_MAXPOOLNAME, lmv->lmv_pool_name)
 
-/* master LMV is sane */
+
 static inline bool lmv_is_sane(const struct lmv_mds_md_v1 *lmv)
 {
 	if (!lmv)
@@ -501,7 +501,7 @@ insane:
 	return false;
 }
 
-/* LMV can be either master or stripe LMV */
+
 static inline bool lmv_is_sane2(const struct lmv_mds_md_v1 *lmv)
 {
 	if (!lmv)

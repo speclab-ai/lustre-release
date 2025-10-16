@@ -34,26 +34,7 @@ class KernelInfo:
 
         for line in exec_crash_command('help -k').splitlines():
             # crash> help -k
-            #          flags: b02600
-            #   (PER_CPU_OFF|SMP|KMOD_V2|KALLSYMS_V2|NO_DWARF_UNWIND|DWARF_UNWIND_MEMORY|DWARF_UNWIND_MODULES)
-            #          stext: ffffffff810001f0
-            #          etext: ffffffff813915b5
-            #     stext_init: ffffffff8170b000
-            #     etext_init: ffffffff81740b65
-            #     init_begin: ffffffff816f9000
-            #       init_end: ffffffff81796000
-            #            end: ffffffff818cf000
-            #           cpus: 48
-            #  cpus_override: (null)
             #        NR_CPUS: 4096 (compiled-in to this version of crash)
-            # kernel_NR_CPUS: 48
-            # ikconfig_flags: 1 (IKCONFIG_AVAIL)
-            #  ikconfig_ents: 0
-            #     display_bh: 0
-            #    highest_irq: (unused/undetermined)
-            #    module_list: ffffffffa05c96e0
-            #  kernel_module: ffffffff81684630
-            # mods_installed: 40
             #  ...
             #
             # Only use the first value after the field name and

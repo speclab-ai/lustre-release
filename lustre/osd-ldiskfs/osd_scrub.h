@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Definitions and declarations for ldiskfs backend OI scrub.
  *
@@ -18,9 +18,9 @@
 #include <lustre_scrub.h>
 #include "osd_oi.h"
 
-/* The flags here are only used inside OSD, NOT be visible by dump(). */
+
 enum scrub_internal_flags {
-	/* This is a new formatted device. */
+	
 	SIF_NO_HANDLE_OLD_FID	= 0x0001,
 };
 
@@ -42,11 +42,11 @@ struct osd_scrub {
 	/* statistics for /lost+found are in ram only, it will be reset
 	 * when each time the device remount. */
 
-	/* How many objects have been scanned during initial OI scrub. */
+	
 	__u64			os_lf_scanned;
-	/* How many objects have been repaired during initial OI scrub. */
+	
 	__u64			os_lf_repaired;
-	/* How many objects failed to be processed during initial OI scrub. */
+	
 	__u64			os_lf_failed;
 
 	__u64			os_bad_oimap_count;
@@ -55,4 +55,4 @@ struct osd_scrub {
 
 int osd_last_seq_get(const struct lu_env *env, struct dt_device *dt,
 		     __u64 *seq);
-#endif /* _OSD_SCRUB_H */
+#endif 

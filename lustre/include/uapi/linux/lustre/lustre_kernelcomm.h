@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: LGPL-2.1+ WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Kernel <-> userspace communication routines.
  * The definitions below are used in the kernel and userspace.
@@ -55,14 +55,14 @@ struct kuc_hdr {
 			       * transport
 			       */
 	__u8  kuc_flags;
-	__u16 kuc_msgtype;    /* Message type or opcode, transport-specific */
-	__u16 kuc_msglen;     /* Including header */
+	__u16 kuc_msgtype;    
+	__u16 kuc_msglen;     
 } __attribute__((aligned(sizeof(__u64))));
 
 
-#define KUC_MAGIC  0x191C /*Lustre9etLinC */
+#define KUC_MAGIC  0x191C 
 
-/* kuc_msgtype values are defined in each transport */
+
 enum kuc_transport_type {
 	KUC_TRANSPORT_GENERIC   = 1,
 	KUC_TRANSPORT_HSM       = 2,
@@ -103,4 +103,4 @@ struct lustre_kernelcomm {
 	__u32 lk_data[];
 } __attribute__((packed));
 
-#endif	/* __UAPI_KERNELCOMM_H__ */
+#endif	

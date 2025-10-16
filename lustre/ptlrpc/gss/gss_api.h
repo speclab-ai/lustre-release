@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Modifications for Lustre
@@ -31,7 +31,7 @@ typedef int (*digest_hash)(
 	int msgcnt, rawobj_t *msgs,
 	int iovcnt, struct bio_vec *iovs);
 
-/* The mechanism-independent gss-api context: */
+
 struct gss_ctx {
 	struct gss_api_mech *mech_type;
 	void *internal_ctx_id;
@@ -108,7 +108,7 @@ struct subflavor_desc {
         char           *sf_name;
 };
 
-/* Each mechanism is described by the following struct: */
+
 struct gss_api_mech {
 	struct list_head	gm_list;
 	struct module	       *gm_owner;
@@ -120,7 +120,7 @@ struct gss_api_mech {
 	struct subflavor_desc  *gm_sfs;
 };
 
-/* and must provide the following operations: */
+
 struct gss_api_ops {
         __u32 (*gss_import_sec_context)(
                         rawobj_t               *input_token,
@@ -187,4 +187,4 @@ struct gss_api_mech * lgss_subflavor_to_mech(__u32 subflavor);
 struct gss_api_mech * lgss_mech_get(struct gss_api_mech *mech);
 void lgss_mech_put(struct gss_api_mech *mech);
 
-#endif /* __PTLRPC_GSS_GSS_API_H_ */
+#endif 

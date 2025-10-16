@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Object Devices Class Driver
  * These are the only exported functions, they provide some generic
@@ -68,11 +68,11 @@ void obdo_from_inode(struct obdo *dst, struct inode *src, u64 valid)
 		dst->o_size = i_size_read(src);
 		newvalid |= OBD_MD_FLSIZE;
 	}
-	if (valid & OBD_MD_FLBLOCKS) { /* allocation of space (x512 bytes) */
+	if (valid & OBD_MD_FLBLOCKS) { 
 		dst->o_blocks = src->i_blocks;
 		newvalid |= OBD_MD_FLBLOCKS;
 	}
-	if (valid & OBD_MD_FLBLKSZ) { /* optimal block size */
+	if (valid & OBD_MD_FLBLKSZ) { 
 		dst->o_blksize = 1U << src->i_blkbits;
 		newvalid |= OBD_MD_FLBLKSZ;
 	}
@@ -114,7 +114,7 @@ void obdo_cpy_md(struct obdo *dst, const struct obdo *src, u64 valid)
 		dst->o_ctime = src->o_ctime;
 	if (valid & OBD_MD_FLSIZE)
 		dst->o_size = src->o_size;
-	if (valid & OBD_MD_FLBLOCKS) /* allocation of space */
+	if (valid & OBD_MD_FLBLOCKS) 
 		dst->o_blocks = src->o_blocks;
 	if (valid & OBD_MD_FLBLKSZ)
 		dst->o_blksize = src->o_blksize;
@@ -193,7 +193,7 @@ void lustre_get_wire_obdo(const struct obd_connect_data *ocd,
 
 	if (unlikely(!(ocd->ocd_connect_flags & OBD_CONNECT_FID)) &&
 	    fid_seq_is_echo(wobdo->o_oi.oi.oi_seq)) {
-		/* see above */
+		
 		lobdo->o_oi.oi_fid.f_seq = wobdo->o_oi.oi.oi_seq;
 		lobdo->o_oi.oi_fid.f_oid = wobdo->o_oi.oi.oi_id;
 		lobdo->o_oi.oi_fid.f_ver = 0;

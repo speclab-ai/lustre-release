@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
  *     alternatives
@@ -43,11 +43,11 @@
 #include "lstddef.h"
 #include "pid_file.h"
 
-/* Progress reporting period */
+
 #define REPORT_INTERVAL_DEFAULT 30
-/* HSM hash subdir permissions */
+
 #define DIR_PERM S_IRWXU
-/* HSM hash file permissions */
+
 #define FILE_PERM (S_IRUSR | S_IWUSR)
 
 #define ONE_MB 0x100000
@@ -67,7 +67,7 @@ enum ct_archive_format {
 	/* v1 (original) using 6 directories (oid & 0xffff)/-/-/-/-/-/FID.
 	 * Places only one FID per directory. See ct_path_archive() below. */
 	CT_ARCHIVE_FORMAT_V1 = 1,
-	/* v2 using 1 directory (oid & 0xffff)/FID. */
+	
 	CT_ARCHIVE_FORMAT_V2 = 2,
 };
 
@@ -123,12 +123,12 @@ struct options {
 	char			*o_mnt;
 	int			 o_mnt_fd;
 	char			*o_hsm_root;
-	char			*o_src; /* for import, or rebind */
-	char			*o_dst; /* for import, or rebind */
+	char			*o_src; 
+	char			*o_dst; 
 	char			*o_pid_file;
 };
 
-/* everything else is zeroed */
+
 struct options opt = {
 	.o_copy_attrs = 1,
 	.o_shadow_tree = 1,
@@ -316,7 +316,7 @@ repeat:
 					 optarg);
 				return rc;
 			}
-			/* if archiveID is zero, any archiveID is accepted */
+			
 			if (all_id == true)
 				goto repeat;
 
@@ -330,12 +330,12 @@ repeat:
 				goto repeat;
 			}
 
-			/* skip the duplicated id */
+			
 			for (i = 0; i < opt.o_archive_id_used; i++) {
 				if (opt.o_archive_id[i] == val)
 					goto repeat;
 			}
-			/* extend the space */
+			
 			if (opt.o_archive_id_used >= opt.o_archive_id_cnt) {
 				int *tmp;
 
@@ -352,7 +352,7 @@ repeat:
 			opt.o_archive_id[opt.o_archive_id_used++] = val;
 			break;
 		}
-		case 'b': /* -b and -c have both a number with unit as arg */
+		case 'b': 
 		case 'c':
 			unit = ONE_MB;
 			if (llapi_parse_size(optarg, &value, &unit, 0) < 0) {
@@ -429,7 +429,7 @@ repeat:
 
 	switch (opt.o_action) {
 	case CA_IMPORT:
-		/* src dst mount_point */
+		
 		if (argc != optind + 3) {
 			rc = -EINVAL;
 			CT_ERROR(rc, "--import requires 2 arguments");
@@ -439,7 +439,7 @@ repeat:
 		opt.o_dst = argv[optind++];
 		break;
 	case CA_REBIND:
-		/* FID1 FID2 mount_point or FILE mount_point */
+		
 		if (argc == optind + 2) {
 			opt.o_src = argv[optind++];
 			opt.o_dst = NULL;
@@ -454,7 +454,7 @@ repeat:
 		break;
 	case CA_MAXSEQ:
 	default:
-		/* just mount point */
+		
 		break;
 	}
 
@@ -523,7 +523,7 @@ static int ct_mkdirat_p(int fd, char *path, mode_t mode)
 	return -errno;
 }
 
-/* XXX Despite the name, this is 'mkdir -p $(dirname path)' */
+
 static int ct_mkdir_p(const char *path)
 {
 	char *path2;
@@ -667,7 +667,7 @@ static int ct_copy_data(struct hsm_copyaction_private *hcp, const char *src,
 	time_t			 last_report_time;
 	int			 rc = 0;
 	double			 start_ct_now = ct_now();
-	/* Bandwidth Control */
+	
 	time_t			start_time;
 	time_t			now;
 	time_t			last_bw_print;
@@ -705,7 +705,7 @@ static int ct_copy_data(struct hsm_copyaction_private *hcp, const char *src,
 		return rc;
 	}
 
-	/* Don't read beyond a given extent */
+	
 	if (length > src_st.st_size - hai->hai_extent.offset)
 		length = src_st.st_size - hai->hai_extent.offset;
 
@@ -741,7 +741,7 @@ static int ct_copy_data(struct hsm_copyaction_private *hcp, const char *src,
 
 		rsize = pread(src_fd, buf, chunk, offset);
 		if (rsize == 0)
-			/* EOF */
+			
 			break;
 
 		if (rsize < 0) {
@@ -761,7 +761,7 @@ static int ct_copy_data(struct hsm_copyaction_private *hcp, const char *src,
 		offset += wsize;
 
 		now = time(NULL);
-		/* sleep if needed, to honor bandwidth limits */
+		
 		if (opt.o_bandwidth != 0) {
 			unsigned long long write_theory;
 
@@ -852,7 +852,7 @@ out:
 	return rc;
 }
 
-/* Copy file attributes from file src to file dest */
+
 static int ct_copy_attr(const char *src, const char *dst, int src_fd,
 			int dst_fd)
 {
@@ -900,14 +900,14 @@ static int ct_copy_xattr(const char *src, const char *dst, int src_fd,
 		if (rc < 0)
 			return -errno;
 
-		/* when we restore, we do not restore lustre xattr */
+		
 		if (!is_restore ||
 		    (strncmp(XATTR_TRUSTED_PREFIX, name,
 			     sizeof(XATTR_TRUSTED_PREFIX) - 1) != 0)) {
 			rc = fsetxattr(dst_fd, name, value, rc, 0);
 			CT_TRACE("fsetxattr of '%s' on '%s' rc=%d (%s)",
 				 name, dst, rc, strerror(errno));
-			/* lustre.* attrs aren't supported on other FS's */
+			
 			if (rc < 0 && errno != EOPNOTSUPP) {
 				rc = -errno;
 				CT_ERROR(rc, "cannot set extended attribute"
@@ -1090,7 +1090,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 	}
 
 	open_flags = O_WRONLY | O_NOFOLLOW;
-	/* If extent is specified, don't truncate an old archived copy */
+	
 	open_flags |= ((hai->hai_extent.length == -1) ? O_TRUNC : 0) | O_CREAT;
 
 	dst_fd = open(dst, open_flags, FILE_PERM);
@@ -1100,7 +1100,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 		goto fini_major;
 	}
 
-	/* saving stripe is not critical */
+	
 	rc = ct_save_stripe(src_fd, src, dst);
 	if (rc < 0)
 		CT_ERROR(rc, "cannot save file striping info of '%s' in '%s'",
@@ -1151,7 +1151,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 		char	 tmp_src[PATH_MAX + 8];
 		char	 tmp_dst[PATH_MAX + 8];
 
-		/* atomically replace old archived file */
+		
 		ct_path_archive(src, sizeof(src), opt.o_hsm_root,
 				&hai->hai_fid);
 		rc = rename(dst, src);
@@ -1160,7 +1160,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 			CT_ERROR(rc, "cannot rename '%s' to '%s'", dst, src);
 			goto fini_major;
 		}
-		/* rename lov file */
+		
 		snprintf(tmp_src, sizeof(tmp_src), "%s.lov", src);
 		snprintf(tmp_dst, sizeof(tmp_dst), "%s.lov", dst);
 		rc = rename(tmp_dst, tmp_src);
@@ -1200,7 +1200,7 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 			goto fini_minor;
 		}
 
-		/* Figure out how many parent dirs to symlink back */
+		
 		ptr = src;
 		while (*ptr)
 			(*ptr++ == '/') ? depth++ : 0;
@@ -1215,9 +1215,9 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 			rcf = rcf ? rcf : -errno;
 			goto fini_minor;
 		}
-		/* symlink already exists ? */
+		
 		sz = readlink(src, buf, sizeof(buf));
-		/* detect truncation */
+		
 		if (sz == sizeof(buf)) {
 			rcf = rcf ? rcf : -E2BIG;
 			CT_ERROR(rcf, "readlink '%s' truncated", src);
@@ -1233,11 +1233,11 @@ static int ct_archive(const struct hsm_action_item *hai, const long hal_flags)
 					rcf = rcf ? rcf : -errno;
 					goto fini_minor;
 				}
-				/* unlink old symlink done */
+				
 				CT_TRACE("remove old symlink '%s' pointing"
 					 " to '%s'", src, buf);
 			} else {
-				/* symlink already ok */
+				
 				CT_TRACE("symlink '%s' already pointing"
 					 " to '%s'", src, dst);
 				rcf = 0;
@@ -1299,7 +1299,7 @@ static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 	 * destination = data FID = volatile file
 	 */
 
-	/* build backend file name from released file FID */
+	
 	ct_path_archive(src, sizeof(src), opt.o_hsm_root, &hai->hai_fid);
 
 	rc = llapi_get_mdt_index_by_fid(opt.o_mnt_fd, &hai->hai_fid,
@@ -1325,7 +1325,7 @@ static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 	if (rc < 0)
 		goto fini;
 
-	/* get the FID of the volatile file */
+	
 	rc = llapi_hsm_action_get_dfid(hcp, &dfid);
 	if (rc < 0) {
 		CT_ERROR(rc, "restoring "DFID
@@ -1334,7 +1334,7 @@ static int ct_restore(const struct hsm_action_item *hai, const long hal_flags)
 		goto fini;
 	}
 
-	/* build volatile "file name", for messages */
+	
 	snprintf(dst, sizeof(dst), "{VOLATILE}="DFID, PFID(&dfid));
 
 	CT_TRACE("restoring data from '%s' to '%s'", src, dst);
@@ -1430,7 +1430,7 @@ static int ct_remove(const struct hsm_action_item *hai, const long hal_flags)
 		CT_ERROR(rc, "cannot unlink '%s'", attr);
 		err_minor++;
 
-		/* ignore the error when lov file does not exist. */
+		
 		if (rc == -ENOENT)
 			rc = 0;
 		else
@@ -1448,7 +1448,7 @@ static int ct_process_item(struct hsm_action_item *hai, const long hal_flags)
 	int	rc = 0;
 
 	if (opt.o_verbose >= LLAPI_MSG_INFO || opt.o_dry_run) {
-		/* Print the original path */
+		
 		char		path[PATH_MAX];
 		long long	recno = -1;
 		int		linkno = 0;
@@ -1467,7 +1467,7 @@ static int ct_process_item(struct hsm_action_item *hai, const long hal_flags)
 	}
 
 	switch (hai->hai_action) {
-	/* set err_major, minor inside these functions */
+	
 	case HSMA_ARCHIVE:
 		rc = ct_archive(hai, hal_flags);
 		break;
@@ -1576,11 +1576,11 @@ static int ct_import_one(const char *src, const char *dst)
 	rc = llapi_hsm_import(dst,
 			      opt.o_archive_id_used ? opt.o_archive_id[0] : 0,
 			      &st,
-			      0 /* default stripe_size */,
-			      -1 /* default stripe offset */,
-			      0 /* default stripe count */,
-			      0 /* stripe pattern (will be RAID0+RELEASED) */,
-			      NULL /* pool_name */,
+			      0 ,
+			      -1 ,
+			      0 ,
+			      0 ,
+			      NULL ,
 			      &fid);
 	if (rc < 0) {
 		CT_ERROR(rc, "cannot import '%s' from '%s'", dst, src);
@@ -1597,8 +1597,8 @@ static int ct_import_one(const char *src, const char *dst)
 
 	}
 
-	/* Lots of choices now: mv, ln, ln -s ? */
-	rc = link(src, newarc); /* hardlink */
+	
+	rc = link(src, newarc); 
 	if (rc < 0) {
 		rc = -errno;
 		CT_ERROR(rc, "cannot link '%s' to '%s'", newarc, src);
@@ -1654,7 +1654,7 @@ static int ct_import_recurse(const char *relpath)
 	if (relpath == NULL)
 		return -EINVAL;
 
-	/* Is relpath a FID? */
+	
 	rc = llapi_fid_parse(relpath, &import_fid, NULL);
 	if (!rc)
 		return ct_import_fid(&import_fid);
@@ -1667,7 +1667,7 @@ static int ct_import_recurse(const char *relpath)
 
 	dir = opendir(srcpath);
 	if (dir == NULL) {
-		/* Not a dir, or error */
+		
 		if (errno == ENOTDIR) {
 			/* Single regular file case, treat o_dst as absolute
 			   final location. */
@@ -1687,7 +1687,7 @@ static int ct_import_recurse(const char *relpath)
 		    !strcmp(ent->d_name, ".."))
 			continue;
 
-		/* New relative path */
+		
 		newpath = path_concat(relpath, ent->d_name);
 		if (newpath == NULL) {
 			err_major++;
@@ -1703,10 +1703,10 @@ static int ct_import_recurse(const char *relpath)
 
 			sprintf(src, "%s/%s", opt.o_hsm_root, newpath);
 			sprintf(dst, "%s/%s", opt.o_dst, newpath);
-			/* Make the target dir in the Lustre fs */
+			
 			rc = ct_mkdir_p(dst);
 			if (rc == 0) {
-				/* Import the file */
+				
 				rc = ct_import_one(src, dst);
 			} else {
 				CT_ERROR(rc, "ct_mkdir_p '%s' failed", dst);
@@ -1752,7 +1752,7 @@ static int ct_rebind_one(const struct lu_fid *old_fid,
 			CT_ERROR(rc, "cannot rename '%s' to '%s'", src, dst);
 			return -errno;
 		}
-		/* rename lov file */
+		
 		snprintf(src_attr, sizeof(src_attr), "%s.lov", src);
 		snprintf(dst_attr, sizeof(dst_attr), "%s.lov", dst);
 		if (rename(src_attr, dst_attr))
@@ -1801,13 +1801,13 @@ static int ct_rebind_list(const char *list)
 		return rc;
 	}
 
-	/* each line consists of 2 FID */
+	
 	while ((r = getline(&line, &line_size, filp)) != -1) {
 		struct lu_fid old_fid;
 		struct lu_fid new_fid;
 		char *next_fid;
 
-		/* Ignore empty and commented out ('#...') lines. */
+		
 		if (should_ignore_line(line))
 			continue;
 
@@ -1839,7 +1839,7 @@ error:			CT_ERROR(rc, "%s:%u: two FIDs expected in '%s'",
 	if (line)
 		free(line);
 
-	/* return 0 if all rebinds were successful */
+	
 	CT_TRACE("%u lines read from '%s', %u rebind successful", nl, list, ok);
 
 	return ok == nl ? 0 : -1;
@@ -1874,7 +1874,7 @@ static int ct_rebind(void)
 		return rc;
 	}
 
-	/* o_src is a list file */
+	
 	rc = ct_rebind_list(opt.o_src);
 
 	return rc;
@@ -1937,7 +1937,7 @@ static int ct_archive_upgrade_reg(int arc_fd, enum ct_archive_format ctaf,
 		goto out;
 	}
 
-	/* Create parent directory and try again. */
+	
 	split = strrchr(new_path, '/');
 
 	*split = '\0';
@@ -2046,7 +2046,7 @@ out:
  * ctaf. Prunes empty archive subdirectories. Idempotent. */
 static int ct_archive_upgrade(int arc_fd, enum ct_archive_format ctaf)
 {
-	/* FIXME Handle shadow tree. */
+	
 	CT_TRACE("upgrade archive to format %s", ct_archive_format_to_str(ctaf));
 
 	return ct_archive_upgrade_dir(arc_fd, ctaf, arc_fd, ".");
@@ -2136,13 +2136,13 @@ static void handler(int signal)
 	 * mtab entry remains. So this just makes mtab happier. */
 	llapi_hsm_copytool_unregister(&ctdata);
 
-	/* Also remove fifo upon signal as during normal/error exit */
+	
 	if (opt.o_event_fifo != NULL)
 		llapi_hsm_unregister_event_fifo(opt.o_event_fifo);
 	_exit(1);
 }
 
-/* Daemon waits for messages from the kernel; run it in the background. */
+
 static int ct_run(void)
 {
 	struct sigaction cleanup_sigaction;

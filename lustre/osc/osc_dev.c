@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_device, for OSC layer.
  *
@@ -17,7 +17,7 @@
 
 #define DEBUG_SUBSYSTEM S_OSC
 
-/* class_name2obd() */
+
 #include <obd_class.h>
 #include <lustre_osc.h>
 #include <uapi/linux/lustre/lustre_param.h>
@@ -132,7 +132,7 @@ struct lu_context_key osc_session_key = {
 };
 EXPORT_SYMBOL(osc_session_key);
 
-/* type constructor/destructor: osc_type_{init,fini,start,stop}(). */
+
 LU_TYPE_INIT_FINI(osc, &osc_key, &osc_session_key);
 
 static int osc_process_config(const struct lu_env *env, struct lu_device *d,
@@ -197,7 +197,7 @@ static struct lu_device *osc_device_alloc(const struct lu_env *env,
 	d = osc2lu_dev(osc);
 	d->ld_ops = &osc_lu_ops;
 
-	/* Setup OSC OBD */
+	
 	obd = class_name2obd(lustre_cfg_string(cfg, 0));
 	LASSERT(obd != NULL);
 	rc = osc_setup(obd, cfg);
@@ -231,4 +231,4 @@ struct lu_device_type osc_device_type = {
         .ldt_ctx_tags = LCT_CL_THREAD
 };
 
-/** @} osc */
+

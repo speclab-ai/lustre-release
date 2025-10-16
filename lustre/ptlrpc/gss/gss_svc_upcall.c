@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Modifications for Lustre
@@ -122,7 +122,7 @@ static inline unsigned long hash_mem(char *buf, int length, int bits)
 static __always_inline __u64 gss_hash_64(__u64 val, unsigned int bits)
 {
 	__u64 hash = val;
-	/*  Sigh, gcc can't optimise this alone like it does for 32 bits. */
+	
 	__u64 n = hash;
 
 	n <<= 18;
@@ -138,7 +138,7 @@ static __always_inline __u64 gss_hash_64(__u64 val, unsigned int bits)
 	n <<= 2;
 	hash += n;
 
-	/* High bits are more random, so use them. */
+	
 	return hash >> (64 - bits);
 }
 
@@ -165,7 +165,7 @@ static inline unsigned long hash_mem_64(char *buf, int length, int bits)
 
 	return hash >> (BITS_PER_LONG - bits);
 }
-#endif /* BITS_PER_LONG == 64 */
+#endif 
 
 /****************************************
  * rpc sec init (rsi) cache		*
@@ -233,7 +233,7 @@ static inline int rsi_entry_match(struct gss_rsi *rsi, struct gss_rsi *tmp)
 				 &rsi->si_in_token, &tmp->si_in_token);
 }
 
-/* Returns 0 to tell this is a match */
+
 static inline int rsi_upcall_compare(struct upcall_cache *cache,
 				     struct upcall_cache_entry *entry,
 				     __u64 key, void *args)
@@ -244,7 +244,7 @@ static inline int rsi_upcall_compare(struct upcall_cache *cache,
 	return rsi_entry_match(rsi1, rsi2);
 }
 
-/* See handle_channel_request() userspace for where the upcall data is read */
+
 static int rsi_do_upcall(struct upcall_cache *cache,
 			 struct upcall_cache_entry *entry)
 {
@@ -272,14 +272,14 @@ static int rsi_do_upcall(struct upcall_cache *cache,
 	CDEBUG(D_SEC, "rsi upcall '%s' on '%s'\n",
 	       cache->uc_upcall, cache->uc_name);
 
-	size = 24 + 1 + /* ue_key is uint64_t */
-		12 + 1 + /* si_lustre_svc is __u32*/
-		18 + 1 + /* si_nid4 is lnet_nid_t, hex with leading 0x */
-		18 + 1 + /* index is __u64, hex with leading 0x */
+	size = 24 + 1 + 
+		12 + 1 + 
+		18 + 1 + 
+		18 + 1 + 
 		strlen(rsi->si_nm_name) + 1 +
 		BASE64URL_CHARS(rsi->si_in_handle.len) + 1 +
 		BASE64URL_CHARS(rsi->si_in_token.len) + 1 +
-		1 + 1; /* eol */
+		1 + 1; 
 	if (size > MAX_ARG_STRLEN)
 		RETURN(-E2BIG);
 	OBD_ALLOC_LARGE(buffer, size);
@@ -291,7 +291,7 @@ static int rsi_do_upcall(struct upcall_cache *cache,
 	len = size;
 	blen = &len;
 
-	/* if in_handle is null, provide kernel suggestion */
+	
 	if (rsi->si_in_handle.len == 0)
 		index = gss_get_next_ctx_index();
 
@@ -343,14 +343,14 @@ static inline int rsi_downcall_compare(struct upcall_cache *cache,
 	char *p = mesg;
 	int len;
 
-	/* sid_val starts with handle and token */
+	
 
-	/* First, handle */
+	
 	len = gss_buffer_get(&mesg, &handle.len, &handle.data);
 	sid->sid_offset = mesg - p;
 	p = mesg;
 
-	/* Second, token */
+	
 	len = gss_buffer_get(&mesg, &token.len, &token.data);
 	sid->sid_offset += mesg - p;
 
@@ -382,7 +382,7 @@ static int rsi_parse_downcall(struct upcall_cache *cache,
 	 * rsi_downcall_compare(). sid_offset gives next field.
 	 */
 
-	/* out_handle */
+	
 	len = gss_buffer_read(&mesg, buf, mlen);
 	if (len < 0)
 		goto out;
@@ -391,7 +391,7 @@ static int rsi_parse_downcall(struct upcall_cache *cache,
 		goto out;
 	}
 
-	/* out_token */
+	
 	len = gss_buffer_read(&mesg, buf, mlen);
 	if (len < 0)
 		goto out;
@@ -503,7 +503,7 @@ static inline int rsc_entry_match(struct gss_rsc *rsc, struct gss_rsc *tmp)
 	return __rsc_entry_match(&rsc->sc_handle, &tmp->sc_handle);
 }
 
-/* Returns 0 to tell this is a match */
+
 static inline int rsc_upcall_compare(struct upcall_cache *cache,
 				     struct upcall_cache_entry *entry,
 				     __u64 key, void *args)
@@ -514,7 +514,7 @@ static inline int rsc_upcall_compare(struct upcall_cache *cache,
 	return rsc_entry_match(rsc1, rsc2);
 }
 
-/* rsc upcall is a no-op, we just need a valid entry */
+
 static inline int rsc_do_upcall(struct upcall_cache *cache,
 				struct upcall_cache_entry *entry)
 {
@@ -535,7 +535,7 @@ static inline int rsc_downcall_compare(struct upcall_cache *cache,
 	rawobj_t handle;
 	int len;
 
-	/* scd_val starts with handle */
+	
 	len = gss_buffer_get(&mesg, &handle.len, &handle.data);
 	scd->scd_offset = mesg - scd->scd_val;
 
@@ -580,7 +580,7 @@ static int rsc_parse_downcall(struct upcall_cache *cache,
 	 * scd_offset gives next field.
 	 */
 
-	/* context token */
+	
 	len = gss_buffer_read(&mesg, buf, mlen);
 	if (len < 0)
 		goto out;
@@ -607,7 +607,7 @@ out:
 	RETURN(status);
 }
 
-/* Returns 1 to tell the expired entry is acceptable */
+
 static inline int rsc_accept_expired(struct upcall_cache *cache,
 				     struct upcall_cache_entry *entry)
 {
@@ -619,7 +619,7 @@ static inline int rsc_accept_expired(struct upcall_cache *cache,
 
 	rsc = &entry->u.rsc;
 
-	/* entry not expired? */
+	
 	if (now < entry->ue_expire)
 		return 0;
 
@@ -760,7 +760,7 @@ int gss_svc_upcall_install_rvs_ctx(struct obd_import *imp,
 		rscp->sc_ctx.gsc_usr_root = 1;
 		break;
 	case LUSTRE_SP_MGS:
-		/* by convention, all 3 set to 1 means MGS */
+		
 		rscp->sc_ctx.gsc_usr_mds = 1;
 		rscp->sc_ctx.gsc_usr_oss = 1;
 		rscp->sc_ctx.gsc_usr_root = 1;
@@ -851,7 +851,7 @@ int gss_svc_upcall_handle_init(struct ptlrpc_request *req,
 	nodemap_test_nid(&req->rq_peer.nid, rsi.si_nm_name,
 			 sizeof(rsi.si_nm_name));
 
-	/* Note that context handle is always 0 for for INIT. */
+	
 	rc2 = rawobj_dup(&rsi.si_in_handle, &gw->gw_handle);
 	if (rc2) {
 		CERROR("%s: failed to duplicate context handle: rc = %d\n",
@@ -989,7 +989,7 @@ out:
 		rsi_entry_put(rsicache, rsip);
 	}
 	if (!IS_ERR_OR_NULL(rscp)) {
-		/* if anything went wrong, we don't keep the context too */
+		
 		if (rc != SECSVC_OK)
 			UC_CACHE_SET_INVALID(rscp->sc_uc_entry);
 		else
@@ -1059,7 +1059,7 @@ static int check_gssd_socket(void)
 	sun->sun_family = AF_UNIX;
 	strncpy(sun->sun_path, GSS_SOCKET_PATH, sizeof(sun->sun_path));
 
-	/* Try to connect to the socket */
+	
 	while (tries++ < 6) {
 		err = kernel_connect(sock, (struct sockaddr *)&sstorage,
 				     sizeof(sstorage), 0);
@@ -1090,9 +1090,9 @@ int __init gss_init_svc_upcall(void)
 
 	rsicache = upcall_cache_init(RSI_CACHE_NAME, RSI_UPCALL_PATH,
 				     UC_RSICACHE_HASH_SIZE,
-				     600, /* entry expire: 10 mn */
-				     30, /* acquire expire: 30 s */
-				     false, /* can't replay acquire */
+				     600, 
+				     30, 
+				     false, 
 				     &rsi_upcall_cache_ops);
 	if (IS_ERR(rsicache)) {
 		rc = PTR_ERR(rsicache);
@@ -1101,9 +1101,9 @@ int __init gss_init_svc_upcall(void)
 	}
 	rsccache = upcall_cache_init(RSC_CACHE_NAME, RSC_UPCALL_PATH,
 				     UC_RSCCACHE_HASH_SIZE,
-				     3600, /* replaced with one from mech */
-				     100, /* arbitrary, not used */
-				     false, /* can't replay acquire */
+				     3600, 
+				     100, 
+				     false, 
 				     &rsc_upcall_cache_ops);
 	if (IS_ERR(rsccache)) {
 		upcall_cache_cleanup(rsicache);

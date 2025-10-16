@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * FIEMAP data structures and flags. This header file will be used until
  * fiemap.h is available in the upstream kernel.
@@ -69,7 +69,7 @@ static inline unsigned int fiemap_size_to_count(__kernel_size_t array_size)
 	       sizeof(struct fiemap_extent);
 }
 
-#define FIEMAP_FLAG_DEVICE_ORDER 0x40000000 /* return device ordered mapping */
+#define FIEMAP_FLAG_DEVICE_ORDER 0x40000000 
 
 #ifdef FIEMAP_FLAGS_COMPAT
 #undef FIEMAP_FLAGS_COMPAT
@@ -79,4 +79,4 @@ static inline unsigned int fiemap_size_to_count(__kernel_size_t array_size)
 					    * Sets NO_DIRECT flag
 					    */
 
-#endif /* _LUSTRE_FIEMAP_H */
+#endif 

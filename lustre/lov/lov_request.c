@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LOV
@@ -177,8 +177,8 @@ lov_statfs_update(struct obd_statfs *osfs, struct obd_statfs *lov_sfs,
 		memcpy(osfs, lov_sfs, sizeof(*lov_sfs));
 	} else {
 		if (osfs->os_bsize != lov_sfs->os_bsize) {
-			/* assume all block sizes are always powers of 2 */
-			/* get the bits difference */
+			
+			
 			tmp = osfs->os_bsize | lov_sfs->os_bsize;
 			for (shift = 0; shift < 32; shift++) {
 				if (tmp & 1) {
@@ -241,7 +241,7 @@ lov_statfs_update(struct obd_statfs *osfs, struct obd_statfs *lov_sfs,
 		osfs->os_namelen = min(osfs->os_namelen, lov_sfs->os_namelen);
 		osfs->os_maxbytes = min(osfs->os_maxbytes,
 					lov_sfs->os_maxbytes);
-		/* OR failure states, AND performance states */
+		
 		osfs->os_state |= lov_sfs->os_state & ~OS_STATFS_DOWNGRADE;
 		osfs->os_state &= lov_sfs->os_state & OS_STATFS_UPGRADE;
 	}
@@ -315,7 +315,7 @@ int lov_prep_statfs_set(struct obd_device *obd, struct obd_info *oinfo,
 	set->set_obd = obd;
 	set->set_oi = oinfo;
 
-	/* We only get block data from the OBD */
+	
 	lov_foreach_tgt(lov, tgt) {
 		struct lov_request *req;
 

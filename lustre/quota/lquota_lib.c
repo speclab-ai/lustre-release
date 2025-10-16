@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -31,7 +31,7 @@ static struct lu_kmem_descr lquota_caches[] = {
 	}
 };
 
-/* register lquota key */
+
 LU_KEY_INIT_FINI(lquota, struct lquota_thread_info);
 LU_CONTEXT_KEY_DEFINE(lquota, LCT_MD_THREAD | LCT_DT_THREAD | LCT_LOCAL);
 LU_KEY_INIT_GENERIC(lquota);
@@ -76,7 +76,7 @@ struct dt_object *acct_obj_lookup(const struct lu_env *env,
 
 	lu_local_obj_fid(&qti->qti_fid, qtype2acct_oid(type));
 
-	/* lookup the accounting object */
+	
 	obj = dt_locate(env, dev, &qti->qti_fid);
 	if (IS_ERR(obj))
 		RETURN(obj);
@@ -89,7 +89,7 @@ struct dt_object *acct_obj_lookup(const struct lu_env *env,
 	if (obj->do_index_ops == NULL) {
 		int rc;
 
-		/* set up indexing operations */
+		
 		rc = obj->do_ops->do_index_try(env, obj, &dt_acct_features);
 		if (rc) {
 			CERROR("%s: failed to set up indexing operations for %s"
@@ -130,7 +130,7 @@ static struct dt_object *quota_obj_lookup(const struct lu_env *env,
 	qti->qti_fid.f_seq = FID_SEQ_QUOTA;
 	qti->qti_fid.f_ver = 0;
 
-	/* lookup the quota object */
+	
 	obj = dt_locate(env, dev, &qti->qti_fid);
 	if (IS_ERR(obj))
 		RETURN(obj);
@@ -143,7 +143,7 @@ static struct dt_object *quota_obj_lookup(const struct lu_env *env,
 	if (obj->do_index_ops == NULL) {
 		int rc;
 
-		/* set up indexing operations */
+		
 		rc = obj->do_ops->do_index_try(env, obj,
 					       &dt_quota_slv_features);
 		if (rc) {
@@ -236,7 +236,7 @@ int lquota_obj_iter(const struct lu_env *env, struct dt_device *dev,
 				break;
 			}
 
-			/* reach the end */
+			
 			if (rc > 0) {
 				if (is_md)
 					oqctl->qc_iter_md_offset = 0;
@@ -317,7 +317,7 @@ next:
 			GOTO(out_fini, rc);
 		}
 
-		/* reach the end */
+		
 		if (rc > 0) {
 			if (is_md)
 				oqctl->qc_iter_md_offset = 0;
@@ -382,10 +382,10 @@ int lquotactl_slv(const struct lu_env *env, struct dt_device *dev,
 	if (oqctl->qc_type < 0 || oqctl->qc_type >= LL_MAXQUOTAS)
 		RETURN(-EOPNOTSUPP);
 
-	/* qc_id is a 32-bit field while a key has 64 bits */
+	
 	key = oqctl->qc_id;
 
-	/* Step 1: collect accounting information */
+	
 
 	obj = acct_obj_lookup(env, dev, oqctl->qc_type);
 	if (IS_ERR(obj))
@@ -404,7 +404,7 @@ int lquotactl_slv(const struct lu_env *env, struct dt_device *dev,
 		GOTO(out, rc);
 	}
 
-	/* lookup record storing space accounting information for this ID */
+	
 	rc = dt_lookup(env, obj, (struct dt_rec *)&qti->qti_acct_rec,
 		       (struct dt_key *)&key);
 	if (rc < 0)
@@ -417,7 +417,7 @@ int lquotactl_slv(const struct lu_env *env, struct dt_device *dev,
 
 	dt_object_put(env, obj);
 
-	/* Step 2: collect enforcement information */
+	
 
 	if (lu_device_is_md(dev->dd_lu_dev.ld_site->ls_top_dev))
 		obj = quota_obj_lookup(env, dev, LQUOTA_RES_MD, oqctl->qc_type);
@@ -430,7 +430,7 @@ int lquotactl_slv(const struct lu_env *env, struct dt_device *dev,
 		GOTO(out, rc = 0);
 
 	memset(&qti->qti_slv_rec, 0, sizeof(qti->qti_slv_rec));
-	/* lookup record storing enforcement information for this ID */
+	
 	rc = dt_lookup(env, obj, (struct dt_rec *)&qti->qti_slv_rec,
 		       (struct dt_key *)&key);
 	if (rc < 0 && rc != -ENOENT)
@@ -590,7 +590,7 @@ static void __exit lquota_exit(void)
 	lu_context_key_degister(&lquota_thread_key);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Quota");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

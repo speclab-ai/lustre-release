@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2024-2025, Amazon and/or its affiliates. All rights reserved.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Yonatan Nachum <ynachum@amazon.com>
  */
@@ -497,7 +497,7 @@ kefalnd_establish_conn(struct kefa_conn *conn)
 
 	if (conn->type == KEFA_CONN_TYPE_LB) {
 		conn->remote_epoch = conn->efa_ni->ni_epoch;
-		/* TODO: initialize self connection caps and requests */
+		
 		rc = kefalnd_init_self_conn_data_qps(conn);
 		if (rc)
 			return rc;
@@ -602,7 +602,7 @@ kefalnd_lookup_or_init_conn(struct kefa_ni *efa_ni, struct lnet_nid *nid,
 	if (IS_ERR(new_conn))
 		return new_conn;
 
-	/* Retry with write lock */
+	
 	write_lock_irqsave(&efa_ni->conn_lock, flags);
 	conn = kefalnd_lookup_conn_locked(efa_ni, nid, conn_type);
 	if (conn) {
@@ -611,7 +611,7 @@ kefalnd_lookup_or_init_conn(struct kefa_ni *efa_ni, struct lnet_nid *nid,
 		return conn;
 	}
 
-	/* Add the new connection atomically so anyone will see it */
+	
 	kefalnd_add_conn_locked(efa_ni, new_conn);
 	write_unlock_irqrestore(&efa_ni->conn_lock, flags);
 
@@ -706,7 +706,7 @@ kefalnd_handle_conn_req_ack(struct kefa_ni *efa_ni,
 	spin_lock_irqsave(&conn->lock, flags);
 	kefalnd_set_conn_state_locked(conn, KEFA_CONN_ACTIVE);
 
-	/* Post all pending TXs on the connection. */
+	
 	kefalnd_conn_post_tx_locked(conn);
 	spin_unlock_irqrestore(&conn->lock, flags);
 
@@ -748,8 +748,8 @@ kefalnd_handle_conn_req(struct kefa_ni *efa_ni,
 	spin_lock_irqsave(&conn->lock, flags);
 	switch (conn->state) {
 	case KEFA_CONN_PROBE_EFA_PASSIVE:
-		/* Regular path */
-		/* TODO: validate requests make sense */
+		
+		
 		conn->requests = request_msg->requests;
 		conn->proto_ver = proto_ver;
 
@@ -767,7 +767,7 @@ kefalnd_handle_conn_req(struct kefa_ni *efa_ni,
 		break;
 
 	case KEFA_CONN_ACTIVE:
-		/* If the connection was already active and valid on probe. */
+		
 		spin_unlock_irqrestore(&conn->lock, flags);
 		break;
 
@@ -828,7 +828,7 @@ kefalnd_handle_conn_probe_resp(struct kefa_ni *efa_ni, struct lnet_nid *srcnid,
 	rc = kefalnd_efa_status_to_errno(probe_resp_msg->status);
 	if (rc) {
 		if (rc == -EPROTONOSUPPORT) {
-			/* Check for supported proto versions overlap */
+			
 			if (min_t(u8, EFALND_MAX_PROTO_VER, max_proto) <
 			    max_t(u8, EFALND_MIN_PROTO_VER, min_proto)) {
 				hstatus = LNET_MSG_STATUS_LOCAL_ERROR;
@@ -1032,7 +1032,7 @@ kefalnd_handle_conn_probe(struct kefa_ni *efa_ni,
 		return -EINVAL;
 	}
 
-	/* We check if TX connection is valid as well and if not remove it */
+	
 	init_conn = kefalnd_lookup_conn(efa_ni, srcnid,
 					KEFA_CONN_TYPE_INITIATOR);
 	if (init_conn) {
@@ -1131,7 +1131,7 @@ kefalnd_cleanup_conn_txs(struct kefa_conn *conn, struct list_head *cancel_tx)
 
 	spin_lock_irqsave(&conn->lock, flags);
 
-	/* Tail of the list holds LRU elements */
+	
 	list_for_each_entry_safe(tx, temp_tx, &conn->active_tx, list_node) {
 		time64_t tx_send_time = atomic64_read(&tx->send_time);
 
@@ -1191,7 +1191,7 @@ kefalnd_cleanup_ni_conns(struct kefa_ni *efa_ni)
 
 	read_unlock_irqrestore(&efa_ni->conn_lock, flags);
 
-	/* No idle connections */
+	
 	if (num_idle == 0)
 		return;
 

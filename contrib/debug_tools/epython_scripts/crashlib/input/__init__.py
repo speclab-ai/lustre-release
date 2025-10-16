@@ -158,7 +158,6 @@ def iter_rangestr(*args, **kwargs):
 if __name__ == '__main__':
     import unittest
 
-    # toint()
     class Test_toint(unittest.TestCase):
         def test_base_zero(self):
             self.assertEqual(toint('0b10', 0), 2)
@@ -194,7 +193,6 @@ if __name__ == '__main__':
             self.assertEqual(toint('1gk', 17), 33*binary_suffixes['k'])
 
 
-    # hex2int()
     class Test_hex2int(unittest.TestCase):
         """Verify the hex2int() function"""
         def test_explicit_base(self):
@@ -208,7 +206,6 @@ if __name__ == '__main__':
             self.assertEqual(hex2int('0b10'), 2832)
 
 
-    # iter_rangelist()
     class Test_iter_rangelist(unittest.TestCase):
         """Test both iter_rangelist and the underlying to_rangelist."""
         def test_good_single_ranges(self):

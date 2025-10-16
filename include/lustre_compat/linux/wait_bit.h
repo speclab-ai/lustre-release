@@ -1,9 +1,9 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 #ifndef __LIBCFS_LINUX_WAIT_BIT_H
 #define __LIBCFS_LINUX_WAIT_BIT_H
 
-/* Make sure we can see if we have TASK_NOLOAD */
+
 #include <linux/sched.h>
 #ifdef HAVE_WAIT_BIT_HEADER_H
 #include <linux/wait_bit.h>
@@ -21,7 +21,7 @@ struct wait_bit_queue_entry {
 	(!__builtin_constant_p(state) ||                                        \
 		state == TASK_INTERRUPTIBLE || state == TASK_KILLABLE)          \
 
-#endif /* ! HAVE_WAIT_BIT_HEADER_H */
+#endif 
 
 #ifndef HAVE_CLEAR_AND_WAKE_UP_BIT
 /**
@@ -36,11 +36,11 @@ struct wait_bit_queue_entry {
 static inline void clear_and_wake_up_bit(int bit, void *word)
 {
 	clear_bit_unlock(bit, word);
-	/* See wake_up_bit() for which memory barrier you need to use. */
+	
 	smp_mb__after_atomic();
 	wake_up_bit(word, bit);
 }
-#endif /* ! HAVE_CLEAR_AND_WAKE_UP_BIT */
+#endif 
 
 #ifndef HAVE_WAIT_VAR_EVENT
 extern void __init wait_bit_init(void);
@@ -54,7 +54,7 @@ extern wait_queue_head_t *__var_waitqueue(void *p);
 	__label__ __out;						\
 	wait_queue_head_t *__wq_head = __var_waitqueue(var);		\
 	struct wait_bit_queue_entry __wbq_entry;			\
-	long __ret = ret; /* explicit shadow */				\
+	long __ret = ret; 				\
 									\
 	init_wait_var_entry(&__wbq_entry, var,				\
 			    exclusive ? WQ_FLAG_EXCLUSIVE : 0);		\
@@ -114,7 +114,7 @@ do {									\
 		__ret = __wait_var_event_timeout(var, condition, timeout); \
 	__ret;								\
 })
-#else /* !HAVE_WAIT_VAR_EVENT */
+#else 
 /* linux-3.10.0-1062.el7 defines wait_var_event_timeout() using
  * __wait_cond_timeout(), but doesn't define __wait_cond_timeout !!!
  */
@@ -126,7 +126,7 @@ do {									\
 		__ret = 1;						\
 	__cond || !__ret;						\
 })
-# endif /* __wait_cond_timeout */
+# endif 
 
-#endif /* ! HAVE_WAIT_VAR_EVENT */
-#endif /* __LICBFS_LINUX_WAIT_BIT_H */
+#endif 
+#endif 

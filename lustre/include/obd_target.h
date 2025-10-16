@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __OBD_TARGET_H
@@ -16,10 +16,10 @@
 #include <lprocfs_status.h>
 #include <obd.h>
 
-/* server-side individual type definitions */
+
 
 #define OBT_MAGIC       0xBDDECEAE
-/* hold common fields for "target" device */
+
 struct obd_device_target {
 	__u32			obt_magic;
 	__u32			obt_instance;
@@ -29,7 +29,7 @@ struct obd_device_target {
 	struct nm_config_file	*obt_nodemap_config_file;
 };
 
-#define OBJ_SUBDIR_COUNT 32 /* set to zero for no subdirs */
+#define OBJ_SUBDIR_COUNT 32 
 
 struct echo_obd {
 	struct obd_device_target	eo_obt;
@@ -99,4 +99,4 @@ static inline struct ost_obd *obd2ost(struct obd_device *obd)
 	return ost;
 }
 
-#endif /* __OBD_TARGET_H */
+#endif 

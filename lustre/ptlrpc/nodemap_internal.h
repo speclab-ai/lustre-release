@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (C) 2013, Trustees of Indiana University
@@ -18,88 +18,88 @@
 
 #define DEFAULT_NODEMAP "default"
 
-/* Default nobody uid, gid and projid values */
+
 #define NODEMAP_NOBODY_UID 65534
 #define NODEMAP_NOBODY_GID 65534
 #define NODEMAP_NOBODY_PROJID 65534
 
-/* fileset id of primary fileset */
+
 #define NODEMAP_FILESET_PRIM_ID 0
 
 struct lprocfs_static_vars;
 
-/* nodemap root proc directory under fs/lustre */
+
 extern struct proc_dir_entry *proc_lustre_nodemap_root;
-/* flag if nodemap is active */
+
 extern bool nodemap_active;
 
 extern struct mutex active_config_lock;
 extern struct nodemap_config *active_config;
 
 struct lu_nid_range {
-	/* unique id set by mgs */
+	
 	unsigned int		 rn_id;
-	/* lu_nodemap containing this range */
+	
 	struct lu_nodemap	*rn_nodemap;
-	/* list for nodemap */
+	
 	struct list_head	 rn_list;
-	/* list for nodemap config */
+	
 	struct list_head	 rn_collect;
-	/* nid interval tree */
+	
 	struct lnet_nid		 rn_start,
 				 rn_end;
 	lnet_nid_t		 rn_subtree_last;
-	/* Large NID netmask */
+	
 	u8			 rn_netmask;
 	/* The nidlist corresponding to the nidrange constructed from
 	 * rn_start and rn_netmask
 	 */
 	struct list_head	 rn_nidlist;
 	struct rb_node		 rn_rb;
-	/* range tree where this NID range is located */
+	
 	struct nodemap_range_tree *rn_tree;
-	/* sub ranges included in this NID range */
+	
 	struct nodemap_range_tree rn_subtree;
 };
 
 struct lu_idmap {
-	/* uid/gid of client */
+	
 	__u32		id_client;
-	/* uid/gid on filesystem */
+	
 	__u32		id_fs;
-	/* tree mapping client ids to filesystem ids */
+	
 	struct rb_node	id_client_to_fs;
-	/* tree mappung filesystem to client */
+	
 	struct rb_node	id_fs_to_client;
 };
 
 struct lu_nodemap_fileset_info {
-	/* nodemap id */
+	
 	__u32		nfi_nm_id;
-	/* subid of the fileset header in the IAM */
+	
 	__u32		nfi_subid_header;
-	/* starting subid of the fileset fragments in the IAM */
+	
 	__u32		nfi_subid_fragments;
-	/* number of fileset fragments */
+	
 	__u32		nfi_fragment_cnt;
-	/* the fileset */
+	
 	const char	*nfi_fileset;
-	/* fileset read-only flag */
+	
 	bool		nfi_ro;
-	/* fileset is alternate */
+	
 	bool		nfi_alt;
 };
 
 struct lu_fileset_alt {
-	/* alt fileset id */
+	
 	__u32		nfa_id;
-	/* fileset path */
+	
 	char		*nfa_path;
-	/* fileset path size */
+	
 	__u32		nfa_path_size;
-	/* fileset read-only */
+	
 	bool		nfa_ro;
-	/* rb tree node */
+	
 	struct rb_node	nfa_rb;
 };
 
@@ -279,4 +279,4 @@ int nodemap_idx_nodemap_activate(bool value);
 int nodemap_index_read(struct lu_env *env, struct nm_config_file *ncf,
 		       struct idx_info *ii, const struct lu_rdpg *rdpg);
 
-#endif  /* _NODEMAP_INTERNAL_H */
+#endif  

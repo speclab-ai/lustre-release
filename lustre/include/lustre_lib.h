@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Basic Lustre library routines.
  */
@@ -30,7 +30,7 @@
 #include <uapi/linux/lustre/lustre_ver.h>
 #include <uapi/linux/lustre/lustre_cfg.h>
 
-/* target.c */
+
 struct ptlrpc_request;
 struct obd_export;
 struct lu_target;
@@ -73,6 +73,6 @@ void target_send_reply(struct ptlrpc_request *req, int rc, int fail_id);
 	       fmt, page, page->mapping, page->index, (long)page->flags, \
 	       page_count(page), page_private(page), ## arg)
 
-/** @} lib */
 
-#endif /* _LUSTRE_LIB_H */
+
+#endif 

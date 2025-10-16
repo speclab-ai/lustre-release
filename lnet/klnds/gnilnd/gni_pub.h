@@ -1,6 +1,6 @@
-/* SPDX-License-Identifier: GPL-2.0 */
 
-/* Copyright 2007 Cray Inc. All Rights Reserved. */
+
+
 
 /* Contains the user interface to the GNI. Kernel and User level.
  *
@@ -19,17 +19,17 @@ extern "C"
 #include <stdint.h>
 #endif
 
-/* Common definitions for the kernel and the user level */
+
 
 /**
  * GNI version control macros and values
  * Example: 0x00400080
  */
-/* Reflects major releases of GNI SW stack (e.g. support for new HW) */
+
 #define GNI_MAJOR_REV 0x00
-/* Reflects any uGNI API changes */
+
 #define GNI_MINOR_REV 0x5c
-/* Reflects any uGNI library code changes */
+
 #define GNI_CODE_REV  0x0000
 
 #define GNI_GET_MAJOR(value) ((value >> 24) & 0xFF)
@@ -38,10 +38,10 @@ extern "C"
 #define GNI_VERSION ((GNI_MAJOR_REV << 24) | (GNI_MINOR_REV << 16) | GNI_CODE_REV)
 #define GNI_VERSION_CHECK(maj,min,code) (((maj) << 24) | ((min) << 16) | code)
 
-/* Definitions of base versions where uGNI features are introduced */
+
 #define GNI_VERSION_FMA_SHARING  0x5b0000
 
-/* Specifies input and output arguments to GNI functions */
+
 #define IN
 #define OUT
 #define INOUT
@@ -93,7 +93,7 @@ enum {
  * cbps_mdd should be set at zero for now */
 #define GNI_JOB_CREATE_COOKIE(pkey, cbps_mdd) (((uint32_t)(pkey) << GNI_COOKIE_PKEY_SHIFT) | (((cbps_mdd) & GNI_COOKIE_CBPS_MDD_MASK) << GNI_COOKIE_CBPS_MDD_SHIFT))
 
-/* Registered memory handle */
+
 typedef struct gni_mem_handle {
 	uint64_t        qword1;
 	uint64_t        qword2;
@@ -109,7 +109,7 @@ typedef enum gni_mem_handle_attr {
 	GNI_MEMHNDL_ATTR_CLONE
 } gni_mem_handle_attr_t;
 
-/* Opaque handles */
+
 typedef struct gni_nic  *gni_nic_handle_t;
 typedef struct gni_cdm  *gni_cdm_handle_t;
 typedef struct gni_ep   *gni_ep_handle_t;
@@ -118,7 +118,7 @@ typedef struct gni_err  *gni_err_handle_t;
 typedef struct gni_msgq *gni_msgq_handle_t;
 typedef struct gni_ce   *gni_ce_handle_t;
 
-/* Short messaging types */
+
 typedef enum gni_smsg_type {
 	GNI_SMSG_TYPE_INVALID = 0,
 	GNI_SMSG_TYPE_MBOX,
@@ -127,7 +127,7 @@ typedef enum gni_smsg_type {
 
 #define GNI_SMSG_ANY_TAG 0xFF
 
-/* Short messaging attributes */
+
 typedef struct gni_smsg_attr {
 	gni_smsg_type_t         msg_type;
 	void                    *msg_buffer;
@@ -138,11 +138,11 @@ typedef struct gni_smsg_attr {
 	uint32_t                msg_maxsize;
 } gni_smsg_attr_t;
 
-/* Maximum SMSG retransmit count default values */
+
 
 #define FMA_SMSG_MAX_RETRANS_DEFAULT    10
 
-/* Return codes */
+
 typedef enum gni_return {
 	GNI_RC_SUCCESS = 0,
 	GNI_RC_NOT_DONE,
@@ -160,11 +160,11 @@ typedef enum gni_return {
 	GNI_RC_ERROR_NOMEM
 } gni_return_t;
 
-/* Communication domain modes */
+
 #define GNI_CDM_MODE_FORK_NOCOPY        0x00000001
 #define GNI_CDM_MODE_FORK_FULLCOPY      0x00000002
-#define GNI_CDM_MODE_FORK_PARTCOPY      0x00000004 /* default */
-/* Do not kill the application for any type of error. For instance, when debugging. */
+#define GNI_CDM_MODE_FORK_PARTCOPY      0x00000004 
+
 #define GNI_CDM_MODE_ERR_NO_KILL        0x00000008
 /* Kill the application for any TRANSACTION errors. By default only a
  * subset will kill an application. The rest of the errors should be
@@ -213,7 +213,7 @@ typedef enum gni_return {
  */
 #define GNI_CDM_MODE_DUAL_EVENTS        0x00001000
 
-/* This mode alters the FMA_SHARED behavior wrt. DLA */
+
 #define GNI_CDM_MODE_DLA_ENABLE_FORWARDING   0x00004000
 #define GNI_CDM_MODE_DLA_DISABLE_FORWARDING  0x00008000
 /* By default, newly created CDM's are assigned a dedicated FMA descriptor.  If
@@ -224,7 +224,7 @@ typedef enum gni_return {
  * node. */
 #define GNI_CDM_MODE_FMA_DEDICATED      0x00010000
 #define GNI_CDM_MODE_FMA_SHARED         0x00020000
-/* This mode enables the use of cached AMO operations */
+
 #define GNI_CDM_MODE_CACHED_AMO_ENABLED 0x00040000
 /* This CDM flag allows applications to request placing the CQs in
  * host memory closest to the NIC. This currently means on die0, but
@@ -242,14 +242,14 @@ typedef enum gni_return {
 
 #define GNI_CDM_MODE_MASK                   0x0FFFFFFF
 
-/* Upper 4 CDM mode bits are reserved for internal ugni/dmapp usage. */
+
 #define GNI_CDM_MODE_PRIV_RESERVED_1        0x10000000
 #define GNI_CDM_MODE_PRIV_RESERVED_2        0x20000000
 #define GNI_CDM_MODE_PRIV_RESERVED_3        0x40000000
 #define GNI_CDM_MODE_PRIV_RESERVED_4        0x80000000
 #define GNI_CDM_MODE_PRIV_MASK              0xF0000000
 
-/* Endpoint machine state */
+
 typedef enum gni_post_state{
 	GNI_POST_PENDING,
 	GNI_POST_COMPLETED,
@@ -259,16 +259,16 @@ typedef enum gni_post_state{
 	GNI_POST_REMOTE_DATA
 } gni_post_state_t;
 
-/* The memory attributes associated with the region.*/
+
 #define GNI_MEM_READWRITE               0x00000000
 #define GNI_MEM_READ_ONLY               0x00000001
-/* Directive to use Virtual MDH while registering this memory region. (user level)*/
+
 #define GNI_MEM_USE_VMDH                0x00000002
-/* Directive to use GART while registering the memory region */
+
 #define GNI_MEM_USE_GART                0x00000004
-/* Directive not to use GART or MRT as memory is physically contiguous */
+
 #define GNI_MEM_PHYS_CONT               0x00000008
-/* Valid only for gni_mem_register_segments(): segments are 4KB each, described by phys. addresses */
+
 #define GNI_MEM_PHYS_SEGMENTS           0x00000010
 /* Instruct NIC to enforce strict PI ordering.  On Gemini based platforms, this
    flag disables the HT "Non-Posted Pass Posted Writes" rule.  On Aries based
@@ -287,7 +287,7 @@ typedef enum gni_post_state{
    requests not originated in the network.  Note: this flag is overridden by
    the GNI_MEM_STRICT_PI_ORDERING flag. */
 #define GNI_MEM_RELAXED_PI_ORDERING     0x00000100
-/* Only reserve the PTE range for this block of memory. */
+
 #define GNI_MEM_RESERVE_REGION          0x00000200
 /* Update the PTE range for the provided block of memory. The first
  * call with this flag will make MDH live. The application may receive
@@ -304,32 +304,32 @@ typedef enum gni_post_state{
  * will operate like the old MDDs did, and be subject to the same
  * limits. */
 #define GNI_MEM_MDD_DEDICATED           0x00001000
-/* Directive that the memory region is GPU-resident memory. */
-#define GNI_MEM_CUDA                    0x01000000              /* Cuda device memory */
+
+#define GNI_MEM_CUDA                    0x01000000              
 
 /* External memory, or resident memory in other PCI devices. These are
  * helper macros, as the different types of external memory have bits
  * assigned to them via the above memory flags */
-#define GNI_EXMEM_FLAGS(flag)           ((flag) >> 24)          /* Isolate exmem type */
+#define GNI_EXMEM_FLAGS(flag)           ((flag) >> 24)          
 #define GNI_MEM_IS_EXTERNAL(flag)       (GNI_EXMEM_FLAGS(flag))
 
 typedef struct gni_mem_segment {
-	uint64_t        address; /* address of the segment */
-	uint64_t        length;  /* size of the segment in bytes */
+	uint64_t        address; 
+	uint64_t        length;  
 } gni_mem_segment_t;
 
-/* CQ modes/attributes of operation */
+
 typedef uint32_t gni_cq_mode_t;
 
-/* The CQ will be created with blocking disabled. */
+
 #define GNI_CQ_NOBLOCK          0x00000000
-/* The CQ will be created with blocking enabled. */
+
 #define GNI_CQ_BLOCKING         0x00000001
-/* the EMULATED mode is reserved for internal uGNI use only. */
+
 #define GNI_CQ_EMULATED         0x00000002
-/* EMULATED mode cannot be created with blocking enabled. */
+
 #define GNI_CQ_EMULATED_INVALID (GNI_CQ_EMULATED | GNI_CQ_BLOCKING)
-/* use physical pages when creating the CQ, by default memory mapped space is used.  */
+
 #define GNI_CQ_PHYS_PAGES       0x00000004
 /* This is a "dummy CQ", as in, the CQ will never be checked for
  * events. It acts like a sink to avoid errors on the sender CQ for
@@ -346,7 +346,7 @@ typedef uint32_t gni_cq_mode_t;
 /* Macros and enum for processing data component of CQEs associated with
    PostRDMA, PostFma, Short message transactions */
 
-/* Completion queue entry (size of type field is 2 bits) */
+
 #define GNI_CQ_EVENT_TYPE_POST  0x0ULL
 #define GNI_CQ_EVENT_TYPE_SMSG  0x1ULL
 #define GNI_CQ_EVENT_TYPE_DMAPP 0x2ULL
@@ -380,7 +380,7 @@ void     gni_cq_set_type(gni_cq_entry_t *,uint64_t);
 void     gni_cq_clr_status(gni_cq_entry_t *);
 unsigned gni_cq_status_dla_overflow(gni_cq_entry_t);
 unsigned gni_cq_bte_enq_status(gni_cq_entry_t);
-#endif /* GNI_INLINE_CQ_FUNCTIONS */
+#endif 
 
 #define GNI_CQ_GET_DATA    gni_cq_get_data
 #define GNI_CQ_GET_SOURCE  gni_cq_get_source
@@ -430,7 +430,7 @@ unsigned gni_cq_bte_enq_status(gni_cq_entry_t);
 #define GNI_CQ_STATUS_DLA_OVERFLOW(entry)   (gni_cq_status_dla_overflow(entry))
 #define GNI_CQ_BTE_ENQ_STATUS(entry)  gni_cq_bte_enq_status(entry)
 
-/* Transaction types (for type field of post descriptor) */
+
 typedef enum gni_post_type {
 	GNI_POST_RDMA_PUT = 1,
 	GNI_POST_RDMA_GET,
@@ -444,173 +444,173 @@ typedef enum gni_post_type {
 	GNI_POST_AMO_W_FLAG
 } gni_post_type_t;
 
-/* FMA Get or Fetching AMO Flagged Response */
-#define GNI_FMA_FLAGGED_RESPONSE_SIZE   4     /* size in bytes */
 
-/* FMA command types (for amo_cmd field of post descriptor) */
+#define GNI_FMA_FLAGGED_RESPONSE_SIZE   4     
+
+
 typedef enum gni_fma_cmd_type {
-	/************ AMOs with GET semantics **************/
-	GNI_FMA_ATOMIC_FADD    = 0x008,    /* atomic FETCH and ADD */
-	GNI_FMA_ATOMIC_FADD_C  = 0x018,    /* cached atomic FETCH and ADD */
-	GNI_FMA_ATOMIC_FAND    = 0x009,    /* atomic FETCH and AND */
-	GNI_FMA_ATOMIC_FAND_C  = 0x019,    /* cached atomic FETCH and AND */
-	GNI_FMA_ATOMIC_FOR     = 0x00A,    /* atomic FETCH and OR */
-	GNI_FMA_ATOMIC_FOR_C   = 0x01A,    /* cached atomic FETCH and OR */
-	GNI_FMA_ATOMIC_FXOR    = 0x00B,    /* atomic FETCH and XOR */
-	GNI_FMA_ATOMIC_FXOR_C  = 0x01B,    /* cached atomic FETCH and XOR */
-	GNI_FMA_ATOMIC_FAX     = 0x00C,    /* atomic FETCH AND exclusive OR */
-	GNI_FMA_ATOMIC_FAX_C   = 0x01C,    /* cached atomic FETCH AND exclusive OR */
-	GNI_FMA_ATOMIC_CSWAP   = 0x00D,    /* atomic COMPARE and SWAP */
-	GNI_FMA_ATOMIC_CSWAP_C = 0x01D,    /* cached atomic COMPARE and SWAP */
-	/* Second generation commands ( GET semantics ) */
-	GNI_FMA_ATOMIC2_FAND_S    = 0x240,    /* atomic fetching logical AND (32-bit operands) */
-	GNI_FMA_ATOMIC2_FAND      = 0x041,    /* atomic FETCH and AND */
-	GNI_FMA_ATOMIC2_FAND_SC   = 0x260,    /* cached atomic fetching logical AND (32-bit operands) */
-	GNI_FMA_ATOMIC2_FAND_C    = 0x061,    /* cached atomic FETCH and AND */
-	GNI_FMA_ATOMIC2_FOR_S     = 0x242,    /* atomic fetching logical OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_FOR       = 0x043,    /* atomic FETCH and OR */
-	GNI_FMA_ATOMIC2_FOR_SC    = 0x262,    /* cached atomic fetching logical OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_FOR_C     = 0x063,    /* cached atomic FETCH and OR */
-	GNI_FMA_ATOMIC2_FXOR_S    = 0x244,    /* atomic fetching logical Exclusive OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_FXOR      = 0x045,    /* atomic FETCH exclusive OR */
-	GNI_FMA_ATOMIC2_FXOR_SC   = 0x264,    /* cached atomic fetching logical Exclusive OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_FXOR_C    = 0x065,    /* cached atomic FETCH exclusive OR */
-	GNI_FMA_ATOMIC2_FSWAP_S   = 0x246,    /* atomic fetching Swap (32-bit operands) */
-	GNI_FMA_ATOMIC2_FSWAP     = 0x047,    /* atomic FETCH and SWAP */
-	GNI_FMA_ATOMIC2_FSWAP_SC  = 0x266,    /* cached atomic fetching Swap (32-bit operands) */
-	GNI_FMA_ATOMIC2_FSWAP_C   = 0x067,    /* cached atomic FETCH and SWAP */
-	GNI_FMA_ATOMIC2_FAX_S     = 0x248,    /* atomic fetching logical AND Exclusive OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_FAX       = 0x049,    /* atomic FETCH AND exclusive OR */
-	GNI_FMA_ATOMIC2_FAX_SC    = 0x268,    /* cached atomic fetching logical AND Exclusive OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_FAX_C     = 0x069,    /* cached atomic FETCH AND exclusive OR */
-	GNI_FMA_ATOMIC2_FCSWAP_S  = 0x24A,    /* atomic fetching Compare and Swap (32-bit operands) */
-	GNI_FMA_ATOMIC2_FCSWAP    = 0x04B,    /* atomic Fetching COMPARE and SWAP */
-	GNI_FMA_ATOMIC2_FCSWAP_SC = 0x26A,    /* cached atomic fetching Compare and Swap (32-bit operands) */
-	GNI_FMA_ATOMIC2_FCSWAP_C  = 0x06B,    /* cached atomic Fetching COMPARE and SWAP */
-	GNI_FMA_ATOMIC2_FIMIN_S   = 0x250,    /* atomic fetching integer signed two’s complement Minimum (32-bit operands) */
-	GNI_FMA_ATOMIC2_FIMIN     = 0x051,    /* atomic Fetching integer signed two's complement Minimum */
-	GNI_FMA_ATOMIC2_FIMIN_SC  = 0x270,    /* cached atomic fetching int signed two’s complement Minimum (32-bit operands) */
-	GNI_FMA_ATOMIC2_FIMIN_C   = 0x071,    /* cached atomic Fetching integer signed two's complement Minimum */
-	GNI_FMA_ATOMIC2_FIMAX_S   = 0x252,    /* atomic fetching integer signed two’s complement Maximum (32-bit operands) */
-	GNI_FMA_ATOMIC2_FIMAX     = 0x053,    /* atomic Fetching integer signed two's complement Maximum */
-	GNI_FMA_ATOMIC2_FIMAX_SC  = 0x272,    /* cached atomic fetching int signed two’s complement Maximum (32-bit operands) */
-	GNI_FMA_ATOMIC2_FIMAX_C   = 0x073,    /* cached atomic Fetching integer signed two's complement Maximum */
-	GNI_FMA_ATOMIC2_FIADD_S   = 0x254,    /* atomic fetching integer two’s complement Addition (32-bit operands) */
-	GNI_FMA_ATOMIC2_FIADD     = 0x055,    /* atomic Fetching integer two's complement Addition */
-	GNI_FMA_ATOMIC2_FIADD_SC  = 0x274,    /* cached atomic fetching integer two’s complement Addition (32-bit operands) */
-	GNI_FMA_ATOMIC2_FIADD_C   = 0x075,    /* cached atomic Fetching integer two's complement Addition */
-	GNI_FMA_ATOMIC2_FFPMIN_S  = 0x258,    /* atomic fetching floating point Minimum (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FFPMIN    = 0x059,    /* atomic Fetching floating point Minimum (double precision) */
-	GNI_FMA_ATOMIC2_FFPMIN_SC = 0x278,    /* cached atomic fetching floating point Minimum (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FFPMIN_C  = 0x079,    /* cached atomic Fetching floating point Minimum (double precision) */
-	GNI_FMA_ATOMIC2_FFPMAX_S  = 0x25A,    /* atomic fetching floating point Maximum (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FFPMAX    = 0x05B,    /* atomic Fetching floating point Maximum (double precision) */
-	GNI_FMA_ATOMIC2_FFPMAX_SC = 0x27A,    /* cached atomic fetching floating point Maximum (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FFPMAX_C  = 0x07B,    /* cached atomic Fetching floating point Maximum (double precision) */
-	GNI_FMA_ATOMIC2_FFPADD_S  = 0x25C,    /* atomic fetching floating point Addition (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FFPADD    = 0x05D,    /* atomic Fetching floating point Addition (double precision) */
-	GNI_FMA_ATOMIC2_FFPADD_SC = 0x27C,    /* cached atomic fetching floating point Addition (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FFPADD_C  = 0x07D,    /* cached atomic Fetching floating point Addition (double precision) */
-	/************ AMOs with PUT semantics ***************/
-	GNI_FMA_ATOMIC_ADD     = 0x108,    /* atomic ADD */
-	GNI_FMA_ATOMIC_ADD_C   = 0x118,    /* cached atomic ADD */
-	GNI_FMA_ATOMIC_AND     = 0x109,    /* atomic AND */
-	GNI_FMA_ATOMIC_AND_C   = 0x119,    /* cached atomic AND */
-	GNI_FMA_ATOMIC_OR      = 0x10A,    /* atomic OR */
-	GNI_FMA_ATOMIC_OR_C    = 0x11A,    /* cached atomic OR */
-	GNI_FMA_ATOMIC_XOR     = 0x10B,    /* atomic exclusive OR */
-	GNI_FMA_ATOMIC_XOR_C   = 0x11B,    /* cached atomic exclusive OR */
-	GNI_FMA_ATOMIC_AX      = 0x10C,    /* atomic AND exclusive OR */
-	GNI_FMA_ATOMIC_AX_C    = 0x11C,    /* cached atomic AND exclusive OR */
-	/* Second generation commands ( PUT semantics ) */
-	GNI_FMA_ATOMIC2_AND_S    = 0x340,    /* atomic AND (32-bit operands) */
-	GNI_FMA_ATOMIC2_AND      = 0x141,    /* atomic AND */
-	GNI_FMA_ATOMIC2_AND_SC   = 0x360,    /* cached atomic AND (32-bit operands) */
-	GNI_FMA_ATOMIC2_AND_C    = 0x161,    /* cached atomic AND */
-	GNI_FMA_ATOMIC2_OR_S     = 0x342,    /* atomic OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_OR       = 0x143,    /* atomic  OR */
-	GNI_FMA_ATOMIC2_OR_SC    = 0x362,    /* cached atomic OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_OR_C     = 0x163,    /* cached atomic  OR */
-	GNI_FMA_ATOMIC2_XOR_S    = 0x344,    /* atomic Exclusive OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_XOR      = 0x145,    /* atomic exclusive OR */
-	GNI_FMA_ATOMIC2_XOR_SC   = 0x364,    /* cached atomic Exclusive OR (32-bit operands) */
-	GNI_FMA_ATOMIC2_XOR_C    = 0x165,    /* cached atomic exclusive OR */
-	GNI_FMA_ATOMIC2_SWAP_S   = 0x346,    /* atomic Swap (Store) (32-bit operands) */
-	GNI_FMA_ATOMIC2_SWAP     = 0x147,    /* atomic SWAP */
-	GNI_FMA_ATOMIC2_SWAP_SC  = 0x366,    /* cached atomic Swap (Store) (32-bit operands) */
-	GNI_FMA_ATOMIC2_SWAP_C   = 0x167,    /* cached atomic SWAP */
-	GNI_FMA_ATOMIC2_AX_S     = 0x348,    /* atomic AND Exclusive OR (32-bit operands), not valid for FMA_LAUNCH */
-	GNI_FMA_ATOMIC2_AX       = 0x149,    /* atomic AND exclusive OR */
-	GNI_FMA_ATOMIC2_AX_SC    = 0x368,    /* cached atomic AND Exclusive OR (32-bit operands), not valid for FMA_LAUNCH */
-	GNI_FMA_ATOMIC2_AX_C     = 0x169,    /* cached atomic AND exclusive OR */
-	GNI_FMA_ATOMIC2_CSWAP_S  = 0x34A,    /* atomic Compare and Swap (Conditional Store) (32-bit operands), not valid for FMA_LAUNCH */
-	GNI_FMA_ATOMIC2_CSWAP    = 0x14B,    /* atomic COMPARE and SWAP */
-	GNI_FMA_ATOMIC2_CSWAP_SC = 0x36A,    /* cached atomic Compare and Swap (Conditional Store) (32-bit operands), not valid for FMA_LAUNCH */
-	GNI_FMA_ATOMIC2_CSWAP_C  = 0x16B,    /* cached atomic COMPARE and SWAP */
-	GNI_FMA_ATOMIC2_IMIN_S   = 0x350,    /* atomic integer signed two’s complement Minimum (32-bit operands) */
-	GNI_FMA_ATOMIC2_IMIN     = 0x151,    /* atomic integer signed two's complement Minimum */
-	GNI_FMA_ATOMIC2_IMIN_SC  = 0x370,    /* cached atomic integer signed two’s complement Minimum (32-bit operands) */
-	GNI_FMA_ATOMIC2_IMIN_C   = 0x171,    /* cached atomic integer signed two's complement Minimum */
-	GNI_FMA_ATOMIC2_IMAX_S   = 0x352,    /* atomic integer signed two’s complement Maximum (32-bit operands) */
-	GNI_FMA_ATOMIC2_IMAX     = 0x153,    /* atomic integer signed two's complement Maximum */
-	GNI_FMA_ATOMIC2_IMAX_SC  = 0x372,    /* cached atomic integer signed two’s complement Maximum (32-bit operands) */
-	GNI_FMA_ATOMIC2_IMAX_C   = 0x173,    /* cached atomic integer signed two's complement Maximum */
-	GNI_FMA_ATOMIC2_IADD_S   = 0x354,    /* atomic integer two’s complement Addition (32-bit operands) */
-	GNI_FMA_ATOMIC2_IADD     = 0x155,    /* atomic integer two's complement Addition */
-	GNI_FMA_ATOMIC2_IADD_SC  = 0x374,    /* cached atomic integer two’s complement Addition (32-bit operands) */
-	GNI_FMA_ATOMIC2_IADD_C   = 0x175,    /* cached atomic integer two's complement Addition */
-	GNI_FMA_ATOMIC2_FPMIN_S  = 0x358,    /* atomic floating point Minimum (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FPMIN    = 0x159,    /* atomic floating point Minimum (double precision) */
-	GNI_FMA_ATOMIC2_FPMIN_SC = 0x378,    /* cached atomic floating point Minimum (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FPMIN_C  = 0x179,    /* cached atomic floating point Minimum (double precision) */
-	GNI_FMA_ATOMIC2_FPMAX_S  = 0x35A,    /* atomic floating point Maximum (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FPMAX    = 0x15B,    /* atomic floating point Maximum (double precision) */
-	GNI_FMA_ATOMIC2_FPMAX_SC = 0x37A,    /* cached atomic floating point Maximum (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FPMAX_C  = 0x17B,    /* cached atomic floating point Maximum (double precision) */
-	GNI_FMA_ATOMIC2_FPADD_S  = 0x35C,    /* atomic floating point Addition (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FPADD    = 0x15D,    /* atomic floating point Addition (double precision) */
-	GNI_FMA_ATOMIC2_FPADD_SC = 0x37C,    /* cached atomic floating point Addition (single precision) (32-bit operands) */
-	GNI_FMA_ATOMIC2_FPADD_C  = 0x17D,    /* cached atomic floating point Addition (double precision) */
+	
+	GNI_FMA_ATOMIC_FADD    = 0x008,    
+	GNI_FMA_ATOMIC_FADD_C  = 0x018,    
+	GNI_FMA_ATOMIC_FAND    = 0x009,    
+	GNI_FMA_ATOMIC_FAND_C  = 0x019,    
+	GNI_FMA_ATOMIC_FOR     = 0x00A,    
+	GNI_FMA_ATOMIC_FOR_C   = 0x01A,    
+	GNI_FMA_ATOMIC_FXOR    = 0x00B,    
+	GNI_FMA_ATOMIC_FXOR_C  = 0x01B,    
+	GNI_FMA_ATOMIC_FAX     = 0x00C,    
+	GNI_FMA_ATOMIC_FAX_C   = 0x01C,    
+	GNI_FMA_ATOMIC_CSWAP   = 0x00D,    
+	GNI_FMA_ATOMIC_CSWAP_C = 0x01D,    
+	
+	GNI_FMA_ATOMIC2_FAND_S    = 0x240,    
+	GNI_FMA_ATOMIC2_FAND      = 0x041,    
+	GNI_FMA_ATOMIC2_FAND_SC   = 0x260,    
+	GNI_FMA_ATOMIC2_FAND_C    = 0x061,    
+	GNI_FMA_ATOMIC2_FOR_S     = 0x242,    
+	GNI_FMA_ATOMIC2_FOR       = 0x043,    
+	GNI_FMA_ATOMIC2_FOR_SC    = 0x262,    
+	GNI_FMA_ATOMIC2_FOR_C     = 0x063,    
+	GNI_FMA_ATOMIC2_FXOR_S    = 0x244,    
+	GNI_FMA_ATOMIC2_FXOR      = 0x045,    
+	GNI_FMA_ATOMIC2_FXOR_SC   = 0x264,    
+	GNI_FMA_ATOMIC2_FXOR_C    = 0x065,    
+	GNI_FMA_ATOMIC2_FSWAP_S   = 0x246,    
+	GNI_FMA_ATOMIC2_FSWAP     = 0x047,    
+	GNI_FMA_ATOMIC2_FSWAP_SC  = 0x266,    
+	GNI_FMA_ATOMIC2_FSWAP_C   = 0x067,    
+	GNI_FMA_ATOMIC2_FAX_S     = 0x248,    
+	GNI_FMA_ATOMIC2_FAX       = 0x049,    
+	GNI_FMA_ATOMIC2_FAX_SC    = 0x268,    
+	GNI_FMA_ATOMIC2_FAX_C     = 0x069,    
+	GNI_FMA_ATOMIC2_FCSWAP_S  = 0x24A,    
+	GNI_FMA_ATOMIC2_FCSWAP    = 0x04B,    
+	GNI_FMA_ATOMIC2_FCSWAP_SC = 0x26A,    
+	GNI_FMA_ATOMIC2_FCSWAP_C  = 0x06B,    
+	GNI_FMA_ATOMIC2_FIMIN_S   = 0x250,    
+	GNI_FMA_ATOMIC2_FIMIN     = 0x051,    
+	GNI_FMA_ATOMIC2_FIMIN_SC  = 0x270,    
+	GNI_FMA_ATOMIC2_FIMIN_C   = 0x071,    
+	GNI_FMA_ATOMIC2_FIMAX_S   = 0x252,    
+	GNI_FMA_ATOMIC2_FIMAX     = 0x053,    
+	GNI_FMA_ATOMIC2_FIMAX_SC  = 0x272,    
+	GNI_FMA_ATOMIC2_FIMAX_C   = 0x073,    
+	GNI_FMA_ATOMIC2_FIADD_S   = 0x254,    
+	GNI_FMA_ATOMIC2_FIADD     = 0x055,    
+	GNI_FMA_ATOMIC2_FIADD_SC  = 0x274,    
+	GNI_FMA_ATOMIC2_FIADD_C   = 0x075,    
+	GNI_FMA_ATOMIC2_FFPMIN_S  = 0x258,    
+	GNI_FMA_ATOMIC2_FFPMIN    = 0x059,    
+	GNI_FMA_ATOMIC2_FFPMIN_SC = 0x278,    
+	GNI_FMA_ATOMIC2_FFPMIN_C  = 0x079,    
+	GNI_FMA_ATOMIC2_FFPMAX_S  = 0x25A,    
+	GNI_FMA_ATOMIC2_FFPMAX    = 0x05B,    
+	GNI_FMA_ATOMIC2_FFPMAX_SC = 0x27A,    
+	GNI_FMA_ATOMIC2_FFPMAX_C  = 0x07B,    
+	GNI_FMA_ATOMIC2_FFPADD_S  = 0x25C,    
+	GNI_FMA_ATOMIC2_FFPADD    = 0x05D,    
+	GNI_FMA_ATOMIC2_FFPADD_SC = 0x27C,    
+	GNI_FMA_ATOMIC2_FFPADD_C  = 0x07D,    
+	
+	GNI_FMA_ATOMIC_ADD     = 0x108,    
+	GNI_FMA_ATOMIC_ADD_C   = 0x118,    
+	GNI_FMA_ATOMIC_AND     = 0x109,    
+	GNI_FMA_ATOMIC_AND_C   = 0x119,    
+	GNI_FMA_ATOMIC_OR      = 0x10A,    
+	GNI_FMA_ATOMIC_OR_C    = 0x11A,    
+	GNI_FMA_ATOMIC_XOR     = 0x10B,    
+	GNI_FMA_ATOMIC_XOR_C   = 0x11B,    
+	GNI_FMA_ATOMIC_AX      = 0x10C,    
+	GNI_FMA_ATOMIC_AX_C    = 0x11C,    
+	
+	GNI_FMA_ATOMIC2_AND_S    = 0x340,    
+	GNI_FMA_ATOMIC2_AND      = 0x141,    
+	GNI_FMA_ATOMIC2_AND_SC   = 0x360,    
+	GNI_FMA_ATOMIC2_AND_C    = 0x161,    
+	GNI_FMA_ATOMIC2_OR_S     = 0x342,    
+	GNI_FMA_ATOMIC2_OR       = 0x143,    
+	GNI_FMA_ATOMIC2_OR_SC    = 0x362,    
+	GNI_FMA_ATOMIC2_OR_C     = 0x163,    
+	GNI_FMA_ATOMIC2_XOR_S    = 0x344,    
+	GNI_FMA_ATOMIC2_XOR      = 0x145,    
+	GNI_FMA_ATOMIC2_XOR_SC   = 0x364,    
+	GNI_FMA_ATOMIC2_XOR_C    = 0x165,    
+	GNI_FMA_ATOMIC2_SWAP_S   = 0x346,    
+	GNI_FMA_ATOMIC2_SWAP     = 0x147,    
+	GNI_FMA_ATOMIC2_SWAP_SC  = 0x366,    
+	GNI_FMA_ATOMIC2_SWAP_C   = 0x167,    
+	GNI_FMA_ATOMIC2_AX_S     = 0x348,    
+	GNI_FMA_ATOMIC2_AX       = 0x149,    
+	GNI_FMA_ATOMIC2_AX_SC    = 0x368,    
+	GNI_FMA_ATOMIC2_AX_C     = 0x169,    
+	GNI_FMA_ATOMIC2_CSWAP_S  = 0x34A,    
+	GNI_FMA_ATOMIC2_CSWAP    = 0x14B,    
+	GNI_FMA_ATOMIC2_CSWAP_SC = 0x36A,    
+	GNI_FMA_ATOMIC2_CSWAP_C  = 0x16B,    
+	GNI_FMA_ATOMIC2_IMIN_S   = 0x350,    
+	GNI_FMA_ATOMIC2_IMIN     = 0x151,    
+	GNI_FMA_ATOMIC2_IMIN_SC  = 0x370,    
+	GNI_FMA_ATOMIC2_IMIN_C   = 0x171,    
+	GNI_FMA_ATOMIC2_IMAX_S   = 0x352,    
+	GNI_FMA_ATOMIC2_IMAX     = 0x153,    
+	GNI_FMA_ATOMIC2_IMAX_SC  = 0x372,    
+	GNI_FMA_ATOMIC2_IMAX_C   = 0x173,    
+	GNI_FMA_ATOMIC2_IADD_S   = 0x354,    
+	GNI_FMA_ATOMIC2_IADD     = 0x155,    
+	GNI_FMA_ATOMIC2_IADD_SC  = 0x374,    
+	GNI_FMA_ATOMIC2_IADD_C   = 0x175,    
+	GNI_FMA_ATOMIC2_FPMIN_S  = 0x358,    
+	GNI_FMA_ATOMIC2_FPMIN    = 0x159,    
+	GNI_FMA_ATOMIC2_FPMIN_SC = 0x378,    
+	GNI_FMA_ATOMIC2_FPMIN_C  = 0x179,    
+	GNI_FMA_ATOMIC2_FPMAX_S  = 0x35A,    
+	GNI_FMA_ATOMIC2_FPMAX    = 0x15B,    
+	GNI_FMA_ATOMIC2_FPMAX_SC = 0x37A,    
+	GNI_FMA_ATOMIC2_FPMAX_C  = 0x17B,    
+	GNI_FMA_ATOMIC2_FPADD_S  = 0x35C,    
+	GNI_FMA_ATOMIC2_FPADD    = 0x15D,    
+	GNI_FMA_ATOMIC2_FPADD_SC = 0x37C,    
+	GNI_FMA_ATOMIC2_FPADD_C  = 0x17D,    
 } gni_fma_cmd_type_t;
 
-/* CE command types */
+
 typedef enum gni_ce_cmd_type {
-	GNI_FMA_CE_AND_S        = 0x0ull,   /* Logical AND, short */
-	GNI_FMA_CE_AND          = 0x1ull,   /* Logical AND */
-	GNI_FMA_CE_OR_S         = 0x2ull,   /* Logical OR, short */
-	GNI_FMA_CE_OR           = 0x3ull,   /* Logical OR */
-	GNI_FMA_CE_XOR_S        = 0x4ull,   /* Logical XOR, short */
-	GNI_FMA_CE_XOR          = 0x5ull,   /* Logical XOR */
-	GNI_FMA_CE_IMIN_LIDX_S  = 0x10ull,  /* Integer signed two's complement minimum, short (lowest index returned) */
-	GNI_FMA_CE_IMIN_LIDX    = 0x11ull,  /* Integer signed two's complement minimum (lowest index returned) */
-	GNI_FMA_CE_IMAX_LIDX_S  = 0x12ull,  /* Integer signed two's complement maximum, short (lowest index returned) */
-	GNI_FMA_CE_IMAX_LIDX    = 0x13ull,  /* Integer signed two's complement maximum (lowest index returned) */
-	GNI_FMA_CE_IADD_S       = 0x14ull,  /* Integer two's complement ADD, short */
-	GNI_FMA_CE_IADD         = 0x15ull,  /* Integer two's complement ADD */
-	GNI_FMA_CE_FPMIN_LIDX_S = 0x18ull,  /* Floating point minimum, short (lowest index returned) */
-	GNI_FMA_CE_FPMIN_LIDX   = 0x19ull,  /* Floating point minimum (lowest index returned) */
-	GNI_FMA_CE_FPMAX_LIDX_S = 0x1aull,  /* Floating point maximum, short (lowest index returned) */
-	GNI_FMA_CE_FPMAX_LIDX   = 0x1bull,  /* Floating point maximum (lowest index returned) */
-	GNI_FMA_CE_FPADD_S      = 0x1cull,  /* Floating point ADD, short */
-	GNI_FMA_CE_FPADD        = 0x1dull,  /* Floating point ADD */
-	GNI_FMA_CE_IMIN_GIDX_S  = 0x30ull,  /* Integer signed two's complement minimum, short (greatest index returned) */
-	GNI_FMA_CE_IMIN_GIDX    = 0x31ull,  /* Integer signed two's complement minimum (greatest index returned) */
-	GNI_FMA_CE_IMAX_GIDX_S  = 0x32ull,  /* Integer signed two's complement maximum, short (greatest index returned) */
-	GNI_FMA_CE_IMAX_GIDX    = 0x33ull,  /* Integer signed two's complement maximum (greatest index returned) */
-	GNI_FMA_CE_FPMIN_GIDX_S = 0x38ull,  /* Floating point minimum, short (greatest index returned) */
-	GNI_FMA_CE_FPMIN_GIDX   = 0x39ull,  /* Floating point minimum (greatest index returned) */
-	GNI_FMA_CE_FPMAX_GIDX_S = 0x3aull,  /* Floating point maximum, short (greatest index returned) */
-	GNI_FMA_CE_FPMAX_GIDX   = 0x3bull,  /* Floating point maximum (greatest index returned) */
+	GNI_FMA_CE_AND_S        = 0x0ull,   
+	GNI_FMA_CE_AND          = 0x1ull,   
+	GNI_FMA_CE_OR_S         = 0x2ull,   
+	GNI_FMA_CE_OR           = 0x3ull,   
+	GNI_FMA_CE_XOR_S        = 0x4ull,   
+	GNI_FMA_CE_XOR          = 0x5ull,   
+	GNI_FMA_CE_IMIN_LIDX_S  = 0x10ull,  
+	GNI_FMA_CE_IMIN_LIDX    = 0x11ull,  
+	GNI_FMA_CE_IMAX_LIDX_S  = 0x12ull,  
+	GNI_FMA_CE_IMAX_LIDX    = 0x13ull,  
+	GNI_FMA_CE_IADD_S       = 0x14ull,  
+	GNI_FMA_CE_IADD         = 0x15ull,  
+	GNI_FMA_CE_FPMIN_LIDX_S = 0x18ull,  
+	GNI_FMA_CE_FPMIN_LIDX   = 0x19ull,  
+	GNI_FMA_CE_FPMAX_LIDX_S = 0x1aull,  
+	GNI_FMA_CE_FPMAX_LIDX   = 0x1bull,  
+	GNI_FMA_CE_FPADD_S      = 0x1cull,  
+	GNI_FMA_CE_FPADD        = 0x1dull,  
+	GNI_FMA_CE_IMIN_GIDX_S  = 0x30ull,  
+	GNI_FMA_CE_IMIN_GIDX    = 0x31ull,  
+	GNI_FMA_CE_IMAX_GIDX_S  = 0x32ull,  
+	GNI_FMA_CE_IMAX_GIDX    = 0x33ull,  
+	GNI_FMA_CE_FPMIN_GIDX_S = 0x38ull,  
+	GNI_FMA_CE_FPMIN_GIDX   = 0x39ull,  
+	GNI_FMA_CE_FPMAX_GIDX_S = 0x3aull,  
+	GNI_FMA_CE_FPMAX_GIDX   = 0x3bull,  
 } gni_ce_cmd_type_t;
 
-/* CE result structure */
+
 typedef struct gni_ce_result {
 	uint64_t        control;
 	uint64_t        result1;
 	uint64_t        result2;
 } gni_ce_result_t;
 
-/* CE result operations */
+
 uint64_t gni_ce_res_get_status(gni_ce_result_t *);
 uint64_t gni_ce_res_status_ok(gni_ce_result_t *);
 uint64_t gni_ce_res_get_fpe(gni_ce_result_t *);
@@ -621,29 +621,29 @@ uint64_t gni_ce_res_get_red_id(gni_ce_result_t *);
 #define GNI_CE_RES_GET_FPE      gni_ce_res_get_fpe
 #define GNI_CE_RES_GET_RED_ID   gni_ce_res_get_red_id
 
-/* CE floating point exceptions  */
+
 #define GNI_CE_FPE_OP_INVAL     0x1
 #define GNI_CE_FPE_OFLOW        0x2
 #define GNI_CE_FPE_UFLOW        0x4
 #define GNI_CE_FPE_PRECISION    0x8
 
-/* CE child types */
+
 typedef enum {
 	GNI_CE_CHILD_UNUSED,
 	GNI_CE_CHILD_VCE,
 	GNI_CE_CHILD_PE
 } gni_ce_child_t;
 
-/* VCE channel modes, used during GNI_CeConfigure(...) */
-/* Rounding mode, specify 1 */
+
+
 #define GNI_CE_MODE_ROUND_UP            0x00000001
 #define GNI_CE_MODE_ROUND_DOWN          0x00000002
 #define GNI_CE_MODE_ROUND_NEAR          0x00000004
 #define GNI_CE_MODE_ROUND_ZERO          0x00000008
-/* CQE delivery mode, specify 1 */
+
 #define GNI_CE_MODE_CQE_ONCOMP          0x00000010
 #define GNI_CE_MODE_CQE_ONERR           0x00000040
-/* Routing mode, specify 1 */
+
 #define GNI_CE_MODE_RC_NMIN_HASH        0x00000080
 #define GNI_CE_MODE_RC_MIN_HASH         0x00000100
 #define GNI_CE_MODE_RC_MNON_HASH        0x00000200
@@ -651,21 +651,21 @@ typedef enum {
 
 #define GNI_CE_MAX_CHILDREN             32
 
-/* CQ event types */
+
 #define GNI_CQMODE_SILENT       0x0000
 #define GNI_CQMODE_LOCAL_EVENT  0x0001
 #define GNI_CQMODE_GLOBAL_EVENT 0x0002
 #define GNI_CQMODE_REMOTE_EVENT 0x0004
 #define GNI_CQMODE_DUAL_EVENTS  ( GNI_CQMODE_LOCAL_EVENT | GNI_CQMODE_GLOBAL_EVENT )
 
-/* Delivery modes */
+
 #define GNI_DLVMODE_PERFORMANCE 0x0000
 #define GNI_DLVMODE_NO_ADAPT    0x0001
 #define GNI_DLVMODE_NO_HASH     0x0002
 #define GNI_DLVMODE_NO_RADAPT   0x0004
 #define GNI_DLVMODE_IN_ORDER    ( GNI_DLVMODE_NO_ADAPT | GNI_DLVMODE_NO_HASH )
 
-/* Aries delivery modes */
+
 #define GNI_DLVMODE_MNON_HASH   GNI_DLVMODE_IN_ORDER
 #define GNI_DLVMODE_NMIN_HASH   0x0008
 #define GNI_DLVMODE_MIN_HASH    0x0010
@@ -676,8 +676,8 @@ typedef enum {
 
 #define GNI_DLVMODE_ORDERED_TAIL 0x0100
 
-/* Error Event Categories */
-/* WARNING: DO NOT CHANGE THESE UNLESS YOU CHANGE ghal_err_cat.h */
+
+
 #define GNI_ERRMASK_CORRECTABLE_MEMORY   BIT(0)
 #define GNI_ERRMASK_CRITICAL             BIT(1)
 #define GNI_ERRMASK_TRANSACTION          BIT(2)
@@ -687,16 +687,16 @@ typedef enum {
 #define GNI_ERRMASK_DIAG_ONLY            BIT(6)
 #define GNI_ERRMASK_UNKNOWN_TRANSACTION  BIT(7)
 
-/* RDMA mode */
-/* local_addr is a physical address (kernel only) */
+
+
 #define GNI_RDMAMODE_PHYS_ADDR  0x0001
 /* instruction to Gemini to wait for all responses from this post and all
  * previous posts before processing the next RDMA descriptor */
 #define GNI_RDMAMODE_FENCE      0x0002
-/* Disable Aries write combining of incoming GET data */
+
 #define GNI_RDMAMODE_GETWC_DIS  0x0004
 
-/* Post CE modes, used during GNI_PostFma(...) */
+
 /* Use two operands (only meaningful for single operand collective operations).
  * Single operand CE operations are all variations of AND, OR, XOR and ADD.  */
 #define GNI_CEMODE_TWO_OP               BIT(0)
@@ -713,7 +713,7 @@ typedef enum {
  * inexact result floating point exception. */
 #define GNI_CEMODE_FPE_PRECISION        BIT(4)
 
-/* Maximum length in bytes of a datagram transaction */
+
 #define GNI_DATAGRAM_MAXSIZE    128
 
 /*
@@ -722,89 +722,89 @@ typedef enum {
  */
 #define GNI_SMSG_MAX_SIZE       65535
 
-/* Transaction descriptor */
+
 typedef struct gni_post_descriptor {
-	/********************** Control **********************/
-	/* points to the next descriptor in the link list */
+	
+	
 	void *next_descr;
-	/* points to the previous descriptor in the link list */
+	
 	void *prev_descr;
-	/* holds an ID of the transaction assigned by the user */
+	
 	uint64_t post_id;
-	/* error status of the transaction */
+	
 	uint64_t status;
-	/* completion flag of the transaction */
+	
 	uint16_t cq_mode_complete;
-	/********************** Common ***********************/
-	/* type of the transaction */
+	
+	
 	gni_post_type_t type;
 	/* instruction to generate CQ events of the following types
 	   (see GNI_CQMODE_xxx)*/
 	uint16_t cq_mode;
-	/* delivery mode (see GNI_DLVMODE_xxx) */
+	
 	uint16_t dlvr_mode;
-	/* address of region on the local node: source for Put, target for Get */
+	
 	uint64_t local_addr;
-	/* local memory handle */
+	
 	gni_mem_handle_t local_mem_hndl;
-	/* address of the remote region: target for Put, source for Get */
+	
 	uint64_t remote_addr;
-	/* remote memory handle */
+	
 	gni_mem_handle_t remote_mem_hndl;
-	/* number of bytes to move during the transaction */
+	
 	uint64_t length;
-	/****************** RDMA specific ********************/
-	/* see GNI_RDMAMODE_xxx */
+	
+	
 	uint16_t rdma_mode;
-	/* defines src. CQ for the transaction */
+	
 	gni_cq_handle_t src_cq_hndl;
-	/************ FMA and AMO specific *******************/
-	/* synchronization value */
+	
+	
 	uint64_t sync_flag_value;
-	/* location to deliver sync. value */
+	
 	uint64_t sync_flag_addr;
-	/****************** AMO specific *********************/
-	/* AMO command for the transaction */
+	
+	
 	gni_fma_cmd_type_t amo_cmd;
-	/* first operand required by the AMO command */
+	
 	uint64_t first_operand;
-	/* second operand required by the AMO command */
+	
 	uint64_t second_operand;
-	/****************** CQWrite specific *****************/
-	/* cqwrite value - only 6 least significant bytes available to software */
+	
+	
 	uint64_t cqwrite_value;
-	/****************** CE specific **********************/
-	/* CE command */
+	
+	
 	gni_ce_cmd_type_t ce_cmd;
-	/* CE modes, see GNI_CEMODE_* */
+	
 	uint32_t ce_mode;
-	/* CE reduction ID */
+	
 	uint64_t ce_red_id;
 } gni_post_descriptor_t;
 
-/* NTT configuration table entries */
+
 typedef struct gni_ntt_entry {
 	uint32_t        blck_addr;
 	uint32_t        rplc_addr;
 	uint8_t         rplc_size;
 } gni_ntt_entry_t;
 
-/* NTT configuration descriptor */
+
 typedef struct gni_ntt_descriptor {
-	/* size of the NTT group to be configured */
+	
 	uint32_t        group_size;
-	/* NTT granularity */
+	
 	uint8_t         granularity;
-	/* pointer to the array of new NTT values */
+	
 	union {
 		uint32_t        *table;
 		gni_ntt_entry_t *table_v2;
 	} u;
-	/* configuration flags ( not used )*/
+	
 	uint8_t         flags;
 } gni_ntt_descriptor_t;
 
-/* GNI Error Event */
+
 typedef struct gni_error_event {
 	uint16_t error_code;
 	uint8_t  error_category;
@@ -816,11 +816,11 @@ typedef struct gni_error_event {
 
 typedef uint8_t gni_error_mask_t;
 
-/* Job parameters and limits */
+
 #define GNI_JOB_INVALID_LIMIT           (-1)
-/* Directive for the driver to cleanup NTT at the end of the job */
+
 #define GNI_JOB_CTRL_NTT_CLEANUP        (0x01)
-/* Job Control CE Channel Masks */
+
 #define GNI_JOB_CTRL_CE0_MASK           (1<<0)
 #define GNI_JOB_CTRL_CE1_MASK           (1<<1)
 #define GNI_JOB_CTRL_CE2_MASK           (1<<2)
@@ -831,26 +831,26 @@ typedef uint8_t gni_error_mask_t;
 					 GNI_JOB_CTRL_CE3_MASK)
 
 typedef struct gni_job_limits {
-	int32_t  mdd_limit;      /* IN number of MDDs associated with the given ptag */
+	int32_t  mdd_limit;      
 	union {
-		int32_t  mrt_limit;          /* Gemini: IN number of MRT entries used by MDDs with the given ptag */
+		int32_t  mrt_limit;          
 		struct {
-			uint8_t  ce_limit;    /* Aries: IN number of CE channels available with the given ptag */
-			uint8_t  iommu_limit; /* Aries: IN 2 ^ N * 1MB bytes of address space per ptag */
+			uint8_t  ce_limit;    
+			uint8_t  iommu_limit; 
 			uint8_t  res_byte2;
 			uint8_t  res_byte3;
 		} m;
 	} a;
 	union {
-		int32_t  gart_limit;     /* Gemini: IN number of GART entries used by MDDs with the given ptag */
-		int32_t  dla_limit;      /* Aries: IN number of DLA entries available with the given ptag */
+		int32_t  gart_limit;     
+		int32_t  dla_limit;      
 	} b;
-	int32_t  fma_limit;      /* IN number of FMA descriptors associated with the given ptag */
-	int32_t  bte_limit;      /* IN number of outstanding BTE descriptors with the given src. ptag */
-	int32_t  cq_limit;       /* IN number of CQ descriptors associated with the given ptag */
-	int32_t  ntt_ctrl;       /* IN NTT cotrol flag (see GNI_JOB_CTRL_NTT_xxx above)*/
-	int32_t  ntt_base;       /* IN Base entry into NTT */
-	int32_t  ntt_size;       /* IN size of the NTT */
+	int32_t  fma_limit;      
+	int32_t  bte_limit;      
+	int32_t  cq_limit;       
+	int32_t  ntt_ctrl;       
+	int32_t  ntt_base;       
+	int32_t  ntt_size;       
 } gni_job_limits_t;
 
 typedef enum gni_nic_device {
@@ -860,7 +860,7 @@ typedef enum gni_nic_device {
 	GNI_DEVICE_LAST
 } gni_nic_device_t;
 
-/* Resource info types */
+
 typedef enum gni_dev_res {
 	GNI_DEV_RES_FIRST = 0,
 	GNI_DEV_RES_MDD,
@@ -945,11 +945,11 @@ typedef struct gni_errno {
 
 #ifndef __KERNEL__
 
-/* User level definitions */
 
-/* public MSGQ definitions */
 
-/* shared message queue receive callback function */
+
+
+
 typedef int gni_msgq_rcv_cb_func(
 		uint32_t snd_id,
 		uint32_t snd_pe,
@@ -958,14 +958,14 @@ typedef int gni_msgq_rcv_cb_func(
 		void     *cb_data
 		);
 
-/* MSGQ limits */
+
 #define GNI_MSGQ_MSG_SZ_MAX             128
 #define GNI_MSGQ_NODE_INSTS_MAX         48
 
-/* MSGQ mode flags */
+
 #define GNI_MSGQ_MODE_BLOCKING          (0x01)
 
-/* MSGQ structures */
+
 typedef struct gni_msgq_attr {
 	uint32_t         max_msg_sz;
 	uint32_t         smsg_q_sz;
@@ -977,9 +977,9 @@ typedef struct gni_msgq_attr {
 } gni_msgq_attr_t;
 
 typedef struct gni_msgq_rem_inst {
-	uint32_t         id;      /* instance ID */
-	gni_mem_handle_t mdh;     /* MDH for the shmem region */
-	uint64_t         mdh_off; /* offset into the MDH for the smsg mbox */
+	uint32_t         id;      
+	gni_mem_handle_t mdh;     
+	uint64_t         mdh_off; 
 } gni_msgq_rem_inst_t;
 
 typedef struct gni_msgq_ep_attr {
@@ -3960,13 +3960,13 @@ gni_return_t
 		IN gni_ce_handle_t      ce_hndl
 		);
 
-/* Balanced Injection modes */
+
 #define GNI_BI_FLAG_APPLY_NOW                   0x1
 #define GNI_BI_FLAG_APPLY_AFTER_THROTTLE        0x2
 #define GNI_BI_FLAG_USE_DEFAULT_SETTINGS        0x4
 #define GNI_BI_FLAG_VALUE_IS_NUM_ORB_ENTRIES    0x8
 
-/* Balanced Injection limits */
+
 #define GNI_BI_INJECT_BW_MIN                    0
 #define GNI_BI_INJECT_BW_MAX                    100
 #define GNI_BI_INJECT_BW_ORB_MIN                0
@@ -4106,10 +4106,10 @@ gni_return_t
 		IN gni_nic_handle_t nic_hndl,
 		IN gni_statistic_t stat);
 
-#endif /*not __KERNEL__*/
+#endif 
 
 #ifdef __KERNEL__
-/* Kernel level definitions */
+
 
 /**
  * gni_cdm_create - Create Communication Domain
@@ -5592,10 +5592,10 @@ gni_return_t
 		OUT gni_errno_t         *errno_ptr
 		);
 
-#endif /*__KERNEL__*/
+#endif 
 
 #ifdef __cplusplus
-} /* extern "C" */
+} 
 #endif
 
-#endif /*_GNI_PUB_H_*/
+#endif 

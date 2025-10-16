@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2022 Hewlett Packard Enterprise Development LP
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * kfilnd domain and fabric implementation.
  */
@@ -13,7 +13,7 @@
 #include "kfilnd_dom.h"
 #include "kfilnd_tn.h"
 
-/* Global list of allocated KFI LND fabrics. */
+
 static LIST_HEAD(fab_list);
 static DEFINE_MUTEX(fab_list_lock);
 
@@ -316,17 +316,17 @@ struct kfilnd_dom *kfilnd_dom_get(struct lnet_ni *ni, const char *node,
 	hints->fabric_attr->prov_version =
 		KFI_VERSION(ni->ni_lnd_tunables.lnd_tun_u.lnd_kfi.lnd_prov_major_version,
 			    ni->ni_lnd_tunables.lnd_tun_u.lnd_kfi.lnd_prov_minor_version);
-	hints->domain_attr->mr_iov_limit = 256; /* 1 MiB LNet message */
+	hints->domain_attr->mr_iov_limit = 256; 
 	hints->domain_attr->mr_key_size = sizeof(int);
 	hints->domain_attr->resource_mgmt = KFI_RM_DISABLED;
 	hints->domain_attr->tclass =
 		ni->ni_lnd_tunables.lnd_tun_u.lnd_kfi.lnd_traffic_class;
 	hints->ep_attr->max_msg_size = LNET_MAX_PAYLOAD;
 	hints->rx_attr->op_flags = KFI_COMPLETION | KFI_MULTI_RECV;
-	hints->rx_attr->iov_limit = 256; /* 1 MiB LNet message */
+	hints->rx_attr->iov_limit = 256; 
 	hints->tx_attr->op_flags = KFI_COMPLETION;
-	hints->tx_attr->iov_limit = 256; /* 1 MiB LNet message */
-	hints->tx_attr->rma_iov_limit = 256; /* 1 MiB LNet message */
+	hints->tx_attr->iov_limit = 256; 
+	hints->tx_attr->rma_iov_limit = 256; 
 	hints->tx_attr->tclass =
 		ni->ni_lnd_tunables.lnd_tun_u.lnd_kfi.lnd_traffic_class;
 	hints->ep_attr->auth_key =
@@ -351,7 +351,7 @@ struct kfilnd_dom *kfilnd_dom_get(struct lnet_ni *ni, const char *node,
 					KFI_CXI_FAB_OPS_1, 0, (void **)&fab_ops,
 					NULL);
 				if (!rc) {
-					/* Set dynamic resource alloc hints */
+					
 					hints->domain_attr->cq_cnt = ni->ni_ncpts * 2;
 					hints->domain_attr->tx_ctx_cnt = ni->ni_ncpts;
 					hints->domain_attr->rx_ctx_cnt = ni->ni_ncpts;
@@ -366,7 +366,7 @@ struct kfilnd_dom *kfilnd_dom_get(struct lnet_ni *ni, const char *node,
 		kfi_freeinfo(hints_tmp);
 	}
 
-	/* Check to see if any KFI LND fabrics/domains can be reused. */
+	
 	fab = kfilnd_fab_reuse(node, service, hints);
 	dom = kfilnd_dom_reuse(node, service, hints, fab);
 
@@ -396,7 +396,7 @@ struct kfilnd_dom *kfilnd_dom_get(struct lnet_ni *ni, const char *node,
 	if (rc)
 		goto err_free_service;
 
-	/* Allocate a new KFI LND fabric and domain if necessary. */
+	
 	if (!fab) {
 		fab = kfilnd_fab_alloc(info->fabric_attr);
 		if (IS_ERR(fab)) {
@@ -406,7 +406,7 @@ struct kfilnd_dom *kfilnd_dom_get(struct lnet_ni *ni, const char *node,
 	}
 
 	if (!dom) {
-		/* Enable dynamic resource allocation if operation supported */
+		
 		rc = kfi_open_ops(&fab->fabric->fid, KFI_CXI_FAB_OPS_1, 0,
 				  (void **)&fab_ops, NULL);
 		if (!rc) {

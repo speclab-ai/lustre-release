@@ -176,7 +176,6 @@ class LNetHelpers(BaseTest):
 		rc, yaml_err = lnetconfig.lustre_lnet_config_ni(nwd, g_cpts, ip2nets, tunables, conns_per_peer, -1)
 		#Freeing the g_cpts causes a segmentation fault
 		#if g_cpts:
-		#	lnetconfig.cfs_expr_list_free(g_cpts)
 		self.cYAML_free(yaml_err)
 		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
 			if self.exceptions:
@@ -486,7 +485,6 @@ class LNetHelpers(BaseTest):
 			return False, [rc, err]
 
 		rc, yaml_show, yaml_err = lnetconfig.lustre_yaml_show(yaml_file)
-		#rc, yaml_show, yaml_err = lnetconfig.lustre_lnet_show_net(None, 0, -1, False)
 		self.cYAML_free(yaml_err)
 		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
 			logging.debug(lnetconfig.cYAML_dump(yaml_show))
@@ -499,7 +497,6 @@ class LNetHelpers(BaseTest):
 		for k, v in pyy.items():
 			logging.debug("key = %s, value = %s, len = %d" % (str(k), str(v), len(v)))
 			show_count += len(v)
-		#show_count = self.cYAML_count(show)
 		logging.debug("show count = %d\n%s" % (show_count, show))
 
 		# verify the show through the count only
@@ -691,7 +688,6 @@ class LNetHelpers(BaseTest):
 		y = yaml.load(rc[0].decode('utf-8'), Loader=yaml.FullLoader)
 		print(y)
 		if y != None:
-			#print("UDSP list not empty")
 			error = "UDSP list not empty"
 			logging.debug(error)
 			return False
@@ -702,13 +698,10 @@ class LNetHelpers(BaseTest):
 		rc = lutf_exec_local_cmd(get_lnetctl() + " udsp show")
 		y = yaml.load(rc[0].decode('utf-8'), Loader=yaml.FullLoader)
 		print(y)
-		#print ("Out")
-		#print(rc[0])
 		if y == udsp_conf_expected_dict:
 			return True
 		else:
 			error = "%s doesn't match expected: %s" % (str(y), str(udsp_conf_expected_dict))
-			#print("%s doesn't match expected: %s ", str(y), str(udsp_conf_expected_dict))
 			logging.debug(error)
 		return False
 

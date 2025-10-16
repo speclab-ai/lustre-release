@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2013, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Match Entry management routines
  */
@@ -59,7 +59,7 @@ LNetMEAttach(unsigned int portal,
 
 	mtable = lnet_mt_of_attach(portal, match_id,
 				   match_bits, ignore_bits, pos);
-	if (mtable == NULL) /* can't match portal type */
+	if (mtable == NULL) 
 		return ERR_PTR(-EPERM);
 
 	me = kmem_cache_zalloc(lnet_mes_cachep, GFP_NOFS);
@@ -96,7 +96,7 @@ LNetMEAttach(unsigned int portal,
 }
 EXPORT_SYMBOL(LNetMEAttach);
 
-/* call with lnet_res_lock please */
+
 void
 lnet_me_unlink(struct lnet_me *me)
 {
@@ -105,7 +105,7 @@ lnet_me_unlink(struct lnet_me *me)
 	if (me->me_md != NULL) {
 		struct lnet_libmd *md = me->me_md;
 
-		/* detach MD from portal of this ME */
+		
 		lnet_ptl_detach_md(me, md);
 		lnet_md_unlink(md);
 	}

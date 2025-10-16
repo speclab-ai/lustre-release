@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_page for VVP layer.
  *
@@ -28,7 +28,7 @@
 #include "llite_internal.h"
 #include "vvp_internal.h"
 
-/* Page operations */
+
 
 static void vvp_page_discard(const struct lu_env *env,
 			     const struct cl_page_slice *slice,
@@ -54,7 +54,7 @@ static void vvp_page_delete(const struct lu_env *env,
 
 		CDEBUG(D_CACHE, "delete page %pK index %ld\n",
 		       vmpage, vmpage->index);
-		/* Drop the reference count held in vvp_page_init */
+		
 		refcount_dec(&cp->cp_ref);
 
 		ClearPagePrivate(vmpage);
@@ -214,7 +214,7 @@ int vvp_page_init(const struct lu_env *env, struct cl_object *obj,
 				  &vvp_transient_page_ops);
 	} else {
 		get_page(vmpage);
-		/* in cache, decref in cl_page_delete() */
+		
 		refcount_inc(&page->cp_ref);
 		SetPagePrivate(vmpage);
 		vmpage->private = (unsigned long)page;

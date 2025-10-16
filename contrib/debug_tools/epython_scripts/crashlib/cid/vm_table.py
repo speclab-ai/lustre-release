@@ -42,11 +42,7 @@ class VmInfo:
 
         for line in exec_crash_command('help -v').splitlines():
             #               flags: 10dc52
-            #  (NODES_ONLINE|ZONES|PERCPU_KMALLOC_V2|KMEM_CACHE_INIT|SPARSEMEM|SPARSEMEM_EX|PERCPU_KMALLOC_V2_NODES|VM_STAT|VM_INIT)
             #      kernel_pgd[NR_CPUS]: ffffffff8163f000 ...
-            #         high_memory: ffff880880000000
-            #       vmalloc_start: ffffc90000000000
-            #             mem_map: 0
             # ...
             #
             # Only use the first value after the field name and

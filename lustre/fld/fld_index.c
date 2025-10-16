@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: WangDi <wangdi@clusterfs.com>
  * Author: Yury Umanets <umka@clusterfs.com>
@@ -76,7 +76,7 @@ int fld_declare_index_create(const struct lu_env *env,
 
 	rc = fld_index_lookup(env, fld, new_range->lsr_start, range);
 	if (rc == 0) {
-		/* In case of duplicate entry, the location must be same */
+		
 		LASSERT((lu_seq_range_compare_loc(new_range, range) == 0));
 		GOTO(out, rc = -EEXIST);
 	}
@@ -365,7 +365,7 @@ int fld_index_init(const struct lu_env *env, struct lu_server_fld *fld,
 	}
 
 	range = &info->fti_rec;
-	/* Load fld entry to cache */
+	
 	iops = &dt_obj->do_index_ops->dio_it;
 	it = iops->init(env, dt_obj, 0);
 	if (IS_ERR(it))

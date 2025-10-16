@@ -1,14 +1,14 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Range lock is used to allow multiple threads writing a single shared
  * file given each thread is writing to a non-overlapping portion of the
  * file.
  *
  * Refer to the possible upstream kernel version of range lock by
- * Jan Kara <jack@suse.cz>: https://lkml.org/lkml/2013/1/31/480
+ * Jan Kara <jack@suse.cz>: https:
  *
  * This file could later replaced by the upstream kernel version.
  *

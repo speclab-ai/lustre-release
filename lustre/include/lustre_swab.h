@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -10,7 +10,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * We assume all nodes are either little-endian or big-endian, and we
  * always send messages in the sender's native format.  The receiver
@@ -49,7 +49,7 @@ void lustre_swab_out_update_header(struct out_update_header *ouh);
 void lustre_swab_out_update_buffer(struct out_update_buffer *oub);
 void lustre_swab_object_update_result(struct object_update_result *our);
 int lustre_swab_object_update_reply(struct object_update_reply *our, __u32 len);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 void lustre_swab_ptlrpc_body(struct ptlrpc_body *pb);
 void lustre_swab_connect(struct obd_connect_data *ocd);
 void lustre_swab_hsm_user_state(struct hsm_user_state *hus);
@@ -122,7 +122,7 @@ void lustre_swab_lmv_user_md(struct lmv_user_md *lum);
 void lustre_swab_ladvise(struct lu_ladvise *ladvise);
 void lustre_swab_ladvise_hdr(struct ladvise_hdr *ladvise_hdr);
 
-/* Functions for dumping PTLRPC fields */
+
 void dump_rniobuf(struct niobuf_remote *rnb);
 void dump_ioo(struct obd_ioobj *nb);
 void dump_ost_body(struct ost_body *ob);

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Yury Umanets <umka@clusterfs.com>
  */
@@ -675,7 +675,7 @@ static ssize_t grant_speed_show(struct kobject *kobj, struct attribute *attr,
 	timeout_t period;
 
 	spin_lock(&pl->pl_lock);
-	/* serialize with ldlm_pool_recalc */
+	
 	period = ktime_get_seconds() - pl->pl_recalc_time;
 	if (period <= 0)
 		period = 1;
@@ -755,7 +755,7 @@ static ssize_t recalc_time_show(struct kobject *kobj,
 }
 LUSTRE_RO_ATTR(recalc_time);
 
-/* These are for pools in /sys/fs/lustre/ldlm/namespaces/.../pool */
+
 static struct attribute *ldlm_pl_attrs[] = {
 	&lustre_attr_grant_speed.attr,
 	&lustre_attr_grant_plan.attr,
@@ -1059,7 +1059,7 @@ static unsigned long ldlm_pools_count(enum ldlm_side client, gfp_t gfp_mask)
 	unsigned long total = 0;
 	int nr_ns;
 	struct ldlm_namespace *ns;
-	struct ldlm_namespace *ns_old = NULL; /* loop detection */
+	struct ldlm_namespace *ns_old = NULL; 
 
 	if (client == LDLM_NAMESPACE_CLIENT && !(gfp_mask & __GFP_FS))
 		return 0;
@@ -1176,14 +1176,14 @@ static time64_t ldlm_pools_recalc_delay(enum ldlm_side side)
 {
 	struct ldlm_namespace *ns;
 	struct ldlm_namespace *ns_old = NULL;
-	/* seconds of sleep if no active namespaces */
+	
 	time64_t delay = ktime_get_seconds() +
 			 (side == LDLM_NAMESPACE_SERVER ?
 			  LDLM_POOL_SRV_DEF_RECALC_PERIOD :
 			  LDLM_POOL_CLI_DEF_RECALC_PERIOD);
 	int nr;
 
-	/* Recalc at least ldlm_namespace_nr(side) namespaces. */
+	
 	for (nr = ldlm_namespace_nr_read(side); nr > 0; nr--) {
 		int skip;
 		/*
@@ -1200,7 +1200,7 @@ static time64_t ldlm_pools_recalc_delay(enum ldlm_side side)
 		}
 		ns = ldlm_namespace_first_locked(side);
 
-		if (ns_old == ns) { /* Full pass complete */
+		if (ns_old == ns) { 
 			mutex_unlock(ldlm_namespace_lock(side));
 			break;
 		}
@@ -1258,14 +1258,14 @@ static DECLARE_DELAYED_WORK(ldlm_pools_recalc_work, ldlm_pools_recalc_task);
 
 static void ldlm_pools_recalc_task(struct work_struct *ws)
 {
-	/* seconds of sleep if no active namespaces */
+	
 	time64_t delay;
 #ifdef HAVE_SERVER_SUPPORT
 	struct ldlm_namespace *ns;
 	unsigned long nr_l = 0, nr_p = 0, l;
 	int equal = 0;
 
-	/* Check all modest namespaces first. */
+	
 	mutex_lock(ldlm_namespace_lock(LDLM_NAMESPACE_SERVER));
 	list_for_each_entry(ns, ldlm_namespace_list(LDLM_NAMESPACE_SERVER),
 			    ns_list_chain) {
@@ -1296,7 +1296,7 @@ static void ldlm_pools_recalc_task(struct work_struct *ws)
 		equal = 1;
 	}
 
-	/* The rest is given to greedy namespaces. */
+	
 	list_for_each_entry(ns, ldlm_namespace_list(LDLM_NAMESPACE_SERVER),
 			    ns_list_chain) {
 		if (!equal && ns->ns_appetite != LDLM_NAMESPACE_GREEDY)
@@ -1325,16 +1325,16 @@ static void ldlm_pools_recalc_task(struct work_struct *ws)
 
 	delay = min(ldlm_pools_recalc_delay(LDLM_NAMESPACE_SERVER),
 		    ldlm_pools_recalc_delay(LDLM_NAMESPACE_CLIENT));
-#else  /* !HAVE_SERVER_SUPPORT */
+#else  
 	delay = ldlm_pools_recalc_delay(LDLM_NAMESPACE_CLIENT);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
-	/* Wake up the blocking threads from time to time. */
+	
 	ldlm_bl_thread_wakeup();
 
 	delay -= ktime_get_seconds();
 	if (delay <= 0) {
-		/* Prevent too frequent recalculation. */
+		
 		CDEBUG(D_DLMTRACE, "Negative interval(%lld)\n", delay);
 		delay = 1;
 	}
@@ -1400,7 +1400,7 @@ void ldlm_pools_fini(void)
 	ldlm_pools_init_done = false;
 }
 
-#else /* !HAVE_LRU_RESIZE_SUPPORT */
+#else 
 int ldlm_pool_setup(struct ldlm_pool *pl, int limit)
 {
 	return 0;
@@ -1467,4 +1467,4 @@ void ldlm_pools_fini(void)
 {
 }
 
-#endif /* HAVE_LRU_RESIZE_SUPPORT */
+#endif 

@@ -233,5 +233,5 @@ int __genradix_prealloc(struct __genradix *, size_t, gfp_t);
 
 #else
 #include <linux/generic-radix-tree.h>
-#endif /* ! HAVE_GENRADIX_SUPPORT */
-#endif /* _LINUX_GENERIC_RADIX_TREE_LUSTRE_H */
+#endif 
+#endif 

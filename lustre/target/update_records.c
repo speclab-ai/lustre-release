@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2015, 2017, Intel Corporation.
@@ -120,7 +120,7 @@ static unsigned int update_records_param_pack(struct update_params *params,
 		if ((new_param == NULL && param->oup_len == new_param_size) ||
 		    (param->oup_len == new_param_size &&
 		     memcmp(param->oup_buf, new_param, new_param_size) == 0))
-			/* Found the parameter and return its index */
+			
 			return i;
 	}
 
@@ -179,7 +179,7 @@ static int update_records_update_pack(const struct lu_env *env,
 	int			index;
 	unsigned int		i;
 
-	/* Check whether the packing exceeding the maximum update size */
+	
 	if (unlikely(*max_op_size < update_op_size(param_bufs_count))) {
 		CDEBUG(D_INFO, "max_op_size = %zu update_op = %zu\n",
 		       *max_op_size, update_op_size(param_bufs_count));
@@ -192,7 +192,7 @@ static int update_records_update_pack(const struct lu_env *env,
 			round_up(sizeof(struct object_update_param) +
 				       param_sizes[i], 8);
 
-	/* Check whether the packing exceeding the maximum parameter size */
+	
 	if (unlikely(*max_param_size < total_param_sizes)) {
 		CDEBUG(D_INFO, "max_param_size = %zu params size = %zu\n",
 		       *max_param_size, total_param_sizes);
@@ -239,7 +239,7 @@ static size_t update_records_update_size(__u32 param_count, size_t *sizes)
 	int i;
 	size_t size;
 
-	/* Check whether the packing exceeding the maximum update size */
+	
 	size = update_op_size(param_count);
 
 	for (i = 0; i < param_count; i++)
@@ -1039,7 +1039,7 @@ int tur_update_extend(struct thandle_update_records *tur,
 	ENTRY;
 
 	record_size = llog_update_record_size(tur->tur_update_records);
-	/* extend update records buffer */
+	
 	if (new_op_size >= (tur->tur_update_records_buf_size - record_size)) {
 		extend_size = round_up(new_op_size, UPDATE_RECORDS_BUFFER_SIZE);
 		rc = tur_update_records_extend(tur,
@@ -1049,7 +1049,7 @@ int tur_update_extend(struct thandle_update_records *tur,
 			RETURN(rc);
 	}
 
-	/* extend parameters buffer */
+	
 	params_size = update_params_size(tur->tur_update_params,
 					 tur->tur_update_param_count);
 	if (new_param_size >= (tur->tur_update_params_buf_size -
@@ -1191,9 +1191,9 @@ static void update_key_fini(const struct lu_context *ctx,
 	OBD_FREE_PTR(info);
 }
 
-/* context key constructor/destructor: update_key_init, update_key_fini */
+
 LU_KEY_INIT(update, struct update_thread_info);
-/* context key: update_thread_key */
+
 LU_CONTEXT_KEY_DEFINE(update, LCT_MD_THREAD | LCT_MG_THREAD |
 			      LCT_DT_THREAD | LCT_LOCAL);
 EXPORT_SYMBOL(update_thread_key);

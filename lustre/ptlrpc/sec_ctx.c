@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
@@ -13,8 +13,8 @@
 
 #include "ptlrpc_internal.h"
 
-/* refine later and change to seqlock or simlar from libcfs */
-/* Debugging check only needed during development */
+
+
 #ifdef OBD_CTXT_DEBUG
 # define ASSERT_CTXT_MAGIC(magic) LASSERT((magic) == OBD_RUN_CTXT_MAGIC)
 #else
@@ -41,10 +41,10 @@ static inline void ll_set_fs_pwd(struct fs_struct *fs, struct vfsmount *mnt,
 		path_put(&old_pwd);
 }
 
-/* push / pop to root of obd store */
+
 void push_ctxt(struct lvfs_run_ctxt *save, struct lvfs_run_ctxt *new_ctx)
 {
-	/* if there is underlaying dt_device then push_ctxt is not needed */
+	
 	if (new_ctx->dt != NULL)
 		return;
 
@@ -62,14 +62,14 @@ void push_ctxt(struct lvfs_run_ctxt *save, struct lvfs_run_ctxt *new_ctx)
 	LASSERT(new_ctx->pwd);
 	LASSERT(new_ctx->pwdmnt);
 
-	current->fs->umask = 0; /* umask already applied on client */
+	current->fs->umask = 0; 
 	ll_set_fs_pwd(current->fs, new_ctx->pwdmnt, new_ctx->pwd);
 }
 EXPORT_SYMBOL(push_ctxt);
 
 void pop_ctxt(struct lvfs_run_ctxt *saved, struct lvfs_run_ctxt *new_ctx)
 {
-	/* if there is underlaying dt_device then pop_ctxt is not needed */
+	
 	if (new_ctx->dt != NULL)
 		return;
 

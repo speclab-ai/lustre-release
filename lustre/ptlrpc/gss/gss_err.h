@@ -88,7 +88,7 @@ typedef unsigned int OM_uint32;
 #define GSS_C_INDEFINITE        ((OM_uint32) 0xfffffffful)
 
 
-/* Major status codes */
+
 
 #define GSS_S_COMPLETE          (0)
 
@@ -180,7 +180,7 @@ typedef unsigned int OM_uint32;
 #define GSS_S_UNSEQ_TOKEN       BIT(GSS_C_SUPPLEMENTARY_OFFSET + 3)
 #define GSS_S_GAP_TOKEN         BIT(GSS_C_SUPPLEMENTARY_OFFSET + 4)
 
-/* XXXX these are not part of the GSSAPI C bindings!  (but should be) */
+
 
 #define GSS_CALLING_ERROR_FIELD(x) \
         (((x) >> GSS_C_CALLING_ERROR_OFFSET) & GSS_C_CALLING_ERROR_MASK)
@@ -189,7 +189,7 @@ typedef unsigned int OM_uint32;
 #define GSS_SUPPLEMENTARY_INFO_FIELD(x) \
         (((x) >> GSS_C_SUPPLEMENTARY_OFFSET) & GSS_C_SUPPLEMENTARY_MASK)
 
-/* XXXX This is a necessary evil until the spec is fixed */
+
 #define GSS_S_CRED_UNAVAIL GSS_S_FAILURE
 
-#endif /* __PTLRPC_GSS_GSS_ERR_H_ */
+#endif 

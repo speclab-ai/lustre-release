@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /*
  * Filesystem-level keyring for llcrypt
  *
@@ -131,7 +131,7 @@ static struct key_type key_type_llcrypt_user = {
 	.describe		= llcrypt_user_key_describe,
 };
 
-/* Search ->lsi_master_keys or ->mk_users */
+
 static struct key *search_llcrypt_keyring(struct key *keyring,
 					  struct key_type *type,
 					  const char *description)
@@ -140,7 +140,7 @@ static struct key *search_llcrypt_keyring(struct key *keyring,
 	 * We need to mark the keyring reference as "possessed" so that we
 	 * acquire permission to search it, via the KEY_POS_SEARCH permission.
 	 */
-	key_ref_t keyref = make_key_ref(keyring, true /* possessed */);
+	key_ref_t keyref = make_key_ref(keyring, true );
 
 #ifdef HAVE_KEYRING_SEARCH_4ARGS
 	keyref = keyring_search(keyref, type, description, false);
@@ -148,8 +148,8 @@ static struct key *search_llcrypt_keyring(struct key *keyring,
 	keyref = keyring_search(keyref, type, description);
 #endif
 	if (IS_ERR(keyref)) {
-		if (PTR_ERR(keyref) == -EAGAIN || /* not found */
-		    PTR_ERR(keyref) == -EKEYREVOKED) /* recently invalidated */
+		if (PTR_ERR(keyref) == -EAGAIN || 
+		    PTR_ERR(keyref) == -EKEYREVOKED) 
 			keyref = ERR_PTR(-ENOKEY);
 		return ERR_CAST(keyref);
 	}
@@ -200,7 +200,7 @@ static void format_mk_user_description(
 		mk_identifier, __kuid_val(current_fsuid()));
 }
 
-/* Create ->lsi_master_keys if needed.  Synchronized by llcrypt_add_key_mutex. */
+
 static int allocate_filesystem_keyring(struct super_block *sb)
 {
 	char description[LLCRYPT_FS_KEYRING_DESCRIPTION_SIZE];
@@ -221,7 +221,7 @@ static int allocate_filesystem_keyring(struct super_block *sb)
 	if (IS_ERR(keyring))
 		return PTR_ERR(keyring);
 
-	/* Pairs with READ_ONCE() in llcrypt_find_master_key() */
+	
 	smp_store_release(&lsi->lsi_master_keys, keyring);
 	return 0;
 }
@@ -249,10 +249,10 @@ struct key *llcrypt_find_master_key(struct super_block *sb,
 	if (!lsi)
 		return ERR_PTR(-EINVAL);
 
-	/* pairs with smp_store_release() in allocate_filesystem_keyring() */
+	
 	keyring = READ_ONCE(lsi->lsi_master_keys);
 	if (keyring == NULL)
-		return ERR_PTR(-ENOKEY); /* No keyring yet, so no keys yet. */
+		return ERR_PTR(-ENOKEY); 
 
 	format_mk_description(description, mk_spec);
 	return search_llcrypt_keyring(keyring, &key_type_llcrypt, description);
@@ -355,7 +355,7 @@ static int add_new_master_key(struct llcrypt_master_key_secret *secret,
 	move_master_key_secret(&mk->mk_secret, secret);
 	init_rwsem(&mk->mk_secret_sem);
 
-	refcount_set(&mk->mk_refcount, 1); /* secret is present */
+	refcount_set(&mk->mk_refcount, 1); 
 	INIT_LIST_HEAD(&mk->mk_decrypted_inodes);
 	spin_lock_init(&mk->mk_decrypted_inodes_lock);
 
@@ -417,12 +417,12 @@ static int add_existing_master_key(struct llcrypt_master_key *mk,
 		}
 	}
 
-	/* If we'll be re-adding ->mk_secret, try to take the reference. */
+	
 	rekey = !is_master_key_secret_present(&mk->mk_secret);
 	if (rekey && !refcount_inc_not_zero(&mk->mk_refcount))
 		return KEY_DEAD;
 
-	/* Add the current user to ->mk_users, if applicable. */
+	
 	if (mk->mk_users) {
 		err = add_master_key_user(mk);
 		if (err) {
@@ -432,7 +432,7 @@ static int add_existing_master_key(struct llcrypt_master_key *mk,
 		}
 	}
 
-	/* Re-add the secret if needed. */
+	
 	if (rekey) {
 		down_write(&mk->mk_secret_sem);
 		move_master_key_secret(&mk->mk_secret, secret);
@@ -453,14 +453,14 @@ static int add_master_key(struct super_block *sb,
 	if (!lsi)
 		return -EINVAL;
 
-	mutex_lock(&llcrypt_add_key_mutex); /* serialize find + link */
+	mutex_lock(&llcrypt_add_key_mutex); 
 retry:
 	key = llcrypt_find_master_key(sb, mk_spec);
 	if (IS_ERR(key)) {
 		err = PTR_ERR(key);
 		if (err != -ENOKEY)
 			goto out_unlock;
-		/* Didn't find the key in ->lsi_master_keys.  Add it. */
+		
 		err = allocate_filesystem_keyring(sb);
 		if (err)
 			goto out_unlock;
@@ -475,7 +475,7 @@ retry:
 		err = add_existing_master_key(key->payload.data[0], secret);
 		up_write(&key->sem);
 		if (err == KEY_DEAD) {
-			/* Key being removed or needs to be removed */
+			
 			key_invalidate(key);
 			key_put(key);
 			goto retry;
@@ -560,7 +560,7 @@ int llcrypt_ioctl_add_key(struct file *filp, void __user *_uarg)
 		 */
 		memzero_explicit(secret.raw, secret.size);
 
-		/* Calculate the key identifier and return it to userspace. */
+		
 		err = llcrypt_hkdf_expand(&secret.hkdf,
 					  HKDF_CONTEXT_KEY_IDENTIFIER,
 					  NULL, 0, arg.key_spec.u.identifier,
@@ -698,7 +698,7 @@ static int check_for_busy_inodes(struct super_block *sb,
 	}
 
 	{
-		/* select an example file to show for debugging purposes */
+		
 		struct inode *inode =
 			list_first_entry(&mk->mk_decrypted_inodes,
 					 struct llcrypt_info,
@@ -741,7 +741,7 @@ static int try_to_lock_encrypted_files(struct super_block *sb,
 	down_read(&sb->s_umount);
 	err1 = sync_filesystem(sb);
 	up_read(&sb->s_umount);
-	/* If a sync error occurs, still try to evict as much as possible. */
+	
 
 	/*
 	 * Inodes are pinned by their dentries, so we have to evict their
@@ -812,7 +812,7 @@ static int do_remove_key(struct file *filp, void __user *_uarg, bool all_users)
 	    !capable(CAP_SYS_ADMIN))
 		return -EACCES;
 
-	/* Find the key being removed. */
+	
 	key = llcrypt_find_master_key(sb, &arg.key_spec);
 	if (IS_ERR(key))
 		return PTR_ERR(key);
@@ -820,7 +820,7 @@ static int do_remove_key(struct file *filp, void __user *_uarg, bool all_users)
 
 	down_write(&key->sem);
 
-	/* If relevant, remove current user's (or all users) claim to the key */
+	
 	if (mk->mk_users && mk->mk_users->keys.nr_leaves_on_tree != 0) {
 		if (all_users)
 			err = keyring_clear(mk->mk_users);
@@ -844,7 +844,7 @@ static int do_remove_key(struct file *filp, void __user *_uarg, bool all_users)
 		}
 	}
 
-	/* No user claims remaining.  Go ahead and wipe the secret. */
+	
 	dead = false;
 	if (is_master_key_secret_present(&mk->mk_secret)) {
 		down_write(&mk->mk_secret_sem);
@@ -861,7 +861,7 @@ static int do_remove_key(struct file *filp, void __user *_uarg, bool all_users)
 		key_invalidate(key);
 		err = 0;
 	} else {
-		/* Some inodes still reference this key; try to evict them. */
+		
 		err = try_to_lock_encrypted_files(sb, mk);
 		if (err == -EBUSY) {
 			status_flags |=

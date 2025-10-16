@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of iam format for fixed size records.
  *
@@ -529,7 +529,7 @@ enum {
 	 * For misery is trodden on by many,
 	 * And being low never relieved by any.
 	 */
-	IAM_LFIX_ROOT_MAGIC = 0xbedabb1edULL /* d01efull */
+	IAM_LFIX_ROOT_MAGIC = 0xbedabb1edULL 
 };
 
 struct iam_lfix_root {
@@ -781,7 +781,7 @@ static void lfix_root(void *buf,
 
 	memset(entry, 0, keysize);
 	entry += keysize;
-	/* now @entry points to <ptr> */
+	
 	if (ptrsize == 4)
 		STORE_UNALIGNED(cpu_to_le32(1), (u_int32_t *)entry);
 	else
@@ -794,7 +794,7 @@ static void lfix_leaf(void *buf,
 	struct iam_leaf_head *head;
 	void *entry;
 
-	/* form leaf */
+	
 	head = buf;
 	*head = (struct iam_leaf_head) {
 		.ill_magic = cpu_to_le16(IAM_LEAF_HEADER_MAGIC),

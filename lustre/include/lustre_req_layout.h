@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Target (mdt) request handler
  *
@@ -20,7 +20,7 @@
 
 #include <linux/types.h>
 
-/* req_layout */
+
 struct req_msg_field;
 struct req_format;
 struct req_capsule;
@@ -33,16 +33,16 @@ enum req_location {
 	RCL_NR
 };
 
-/* Maximal number of fields (buffers) in a request message. */
+
 #define REQ_MAX_FIELD_NR 12
 
 struct req_capsule {
 	struct ptlrpc_request	*rc_req;
-	/* Request message - what client sent */
+	
 	struct lustre_msg	*rc_reqmsg;
-	/* Reply message - server response */
+	
 	struct lustre_msg	*rc_repmsg;
-	/* Fields that help to see if request and reply were swabved or not */
+	
 	__u32			 rc_req_swab_mask;
 	__u32			 rc_rep_swab_mask;
 	const struct req_format *rc_fmt;
@@ -180,16 +180,16 @@ extern struct req_format RQF_OBD_SET_INFO;
 extern struct req_format RQF_MDT_SET_INFO;
 extern struct req_format RQF_SEC_CTX;
 extern struct req_format RQF_OBD_IDX_READ;
-/* MGS req_format */
+
 extern struct req_format RQF_MGS_TARGET_REG;
 extern struct req_format RQF_MGS_TARGET_REG_NIDLIST;
 extern struct req_format RQF_MGS_SET_INFO;
 extern struct req_format RQF_MGS_CONFIG_READ;
-/* fid/fld req_format */
+
 extern struct req_format RQF_SEQ_QUERY;
 extern struct req_format RQF_FLD_QUERY;
 extern struct req_format RQF_FLD_READ;
-/* MDS req_format */
+
 extern struct req_format RQF_MDS_CONNECT;
 extern struct req_format RQF_MDS_DISCONNECT;
 extern struct req_format RQF_MDS_STATFS;
@@ -228,7 +228,7 @@ extern struct req_format RQF_MDS_SWAP_LAYOUTS;
 extern struct req_format RQF_MDS_REINT_MIGRATE;
 extern struct req_format RQF_MDS_REINT_RESYNC;
 extern struct req_format RQF_MDS_RMFID;
-/* MDS hsm formats */
+
 extern struct req_format RQF_MDS_HSM_STATE_GET;
 extern struct req_format RQF_MDS_HSM_STATE_SET;
 extern struct req_format RQF_MDS_HSM_ACTION;
@@ -237,7 +237,7 @@ extern struct req_format RQF_MDS_HSM_CT_REGISTER;
 extern struct req_format RQF_MDS_HSM_CT_UNREGISTER;
 extern struct req_format RQF_MDS_HSM_REQUEST;
 extern struct req_format RQF_MDS_HSM_DATA_VERSION;
-/* OST req_format */
+
 extern struct req_format RQF_OST_CONNECT;
 extern struct req_format RQF_OST_DISCONNECT;
 extern struct req_format RQF_OST_QUOTACTL;
@@ -260,7 +260,7 @@ extern struct req_format RQF_OST_GET_INFO_FIEMAP;
 extern struct req_format RQF_OST_LADVISE;
 extern struct req_format RQF_OST_SEEK;
 
-/* LDLM req_format */
+
 extern struct req_format RQF_LDLM_ENQUEUE;
 extern struct req_format RQF_LDLM_ENQUEUE_LVB;
 extern struct req_format RQF_LDLM_CONVERT;
@@ -278,7 +278,7 @@ extern struct req_format RQF_LDLM_CP_CALLBACK;
 extern struct req_format RQF_LDLM_BL_CALLBACK;
 extern struct req_format RQF_LDLM_GL_CALLBACK;
 extern struct req_format RQF_LDLM_GL_CALLBACK_DESC;
-/* LOG req_format */
+
 extern struct req_format RQF_LLOG_ORIGIN_HANDLE_CREATE;
 extern struct req_format RQF_LLOG_ORIGIN_HANDLE_NEXT_BLOCK;
 extern struct req_format RQF_LLOG_ORIGIN_HANDLE_PREV_BLOCK;
@@ -286,11 +286,11 @@ extern struct req_format RQF_LLOG_ORIGIN_HANDLE_READ_HEADER;
 
 extern struct req_format RQF_CONNECT;
 
-/* LFSCK req_format */
+
 extern struct req_format RQF_LFSCK_NOTIFY;
 extern struct req_format RQF_LFSCK_QUERY;
 
-/* Batch UpdaTe req_format */
+
 extern struct req_format RQF_BUT_GETATTR;
 extern struct req_format RQF_MDS_BATCH;
 
@@ -353,12 +353,12 @@ extern struct req_msg_field RMF_MDS_HSM_CURRENT_ACTION;
 extern struct req_msg_field RMF_MDS_HSM_REQUEST;
 extern struct req_msg_field RMF_SELINUX_POL;
 
-/* seq-mgr fields */
+
 extern struct req_msg_field RMF_SEQ_OPC;
 extern struct req_msg_field RMF_SEQ_RANGE;
 extern struct req_msg_field RMF_FID_SPACE;
 
-/* FLD fields */
+
 extern struct req_msg_field RMF_FLD_OPC;
 extern struct req_msg_field RMF_FLD_MDFLD;
 
@@ -382,29 +382,29 @@ extern struct req_msg_field RMF_FIEMAP_VAL;
 extern struct req_msg_field RMF_OST_ID;
 extern struct req_msg_field RMF_SHORT_IO;
 
-/* MGS config read message format */
+
 extern struct req_msg_field RMF_MGS_CONFIG_BODY;
 extern struct req_msg_field RMF_MGS_CONFIG_RES;
 
-/* generic uint32 */
+
 extern struct req_msg_field RMF_U32;
 
-/* OBJ update format */
+
 extern struct req_msg_field RMF_OUT_UPDATE;
 extern struct req_msg_field RMF_OUT_UPDATE_REPLY;
 extern struct req_msg_field RMF_OUT_UPDATE_HEADER;
 extern struct req_msg_field RMF_OUT_UPDATE_BUF;
 
-/* Batch UpdaTe format */
+
 extern struct req_msg_field RMF_BUT_REPLY;
 extern struct req_msg_field RMF_BUT_HEADER;
 extern struct req_msg_field RMF_BUT_BUF;
 
-/* LFSCK format */
+
 extern struct req_msg_field RMF_LFSCK_REQUEST;
 extern struct req_msg_field RMF_LFSCK_REPLY;
 
 extern struct req_msg_field RMF_OST_LADVISE_HDR;
 extern struct req_msg_field RMF_OST_LADVISE;
 
-#endif /* _LUSTRE_REQ_LAYOUT_H__ */
+#endif 

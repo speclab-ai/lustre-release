@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * wbcFS OSD module
@@ -34,7 +34,7 @@ static struct lu_kmem_descr wbcfs_caches[] = {
 	}
 };
 
-/* Copied form osd-ldiskfs to open/put file handle in kenrel. */
+
 struct work_struct flush_fput;
 atomic_t descriptors_cnt;
 unsigned int wbcfs_flush_descriptors_cnt = 5000;
@@ -43,11 +43,11 @@ unsigned int wbcfs_flush_descriptors_cnt = 5000;
 # define cfs_flush_delayed_fput() flush_delayed_fput()
 #else
 void (*cfs_flush_delayed_fput)(void);
-#endif /* HAVE_FLUSH_DELAYED_FPUT */
+#endif 
 
 static void osd_flush_fput(struct work_struct *work)
 {
-	/* flush file descriptors when too many files */
+	
 	CDEBUG_LIMIT(D_HA, "Flushing file descriptors limit %d\n",
 		     wbcfs_flush_descriptors_cnt);
 
@@ -286,7 +286,7 @@ static void osd_trans_commit_cb(struct osd_thandle *oh, int result)
 	struct thandle *th = &oh->ot_super;
 	struct dt_txn_commit_cb *dcb, *tmp;
 
-	/* call per-transaction callbacks if any */
+	
 	list_for_each_entry_safe(dcb, tmp, &oh->ot_commit_dcb_list,
 				 dcb_linkage) {
 		LASSERTF(dcb->dcb_magic == TRANS_COMMIT_CB_MAGIC,
@@ -302,7 +302,7 @@ static void osd_trans_stop_cb(struct osd_thandle *oh, int result)
 	struct thandle *th = &oh->ot_super;
 	struct dt_txn_commit_cb *dcb, *tmp;
 
-	/* call per-transaction stop callbacks if any */
+	
 	list_for_each_entry_safe(dcb, tmp, &oh->ot_stop_dcb_list,
 				 dcb_linkage) {
 		LASSERTF(dcb->dcb_magic == TRANS_COMMIT_CB_MAGIC,
@@ -329,7 +329,7 @@ static int osd_trans_stop(const struct lu_env *env, struct dt_device *dt,
 		       osd_name(osd), rc);
 
 	osd_trans_stop_cb(oh, rc);
-	/* FIXME: using th->th_result? */
+	
 	osd_trans_commit_cb(oh, rc);
 	sb_end_write(osd_sb(osd));
 
@@ -371,7 +371,7 @@ static void osd_conf_get(const struct lu_env *env,
 
 	param->ddp_mntopts = MNTOPT_USERXATTR;
 
-	/* TODO: Add support for MNTOPT_ACL. */
+	
 
 	param->ddp_max_ea_size = OBD_MAX_EA_SIZE;
 	param->ddp_inodespace = 1024;
@@ -433,7 +433,7 @@ static void osd_umount(const struct lu_env *env, struct osd_device *dev)
 		dev->od_mnt = NULL;
 	}
 
-	/* to be sure all delayed fput are finished. */
+	
 	cfs_flush_delayed_fput();
 
 	EXIT;
@@ -458,7 +458,7 @@ static int __osd_device_init(const struct lu_env *env, struct osd_device *osd,
 	if (cplen < 0)
 		GOTO(out, rc = cplen);
 
-	/* -1 means that index is invalid. */
+	
 	osd->od_index = -1;
 	rc = server_name2index(osd->od_svname, &osd->od_index, NULL);
 	if (rc == LDD_F_SV_TYPE_OST)
@@ -530,7 +530,7 @@ static struct lu_device *osd_device_free(const struct lu_env *env,
 
 	ENTRY;
 
-	/* XXX: make osd top device in order to release reference */
+	
 	d->ld_site->ls_top_dev = d;
 	lu_site_purge(env, d->ld_site, -1);
 	lu_site_print(env, d->ld_site, &d->ld_site->ls_obj_hash.nelems,
@@ -576,7 +576,7 @@ static struct lu_device_type osd_device_type = {
 	.ldt_ctx_tags	= LCT_LOCAL
 };
 
-/* We use exports to track all osd users. */
+
 static int osd_obd_connect(const struct lu_env *env, struct obd_export **exp,
 			   struct obd_device *obd, struct obd_uuid *cluuid,
 			   struct obd_connect_data *data, void *localdata)
@@ -611,7 +611,7 @@ static int osd_obd_disconnect(struct obd_export *exp)
 
 	ENTRY;
 
-	/* Only disconnect the underlying layers on the final disconnect. */
+	
 	release = atomic_dec_and_test(&osd->od_connects);
 	rc = class_disconnect(exp);
 

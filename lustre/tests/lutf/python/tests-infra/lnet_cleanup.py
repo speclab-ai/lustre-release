@@ -21,13 +21,8 @@ class LNetCleanup(BaseTest):
 	def unconfigure(self):
 		logging.critical("LNetCleanup::unconfigure() --> lustre_rmmod()")
 		lustre_rmmod()
-#		st = LNetSelfTest()
-#		try:
-#			st.unload()
 #		except:
 #			pass
-#		L = lnet.TheLNet()
-#		L.unconfigure()
 
 def clean_lnet():
 	agents = lutf_agent.LutfAgents()

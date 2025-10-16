@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2005, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LOV
@@ -65,7 +65,7 @@ int lov_merge_lvb_kms(struct lov_stripe_md *lsm, int index,
 		lov_size = lov_stripe_size(lsm, index, tmpsize, i);
 		if (lov_size > size)
 			size = lov_size;
-		/* merge blocks, mtime, atime */
+		
 		blocks += loi->loi_lvb.lvb_blocks;
 		if (loi->loi_lvb.lvb_mtime > current_mtime)
 			current_mtime = loi->loi_lvb.lvb_mtime;

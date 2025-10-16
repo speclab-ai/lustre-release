@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Peter Braam <braam@clusterfs.com>
  * Author: Phil Schwan <phil@clusterfs.com>
@@ -109,7 +109,7 @@ static inline void extent_replace(struct ldlm_lock *in_tree,
 {
 	struct rb_node *p = rb_parent(&in_tree->l_rb);
 
-	/* place 'new' in the rbtree replacing in_tree */
+	
 	new->l_rb.rb_left = in_tree->l_rb.rb_left;
 	new->l_rb.rb_right = in_tree->l_rb.rb_right;
 
@@ -221,7 +221,7 @@ static void ldlm_extent_internal_policy_granted(struct ldlm_lock *req,
 
 	lockmode_verify(req_mode);
 
-	/* Using interval tree to handle the LDLM extent granted locks. */
+	
 	for (idx = 0; idx < LCK_MODE_NUM; idx++) {
 		tree = &res->lr_itree[idx];
 		if (lockmode_compat(tree->lit_mode, req_mode))
@@ -284,17 +284,17 @@ ldlm_extent_internal_policy_waiting(struct ldlm_lock *req,
 
 	lockmode_verify(req_mode);
 
-	/* for waiting locks */
+	
 	list_for_each_entry(lock, &res->lr_waiting, l_res_link) {
 		struct ldlm_extent *l_extent = &lock->l_policy_data.l_extent;
 
-		/* We already hit the minimum requested size, search no more */
+		
 		if (new_ex->start == req_start && new_ex->end == req_end) {
 			EXIT;
 			return;
 		}
 
-		/* Don't conflict with ourselves */
+		
 		if (req == lock)
 			continue;
 
@@ -313,7 +313,7 @@ ldlm_extent_internal_policy_waiting(struct ldlm_lock *req,
 		if (conflicting > 4)
 			new_ex->start = req_start;
 
-		/* If lock doesn't overlap new_ex, skip it. */
+		
 		if (!ldlm_extent_overlap(l_extent, new_ex))
 			continue;
 
@@ -378,7 +378,7 @@ static void ldlm_extent_policy(struct ldlm_resource *res,
 
 	if (lock->l_policy_data.l_extent.start == 0 &&
 	    lock->l_policy_data.l_extent.end == OBD_OBJECT_EOF)
-		/* fast-path whole file locks */
+		
 		return;
 
 	/* Because reprocess_queue zeroes flags and uses it to return
@@ -437,7 +437,7 @@ static bool ldlm_extent_compat_cb(struct ldlm_lock *lock, void *data)
 	enum ldlm_mode mode = priv->mode;
 
 	ENTRY;
-	/* interval tree is for granted lock */
+	
 	LASSERTF(mode == lock->l_granted_mode,
 		 "mode = %s, lock->l_granted_mode = %s\n",
 		 ldlm_lockname[mode],
@@ -445,7 +445,7 @@ static bool ldlm_extent_compat_cb(struct ldlm_lock *lock, void *data)
 	if (lock->l_blocking_ast && lock->l_granted_mode != LCK_GROUP)
 		ldlm_add_ast_work_item(lock, enq, work_list);
 
-	/* don't count conflicting glimpse locks */
+	
 	if (!(mode == LCK_PR && lock->l_policy_data.l_extent.start == 0 &&
 	      lock->l_policy_data.l_extent.end == OBD_OBJECT_EOF))
 		*priv->locks += 1;
@@ -485,7 +485,7 @@ ldlm_extent_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 
 	lockmode_verify(req_mode);
 
-	/* Using interval tree for granted lock */
+	
 	if (queue == &res->lr_granted) {
 		struct ldlm_interval_tree *tree;
 		struct ldlm_extent_compat_args data = {.work_list = work_list,
@@ -563,7 +563,7 @@ ldlm_extent_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 					compat = 0;
 			}
 		}
-	} else { /* for waiting queue */
+	} else { 
 		list_for_each_entry(lock, queue, l_res_link) {
 			check_contention = 1;
 
@@ -574,7 +574,7 @@ ldlm_extent_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 			if (req == lock)
 				break;
 
-			/* locks are compatible, overlap doesn't matter */
+			
 			if (lockmode_compat(lock->l_req_mode, req_mode)) {
 				if (req_mode == LCK_PR &&
 				    ((lock->l_policy_data.l_extent.start <=
@@ -690,7 +690,7 @@ ldlm_extent_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 				}
 			} else if (lock->l_policy_data.l_extent.end < req_start ||
 				   lock->l_policy_data.l_extent.start > req_end) {
-				/* if non group lock doesn't overlap skip it */
+				
 				continue;
 			} else if (lock->l_req_extent.end < req_start ||
 				   lock->l_req_extent.start > req_end) {
@@ -708,7 +708,7 @@ ldlm_extent_compat_queue(struct list_head *queue, struct ldlm_lock *req,
 				goto destroylock;
 			}
 
-			/* don't count conflicting glimpse locks */
+			
 			if (lock->l_req_mode == LCK_PR &&
 			    lock->l_policy_data.l_extent.start == 0 &&
 			     lock->l_policy_data.l_extent.end == OBD_OBJECT_EOF)
@@ -755,13 +755,13 @@ void ldlm_lock_prolong_one(struct ldlm_lock *lock,
 
 	if (arg->lpa_export != lock->l_export ||
 	    lock->l_flags & LDLM_FL_DESTROYED)
-		/* ignore unrelated locks */
+		
 		return;
 
 	arg->lpa_locks_cnt++;
 
 	if (!(lock->l_flags & LDLM_FL_AST_SENT))
-		/* ignore locks not being cancelled */
+		
 		return;
 
 	arg->lpa_blocks_cnt++;
@@ -910,7 +910,7 @@ int ldlm_process_extent_lock(struct ldlm_lock *lock, __u64 *flags,
 out:
 	return rc;
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 /* When a lock is cancelled by a client, the KMS may undergo change if this
  * is the "highest lock".  This function returns the new KMS value, updating
@@ -1017,7 +1017,7 @@ static inline int ldlm_mode_to_index(enum ldlm_mode mode)
 	return index;
 }
 
-/** Add newly granted lock into interval tree for the resource. */
+
 void ldlm_extent_add_lock(struct ldlm_resource *res,
 			  struct ldlm_lock *lock)
 {
@@ -1066,7 +1066,7 @@ void ldlm_extent_add_lock(struct ldlm_resource *res,
 	}
 }
 
-/** Remove cancelled lock from resource interval tree. */
+
 void ldlm_extent_unlink_lock(struct ldlm_lock *lock)
 {
 	struct ldlm_resource *res = lock->l_resource;
@@ -1074,7 +1074,7 @@ void ldlm_extent_unlink_lock(struct ldlm_lock *lock)
 	int idx;
 
 	if (RB_EMPTY_NODE(&lock->l_rb) &&
-	    list_empty(&lock->l_same_extent)) /* duplicate unlink */
+	    list_empty(&lock->l_same_extent)) 
 		return;
 
 	idx = ldlm_mode_to_index(lock->l_granted_mode);

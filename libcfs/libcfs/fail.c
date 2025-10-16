@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #include <linux/types.h>
@@ -40,29 +40,29 @@ int __cfs_fail_check_set(u32 id, u32 value, int set)
 
 	if ((cfs_fail_loc & (CFS_FAILED | CFS_FAIL_ONCE)) ==
 	    (CFS_FAILED | CFS_FAIL_ONCE)) {
-		atomic_set(&cfs_fail_count, 0); /* paranoia */
+		atomic_set(&cfs_fail_count, 0); 
 		return 0;
 	}
 
-	/* Fail 1/cfs_fail_val times */
+	
 	if (cfs_fail_loc & CFS_FAIL_RAND) {
 		if (cfs_fail_val < 2 || get_random_u32_below(cfs_fail_val) > 0)
 			return 0;
 	}
 
-	/* Skip the first cfs_fail_val, then fail */
+	
 	if (cfs_fail_loc & CFS_FAIL_SKIP) {
 		if (atomic_inc_return(&cfs_fail_count) <= cfs_fail_val)
 			return 0;
 	}
 
-	/* check cfs_fail_val... */
+	
 	if (set == CFS_FAIL_LOC_VALUE) {
 		if (cfs_fail_val != -1 && cfs_fail_val != value)
 			return 0;
 	}
 
-	/* Fail cfs_fail_val times, overridden by FAIL_ONCE */
+	
 	if (cfs_fail_loc & CFS_FAIL_SOME &&
 	    (!(cfs_fail_loc & CFS_FAIL_ONCE) || cfs_fail_val <= 1)) {
 		int count = atomic_inc_return(&cfs_fail_count);
@@ -70,7 +70,7 @@ int __cfs_fail_check_set(u32 id, u32 value, int set)
 		if (count >= cfs_fail_val) {
 			set_bit(CFS_FAIL_ONCE_BIT, &cfs_fail_loc);
 			atomic_set(&cfs_fail_count, 0);
-			/* we are lost race to increase  */
+			
 			if (count > cfs_fail_val)
 				return 0;
 		}
@@ -81,7 +81,7 @@ int __cfs_fail_check_set(u32 id, u32 value, int set)
 	 */
 	if ((set == CFS_FAIL_LOC_ORSET) && (value & CFS_FAIL_ONCE))
 		set_bit(CFS_FAIL_ONCE_BIT, &cfs_fail_loc);
-	/* Lost race to set CFS_FAILED_BIT. */
+	
 	if (test_and_set_bit(CFS_FAILED_BIT, &cfs_fail_loc)) {
 		/* If CFS_FAIL_ONCE is valid, only one process can fail,
 		 * otherwise multi-process can fail at the same time.

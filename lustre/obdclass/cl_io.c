@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -9,7 +9,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Client IO.
  *
@@ -85,7 +85,7 @@ void cl_io_fini(const struct lu_env *env, struct cl_io *io)
 	}
 	io->ci_state = CIS_FINI;
 
-	/* sanity check for layout change */
+	
 	switch(io->ci_type) {
 	case CIT_READ:
 	case CIT_WRITE:
@@ -97,7 +97,7 @@ void cl_io_fini(const struct lu_env *env, struct cl_io *io)
 		break;
 	case CIT_SETATTR:
 	case CIT_MISC:
-		/* Check ignore layout change conf */
+		
 		LASSERT(ergo(io->ci_ignore_layout || !io->ci_verify_layout,
 				!io->ci_need_restart));
 		break;
@@ -182,7 +182,7 @@ int cl_io_init(const struct lu_env *env, struct cl_io *io,
 {
 	LASSERT(obj == cl_object_top(obj));
 
-	/* clear I/O restart from previous instance */
+	
 	io->ci_need_restart = 0;
 
 	return __cl_io_init(env, io, iot, obj);
@@ -222,10 +222,10 @@ EXPORT_SYMBOL(cl_io_rw_init);
 static int cl_lock_descr_cmp(void *priv,
 			     const struct list_head *a,
 			     const struct list_head *b)
-#else /* !HAVE_LIST_CMP_FUNC_T */
+#else 
 static int cl_lock_descr_cmp(void *priv,
 			     struct list_head *a, struct list_head *b)
-#endif /* HAVE_LIST_CMP_FUNC_T */
+#endif 
 {
 	const struct cl_io_lock_link *l0 = list_entry(a, struct cl_io_lock_link,
 						      cill_linkage);
@@ -456,7 +456,7 @@ void cl_io_rw_advance(const struct lu_env *env, struct cl_io *io, size_t bytes)
 	io->u.ci_rw.crw_pos   += bytes;
 	io->u.ci_rw.crw_bytes -= bytes;
 
-	/* layers have to be notified. */
+	
 	list_for_each_entry_reverse(scan, &io->ci_layers, cis_linkage) {
 		if (scan->cis_iop->op[io->ci_type].cio_advance != NULL)
 			scan->cis_iop->op[io->ci_type].cio_advance(env, scan,
@@ -505,7 +505,7 @@ int cl_io_lock_alloc_add(const struct lu_env *env, struct cl_io *io,
 		link->cill_descr = *descr;
 		link->cill_fini	 = cl_free_io_lock_link;
 		result = cl_io_lock_add(env, io, link);
-		if (result) /* lock match */
+		if (result) 
 			link->cill_fini(env, link);
 	} else
 		result = -ENOMEM;
@@ -557,7 +557,7 @@ void cl_io_end(const struct lu_env *env, struct cl_io *io)
 	list_for_each_entry_reverse(scan, &io->ci_layers, cis_linkage) {
 		if (scan->cis_iop->op[io->ci_type].cio_end != NULL)
 			scan->cis_iop->op[io->ci_type].cio_end(env, scan);
-		/* TODO: error handling. */
+		
 	}
 	io->ci_state = CIS_IO_FINISHED;
 	EXIT;
@@ -776,7 +776,7 @@ int cl_io_submit_sync(const struct lu_env *env, struct cl_io *io,
 			cl_sync_io_note(env, anchor, 1);
 		}
 
-		/* wait for the IO to be finished. */
+		
 		rc = cl_sync_io_wait(env, anchor, timeout);
 		cl_page_list_assume(env, io, &queue->c2_qout);
 	} else {
@@ -1148,7 +1148,7 @@ void cl_2queue_init_page(struct cl_2queue *queue, struct cl_page *page)
 }
 EXPORT_SYMBOL(cl_2queue_init_page);
 
-/* Returns top-level io. (See cl_object.c:cl_object_top()) */
+
 struct cl_io *cl_io_top(struct cl_io *io)
 {
 	ENTRY;
@@ -1233,7 +1233,7 @@ int cl_sync_io_wait(const struct lu_env *env, struct cl_sync_io *anchor,
 	if (!rc)
 		rc = anchor->csi_sync_rc;
 
-	/* We take the lock to ensure that cl_sync_io_note() has finished */
+	
 	spin_lock(&anchor->csi_waitq.lock);
 	LASSERT(atomic_read(&anchor->csi_sync_nr) == 0);
 	LASSERT(atomic_read(&anchor->csi_complete) == 1);
@@ -1409,7 +1409,7 @@ struct cl_sub_dio *cl_sub_dio_alloc(struct cl_dio_aio *ll_aio,
 			else if (iov_iter_is_kvec(iter) || iter_is_iovec(iter))
 				v_sz = iter->nr_segs * sizeof(struct iovec);
 
-			/* xarray and discard do not need vec to be dup'd */
+			
 			if (!v_sz)
 				goto out;
 
@@ -1468,7 +1468,7 @@ int ll_allocate_dio_buffer(struct cl_dio_pages *cdp, size_t io_size)
 
 	ENTRY;
 
-	/* page level offset in the file where the I/O starts */
+	
 	pg_offset = cdp->cdp_file_offset & ~PAGE_MASK;
 	/* this adds 1 for the first page and removes the bytes in it from the
 	 * io_size, making the rest of the calculation aligned
@@ -1478,7 +1478,7 @@ int ll_allocate_dio_buffer(struct cl_dio_pages *cdp, size_t io_size)
 		io_size -= min_t(size_t, PAGE_SIZE - pg_offset, io_size);
 	}
 
-	/* calculate pages for the rest of the buffer */
+	
 	cdp->cdp_page_count += (io_size + PAGE_SIZE - 1) >> PAGE_SHIFT;
 
 #ifdef HAVE_DIO_ITER
@@ -1559,7 +1559,7 @@ EXPORT_SYMBOL(ll_release_user_pages);
 #define kthread_unuse_mm(mm) unuse_mm(mm)
 #endif
 
-/* copy IO data to/from internal buffer and userspace iovec */
+
 static ssize_t __ll_dio_user_copy(struct cl_sub_dio *sdio)
 {
 	struct iov_iter *iter = &sdio->csd_iter;
@@ -1613,7 +1613,7 @@ static ssize_t __ll_dio_user_copy(struct cl_sub_dio *sdio)
 		mm_used = true;
 	}
 
-	/* fault in the entire userspace iovec */
+	
 	if (rw == WRITE) {
 		if (unlikely(ll_iov_iter_fault_in_readable(iter, count)))
 			GOTO(out, status = -EFAULT);
@@ -1628,9 +1628,9 @@ static ssize_t __ll_dio_user_copy(struct cl_sub_dio *sdio)
 	 */
 	while (true) {
 		struct page *page = cdp->cdp_pages[i];
-		unsigned long offset; /* offset into kernel buffer page */
-		size_t copied; /* bytes successfully copied */
-		size_t bytes; /* bytes to copy for this page */
+		unsigned long offset; 
+		size_t copied; 
+		size_t bytes; 
 
 		LASSERT(i < cdp->cdp_page_count);
 
@@ -1655,7 +1655,7 @@ static ssize_t __ll_dio_user_copy(struct cl_sub_dio *sdio)
 		 */
 		flush_dcache_page(page);
 
-		/* write requires a few extra steps */
+		
 		if (rw == WRITE) {
 #ifndef HAVE_COPY_PAGE_FROM_ITER_ATOMIC
 			copied = iov_iter_copy_from_user_atomic(page, iter,
@@ -1667,7 +1667,7 @@ static ssize_t __ll_dio_user_copy(struct cl_sub_dio *sdio)
 #endif
 			flush_dcache_page(page);
 
-		} else /* READ */ {
+		} else  {
 			copied = copy_page_to_iter(page, offset, bytes, iter);
 		}
 
@@ -1707,7 +1707,7 @@ static ssize_t __ll_dio_user_copy(struct cl_sub_dio *sdio)
 	if (rw == WRITE && status == 0)
 		sdio->csd_write_copied = true;
 
-	/* if we complete successfully, we should reach all of the pages */
+	
 	LASSERTF(ergo(status == 0, i == cdp->cdp_page_count - 1),
 		 "status: %d, i: %d, cdp->cdp_page_count %u, count %zu\n",
 		  status, i, cdp->cdp_page_count, count);
@@ -1719,7 +1719,7 @@ out:
 	if (locked)
 		spin_unlock(&sdio->csd_lock);
 
-	/* the total bytes copied, or status */
+	
 	RETURN(original_count - count ? original_count - count : status);
 }
 
@@ -1745,9 +1745,9 @@ ssize_t ll_dio_user_copy(struct cl_sub_dio *sdio)
 	struct dio_user_copy_data ducd;
 	struct task_struct *kthread;
 
-	/* normal case - copy is being done by ptlrpcd */
+	
 	if (current->flags & PF_KTHREAD ||
-	/* for non-parallel DIO, the submitting thread does the copy */
+	
 	    sdio->csd_ll_aio->cda_mm == current->mm)
 		return __ll_dio_user_copy(sdio);
 
@@ -1892,7 +1892,7 @@ int cl_sync_io_wait_recycle(const struct lu_env *env, struct cl_sync_io *anchor,
 	 * reused we assume it as 1 before using.
 	 */
 	atomic_add(1, &anchor->csi_sync_nr);
-	/* we must also set this anchor as incomplete */
+	
 	atomic_set(&anchor->csi_complete, 0);
 
 	return rc;

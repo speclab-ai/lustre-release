@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Dynamic Locks; struct dynlock is lockspace; one may request lock
  * (exclusive or shared) for some value in that lockspace.
@@ -52,7 +52,7 @@ struct dynlock_handle *dynlock_lock(struct dynlock *dl, unsigned long value,
 	BUG_ON(dl->dl_magic != DYNLOCK_LIST_MAGIC);
 
 repeat:
-	/* find requested lock in lockspace */
+	
 	spin_lock(&dl->dl_list_lock);
 	BUG_ON(dl->dl_list.next == NULL);
 	BUG_ON(dl->dl_list.prev == NULL);
@@ -61,7 +61,7 @@ repeat:
 		BUG_ON(hl->dh_list.prev == NULL);
 		BUG_ON(hl->dh_magic != DYNLOCK_HANDLE_MAGIC);
 		if (hl->dh_value == value) {
-			/* lock is found */
+			
 			if (nhl) {
 				/* someone else just allocated
 				 * lock we didn't find and just created
@@ -73,9 +73,9 @@ repeat:
 			goto found;
 		}
 	}
-	/* lock not found */
+	
 	if (nhl) {
-		/* we already have allocated lock. use it */
+		
 		hl = nhl;
 		nhl = NULL;
 		list_add(&hl->dh_list, &dl->dl_list);
@@ -83,7 +83,7 @@ repeat:
 	}
 	spin_unlock(&dl->dl_list_lock);
 
-	/* lock not found and we haven't allocated lock yet. allocate it */
+	
 	OBD_SLAB_ALLOC_GFP(nhl, dynlock_cachep, sizeof(*nhl), gfp);
 	if (nhl == NULL)
 		return NULL;
@@ -113,7 +113,7 @@ found:
 		}
 		hl->dh_writers++;
 	} else {
-		/* shared lock: user do not want to share lock with writer */
+		
 		while (hl->dh_writers) {
 			spin_unlock(&dl->dl_list_lock);
 			wait_event(hl->dh_wait, hl->dh_writers == 0);
@@ -178,7 +178,7 @@ int dynlock_is_locked(struct dynlock *dl, unsigned long value)
 	struct dynlock_handle *hl;
 	int result = 0;
 
-	/* find requested lock in lockspace */
+	
 	spin_lock(&dl->dl_list_lock);
 	BUG_ON(dl->dl_list.next == NULL);
 	BUG_ON(dl->dl_list.prev == NULL);
@@ -187,7 +187,7 @@ int dynlock_is_locked(struct dynlock *dl, unsigned long value)
 		BUG_ON(hl->dh_list.prev == NULL);
 		BUG_ON(hl->dh_magic != DYNLOCK_HANDLE_MAGIC);
 		if (hl->dh_value == value && hl->dh_pid == current->pid) {
-			/* lock is found */
+			
 			result = 1;
 			break;
 		}

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_io for OSC layer.
  *
@@ -110,7 +110,7 @@ int osc_io_submit(const struct lu_env *env, struct cl_io *io,
 	struct cl_page	  *tmp;
 	struct cl_io	  *top_io = cl_io_top(io);
 	struct client_obd *cli  = NULL;
-	struct osc_object *osc  = NULL;	/* to keep gcc happy */
+	struct osc_object *osc  = NULL;	
 	struct osc_page	  *opg;
 	LIST_HEAD(list);
 
@@ -120,7 +120,7 @@ int osc_io_submit(const struct lu_env *env, struct cl_io *io,
 	int result = 0;
 	int brw_flags;
 	unsigned int max_pages;
-	unsigned int ppc_bits; /* pages per chunk bits */
+	unsigned int ppc_bits; 
 	unsigned int ppc;
 	bool sync_queue = false;
 	bool dio = false;
@@ -192,7 +192,7 @@ int osc_io_submit(const struct lu_env *env, struct cl_io *io,
 
 		if (page->cp_sync_io != NULL)
 			cl_page_list_move(qout, qin, page);
-		else /* async IO */
+		else 
 			cl_page_list_del(env, qin, page, true);
 
 		queued++;
@@ -203,10 +203,10 @@ int osc_io_submit(const struct lu_env *env, struct cl_io *io,
 			unsigned int next_chunks;
 
 			chunks = (queued + ppc - 1) >> ppc_bits;
-			/* chunk number if add another page */
+			
 			next_chunks = (queued + ppc) >> ppc_bits;
 
-			/* next page will excceed write chunk limit */
+			
 			if (chunks == osc_max_write_chunks(cli) &&
 			    next_chunks > chunks)
 				sync_queue = true;
@@ -226,7 +226,7 @@ int osc_io_submit(const struct lu_env *env, struct cl_io *io,
 		result = osc_queue_sync_pages(env, top_io, osc, &list,
 					      brw_flags);
 
-	/* Update c/mtime for sync write. LU-7310 */
+	
 	if (crt == CRT_WRITE && qout->pl_nr > 0 && result == 0) {
 		struct cl_object *obj   = ios->cis_obj;
 		struct cl_attr *attr = &osc_env_info(env)->oti_attr;
@@ -251,7 +251,7 @@ int osc_dio_submit(const struct lu_env *env, struct cl_io *io,
 	struct client_obd *cli  = osc_cli(osc);
 	struct page	  *vmpage;
 	LIST_HEAD(list);
-	/* pages per chunk bits */
+	
 	unsigned int ppc_bits = cli->cl_chunkbits - PAGE_SHIFT;
 	unsigned int max_pages = cli->cl_max_pages_per_rpc;
 	unsigned int ppc = 1 << ppc_bits;
@@ -304,10 +304,10 @@ int osc_dio_submit(const struct lu_env *env, struct cl_io *io,
 			unsigned int chunks;
 
 			chunks = (queued + ppc - 1) >> ppc_bits;
-			/* chunk number if add another page */
+			
 			next_chunks = (queued + ppc) >> ppc_bits;
 
-			/* next page will excceed write chunk limit */
+			
 			if (chunks == osc_max_write_chunks(cli) &&
 			    next_chunks > chunks)
 				sync_queue = true;
@@ -332,7 +332,7 @@ int osc_dio_submit(const struct lu_env *env, struct cl_io *io,
 					     from, to, brw_flags);
 	}
 
-	/* Update c/mtime for sync write. LU-7310 */
+	
 	if (crt == CRT_WRITE && total_queued > 0 && result == 0) {
 		struct cl_attr *attr = &osc_env_info(env)->oti_attr;
 		struct cl_object *obj   = ios->cis_obj;
@@ -365,7 +365,7 @@ void osc_page_touch_at(const struct lu_env *env, struct cl_object *obj,
 
 	ENTRY;
 
-	/* offset within stripe */
+	
 	kms = (idx << PAGE_SHIFT) + to;
 
 	cl_object_attr_lock(obj);
@@ -406,7 +406,7 @@ int osc_io_commit_async(const struct lu_env *env,
 
 	LASSERT(qin->pl_nr > 0);
 
-	/* Handle partial page cases */
+	
 	last_page = cl_page_list_last(qin);
 	if (oio->oi_lockless) {
 		page = cl_page_list_first(qin);
@@ -436,7 +436,7 @@ int osc_io_commit_async(const struct lu_env *env,
 			break;
 		}
 
-		/* The page may be already in dirty cache. */
+		
 		if (list_empty(&oap->oap_pending_item)) {
 			result = osc_page_cache_add(env, osc, opg, io, cb);
 			if (result != 0)
@@ -448,7 +448,7 @@ int osc_io_commit_async(const struct lu_env *env,
 
 		cl_page_list_del(env, qin, page, true);
 
-		/* if there are no more slots, do the callback & reinit */
+		
 		if (!folio_batch_add_page(fbatch, page->cp_vmpage)) {
 			(*cb)(env, io, fbatch);
 			folio_batch_reinit(fbatch);
@@ -460,7 +460,7 @@ int osc_io_commit_async(const struct lu_env *env,
 	osc_update_next_shrink(osc_cli(osc));
 
 
-	/* Clean up any partially full folio_batches */
+	
 	if (folio_batch_count(fbatch) != 0)
 		(*cb)(env, io, fbatch);
 
@@ -692,11 +692,11 @@ static int osc_io_setattr_start(const struct lu_env *env,
 	bool io_is_falloc = cl_io_is_fallocate(io);
 
 	ENTRY;
-	/* truncate cache dirty pages first */
+	
 	if (cl_io_is_trunc(io))
 		result = osc_cache_truncate_start(env, cl2osc(obj), size,
 						  &oio->oi_trunc);
-	/* flush local pages prior punching/zero-range them on server */
+	
 	if (io_is_falloc &&
 	    (io->u.ci_setattr.sa_falloc_mode &
 	     (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE)))
@@ -760,7 +760,7 @@ static int osc_io_setattr_start(const struct lu_env *env,
 			}
 
 			if (io->ci_layout_version > 0) {
-				/* verify layout version */
+				
 				oa->o_valid |= OBD_MD_LAYOUT_VERSION;
 				oa->o_layout_version = io->ci_layout_version;
 			}
@@ -853,7 +853,7 @@ void osc_io_setattr_end(const struct lu_env *env,
 	if (cl_io_is_fallocate(io)) {
 		if (result == 0) {
 			cl_object_attr_lock(obj);
-			/* update blocks */
+			
 			if (oa->o_valid & OBD_MD_FLBLOCKS) {
 				attr->cat_blocks = oa->o_blocks;
 				cl_valid |= CAT_BLOCKS;
@@ -1048,7 +1048,7 @@ int osc_fsync_ost(const struct lu_env *env, struct osc_object *obj,
 	oa->o_valid = OBD_MD_FLID | OBD_MD_FLGROUP;
 	osc_set_projid_info(env, osc2cl(obj), oa);
 
-	/* reload size abd blocks for start and end of sync range */
+	
 	oa->o_size = fio->fi_start;
 	oa->o_blocks = fio->fi_end;
 	oa->o_valid |= OBD_MD_FLSIZE | OBD_MD_FLBLOCKS;
@@ -1179,7 +1179,7 @@ static int osc_io_ladvise_start(const struct lu_env *env,
 	int			 num_advise = 1;
 	ENTRY;
 
-	/* TODO: add multiple ladvise support in CLIO */
+	
 	buf_size = offsetof(typeof(*ladvise_hdr), lah_advise[num_advise]);
 	if (osc_env_info(env)->oti_ladvise_buf.lb_len < buf_size)
 		lu_buf_realloc(&osc_env_info(env)->oti_ladvise_buf, buf_size);
@@ -1291,7 +1291,7 @@ int osc_io_lseek_start(const struct lu_env *env,
 
 	ENTRY;
 
-	/* No negative values at this point */
+	
 	LASSERT(lsio->ls_start >= 0);
 	LASSERT(lsio->ls_whence == SEEK_HOLE || lsio->ls_whence == SEEK_DATA);
 
@@ -1299,7 +1299,7 @@ int osc_io_lseek_start(const struct lu_env *env,
 	 * boundaries prior sending LSEEK RPC
 	 */
 	if (lsio->ls_start >= loi->loi_lvb.lvb_size) {
-		/* consider area beyond end of object as hole */
+		
 		if (lsio->ls_whence == SEEK_HOLE)
 			lsio->ls_result = lsio->ls_start;
 		else
@@ -1476,4 +1476,4 @@ int osc_io_init(const struct lu_env *env,
 	return 0;
 }
 
-/** @} osc */
+

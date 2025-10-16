@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_object for LOVSUB layer.
  *
@@ -191,4 +191,4 @@ struct lu_object *lovsub_object_alloc(const struct lu_env *env,
 	RETURN(obj);
 }
 
-/** @} lov */
+

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -94,7 +94,7 @@ static struct lquota_entry *qsd_id_ast_data_get(struct ldlm_lock *lock,
 	unlock_res_and_lock(lock);
 
 	if (reset && lqe)
-		/* release lqe reference hold for the lock */
+		
 		lqe_putref(lqe);
 	RETURN(lqe);
 }
@@ -122,10 +122,10 @@ static int qsd_common_glimpse_ast(struct ptlrpc_request *req,
 
 	LASSERT(lustre_msg_get_opc(req->rq_reqmsg) == LDLM_GL_CALLBACK);
 
-	/* glimpse on quota locks always packs a glimpse descriptor */
+	
 	req_capsule_extend(&req->rq_pill, &RQF_LDLM_GL_CALLBACK_DESC);
 
-	/* extract glimpse descriptor */
+	
 	*desc = req_capsule_client_get(&req->rq_pill, &RMF_DLM_GL_DESC);
 	if (!*desc)
 		RETURN(-EFAULT);
@@ -133,7 +133,7 @@ static int qsd_common_glimpse_ast(struct ptlrpc_request *req,
 	if (req_capsule_req_need_swab(&req->rq_pill))
 		lustre_swab_gl_lquota_desc(*desc);
 
-	/* prepare reply */
+	
 	req_capsule_set_size(&req->rq_pill, &RMF_DLM_LVB, RCL_SERVER,
 			     sizeof(struct lquota_lvb));
 	rc = req_capsule_server_pack(&req->rq_pill);
@@ -142,7 +142,7 @@ static int qsd_common_glimpse_ast(struct ptlrpc_request *req,
 		RETURN(rc);
 	}
 
-	/* extract lvb */
+	
 	*lvb = req_capsule_server_get(&req->rq_pill, &RMF_DLM_LVB);
 
 	RETURN(0);
@@ -282,7 +282,7 @@ static int qsd_glb_glimpse_ast(struct ldlm_lock *lock, void *data)
 
 	qqi = qsd_glb_ast_data_get(lock, false);
 	if (!qqi)
-		/* valid race */
+		
 		GOTO(out, rc = -ELDLM_NO_LOCK_DATA);
 
 	CDEBUG(D_QUOTA,
@@ -297,7 +297,7 @@ static int qsd_glb_glimpse_ast(struct ldlm_lock *lock, void *data)
 		GOTO(out_qqi, rc = -EINVAL);
 	}
 
-	/* extract new hard & soft limits from the glimpse descriptor */
+	
 	rec.qbr_hardlimit = desc->gl_hardlimit;
 	rec.qbr_softlimit = desc->gl_softlimit;
 	rec.qbr_time      = desc->gl_time;
@@ -362,7 +362,7 @@ static int qsd_id_blocking_ast(struct ldlm_lock *lock,
 		ldlm_lock2handle(lock, &lockh);
 		lqe_write_lock(lqe);
 		if (lustre_handle_equal(&lockh, &lqe->lqe_lockh)) {
-			/* Clear lqe_lockh & reset qunit to 0 */
+			
 			qsd_set_qunit(lqe, 0);
 			memset(&lqe->lqe_lockh, 0, sizeof(lqe->lqe_lockh));
 			qsd_set_edquot(lqe, false);
@@ -388,7 +388,7 @@ static int qsd_id_blocking_ast(struct ldlm_lock *lock,
 				rc = -ENOMEM;
 		}
 
-		/* release lqe reference grabbed by qsd_id_ast_data_get() */
+		
 		lqe_putref(lqe);
 		break;
 	}
@@ -422,7 +422,7 @@ static int qsd_id_glimpse_ast(struct ldlm_lock *lock, void *data)
 
 	lqe = qsd_id_ast_data_get(lock, false);
 	if (!lqe)
-		/* valid race */
+		
 		GOTO(out, rc = -ELDLM_NO_LOCK_DATA);
 
 	LQUOTA_DEBUG(lqe, "glimpse on quota locks, new qunit:%llu, edquot:%d",
@@ -434,7 +434,7 @@ static int qsd_id_glimpse_ast(struct ldlm_lock *lock, void *data)
 		struct lu_env *env;
 		long long space;
 
-		/* extract new qunit from glimpse request */
+		
 		qsd_set_qunit(lqe, desc->gl_qunit);
 
 		lqe_write_unlock(lqe);
@@ -458,13 +458,13 @@ static int qsd_id_glimpse_ast(struct ldlm_lock *lock, void *data)
 			} else {
 				lqe->lqe_pending_req++;
 
-				/* release quota space in glimpse reply */
+				
 				LQUOTA_DEBUG(lqe, "releasing %lld", space);
 				lqe->lqe_granted -= space;
 				lvb->lvb_id_rel   = space;
 
 				lqe_write_unlock(lqe);
-				/* change the lqe_granted */
+				
 				qsd_upd_schedule(lqe2qqi(lqe), lqe,
 						 &lqe->lqe_id,
 						 (union lquota_rec *)
@@ -520,7 +520,7 @@ int qsd_id_lock_match(struct lustre_handle *lockh, struct lustre_handle *rlockh)
 	ldlm_lock_dump_handle(D_QUOTA, lockh);
 
 	if (!rlockh)
-		/* caller not interested in remote handle */
+		
 		RETURN(0);
 
 	/*

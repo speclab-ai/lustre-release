@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,18 +8,18 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * on-disk structure for managing /O
  *
  * Author: Alex Zhuravlev <bzzz@whamcloud.com>
  */
 
-/* prerequisite for linux/xattr.h */
+
 #include <linux/types.h>
-/* prerequisite for linux/xattr.h */
+
 #include <linux/fs.h>
-/* XATTR_{REPLACE,CREATE} */
+
 #include <linux/xattr.h>
 
 /*
@@ -122,7 +122,7 @@ struct dentry *osd_lookup_one_len(struct osd_device *dev, const char *name,
 	return osd_lookup_one_len_common(dev, name, base, len, OI_LOCKED);
 }
 
-/* utility to make a directory */
+
 static struct dentry *
 simple_mkdir(const struct lu_env *env, struct osd_device *osd,
 	     struct dentry *dir, const struct lu_fid *fid,
@@ -137,7 +137,7 @@ simple_mkdir(const struct lu_env *env, struct osd_device *osd,
 
 	ENTRY;
 
-	// ASSERT_KERNEL_CTXT("kernel doing mkdir outside kernel context\n");
+	
 	CDEBUG(D_INODE, "creating directory %.*s\n", (int)strlen(name), name);
 	dchild = osd_lookup_one_len_unlocked(osd, name, dir, strlen(name));
 	if (IS_ERR(dchild))
@@ -162,7 +162,7 @@ simple_mkdir(const struct lu_env *env, struct osd_device *osd,
 		if (unlikely(osd->od_dt_dev.dd_rdonly))
 			RETURN(dchild);
 
-		/* Fixup directory permissions if necessary */
+		
 		if ((old_mode & S_IALLUGO) != (mode & S_IALLUGO)) {
 			CDEBUG(D_CONFIG,
 			       "fixing permissions on %s from %o to %o\n",
@@ -408,7 +408,7 @@ int osd_delete_from_remote_parent(const struct lu_env *env,
 	if (rc)
 		RETURN(rc);
 
-	/* Get rid of REMOTE_PARENT flag from incompat */
+	
 	lma->lma_incompat &= ~LMAI_REMOTE_PARENT;
 	lustre_lma_swab(lma);
 	rc = __osd_xattr_set(oti, obj->oo_inode, XATTR_NAME_LMA, lma,
@@ -490,7 +490,7 @@ static int osd_ost_init(const struct lu_env *env, struct osd_device *dev)
 	if (dev->od_ost_map == NULL)
 		RETURN(-ENOMEM);
 
-	/* to get subdir count from last_rcvd */
+	
 	rc = osd_last_rcvd_subdir_count(dev);
 	if (rc < 0)
 		GOTO(cleanup_alloc, rc);
@@ -507,7 +507,7 @@ static int osd_ost_init(const struct lu_env *env, struct osd_device *dev)
 		GOTO(cleanup_ctxt, rc = PTR_ERR(d));
 
 	if (created)
-		/* It is quite probably that the device is new formatted. */
+		
 		dev->od_maybe_new = 1;
 
 	dev->od_ost_map->om_root = d;
@@ -873,7 +873,7 @@ static int osd_obj_add_entry(struct osd_thread_info *info,
 
 	inode->i_sb = osd_sb(osd);
 	osd_id_to_inode(inode, id);
-	inode->i_mode = S_IFREG; /* for type in ldiskfs dir entry */
+	inode->i_mode = S_IFREG; 
 
 	child = &info->oti_child_dentry;
 	child->d_name.hash = 0;
@@ -910,7 +910,7 @@ static inline void osd_seq_name(char *seq_name, size_t name_size, u64 seq)
 		 fid_seq_is_idif(seq) ? 0 : seq);
 }
 
-/* external locking is required */
+
 static int osd_seq_load_locked(struct osd_thread_info *info,
 			       struct osd_device *osd,
 			       struct osd_obj_seq *osd_seq)
@@ -995,10 +995,10 @@ struct osd_obj_seq *osd_seq_load(struct osd_thread_info *info,
 	if (likely(osd_seq != NULL))
 		RETURN(osd_seq);
 
-	/* Serializing init process */
+	
 	mutex_lock(&map->om_dir_init_mutex);
 
-	/* Check whether the seq has been added */
+	
 	read_lock(&map->om_seq_list_lock);
 	osd_seq = osd_seq_find_locked(map, seq);
 	if (osd_seq != NULL) {
@@ -1053,7 +1053,7 @@ int osd_obj_map_lookup(struct osd_thread_info *info, struct osd_device *dev,
 
 	ENTRY;
 
-	/* on the very first lookup we find and open directories */
+	
 	map = dev->od_ost_map;
 	LASSERT(map);
 	LASSERT(map->om_root);
@@ -1073,7 +1073,7 @@ int osd_obj_map_lookup(struct osd_thread_info *info, struct osd_device *dev,
 	child->d_parent = d_seq;
 	child->d_name.hash = 0;
 	child->d_name.name = name;
-	/* XXX: we can use rc from sprintf() instead of strlen() */
+	
 	child->d_name.len = strlen(name);
 
 	dir = d_seq->d_inode;
@@ -1117,7 +1117,7 @@ int osd_obj_map_insert(struct osd_thread_info *info,
 	map = osd->od_ost_map;
 	LASSERT(map);
 
-	/* map fid to seq:objid */
+	
 	fid_to_ostid(fid, ostid);
 
 	oid = ostid_id(ostid);
@@ -1161,7 +1161,7 @@ int osd_obj_map_delete(struct osd_thread_info *info, struct osd_device *osd,
 	map = osd->od_ost_map;
 	LASSERT(map);
 
-	/* map fid to seq:objid */
+	
 	fid_to_ostid(fid, ostid);
 
 	osd_seq = osd_seq_load(info, osd, ostid_seq(ostid));
@@ -1255,7 +1255,7 @@ int osd_obj_map_recover(struct osd_thread_info *info,
 	tgt_child->d_parent = tgt_parent;
 	tgt_child->d_inode = inode;
 
-	/* The non-initialized src_child may be destroyed. */
+	
 	jh = osd_journal_start_sb(osd_sb(osd), LDISKFS_HT_MISC,
 				osd_dto_credits_noquota[DTO_INDEX_DELETE] +
 				osd_dto_credits_noquota[DTO_INDEX_INSERT] +
@@ -1293,7 +1293,7 @@ int osd_obj_map_recover(struct osd_thread_info *info,
 		ldiskfs_journal_stop(jh);
 
 		rc = -EEXIST;
-		/* If the src object has never been modified, then remove it. */
+		
 		if (inode->i_size == 0 && inode->i_mode & S_ISUID &&
 		    inode->i_mode & S_ISGID) {
 			rc = vfs_unlink(&nop_mnt_idmap, src_parent, src_child);
@@ -1341,7 +1341,7 @@ osd_object_spec_find(struct osd_thread_info *info, struct osd_device *osd,
 	if (fid_is_last_id(fid)) {
 		struct osd_obj_seq *osd_seq;
 
-		/* on creation of LAST_ID we create O/<seq> hierarchy */
+		
 		osd_seq = osd_seq_load(info, osd, fid_seq(fid));
 		if (IS_ERR(osd_seq))
 			RETURN((struct dentry *)osd_seq);

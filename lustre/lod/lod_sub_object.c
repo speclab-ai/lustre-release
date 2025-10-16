@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2015, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * LOD sub object methods
  *
@@ -65,7 +65,7 @@ struct thandle *lod_sub_get_thandle(const struct lu_env *env,
 	 * so if the FID of sub_obj is zero, it means OST object. */
 	if (!dt_object_remote(sub_obj) ||
 	    fid_is_zero(lu_object_fid(&sub_obj->do_lu))) {
-		/* local MDT object */
+		
 		if (fid_is_sane(lu_object_fid(&sub_obj->do_lu)) &&
 		    tth->tt_multiple_thandle != NULL &&
 		    record_update != NULL &&
@@ -932,7 +932,7 @@ int lod_sub_prep_llog(const struct lu_env *env, struct lod_device *lod,
 	if (likely(logid_id(&cid->lci_logid) != 0)) {
 		rc = llog_open(env, ctxt, &lgh, &cid->lci_logid, NULL,
 			       LLOG_OPEN_EXISTS);
-		/* re-create llog if it is missing */
+		
 		if (rc == -ENOENT || rc == -EREMCHG) {
 			logid_set_id(&cid->lci_logid, 0);
 		} else if (rc < 0) {
@@ -959,7 +959,7 @@ renew:
 
 	rc = llog_init_handle(env, lgh, LLOG_F_IS_CAT, NULL);
 	if (rc) {
-		/* Update llog is incorrect, renew it */
+		
 		if (rc == -EINVAL && need_put == false) {
 			CWARN("%s: renew invalid update log "DFID": rc = %d\n",
 			      lod2obd(lod)->obd_name, PLOGID(&cid->lci_logid),

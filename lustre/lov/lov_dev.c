@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_device and cl_device_type for LOV layer.
  *
@@ -17,7 +17,7 @@
 
 #define DEBUG_SUBSYSTEM S_LOV
 
-/* class_name2obd() */
+
 #include <obd_class.h>
 
 #include "lov_cl_internal.h"
@@ -143,7 +143,7 @@ struct lu_context_key lov_session_key = {
 	.lct_fini = lov_session_key_fini
 };
 
-/* type constructor/destructor: lov_type_{init,fini,start,stop}() */
+
 LU_TYPE_INIT_FINI(lov, &lov_key, &lov_session_key);
 
 
@@ -244,7 +244,7 @@ static int lov_device_init(const struct lu_env *env, struct lu_device *d,
 	struct lov_tgt_desc *desc;
 	int rc = 0, i;
 
-	/* check all added already MDC subdevices and initialize them */
+	
 	for (i = 0; i < ld->ld_md_tgts_nr; i++) {
 		struct obd_device *mdc;
 		__u32 idx;
@@ -314,7 +314,7 @@ static struct lu_device *lov_device_free(const struct lu_env *env,
 		OBD_FREE_PTR_ARRAY(ld->ld_md_tgts, LOV_MDC_TGT_MAX);
 		ld->ld_md_tgts = NULL;
 	}
-	/* free array of MDCs */
+	
 	if (ld->ld_lov->lov_mdc_tgts) {
 		OBD_FREE_PTR_ARRAY(ld->ld_lov->lov_mdc_tgts, LOV_MDC_TGT_MAX);
 		ld->ld_lov->lov_mdc_tgts = NULL;
@@ -614,15 +614,15 @@ static struct lu_device *lov_device_alloc(const struct lu_env *env,
 	d = lov2lu_dev(ld);
 	d->ld_ops = &lov_lu_ops;
 
-	/* setup the LOV OBD */
+	
 	obd = class_name2obd(lustre_cfg_string(cfg, 0));
 	LASSERT(obd != NULL);
 	rc = lov_setup(obd, cfg);
 	if (rc)
 		GOTO(out, rc);
 
-	/* Alloc MDC devices array */
-	/* XXX: need dynamic allocation at some moment */
+	
+	
 	OBD_ALLOC_PTR_ARRAY(ld->ld_md_tgts, LOV_MDC_TGT_MAX);
 	if (!ld->ld_md_tgts)
 		GOTO(out, rc = -ENOMEM);
@@ -678,4 +678,4 @@ struct lu_device_type lov_device_type = {
 	.ldt_ctx_tags = LCT_CL_THREAD
 };
 
-/** @} lov */
+

@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf_python.h
  *
@@ -37,4 +37,4 @@ lutf_rc_t python_collect_agent_core(char *ip);
  */
 lutf_rc_t python_handle_rpc_request(char *rpc);
 
-#endif /* LUTF_PYTHON_H */
+#endif 

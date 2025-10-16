@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __SELFTEST_RPC_H__
@@ -28,7 +28,7 @@ enum srpc_service_type {
 	SRPC_SERVICE_QUERY_STAT        = 5,
 	SRPC_SERVICE_JOIN              = 6,
 	SRPC_FRAMEWORK_SERVICE_MAX_ID  = 10,
-	/* other services start from SRPC_FRAMEWORK_SERVICE_MAX_ID+1 */
+	
 	SRPC_SERVICE_BRW               = 11,
 	SRPC_SERVICE_PING              = 12,
 	SRPC_SERVICE_MAX_ID
@@ -68,8 +68,8 @@ enum srpc_msg_type {
  * session id if needed.
  */
 struct srpc_generic_reqst {
-	__u64		rpyid;		/* reply buffer matchbits */
-	__u64		bulkid;		/* bulk buffer matchbits */
+	__u64		rpyid;		
+	__u64		bulkid;		
 } __packed;
 
 struct srpc_generic_reply {
@@ -77,56 +77,56 @@ struct srpc_generic_reply {
 	struct lst_sid	sid;
 } __packed;
 
-/* FRAMEWORK RPCs */
+
 struct srpc_mksn_reqst {
-	__u64		mksn_rpyid;      /* reply buffer matchbits */
-	struct lst_sid	mksn_sid;        /* session id */
-	__u32		mksn_force;      /* use brute force */
+	__u64		mksn_rpyid;      
+	struct lst_sid	mksn_sid;        
+	__u32		mksn_force;      
 	char		mksn_name[LST_NAME_SIZE];
-} __packed;				/* make session request */
+} __packed;				
 
 struct srpc_mksn_reply {
-	__u32		mksn_status;      /* session status */
-	struct lst_sid	mksn_sid;         /* session id */
-	__u32		mksn_timeout;     /* session timeout */
+	__u32		mksn_status;      
+	struct lst_sid	mksn_sid;         
+	__u32		mksn_timeout;     
 	char			mksn_name[LST_NAME_SIZE];
-} __packed;					/* make session reply */
+} __packed;					
 
 struct srpc_rmsn_reqst {
-	__u64		rmsn_rpyid;	/* reply buffer matchbits */
-	struct lst_sid	rmsn_sid;	/* session id */
-} __packed;				/* remove session request */
+	__u64		rmsn_rpyid;	
+	struct lst_sid	rmsn_sid;	
+} __packed;				
 
 struct srpc_rmsn_reply {
 	__u32			rmsn_status;
-	struct lst_sid		rmsn_sid;	/* session id */
-} __packed;					/* remove session reply */
+	struct lst_sid		rmsn_sid;	
+} __packed;					
 
 struct srpc_join_reqst {
-	__u64			join_rpyid;     /* reply buffer matchbits */
-	struct lst_sid		join_sid;       /* session id to join */
-	char			join_group[LST_NAME_SIZE]; /* group name */
+	__u64			join_rpyid;     
+	struct lst_sid		join_sid;       
+	char			join_group[LST_NAME_SIZE]; 
 } __packed;
 
 struct srpc_join_reply {
-	__u32		join_status;    /* returned status */
-	struct lst_sid	join_sid;       /* session id */
-	__u32		join_timeout;   /* # seconds' inactivity to expire */
-	char		join_session[LST_NAME_SIZE]; /* session name */
+	__u32		join_status;    
+	struct lst_sid	join_sid;       
+	__u32		join_timeout;   
+	char		join_session[LST_NAME_SIZE]; 
 } __packed;
 
 struct srpc_debug_reqst {
-	__u64		dbg_rpyid;      /* reply buffer matchbits */
-	struct lst_sid	dbg_sid;        /* session id */
-	__u32		dbg_flags;      /* bitmap of debug */
+	__u64		dbg_rpyid;      
+	struct lst_sid	dbg_sid;        
+	__u32		dbg_flags;      
 } __packed;
 
 struct srpc_debug_reply {
-	__u32		dbg_status;     /* returned code */
-	struct lst_sid	dbg_sid;        /* session id */
-	__u32		dbg_timeout;    /* session timeout */
-	__u32		dbg_nbatch;     /* # of batches in the node */
-	char		dbg_name[LST_NAME_SIZE]; /* session name */
+	__u32		dbg_status;     
+	struct lst_sid	dbg_sid;        
+	__u32		dbg_timeout;    
+	__u32		dbg_nbatch;     
+	char		dbg_name[LST_NAME_SIZE]; 
 } __packed;
 
 #define SRPC_BATCH_OPC_RUN      1
@@ -134,25 +134,25 @@ struct srpc_debug_reply {
 #define SRPC_BATCH_OPC_QUERY    3
 
 struct srpc_batch_reqst {
-	__u64		bar_rpyid;      /* reply buffer matchbits */
-	struct lst_sid	bar_sid;        /* session id */
-	struct lst_bid	bar_bid;        /* batch id */
-	__u32		bar_opc;        /* create/start/stop batch */
-	__u32		bar_testidx;    /* index of test */
-	__u32		bar_arg;        /* parameters */
+	__u64		bar_rpyid;      
+	struct lst_sid	bar_sid;        
+	struct lst_bid	bar_bid;        
+	__u32		bar_opc;        
+	__u32		bar_testidx;    
+	__u32		bar_arg;        
 } __packed;
 
 struct srpc_batch_reply {
-	__u32		bar_status;     /* status of request */
-	struct lst_sid	bar_sid;	/* session id */
-	__u32		bar_active;     /* # of active tests in batch/test */
-	__u32		bar_time;       /* remained time */
+	__u32		bar_status;     
+	struct lst_sid	bar_sid;	
+	__u32		bar_active;     
+	__u32		bar_time;       
 } __packed;
 
 struct srpc_stat_reqst {
-	__u64		str_rpyid;      /* reply buffer matchbits */
-	struct lst_sid	str_sid;	/* session id */
-	__u32		str_type;       /* type of stat */
+	__u64		str_rpyid;      
+	struct lst_sid	str_sid;	
+	__u32		str_type;       
 } __packed;
 
 struct srpc_stat_reply {
@@ -164,39 +164,39 @@ struct srpc_stat_reply {
 } __packed;
 
 struct test_bulk_req {
-	__u32		blk_opc;        /* bulk operation code */
-	__u32		blk_npg;        /* # of pages */
-	__u32		blk_flags;      /* reserved flags */
+	__u32		blk_opc;        
+	__u32		blk_npg;        
+	__u32		blk_flags;      
 } __packed;
 
 struct test_bulk_req_v1 {
-	/** bulk operation code */
+	
 	__u16		blk_opc;
-	/** data check flags */
+	
 	__u16		blk_flags;
-	/** data length */
+	
 	__u32		blk_len;
-	/** bulk offset */
+	
 	__u32		blk_offset;
 } __packed;
 
 struct test_ping_req {
-	__u32			png_size;       /* size of ping message */
-	__u32			png_flags;      /* reserved flags */
+	__u32			png_size;       
+	__u32			png_flags;      
 } __packed;
 
 struct srpc_test_reqst {
-	__u64			tsr_rpyid;      /* reply buffer matchbits */
-	__u64			tsr_bulkid;     /* bulk buffer matchbits */
-	struct lst_sid		tsr_sid;        /* session id */
-	struct lst_bid		tsr_bid;        /* batch id */
-	enum srpc_service_type	tsr_service;    /* test type: bulk|ping|... */
-	/* test client loop count or # server buffers needed */
+	__u64			tsr_rpyid;      
+	__u64			tsr_bulkid;     
+	struct lst_sid		tsr_sid;        
+	struct lst_bid		tsr_bid;        
+	enum srpc_service_type	tsr_service;    
+	
 	__u32			tsr_loop;
-	__u32			tsr_concur;     /* concurrency of test */
-	__u8			tsr_is_client;  /* is test client or not */
-	__u8			tsr_stop_onerr; /* stop on error */
-	__u32			tsr_ndest;      /* # of dest nodes */
+	__u32			tsr_concur;     
+	__u8			tsr_is_client;  
+	__u8			tsr_stop_onerr; 
+	__u32			tsr_ndest;      
 
 	union {
 		struct test_ping_req	ping;
@@ -206,11 +206,11 @@ struct srpc_test_reqst {
 } __packed;
 
 struct srpc_test_reply {
-	__u32			tsr_status;     /* returned code */
+	__u32			tsr_status;     
 	struct lst_sid		tsr_sid;
 } __packed;
 
-/* TEST RPCs */
+
 struct srpc_ping_reqst {
 	__u64		pnr_rpyid;
 	__u32		pnr_magic;
@@ -226,30 +226,30 @@ struct srpc_ping_reply {
 } __packed;
 
 struct srpc_brw_reqst {
-	__u64		brw_rpyid;      /* reply buffer matchbits */
-	__u64		brw_bulkid;     /* bulk buffer matchbits */
-	__u32		brw_rw;         /* read or write */
-	__u32		brw_len;        /* bulk data len */
-	__u32		brw_flags;      /* bulk data patterns */
-} __packed;					/* bulk r/w request */
+	__u64		brw_rpyid;      
+	__u64		brw_bulkid;     
+	__u32		brw_rw;         
+	__u32		brw_len;        
+	__u32		brw_flags;      
+} __packed;					
 
 struct srpc_brw_reply {
 	__u32                   brw_status;
-} __packed; /* bulk r/w reply */
+} __packed; 
 
 #define SRPC_MSG_MAGIC                  0xeeb0f00d
 #define SRPC_MSG_VERSION                1
 
 struct srpc_msg {
-	/** magic number */
+	
 	__u32	msg_magic;
-	/** message version number */
+	
 	__u32	msg_version;
-	/** type of message body: enum srpc_msg_type */
+	
 	__u32	msg_type;
 	__u32	msg_reserved0;
 	__u32	msg_reserved1;
-	/** test session features */
+	
 	__u32	msg_ses_feats;
 	union {
 		struct srpc_generic_reqst	reqst;
@@ -281,12 +281,12 @@ static inline void
 srpc_unpack_msg_hdr(struct srpc_msg *msg)
 {
 	if (msg->msg_magic == SRPC_MSG_MAGIC)
-		return; /* no flipping needed */
+		return; 
 
 	/* We do not swap the magic number here as it is needed to
 	 * determine whether the body needs to be swapped.
 	 */
-	/* __swab32s(&msg->msg_magic); */
+	
 	__swab32s(&msg->msg_type);
 	__swab32s(&msg->msg_version);
 	__swab32s(&msg->msg_ses_feats);
@@ -294,4 +294,4 @@ srpc_unpack_msg_hdr(struct srpc_msg *msg)
 	__swab32s(&msg->msg_reserved1);
 }
 
-#endif /* __SELFTEST_RPC_H__ */
+#endif 

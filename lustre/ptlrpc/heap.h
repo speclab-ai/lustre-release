@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2011 Intel Corporation
@@ -38,7 +38,7 @@
  */
 
 #define CBH_SHIFT	9
-#define CBH_SIZE       (1 << CBH_SHIFT)		    /* # ptrs per level */
+#define CBH_SIZE       (1 << CBH_SHIFT)		    
 #define CBH_MASK       (CBH_SIZE - 1)
 #define CBH_NOB        (CBH_SIZE * sizeof(struct binheap_node *))
 
@@ -106,25 +106,25 @@ struct binheap_ops {
  * Sorts elements of type \e struct binheap_node
  */
 struct binheap {
-	/** Triple indirect */
+	
 	struct binheap_node  ****cbh_elements3;
-	/** double indirect */
+	
 	struct binheap_node   ***cbh_elements2;
-	/** single indirect */
+	
 	struct binheap_node    **cbh_elements1;
-	/** # elements referenced */
+	
 	unsigned int		cbh_nelements;
-	/** high water mark */
+	
 	unsigned int		cbh_hwm;
-	/** user flags */
+	
 	unsigned int		cbh_flags;
-	/** operations table */
+	
 	struct binheap_ops *cbh_ops;
-	/** private data */
+	
 	void		       *cbh_private;
-	/** associated CPT table */
+	
 	struct cfs_cpt_table   *cbh_cptab;
-	/** associated CPT id of this struct binheap::cbh_cptab */
+	
 	int			cbh_cptid;
 };
 
@@ -167,6 +167,6 @@ binheap_remove_root(struct binheap *h)
 	return e;
 }
 
-/** @} heap */
 
-#endif /* __LIBCFS_HEAP_H__ */
+
+#endif 

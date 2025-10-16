@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 /* This is taken from kernel commit:
  *
  * 8a0e8bb11 ("mm: shrinker: convert shrinker_rwsem to mutex")
@@ -16,7 +16,7 @@
 #include <linux/libcfs/libcfs_private.h>
 
 #ifndef CONFIG_SHRINKER_DEBUG
-/* RHEL7 is sooooo old and we really don't support it */
+
 static DEFINE_IDA(shrinker_debugfs_ida);
 static struct dentry *shrinker_debugfs_root;
 
@@ -122,7 +122,7 @@ static ssize_t shrinker_debugfs_scan_write(struct file *file,
 	if (nr_to_scan == 0)
 		return size;
 
-	/* Lustre doesn't support memcg aware shrinkers */
+	
 	if (ino != 0)
 		return -EINVAL;
 
@@ -154,7 +154,7 @@ static int shrinker_add_debugfs(struct shrinker *shrinker, const char *name)
 	char buf[128];
 	int id;
 
-	/* debugfs isn't initialized yet, add debugfs entries later. */
+	
 	if (!shrinker_debugfs_root)
 		return 0;
 
@@ -166,7 +166,7 @@ static int shrinker_add_debugfs(struct shrinker *shrinker, const char *name)
 
 	snprintf(buf, sizeof(buf), "%s-%d", name, id);
 
-	/* create debugfs entry */
+	
 	entry = debugfs_create_dir(buf, shrinker_debugfs_root);
 	if (IS_ERR(entry)) {
 		ida_free(&shrinker_debugfs_ida, id);
@@ -180,7 +180,7 @@ static int shrinker_add_debugfs(struct shrinker *shrinker, const char *name)
 			    &shrinker_debugfs_scan_fops);
 	return 0;
 }
-#endif /* !CONFIG_SHRINKER_DEBUG */
+#endif 
 
 void ll_shrinker_free(struct shrinker *shrinker)
 {
@@ -190,19 +190,19 @@ void ll_shrinker_free(struct shrinker *shrinker)
 					     ll_shrinker);
 #else
 	struct ll_shrinker *s = shrinker->private_data;
-#endif /* HAVE_SHRINKER_ALLOC */
+#endif 
 
 	if (s->debugfs_entry)
 		ida_free(&shrinker_debugfs_ida, s->debugfs_id);
 
 	debugfs_remove_recursive(s->debugfs_entry);
-#endif /* !CONFIG_SHRINKER_DEBUG */
+#endif 
 
 #ifdef HAVE_SHRINKER_ALLOC
 	shrinker_free(shrinker);
-#else /* !HAVE_SHRINKER_ALLOC */
+#else 
 	unregister_shrinker(shrinker);
-#endif /* !HAVE_SHRINKER_ALLOC */
+#endif 
 
 #ifndef CONFIG_SHRINKER_DEBUG
 	LIBCFS_FREE_PRE(s, sizeof(*s), "kfreed");
@@ -310,4 +310,4 @@ int __init shrinker_debugfs_init(void)
 
 	return ret;
 }
-#endif /* CONFIG_SHRINKER_DEBUG */
+#endif 

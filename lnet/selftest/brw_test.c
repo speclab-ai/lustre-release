@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Isaac Huang <isaac@clusterfs.com>
  */
@@ -165,7 +165,7 @@ static int
 brw_check_page(struct page *pg, int off, int len, int pattern, __u64 magic)
 {
 	char *addr = page_address(pg) + off;
-	__u64 data = 0; /* make compiler happy */
+	__u64 data = 0; 
 	int i;
 
 	LASSERT(addr != NULL);
@@ -322,7 +322,7 @@ brw_client_done_rpc(struct sfw_test_unit *tsu, struct srpc_client_rpc *rpc)
 	if (rpc->crpc_status != 0) {
 		CERROR("BRW RPC to %s failed with %d\n",
 		       libcfs_id2str(rpc->crpc_dest), rpc->crpc_status);
-		if (!tsi->tsi_stopping) /* rpc could have been aborted */
+		if (!tsi->tsi_stopping) 
 			atomic_inc(&sn->sn_brw_errors);
 		return;
 	}
@@ -447,7 +447,7 @@ brw_server_handle(struct srpc_server_rpc *rpc)
 	}
 
 	if ((reqstmsg->msg_ses_feats & LST_FEAT_BULK_LEN) == 0) {
-		/* compat with old version */
+		
 		if ((reqst->brw_len & ~PAGE_MASK) != 0) {
 			reply->brw_status = EINVAL;
 			return 0;
@@ -475,7 +475,7 @@ brw_server_handle(struct srpc_server_rpc *rpc)
 static int
 brw_srpc_init(struct srpc_server_rpc *rpc, int cpt)
 {
-	/* just alloc a maximal size - actual values will be adjusted later */
+	
 	rpc->srpc_bulk = srpc_alloc_bulk(cpt, LNET_MTU);
 	if (rpc->srpc_bulk == NULL)
 		return -ENOMEM;
@@ -513,7 +513,7 @@ void brw_init_test_service(void)
 {
 	unsigned long cache_size = cfs_totalram_pages() >> 4;
 
-	/* brw prealloc cache should don't eat more than half memory */
+	
 	cache_size /= ((LNET_MTU >> PAGE_SHIFT) + 1);
 
 	brw_test_service.sv_wi_total   = brw_srv_workitems;

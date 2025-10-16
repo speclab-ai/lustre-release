@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Kernel <-> userspace communication routines.
  * Using pipes for all arches.
@@ -87,7 +87,7 @@ device_dump_ctx(struct netlink_callback *cb)
 #define DEVICE_VALUE_PACKET_SIZE	(2 + 2 + 16 + MAX_OBD_NAME + UUID_MAX + 4)
 #define DEVICE_KEY_TABLE_PACKET_SIZE	(44 + 28 + 28 + 28 + 28 + 28 + 32)
 
-/* generic ->start() handler for GET requests */
+
 static int lustre_device_list_start(struct netlink_callback *cb)
 {
 	struct genlmsghdr *gnlh = nlmsg_data(cb->nlh);
@@ -224,7 +224,7 @@ static int lustre_device_list_dump(struct sk_buff *msg,
 
 		nla_put_u16(msg, LUSTRE_DEVICE_ATTR_INDEX, obd->obd_minor);
 
-		/* Collect only the index value for a single obd */
+		
 		if (filter) {
 			genlmsg_end(msg, hdr);
 			idx++;
@@ -298,7 +298,7 @@ static int lustre_device_done(struct netlink_callback *cb)
 	return 0;
 }
 
-/* target_obd handling */
+
 struct lu_tgt_list {
 	char			ltl_src[MAX_OBD_NAME * 3];
 	struct lu_tgt_descs	*ltl_desc;
@@ -329,7 +329,7 @@ static int lustre_targets_done(struct netlink_callback *cb)
 	return 0;
 }
 
-/* generic ->start() handler for GET requests */
+
 static int lustre_targets_start(struct netlink_callback *cb)
 {
 	struct genlmsghdr *gnlh = nlmsg_data(cb->nlh);
@@ -383,7 +383,7 @@ static int lustre_targets_start(struct netlink_callback *cb)
 				if (len < 0)
 					GOTO(report_err, rc = (int)len);
 
-				filter = strim(name); /* remove any whitespaces */
+				filter = strim(name); 
 				len = strcspn(filter, ".") + 1;
 				strscpy(type, name, min_t(size_t, len, sizeof(type)));
 
@@ -392,7 +392,7 @@ static int lustre_targets_start(struct netlink_callback *cb)
 					struct lu_tgt_descs *ltd = NULL;
 					struct lu_tgt_list *ltl;
 
-					/* Only look at specific obds */
+					
 					if (strncmp(obd->obd_type->typ_name,
 						    LUSTRE_LMV_NAME,
 						    strlen(LUSTRE_LMV_NAME)) == 0)
@@ -404,12 +404,12 @@ static int lustre_targets_start(struct netlink_callback *cb)
 					if (!ltd)
 						continue;
 
-					/* Now filter by obd_type */
+					
 					if (!glob_match(type,
 							obd->obd_type->typ_name))
 						continue;
 
-					/* Filter by obd_name */
+					
 					if (!glob_match(filter + len,
 							obd->obd_name))
 						continue;
@@ -567,7 +567,7 @@ static int lustre_targets_dump(struct sk_buff *msg,
 		nla_put_string(msg, LUSTRE_TARGET_ATTR_SOURCE,
 			       ltl->ltl_src);
 
-		/* We just want the source */
+		
 		if (!gnlh->version)
 			goto skip_details;
 
@@ -826,7 +826,7 @@ static int lustre_stats_start(struct netlink_callback *cb)
 		rc = 0;
 	}
 
-	/* Older kernels only support 64K. Our stats can be huge. */
+	
 	if (len >= (1UL << (sizeof(cb->min_dump_alloc) << 3))) {
 		struct lprocfs_stats **stats;
 		struct genradix_iter iter;
@@ -894,7 +894,7 @@ int lustre_stats_dump(struct sk_buff *msg, struct netlink_callback *cb)
 					       "first key list allocation failure");
 				GOTO(out_cancel, rc = -ENOMEM);
 			}
-			*start = stats_list; /* Set initial values */
+			*start = stats_list; 
 			start->lkl_maxattr += stats->ls_num;
 			for (i = LUSTRE_STATS_ATTR_MAX + 1;
 			     i <= start->lkl_maxattr; i++)
@@ -927,7 +927,7 @@ int lustre_stats_dump(struct sk_buff *msg, struct netlink_callback *cb)
 				GOTO(out_cancel, rc);
 			}
 		} else if (!gnlh->version && !idx) {
-			/* We just want the source of the stats */
+			
 			const struct ln_key_list *all[] = {
 				&stats_params, NULL
 			};
@@ -959,7 +959,7 @@ int lustre_stats_dump(struct sk_buff *msg, struct netlink_callback *cb)
 			src += strlen(".fs.lustre.");
 		nla_put_string(msg, LUSTRE_STATS_ATTR_SOURCE, src);
 
-		if (!gnlh->version) { /* We just want the source of the stats */
+		if (!gnlh->version) { 
 			idx++;
 			GOTO(out_cancel, rc = 0);
 		}
@@ -1234,7 +1234,7 @@ EXPORT_SYMBOL(libcfs_kkuc_msg_put);
 /* Broadcast groups are global across all mounted filesystems;
  * i.e. registering for a group on 1 fs will get messages for that
  * group from any fs */
-/** A single group registration has a uid and a file pointer */
+
 struct kkuc_reg {
 	struct list_head kr_chain;
 	struct obd_uuid	 kr_uuid;
@@ -1244,7 +1244,7 @@ struct kkuc_reg {
 };
 
 static struct list_head kkuc_groups[KUC_GRP_MAX + 1];
-/* Protect message sending against remove and adds */
+
 static DECLARE_RWSEM(kg_sem);
 
 static inline bool libcfs_kkuc_group_is_valid(int group)
@@ -1283,11 +1283,11 @@ int libcfs_kkuc_group_add(struct file *filp, const struct obd_uuid *uuid,
 		return -EINVAL;
 	}
 
-	/* fput in group_rem */
+	
 	if (filp == NULL)
 		return -EBADF;
 
-	/* freed in group_rem */
+	
 	reg = kzalloc(sizeof(*reg) + data_len, 0);
 	if (reg == NULL)
 		return -ENOMEM;
@@ -1318,7 +1318,7 @@ int libcfs_kkuc_group_rem(const struct obd_uuid *uuid, int uid, int group)
 	}
 
 	if (uid == 0) {
-		/* Broadcast a shutdown message */
+		
 		struct kuc_hdr lh;
 
 		lh.kuc_magic = KUC_MAGIC;
@@ -1362,7 +1362,7 @@ int libcfs_kkuc_group_put(const struct obd_uuid *uuid, int group, void *payload)
 
 	if (unlikely(list_empty(&kkuc_groups[group])) ||
 	    unlikely(CFS_FAIL_CHECK(OBD_FAIL_MDS_HSM_CT_REGISTER_NET))) {
-		/* no agent have fully registered, CDT will retry */
+		
 		up_write(&kg_sem);
 		RETURN(-EAGAIN);
 	}

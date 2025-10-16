@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Target (mdt) request unpacking helper.
  *
@@ -89,7 +89,7 @@ static int match_nosquash_list(struct spinlock *rsi_lock,
 	RETURN(rc);
 }
 
-/* root_squash for inter-MDS operations */
+
 static int mdt_root_squash(struct mdt_thread_info *info,
 			   struct lnet_nid *peernid)
 {
@@ -132,7 +132,7 @@ static void ucred_set_jobid(struct mdt_thread_info *info, struct lu_ucred *uc)
 	struct ptlrpc_request	*req = mdt_info_req(info);
 	const char		*jobid = mdt_req_get_jobid(req);
 
-	/* set jobid if specified. */
+	
 	if (jobid)
 		strscpy(uc->uc_jobid, jobid, sizeof(uc->uc_jobid));
 	else
@@ -253,7 +253,7 @@ static int new_init_ucred(struct mdt_thread_info *info, ucred_init_type_t type,
 		ucred->uc_suppgids[1] = -1;
 	}
 
-	/* Perm checks before fetching external identity */
+	
 
 	if (!flvr_is_rootonly(req->rq_flvr.sf_rpc) &&
 	    req->rq_auth_uid != pud->pud_uid) {
@@ -269,12 +269,12 @@ static int new_init_ucred(struct mdt_thread_info *info, ucred_init_type_t type,
 					      NODEMAP_CLIENT_TO_FS,
 					      nodemap->nm_squash_uid) &&
 	    nodemap->nmf_deny_unknown)
-		/* deny access before we get identity ref */
+		
 		GOTO(out, rc = -EACCES);
 
 	ucred_set_rbac_roles(info, ucred);
 
-	/* Fetch external identity info, if enabled */
+	
 
 	if (!is_identity_get_disabled(get_cache(info))) {
 		identity = mdt_identity_get(get_cache(info),
@@ -294,27 +294,27 @@ static int new_init_ucred(struct mdt_thread_info *info, ucred_init_type_t type,
 	}
 	ucred->uc_identity = identity;
 
-	/* Perm checks that needs external identity */
+	
 
 	if (ucred->uc_identity)
 		perm = mdt_identity_get_perm(ucred->uc_identity, &peernid);
 	else
 		perm = CFS_SETUID_PERM | CFS_SETGID_PERM | CFS_SETGRP_PERM;
 
-	/* find out the setuid/setgid attempt */
+	
 	setuid = (pud->pud_uid != pud->pud_fsuid);
 	setgid = ((pud->pud_gid != pud->pud_fsgid) ||
 		  (ucred->uc_identity &&
 		   (pud->pud_gid != ucred->uc_identity->mi_gid)));
 
-	/* check permission of setuid */
+	
 	if (setuid && !(perm & CFS_SETUID_PERM)) {
 		CDEBUG(D_SEC, "mdt blocked setuid attempt (%u -> %u) from %s\n",
 		       pud->pud_uid, pud->pud_fsuid, libcfs_nidstr(&peernid));
 		GOTO(out, rc = -EACCES);
 	}
 
-	/* check permission of setgid */
+	
 	if (setgid && !(perm & CFS_SETGID_PERM)) {
 		CDEBUG(D_SEC,
 		       "mdt blocked setgid attempt (%u:%u/%u:%u -> %d) from %s\n",
@@ -326,7 +326,7 @@ static int new_init_ucred(struct mdt_thread_info *info, ucred_init_type_t type,
 	}
 
 	if (perm & CFS_SETGRP_PERM && pud->pud_ngroups) {
-		/* setgroups for local client */
+		
 		ucred->uc_ginfo = groups_alloc(pud->pud_ngroups);
 		if (!ucred->uc_ginfo) {
 			CERROR("failed to alloc %d groups\n",
@@ -342,7 +342,7 @@ static int new_init_ucred(struct mdt_thread_info *info, ucred_init_type_t type,
 		ucred->uc_ginfo = NULL;
 	}
 
-	/* clear suppgids if uid or gid was squashed. */
+	
 	if (nodemap &&
 	    (ucred->uc_o_uid == nodemap->nm_squash_uid ||
 	     ucred->uc_o_gid == nodemap->nm_squash_gid)) {
@@ -441,7 +441,7 @@ bool allow_client_chgrp(struct mdt_thread_info *info, struct lu_ucred *uc)
 {
 	__u32 perm;
 
-	/* 1. identity_upcall disabled? permit local client to do anything. */
+	
 	if (is_identity_get_disabled(info->mti_mdt->mdt_identity_cache))
 		return true;
 
@@ -451,7 +451,7 @@ bool allow_client_chgrp(struct mdt_thread_info *info, struct lu_ucred *uc)
 	if (uc->uc_identity == NULL)
 		return false;
 
-	/* 3. Check the permission in the identities. */
+	
 	perm = mdt_identity_get_perm(
 		uc->uc_identity,
 		&mdt_info_req(info)->rq_peer.nid);
@@ -510,19 +510,19 @@ int mdt_check_ucred(struct mdt_thread_info *info)
 	}
 
 	perm = mdt_identity_get_perm(identity, &peernid);
-	/* find out the setuid/setgid attempt */
+	
 	setuid = (pud->pud_uid != pud->pud_fsuid);
 	setgid = (pud->pud_gid != pud->pud_fsgid ||
 		  pud->pud_gid != identity->mi_gid);
 
-	/* check permission of setuid */
+	
 	if (setuid && !(perm & CFS_SETUID_PERM)) {
 		CDEBUG(D_SEC, "mdt blocked setuid attempt (%u -> %u) from %s\n",
 		       pud->pud_uid, pud->pud_fsuid, libcfs_nidstr(&peernid));
 		GOTO(out, rc = -EACCES);
 	}
 
-	/* check permission of setgid */
+	
 	if (setgid && !(perm & CFS_SETGID_PERM)) {
 		CDEBUG(D_SEC,
 		       "mdt blocked setgid attempt (%u:%u/%u:%u -> %u) from %s\n",
@@ -552,7 +552,7 @@ static int old_init_ucred_common(struct mdt_thread_info *info,
 					   NODEMAP_CLIENT_TO_FS,
 					   nodemap->nm_squash_uid) &&
 	    nodemap->nmf_deny_unknown)
-		/* deny access before we get identity ref */
+		
 		RETURN(-EACCES);
 
 	ucred_set_rbac_roles(info, uc);
@@ -583,7 +583,7 @@ static int old_init_ucred_common(struct mdt_thread_info *info,
 		uc->uc_suppgids[1] = -1;
 	}
 
-	/* process root_squash here. */
+	
 	mdt_root_squash(info,
 			&mdt_info_req(info)->rq_peer.nid);
 
@@ -736,7 +736,7 @@ int mdt_init_ucred_reint(struct mdt_thread_info *info)
 	if ((uc->uc_valid == UCRED_OLD) || (uc->uc_valid == UCRED_NEW))
 		return 0;
 
-	/* LU-5564: for normal close request, skip permission check */
+	
 	if (lustre_msg_get_opc(req->rq_reqmsg) == MDS_CLOSE &&
 	    !(ma->ma_attr_flags & (MDS_HSM_RELEASE | MDS_CLOSE_LAYOUT_SWAP))) {
 		cap_raise_nfsd_set(uc->uc_cap, CAP_FULL_SET);
@@ -776,11 +776,11 @@ int mdt_check_resource_ids(struct mdt_thread_info *info, struct mdt_object *obj)
 
 	dt = mdt_obj2dt(obj);
 
-	/* Get attributes from MDT inode */
+	
 	if (dt && dt->do_ops && dt->do_ops->do_attr_get) {
 		dt_attr_get(info->mti_env, mdt_obj2dt(obj), &la);
 	} else {
-		/* log this case but don't return err code */
+		
 		CERROR("%s: no dt object for " DFID ": rc = %d\n",
 		       mdt_obd_name(info->mti_mdt), PFID(mdt_object_fid(obj)),
 		       -ENOENT);
@@ -791,7 +791,7 @@ int mdt_check_resource_ids(struct mdt_thread_info *info, struct mdt_object *obj)
 					  la.la_uid, la.la_gid));
 }
 
-/* copied from lov/lov_ea.c, just for debugging, will be removed later */
+
 void mdt_dump_lmm(int level, const struct lov_mds_md *lmm, __u64 valid)
 {
 	const struct lov_ost_data_v1 *lod;
@@ -806,7 +806,7 @@ void mdt_dump_lmm(int level, const struct lov_mds_md *lmm, __u64 valid)
 		     POSTID(&lmm->lmm_oi), lmm_magic,
 		     le32_to_cpu(lmm->lmm_pattern));
 
-	/* No support for compound layouts yet */
+	
 	if (lmm_magic != LOV_MAGIC_V1 && lmm_magic != LOV_MAGIC_V3)
 		return;
 
@@ -843,7 +843,7 @@ void mdt_dump_lmv(unsigned int level, const union lmv_mds_md *lmv)
 	if (likely(!cfs_cdebug_show(level, DEBUG_SUBSYSTEM)))
 		return;
 
-	/* foreign LMV case */
+	
 	lfm = &lmv->lmv_foreign_md;
 	if (le32_to_cpu(lfm->lfm_magic) == LMV_MAGIC_FOREIGN) {
 		CDEBUG_LIMIT(level,
@@ -878,7 +878,7 @@ void mdt_dump_lmv(unsigned int level, const union lmv_mds_md *lmv)
 	}
 }
 
-/* Shrink and/or grow reply buffers */
+
 int mdt_fix_reply(struct mdt_thread_info *info)
 {
 	struct req_capsule *pill = info->mti_pill;
@@ -899,7 +899,7 @@ int mdt_fix_reply(struct mdt_thread_info *info)
 
 	acl_size = body->mbo_aclsize;
 
-	/* this replay - not send info to client */
+	
 	if (info->mti_spec.no_create) {
 		md_size = 0;
 		acl_size = 0;
@@ -927,12 +927,12 @@ int mdt_fix_reply(struct mdt_thread_info *info)
 			md_packed = req_capsule_get_size(pill, &RMF_MDT_MD,
 							 RCL_SERVER);
 
-		/* free big lmm if md_size is not needed */
+		
 		if (md_size == 0 || md_packed == 0) {
 			info->mti_big_lov_used = 0;
 			info->mti_big_lmv_used = 0;
 		} else {
-			/* buffer must be allocated separately */
+			
 			LASSERT(info->mti_attr.ma_lmm !=
 				req_capsule_server_get(pill, &RMF_MDT_MD));
 			req_capsule_shrink(pill, &RMF_MDT_MD, 0, RCL_SERVER);
@@ -952,19 +952,19 @@ int mdt_fix_reply(struct mdt_thread_info *info)
 		req_capsule_shrink(pill, &RMF_LOGCOOKIES, acl_size, RCL_SERVER);
 	}
 
-	/* Shrink optional SECCTX buffer if it is not used */
+	
 	if (req_capsule_has_field(pill, &RMF_FILE_SECCTX, RCL_SERVER) &&
 	    req_capsule_get_size(pill, &RMF_FILE_SECCTX, RCL_SERVER) != 0 &&
 	    !(body->mbo_valid & OBD_MD_SECCTX))
 		req_capsule_shrink(pill, &RMF_FILE_SECCTX, 0, RCL_SERVER);
 
-	/* Shrink optional ENCCTX buffer if it is not used */
+	
 	if (req_capsule_has_field(pill, &RMF_FILE_ENCCTX, RCL_SERVER) &&
 	    req_capsule_get_size(pill, &RMF_FILE_ENCCTX, RCL_SERVER) != 0 &&
 	    !(body->mbo_valid & OBD_MD_ENCCTX))
 		req_capsule_shrink(pill, &RMF_FILE_ENCCTX, 0, RCL_SERVER);
 
-	/* Shrink optional default LMV buffer if it is not used */
+	
 	if (req_capsule_has_field(pill, &RMF_DEFAULT_MDT_MD, RCL_SERVER) &&
 	    req_capsule_get_size(pill, &RMF_DEFAULT_MDT_MD, RCL_SERVER) != 0 &&
 	    !(body->mbo_valid & OBD_MD_DEFAULT_MEA))
@@ -975,7 +975,7 @@ int mdt_fix_reply(struct mdt_thread_info *info)
 	 * This should be done by those who added fields to reply message.
 	 */
 
-	/* Grow MD buffer if needed finally */
+	
 	if (info->mti_big_lov_used || info->mti_big_lmv_used) {
 		void *lmm;
 
@@ -990,10 +990,10 @@ int mdt_fix_reply(struct mdt_thread_info *info)
 			 * considered as failed
 			 */
 			body->mbo_valid &= ~(OBD_MD_FLDIREA | OBD_MD_FLEASIZE);
-			/* don't return transno along with error */
+			
 			lustre_msg_set_transno(pill->rc_req->rq_repmsg, 0);
 		} else {
-			/* now we need to pack right LOV/LMV EA */
+			
 			lmm = req_capsule_server_get(pill, &RMF_MDT_MD);
 			if (info->mti_attr.ma_valid & MA_LOV) {
 				LASSERT(req_capsule_get_size(pill, &RMF_MDT_MD,
@@ -1010,7 +1010,7 @@ int mdt_fix_reply(struct mdt_thread_info *info)
 			}
 		}
 
-		/* update mdt_max_mdsize so clients will be aware about that */
+		
 		if (info->mti_mdt->mdt_max_mdsize < info->mti_attr.ma_lmm_size)
 			info->mti_mdt->mdt_max_mdsize =
 						info->mti_attr.ma_lmm_size;
@@ -1077,12 +1077,12 @@ int mdt_handle_last_unlink(struct mdt_thread_info *info, struct mdt_object *mo,
 	if (repbody != NULL)
 		repbody->mbo_eadatasize = 0;
 
-	/* Only check unlinked and archived if RAoLU and upon last close */
+	
 	if (!cdt->cdt_remove_archive_on_last_unlink ||
 	    atomic_read(&mo->mot_open_count) != 0)
 		RETURN(0);
 
-	/* mdt_attr_get_complex will clear ma_valid, so check here first */
+	
 	if ((ma->ma_valid & MA_INODE) && (ma->ma_attr.la_nlink != 0))
 		RETURN(0);
 
@@ -1200,7 +1200,7 @@ static __u64 mdt_attr_valid_xlate(enum mds_attr_flags in,
 	return out;
 }
 
-/* unpacking */
+
 int mdt_name_unpack(struct req_capsule *pill,
 		    const struct req_msg_field *field,
 		    struct lu_name *ln,
@@ -1305,7 +1305,7 @@ static int mdt_setattr_unpack_rec(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid = rec->sa_fsuid;
 	uc->uc_fsgid = rec->sa_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -1476,7 +1476,7 @@ static int mdt_create_unpack(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid = rec->cr_fsuid;
 	uc->uc_fsgid = rec->cr_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -1516,7 +1516,7 @@ static int mdt_create_unpack(struct mdt_thread_info *info)
 		if (sz) {
 			tgt = req_capsule_client_get(pill, &RMF_SYMTGT);
 			sp->u.sp_symname.ln_name = tgt;
-			sp->u.sp_symname.ln_namelen = sz - 1; /* skip NUL */
+			sp->u.sp_symname.ln_namelen = sz - 1; 
 		}
 		if (tgt == NULL)
 			RETURN(-EFAULT);
@@ -1586,7 +1586,7 @@ static int mdt_link_unpack(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid = rec->lk_fsuid;
 	uc->uc_fsgid = rec->lk_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -1635,7 +1635,7 @@ static int mdt_unlink_unpack(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid = rec->ul_fsuid;
 	uc->uc_fsgid = rec->ul_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -1697,7 +1697,7 @@ static int mdt_rename_unpack(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid = rec->rn_fsuid;
 	uc->uc_fsgid = rec->rn_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -1715,7 +1715,7 @@ static int mdt_rename_unpack(struct mdt_thread_info *info)
 	rr->rr_fid2 = &rec->rn_fid2;
 	attr->la_ctime = rec->rn_time;
 	attr->la_mtime = rec->rn_time;
-	/* rename_tgt contains the mode already */
+	
 	attr->la_mode = rec->rn_mode;
 	attr->la_valid = LA_UID | LA_GID | LA_CTIME | LA_MTIME | LA_MODE;
 
@@ -1755,7 +1755,7 @@ static int mdt_migrate_unpack(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid = rec->rn_fsuid;
 	uc->uc_fsgid = rec->rn_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -1773,7 +1773,7 @@ static int mdt_migrate_unpack(struct mdt_thread_info *info)
 	rr->rr_fid2 = &rec->rn_fid2;
 	attr->la_ctime = rec->rn_time;
 	attr->la_mtime = rec->rn_time;
-	/* rename_tgt contains the mode already */
+	
 	attr->la_mode = rec->rn_mode;
 	attr->la_valid = LA_UID | LA_GID | LA_CTIME | LA_MTIME | LA_MODE;
 	spec->sp_cr_flags = 0;
@@ -1794,7 +1794,7 @@ static int mdt_migrate_unpack(struct mdt_thread_info *info)
 
 	spec->sp_migrate_nsonly = !!(rec->rn_bias & MDS_MIGRATE_NSONLY);
 
-	/* lustre version > 2.11 migration packs lum */
+	
 	if (req_capsule_has_field(pill, &RMF_EADATA, RCL_CLIENT)) {
 		if (req_capsule_field_present(pill, &RMF_EADATA, RCL_CLIENT)) {
 			rr->rr_eadatalen = req_capsule_get_size(pill,
@@ -1811,7 +1811,7 @@ static int mdt_migrate_unpack(struct mdt_thread_info *info)
 				spec->sp_cr_flags |= MDS_OPEN_HAS_EA;
 			}
 		} else {
-			/* old client doesn't provide lum. */
+			
 			RETURN(-EOPNOTSUPP);
 		}
 	}
@@ -1860,7 +1860,7 @@ static int mdt_open_unpack(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid = rec->cr_fsuid;
 	uc->uc_fsgid = rec->cr_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -1887,7 +1887,7 @@ static int mdt_open_unpack(struct mdt_thread_info *info)
 			 LA_CTIME | LA_MTIME | LA_ATIME;
 	memset(&info->mti_spec.u, 0, sizeof(info->mti_spec.u));
 	info->mti_spec.sp_cr_flags = get_mrc_cr_flags(rec);
-	/* Do not trigger ASSERTION if client miss to set such flags. */
+	
 	if (unlikely(info->mti_spec.sp_cr_flags == 0))
 		RETURN(-EPROTO);
 
@@ -1954,7 +1954,7 @@ static int mdt_setxattr_unpack(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid  = rec->sx_fsuid;
 	uc->uc_fsgid  = rec->sx_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -2021,7 +2021,7 @@ static int mdt_resync_unpack(struct mdt_thread_info *info)
 	if (rec == NULL)
 		RETURN(-EFAULT);
 
-	/* This prior initialization is needed for old_init_ucred_reint() */
+	
 	uc->uc_fsuid = rec->rs_fsuid;
 	uc->uc_fsgid = rec->rs_fsgid;
 	uc->uc_cap = CAP_EMPTY_SET;
@@ -2091,7 +2091,7 @@ int mdt_pack_secctx_in_reply(struct mdt_thread_info *info,
 			req_capsule_client_get(pill, &RMF_FILE_SECCTX_NAME);
 		buffer = &info->mti_buf;
 
-		/* fill reply buffer with security context now */
+		
 		buffer->lb_len = req_capsule_get_size(pill, &RMF_FILE_SECCTX,
 						      RCL_SERVER);
 		buffer->lb_buf = req_capsule_server_get(info->mti_pill,
@@ -2206,14 +2206,14 @@ int mdt_is_remote_object(struct mdt_thread_info *info,
 		RETURN(rc);
 	}
 
-	/* client < 2.13.52 getattr_by_fid parent and child are the same */
+	
 	buf = lu_buf_check_and_alloc(buf, PATH_MAX);
 	if (!buf->lb_buf)
 		RETURN(-ENOMEM);
 
 	ldata.ld_buf = buf;
 	rc = mdt_links_read(info, child, &ldata);
-	/* can't read linkea, just assume it's remote object */
+	
 	if (rc == -ENOENT || rc == -ENODATA)
 		RETURN(1);
 	if (rc)
@@ -2256,7 +2256,7 @@ int mdt_pack_encctx_in_reply(struct mdt_thread_info *info,
 		if (la.la_valid & LA_FLAGS && la.la_flags & LUSTRE_ENCRYPT_FL) {
 			buffer = &info->mti_buf;
 
-			/* fill reply buffer with encryption context now */
+			
 			buffer->lb_len =
 				req_capsule_get_size(pill, &RMF_FILE_ENCCTX,
 						     RCL_SERVER);
@@ -2267,7 +2267,7 @@ int mdt_pack_encctx_in_reply(struct mdt_thread_info *info,
 					  buffer,
 					  LL_XATTR_NAME_ENCRYPTION_CONTEXT);
 			if (unlikely(rc == -ENODATA))
-				/* For compatibility with 2.14 */
+				
 				rc = mo_xattr_get(info->mti_env,
 					  mdt_object_child(child),
 					  buffer,

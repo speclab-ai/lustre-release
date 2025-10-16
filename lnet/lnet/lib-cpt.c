@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Please see comments in include/lnet/lib-cpt.h for introduction
  *
@@ -21,41 +21,41 @@
 #include <lnet/lib-types.h>
 #include <lnet/lib-cpt.h>
 
-/** virtual processing unit */
+
 struct cfs_cpu_partition {
-	/* CPUs mask for this partition */
+	
 	cpumask_var_t			cpt_cpumask;
-	/* nodes mask for this partition */
+	
 	nodemask_t			*cpt_nodemask;
-	/* NUMA distance between CPTs */
+	
 	unsigned int			*cpt_distance;
-	/* spread rotor for NUMA allocator */
+	
 	unsigned int			cpt_spread_rotor;
-	/* NUMA node if cpt_nodemask is empty */
+	
 	int				cpt_node;
 };
 
-/** descriptor for CPU partitions */
+
 struct cfs_cpt_table {
-	/* spread rotor for NUMA allocator */
+	
 	unsigned int			ctb_spread_rotor;
-	/* maximum NUMA distance between all nodes in table */
+	
 	unsigned int			ctb_distance;
-	/* # of CPU partitions */
+	
 	int				ctb_nparts;
-	/* partitions tables */
+	
 	struct cfs_cpu_partition	*ctb_parts;
-	/* shadow HW CPU to CPU partition ID */
+	
 	int				*ctb_cpu2cpt;
-	/* all cpus in this partition table */
+	
 	cpumask_var_t			ctb_cpumask;
-	/* shadow HW node to CPU partition ID */
+	
 	int				*ctb_node2cpt;
-	/* all nodes in this partition table */
+	
 	nodemask_t			*ctb_nodemask;
 };
 
-/** Global CPU partition table */
+
 struct cfs_cpt_table *cfs_cpt_tab __read_mostly;
 EXPORT_SYMBOL(cfs_cpt_tab);
 
@@ -406,7 +406,7 @@ static void cfs_cpt_add_node(struct cfs_cpt_table *cptab, int cpt, int node)
 	if (!node_isset(node, *cptab->ctb_nodemask)) {
 		unsigned int dist;
 
-		/* first time node is added to the CPT table */
+		
 		node_set(node, *cptab->ctb_nodemask);
 		cptab->ctb_node2cpt[node] = cpt;
 
@@ -419,7 +419,7 @@ static void cfs_cpt_add_node(struct cfs_cpt_table *cptab, int cpt, int node)
 	if (!node_isset(node, *part->cpt_nodemask)) {
 		int cpt2;
 
-		/* first time node is added to this CPT */
+		
 		node_set(node, *part->cpt_nodemask);
 		for (cpt2 = 0; cpt2 < cptab->ctb_nparts; cpt2++) {
 			struct cfs_cpu_partition *part2;
@@ -442,7 +442,7 @@ static void cfs_cpt_del_node(struct cfs_cpt_table *cptab, int cpt, int node)
 	int cpu;
 
 	for_each_cpu(cpu, part->cpt_cpumask) {
-		/* this CPT has other CPU belonging to this node? */
+		
 		if (cpu_to_node(cpu) == node)
 			break;
 	}
@@ -450,7 +450,7 @@ static void cfs_cpt_del_node(struct cfs_cpt_table *cptab, int cpt, int node)
 	if (cpu >= nr_cpu_ids && node_isset(node,  *part->cpt_nodemask)) {
 		int cpt2;
 
-		/* No more CPUs in the node for this CPT. */
+		
 		node_clear(node, *part->cpt_nodemask);
 		for (cpt2 = 0; cpt2 < cptab->ctb_nparts; cpt2++) {
 			struct cfs_cpu_partition *part2;
@@ -470,13 +470,13 @@ static void cfs_cpt_del_node(struct cfs_cpt_table *cptab, int cpt, int node)
 	}
 
 	for_each_cpu(cpu, cptab->ctb_cpumask) {
-		/* this CPT-table has other CPUs belonging to this node? */
+		
 		if (cpu_to_node(cpu) == node)
 			break;
 	}
 
 	if (cpu >= nr_cpu_ids && node_isset(node, *cptab->ctb_nodemask)) {
-		/* No more CPUs in the table for this node. */
+		
 		node_clear(node, *cptab->ctb_nodemask);
 		cptab->ctb_node2cpt[node] = -1;
 		cptab->ctb_distance =
@@ -529,9 +529,9 @@ void cfs_cpt_unset_cpu(struct cfs_cpt_table *cptab, int cpt, int cpu)
 	}
 
 	if (cpt == CFS_CPT_ANY) {
-		/* caller doesn't know the partition ID */
+		
 		cpt = cptab->ctb_cpu2cpt[cpu];
-		if (cpt < 0) { /* not set in this CPT-table */
+		if (cpt < 0) { 
 			CDEBUG(D_INFO,
 			       "Try to unset cpu %d which is not in CPT-table %p\n",
 			       cpt, cptab);
@@ -762,7 +762,7 @@ int cfs_cpt_spread_node(struct cfs_cpt_table *cptab, int cpt)
 	unsigned int rotor;
 	int node = 0;
 
-	/* convert CPU partition ID to HW node id */
+	
 
 	if (cpt < 0 || cpt >= cptab->ctb_nparts) {
 		mask = cptab->ctb_nodemask;
@@ -855,12 +855,12 @@ int cfs_cpt_bind(struct cfs_cpt_table *cptab, int cpt)
 		rc = set_cpus_allowed_ptr(current, cpumask);
 		set_mems_allowed(*nodemask);
 		if (!rc)
-			schedule(); /* switch to allowed CPU */
+			schedule(); 
 
 		return rc;
 	}
 
-	/* don't need to set affinity because all online CPUs are covered */
+	
 	return 0;
 }
 EXPORT_SYMBOL(cfs_cpt_bind);
@@ -909,10 +909,10 @@ static int cfs_cpt_choose_ncpus(struct cfs_cpt_table *cptab, int cpt,
 	while (!cpumask_empty(node_mask)) {
 		cpu = cpumask_first(node_mask);
 
-		/* get cpumask for cores in the same socket */
+		
 		cpumask_and(socket_mask, topology_core_cpumask(cpu), node_mask);
 		while (!cpumask_empty(socket_mask)) {
-			/* get cpumask for hts in the same core */
+			
 			cpumask_and(core_mask, topology_sibling_cpumask(cpu),
 				    node_mask);
 
@@ -956,7 +956,7 @@ static unsigned int cfs_cpt_num_estimate(void)
 
 	if (ncpu > CPT_WEIGHT_MIN)
 		for (ncpt = 2; ncpu > 2 * nthr * ncpt; ncpt++)
-			; /* nothing */
+			; 
 
 #if (BITS_PER_LONG == 32)
 	/* config many CPU partitions on 32-bit system could consume
@@ -965,7 +965,7 @@ static unsigned int cfs_cpt_num_estimate(void)
 	ncpt = min(2U, ncpt);
 #endif
 	while (ncpu % ncpt)
-		ncpt--; /* worst case is 1 */
+		ncpt--; 
 
 	return ncpt;
 }
@@ -1073,8 +1073,8 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(const char *pattern)
 
 	str = strim(pattern_dup);
 	if (*str == 'n' || *str == 'N') {
-		str++; /* skip 'N' char */
-		node = 1; /* NUMA pattern */
+		str++; 
+		node = 1; 
 		if (*str == '\0') {
 			if (cpu_npartitions) {
 				kfree(pattern_dup);
@@ -1089,13 +1089,13 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(const char *pattern)
 	}
 
 	if (*str == 'x' || *str == 'X') {
-		str++; /* skip 'X' char */
+		str++; 
 		exclude = true;
 		str = strim(str);
 	}
 
 	if (*str == 'c' || *str == 'C') {
-		str++; /* skip 'C' char */
+		str++; 
 		exclude = true;
 		relative = true;
 	}
@@ -1104,7 +1104,7 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(const char *pattern)
 			if (!cpumask_empty(cpumask_of_node(i)))
 				ncpt++;
 		}
-	} else if (!ncpt) { /* scan for bracket at start of partition */
+	} else if (!ncpt) { 
 		bracket = str;
 		while ((bracket = strchr(bracket, '['))) {
 			bracket++;
@@ -1129,7 +1129,7 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(const char *pattern)
 		goto err_free_str;
 	}
 
-	if (exclude || node < 0) { /* create a default cpu layout */
+	if (exclude || node < 0) { 
 		if (node) {
 			for_each_online_node(i) {
 				if (cpumask_empty(cpumask_of_node(i)))
@@ -1149,12 +1149,12 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(const char *pattern)
 						high = c;
 				}
 			}
-			if (node < 0) { /* return layout for only "N" */
+			if (node < 0) { 
 				kfree(pattern_dup);
 				return cptab;
 			}
 		} else {
-			cfs_cpt_table_free(cptab); /* free old table */
+			cfs_cpt_table_free(cptab); 
 			cptab = cfs_cpt_table_create(ncpt);
 			if (!cptab) {
 				rc = -ENOMEM;
@@ -1170,7 +1170,7 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(const char *pattern)
 	if (!exclude)
 		high = node ? nr_node_ids - 1 : nr_cpu_ids - 1;
 
-	for (str = strim(str), c = 0; /* until break */; c++) {
+	for (str = strim(str), c = 0; ; c++) {
 		struct cfs_range_expr *range;
 		struct cfs_expr_list *el;
 		int n;
@@ -1210,7 +1210,7 @@ static struct cfs_cpt_table *cfs_cpt_table_create_pattern(const char *pattern)
 			goto err_free_table;
 		}
 
-		str = exclude ? bracket : strim(str + n); /* jump to next '[' */
+		str = exclude ? bracket : strim(str + n); 
 		if (!exclude && str != bracket) {
 			CERROR("Invalid pattern '%s' does not start with '['\n",
 			       str);
@@ -1301,13 +1301,13 @@ err_free_str:
 }
 
 struct cfs_var_array {
-	unsigned int		va_count;	/* # of buffers */
-	unsigned int		va_size;	/* size of each var */
-	struct cfs_cpt_table	*va_cptab;	/* cpu partition table */
-	void			*va_ptrs[];	/* buffer addresses */
+	unsigned int		va_count;	
+	unsigned int		va_size;	
+	struct cfs_cpt_table	*va_cptab;	
+	void			*va_ptrs[];	
 };
 
-/* free per-cpu data, see more detail in cfs_percpt_free */
+
 void
 cfs_percpt_free(void *vars)
 {
@@ -1393,7 +1393,7 @@ static int cfs_cpu_dead(unsigned int cpu)
 {
 	bool warn;
 
-	/* if all HTs in a core are offline, it may break affinity */
+	
 	warn = cpumask_any_and(topology_sibling_cpumask(cpu),
 			       cpu_online_mask) >= nr_cpu_ids;
 	CDEBUG(warn ? D_WARNING : D_INFO,
@@ -1430,8 +1430,8 @@ static struct notifier_block cfs_cpu_notifier = {
 	.notifier_call	= cfs_cpu_notify,
 	.priority	= 0
 };
-#endif /* !HAVE_HOTPLUG_STATE_MACHINE */
-#endif /* CONFIG_HOTPLUG_CPU */
+#endif 
+#endif 
 
 void cfs_cpu_fini(void)
 {
@@ -1445,8 +1445,8 @@ void cfs_cpu_fini(void)
 	cpuhp_remove_state_nocalls(CPUHP_BP_PREPARE_DYN);
 #else
 	unregister_hotcpu_notifier(&cfs_cpu_notifier);
-#endif /* !HAVE_HOTPLUG_STATE_MACHINE */
-#endif /* CONFIG_HOTPLUG_CPU */
+#endif 
+#endif 
 }
 
 int cfs_cpu_init(void)
@@ -1472,8 +1472,8 @@ int cfs_cpu_init(void)
 	lustre_cpu_online = ret;
 #else
 	register_hotcpu_notifier(&cfs_cpu_notifier);
-#endif /* !HAVE_HOTPLUG_STATE_MACHINE */
-#endif /* CONFIG_HOTPLUG_CPU */
+#endif 
+#endif 
 
 	cpus_read_lock();
 	if (*cpu_pattern) {
@@ -1516,7 +1516,7 @@ failed_cpu_online:
 failed_cpu_dead:
 #else
 	unregister_hotcpu_notifier(&cfs_cpu_notifier);
-#endif /* !HAVE_HOTPLUG_STATE_MACHINE */
-#endif /* CONFIG_HOTPLUG_CPU */
+#endif 
+#endif 
 	return ret;
 }

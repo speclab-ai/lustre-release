@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file contains OSD API methods related to OBD Filter Device (OFD)
  * object operations.
@@ -51,7 +51,7 @@ static int ofd_version_get_check(struct ofd_thread_info *info,
 	curr_version = dt_version_get(info->fti_env, ofd_object_child(fo));
 	if ((__s64)curr_version == -EOPNOTSUPP)
 		RETURN(0);
-	/* VBR: version is checked always because costs nothing */
+	
 	if (info->fti_pre_version != 0 &&
 	    info->fti_pre_version != curr_version) {
 		CDEBUG(D_INODE, "Version mismatch %#llx != %#llx\n",
@@ -96,7 +96,7 @@ struct ofd_object *ofd_object_find(const struct lu_env *env,
 	if (likely(!IS_ERR(o)))
 		fo = ofd_obj(o);
 	else
-		fo = ERR_CAST(o); /* return error */
+		fo = ERR_CAST(o); 
 
 	RETURN(fo);
 }
@@ -301,7 +301,7 @@ int ofd_precreate_objects(const struct lu_env *env, struct ofd_device *ofd,
 
 	LASSERT(id != 0);
 
-	/* prepare objects */
+	
 	*fid = *lu_object_fid(&oseq->os_lastid_obj->do_lu);
 	for (i = 0; i < nr; i++) {
 		rc = fid_set_id(fid, id + i);
@@ -344,7 +344,7 @@ int ofd_precreate_objects(const struct lu_env *env, struct ofd_device *ofd,
 		LASSERT(fo);
 
 		if (unlikely(ofd_object_exists(fo))) {
-			/* object may exist being re-created by write replay */
+			
 			CDEBUG(D_INODE, "object %#llx/%#llx exists: "
 			       DFID"\n", ostid_seq(&oseq->os_oi), id,
 			       PFID(lu_object_fid(&fo->ofo_obj.do_lu)));
@@ -365,7 +365,7 @@ int ofd_precreate_objects(const struct lu_env *env, struct ofd_device *ofd,
 		}
 	}
 
-	/* Only needed for MDS+OSS rolling upgrade interop with 2.16+older. */
+	
 	if (unlikely(trans_local))
 		rc = dt_trans_start_local(env, ofd->ofd_osd, th);
 	else
@@ -405,7 +405,7 @@ int ofd_precreate_objects(const struct lu_env *env, struct ofd_device *ofd,
 
 		ofd_write_lock(env, fo);
 
-		/* Only the new created objects need to be recorded. */
+		
 		if (ofd->ofd_osd->dd_record_fid_accessed) {
 			struct lfsck_req_local *lrl = &ofd_info(env)->fti_lrl;
 
@@ -535,7 +535,7 @@ int ofd_attr_handle_id(const struct lu_env *env, struct ofd_object *fo,
 			la->la_valid &= ~LA_PROJID;
 	}
 
-	/* Initialize ownership of this object, clear SUID+SGID bits*/
+	
 	if ((la->la_valid & LA_UID) && (ln->la_mode & S_ISUID))
 		mask |= S_ISUID;
 	if ((la->la_valid & LA_GID) && (ln->la_mode & S_ISGID))
@@ -623,12 +623,12 @@ int ofd_object_ff_update(const struct lu_env *env, struct ofd_object *fo,
 		 * be recorded in the OFD objects.
 		 */
 		if (ff->ff_layout_version & LU_LAYOUT_RESYNC) {
-			/* this opens a new era of writing */
+			
 			ff->ff_layout_version = 0;
 			ff->ff_range = 0;
 		}
 
-		/* it's not allowed to change it to a smaller value */
+		
 		if (ofd_layout_version_less(oa->o_layout_version,
 					    ff->ff_layout_version))
 			RETURN(-EINVAL);
@@ -648,7 +648,7 @@ int ofd_object_ff_update(const struct lu_env *env, struct ofd_object *fo,
 
 	if (memcmp(ff, &fo->ofo_ff, sizeof(*ff)))
 		filter_fid_cpu_to_le(ff, ff, sizeof(*ff));
-	else /* no change */
+	else 
 		rc = 0;
 
 	RETURN(rc);
@@ -688,7 +688,7 @@ int ofd_attr_set(const struct lu_env *env, struct ofd_object *fo,
 	    CFS_FAIL_CHECK(OBD_FAIL_OUT_DROP_PROJID_SET))
 		la->la_valid &= ~LA_PROJID;
 
-	/* VBR: version recovery check */
+	
 	rc = ofd_version_get_check(info, fo);
 	if (rc)
 		GOTO(out, rc);
@@ -697,7 +697,7 @@ int ofd_attr_set(const struct lu_env *env, struct ofd_object *fo,
 	if (unlikely(rc))
 		GOTO(out, rc);
 
-	rc = ofd_attr_handle_id(env, fo, la, 1 /* is_setattr */);
+	rc = ofd_attr_handle_id(env, fo, la, 1 );
 	if (rc != 0)
 		GOTO(out, rc);
 
@@ -724,7 +724,7 @@ int ofd_attr_set(const struct lu_env *env, struct ofd_object *fo,
 	if (!ofd_object_exists(fo))
 		GOTO(unlock, rc = -ENOENT);
 
-	/* serialize vs ofd_commitrw_write() */
+	
 	if (la->la_valid & (LA_ATIME | LA_MTIME | LA_CTIME))
 		tgt_fmd_update(info->fti_exp, &fo->ofo_header.loh_fid,
 			       info->fti_xid);
@@ -802,7 +802,7 @@ int ofd_object_fallocate(const struct lu_env *env, struct ofd_object *fo,
 	if (!ofd_object_exists(fo))
 		RETURN(-ENOENT);
 
-	/* VBR: version recovery check */
+	
 	rc = ofd_version_get_check(info, fo);
 	if (rc != 0)
 		RETURN(rc);
@@ -927,7 +927,7 @@ int ofd_object_punch(const struct lu_env *env, struct ofd_object *fo,
 
 	ENTRY;
 
-	/* we support truncate, not punch yet */
+	
 	LASSERT(end == OBD_OBJECT_EOF);
 
 	if (!ofd_object_exists(fo))
@@ -939,7 +939,7 @@ int ofd_object_punch(const struct lu_env *env, struct ofd_object *fo,
 			GOTO(out, rc);
 	}
 
-	/* VBR: version recovery check */
+	
 	rc = ofd_version_get_check(info, fo);
 	if (rc)
 		GOTO(out, rc);
@@ -948,7 +948,7 @@ int ofd_object_punch(const struct lu_env *env, struct ofd_object *fo,
 	if (unlikely(rc))
 		GOTO(out, rc);
 
-	rc = ofd_attr_handle_id(env, fo, la, 0 /* !is_setattr */);
+	rc = ofd_attr_handle_id(env, fo, la, 0 );
 	if (rc != 0)
 		GOTO(out, rc);
 
@@ -957,7 +957,7 @@ int ofd_object_punch(const struct lu_env *env, struct ofd_object *fo,
 		GOTO(out, rc = PTR_ERR(th));
 
 	if (oa->o_valid & OBD_MD_FLFLAGS && oa->o_flags & LUSTRE_ENCRYPT_FL) {
-		/* punch must be aware we are dealing with an encrypted file */
+		
 		la->la_valid |= LA_FLAGS;
 		la->la_flags |= LUSTRE_ENCRYPT_FL;
 	}
@@ -989,7 +989,7 @@ int ofd_object_punch(const struct lu_env *env, struct ofd_object *fo,
 	if (!ofd_object_exists(fo))
 		GOTO(unlock, rc = -ENOENT);
 
-	/* need to verify layout version */
+	
 	if (oa->o_valid & OBD_MD_LAYOUT_VERSION) {
 		rc = ofd_verify_layout_version(env, fo, oa);
 		if (rc)
@@ -1165,12 +1165,12 @@ struct ofd_id_repair_args {
 static bool ofd_can_repair_resource_ids(const struct lu_attr *la_obj,
 					const struct lu_attr *la_obdo)
 {
-	/* If no valid IDs are available, no repair is possible */
+	
 	if (!(la_obdo->la_valid & LA_UID) && !(la_obdo->la_valid & LA_GID) &&
 	    !(la_obdo->la_valid & LA_PROJID))
 		RETURN(false);
 
-	/* No ID is set yet. Object can be repaired with any subset of IDs */
+	
 	if (la_obj->la_mode == OFD_UNSET_ATTRS_MODE) {
 		/* The object was created and pages not yet flushed by the
 		 * client. Repair is not necessary for this object yet.
@@ -1185,7 +1185,7 @@ static bool ofd_can_repair_resource_ids(const struct lu_attr *la_obj,
 		RETURN(true);
 	}
 
-	/* If a subset of IDs is unset, the same incoming ID must be valid */
+	
 	if (((la_obdo->la_valid & LA_UID) && (la_obj->la_mode & S_ISUID)) ||
 	    ((la_obdo->la_valid & LA_GID) && (la_obj->la_mode & S_ISGID)) ||
 	    ((la_obdo->la_valid & LA_PROJID) && (la_obj->la_mode & S_ISVTX)))
@@ -1223,8 +1223,8 @@ static int ofd_id_repair_one(struct ofd_device *ofd,
 		RETURN(PTR_ERR(fo));
 	}
 
-	/* clear SUID+SGID+sticky bits if included in oiw_la->la_valid */
-	rc = ofd_attr_handle_id(env, fo, &work->oiw_la, 0 /* !is_setattr */);
+	
+	rc = ofd_attr_handle_id(env, fo, &work->oiw_la, 0 );
 	if (rc)
 		GOTO(out, rc);
 
@@ -1245,7 +1245,7 @@ static int ofd_id_repair_one(struct ofd_device *ofd,
 	if (!ofd_object_exists(fo))
 		GOTO(out_unlock, rc = -ENOENT);
 
-	rc = ofd_attr_handle_id(env, fo, &work->oiw_la, 0 /* !is_setattr */);
+	rc = ofd_attr_handle_id(env, fo, &work->oiw_la, 0 );
 	if (rc)
 		GOTO(out_unlock, rc);
 
@@ -1368,7 +1368,7 @@ int ofd_id_repair_start_thread(struct ofd_device *ofd)
 		RETURN(rc);
 	}
 
-	/* start thread handling creation */
+	
 	task = kthread_create(ofd_id_repair_thread_main, args, "ofd_id_repair");
 	if (IS_ERR(task)) {
 		CERROR("%s: failed to start id repair thread: rc = %ld\n",
@@ -1401,7 +1401,7 @@ void ofd_id_repair_stop_thread(struct ofd_device *ofd)
 		kthread_stop(task);
 
 	spin_lock(&ofd->ofd_id_repair_lock);
-	/* Clean up remaining work items */
+	
 	list_for_each_entry_safe(work, tmp, &ofd->ofd_id_repair_list,
 				 oiw_linkage) {
 		list_del(&work->oiw_linkage);
@@ -1493,7 +1493,7 @@ static int __ofd_check_resource_ids(const struct lu_env *env,
 
 	rc = dt_attr_get(env, ofd_object_child(fo), &la_obj);
 	if (rc) {
-		/* log this case but don't return err code */
+		
 		CERROR("%s: failed to get attr for obj " DFID ": rc = %d\n",
 		       ofd_name(ofd_exp(exp)),
 		       PFID(lu_object_fid(&fo->ofo_obj.do_lu)), rc);
@@ -1546,7 +1546,7 @@ int ofd_check_resource_ids(const struct lu_env *env, struct ofd_object *fo,
 		RETURN(0);
 
 	rc = __ofd_check_resource_ids(env, fo, oa);
-	/* EAGAIN indicates needed repair. Caller asked for check only - pass */
+	
 	if (rc == -EAGAIN)
 		rc = 0;
 
@@ -1626,7 +1626,7 @@ int ofd_check_repair_resource_ids(const struct lu_env *env,
 
 	rc = __ofd_check_resource_ids(env, fo, oa);
 	if (rc == -EAGAIN) {
-		/* force repair - check_ids verified ID repair is possible */
+		
 		ofd_repair_resource_ids(env, fo, oa, true);
 		rc = 0;
 	}

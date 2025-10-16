@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2014, Intel Corporation.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Network Request Scheduler (NRS) Client Round Robin over NIDs (CRR-N) policy
  */
@@ -28,7 +28,7 @@
 struct nrs_crrn_net {
 	struct ptlrpc_nrs_resource	cn_res;
 	struct binheap	       *cn_binheap;
-	/* CRR-N NRS - NID hash body */
+	
 	struct rhashtable		cn_cli_hash;
 	/**
 	 * Used when a new scheduling round commences, in order to synchronize
@@ -103,5 +103,5 @@ struct nrs_crrn_req {
  */
 #define NRS_CTL_CRRN_WR_QUANTUM PTLRPC_NRS_CTL_POL_SPEC_02
 
-/** @} CRR-N */
+
 #endif

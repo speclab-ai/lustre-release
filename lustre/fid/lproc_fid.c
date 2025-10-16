@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Sequence Manager
  *
@@ -25,7 +25,7 @@
 #include <lprocfs_status.h>
 #include "fid_internal.h"
 
-/* Format: [0x64BIT_INT - 0x64BIT_INT] + 32 bytes just in case */
+
 #define MAX_FID_RANGE_STRLEN (32 + 2 * 2 * sizeof(__u64))
 /*
  * Reduce the SEQ range allocated to a node to a strict subset of the range
@@ -61,7 +61,7 @@ ldebugfs_fid_write_common(const char __user *buffer, size_t count,
 		RETURN(count);
 	}
 
-	/* of the form "[0x0000000240000400 - 0x000000028000400]" */
+	
 	rc = sscanf(kernbuf, "[%llx - %llx]\n",
 		    (unsigned long long *)&tmp.lsr_start,
 		    (unsigned long long *)&tmp.lsr_end);
@@ -478,9 +478,9 @@ const struct file_operations seq_fld_debugfs_seq_fops = {
 	.release = fldb_seq_release,
 };
 
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
-/* Client side debugfs stuff */
+
 static ssize_t
 ldebugfs_client_fid_space_seq_write(struct file *file,
 				    const char __user *buffer,
@@ -589,7 +589,7 @@ ldebugfs_client_fid_server_seq_show(struct seq_file *m, void *unused)
 #ifdef HAVE_SERVER_SUPPORT
 	} else {
 		seq_printf(m, "%s\n", seq->lcs_srv->lss_name);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 	}
 
 	RETURN(0);

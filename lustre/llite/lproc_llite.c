@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LLITE
@@ -73,7 +73,7 @@ void llite_tunables_unregister(void)
 	llite_kobj = NULL;
 }
 
-/* <debugfs>/lustre/llite mount point registration */
+
 static const struct file_operations ll_rw_extents_stats_fops;
 static const struct file_operations ll_rw_extents_stats_pp_fops;
 static const struct file_operations ll_rw_offset_stats_fops;
@@ -309,7 +309,7 @@ static ssize_t namelen_max_store(struct kobject *kobj, struct attribute *attr,
 	if (rc)
 		return rc;
 
-	if (val < 12) { /* arbitrary sanity check, but 8.3 was OK for DOS :-) */
+	if (val < 12) { 
 		CERROR("%s: cannot set max filename length %u below 12 chars\n",
 		       sbi->ll_fsname, val);
 		return -ERANGE;
@@ -424,7 +424,7 @@ static ssize_t max_read_ahead_mb_store(struct kobject *kobj,
 	CDEBUG(D_INFO, "%s: set max_read_ahead_mb=%llu (%llu pages)\n",
 	       sbi->ll_fsname, PAGES_TO_MiB(pages_number), pages_number);
 	if (pages_number > cfs_totalram_pages() / 2) {
-		/* 1/2 of RAM */
+		
 		CERROR("%s: cannot set max_read_ahead_mb=%llu > totalram/2=%luMB\n",
 		       sbi->ll_fsname, PAGES_TO_MiB(pages_number),
 		       PAGES_TO_MiB(cfs_totalram_pages() / 2));
@@ -597,13 +597,13 @@ static ssize_t ll_max_cached_mb_seq_write(struct file *file,
 		RETURN(rc);
 
 	pages_number = value >> PAGE_SHIFT;
-	/* Allow enough cache so clients can make well-formed RPCs */
+	
 	pages_number = max_t(long, pages_number, PTLRPC_MAX_BRW_PAGES);
 
 	mutex_lock(&cache->ccc_max_cache_mb_lock);
 	diff = pages_number - cache->ccc_lru_max;
 
-	/* easy - add more LRU slots. */
+	
 	if (diff >= 0) {
 		atomic_long_add(diff, &cache->ccc_lru_left);
 		GOTO(out, rc = 0);
@@ -617,7 +617,7 @@ static ssize_t ll_max_cached_mb_seq_write(struct file *file,
 	while (diff > 0) {
 		long tmp;
 
-		/* reduce LRU budget from free slots. */
+		
 		do {
 			long lru_left_old, lru_left_new, lru_left_ret;
 
@@ -641,7 +641,7 @@ static ssize_t ll_max_cached_mb_seq_write(struct file *file,
 		if (diff <= 0)
 			break;
 
-		if (sbi->ll_dt_exp == NULL) { /* being initialized */
+		if (sbi->ll_dt_exp == NULL) { 
 			rc = -ENODEV;
 			break;
 		}
@@ -650,7 +650,7 @@ static ssize_t ll_max_cached_mb_seq_write(struct file *file,
 		 * by other processes before this can continue shrinking.
 		 */
 		tmp = diff + min_t(long, diff, MiB_TO_PAGES(1024));
-		/* difficult - have to ask OSCs to drop LRU slots. */
+		
 		rc = obd_set_info_async(env, sbi->ll_dt_exp,
 				sizeof(KEY_CACHE_LRU_SHRINK),
 				KEY_CACHE_LRU_SHRINK,
@@ -717,7 +717,7 @@ static ssize_t ll_unevict_cached_mb_seq_write(struct file *file,
 	if (IS_ERR(env))
 		RETURN(PTR_ERR(env));
 
-	/* being initialized */
+	
 	if (sbi->ll_dt_exp == NULL)
 		GOTO(out, rc = -ENODEV);
 
@@ -877,7 +877,7 @@ static ssize_t checksums_store(struct kobject *kobj, struct attribute *attr,
 	int rc;
 
 	if (!sbi->ll_dt_exp)
-		/* Not set up yet */
+		
 		return -EAGAIN;
 
 	rc = kstrtobool(buffer, &val);
@@ -1429,7 +1429,7 @@ static ssize_t max_easize_show(struct kobject *kobj,
 	if (rc)
 		return rc;
 
-	/* Limit xattr size returned to userspace based on kernel maximum */
+	
 	return scnprintf(buf, PAGE_SIZE, "%u\n",
 			 ealen > XATTR_SIZE_MAX ? XATTR_SIZE_MAX : ealen);
 }
@@ -1458,7 +1458,7 @@ static ssize_t default_easize_show(struct kobject *kobj,
 	if (rc)
 		return rc;
 
-	/* Limit xattr size returned to userspace based on kernel maximum */
+	
 	return scnprintf(buf, PAGE_SIZE, "%u\n",
 			 ealen > XATTR_SIZE_MAX ? XATTR_SIZE_MAX : ealen);
 }
@@ -1847,7 +1847,7 @@ read_ahead_range_kb_store(struct kobject *kobj,
 		return rc;
 
 	pages_number = val >> PAGE_SHIFT;
-	/* Disable mmap range read */
+	
 	if (pages_number == 0)
 		goto out;
 
@@ -2031,7 +2031,7 @@ static ssize_t opencache_threshold_count_store(struct kobject *kobj,
 	rc = kstrtouint(buffer, 10, &val);
 	if (rc) {
 		bool enable;
-		/* also accept "off" to disable and "on" to always cache */
+		
 		rc = kstrtobool(buffer, &enable);
 		if (rc)
 			return rc;
@@ -2133,8 +2133,8 @@ static ssize_t inode_cache_store(struct kobject *kobj,
 }
 LUSTRE_RW_ATTR(inode_cache);
 
-/* an arbitrary but very large maximum value for sanity */
-#define HYBRID_IO_THRESHOLD_BYTES_MAX (2 * 1024 * 1024 * 1024UL) /* 2 GiB */
+
+#define HYBRID_IO_THRESHOLD_BYTES_MAX (2 * 1024 * 1024 * 1024UL) 
 static ssize_t hybrid_io_write_threshold_bytes_show(struct kobject *kobj,
 						    struct attribute *attr,
 						    char *buf)
@@ -2281,7 +2281,7 @@ static ssize_t ll_unstable_stats_seq_write(struct file *file,
 	if (rc < 0)
 		return rc;
 
-	/* borrow lru lock to set the value */
+	
 	spin_lock(&sbi->ll_cache->ccc_lru_lock);
 	sbi->ll_cache->ccc_unstable_check = val;
 	spin_unlock(&sbi->ll_cache->ccc_lru_lock);
@@ -2405,7 +2405,7 @@ static ssize_t enable_filename_encryption_store(struct kobject *kobj,
 }
 
 LUSTRE_RW_ATTR(enable_filename_encryption);
-#endif /* CONFIG_LL_ENCRYPTION */
+#endif 
 
 #if defined(CONFIG_LL_ENCRYPTION) || defined(HAVE_LUSTRE_CRYPTO)
 static ssize_t filename_enc_use_old_base64_show(struct kobject *kobj,
@@ -2456,7 +2456,7 @@ static ssize_t filename_enc_use_old_base64_store(struct kobject *kobj,
 }
 
 LUSTRE_RW_ATTR(filename_enc_use_old_base64);
-#endif /* CONFIG_LL_ENCRYPTION || HAVE_LUSTRE_CRYPTO */
+#endif 
 
 static int ll_pcc_seq_show(struct seq_file *m, void *v)
 {
@@ -2594,7 +2594,7 @@ static struct attribute *llite_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(llite); /* creates llite_groups */
+KOBJ_ATTRIBUTE_GROUPS(llite); 
 
 static void sbi_kobj_release(struct kobject *kobj)
 {
@@ -2614,7 +2614,7 @@ static const struct llite_file_opcode {
 	enum lprocfs_counter_config	lfo_config;
 	const char			*lfo_opname;
 } llite_opcode_table[LPROC_LL_FILE_OPCODES] = {
-	/* file operation */
+	
 	{ LPROC_LL_READ_BYTES,	LPROCFS_TYPE_BYTES_FULL, "read_bytes" },
 	{ LPROC_LL_WRITE_BYTES,	LPROCFS_TYPE_BYTES_FULL, "write_bytes" },
 	{ LPROC_LL_HIO_READ,	LPROCFS_TYPE_BYTES_FULL, "hybrid_read_bytes" },
@@ -2633,13 +2633,13 @@ static const struct llite_file_opcode {
 	{ LPROC_LL_INODE_OCOUNT, LPROCFS_TYPE_REQS | LPROCFS_CNTR_AVGMINMAX |
 				LPROCFS_CNTR_STDDEV,	"opencount" },
 	{ LPROC_LL_INODE_OPCLTM, LPROCFS_TYPE_LATENCY,	"openclosetime" },
-	/* inode operation */
+	
 	{ LPROC_LL_SETATTR,	LPROCFS_TYPE_LATENCY,	"setattr" },
 	{ LPROC_LL_TRUNC,	LPROCFS_TYPE_LATENCY,	"truncate" },
 	{ LPROC_LL_FLOCK,	LPROCFS_TYPE_LATENCY,	"flock" },
 	{ LPROC_LL_GETATTR,	LPROCFS_TYPE_LATENCY,	"getattr" },
 	{ LPROC_LL_FALLOCATE,	LPROCFS_TYPE_LATENCY,	"fallocate"},
-	/* dir inode operation */
+	
 	{ LPROC_LL_CREATE,	LPROCFS_TYPE_LATENCY,	"create" },
 	{ LPROC_LL_LINK,	LPROCFS_TYPE_LATENCY,	"link" },
 	{ LPROC_LL_UNLINK,	LPROCFS_TYPE_LATENCY,	"unlink" },
@@ -2648,7 +2648,7 @@ static const struct llite_file_opcode {
 	{ LPROC_LL_RMDIR,	LPROCFS_TYPE_LATENCY,	"rmdir" },
 	{ LPROC_LL_MKNOD,	LPROCFS_TYPE_LATENCY,	"mknod" },
 	{ LPROC_LL_RENAME,	LPROCFS_TYPE_LATENCY,	"rename" },
-	/* special inode operation */
+	
 	{ LPROC_LL_STATFS,	LPROCFS_TYPE_LATENCY,	"statfs" },
 	{ LPROC_LL_SETXATTR,	LPROCFS_TYPE_LATENCY,	"setxattr" },
 	{ LPROC_LL_GETXATTR,	LPROCFS_TYPE_LATENCY,	"getxattr" },
@@ -2656,14 +2656,14 @@ static const struct llite_file_opcode {
 	{ LPROC_LL_LISTXATTR,	LPROCFS_TYPE_LATENCY,	"listxattr" },
 	{ LPROC_LL_REMOVEXATTR,	LPROCFS_TYPE_LATENCY,	"removexattr" },
 	{ LPROC_LL_INODE_PERM,	LPROCFS_TYPE_LATENCY,	"inode_permission" },
-	/* PCC I/O statistics */
+	
 	{ LPROC_LL_PCC_ATTACH,  LPROCFS_TYPE_REQS,	"pcc_attach" },
 	{ LPROC_LL_PCC_DETACH,  LPROCFS_TYPE_REQS,	"pcc_detach" },
 	{ LPROC_LL_PCC_AUTOAT, LPROCFS_TYPE_REQS,	"pcc_auto_attach" },
 	{ LPROC_LL_PCC_HIT_BYTES, LPROCFS_TYPE_BYTES_FULL, "pcc_hit_bytes" },
 	{ LPROC_LL_PCC_ATTACH_BYTES, LPROCFS_TYPE_BYTES_FULL,
 		"pcc_attach_bytes" },
-	/* hybrid IO switch from buffered I/O (BIO) to direct I/O (DIO) */
+	
 	{ LPROC_LL_HYBRID_NOSWITCH, LPROCFS_TYPE_REQS, "hybrid_noswitch" },
 	{ LPROC_LL_HYBRID_WRITESIZE_SWITCH, LPROCFS_TYPE_REQS,
 		"hybrid_writesize_switch" },
@@ -2721,7 +2721,7 @@ int ll_debugfs_register_super(struct super_block *sb, const char *name)
 	ENTRY;
 	LASSERT(sbi);
 
-	/* Yes we also register sysfs mount kset here as well */
+	
 	sbi->ll_kset.kobj.parent = llite_kobj;
 	sbi->ll_kset.kobj.ktype = &sbi_ktype;
 	init_completion(&sbi->ll_kobj_unregister);
@@ -2752,7 +2752,7 @@ int ll_debugfs_register_super(struct super_block *sb, const char *name)
 	debugfs_create_file("offset_stats", 0644, sbi->ll_debugfs_entry, sbi,
 			    &ll_rw_offset_stats_fops);
 
-	/* File operations stats */
+	
 	scnprintf(param, sizeof(param), "llite.%s.stats", name);
 	sbi->ll_stats = ldebugfs_stats_alloc(LPROC_LL_FILE_OPCODES, param,
 					     sbi->ll_debugfs_entry,
@@ -2760,7 +2760,7 @@ int ll_debugfs_register_super(struct super_block *sb, const char *name)
 	if (!sbi->ll_stats)
 		GOTO(out_debugfs, err = -ENOMEM);
 
-	/* do counter init */
+	
 	for (id = 0; id < LPROC_LL_FILE_OPCODES; id++)
 		lprocfs_counter_init(sbi->ll_stats,
 				     llite_opcode_table[id].lfo_opcode,
@@ -2910,7 +2910,7 @@ static int alloc_rw_stats_info(struct ll_sb_info *sbi)
 	if (!sbi->ll_rw_extents_info)
 		sbi->ll_rw_extents_info = rw_extents;
 	spin_unlock(&sbi->ll_pp_extent_lock);
-	/* another writer allocated the struct before we got the lock */
+	
 	if (sbi->ll_rw_extents_info != rw_extents)
 		OBD_FREE(rw_extents, sizeof(*rw_extents));
 
@@ -2929,7 +2929,7 @@ static int alloc_rw_stats_info(struct ll_sb_info *sbi)
 	spin_unlock(&sbi->ll_process_lock);
 	sbi->ll_process_stats_init = ktime_get_real();
 
-	/* another writer allocated the structs before we got the lock */
+	
 	if (sbi->ll_rw_offset_info != offset)
 		OBD_FREE(offset, sizeof(*offset) * LL_OFFSET_HIST_MAX);
 	if (sbi->ll_rw_process_info != process) {
@@ -3095,7 +3095,7 @@ void ll_rw_stats_tally(struct ll_sb_info *sbi, pid_t pid,
 		return;
 	}
 
-	/* Extent statistics */
+	
 	for (i = 0; i < LL_PROCESS_HIST_MAX; i++) {
 		if (rw_extents->pp_extents[i].pid == pid) {
 			cur = i;
@@ -3104,7 +3104,7 @@ void ll_rw_stats_tally(struct ll_sb_info *sbi, pid_t pid,
 	}
 
 	if (cur == -1) {
-		/* new process */
+		
 		sbi->ll_extent_process_count =
 			(sbi->ll_extent_process_count + 1) %
 			 LL_PROCESS_HIST_MAX;
@@ -3131,7 +3131,7 @@ void ll_rw_stats_tally(struct ll_sb_info *sbi, pid_t pid,
 	if (!process || !offset)
 		goto out_unlock;
 
-	/* Offset statistics */
+	
 	for (i = 0; i < LL_PROCESS_HIST_MAX; i++) {
 		if (process[i].rw_pid == pid) {
 			if (process[i].rw_last_file != lfd) {
@@ -3207,7 +3207,7 @@ static int ll_rw_offset_stats_seq_show(struct seq_file *seq, void *v)
 		   "R/W", "PID", "RANGE START", "RANGE END",
 		   "SMALLEST EXTENT", "LARGEST EXTENT", "OFFSET");
 
-	/* We stored the discontiguous offsets here; print them first */
+	
 	offset = sbi->ll_rw_offset_info;
 	for (i = 0; offset && i < LL_OFFSET_HIST_MAX; i++) {
 		if (offset[i].rw_pid != 0)
@@ -3222,7 +3222,7 @@ static int ll_rw_offset_stats_seq_show(struct seq_file *seq, void *v)
 				   offset[i].rw_offset);
 	}
 
-	/* Then print the current offsets for each process */
+	
 	process = sbi->ll_rw_process_info;
 	for (i = 0; process && i < LL_PROCESS_HIST_MAX; i++) {
 		if (process[i].rw_pid != 0)

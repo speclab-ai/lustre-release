@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * OSD Object Index
  *
@@ -22,7 +22,7 @@
 #ifndef _OSD_OI_H
 #define _OSD_OI_H
 
-/* struct rw_semaphore */
+
 #include <linux/rwsem.h>
 #include <linux/jbd2.h>
 #include <lustre_fid.h>
@@ -50,16 +50,16 @@ struct osd_oi;
  * identifiers, so this cannot form any part of the OSD API.
  */
 struct osd_inode_id {
-	__u32 oii_ino; /* inode number */
-	__u32 oii_gen; /* inode generation */
+	__u32 oii_ino; 
+	__u32 oii_gen; 
 };
 
-/* OI cache entry */
+
 struct osd_idmap_cache {
 	struct lu_fid		oic_fid;
 	struct osd_inode_id	oic_lid;
 	struct osd_device	*oic_dev;
-	__u16			oic_remote:1;	/* FID isn't local */
+	__u16			oic_remote:1;	
 };
 
 static inline void osd_id_pack(struct osd_inode_id *tgt,
@@ -131,4 +131,4 @@ int  osd_oi_update(struct osd_thread_info *info, struct osd_device *osd,
 
 int fid_is_on_ost(struct osd_thread_info *info, struct osd_device *osd,
 		  const struct lu_fid *fid, enum oi_check_flags flags);
-#endif /* _OSD_OI_H */
+#endif 

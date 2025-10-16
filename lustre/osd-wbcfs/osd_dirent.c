@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2025-2026, DDN/Whamcloud, Inc.
@@ -15,7 +15,7 @@
 #include "osd_internal.h"
 #include "wbcfs.h"
 
-/* Lookup the directory entry (dentry) specified by @key. */
+
 static int osd_index_dir_lookup(const struct lu_env *env, struct dt_object *dt,
 				struct dt_rec *rec, const struct dt_key *key)
 {
@@ -35,7 +35,7 @@ static int osd_index_dir_lookup(const struct lu_env *env, struct dt_object *dt,
 	if (IS_ERR(parent))
 		RETURN(PTR_ERR(parent));
 
-	/* FIXME: more checking for ".." lookup. */
+	
 	if (strcmp(name, "..") == 0) {
 		*fid = MEMFS_I(d_inode(parent->d_parent))->mei_fid;
 		GOTO(out, rc = 1);
@@ -98,13 +98,13 @@ static int osd_index_dir_insert(const struct lu_env *env, struct dt_object *dt,
 	LASSERT(!dt_object_remote(dt));
 	LASSERTF(fid_is_sane(fid), "fid "DFID" is insane!\n", PFID(fid));
 
-	/* Skip "." and ".." in MemFS. */
+	
 	if (name[0] == '.' && (name[1] == '\0' ||
 			       (name[1] == '.' && name[2] == '\0')))
 		RETURN(0);
 
-	/* FIXME: handle remote object in DNE environment. */
-	/* TODO: Store inode in @osd_thread_info? */
+	
+	
 	inode = ilookup5(osd_sb(osd), lu_fid_build_ino(fid, 0),
 			 memfs_test_inode_by_fid, (void *)fid);
 	if (!inode) {
@@ -138,7 +138,7 @@ static int osd_index_dir_insert(const struct lu_env *env, struct dt_object *dt,
 		 * thus we can do undo (recovery) operations upon failure.
 		 */
 		dchild = d_find_any_alias(inode);
-		/* mv (rename) a non-empty directory. */
+		
 		if (dchild && !simple_empty(dchild))
 			nedir_rename = true;
 		fallthrough;
@@ -147,7 +147,7 @@ static int osd_index_dir_insert(const struct lu_env *env, struct dt_object *dt,
 		inode_set_mtime_to_ts(dir, inode_set_ctime_current(dir));
 		break;
 	case S_IFLNK:
-		/* FIXME: symlink support. */
+		
 		CERROR("%s: symlink does not support\n",
 		       osd_name(osd_obj2dev(pobj)));
 		break;
@@ -158,17 +158,17 @@ static int osd_index_dir_insert(const struct lu_env *env, struct dt_object *dt,
 	inode_inc_iversion(dir);
 	if (nedir_rename) {
 		d_move(dchild, dentry);
-		/* Put the refcount obtained by @d_find_any_alias() */
+		
 		dput(dchild);
-		/* Finally release the @dentry. */
+		
 		dput(dentry);
 	} else {
-		/* Add dentry into dentry hashtable for VFS lookup. */
+		
 		d_add(dentry, inode);
 		ihold(inode);
 	}
-	/* Extra count (already obtain in @d_alloc) - pin the dentry in core */
-	/* dget(dentry); */
+	
+	
 
 	CDEBUG(D_CACHE,
 	       "%s: Insert dirent "DFID"/%pd@%pK inode@%pK nlink=%d\n",
@@ -203,7 +203,7 @@ static int osd_index_dir_delete(const struct lu_env *env, struct dt_object *dt,
 
 	ENTRY;
 
-	/* Skip "." and ".." in MemFS. */
+	
 	if (name[0] == '.' && (name[1] == '\0' ||
 			       (name[1] == '.' && name[2] == '\0')))
 		RETURN(0);
@@ -259,8 +259,8 @@ static int osd_index_dir_delete(const struct lu_env *env, struct dt_object *dt,
 		inode_set_mtime_to_ts(dir, inode_set_ctime_to_ts(dir,
 					inode_set_ctime_current(inode)));
 		inode_inc_iversion(dir);
-		/* MDD layer drops @nlink later via @dt_ref_del(). */
-		/* drop_nlink(inode); */
+		
+		
 		/*
 		 * Undo the count from "create".
 		 * Unhash the dentry from the parent dentry hashtable which is
@@ -299,14 +299,14 @@ __osd_dir_it_init(const struct lu_env *env, struct osd_device *dev,
 	if (oit == NULL)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	/* TODO: store buffer as thread context data @osd_thread_info. */
+	
 	OBD_ALLOC(oit->oit_buf, OSD_IT_BUFSIZE);
 	if (!oit->oit_buf)
 		GOTO(out_free, rc = -ENOMEM);
 
 	oit->oit_obj = NULL;
 	file = &oit->oit_file;
-	/* Only FMODE_64BITHASH or FMODE_32BITHASH should be set, NOT both. */
+	
 	if (attr & LUDA_64BITHASH)
 		file->f_mode |= FMODE_64BITHASH;
 	else
@@ -414,7 +414,7 @@ static int osd_dir_it_get(const struct lu_env *env,
 	RETURN(1);
 }
 
-/* Does nothing */
+
 static void osd_dir_it_put(const struct lu_env *env, struct dt_it *di)
 {
 }
@@ -448,17 +448,17 @@ static int osd_memfs_filldir(void *ctx,
 
 	ENTRY;
 
-	/* This should never happen */
+	
 	if (unlikely(namelen == 0 || namelen > NAME_MAX)) {
 		CERROR("MemFS return invalid namelen %d\n", namelen);
 		RETURN(-EIO);
 	}
 
-	/* Check for enough space. Note oitd_name is not NUL terminated. */
+	
 	if (&ent->oitd_name[namelen] > buf + OSD_IT_BUFSIZE)
 		RETURN(1);
 
-	/* "." is just the object itself. */
+	
 	if (namelen == 1 && name[0] == '.') {
 		if (obj != NULL)
 			*fid = obj->oo_dt.do_lu.lo_header->loh_fid;
@@ -480,7 +480,7 @@ static int osd_memfs_filldir(void *ctx,
 		fid_zero(fid);
 	}
 
-	/* NOT export local root. */
+	
 	if (obj != NULL &&
 	    unlikely(osd_sb(osd_obj2dev(obj))->s_root->d_inode->i_ino == ino)) {
 		ino = obj->oo_inode->i_ino;
@@ -493,7 +493,7 @@ static int osd_memfs_filldir(void *ctx,
 	} else {
 		int encoded_namelen = critical_chars(name, namelen);
 
-		/* Check again for enough space. */
+		
 		if (&ent->oitd_name[encoded_namelen] > buf + OSD_IT_BUFSIZE)
 			RETURN(1);
 
@@ -656,7 +656,7 @@ static int osd_dir_it_key_size(const struct lu_env *env, const struct dt_it *di)
 static inline void
 osd_it_append_attrs(struct lu_dirent *ent, int len, __u16 type)
 {
-	/* check if file type is required */
+	
 	if (ent->lde_attrs & LUDA_TYPE) {
 		struct luda_type *lt;
 		int align = sizeof(*lt) - 1;
@@ -686,7 +686,7 @@ osd_it_pack_dirent(struct lu_dirent *ent, struct lu_fid *fid, __u64 offset,
 	ent->lde_name[namelen] = '\0';
 	ent->lde_namelen = cpu_to_le16(namelen);
 
-	/* append lustre attributes */
+	
 	osd_it_append_attrs(ent, namelen, type);
 }
 
@@ -711,10 +711,10 @@ static inline int osd_dir_it_rec(const struct lu_env *env,
 
 	ENTRY;
 
-	/* TODO: lfsck checking support.*/
+	
 
 	attr &= ~LU_DIRENT_ATTRS_MASK;
-	/* Pack the entry anyway, at least the offset is right. */
+	
 	osd_it_pack_dirent(lde, fid, it->oit_dirent->oitd_off,
 			   it->oit_dirent->oitd_name,
 			   it->oit_dirent->oitd_namelen,

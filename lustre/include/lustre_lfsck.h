@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre LFSCK exported functions.
  *
@@ -26,7 +26,7 @@ struct lfsck_start_param {
 	unsigned int		 lsp_index_valid:1;
 };
 
-/* For LE_PAIRS_VERIFY returned status */
+
 enum lfsck_pv_status {
 	LPVS_INIT		= 0,
 	LPVS_INCONSISTENT	= 1,
@@ -102,11 +102,11 @@ static inline void lfsck_pack_rfa(struct lfsck_req_local *lrl,
 
 static inline bool lovea_slot_is_dummy(const struct lov_ost_data_v1 *obj)
 {
-	/* zero area does not care about the bytes-order. */
+	
 	if (obj->l_ost_oi.oi.oi_id == 0 && obj->l_ost_oi.oi.oi_seq == 0 &&
 	    obj->l_ost_idx == 0 && obj->l_ost_gen == 0)
 		return true;
 
 	return false;
 }
-#endif /* _LUSTRE_LFSCK_H */
+#endif 

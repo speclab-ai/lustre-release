@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * ptlrpcd is a special thread with its own set where other user might add
  * requests when they don't want to wait for their completion.
@@ -30,14 +30,14 @@
 #include <lustre_net.h>
 #include <lustre_lib.h>
 #include <lustre_ha.h>
-#include <obd_class.h>   /* for obd_zombie */
+#include <obd_class.h>   
 #include <obd_support.h>
-#include <cl_object.h> /* cl_env_{get,put}() */
+#include <cl_object.h> 
 #include <lprocfs_status.h>
 
 #include "ptlrpc_internal.h"
 
-/* One of these per CPT. */
+
 struct ptlrpcd {
 	int			pd_size;
 	int			pd_index;
@@ -111,10 +111,10 @@ module_param(ptlrpcd_cpts, charp, 0644);
 MODULE_PARM_DESC(ptlrpcd_cpts,
 		 "CPU partitions ptlrpcd threads should run in");
 
-/* ptlrpcds_cpt_idx maps cpt numbers to an index in the ptlrpcds array. */
+
 static int		*ptlrpcds_cpt_idx;
 
-/* ptlrpcds_num is the number of entries in the ptlrpcds array. */
+
 static int		ptlrpcds_num;
 static struct ptlrpcd	**ptlrpcds;
 
@@ -156,7 +156,7 @@ ptlrpcd_select_pc(struct ptlrpc_request *req)
 		idx = ptlrpcds_cpt_idx[cpt];
 	pd = ptlrpcds[idx];
 
-	/* We do not care whether it is strict load balance. */
+	
 	idx = pd->pd_cursor;
 	if (++idx == pd->pd_nthreads)
 		idx = 0;
@@ -220,7 +220,7 @@ void ptlrpcd_add_req(struct ptlrpc_request *req)
 		LASSERT(req->rq_phase == RQ_PHASE_NEW);
 		LASSERT(req->rq_send_state == LUSTRE_IMP_REPLAY);
 
-		/* ptlrpc_check_set will decrease the count */
+		
 		atomic_inc(&req->rq_set->set_remaining);
 		spin_unlock(&req->rq_lock);
 		wake_up(&req->rq_set->set_waitq);
@@ -389,7 +389,7 @@ static int ptlrpcd(void *arg)
 	pc->pc_set = set;
 	spin_unlock(&pc->pc_lock);
 
-	/* Both client and server (MDT/OST) may use the environment. */
+	
 	rc = lu_context_init(&env.le_ctx, LCT_MD_THREAD |
 					  LCT_DT_THREAD |
 					  LCT_CL_THREAD |
@@ -436,7 +436,7 @@ static int ptlrpcd(void *arg)
 			}
 			if (ret != 0)
 				continue;
-			/* Timed out */
+			
 			ptlrpc_expired_set(set);
 			break;
 		}
@@ -489,10 +489,10 @@ static void ptlrpcd_ctl_init(struct ptlrpcd_ctl *pc, int index, int cpt)
 	spin_lock_init(&pc->pc_lock);
 
 	if (index < 0) {
-		/* Recovery thread. */
+		
 		snprintf(pc->pc_name, sizeof(pc->pc_name), "ptlrpcd_rcv");
 	} else {
-		/* Regular thread. */
+		
 		snprintf(pc->pc_name, sizeof(pc->pc_name),
 			 "ptlrpcd_%02d_%02d", cpt, index);
 	}
@@ -759,7 +759,7 @@ static int ptlrpcd_init(void)
 		CWARN("max_ptlrpcds is obsolete.\n");
 		if (ptlrpcd_per_cpt_max == 0) {
 			ptlrpcd_per_cpt_max = max_ptlrpcds / ncpts;
-			/* Round up if there is a remainder. */
+			
 			if (max_ptlrpcds % ncpts != 0)
 				ptlrpcd_per_cpt_max++;
 			CWARN("Setting ptlrpcd_per_cpt_max = %d\n",
@@ -778,21 +778,21 @@ static int ptlrpcd_init(void)
 		CWARN("ptlrpcd_bind_policy is obsolete.\n");
 		if (ptlrpcd_partner_group_size == 0) {
 			switch (ptlrpcd_bind_policy) {
-			case 1: /* PDB_POLICY_NONE */
-			case 2: /* PDB_POLICY_FULL */
+			case 1: 
+			case 2: 
 				ptlrpcd_partner_group_size = 1;
 				break;
-			case 3: /* PDB_POLICY_PAIR */
+			case 3: 
 				ptlrpcd_partner_group_size = 2;
 				break;
-			case 4:	/* PDB_POLICY_NEIGHBOR */
+			case 4:	
 #ifdef CONFIG_NUMA
-				ptlrpcd_partner_group_size = -1; /* CPT */
+				ptlrpcd_partner_group_size = -1; 
 #else
-				ptlrpcd_partner_group_size = 3; /* Triplets */
+				ptlrpcd_partner_group_size = 3; 
 #endif
 				break;
-			default: /* Illegal value, use the default. */
+			default: 
 				ptlrpcd_partner_group_size = 2;
 				break;
 			}
@@ -926,4 +926,4 @@ void ptlrpcd_decref(void)
 	mutex_unlock(&ptlrpcd_mutex);
 }
 EXPORT_SYMBOL(ptlrpcd_decref);
-/** @} ptlrpcd */
+

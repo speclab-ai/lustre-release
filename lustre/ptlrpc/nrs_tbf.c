@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2013 DataDirect Networks, Inc.
@@ -115,7 +115,7 @@ nrs_tbf_cli_reset(struct nrs_tbf_head *head,
 	}
 	LASSERT(cli->tc_rule == NULL);
 	LASSERT(list_empty(&cli->tc_linkage));
-	/* Rule's ref is added before called */
+	
 	cli->tc_rule = rule;
 	spin_lock(&rule->tr_rule_lock);
 	list_add_tail(&cli->tc_linkage, &rule->tr_cli_list);
@@ -138,7 +138,7 @@ nrs_tbf_rule_dump_all(struct nrs_tbf_head *head, struct seq_file *m)
 
 	LASSERT(head != NULL);
 	spin_lock(&head->th_rule_lock);
-	/* List the rules from newest to oldest */
+	
 	list_for_each_entry(rule, &head->th_list, tr_linkage) {
 		LASSERT((rule->tr_flags & NTRS_STOPPING) == 0);
 		rc = nrs_tbf_rule_dump(rule, m);
@@ -190,7 +190,7 @@ nrs_tbf_rule_match(struct nrs_tbf_head *head,
 	struct nrs_tbf_rule *tmp_rule;
 
 	spin_lock(&head->th_rule_lock);
-	/* Match the newest rule in the list */
+	
 	list_for_each_entry(tmp_rule, &head->th_list, tr_linkage) {
 		LASSERT((tmp_rule->tr_flags & NTRS_STOPPING) == 0);
 		if (head->th_ops->o_rule_match(tmp_rule, cli)) {
@@ -287,7 +287,7 @@ nrs_tbf_rule_start(struct ptlrpc_nrs_policy *policy,
 		return rc;
 	}
 
-	/* Add as the newest rule */
+	
 	spin_lock(&head->th_rule_lock);
 	tmp_rule = nrs_tbf_rule_find_nolock(head, start->tc_name);
 	if (tmp_rule) {
@@ -308,7 +308,7 @@ nrs_tbf_rule_start(struct ptlrpc_nrs_policy *policy,
 		list_add(&rule->tr_linkage, next_rule->tr_linkage.prev);
 		kref_put(&next_rule->tr_ref, nrs_tbf_rule_fini);
 	} else {
-		/* Add on the top of the rule list */
+		
 		list_add(&rule->tr_linkage, &head->th_list);
 	}
 	spin_unlock(&head->th_rule_lock);
@@ -363,7 +363,7 @@ nrs_tbf_rule_change_rank(struct ptlrpc_nrs_policy *policy,
 	if (!next_rule)
 		GOTO(out_put, rc = -ENOENT);
 
-	/* rules may be adjacent in same list, so list_move() isn't safe here */
+	
 	list_move_tail(&rule->tr_linkage, &next_rule->tr_linkage);
 	kref_put(&next_rule->tr_ref, nrs_tbf_rule_fini);
 out_put:
@@ -468,7 +468,7 @@ nrs_tbf_command(struct ptlrpc_nrs_policy *policy,
 		return rc;
 	case NRS_CTL_TBF_STOP_RULE:
 		rc = nrs_tbf_rule_stop(policy, head, cmd);
-		/* Take it as a success, if not exists at all */
+		
 		return rc == -ENOENT ? 0 : rc;
 	default:
 		return -EFAULT;
@@ -503,7 +503,7 @@ tbf_cli_compare(struct binheap_node *e1, struct binheap_node *e2)
 	else if (cli1->tc_check_time > cli2->tc_check_time)
 		return 0;
 
-	/* Maybe need more comparasion, e.g. request number in the rules */
+	
 	return 1;
 }
 
@@ -897,16 +897,16 @@ static int nrs_tbf_check_id_value(char **strp, char *key)
 
 	tok = strim(strsep(&str, "="));
 	if (!*tok || !str)
-		/* No LHS or no '=' */
+		
 		return -EINVAL;
 	str = strim(str);
 	len = strlen(str);
 	if (strcmp(tok, key) != 0 ||
 	    str[0] != '{' || str[len-1] != '}')
-		/* Wrong key, or RHS missing {} */
+		
 		return -EINVAL;
 
-	/* Skip '{' and '}' */
+	
 	str[len-1] = '\0';
 	str += 1;
 	*strp = str;
@@ -925,7 +925,7 @@ static int nrs_tbf_jobid_parse(struct nrs_tbf_cmd *cmd, char *id)
 	if (cmd->u.tc_start.ts_jobids_str == NULL)
 		return -ENOMEM;
 
-	/* parse jobid list */
+	
 	rc = nrs_tbf_jobid_list_parse(cmd->u.tc_start.ts_jobids_str,
 				      &cmd->u.tc_start.ts_jobids);
 	if (rc)
@@ -1071,9 +1071,9 @@ try_again:
 						 &cli->tc_rhash,
 						 tbf_nid_hash_params);
 	if (cli2) {
-		/* Insertion failed. */
+		
 		if (IS_ERR(cli2)) {
-			/* hash table could be resizing. */
+			
 			if (PTR_ERR(cli2) == -ENOMEM ||
 			    PTR_ERR(cli2) == -EBUSY) {
 				rcu_read_unlock();
@@ -1081,14 +1081,14 @@ try_again:
 				rcu_read_lock();
 				goto try_again;
 			}
-			/* return ERR_PTR */
+			
 		} else {
-			/* lost race. Use new cli2 */
+			
 			if (!refcount_inc_not_zero(&cli2->tc_ref))
 				goto try_again;
 		}
 	} else {
-		/* New cli has been inserted */
+		
 		cli2 = cli;
 	}
 	if (!IS_ERR(cli2))
@@ -1214,7 +1214,7 @@ static int nrs_tbf_nid_parse(struct nrs_tbf_cmd *cmd, char *id)
 	if (!cmd->u.tc_start.ts_nids_str)
 		return -ENOMEM;
 
-	/* parse NID list */
+	
 	if (cfs_parse_nidlist(cmd->u.tc_start.ts_nids_str, len,
 			      &cmd->u.tc_start.ts_nids)) {
 		nrs_tbf_nid_cmd_fini(cmd);
@@ -1250,13 +1250,13 @@ __cfs_hash_djb2_hash(const void *key, size_t size, unsigned int hash)
 	return hash;
 }
 
-/* A variant of the generic djb2 hash algorithm for character arrays. */
+
 static inline unsigned int
 nrs_tbf_generic_hash(const struct nrs_tbf_key *key, const unsigned int bits)
 {
 	unsigned int hash = 5381;
 
-	/* All TBF types are valid: nid+uid+gid+opcode+jobid. */
+	
 	if (key->tk_flags == NRS_TBF_FLAG_ALL)
 		return cfs_hash_djb2_hash(key, sizeof(*key), bits);
 
@@ -1469,7 +1469,7 @@ static struct req_format *req_fmt(__u32 opcode)
 		return &RQF_MDS_GETATTR;
 	case MDS_GETATTR_NAME:
 		return &RQF_MDS_GETATTR_NAME;
-	/* close is skipped to avoid LDLM cancel slowness */
+	
 #if 0
 	case MDS_CLOSE:
 		return &RQF_MDS_CLOSE;
@@ -1490,7 +1490,7 @@ static struct req_format *req_fmt(__u32 opcode)
 		return &RQF_MDS_GETXATTR;
 	case MDS_GET_INFO:
 		return &RQF_MDS_GET_INFO;
-	/* HSM op is skipped */
+	
 #if 0 
 	case MDS_HSM_STATE_GET:
 		return &RQF_MDS_HSM_STATE_GET;
@@ -1563,7 +1563,7 @@ static void unpack_ugid_from_mdt_rec_reint(struct ptlrpc_request *req,
 	rec = req_capsule_client_get(&req->rq_pill, &RMF_REC_REINT);
 	LASSERT(rec != NULL);
 
-	/* use the fs{ug}id as {ug}id of the process */
+	
 	id->ti_uid = rec->rr_fsuid;
 	id->ti_gid = rec->rr_fsgid;
 }
@@ -1661,7 +1661,7 @@ static int nrs_tbf_id_cli_set(struct ptlrpc_request *req, struct tbf_id *id,
 	else
 		rc = -EINVAL;
 
-	/* restore it to the original state */
+	
 	if (req->rq_pill.rc_fmt != old_fmt)
 		req->rq_pill.rc_fmt = old_fmt;
 	return rc;
@@ -1870,15 +1870,15 @@ nrs_tbf_expression_parse(char *str, struct list_head *cond_list)
 
 	field = strim(strsep(&str, NRS_TBF_EXPRESSION_DELIM));
 	if (!*field || !str)
-		/* No LHS or no '=' sign */
+		
 		GOTO(out, rc = -EINVAL);
 	str = strim(str);
 	len = strlen(str);
 	if (len < 2 || str[0] != '{' || str[len-1] != '}')
-		/* No {} around RHS */
+		
 		GOTO(out, rc = -EINVAL);
 
-	/* Skip '{' and '}' */
+	
 	str[len-1] = '\0';
 	str += 1;
 	len -= 2;
@@ -1969,7 +1969,7 @@ nrs_tbf_generic_parse(struct nrs_tbf_cmd *cmd, const char *id)
 	if (cmd->u.tc_start.ts_conds_str == NULL)
 		return -ENOMEM;
 
-	/* Parse hybird NID and JOBID conditions */
+	
 	rc = nrs_tbf_conds_parse(cmd->u.tc_start.ts_conds_str,
 				 &cmd->u.tc_start.ts_conds);
 	if (rc)
@@ -2108,7 +2108,7 @@ static unsigned int
 nrs_tbf_opcode_hop_hash(struct cfs_hash *hs, const void *key,
 			const unsigned int bits)
 {
-	/* XXX did hash needs ? */
+	
 	return cfs_hash_djb2_hash(key, sizeof(__u32), bits);
 }
 
@@ -2304,7 +2304,7 @@ static int nrs_tbf_opcode_parse(struct nrs_tbf_cmd *cmd, char *id)
 	if (cmd->u.tc_start.ts_opcodes_str == NULL)
 		return -ENOMEM;
 
-	/* parse opcode list */
+	
 	rc = nrs_tbf_opcode_list_parse(cmd->u.tc_start.ts_opcodes_str, NULL);
 	if (rc)
 		nrs_tbf_opcode_cmd_fini(cmd);
@@ -2335,7 +2335,7 @@ static int nrs_tbf_opcode_rule_init(struct ptlrpc_nrs_policy *policy,
 	if (rule->tr_opcodes_str == NULL)
 		return -ENOMEM;
 
-	/* Default rule '*' */
+	
 	if (strcmp(start->u.tc_start.ts_opcodes_str, "*") == 0)
 		return 0;
 
@@ -2593,7 +2593,7 @@ nrs_tbf_id_list_parse(char *orig, struct list_head *id_list,
 		list_add_tail(&nti_id->nti_linkage, id_list);
 	}
 	if (list_empty(id_list))
-		/* Only white space in the list */
+		
 		GOTO(out, rc = -EINVAL);
 out:
 	kfree(orig);
@@ -2916,7 +2916,7 @@ static void nrs_tbf_stop(struct ptlrpc_nrs_policy *policy)
 
 	LASSERT(head != NULL);
 	hrtimer_cancel(&head->th_timer);
-	/* Should cleanup hash first before free rules */
+	
 	if (head->th_type_flag == NRS_TBF_FLAG_NID) {
 		rhashtable_free_and_destroy(&head->th_cli_rhash,
 					    nrs_tbf_nid_exit, NULL);
@@ -3182,7 +3182,7 @@ struct ptlrpc_nrs_request *nrs_tbf_req_get(struct ptlrpc_nrs_policy *policy,
 		} else if (ntoken > cli->tc_depth)
 			ntoken = cli->tc_depth;
 
-		/* give an extra token with force mode */
+		
 		if (unlikely(force) && ntoken == 0)
 			ntoken = 1;
 
@@ -3355,7 +3355,7 @@ static void nrs_tbf_req_stop(struct ptlrpc_nrs_policy *policy,
 /*
  * The maximum RPC rate.
  */
-#define LPROCFS_NRS_RATE_MAX		1000000ULL	/* 1rpc/us */
+#define LPROCFS_NRS_RATE_MAX		1000000ULL	
 
 static int
 ptlrpc_lprocfs_nrs_tbf_rule_seq_show(struct seq_file *m, void *data)
@@ -3502,7 +3502,7 @@ nrs_tbf_parse_value_pair(struct nrs_tbf_cmd *cmd, char *buffer)
 	if (val == NULL || strlen(val) == 0)
 		return -EINVAL;
 
-	/* Key of the value pair */
+	
 	if (strcmp(key, "rate") == 0) {
 		rc = kstrtoull(val, 10, &rate);
 		if (rc)
@@ -3594,7 +3594,7 @@ nrs_tbf_parse_cmd(char *buffer, unsigned long count, __u32 type_flag)
 	if (val == NULL || strlen(val) == 0)
 		GOTO(out_free_cmd, rc = -EINVAL);
 
-	/* Type of the command */
+	
 	if (strcmp(token, "start") == 0) {
 		cmd->tc_cmd = NRS_CTL_TBF_START_RULE;
 		cmd->u.tc_start.ts_valid_type = type_flag;
@@ -3605,7 +3605,7 @@ nrs_tbf_parse_cmd(char *buffer, unsigned long count, __u32 type_flag)
 	else
 		GOTO(out_free_cmd, rc = -EINVAL);
 
-	/* Name of the rule */
+	
 	token = strsep(&val, " ");
 	if ((val == NULL && cmd->tc_cmd != NRS_CTL_TBF_STOP_RULE))
 		GOTO(out_free_cmd, rc = -EINVAL);
@@ -3617,14 +3617,14 @@ nrs_tbf_parse_cmd(char *buffer, unsigned long count, __u32 type_flag)
 	cmd->tc_name = token;
 
 	if (cmd->tc_cmd == NRS_CTL_TBF_START_RULE) {
-		/* List of ID */
+		
 		LASSERT(val);
 		token = val;
 		val = strrchr(token, '}');
 		if (!val)
 			GOTO(out_free_cmd, rc = -EINVAL);
 
-		/* Skip '}' */
+		
 		val++;
 		if (*val == '\0') {
 			val = NULL;

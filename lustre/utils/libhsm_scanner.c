@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2019, DDN Storage Corporation.
  */
@@ -74,7 +74,7 @@ int hsm_scan_handle_dir(struct hsm_scan_control *hsc, struct list_head *head,
 	}
 
 	while ((ent = readdir(dir)) != NULL) {
-		/* skip "." and ".." */
+		
 		if (strcmp(ent->d_name, ".") == 0 ||
 		    strcmp(ent->d_name, "..") == 0)
 			continue;
@@ -92,7 +92,7 @@ int hsm_scan_handle_dir(struct hsm_scan_control *hsc, struct list_head *head,
 				if (ret && !rc) {
 					hsc->hsc_errnum++;
 					rc = ret;
-					/* ignore error, continue to check */
+					
 				}
 			} else if (ent->d_type == DT_DIR) {
 				if (strlen(ent->d_name) + strlen(pathname) + 1

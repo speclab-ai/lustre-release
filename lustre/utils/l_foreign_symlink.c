@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2020, Intel Corporation.
  */
@@ -80,38 +80,38 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	/* the number of items is presently limited to MAX_NB_UPCALL_ITEMS */
+	
 
-	/* all items are expected to be on a __u32 boundary by llite */
+	
 
-	/* 1st item to locate <PUUID> */
+	
 	items = (struct ll_foreign_symlink_upcall_item *)buf;
 	items->type = POSLEN_TYPE;
 	items->pos = 0;
 	items->len = UUID_STRING_LENGTH;
 
-	/* 2nd item to store "/" string */
+	
 	items = (struct ll_foreign_symlink_upcall_item *)((char *)items +
 			POSLEN_ITEM_SZ);
 	items->type = STRING_TYPE;
-	/* NUL byte is not necessary */
+	
 	items->size = strlen("/");
 	memcpy(items->bytestring, "/", strlen("/"));
-	/* space occupied by string will fit on __u32 boundary */
+	
 
-	/* 3rd item to locate <CUUID> */
+	
 	items = (struct ll_foreign_symlink_upcall_item *)((char *)items +
 		STRING_ITEM_SZ(items->size));
 	items->type = POSLEN_TYPE;
 	items->pos = UUID_STRING_LENGTH + 1;
 	items->len = UUID_STRING_LENGTH;
 
-	/* 4th item is end of buf */
+	
 	items = (struct ll_foreign_symlink_upcall_item *)((char *)items +
 			POSLEN_ITEM_SZ);
 	items->type = EOB_TYPE;
 
-	/* Send foreign symlink parsing items info to kernelspace */
+	
 	rc = cfs_get_param_paths(&path, "llite/%s/foreign_symlink_upcall_info",
 				 argv[1]);
 	if (rc != 0) {
@@ -142,7 +142,7 @@ out_param:
 	cfs_free_param_data(&path);
 out:
 	if (isatty(STDIN_FILENO))
-		/* we are called from the command line */
+		
 		return rc < 0 ? -rc : rc;
 	else
 		return rc;

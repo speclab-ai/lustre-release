@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * FLD (Fids Location Database)
  *
@@ -31,11 +31,11 @@
 
 #include "fld_internal.h"
 
-/* context key constructor/destructor: fld_key_init, fld_key_fini */
+
 LU_KEY_INIT_FINI(fld, struct fld_thread_info);
 
-/* context key: fld_thread_key */
-/* MGS thread may create llog file causing FLD lookup */
+
+
 LU_CONTEXT_KEY_DEFINE(fld, LCT_MD_THREAD | LCT_DT_THREAD | LCT_MG_THREAD);
 
 int fld_server_mod_init(void)
@@ -126,7 +126,7 @@ int fld_update_from_controller(const struct lu_env *env,
 	if (rc < 0)
 		RETURN(rc);
 
-	/* No need update fldb for MDT0 */
+	
 	if (index == 0)
 		RETURN(0);
 
@@ -195,7 +195,7 @@ int fld_local_lookup(const struct lu_env *env, struct lu_server_fld *fld,
 	LASSERT(info != NULL);
 	erange = &info->fti_lrange;
 
-	/* Lookup it in the cache. */
+	
 	rc = fld_cache_lookup(fld->lsf_cache, seq, erange);
 	if (rc == 0) {
 		if (unlikely(fld_range_type(erange) != fld_range_type(range) &&
@@ -373,7 +373,7 @@ int fid_is_local(const struct lu_env *env,
 	info = lu_context_key_get(&env->le_ctx, &fld_thread_key);
 	range = &info->fti_lrange;
 
-	result = 1; /* conservatively assume fid is local */
+	result = 1; 
 	ss_site = lu_site2seq(site);
 	if (ss_site->ss_client_fld) {
 		int rc;

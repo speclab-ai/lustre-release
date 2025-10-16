@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0+
+
 /*
  * Copyright (c) 2004 Daniel McNeil <daniel@osdl.org>
  *               2004 Open Source Development Lab
@@ -27,8 +27,8 @@
  *  - 2/2004  Marty Ridgeway (mridge@us.ibm.com) Changes to adapt to LTP
  */
 
-/* #define _GNU_SOURCE */
-/* #define DEBUG 1 */
+
+
 #undef DEBUG
 
 #include <unistd.h>
@@ -49,25 +49,25 @@
 static int aio_blksize = AIO_BLKSIZE;
 static int aio_maxio = AIO_MAXIO;
 
-static int busy;		/* # of I/O's in flight */
-static int tocopy;		/* # of blocks left to copy */
-static int srcfd;		/* source fd */
-static int dstfd = -1;		/* destination file descriptor */
+static int busy;		
+static int tocopy;		
+static int srcfd;		
+static int dstfd = -1;		
 static const char *dstname;
 static const char *srcname;
-static int source_open_flag = O_RDONLY;	/* open flags on source file */
-static int dest_open_flag = O_WRONLY;	/* open flags on dest file */
-static int no_write;			/* do not write */
-static int zero;			/* write zero's only */
+static int source_open_flag = O_RDONLY;	
+static int dest_open_flag = O_WRONLY;	
+static int no_write;			
+static int zero;			
 
 static int debug;
-static int count_io_q_waits;	/* how many times io_queue_wait called */
+static int count_io_q_waits;	
 
-struct iocb **iocb_free;	/* array of pointers to iocb */
-int iocb_free_count;		/* current free count */
-int alignment = 512;		/* buffer alignment */
+struct iocb **iocb_free;	
+int iocb_free_count;		
+int alignment = 512;		
 
-struct timeval delay;		/* delay between I/O */
+struct timeval delay;		
 
 static int init_iocb(int n, int iosize)
 {
@@ -138,7 +138,7 @@ static int io_wait_run(io_context_t ctx, struct timespec *to)
 	return ret;
 }
 
-/* Fatal error handler */
+
 static void io_error(const char *func, int rc)
 {
 	if (rc < 0)
@@ -181,7 +181,7 @@ static void wr_done(io_context_t ctx, struct iocb *iocb, long res, long res2)
  */
 static void rd_done(io_context_t ctx, struct iocb *iocb, long res, long res2)
 {
-	/* library needs accessors to look at iocb? */
+	
 	int iosize = iocb->u.c.nbytes;
 	char *buf = iocb->u.c.buf;
 	off_t offset = iocb->u.c.offset;
@@ -195,7 +195,7 @@ static void rd_done(io_context_t ctx, struct iocb *iocb, long res, long res2)
 		exit(1);
 	}
 
-	/* turn read into write */
+	
 	if (no_write) {
 		--tocopy;
 		--busy;
@@ -263,12 +263,12 @@ int main(int argc, char *const *argv)
 		char *endp;
 
 		switch (c) {
-		case 'a':	/* alignment of data buffer */
+		case 'a':	
 			alignment = strtol(optarg, &endp, 0);
 			alignment = (long)scale_by_kmg((long long)alignment,
 							*endp);
 			break;
-		case 'f':	/* use these open flags */
+		case 'f':	
 			if (strcmp(optarg, "LARGEFILE") == 0 ||
 			    strcmp(optarg, "O_LARGEFILE") == 0) {
 				source_open_flag |= O_LARGEFILE;
@@ -294,22 +294,22 @@ int main(int argc, char *const *argv)
 		case 'D':
 			delay.tv_usec = atoi(optarg);
 			break;
-		case 'b':	/* block size */
+		case 'b':	
 			aio_blksize = strtol(optarg, &endp, 0);
 			aio_blksize = (long)scale_by_kmg(
 					(long long)aio_blksize, *endp);
 			break;
-		case 'n':	/* num io */
+		case 'n':	
 			aio_maxio = strtol(optarg, &endp, 0);
 			break;
-		case 's':	/* size to transfer */
+		case 's':	
 			length = strtoll(optarg, &endp, 0);
 			length = scale_by_kmg(length, *endp);
 			break;
-		case 'w':	/* no write */
+		case 'w':	
 			no_write = 1;
 			break;
-		case 'z':	/* write zero's */
+		case 'z':	
 			zero = 1;
 			break;
 
@@ -383,7 +383,7 @@ int main(int argc, char *const *argv)
 		}
 	}
 
-	/* initialize state machine */
+	
 	memset(&myctx, 0, sizeof(myctx));
 	io_queue_init(aio_maxio, &myctx);
 	tocopy = howmany(length, aio_blksize);
@@ -394,7 +394,7 @@ int main(int argc, char *const *argv)
 
 	while (tocopy > 0) {
 		int i, rc;
-		/* Submit as many reads as once as possible upto aio_maxio */
+		
 		int n = MIN(MIN(aio_maxio - busy, aio_maxio),
 				howmany(length - offset, aio_blksize));
 		if (n > 0) {

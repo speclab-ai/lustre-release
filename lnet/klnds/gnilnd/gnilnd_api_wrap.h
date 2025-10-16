@@ -1,8 +1,8 @@
-/* SPDX-License-Identifier: GPL-2.0 */
 
-/* Copyright (C) 2009-2012 Cray, Inc. */
 
-/* This file is part of Lustre, http://www.lustre.org.
+
+
+/* This file is part of Lustre, http:
  *
  * Author: Nic Henke <nic@cray.com>
  */
@@ -10,9 +10,9 @@
 #ifndef _GNILND_API_WRAP_H
 #define _GNILND_API_WRAP_H
 
-/* LNet is allocated failure locations 0xe000 to 0xffff */
 
-/* GNILND has 0xf0XX */
+
+
 #define CFS_FAIL_GNI			0xf000
 #define CFS_FAIL_GNI_PHYS_MAP		0xf001
 #define CFS_FAIL_GNI_VIRT_MAP		0xf002
@@ -92,7 +92,7 @@
 #define CFS_FAIL_GNI_DGRAM_DROP_TX	0xf054
 #define CFS_FAIL_GNI_RDMA_CQ_ERROR	0xf055
 
-/* helper macros */
+
 extern void
 _kgnilnd_api_rc_lbug(const char *rcstr, int rc, struct libcfs_debug_msg_data *data,
 			const char *fmt, ...)
@@ -100,7 +100,7 @@ _kgnilnd_api_rc_lbug(const char *rcstr, int rc, struct libcfs_debug_msg_data *da
 
 #define kgnilnd_api_rc_lbug(msgdata, rc, fmt, a...)				\
 do {										\
-	/* we don't mask this - it is always at D_ERROR */			\
+				\
 	_kgnilnd_api_rc_lbug(kgnilnd_api_rc2str(rc), (rc), msgdata, fmt, ##a);	\
 } while (0)
 
@@ -132,7 +132,7 @@ kgnilnd_api_rc2str(gni_return_t rrc)
  *  gni_api_call(arg1, arg2, arg3)
  */
 
-/* apick_fn and apick_fmt should be defined for each site */
+
 #undef apick_fn
 #undef apick_fmt
 
@@ -190,7 +190,7 @@ do {                                                                          \
  * This allows us to handle all the return codes and api checks without
  * dirtying up the logic code */
 
-/* TODO: RETURN wrapper that translates integer to GNI API RC string */
+
 
 #define apick_fn "kgnilnd_cdm_create"
 #define apick_fmt "%u, %u, %u, %u, 0x%p"
@@ -204,7 +204,7 @@ static inline gni_return_t kgnilnd_cdm_create(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_CDM_CREATE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -216,7 +216,7 @@ static inline gni_return_t kgnilnd_cdm_create(
 		break;
 	case GNI_RC_ERROR_RESOURCE:
 	case GNI_RC_INVALID_PARAM:
-		/* Try to bail gracefully */
+		
 		GNILND_API_SWBUG(
 			inst_id, ptag, cookie, modes, cdm_hndl);
 		break;
@@ -224,7 +224,7 @@ static inline gni_return_t kgnilnd_cdm_create(
 		GNILND_API_RC_LBUG(
 			inst_id, ptag, cookie, modes, cdm_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -244,7 +244,7 @@ static inline gni_return_t kgnilnd_cdm_attach(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_CDM_ATTACH)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -268,7 +268,7 @@ static inline gni_return_t kgnilnd_cdm_attach(
 		GNILND_API_RC_LBUG(
 			cdm_hndl, device_id, local_addr, nic_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -284,7 +284,7 @@ static inline gni_return_t kgnilnd_cdm_destroy(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_CQ_DESTROY)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -303,7 +303,7 @@ static inline gni_return_t kgnilnd_cdm_destroy(
 		GNILND_API_RC_LBUG(
 			cdm_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -324,7 +324,7 @@ static inline gni_return_t kgnilnd_subscribe_errors(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_ERR_SUBSCRIBE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -350,7 +350,7 @@ static inline gni_return_t kgnilnd_subscribe_errors(
 		GNILND_API_RC_LBUG(
 			nic_handle, mask, EEQ_size, EQ_new_event, app_crit_err,
 			err_handle);
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -380,7 +380,7 @@ static inline gni_return_t kgnilnd_release_errors(
 	default:
 		GNILND_API_RC_LBUG(
 			err_handle);
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -397,7 +397,7 @@ static inline gni_return_t kgnilnd_set_quiesce_callback(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_REG_QUIESCE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -416,7 +416,7 @@ static inline gni_return_t kgnilnd_set_quiesce_callback(
 	default:
 		GNILND_API_RC_LBUG(
 			nic_handle, qsce_func);
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -437,7 +437,7 @@ static inline gni_return_t kgnilnd_get_quiesce_status(
 	 * 1 - quiesce is turned on
 	*/
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_IN_QUIESCE)) {
 		rrc = 1;
 	} else {
@@ -452,7 +452,7 @@ static inline gni_return_t kgnilnd_get_quiesce_status(
 	default:
 		GNILND_API_RC_LBUG(
 			nic_handle);
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -473,7 +473,7 @@ static inline gni_return_t kgnilnd_cq_create(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_CQ_CREATE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -500,7 +500,7 @@ static inline gni_return_t kgnilnd_cq_create(
 			nic_hndl, entry_count, delay_index, event_handler,
 			usr_event_data, cq_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -516,7 +516,7 @@ static inline gni_return_t kgnilnd_cq_destroy(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_CQ_DESTROY)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -540,7 +540,7 @@ static inline gni_return_t kgnilnd_cq_destroy(
 		GNILND_API_RC_LBUG(
 			cq_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -581,7 +581,7 @@ static inline gni_return_t kgnilnd_cq_get_event(
 		GNILND_API_RC_LBUG(
 			cq_hndl, event_data);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	return rrc;
@@ -599,7 +599,7 @@ static inline gni_return_t kgnilnd_smsg_init(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_SMSG_INIT)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_ERROR_RESOURCE;
 	} else {
@@ -608,7 +608,7 @@ static inline gni_return_t kgnilnd_smsg_init(
 	}
 
 	switch (rrc)  {
-	/* both of these are OK, upper SW needs to handle */
+	
 	case GNI_RC_SUCCESS:
 	case GNI_RC_NOT_DONE:
 		break;
@@ -625,7 +625,7 @@ static inline gni_return_t kgnilnd_smsg_init(
 		GNILND_API_RC_LBUG(
 			ep_hndl, local_smsg_attr, remote_smsg_attr);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -646,7 +646,7 @@ static inline gni_return_t kgnilnd_smsg_send(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_SMSG_SEND)) {
 		if (cfs_fail_loc & CFS_FAIL_RAND) {
 			rrc = GNI_RC_NOT_DONE;
@@ -659,7 +659,7 @@ static inline gni_return_t kgnilnd_smsg_send(
 	}
 
 	switch (rrc)  {
-	/* both of these are OK, upper SW needs to handle */
+	
 	case GNI_RC_SUCCESS:
 	case GNI_RC_NOT_DONE:
 		break;
@@ -675,7 +675,7 @@ static inline gni_return_t kgnilnd_smsg_send(
 		GNILND_API_RC_LBUG(
 			ep_hndl, header, header_length, data, data_length, msg_id);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -692,7 +692,7 @@ static inline gni_return_t kgnilnd_smsg_getnext(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_SMSG_RELEASE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_NOT_DONE;
 	} else {
@@ -701,7 +701,7 @@ static inline gni_return_t kgnilnd_smsg_getnext(
 	}
 
 	switch (rrc)  {
-	/* both of these are OK, upper SW needs to handle */
+	
 	case GNI_RC_SUCCESS:
 	case GNI_RC_NOT_DONE:
 	case GNI_RC_INVALID_STATE:
@@ -714,7 +714,7 @@ static inline gni_return_t kgnilnd_smsg_getnext(
 		GNILND_API_RC_LBUG(
 			ep_hndl, header);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -730,7 +730,7 @@ static inline gni_return_t kgnilnd_smsg_release(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_SMSG_RELEASE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -739,7 +739,7 @@ static inline gni_return_t kgnilnd_smsg_release(
 	}
 
 	switch (rrc)  {
-	/* both of these are OK, upper SW needs to handle */
+	
 	case GNI_RC_SUCCESS:
 	case GNI_RC_NOT_DONE:
 		break;
@@ -751,7 +751,7 @@ static inline gni_return_t kgnilnd_smsg_release(
 		GNILND_API_RC_LBUG(
 			ep_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -769,7 +769,7 @@ static inline gni_return_t kgnilnd_ep_create(
 {
 	gni_return_t rrc;
 
-	/* error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_EP_CREATE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_ERROR_NOMEM;
 	} else {
@@ -792,7 +792,7 @@ static inline gni_return_t kgnilnd_ep_create(
 		GNILND_API_RC_LBUG(
 			nic_hndl, src_cq_hndl, ep_hndl);
 
-		/* lbug never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -810,7 +810,7 @@ static inline gni_return_t kgnilnd_ep_bind(
 {
 	gni_return_t rrc;
 
-	/* error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_EP_BIND)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_NOT_DONE;
 	} else {
@@ -819,7 +819,7 @@ static inline gni_return_t kgnilnd_ep_bind(
 	}
 
 	switch (rrc)  {
-	/* both of these are ok, upper sw needs to handle */
+	
 	case GNI_RC_SUCCESS:
 	case GNI_RC_NOT_DONE:
 		break;
@@ -831,7 +831,7 @@ static inline gni_return_t kgnilnd_ep_bind(
 		GNILND_API_RC_LBUG(
 			ep_hndl, remote_addr, remote_id);
 
-		/* lbug never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -849,7 +849,7 @@ static inline gni_return_t kgnilnd_ep_set_eventdata(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_EP_SET_EVDATA)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -868,7 +868,7 @@ static inline gni_return_t kgnilnd_ep_set_eventdata(
 		GNILND_API_RC_LBUG(
 			ep_hndl, local_event, remote_event);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -884,7 +884,7 @@ static inline gni_return_t kgnilnd_ep_unbind(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_EP_UNBIND)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_NOT_DONE;
 	} else {
@@ -893,7 +893,7 @@ static inline gni_return_t kgnilnd_ep_unbind(
 	}
 
 	switch (rrc)  {
-	/* both of these are OK, upper SW needs to handle */
+	
 	case GNI_RC_NOT_DONE:
 	case GNI_RC_SUCCESS:
 		break;
@@ -905,7 +905,7 @@ static inline gni_return_t kgnilnd_ep_unbind(
 		GNILND_API_RC_LBUG(
 			ep_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -921,7 +921,7 @@ static inline gni_return_t kgnilnd_ep_destroy(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_EP_DESTROY)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_NOT_DONE;
 	} else {
@@ -940,7 +940,7 @@ static inline gni_return_t kgnilnd_ep_destroy(
 		GNILND_API_RC_LBUG(
 			ep_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -961,7 +961,7 @@ static inline gni_return_t kgnilnd_ep_postdata_w_id(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_EP_POST)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_SIZE_ERROR;
 	} else {
@@ -986,7 +986,7 @@ static inline gni_return_t kgnilnd_ep_postdata_w_id(
 			ep_hndl, in_data, data_len, out_buf, buf_size,
 			datagram_id);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1006,7 +1006,7 @@ static inline gni_return_t kgnilnd_ep_postdata_test_by_id(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_EP_TEST)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_ERROR_NOMEM;
 	} else {
@@ -1017,7 +1017,7 @@ static inline gni_return_t kgnilnd_ep_postdata_test_by_id(
 		/* we want to lie, but we need to do the actual work first
 		 * so we don't keep getting the event saying a dgram is ready */
 		if (rrc == GNI_RC_SUCCESS && CFS_FAIL_CHECK(CFS_FAIL_GNI_DG_TERMINATE)) {
-			/* don't use fail_val, allows us to do FAIL_SOME */
+			
 			*post_state = GNI_POST_TERMINATED;
 		}
 	}
@@ -1042,7 +1042,7 @@ static inline gni_return_t kgnilnd_ep_postdata_test_by_id(
 			ep_hndl, datagram_id, post_state, remote_addr,
 			remote_id);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1059,7 +1059,7 @@ static inline gni_return_t kgnilnd_ep_postdata_cancel_by_id(
 {
 	gni_return_t rrc;
 
-	/* no error injection as the only thing we'd do is LBUG */
+	
 
 	rrc = gni_ep_postdata_cancel_by_id(
 		ep_hndl, datagram_id);
@@ -1076,7 +1076,7 @@ static inline gni_return_t kgnilnd_ep_postdata_cancel_by_id(
 		GNILND_API_RC_LBUG(
 			ep_hndl, datagram_id);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1093,7 +1093,7 @@ static inline gni_return_t kgnilnd_postdata_probe_by_id(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_PROBE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_NO_MATCH;
 	} else {
@@ -1113,7 +1113,7 @@ static inline gni_return_t kgnilnd_postdata_probe_by_id(
 		GNILND_API_RC_LBUG(
 			nic_hndl, datagram_id);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1131,7 +1131,7 @@ static inline gni_return_t kgnilnd_postdata_probe_wait_by_id(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_PROBE_WAIT)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_TIMEOUT;
 	} else {
@@ -1151,7 +1151,7 @@ static inline gni_return_t kgnilnd_postdata_probe_wait_by_id(
 		GNILND_API_RC_LBUG(
 			nic_hndl, timeout, datagram_id);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1168,7 +1168,7 @@ static inline gni_return_t kgnilnd_post_rdma(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_POST_RDMA)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -1193,7 +1193,7 @@ static inline gni_return_t kgnilnd_post_rdma(
 		GNILND_API_RC_LBUG(
 			ep_hndl, post_descr);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1224,7 +1224,7 @@ static inline gni_return_t kgnilnd_get_completed(
 		break;
 	default:
 		GNILND_API_RC_LBUG(cq_hndl, event_data, post_descr);
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 
@@ -1232,7 +1232,7 @@ static inline gni_return_t kgnilnd_get_completed(
 	 * - then we lie  */
 	if (rrc == GNI_RC_SUCCESS &&
 	    (CFS_FAIL_CHECK(CFS_FAIL_GNI_GET_COMPLETED))) {
-		/* We only trigger TRANSACTION_ERROR for now */
+		
 		gni_post_descriptor_t *desc;
 		rrc = GNI_RC_TRANSACTION_ERROR;
 		desc = *post_descr;
@@ -1276,14 +1276,14 @@ static inline gni_return_t kgnilnd_cq_error_str(
 	case GNI_RC_INVALID_PARAM:
 		GNILND_API_SWBUG(
 			entry, buffer, len);
-		/* give them something to use */
+		
 		snprintf(buffer, len, "UNDEF:UNDEF");
 		break;
 	default:
 		GNILND_API_RC_LBUG(
 			entry, buffer, len);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1323,7 +1323,7 @@ static inline gni_return_t kgnilnd_cq_error_recoverable(
 		GNILND_API_RC_LBUG(
 			entry, recoverable);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1345,7 +1345,7 @@ kgnilnd_mem_register_segments(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_PHYS_MAP)) {
 		rrc = GNI_RC_ERROR_RESOURCE;
 	} else {
@@ -1368,7 +1368,7 @@ kgnilnd_mem_register_segments(
 			nic_hndl, mem_segments, segments_cnt,
 			dst_cq_hndl, flags, mem_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1389,7 +1389,7 @@ static inline gni_return_t kgnilnd_mem_register(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_VIRT_MAP)) {
 		rrc = GNI_RC_ERROR_RESOURCE;
 	} else if (CFS_FAIL_CHECK(CFS_FAIL_GNI_VIRT_SMALL_MAP) &&
@@ -1422,7 +1422,7 @@ static inline gni_return_t kgnilnd_mem_register(
 			nic_hndl, address, length,
 			dst_cq_hndl, flags, mem_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1440,7 +1440,7 @@ static inline gni_return_t kgnilnd_mem_deregister(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_VIRT_UNMAP)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_INVALID_PARAM;
 	} else {
@@ -1459,7 +1459,7 @@ static inline gni_return_t kgnilnd_mem_deregister(
 		GNILND_API_RC_LBUG(
 			nic_hndl, mem_hndl, hold_timeout);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1476,7 +1476,7 @@ static inline gni_return_t kgnilnd_mem_mdd_release(
 {
 	gni_return_t rrc;
 
-	/* Error injection */
+	
 	if (CFS_FAIL_CHECK(CFS_FAIL_GNI_MDD_RELEASE)) {
 		rrc = cfs_fail_val ? cfs_fail_val : GNI_RC_NO_MATCH;
 	} else {
@@ -1492,7 +1492,7 @@ static inline gni_return_t kgnilnd_mem_mdd_release(
 		GNILND_API_RC_LBUG(
 			nic_hndl, mem_hndl);
 
-		/* LBUG never returns, but just for style and consistency */
+		
 		break;
 	}
 	RETURN(rrc);
@@ -1500,4 +1500,4 @@ static inline gni_return_t kgnilnd_mem_mdd_release(
 #undef apick_fn
 #undef apick_fmt
 
-#endif /* _GNILND_API_WRAP_H */
+#endif 

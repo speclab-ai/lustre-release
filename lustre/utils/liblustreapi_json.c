@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * Copyright (c) 2014, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for json calls
  *
@@ -35,8 +35,8 @@
  * \retval	0 on success.
  * \retval	-errno on error.
  *
- * http://json.org/
- * http://www.ietf.org/rfc/rfc4627.txt (section 2.5)
+ * http:
+ * http:
  */
 static int json_escape_string(char **out_string, char *in_string)
 {
@@ -50,7 +50,7 @@ static int json_escape_string(char **out_string, char *in_string)
 	char	*escaped_string;
 	size_t	tmp_len, escaped_length = strlen(in_string);
 
-	/* add up the extra space needed for the escapes */
+	
 	while (*src) {
 		idx = strchr(escape_chars, *src);
 		if (idx != NULL) {
@@ -146,7 +146,7 @@ int llapi_json_write_list(struct llapi_json_item_list **json_items, FILE *fp)
 		default:
 			llapi_err_noerrno(LLAPI_MSG_ERROR,
 				    "Invalid item type: %d", item->lji_type);
-			/* Ensure valid JSON */
+			
 			fprintf(fp, "\"\"");
 			break;
 		}

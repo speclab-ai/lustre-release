@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __LUSTRE_HANDLES_H_
@@ -42,15 +42,15 @@ struct portals_handle {
 	struct rcu_head			h_rcu;
 };
 
-/* handles.c */
 
-/* Add a handle to the hash table */
+
+
 void class_handle_hash(struct portals_handle *, const char *h_owner);
 void class_handle_unhash(struct portals_handle *);
 void *class_handle2object(u64 cookie, const char *h_owner);
 int class_handle_init(void);
 void class_handle_cleanup(void);
 
-/** @} handles */
+
 
 #endif

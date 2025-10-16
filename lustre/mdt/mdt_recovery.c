@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Target (mdt) recovery-related methods
  *
@@ -20,7 +20,7 @@
 
 #include "mdt_internal.h"
 
-/* reconstruction code */
+
 static void mdt_steal_ack_locks(struct ptlrpc_request *req)
 {
 	struct ptlrpc_service_part *svcpt;
@@ -29,7 +29,7 @@ static void mdt_steal_ack_locks(struct ptlrpc_request *req)
 	struct ptlrpc_reply_state *rs;
 	int i;
 
-	/* CAVEAT EMPTOR: spinlock order */
+	
 	spin_lock(&exp->exp_lock);
 	list_for_each(tmp, &exp->exp_outstanding_replies) {
 		rs = list_entry(tmp, struct ptlrpc_reply_state,
@@ -68,7 +68,7 @@ static void mdt_steal_ack_locks(struct ptlrpc_request *req)
 	}
 	spin_unlock(&exp->exp_lock);
 
-	/* if exp_disconnected, decref stolen locks */
+	
 	if (exp->exp_disconnected) {
 		rs = req->rq_reply_state;
 
@@ -151,7 +151,7 @@ static void mdt_reconstruct_create(struct mdt_thread_info *mti,
 	if (req->rq_status)
 		return;
 
-	/* if no error, so child was created with requested fid */
+	
 	child = mdt_object_find(mti->mti_env, mdt, mti->mti_rr.rr_fid2);
 	if (IS_ERR(child)) {
 		rc = PTR_ERR(child);
@@ -174,9 +174,9 @@ static void mdt_reconstruct_create(struct mdt_thread_info *mti,
 	if (rc == -ENOENT) {
 		mdt_fake_ma(ma);
 	} else if (rc == -EREMOTE) {
-		/* object was created on remote server */
+		
 		if (!mdt_is_dne_client(exp))
-			/* Return -EIO for old client */
+			
 			rc = -EIO;
 
 		req->rq_status = rc;

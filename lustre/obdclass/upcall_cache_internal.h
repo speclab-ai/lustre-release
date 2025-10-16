@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2023, Whamcloud.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _UPCALL_CACHE_INTERNAL_H
@@ -13,7 +13,7 @@
 
 #include <upcall_cache.h>
 
-/* protected by cache lock */
+
 static void free_entry(struct upcall_cache *cache,
 		       struct upcall_cache_entry *entry)
 {
@@ -51,7 +51,7 @@ int upcall_cache_get_entry_internal(struct upcall_cache *cache,
 				    struct upcall_cache_entry *entry,
 				    void *args, gid_t *fsgid,
 				    struct group_info **ginfo);
-#else /* HAVE_SERVER_SUPPORT */
+#else 
 static inline
 void refresh_entry_internal(struct upcall_cache *cache,
 			    struct upcall_cache_entry *entry,
@@ -84,4 +84,4 @@ static inline void upcall_group_usage_dec(struct group_info *group)
 #endif
 }
 
-#endif /* _UPCALL_CACHE_INTERNAL_H */
+#endif 

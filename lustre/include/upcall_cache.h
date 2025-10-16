@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _UPCALL_CACHE_H
@@ -72,7 +72,7 @@ struct md_identity {
 
 struct gss_rsi {
 	struct upcall_cache_entry *si_uc_entry;
-	lnet_nid_t		   si_nid4; /* FIXME Support larger NID */
+	lnet_nid_t		   si_nid4; 
 	char			   si_nm_name[LUSTRE_NODEMAP_NAME_LENGTH + 1];
 	__u32			   si_lustre_svc;
 	rawobj_t		   si_in_handle;
@@ -135,11 +135,11 @@ struct upcall_cache {
 	rwlock_t		uc_lock;
 	struct rw_semaphore	uc_upcall_rwsem;
 
-	char			uc_name[40];		/* for upcall */
+	char			uc_name[40];		
 	char			uc_upcall[UC_CACHE_UPCALL_MAXPATH];
 	bool			uc_acquire_replay;
-	time64_t		uc_acquire_expire;	/* seconds */
-	time64_t		uc_entry_expire;	/* seconds */
+	time64_t		uc_acquire_expire;	
+	time64_t		uc_entry_expire;	
 	struct upcall_cache_ops	*uc_ops;
 };
 
@@ -174,6 +174,6 @@ struct upcall_cache *upcall_cache_init(const char *name, const char *upcall,
 				       struct upcall_cache_ops *ops);
 void upcall_cache_cleanup(struct upcall_cache *cache);
 
-/** @} ucache */
 
-#endif /* _UPCALL_CACHE_H */
+
+#endif 

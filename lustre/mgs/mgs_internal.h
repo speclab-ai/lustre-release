@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _MGS_INTERNAL_H
@@ -24,7 +24,7 @@
 
 #define MGS_SERVICE_WATCHDOG_FACTOR 2
 
-/* -- imperative recovery control data structures -- */
+
 /**
  * restarting targets.
  */
@@ -32,7 +32,7 @@ struct mgs_nidtbl;
 
 struct tnt_nidlist {
 	u64	     tnl_version;
-	unsigned int tnl_size; /* preallocated size */
+	unsigned int tnl_size; 
 	unsigned int tnl_count;
 	char	     tnl_nids[][LNET_NIDSTR_SIZE];
 };
@@ -44,9 +44,9 @@ struct mgs_nidtbl_target {
 	struct list_head	mnt_list;
 	struct mgs_nidtbl      *mnt_fs;
 	u64			mnt_version;
-	int			mnt_type; /* OST or MDT */
+	int			mnt_type; 
 	__u32			mnt_stripe_index;
-	__u32			mnt_instance; /* Running instance of target */
+	__u32			mnt_instance; 
 	struct xarray		mnt_xa_nids;
 };
 
@@ -99,28 +99,28 @@ struct mgs_tgt_srpc_conf {
         struct sptlrpc_rule_set    mtsc_rset;
 };
 
-#define INDEX_MAP_SIZE  8192     /* covers indicies to FFFF */
+#define INDEX_MAP_SIZE  8192     
 #define INDEX_MAP_MAX_VALUE	((INDEX_MAP_SIZE * 8) - 1)
 
-#define FSDB_LOG_EMPTY          (0)  /* missing client log */
-#define FSDB_OLDLOG14           (1)  /* log starts in old (1.4) style */
-#define FSDB_REVOKING_LOCK      (2)  /* DLM lock is being revoked */
-#define FSDB_MGS_SELF           (3)  /* for '_mgs', used by sptlrpc */
-#define FSDB_OSCNAME18          (4)  /* old 1.8 style OSC naming */
-#define FSDB_UDESC              (5)  /* sptlrpc user desc, will be obsolete */
-#define FSDB_REVOKING_PARAMS	(6)  /* DLM lock is being revoked */
+#define FSDB_LOG_EMPTY          (0)  
+#define FSDB_OLDLOG14           (1)  
+#define FSDB_REVOKING_LOCK      (2)  
+#define FSDB_MGS_SELF           (3)  
+#define FSDB_OSCNAME18          (4)  
+#define FSDB_UDESC              (5)  
+#define FSDB_REVOKING_PARAMS	(6)  
 
 struct fs_db {
 	char		  fsdb_name[20];
-	struct list_head  fsdb_list;		/* list of databases */
+	struct list_head  fsdb_list;		
 	struct mutex	  fsdb_mutex;
 	union {
-		void	 *fsdb_ost_index_map;	/* bitmap of used indicies */
-		void	 *fsdb_barrier_map;	/* bitmap of barrier */
+		void	 *fsdb_ost_index_map;	
+		void	 *fsdb_barrier_map;	
 	};
-	void		 *fsdb_mdt_index_map;	/* bitmap of used indicies */
+	void		 *fsdb_mdt_index_map;	
 	atomic_t	  fsdb_ref;
-	char		 *fsdb_clilov;	/* COMPAT_146 client lov name */
+	char		 *fsdb_clilov;	
 	char		 *fsdb_clilmv;
 	unsigned long	  fsdb_flags;
 	__u32		  fsdb_barrier_status;
@@ -130,19 +130,19 @@ struct fs_db {
 	int		  fsdb_barrier_result;
 	time64_t	  fsdb_barrier_latest_create_time;
 
-        /* in-memory copy of the srpc rules, guarded by fsdb_lock */
+        
         struct sptlrpc_rule_set   fsdb_srpc_gen;
         struct mgs_tgt_srpc_conf *fsdb_srpc_tgt;
 
-        /* list of fs clients, mgs_fsc. protected by mgs_mutex */
+        
 	struct list_head     fsdb_clients;
         int                  fsdb_nonir_clients;
         int                  fsdb_ir_state;
 
-        /* Target NIDs Table */
+        
         struct mgs_nidtbl    fsdb_nidtbl;
 
-	/* async thread to notify clients */
+	
 	struct mgs_device    *fsdb_mgs;
 	wait_queue_head_t     fsdb_notify_waitq;
 	struct completion     fsdb_notify_comp;
@@ -152,7 +152,7 @@ struct fs_db {
 			      fsdb_notify_stop:1,
 			      fsdb_has_lproc_entry:1,
 			      fsdb_barrier_disabled:1;
-	/* statistic data */
+	
 	ktime_t		fsdb_notify_total;
 	ktime_t		fsdb_notify_max;
 	unsigned int	fsdb_notify_count;
@@ -167,7 +167,7 @@ struct mgs_device {
 	struct dt_object		*mgs_configs_dir;
 	struct dt_object		*mgs_nidtbl_dir;
 	struct list_head		 mgs_fs_db_list;
-	spinlock_t			 mgs_lock; /* covers mgs_fs_db_list */
+	spinlock_t			 mgs_lock; 
 	struct proc_dir_entry		*mgs_proc_live;
 	struct proc_dir_entry           *mgs_proc_osd;
 	struct attribute		*mgs_fstype;
@@ -181,7 +181,7 @@ struct mgs_device {
 	struct lu_target		 mgs_lut;
 };
 
-/* this is a top object */
+
 struct mgs_object {
 	struct lu_object_header mgo_header;
 	struct dt_object        mgo_obj;
@@ -223,14 +223,14 @@ int mgs_pool_cmd(const struct lu_env *env, struct mgs_device *mgs,
 		 enum lcfg_command_type cmd, char *poolname, char *fsname,
 		 char *ostname);
 
-/* mgs_handler.c */
+
 int  mgs_get_lock(struct obd_device *obd, struct ldlm_res_id *res,
                   struct lustre_handle *lockh);
 int  mgs_put_lock(struct lustre_handle *lockh);
 void mgs_revoke_lock(struct mgs_device *mgs, struct fs_db *fsdb,
 		     enum mgs_cfg_type type);
 
-/* mgs_nids.c */
+
 int  mgs_ir_update(const struct lu_env *env, struct mgs_device *mgs,
 		   struct mgs_target_info *mti);
 int mgs_ir_init_fs(const struct lu_env *env, struct mgs_device *mgs,
@@ -250,14 +250,14 @@ void mgs_fsc_cleanup_by_fsdb(struct fs_db *fsdb);
 int  mgs_fsc_attach(const struct lu_env *env, struct obd_export *exp,
 		    char *fsname);
 
-/* mgs_fs.c */
+
 int mgs_export_stats_init(struct obd_device *obd, struct obd_export *exp,
                           void *localdata);
 int mgs_client_free(struct obd_export *exp);
 int mgs_fs_setup(const struct lu_env *env, struct mgs_device *m);
 int mgs_fs_cleanup(const struct lu_env *env, struct mgs_device *m);
 
-/* mgs_barrier.c */
+
 int mgs_iocontrol_barrier(const struct lu_env *env,
 			  struct mgs_device *mgs,
 			  struct obd_ioctl_data *data);
@@ -278,7 +278,7 @@ static inline int lproc_mgs_del_live(struct mgs_device *mgs, struct fs_db *fsdb)
 {return 0;}
 #endif
 
-/* mgs/lproc_mgs.c */
+
 enum {
         LPROC_MGS_CONNECT = 0,
         LPROC_MGS_DISCONNECT,
@@ -369,7 +369,7 @@ static inline struct mgs_direntry *mgs_direntry_alloc(int len)
 	return de;
 }
 
-/* mgs_llog.c */
+
 int class_dentry_readdir(const struct lu_env *env, struct mgs_device *mgs,
 			 struct list_head *list);
 int mgs_lcfg_fork(const struct lu_env *env, struct mgs_device *mgs,
@@ -378,4 +378,4 @@ int mgs_lcfg_erase(const struct lu_env *env, struct mgs_device *mgs,
 		   const char *fsname);
 int mgs_lcfg_rename(const struct lu_env *env, struct mgs_device *mgs);
 
-#endif /* _MGS_INTERNAL_H */
+#endif 

@@ -31,7 +31,7 @@
 #include <sys/types.h>
 #include <gssapi/gssapi.h>
 
-/* from kerberos source, gssapi_krb5.c */
+
 gss_OID_desc krb5oid = {
 	9,
 	"\052\206\110\206\367\022\001\002\002",

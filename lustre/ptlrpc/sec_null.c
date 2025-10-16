@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Eric Mei <ericm@clusterfs.com>
  */
@@ -114,7 +114,7 @@ void null_destroy_sec(struct ptlrpc_sec *sec)
 static
 void null_kill_sec(struct ptlrpc_sec *sec)
 {
-	/* release the ref taken by null_create_sec() */
+	
 	sptlrpc_sec_put(sec);
 }
 
@@ -181,7 +181,7 @@ int null_alloc_repbuf(struct ptlrpc_sec *sec,
 		      struct ptlrpc_request *req,
 		      int msgsize)
 {
-	/* add space for early replied */
+	
 	msgsize += lustre_msg_early_size;
 
 	msgsize = size_roundup_power2(msgsize);
@@ -219,13 +219,13 @@ int null_enlarge_reqbuf(struct ptlrpc_sec *sec,
 	LASSERT(req->rq_reqbuf_len >= req->rq_reqlen);
 	LASSERT(req->rq_reqlen == lustre_packed_msg_size(oldbuf));
 
-	/* compute new message size */
+	
 	oldsize = req->rq_reqbuf->lm_buflens[segment];
 	req->rq_reqbuf->lm_buflens[segment] = newsize;
 	newmsg_size = lustre_packed_msg_size(oldbuf);
 	req->rq_reqbuf->lm_buflens[segment] = oldsize;
 
-	/* request from pool should always have enough buffer */
+	
 	LASSERT(!req->rq_pool || req->rq_reqbuf_len >= newmsg_size);
 
 	if (req->rq_reqbuf_len < newmsg_size) {
@@ -299,7 +299,7 @@ int null_alloc_rs(struct ptlrpc_request *req, int msgsize)
 	rs = req->rq_reply_state;
 
 	if (rs) {
-		/* pre-allocated */
+		
 		LASSERT(rs->rs_size >= rs_size);
 	} else {
 		OBD_ALLOC_LARGE(rs, rs_size);
@@ -401,13 +401,13 @@ static void null_init_internal(void)
 	null_sec.ps_part = LUSTRE_SP_ANY;
 	null_sec.ps_dying = 0;
 	spin_lock_init(&null_sec.ps_lock);
-	atomic_set(&null_sec.ps_nctx, 1);	/* for "null_cli_ctx" */
+	atomic_set(&null_sec.ps_nctx, 1);	
 	INIT_LIST_HEAD(&null_sec.ps_gc_list);
 	null_sec.ps_gc_interval = 0;
 	null_sec.ps_gc_next = 0;
 
 	hlist_add_head(&null_cli_ctx.cc_cache, &__list);
-	atomic_set(&null_cli_ctx.cc_refcount, 1);	/* for hash */
+	atomic_set(&null_cli_ctx.cc_refcount, 1);	
 	null_cli_ctx.cc_sec = &null_sec;
 	null_cli_ctx.cc_ops = &null_ctx_ops;
 	null_cli_ctx.cc_expire = 0;

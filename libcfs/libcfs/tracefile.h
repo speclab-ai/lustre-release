@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef __LIBCFS_TRACEFILE_H__
@@ -65,7 +65,7 @@ union cfs_trace_data_union {
 		 * pages with trace records not yet processed by tracefiled.
 		 */
 		struct list_head	tcd_pages;
-		/* number of pages on ->tcd_pages */
+		
 		unsigned long		tcd_cur_pages;
 
 		/*
@@ -98,13 +98,13 @@ union cfs_trace_data_union {
 		 * emitted in non-blocking contexts. Which is quite unlikely.
 		 */
 		struct list_head	tcd_stock_pages;
-		/* number of pages on ->tcd_stock_pages */
+		
 		unsigned long           tcd_cur_stock_pages;
 
 		unsigned short          tcd_shutting_down;
 		unsigned short          tcd_cpu;
 		unsigned short          tcd_type;
-		/* The factors to share debug memory. */
+		
 		unsigned short          tcd_pages_factor;
 	} tcd;
 	char __pad[L1_CACHE_ALIGN(sizeof(struct cfs_trace_cpu_data))];
@@ -151,7 +151,7 @@ int cfs_tcd_owns_tage(struct cfs_trace_cpu_data *tcd,
 extern void cfs_trace_assertion_failed(const char *str,
                                        struct libcfs_debug_msg_data *m);
 
-/* ASSERTION that is safe to use within the debug system */
+
 #define __LASSERT(cond)							\
 do {									\
 	if (unlikely(!(cond))) {					\
@@ -169,4 +169,4 @@ do {									\
 	__LASSERT(page_count(tage->page) > 0);				\
 } while (0)
 
-#endif /* __LIBCFS_TRACEFILE_H__ */
+#endif 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2001, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Peter J. Braam <braam@clusterfs.com>
  * Author: Phil Schwan <phil@clusterfs.com>
@@ -60,7 +60,7 @@ MODULE_PARM_DESC(oss_io_cpts, "CPU partitions OSS IO threads should run on");
 
 static struct cfs_cpt_table *ost_io_cptable;
 
-/* Sigh - really, this is an OSS, the _server_, not the _target_ */
+
 static int oss_device_init(const struct lu_env *env, struct lu_device *lu,
 			   const char *name, struct lu_device *next)
 {
@@ -274,7 +274,7 @@ static int oss_device_init(const struct lu_env *env, struct lu_device *lu,
 		GOTO(out_io, rc);
 	}
 
-	/* Object update service */
+	
 	memset(&svc_conf, 0, sizeof(svc_conf));
 	svc_conf = (typeof(svc_conf)) {
 		.psc_name		= "ost_out",
@@ -399,7 +399,7 @@ static int oss_health_check(const struct lu_env *env, struct obd_device *obd)
 	return rc != 0 ? 1 : 0;
 }
 
-/* ioctls on obd dev */
+
 static int oss_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 			 void *karg, void __user *uarg)
 {
@@ -414,7 +414,7 @@ static int oss_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 	       obd->obd_name, cmd, len, karg, uarg);
 
 	data = karg;
-	/* we only support nodemap ioctls, for now */
+	
 	if (cmd != OBD_IOC_NODEMAP)
 		GOTO(out, rc = -EINVAL);
 
@@ -438,7 +438,7 @@ static struct lu_device_type oss_device_type = {
 	.ldt_ctx_tags = LCT_LOCAL
 };
 
-/* use obd ops to offer management infrastructure */
+
 static const struct obd_ops oss_obd_ops = {
 	.o_owner        = THIS_MODULE,
 	.o_health_check = oss_health_check,

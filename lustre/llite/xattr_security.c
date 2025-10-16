@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2014 Bull SAS
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Handler for storing security labels as extended attributes.
  *
@@ -63,7 +63,7 @@ int ll_dentry_init_security(struct dentry *dentry, int mode, struct qstr *name,
 	 */
 
 	*secctx_name_size = ll_secctx_name_get(sbi, secctx_name);
-	/* xattr name length == 0 means no LSM module manage file contexts */
+	
 	if (*secctx_name_size == 0)
 		return 0;
 
@@ -76,7 +76,7 @@ int ll_dentry_init_security(struct dentry *dentry, int mode, struct qstr *name,
 #else
 					   secctx, secctx_size);
 #endif
-	/* ignore error if the hook is not supported by the LSM module */
+	
 	if (rc == -EOPNOTSUPP)
 		return 0;
 	if (rc < 0)
@@ -89,8 +89,8 @@ int ll_dentry_init_security(struct dentry *dentry, int mode, struct qstr *name,
 	*secctx_slot = ctx.id;
 #else
 	*secctx_slot = ctx.slot;
-#endif /* HAVE_LSMCONTEXT_HAS_ID */
-#endif /* HAVE_SECURITY_DENTRY_INIT_SECURTY_WITH_CTX */
+#endif 
+#endif 
 
 #ifdef HAVE_SECURITY_DENTRY_INIT_WITH_XATTR_NAME_ARG
 	if (strncmp(*secctx_name, secctx_name_lsm, *secctx_name_size) != 0) {
@@ -244,7 +244,7 @@ int ll_secctx_name_store(struct inode *in)
 	if (!ll_security_xattr_wanted(in))
 		return 0;
 
-	/* get size of xattr name */
+	
 	rc = security_inode_listsecurity(in, NULL, 0);
 	if (rc <= 0)
 		return rc;
@@ -256,7 +256,7 @@ int ll_secctx_name_store(struct inode *in)
 	if (!sbi->ll_secctx_name)
 		return -ENOMEM;
 
-	/* save the xattr name */
+	
 	sbi->ll_secctx_name_size = rc;
 	rc = security_inode_listsecurity(in, sbi->ll_secctx_name,
 					 sbi->ll_secctx_name_size);
@@ -268,7 +268,7 @@ int ll_secctx_name_store(struct inode *in)
 		goto err_free;
 	}
 
-	/* sanity check */
+	
 	sbi->ll_secctx_name[rc] = '\0';
 	if (rc < sizeof(XATTR_SECURITY_PREFIX)) {
 		rc = -EINVAL;
@@ -334,7 +334,7 @@ int ll_security_secctx_name_filter(struct ll_sb_info *sbi, int xattr_type,
 	    !ll_xattr_suffix_is_seclabel(suffix))
 		return 0;
 
-	/* is the xattr label used by lsm ? */
+	
 	if (!ll_secctx_name_get(sbi, &cached_suffix))
 		return -EOPNOTSUPP;
 

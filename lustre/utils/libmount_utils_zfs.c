@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
  * Use is subject to license terms.
@@ -13,7 +13,7 @@
 #include <libzfs.h>
 #include <sys/systeminfo.h>
 
-/* Persistent mount data is stored in these user attributes */
+
 #define LDD_PREFIX		"lustre:"
 #define LDD_VERSION_PROP	LDD_PREFIX "version"
 #define LDD_FLAGS_PROP		LDD_PREFIX "flags"
@@ -48,7 +48,7 @@ struct zfs_ldd_prop_bridge {
 	int (*zlpb_set_prop_fn)(zfs_handle_t *zhp, char *prop, void *ldd_field);
 };
 
-/* Forward declarations needed to initialize the ldd prop bridge list */
+
 #ifdef HAVE_ZFS_NVLIST_CONST_INTERFACES
 static int zfs_get_prop_int(zfs_handle_t *, const char *, void *);
 static int zfs_get_prop_str(zfs_handle_t *, const char *, void *);
@@ -91,7 +91,7 @@ struct zfs_ldd_prop_bridge special_ldd_prop_params[] = {
 	{ NULL }
 };
 
-/* indicate if the ZFS OSD has been successfully setup */
+
 static int osd_zfs_setup = 0;
 
 static libzfs_handle_t *g_zfs;
@@ -243,7 +243,7 @@ static int zfs_set_prop_params(zfs_handle_t *zhp, char *params)
 
 		value = strtok(NULL, "=");
 		if (!value) {
-			/* remove this prop when its value is null */
+			
 			ret = zfs_erase_prop(zhp, key);
 			if (ret)
 				break;
@@ -291,7 +291,7 @@ static int zfs_check_hostid(struct mkfs_opts *mop)
 static int osd_check_zfs_setup(void)
 {
 	if (osd_zfs_setup == 0) {
-		/* setup failed */
+		
 		fatal();
 		fprintf(stderr, "Failed to initialize ZFS library. Are the ZFS "
 			"packages and modules correctly installed?\n");
@@ -299,7 +299,7 @@ static int osd_check_zfs_setup(void)
 	return osd_zfs_setup == 1;
 }
 
-/* Write the server config as properties associated with the dataset */
+
 int zfs_write_ldd(struct mkfs_opts *mop)
 {
 	struct lustre_disk_data *ldd = &mop->mo_ldd;
@@ -346,7 +346,7 @@ out:
 	return ret;
 }
 
-/* Mark a property to be removed by the form of "key=" */
+
 int zfs_erase_ldd(struct mkfs_opts *mop, char *param)
 {
 	char key[ZFS_MAXPROPLEN] = "";
@@ -498,7 +498,7 @@ out:
 	return ret;
 }
 
-/* Print ldd params */
+
 void zfs_print_ldd_params(struct mkfs_opts *mop)
 {
 	char *from = mop->mo_ldd.ldd_params;
@@ -507,14 +507,14 @@ void zfs_print_ldd_params(struct mkfs_opts *mop)
 
 	vprint("Parameters:");
 	while (from) {
-		/* skip those keys to be removed in the form of "key=" */
+		
 		to = strstr(from, "= ");
 		if (!to)
-			/* "key=" may be in the end */
+			
 			if (*(from + strlen(from) - 1) == '=')
 				to = from + strlen(from) - 1;
 
-		/* find " " inward */
+		
 		len = strlen(from);
 		if (to) {
 			len = strlen(from) - strlen(to);
@@ -522,14 +522,14 @@ void zfs_print_ldd_params(struct mkfs_opts *mop)
 				len--;
 		}
 		if (len)
-			/* no space in the end */
+			
 			vprint("%*.*s", len, len, from);
 
-		/* If there is no "key=" or "key=" is in the end, stop. */
+		
 		if (!to || strlen(to) == 1)
 			break;
 
-		/* skip "=" */
+		
 		from = to + 1;
 	}
 }
@@ -569,7 +569,7 @@ static int zfs_create_vdev(struct mkfs_opts *mop, char *vdev)
 {
 	int ret = 0;
 
-	/* Silently ignore reserved vdev names */
+	
 	if ((strncmp(vdev, "disk", 4) == 0) ||
 	    (strncmp(vdev, "file", 4) == 0) ||
 	    (strncmp(vdev, "mirror", 6) == 0) ||
@@ -616,7 +616,7 @@ static int zfs_create_vdev(struct mkfs_opts *mop, char *vdev)
 
 	return ret;
 }
-/* interop will break if we change MAX_NAME from 255 */
+
 #ifdef ZAP_MAXNAMELEN_NEW
 #define ZFS_LONGNAME_FEATURE	" -o feature@longname=disabled"
 #else
@@ -636,7 +636,7 @@ int zfs_make_lustre(struct mkfs_opts *mop)
 	if (osd_check_zfs_setup() == 0)
 		return EINVAL;
 
-	/* no automatic index with zfs backend */
+	
 	if (mop->mo_ldd.ldd_flags & LDD_F_NEED_INDEX) {
 		fatal();
 		fprintf(stderr, "The target index must be specified with "
@@ -664,10 +664,10 @@ int zfs_make_lustre(struct mkfs_opts *mop)
 		goto out;
 	}
 
-	/* Due to zfs_prepare_lustre() check the '/' must exist */
+	
 	strchr(pool, '/')[0] = '\0';
 
-	/* If --reformat was given attempt to destroy the previous dataset */
+	
 	if ((mop->mo_flags & MO_FORCEFORMAT) &&
 	    ((zhp = zfs_open(g_zfs, ds, ZFS_TYPE_FILESYSTEM)) != NULL)) {
 
@@ -702,7 +702,7 @@ int zfs_make_lustre(struct mkfs_opts *mop)
 			"zpool create%s -f -O canmount=off %s",
 			ZFS_LONGNAME_FEATURE, pool);
 
-		/* Append the vdev config and create file vdevs as required */
+		
 		while (*mop->mo_pool_vdevs != NULL) {
 			strscat(mkfs_cmd, " ", PATH_MAX);
 			strscat(mkfs_cmd, *mop->mo_pool_vdevs, PATH_MAX);
@@ -776,23 +776,23 @@ int zfs_make_lustre(struct mkfs_opts *mop)
 	if (zhp) {
 		char *opt;
 
-		/* zfs 0.6.1 - system attribute based xattrs */
+		
 		if (!strstr(mop->mo_mkfsopts, "xattr="))
 			zfs_set_prop_str(zhp, "xattr", "sa");
 
-		/* zfs 0.7.0 - large dnode support */
+		
 		if (!strstr(mop->mo_mkfsopts, "dnodesize=") &&
 		    !strstr(mop->mo_mkfsopts, "dnsize="))
 			zfs_set_prop_str(zhp, "dnodesize", "auto");
 
 		if (IS_OST(&mop->mo_ldd)) {
-			/* zfs 0.6.5 - large block support */
+			
 			if (!strstr(mop->mo_mkfsopts, "recordsize=") &&
 			    !strstr(mop->mo_mkfsopts, "recsize="))
 				zfs_set_prop_str(zhp, "recordsize", "1M");
 		}
 
-		/* zfs 2.2.6 - compression handling */
+		
 		opt = strstr(mop->mo_mkfsopts, "compression=");
 		if (opt) {
 			char *end = index(opt, ',');
@@ -806,7 +806,7 @@ int zfs_make_lustre(struct mkfs_opts *mop)
 			if (end)
 				free(end);
 		} else {
-			/* By default turn off compression */
+			
 			zfs_set_prop_str(zhp, "compression", "off");
 		}
 
@@ -905,7 +905,7 @@ int zfs_rename_fsname(struct mkfs_opts *mop, const char *oldname)
 	char *cmd_buf;
 	int ret;
 
-	/* Change the filesystem label. */
+	
 	opts.mo_ldd = mop->mo_ldd;
 	opts.mo_source = mop->mo_device;
 	ret = zfs_label_lustre(&opts);
@@ -917,7 +917,7 @@ int zfs_rename_fsname(struct mkfs_opts *mop, const char *oldname)
 		return ret;
 	}
 
-	/* Mount this device temporarily in order to write these files */
+	
 	if (mkdtemp(mntpt) == NULL) {
 		if (errno != 0)
 			ret = errno;
@@ -969,7 +969,7 @@ int zfs_init(void)
 	g_zfs = libzfs_init();
 
 	if (g_zfs == NULL) {
-		/* Try to load zfs.ko and retry libzfs_init() */
+		
 
 		ret = system("/sbin/modprobe -q zfs");
 
@@ -1016,4 +1016,4 @@ struct module_backfs_ops zfs_ops = {
 	.enable_quota		= zfs_enable_quota,
 	.rename_fsname		= zfs_rename_fsname,
 };
-#endif /* PLUGIN_DIR */
+#endif 

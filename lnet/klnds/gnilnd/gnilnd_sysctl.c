@@ -1,17 +1,17 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (C) 2012 Cray, Inc.
  *
  * Copyright (c) 2014, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org.
+/* This file is part of Lustre, http:
  *
  * Author: Nic Henke <nic@cray.com>
  * Author: James Shimek <jshimek@cray.com>
  */
 
-/* this code liberated and modified from Lustre */
+
 
 #define DEBUG_SUBSYSTEM S_LND
 
@@ -43,7 +43,7 @@ proc_toggle_thread_pause(struct ctl_table *table, int write,
 
 	rc = proc_dointvec(table, write, buffer, lenp, ppos);
 	if (!write) {
-		/* read */
+		
 		RETURN(rc);
 	}
 
@@ -73,7 +73,7 @@ proc_hw_quiesce(struct ctl_table *table, int write, void __user *buffer,
 
 	rc = proc_dointvec(table, write, buffer, lenp, ppos);
 	if (!write) {
-		/* read */
+		
 		RETURN(rc);
 	}
 
@@ -83,7 +83,7 @@ proc_hw_quiesce(struct ctl_table *table, int write, void __user *buffer,
 	}
 
 
-	/* only device 0 gets the handle, see kgnilnd_dev_init */
+	
 	dev = &kgnilnd_data.kgn_devices[0];
 
 	LASSERTF(dev != NULL, "dev 0 is NULL\n");
@@ -104,12 +104,12 @@ proc_trigger_stack_reset(struct ctl_table *table, int write,
 	ENTRY;
 
 	if (!write) {
-		/* read */
+		
 		rc = proc_dointvec(table, write, buffer, lenp, ppos);
 		RETURN(rc);
 	}
 
-	/* only device 0 gets the handle, see kgnilnd_dev_init */
+	
 	dev = &kgnilnd_data.kgn_devices[0];
 
 	LASSERTF(dev != NULL, "dev 0 is NULL\n");
@@ -138,7 +138,7 @@ proc_toggle_rdmaq_override(struct ctl_table *table, int write,
 
 	rc = proc_dointvec(table, write, buffer, lenp, ppos);
 	if (!write) {
-		/* read */
+		
 		RETURN(rc);
 	}
 
@@ -151,7 +151,7 @@ proc_toggle_rdmaq_override(struct ctl_table *table, int write,
 		long    new_mb = kgnilnd_sysctl.ksd_rdmaq_override * (long)(1024*1024);
 		LCONSOLE_INFO("changing RDMAQ override to %d mbytes/sec\n",
 			      kgnilnd_sysctl.ksd_rdmaq_override);
-		/* override proc is mbytes, but we calc in bytes */
+		
 		kgnilnd_data.kgn_rdmaq_override = new_mb;
 		smp_wmb();
 	}
@@ -175,7 +175,7 @@ proc_peer_state(struct ctl_table *table, int write, void __user *buffer,
 	rc = proc_dostring(table, write, buffer, lenp, ppos);
 
 	if (!write) {
-		/* read */
+		
 		RETURN(rc);
 	}
 
@@ -184,7 +184,7 @@ proc_peer_state(struct ctl_table *table, int write, void __user *buffer,
 		RETURN(rc);
 	}
 
-	/* convert to nid, up/down values */
+	
 	rc = sscanf(kgnilnd_sysctl.ksd_peer_state, "%s %d", command, &nid);
 	CDEBUG(D_INFO, "command %s, nid %d\n", command, nid);
 
@@ -193,11 +193,11 @@ proc_peer_state(struct ctl_table *table, int write, void __user *buffer,
 		RETURN(rc);
 	} else {
 		switch (command[0]) {
-		case 'd': /* down */
+		case 'd': 
 			node_down = 1;
 			CDEBUG(D_INFO, "take node %d down\n", nid);
 			break;
-		case 'u': /* up */
+		case 'u': 
 			node_down = 0;
 			CDEBUG(D_INFO, "bring node %d up\n", nid);
 			break;

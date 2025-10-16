@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: BSD-3-Clause */
+
 
 #ifndef PTLRPC_GSS_CRYPTO_H
 #define PTLRPC_GSS_CRYPTO_H
@@ -26,7 +26,7 @@
 
 #define skcipher_request_set_crypt_iv(d)
 
-#else /* ! SYNC_SKCIPHER_REQUEST_ON_STACK */
+#else 
 
 #ifdef HAVE_CRYPTO_ALLOC_SKCIPHER
 
@@ -54,9 +54,9 @@
 #define crypto_skcipher_decrypt_iv(desc, dst, src, blocksize)	\
 	crypto_skcipher_decrypt((desc))
 
-#define skcipher_request_zero(req) /* nop */
+#define skcipher_request_zero(req) 
 
-#else /* ! HAVE_CRYPTO_ALLOC_SKCIPHER */
+#else 
 
 #define	crypto_sync_skcipher		crypto_blkcipher
 
@@ -96,10 +96,10 @@
 #define crypto_skcipher_decrypt_iv(desc, dst, src, len)			\
 	crypto_blkcipher_decrypt_iv((desc), (dst), (src), (len))
 
-#define skcipher_request_zero(req) /* nop */
+#define skcipher_request_zero(req) 
 
-#endif /* HAVE_CRYPTO_ALLOC_SKCIPHER */
-#endif /* SYNC_SKCIPHER_REQUEST_ON_STACK */
+#endif 
+#endif 
 
 struct gss_keyblock {
 	rawobj_t kb_key;
@@ -130,4 +130,4 @@ int gss_crypt_rawobjs(struct crypto_sync_skcipher *tfm, __u8 *iv,
 		      int inobj_cnt, rawobj_t *inobjs, rawobj_t *outobj,
 		      int enc);
 
-#endif /* PTLRPC_GSS_CRYPTO_H */
+#endif 

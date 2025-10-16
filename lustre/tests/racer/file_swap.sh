@@ -1,9 +1,7 @@
 #!/bin/bash
 trap 'kill $(jobs -p)' EXIT
-
 DIR=$1
 MAX=$2
-
 while : ; do
 	file=$((RANDOM % $MAX))
 	new_file=$((RANDOM % MAX))

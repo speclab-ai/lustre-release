@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2021, DDN Storage Corporation.
  */
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 		rc = errno;
 		goto cleanup;
 	}
-	/* stripe_size stripe_count */
+	
 	if (lum_file->lmm_magic == LOV_MAGIC_V1)
 		printf("lmm_magic: v1\n");
 	else if (lum_file->lmm_magic == LOV_MAGIC_V3)

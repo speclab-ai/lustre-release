@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (C) 2015, Trustees of Indiana University
  *
@@ -18,14 +18,14 @@ static int lgss_null_prepare_cred(struct lgss_cred *cred)
 		return -1;
 	cred->lc_mech_token.length = sizeof(uint64_t);
 
-	/* random token so it's not cached by the other side */
+	
 	tmp = random();
 	tmp <<= 32;
 
-	/* Sec part flags needed on the other end */
+	
 	tmp |= cred->lc_root_flags;
 
-	/* big-endian for the wire */
+	
 	tmp = htobe64(tmp);
 	memcpy(cred->lc_mech_token.value, &tmp, cred->lc_mech_token.length);
 

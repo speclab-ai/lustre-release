@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre disk format definitions.
  *
@@ -53,7 +53,7 @@
 
 #define MT_STR(data)		mt_str((data)->ldd_mount_type)
 
-/****************** mount command *********************/
+
 
 /* The lmd is only used internally by Lustre; mount simply passes
  * everything as string options
@@ -62,76 +62,76 @@
 #define LMD_PARAMS_MAXLEN	4096
 
 enum lmd_flags {
-	LMD_FLG_CLIENT,			/* Mounting a client */
-	LMD_FLG_SKIP_LFSCK,		/* NOT auto resume LFSCK when mount */
-	LMD_FLG_ABORT_RECOV,		/* Abort recovery */
+	LMD_FLG_CLIENT,			
+	LMD_FLG_SKIP_LFSCK,		
+	LMD_FLG_ABORT_RECOV,		
 	LMD_FLG_NOSVC,			/* Only start MGS/MGC for servers,
 					 * no other services
 					 */
 	LMD_FLG_NOMGS,			/* Only start target for servers,
 					 * reusing existing MGS services
 					 */
-	LMD_FLG_WRITECONF,		/* Rewrite config log */
-	LMD_FLG_NOIR,			/* NO imperative recovery */
-	LMD_FLG_NOSCRUB,		/* Do not trigger scrub automatically */
-	LMD_FLG_MGS,			/* Also start MGS along with server */
-	LMD_FLG_NO_PRIMNODE,		/* all nodes are service nodes */
-	LMD_FLG_VIRGIN,			/* the service registers first time */
-	LMD_FLG_UPDATE,			/* update parameters */
-	LMD_FLG_HSM,			/* Start coordinator */
-	LMD_FLG_DEV_RDONLY,		/* discard modification quitely */
-	LMD_FLG_NO_CREATE,		/* prevent MDT/OST object creation */
-	LMD_FLG_LOCAL_RECOV,		/* force recovery for local clients */
-	LMD_FLG_ABORT_RECOV_MDT,	/* Abort recovery between MDTs */
-	LMD_FLG_NO_LOCAL_LOGS,		/* Use config logs from MGS */
+	LMD_FLG_WRITECONF,		
+	LMD_FLG_NOIR,			
+	LMD_FLG_NOSCRUB,		
+	LMD_FLG_MGS,			
+	LMD_FLG_NO_PRIMNODE,		
+	LMD_FLG_VIRGIN,			
+	LMD_FLG_UPDATE,			
+	LMD_FLG_HSM,			
+	LMD_FLG_DEV_RDONLY,		
+	LMD_FLG_NO_CREATE,		
+	LMD_FLG_LOCAL_RECOV,		
+	LMD_FLG_ABORT_RECOV_MDT,	
+	LMD_FLG_NO_LOCAL_LOGS,		
 	LMD_FLG_NUM_FLAGS
 };
 
-/* gleaned from the mount command - no persistent info here */
+
 struct lustre_mount_data {
 	u32	lmd_magic;
-	DECLARE_BITMAP(lmd_flags, LMD_FLG_NUM_FLAGS); /* lustre mount flags */
-	int	lmd_mgs_failnodes; /* mgs failover node count */
+	DECLARE_BITMAP(lmd_flags, LMD_FLG_NUM_FLAGS); 
+	int	lmd_mgs_failnodes; 
 	int	lmd_exclude_count;
 	int	lmd_recovery_time_soft;
 	int	lmd_recovery_time_hard;
-	char   *lmd_dev;	/* device name */
-	char   *lmd_profile;	/* client only */
-	char   *lmd_fileset;	/* mount fileset */
-	char   *lmd_mgssec;	/* sptlrpc flavor to mgs */
-	char   *lmd_opts;	/* lustre mnt option (not device_ mnt option) */
-	char   *lmd_params;	/* lustre params */
-	u32    *lmd_exclude;	/* array of OSTs to ignore */
-	char   *lmd_mgs;	/* MGS nid */
-	char   *lmd_mgsname;	/* MGS hostname for display */
-	char   *lmd_osd_type;	/* OSD type */
-	char   *lmd_nidnet;     /* network to restrict this client to */
+	char   *lmd_dev;	
+	char   *lmd_profile;	
+	char   *lmd_fileset;	
+	char   *lmd_mgssec;	
+	char   *lmd_opts;	
+	char   *lmd_params;	
+	u32    *lmd_exclude;	
+	char   *lmd_mgs;	
+	char   *lmd_mgsname;	
+	char   *lmd_osd_type;	
+	char   *lmd_nidnet;     
 };
 
 #define lmd_is_client(x) (test_bit(LMD_FLG_CLIENT, (x)->lmd_flags))
 
-/****************** superblock additional info *********************/
+
 struct ll_sb_info;
 struct kobject;
 
 struct lustre_sb_info {
 	int                       lsi_flags;
-	struct obd_device        *lsi_mgc;     /* mgc obd */
-	struct lustre_mount_data *lsi_lmd;     /* mount command info */
-	struct ll_sb_info        *lsi_llsbi;   /* add'l client sbi info */
-	struct dt_device	 *lsi_dt_dev;  /* dt device to access disk fs*/
-	struct kref		  lsi_mounts;  /* references to the srv_mnt */
+	struct obd_device        *lsi_mgc;     
+	struct lustre_mount_data *lsi_lmd;     
+	struct ll_sb_info        *lsi_llsbi;   
+	struct dt_device	 *lsi_dt_dev;  
+	struct kref		  lsi_mounts;  
 	char			  lsi_svname[MTI_NAME_MAXLEN];
-	/* lsi_osd_obdname format = 'lsi->ls_svname'-osd */
+	
 	char			  lsi_osd_obdname[MTI_NAME_MAXLEN + 4];
-	/* lsi_osd_uuid format = 'lsi->ls_osd_obdname'_UUID */
+	
 	char			  lsi_osd_uuid[MTI_NAME_MAXLEN + 9];
 	struct obd_export	 *lsi_osd_exp;
 	char			  lsi_osd_type[16];
 	char			  lsi_fstype[16];
-	/* each client mountpoint needs own backing_dev_info */
+	
 	struct backing_dev_info   lsi_bdi;
-	/* protect lsi_lwp_list */
+	
 	struct mutex		  lsi_lwp_mutex;
 	struct list_head	  lsi_lwp_list;
 	unsigned long		  lsi_lwp_started:1,
@@ -140,10 +140,10 @@ struct lustre_sb_info {
 
 #ifdef CONFIG_LL_ENCRYPTION
 	const struct llcrypt_operations	*lsi_cop;
-	struct key		 *lsi_master_keys; /* master crypto keys used */
+	struct key		 *lsi_master_keys; 
 #elif defined(HAVE_LUSTRE_CRYPTO) && \
 	!defined(HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED)
-	/* Dummy Encryption policy for '-o test_dummy_encryption' */
+	
 	struct llcrypt_dummy_policy	lsi_dummy_enc_policy;
 #endif
 };
@@ -153,9 +153,9 @@ struct lustre_sb_info {
 #define LSI_BDI_INITIALIZED		 0x00400000
 #endif
 #ifdef CONFIG_LL_ENCRYPTION
-#define LSI_FILENAME_ENC		 0x00800000 /* enable name encryption */
+#define LSI_FILENAME_ENC		 0x00800000 
 #endif
-#define LSI_FILENAME_ENC_B64_OLD_CLI	 0x01000000 /* use old style base64 */
+#define LSI_FILENAME_ENC_B64_OLD_CLI	 0x01000000 
 
 #define     s2lsi(sb)        ((struct lustre_sb_info *)((sb)->s_fs_info))
 #define     s2lsi_nocast(sb) ((sb)->s_fs_info)
@@ -170,7 +170,7 @@ struct lustre_sb_info {
  * LDD_F_NO_LOCAL_LOGS so 17 is next free bit.
  */
 enum ldd_target_flags {
-	LDD_F_LARGE_NID		= BIT(17),	/* 0x20000 */
+	LDD_F_LARGE_NID		= BIT(17),	
 };
 
 static inline bool target_supports_large_nid(struct mgs_target_info *mti)
@@ -179,10 +179,10 @@ static inline bool target_supports_large_nid(struct mgs_target_info *mti)
 }
 
 # ifdef HAVE_SERVER_SUPPORT
-/* opc for target register */
-#define LDD_F_OPC_REG   0x10000000	/* bit 28 */
-#define LDD_F_OPC_UNREG 0x20000000	/* bit 29 */
-#define LDD_F_OPC_READY 0x40000000	/* bit 30 */
+
+#define LDD_F_OPC_REG   0x10000000	
+#define LDD_F_OPC_UNREG 0x20000000	
+#define LDD_F_OPC_READY 0x40000000	
 #define LDD_F_OPC_MASK  0xf0000000
 
 #define LDD_F_MASK	0xFFFF
@@ -199,33 +199,33 @@ static inline bool target_supports_large_nid(struct mgs_target_info *mti)
 #define LR_MAX_CLIENTS (PAGE_SIZE * 8)
 #endif
 
-/** COMPAT_146: this is an OST (temporary) */
+
 #define OBD_COMPAT_OST          0x00000002
-/** COMPAT_146: this is an MDT (temporary) */
+
 #define OBD_COMPAT_MDT          0x00000004
-/** 2.0 server, interop flag to show server version is changed */
+
 #define OBD_COMPAT_20           0x00000008
 
-/** MDS handles LOV_OBJID file */
+
 #define OBD_ROCOMPAT_LOVOBJID		0x00000001
-/** store OST index in the IDIF */
+
 #define OBD_ROCOMPAT_IDX_IN_IDIF	0x00000002
 
-/** OST handles group subdirs */
+
 #define OBD_INCOMPAT_GROUPS     0x00000001
-/** this is an OST */
+
 #define OBD_INCOMPAT_OST        0x00000002
-/** this is an MDT */
+
 #define OBD_INCOMPAT_MDT        0x00000004
-/** common last_rvcd format */
+
 #define OBD_INCOMPAT_COMMON_LR  0x00000008
-/** FID is enabled */
+
 #define OBD_INCOMPAT_FID        0x00000010
-/** Size-on-MDS is enabled */
+
 #define OBD_INCOMPAT_SOM        0x00000020
-/** filesystem using iam format to store directory entries */
+
 #define OBD_INCOMPAT_IAM_DIR    0x00000040
-/** LMA attribute contains per-inode incompatible flags */
+
 #define OBD_INCOMPAT_LMA        0x00000080
 /** lmm_stripe_count has been shrunk from u32 to u16 and the remaining 16
  * bits are now used to store a generation. Once we start changing the layout
@@ -234,12 +234,12 @@ static inline bool target_supports_large_nid(struct mgs_target_info *mti)
  * stripe count
  */
 #define OBD_INCOMPAT_LMM_VER    0x00000100
-/** multiple OI files for MDT */
+
 #define OBD_INCOMPAT_MULTI_OI   0x00000200
-/** multiple RPCs in flight */
+
 #define OBD_INCOMPAT_MULTI_RPCS	0x00000400
 
-/* last_rcvd handling */
+
 static inline void lsd_le_to_cpu(struct lr_server_data *buf,
 				 struct lr_server_data *lsd)
 {
@@ -348,7 +348,7 @@ static inline u64 lcd_last_xid(struct lsd_client_data *lcd)
 		lcd->lcd_last_xid : lcd->lcd_last_close_xid);
 }
 
-/****************** mount lookup info *********************/
+
 
 struct lustre_mount_info {
 	char			*lmi_name;
@@ -356,9 +356,9 @@ struct lustre_mount_info {
 	struct list_head	 lmi_list_chain;
 };
 
-/****************** prototypes *********************/
 
-/* obd_mount_server.c */
+
+
 int server_fill_super(struct super_block *sb);
 struct lustre_mount_info *server_get_mount(const char *name);
 int server_put_mount(const char *name, bool dereg_mnt);
@@ -366,7 +366,7 @@ struct mgs_target_info;
 int server_mti_print(const char *title, struct mgs_target_info *mti);
 void server_calc_timeout(struct lustre_sb_info *lsi, struct obd_device *obd);
 
-/* obd_mount.c */
+
 int server_name2svname(const char *label, char *svname, const char **endptr,
 		       size_t svsize);
 
@@ -376,7 +376,7 @@ int lustre_put_lsi(struct super_block *sb);
 int lustre_start_simple(char *obdname, char *type, char *uuid,
 			char *s1, char *s2, char *s3, char *s4);
 int lustre_stop_mgc(struct super_block *sb);
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 int lustre_start_mgc(struct super_block *sb);
 int lustre_common_put_super(struct super_block *sb);
@@ -385,12 +385,12 @@ struct lustre_sb_info *lustre_init_lsi(struct super_block *sb);
 int lustre_put_lsi(struct super_block *sb);
 int lmd_parse(char *options, struct lustre_mount_data *lmd);
 
-/* mgc_request.c */
+
 int mgc_fsname2resid(char *fsname, struct ldlm_res_id *res_id,
 		     enum mgs_cfg_type type);
 int mgc_logname2resid(char *fsname, struct ldlm_res_id *res_id,
 		      enum mgs_cfg_type type);
 
-/** @} disk */
 
-#endif /* _LUSTRE_DISK_H */
+
+#endif 

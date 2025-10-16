@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2015, 2017, Intel Corporation.
@@ -80,7 +80,7 @@ static int dtrq_insert(struct target_distribute_txn_data *tdtd,
 {
 	struct distribute_txn_replay_req *iter;
 
-	/* Check if the dtrq has been added to the list */
+	
 	iter = dtrq_lookup(tdtd, new->dtrq_batchid);
 	if (iter != NULL)
 		return -EEXIST;
@@ -313,7 +313,7 @@ static int dtrq_append_updates(struct distribute_txn_replay_req *dtrq,
 		RETURN(-ENOMEM);
 	}
 
-	/* Copy the old and new records to the new allocated buffer */
+	
 	memcpy(new_lur, dtrq->dtrq_lur, dtrq->dtrq_lur_size);
 	ptr = (char *)&new_lur->lur_update_rec +
 		update_records_size(&new_lur->lur_update_rec);
@@ -325,7 +325,7 @@ static int dtrq_append_updates(struct distribute_txn_replay_req *dtrq,
 	new_lur->lur_update_rec.ur_param_count += record->ur_param_count;
 	new_lur->lur_hdr.lrh_len = llog_update_record_size(new_lur);
 
-	/* Replace the records */
+	
 	OBD_FREE_LARGE(dtrq->dtrq_lur, dtrq->dtrq_lur_size);
 	dtrq->dtrq_lur = new_lur;
 	dtrq->dtrq_lur_size = lur_size;
@@ -365,7 +365,7 @@ insert_update_records_to_replay_list(struct target_distribute_txn_data *tdtd,
 	       " mdt_index %u\n", tdtd->tdtd_lut->lut_obd->obd_name,
 	       record->ur_batchid, record->ur_master_transno, mdt_index);
 
-	/* Update batchid if necessary */
+	
 	spin_lock(&tdtd->tdtd_batchid_lock);
 	if (record->ur_batchid >= tdtd->tdtd_batchid) {
 		CDEBUG(D_HA, "%s update batchid from %llu" " to %llu\n",
@@ -377,7 +377,7 @@ insert_update_records_to_replay_list(struct target_distribute_txn_data *tdtd,
 
 again:
 	spin_lock(&tdtd->tdtd_replay_list_lock);
-	/* First try to build the replay update request with the records */
+	
 	dtrq = dtrq_lookup(tdtd, record->ur_batchid);
 	if (dtrq == NULL) {
 		spin_unlock(&tdtd->tdtd_replay_list_lock);
@@ -410,7 +410,7 @@ again:
 
 			dtrq->dtrq_master_transno = record->ur_master_transno;
 			replace_record = true;
-			/* try to insert again */
+			
 			rc = dtrq_insert(tdtd, dtrq);
 			if (rc < 0) {
 				spin_unlock(&tdtd->tdtd_replay_list_lock);
@@ -424,7 +424,7 @@ again:
 	/* Because there should be only thread access the update record, so
 	 * we do not need lock here */
 	if (replace_record) {
-		/* Replace the update record and master transno */
+		
 		OBD_FREE_LARGE(dtrq->dtrq_lur, dtrq->dtrq_lur_size);
 		dtrq->dtrq_lur = NULL;
 		dtrq->dtrq_lur_size = llog_update_record_size(lur);
@@ -440,7 +440,7 @@ again:
 	if (record->ur_flags & UPDATE_RECORD_CONTINUE)
 		rc = dtrq_append_updates(dtrq, record);
 
-	/* Then create and add sub update request */
+	
 	rc = dtrq_sub_create_and_insert(dtrq, cookie, mdt_index);
 
 	RETURN(rc);
@@ -1139,7 +1139,7 @@ static int update_recovery_exec(const struct lu_env *env,
 	int			rc = 0;
 	ENTRY;
 
-	/* These records have been swabbed in llog_cat_process() */
+	
 	for (i = 0, op = &ops->uops_op[0]; i < records->ur_update_count;
 	     i++, op = update_op_next_op(op)) {
 		struct lu_fid		*fid = &op->uop_fid;
@@ -1169,7 +1169,7 @@ static int update_recovery_exec(const struct lu_env *env,
 		}
 		sub_dt_obj = dt_object_child(dt_obj);
 
-		/* Create sub thandle if not */
+		
 		sub_dt = lu2dt_dev(sub_dt_obj->do_lu.lo_dev);
 		st = lookup_sub_thandle(tmt, sub_dt);
 		if (st == NULL) {
@@ -1178,16 +1178,16 @@ static int update_recovery_exec(const struct lu_env *env,
 				GOTO(next, rc = PTR_ERR(st));
 		}
 
-		/* check if updates on the OSD/OSP are committed */
+		
 		rc = update_is_committed(env, dtrq, dt_obj, top_th, st);
 		if (rc == 0)
-			/* If this is committed, goto next */
+			
 			goto next;
 
 		if (rc < 0)
 			GOTO(next, rc);
 
-		/* Create thandle for sub thandle if needed */
+		
 		if (st->st_sub_th == NULL) {
 			rc = sub_thandle_trans_create(env, top_th, st);
 			if (rc != 0)
@@ -1295,7 +1295,7 @@ int distribute_txn_replay_handle(struct lu_env *env,
 	int			rc = 0;
 	ENTRY;
 
-	/* initialize session, it is needed for the handler of target */
+	
 	rc = lu_context_init(&session_env, LCT_SERVER_SESSION | LCT_NOREF);
 	if (rc) {
 		CERROR("%s: failure to initialize session: rc = %d\n",
@@ -1314,7 +1314,7 @@ int distribute_txn_replay_handle(struct lu_env *env,
 	ta->ta_argno = 0;
 
 	update_env_info(env)->uti_dtrq = dtrq;
-	/* Create distribute transaction structure for this top thandle */
+	
 	top_th = container_of(th, struct top_thandle, tt_super);
 	rc = top_trans_create_tmt(env, top_th);
 	if (rc < 0)
@@ -1323,7 +1323,7 @@ int distribute_txn_replay_handle(struct lu_env *env,
 	th->th_dev = tdtd->tdtd_dt;
 	ta->ta_handle = th;
 
-	/* check if the distribute transaction has been committed */
+	
 	tmt = top_th->tt_multiple_thandle;
 	tmt->tmt_master_sub_dt = tdtd->tdtd_lut->lut_bottom;
 	tmt->tmt_batchid = dtrq->dtrq_batchid;

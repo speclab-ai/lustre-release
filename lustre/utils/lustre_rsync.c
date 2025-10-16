@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/lustre_rsync.c
  *
@@ -107,7 +107,7 @@
 
 #define REPLICATE_STATUS_VER 1
 #define CLEAR_INTERVAL 100
-#define DEFAULT_RSYNC_THRESHOLD 0xA00000 /* 10 MB */
+#define DEFAULT_RSYNC_THRESHOLD 0xA00000 
 
 #define TYPE_STR_LEN 16
 
@@ -116,7 +116,7 @@
 #define RSYNC "rsync"
 #define TYPE "type"
 
-/* Debug flags */
+
 #define DINFO 1
 #define DTRACE 2
 
@@ -145,7 +145,7 @@ struct lr_info {
 	int bufsize;
 	char *buf;
 
-	/* Variables for querying the xattributes */
+	
 	char *xlist;
 	ssize_t xsize;
 	char *xvalue;
@@ -158,16 +158,16 @@ struct lr_parent_child_list {
 };
 
 struct lustre_rsync_status *status;
-char *statuslog;  /* Name of the status log file */
+char *statuslog;  
 int logbackedup;
-int noxattr;    /* Flag to turn off replicating xattrs */
-int noclear;    /* Flag to turn off clearing changelogs */
-int debug;      /* Flag to turn debugging information on and off */
-int verbose;    /* Verbose output */
-long long rec_count; /* No of changelog records that were processed */
+int noxattr;    
+int noclear;    
+int debug;      
+int verbose;    
+long long rec_count; 
 int errors;
 int dryrun;
-int use_rsync;  /* Flag to turn on use of rsync to copy data */
+int use_rsync;  
 long long rsync_threshold = DEFAULT_RSYNC_THRESHOLD;
 int quit;       /* Flag to stop processing the changelog; set on the
 		 * receipt of a signal
@@ -180,7 +180,7 @@ struct lr_parent_child_list *parents;
 
 FILE *debug_log;
 
-/* Command line options */
+
 struct option long_opts[] = {
 	{ .val = 'l',	.name = "statuslog",	.has_arg = required_argument },
 	{ .val = 'm',	.name = "mdt",		.has_arg = required_argument },
@@ -192,7 +192,7 @@ struct option long_opts[] = {
 	{ .val = 'z',	.name = "dry-run",	.has_arg = no_argument },
 	{ .val = 'a',	.name = "abort-on-err",	.has_arg = no_argument },
 	{ .val = 'h',	.name = "help",		.has_arg = no_argument },
-	/* Undocumented options follow */
+	
 	{ .val = 'c',	.name = "cl-clear",	.has_arg = required_argument },
 	{ .val = 'd',	.name = "debug",	.has_arg = required_argument },
 	{ .val = 'D',	.name = "debuglog",	.has_arg = required_argument },
@@ -202,7 +202,7 @@ struct option long_opts[] = {
 						.has_arg = required_argument },
 	{ .name = NULL } };
 
-/* Command line usage */
+
 void lr_usage_short(void)
 {
 	fprintf(stdout,
@@ -268,7 +268,7 @@ void *lr_grow_buf(void *buf, int size)
 	return ptr;
 }
 
-/* Use rsync to replicate file data */
+
 int lr_rsync_data(struct lr_info *info)
 {
 	struct stat st_src, st_dest;
@@ -382,7 +382,7 @@ int lr_copy_data(struct lr_info *info)
 	bufsize = st_dest.st_blksize;
 
 	if (info->bufsize < bufsize) {
-		/* Grow buffer */
+		
 		info->buf = lr_grow_buf(info->buf, bufsize);
 		if (!info->buf) {
 			rc = -ENOMEM;
@@ -426,7 +426,7 @@ out:
 	return rc;
 }
 
-/* Copy data from source to destination */
+
 int lr_sync_data(struct lr_info *info)
 {
 	if (use_rsync)
@@ -435,7 +435,7 @@ int lr_sync_data(struct lr_info *info)
 		return lr_copy_data(info);
 }
 
-/* Copy all attributes from file src to file dest */
+
 int lr_copy_attr(const char *src, const char *dest)
 {
 	struct stat st;
@@ -452,7 +452,7 @@ int lr_copy_attr(const char *src, const char *dest)
 	return 0;
 }
 
-/* Copy all xattrs from file info->src to info->dest */
+
 int lr_copy_xattr(struct lr_info *info)
 {
 	ssize_t size = info->xsize;
@@ -560,15 +560,15 @@ int lr_get_path(struct lr_info *info, char *fidstr)
 	return lr_get_path_ln(info, fidstr, 0);
 }
 
-/* Generate the path for opening by FID */
+
 void lr_get_FID_PATH(char *mntpt, char *fidstr, char *buf, int bufsize)
 {
-	/* Open-by-FID path is <mntpt>/.lustre/fid/[SEQ:OID:VER] */
+	
 	snprintf(buf, bufsize, "%s/%s/fid/%s", mntpt, dot_lustre_name,
 		 fidstr);
 }
 
-/* Read the symlink information into 'info->link' */
+
 int lr_get_symlink(struct lr_info *info)
 {
 	int rc;
@@ -584,7 +584,7 @@ int lr_get_symlink(struct lr_info *info)
 
 	if (strncmp(info->linktmp, status->ls_source,
 		    strlen(status->ls_source)) == 0) {
-		/* Strip source fs path and replace with target fs path. */
+		
 		link = info->linktmp + strlen(status->ls_source);
 		snprintf(info->src, sizeof(info->src), "%s%s",
 			 status->ls_targets[info->target_no], link);
@@ -598,7 +598,7 @@ int lr_get_symlink(struct lr_info *info)
 	return rc;
 }
 
-/* Create file/directory/device file/symlink. */
+
 int lr_mkfile(struct lr_info *info)
 {
 	struct stat st;
@@ -633,7 +633,7 @@ int lr_mkfile(struct lr_info *info)
 			return -errno;
 	}
 
-	/* Sync data and attributes */
+	
 	if (info->type == CL_CREATE || info->type == CL_MKDIR) {
 		lr_debug(DTRACE, "Syncing data and attributes %s\n",
 			 info->tfid);
@@ -644,7 +644,7 @@ int lr_mkfile(struct lr_info *info)
 			rc = lr_copy_attr(info->src, info->dest);
 
 		if (rc == -ENOENT)
-			/* Source file has disappeared. Not an error. */
+			
 			rc = 0;
 	} else {
 		lr_debug(DTRACE, "Not syncing data and attributes %s\n",
@@ -723,7 +723,7 @@ void lr_cascade_move(const char *fid, const char *dest, struct lr_info *info)
 	}
 }
 
-/* remove [info->spfid, info->sfid] from parents */
+
 int lr_remove_pc(const char *pfid, const char *tfid)
 {
 	struct lr_parent_child_list *curr, *prev;
@@ -742,7 +742,7 @@ int lr_remove_pc(const char *pfid, const char *tfid)
 	return 0;
 }
 
-/* Create file under SPECIAL_DIR with its tfid as its name. */
+
 int lr_mk_special(struct lr_info *info)
 {
 	int rc;
@@ -758,7 +758,7 @@ int lr_mk_special(struct lr_info *info)
 	return rc;
 }
 
-/* Remove a file or directory */
+
 int lr_rmfile(struct lr_info *info)
 {
 	int rc;
@@ -772,7 +772,7 @@ int lr_rmfile(struct lr_info *info)
 	return rc;
 }
 
-/* Recursively remove directory and its contents */
+
 int lr_rm_recursive(struct lr_info *info)
 {
 	char *args[] = {
@@ -797,7 +797,7 @@ int lr_rm_recursive(struct lr_info *info)
 	return rc;
 }
 
-/* Remove a file under SPECIAL_DIR with its tfid as its name. */
+
 int lr_rm_special(struct lr_info *info)
 {
 	int rc;
@@ -812,7 +812,7 @@ int lr_rm_special(struct lr_info *info)
 	return rc;
 }
 
-/* Replicate file and directory create events */
+
 int lr_create(struct lr_info *info)
 {
 	int len;
@@ -820,10 +820,10 @@ int lr_create(struct lr_info *info)
 	int rc;
 	int mkspecial = 0;
 
-	/* Is target FID present on the source? */
+	
 	rc = lr_get_path(info, info->tfid);
 	if (rc == -ENOENT) {
-		/* Source file has disappeared. Not an error. */
+		
 		lr_debug(DINFO, "create: tfid %s not found on source-fs\n",
 			 info->tfid);
 		return 0;
@@ -832,7 +832,7 @@ int lr_create(struct lr_info *info)
 	}
 	strcpy(info->savedpath, info->path);
 
-	/* Is parent FID present on the source */
+	
 	rc = lr_get_path(info, info->pfid);
 	if (rc == -ENOENT) {
 		lr_debug(DINFO, "create: pfid %s not found on source-fs\n",
@@ -842,7 +842,7 @@ int lr_create(struct lr_info *info)
 		return rc;
 	}
 
-	/* Is f2p(pfid)+name != f2p(tfid)? If not the file has moved. */
+	
 	len = strlen(info->path);
 	if (len == 1 && info->path[0] == '/')
 		snprintf(info->dest, sizeof(info->dest), "%s", info->name);
@@ -861,7 +861,7 @@ int lr_create(struct lr_info *info)
 		mkspecial = 1;
 	}
 
-	/* Is f2p(pfid) present on the target? If not, the parent has moved */
+	
 	if (!mkspecial) {
 		snprintf(info->dest, sizeof(info->dest), "%s/%s",
 			 status->ls_targets[0], info->path);
@@ -888,7 +888,7 @@ int lr_create(struct lr_info *info)
 	return rc;
 }
 
-/* Replicate a file remove (rmdir/unlink) operation */
+
 int lr_remove(struct lr_info *info)
 {
 	int rc = 0;
@@ -928,7 +928,7 @@ int lr_remove(struct lr_info *info)
 	return rc;
 }
 
-/* Replicate a rename/move operation. */
+
 int lr_move(struct lr_info *info)
 {
 	int rc = 0;
@@ -1015,7 +1015,7 @@ int lr_move(struct lr_info *info)
 	return rc;
 }
 
-/* Replicate a hard link */
+
 int lr_link(struct lr_info *info)
 {
 	int i;
@@ -1052,7 +1052,7 @@ int lr_link(struct lr_info *info)
 			lr_debug(DINFO, "link destination is %s\n", info->dest);
 		}
 
-		/* Search through the hardlinks to get the src */
+		
 		for (i = 0; i < st.st_nlink && info->src[0] == 0; i++) {
 			size_t len;
 
@@ -1132,7 +1132,7 @@ int lr_set_dest_for_attr(struct lr_info *info)
 	return 0;
 }
 
-/* Replicate file attributes */
+
 int lr_setattr(struct lr_info *info)
 {
 	int rc1;
@@ -1165,7 +1165,7 @@ int lr_setattr(struct lr_info *info)
 	return rc;
 }
 
-/* Replicate xattrs */
+
 int lr_setxattr(struct lr_info *info)
 {
 	int rc, rc1;
@@ -1196,7 +1196,7 @@ int lr_setxattr(struct lr_info *info)
 	return rc;
 }
 
-/* Parse a line of changelog entry */
+
 int lr_parse_line(void *priv, struct lr_info *info)
 {
 	struct changelog_rec		*rec;
@@ -1218,7 +1218,7 @@ int lr_parse_line(void *priv, struct lr_info *info)
 		copylen = namelen + 1;
 	snprintf(info->name, copylen, "%s", changelog_rec_name(rec));
 
-	/* Don't use rnm if CLF_RENAME isn't set */
+	
 	rnm = changelog_rec_rename(rec);
 	if (rec->cr_flags & CLF_RENAME && !fid_is_zero(&rnm->cr_sfid)) {
 		copylen = sizeof(info->sname);
@@ -1247,7 +1247,7 @@ int lr_parse_line(void *priv, struct lr_info *info)
 	return 0;
 }
 
-/* Initialize the replication parameters */
+
 int lr_init_status(void)
 {
 	size_t size = sizeof(struct lustre_rsync_status) + PATH_MAX + 1;
@@ -1263,7 +1263,7 @@ int lr_init_status(void)
 	return 0;
 }
 
-/* Make a backup of the statuslog */
+
 void lr_backup_log(void)
 {
 	char backupfile[PATH_MAX];
@@ -1275,7 +1275,7 @@ void lr_backup_log(void)
 	logbackedup = 1;
 }
 
-/* Save replication parameters to a statuslog. */
+
 int lr_write_log(void)
 {
 	int fd;
@@ -1384,7 +1384,7 @@ int lr_read_log(void)
 		parents = tmp;
 	}
 
-	/* copy uninitialized fields to status */
+	
 	if (status->ls_num_targets == 0) {
 		if (status->ls_size != s->ls_size) {
 			status = lr_grow_buf(status, s->ls_size);
@@ -1477,7 +1477,7 @@ int lr_locate_rsync(void)
 	FILE *fp;
 	int len;
 
-	/* Locate rsync */
+	
 	snprintf(rsync, sizeof(rsync), "%s -p %s", TYPE, RSYNC);
 	fp = popen(rsync, "r");
 	if (!fp)
@@ -1493,7 +1493,7 @@ int lr_locate_rsync(void)
 		rsync[len - 1] = '\0';
 	pclose(fp);
 
-	/* Determine the version of rsync */
+	
 	snprintf(rsync_ver, sizeof(rsync_ver), "%s --version", rsync);
 	fp = popen(rsync_ver, "r");
 	if (!fp)
@@ -1511,7 +1511,7 @@ int lr_locate_rsync(void)
 	return 0;
 }
 
-/* Print the replication parameters */
+
 void lr_print_status(struct lr_info *info)
 {
 	int i;
@@ -1545,7 +1545,7 @@ void lr_print_failure(struct lr_info *info, int rc)
 		info->tfid, info->pfid, info->name);
 }
 
-/* Replicate filesystem operations from src_path to target_path */
+
 int lr_replicate(void)
 {
 	void *changelog_priv = NULL;
@@ -1604,12 +1604,12 @@ int lr_replicate(void)
 		}
 	}
 	if (xattr_not_supp == status->ls_num_targets)
-		/* None of the targets support xattrs. */
+		
 		noxattr = 1;
 
 	lr_print_status(info);
 
-	/* Open changelogs for consumption*/
+	
 	rc = llapi_changelog_start(&changelog_priv,
 				   CHANGELOG_FLAG_BLOCK |
 				   CHANGELOG_FLAG_JOBID |
@@ -1650,7 +1650,7 @@ int lr_replicate(void)
 			snprintf(info->name, sizeof(info->name), "%s",
 				 ext->name);
 			info->is_extended = 1;
-			info->recno = ext->recno; /* For lr_clear_cl(). */
+			info->recno = ext->recno; 
 		}
 
 		if (dryrun)
@@ -1718,7 +1718,7 @@ int lr_replicate(void)
 	if (errors || verbose)
 		printf("Errors: %d\n", errors);
 
-	/* Clear changelog records used so far */
+	
 	lr_clear_cl(info, 1);
 
 	if (verbose) {
@@ -1742,7 +1742,7 @@ out:
 void
 termination_handler (int signum)
 {
-	/* Set a flag for the replicator to gracefully shutdown */
+	
 	quit = 1;
 	printf("lustre_rsync halting.\n");
 }
@@ -1753,7 +1753,7 @@ int main(int argc, char *argv[])
 	int numtargets = 0;
 	int rc = 0;
 
-	/* lustre_rsync needs at least one argument */
+	
 	if (argc < 2) {
 		lr_usage_short();
 		return -1;
@@ -1766,11 +1766,11 @@ int main(int argc, char *argv[])
 				 long_opts, NULL)) >= 0) {
 		switch (rc) {
 		case 'a':
-			/* Assume absolute paths */
+			
 			abort_on_err++;
 			break;
 		case 's':
-			/* Assume absolute paths */
+			
 			snprintf(status->ls_source, sizeof(status->ls_source),
 				 "%s", optarg);
 			break;
@@ -1827,7 +1827,7 @@ int main(int argc, char *argv[])
 			dryrun = 1;
 			break;
 		case 'c':
-			/* Undocumented option cl-clear */
+			
 			if (strcmp("no", optarg) == 0) {
 				noclear = 1;
 			} else if (strcmp("yes", optarg) != 0) {
@@ -1837,25 +1837,25 @@ int main(int argc, char *argv[])
 			}
 			break;
 		case 'r':
-			/* Undocumented option use-rsync */
+			
 			use_rsync = 1;
 			break;
 		case 'y':
-			/* Undocumented option rsync-threshold */
+			
 			rsync_threshold = atol(optarg);
 			break;
 		case 'n':
-			/* Undocumented option start-recno */
+			
 			status->ls_last_recno = atol(optarg);
 			break;
 		case 'd':
-			/* Undocumented option debug */
+			
 			debug = atoi(optarg);
 			if (debug < 0 || debug > 2)
 				debug = 0;
 			break;
 		case 'D':
-			/* Undocumented option debug log file */
+			
 			if (debug_log)
 				fclose(debug_log);
 			debug_log = fopen(optarg, "a");
@@ -1878,7 +1878,7 @@ int main(int argc, char *argv[])
 
 	if (status->ls_last_recno == -1)
 		status->ls_last_recno = 0;
-	/* Check for mandatory options */
+	
 	if (strnlen(status->ls_registration, LR_NAME_MAXLEN) == 0) {
 		fprintf(stderr,
 			"Please specify changelog consumer registration id (--user).\n");

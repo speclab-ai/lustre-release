@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _UAPI_LUSTRE_IOCTL_H
@@ -28,14 +28,14 @@
 #endif
 
 enum md_echo_cmd {
-	ECHO_MD_CREATE		= 1, /* Open/Create file on MDT */
-	ECHO_MD_MKDIR		= 2, /* Mkdir on MDT */
-	ECHO_MD_DESTROY		= 3, /* Unlink file on MDT */
-	ECHO_MD_RMDIR		= 4, /* Rmdir on MDT */
-	ECHO_MD_LOOKUP		= 5, /* Lookup on MDT */
-	ECHO_MD_GETATTR		= 6, /* Getattr on MDT */
-	ECHO_MD_SETATTR		= 7, /* Setattr on MDT */
-	ECHO_MD_ALLOC_FID	= 8, /* Get FIDs from MDT */
+	ECHO_MD_CREATE		= 1, 
+	ECHO_MD_MKDIR		= 2, 
+	ECHO_MD_DESTROY		= 3, 
+	ECHO_MD_RMDIR		= 4, 
+	ECHO_MD_LOOKUP		= 5, 
+	ECHO_MD_GETATTR		= 6, 
+	ECHO_MD_SETATTR		= 7, 
+	ECHO_MD_ALLOC_FID	= 8, 
 };
 
 #define OBD_DEV_ID 1
@@ -74,13 +74,13 @@ struct obd_ioctl_data {
 	__u32		ioc_nal;
 	__u32		ioc_type;
 
-	/* buffers the kernel will treat as user pointers */
+	
 	__u32		ioc_plen1;
 	char __user    *ioc_pbuf1;
 	__u32		ioc_plen2;
 	char __user    *ioc_pbuf2;
 
-	/* inline buffers for various arguments */
+	
 	__u32		ioc_inllen1;
 	char	       *ioc_inlbuf1;
 	__u32		ioc_inllen2;
@@ -124,10 +124,10 @@ static inline __u32 obd_ioctl_packlen(struct obd_ioctl_data *data)
 #define OBD_IOC_BARRIER_V2	_IOW('f', 105, struct obd_ioctl_data)
 #define OBD_IOC_SET_ACTIVE	_IOW('f', 106, struct obd_ioctl_data)
 #if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 19, 53, 0)
-/* for API compatibility until 2.19.x, but prefer to use new IOC values above */
-/* OBD_IOC_BARRIER wrongly defined as _IOWR('f', 261, OBD_IOC_DATA_TYPE) */
-#define OBD_IOC_BARRIER		_IOWR('g', 5, OBD_IOC_DATA_TYPE) /* < 2.16 */
-#define IOC_OSC_SET_ACTIVE	_IOWR('h', 21, void *) /* deprecated 2.16 */
+
+
+#define OBD_IOC_BARRIER		_IOWR('g', 5, OBD_IOC_DATA_TYPE) 
+#define IOC_OSC_SET_ACTIVE	_IOWR('h', 21, void *) 
 #endif
 
 #define OBD_IOC_SETATTR		_IOW('f', 107, OBD_IOC_DATA_TYPE)
@@ -143,23 +143,23 @@ static inline __u32 obd_ioctl_packlen(struct obd_ioctl_data *data)
 #define OBD_IOC_NAME2DEV	_IOWR('f', 127, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_GETDTNAME	_IOR('f', 127, char[MAX_OBD_NAME])
 #define OBD_IOC_GETUUID		_IOR('f', 127, char[UUID_MAX])
-/* ioctl codes 128-143 are reserved for fsverity */
+
 #define OBD_IOC_UUID2DEV	_IOWR('f', 130, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_GETMDNAME	_IOR('f', 131, char[MAX_OBD_NAME])
 #define OBD_IOC_CLIENT_RECOVER	_IOW('f', 133, OBD_IOC_DATA_TYPE)
-/* ioctl codes 128-143 are reserved for fsverity */
+
 #define OBD_IOC_SET_READONLY	_IOW('f', 141, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_ABORT_RECOVERY	_IOR('f', 142, OBD_IOC_DATA_TYPE)
 enum obd_abort_recovery_flags {
-	OBD_FLG_ABORT_RECOV_OST	= 0x00008, /* LMD_FLG_ABORT_RECOV */
-	OBD_FLG_ABORT_RECOV_MDT	= 0x40000, /* LMD_FLG_ABORT_RECOV_MDT */
+	OBD_FLG_ABORT_RECOV_OST	= 0x00008, 
+	OBD_FLG_ABORT_RECOV_MDT	= 0x40000, 
 };
-/* ioctl codes 128-143 are reserved for fsverity */
+
 #define OBD_IOC_GETDEVICE	_IOWR('f', 149, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_FID2PATH	_IOWR('f', 150, OBD_IOC_DATA_TYPE)
-/*	lustre/lustre_user.h	151-159 */
+
 #define OBD_IOC_QUOTACTL	_IOWR('f', 162, struct if_quotactl)
-/*	lustre/lustre_user.h	163-176 */
+
 #define OBD_IOC_CHANGELOG_REG	_IOW('f', 177, struct obd_ioctl_data)
 #define OBD_IOC_CHANGELOG_DEREG	_IOW('f', 178, struct obd_ioctl_data)
 #define OBD_IOC_CHANGELOG_CLEAR	_IOW('f', 179, struct obd_ioctl_data)
@@ -179,15 +179,15 @@ enum obd_abort_recovery_flags {
 #define OBD_IOC_LCFG_FORK	_IOWR('f', 208, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_LCFG_ERASE	_IOWR('f', 209, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_GET_OBJ_VERSION	_IOR('f', 210, OBD_IOC_DATA_TYPE)
-/*	lustre/lustre_user.h	211-220 */
+
 #define OBD_IOC_ECHO_MD		_IOR('f', 221, struct obd_ioctl_data)
 #define OBD_IOC_ECHO_ALLOC_SEQ	_IOWR('f', 222, struct obd_ioctl_data)
 #define OBD_IOC_START_LFSCK	_IOWR('f', 230, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_STOP_LFSCK	_IOW('f', 231, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_QUERY_LFSCK	_IOR('f', 232, struct obd_ioctl_data)
 #define OBD_IOC_CHLG_SET_FLAGS	_IOR('f', 233, long)
-/* for compatibility issues with old apps */
-#define OBD_IOC_CHLG_POLL OBD_IOC_CHLG_SET_FLAGS
-/*	lustre/lustre_user.h	240-253 */
 
-#endif /* _UAPI_LUSTRE_IOCTL_H */
+#define OBD_IOC_CHLG_POLL OBD_IOC_CHLG_SET_FLAGS
+
+
+#endif 

@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #ifndef _GNU_SOURCE
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 	else
 		dname2 = argv[1];
 
-	/* create the special file (right now only test on pipe) */
+	
 	fprintf(stderr, "creating special file %s\n", dname1);
 	rc = mknod(dname1, 0777 | S_IFIFO, 0);
 	if (rc == -1) {
@@ -47,7 +47,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* open the special file again */
+	
 	fprintf(stderr, "opening file\n");
 	fddev1 = open(dname1, O_RDONLY | O_NONBLOCK);
 	if (fddev1 == -1) {
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* doesn't matter if the two dirs are the same?? */
+	
 	fddev2 = open(dname2, O_RDONLY | O_NONBLOCK);
 	if (fddev2 == -1) {
 		fprintf(stderr, "open %s fails: %s\n",
@@ -64,7 +64,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* delete the special file */
+	
 	fprintf(stderr, "unlinking %s\n", dname1);
 	rc = unlink(dname1);
 	if (rc) {
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* fchmod one special file */
+	
 	rc = fchmod(fddev1, 0777);
 	if (rc == -1) {
 		fprintf(stderr, "fchmod unlinked special file %s fails: %s\n",
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 		exit(1);
 	}
 
-	/* fstat two files to check if they are the same */
+	
 	rc = fstat(fddev1, &st1);
 	if (rc == -1) {
 		fprintf(stderr, "fstat unlinked special file %s fails: %s\n",

@@ -1,10 +1,10 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
+
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/include/lustre/lustre_rsync.h
  *
@@ -21,15 +21,15 @@
  * parameters. */
 
 struct lustre_rsync_status {
-        __u32   ls_version;           /* Version of the log entry */
-        __u32   ls_size;              /* Size of the log entry */
-        __u64   ls_last_recno;        /* Last replicated record no. */
-        char    ls_registration[LR_NAME_MAXLEN + 1]; /* Changelog registration*/
-        char    ls_mdt_device[LR_NAME_MAXLEN + 1]; /* MDT device */
-        char    ls_source_fs[LR_NAME_MAXLEN + 1]; /* Source Lustre FS */
-        char    ls_source[PATH_MAX + 1];/* Source FS path */
-        __u32   ls_num_targets;       /* No of replication targets */
-        char    ls_targets[0][PATH_MAX + 1]; /* Target FS path */
+        __u32   ls_version;           
+        __u32   ls_size;              
+        __u64   ls_last_recno;        
+        char    ls_registration[LR_NAME_MAXLEN + 1]; 
+        char    ls_mdt_device[LR_NAME_MAXLEN + 1]; 
+        char    ls_source_fs[LR_NAME_MAXLEN + 1]; 
+        char    ls_source[PATH_MAX + 1];
+        __u32   ls_num_targets;       
+        char    ls_targets[0][PATH_MAX + 1]; 
 };
 
 struct lr_parent_child_log {
@@ -38,4 +38,4 @@ struct lr_parent_child_log {
         char pcl_name[PATH_MAX];
 };
 
-#endif /* _LUSTRE_RSYNC_H_ */
+#endif 

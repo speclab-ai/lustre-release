@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2011, 2017, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lnet/utils/debug.c
  * Some day I'll split all of this functionality into a cfs_debug module
@@ -44,7 +44,7 @@
 static char rawbuf[8192];
 static char *buf = rawbuf;
 static int max = 8192;
-/*static int g_pfd = -1;*/
+
 static int subsystem_mask = ~0;
 static int debug_mask = ~0;
 
@@ -229,7 +229,7 @@ int jt_dbg_list(int argc, char **argv)
 	return 0;
 }
 
-/* all strings nul-terminated; only the struct and hdr need to be freed */
+
 struct dbg_line {
 	struct ptldebug_header *hdr;
 	char		       *file;
@@ -362,7 +362,7 @@ readhdr:
 		if (count > 0)
 			goto readhdr;
 
-		if (hdr->ph_len > 4094 ||       /* is this header bogus? */
+		if (hdr->ph_len > 4094 ||       
 		    hdr->ph_stack > 65536 ||
 		    hdr->ph_sec < (1 << 30) ||
 		    hdr->ph_usec > 1000000000 ||
@@ -372,11 +372,11 @@ readhdr:
 			bad += first_bad;
 			first_bad = 0;
 
-			/* try to restart on next line */
+			
 			while (count < HDR_SIZE && buf[count] != '\n')
 				count++;
 			if (buf[count] == '\n')
-				count++; /* move past '\n' */
+				count++; 
 			if (HDR_SIZE - count > 0) {
 				int left = HDR_SIZE - count;
 
@@ -545,7 +545,7 @@ int jt_dbg_debug_kernel(int argc, char **argv)
 
 	fdin = open(filename, O_RDONLY);
 	if (fdin < 0) {
-		if (errno == ENOENT) /* no dump file created */
+		if (errno == ENOENT) 
 			return 0;
 		fprintf(stderr, "fopen(%s) failed: %s\n", filename,
 			strerror(errno));

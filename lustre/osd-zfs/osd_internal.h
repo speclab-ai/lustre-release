@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Shared definitions and declarations for zfs/dmu osd
  *
@@ -78,16 +78,16 @@
 
 #define OSD_GFP_IO		(GFP_NOFS | __GFP_HIGHMEM)
 
-/* Statfs space reservation for grant, fragmentation, and unlink space. */
-#define OSD_STATFS_RESERVED_SIZE	(16ULL << 20) /* reserve 16MB minimum */
-#define OSD_STATFS_RESERVED_SHIFT	(7)     /* reserve 0.78% of all space */
 
-/* Statfs {minimum, safe estimate, and maximum} dnodes per block */
+#define OSD_STATFS_RESERVED_SIZE	(16ULL << 20) 
+#define OSD_STATFS_RESERVED_SHIFT	(7)     
+
+
 #define OSD_DNODE_MIN_BLKSHIFT	(DNODES_PER_BLOCK_SHIFT)
-#define OSD_DNODE_EST_BLKSHIFT	(12)     /* est 4KB/dnode */
+#define OSD_DNODE_EST_BLKSHIFT	(12)     
 #define OSD_DNODE_EST_COUNT	4096
 
-#define OSD_GRANT_FOR_LOCAL_OIDS (2ULL << 20) /* 2MB for last_rcvd, ... */
+#define OSD_GRANT_FOR_LOCAL_OIDS (2ULL << 20) 
 
 #define OSD_MAX_CACHE_SIZE OBD_OBJECT_EOF
 
@@ -106,20 +106,20 @@ extern struct kmem_cache *osd_object_kmem;
  */
 struct osd_it_quota {
 	struct osd_object	*oiq_obj;
-	/* DMU accounting object id */
+	
 	uint64_t		 oiq_oid;
-	/* ZAP cursor */
+	
 	zap_cursor_t		*oiq_zc;
-	/** identifier for current quota record */
+	
 	__u64			 oiq_id;
-	unsigned		 oiq_reset:1; /* 1 -- no need to advance */
+	unsigned		 oiq_reset:1; 
 };
 
 enum osd_zap_pos {
 	OZI_POS_INIT = 0,
-	OZI_POS_DOT = 1,	/* cursor at . */
-	OZI_POS_DOTDOT = 2,	/* cursor at .. */
-	OZI_POS_REAL = 3,	/* cursor at real entries */
+	OZI_POS_DOT = 1,	
+	OZI_POS_DOTDOT = 2,	
+	OZI_POS_REAL = 3,	
 };
 
 /*
@@ -149,23 +149,23 @@ struct luz_direntry {
 struct osd_zap_it {
 	zap_cursor_t		*ozi_zc;
 	struct osd_object	*ozi_obj;
-	unsigned		 ozi_reset:1;	/* 1 -- no need to advance */
-	/* ozi_pos - position of the cursor */
+	unsigned		 ozi_reset:1;	
+	
 	enum osd_zap_pos	 ozi_pos;
 	struct luz_direntry	 ozi_zde;
 	zap_attribute_t		 ozi_za;
 #ifdef ZAP_MAXNAMELEN_NEW
-	/* flexible array: zap_attribute_t.za_name[], ensure space allocated */
+	
 	char			 ozi_za_name_buffer[MAXNAMELEN];
 #endif
 	union {
-		char		 ozi_name[MAXNAMELEN]; /* file name for dir */
-		__u64		 ozi_key; /* binary key for index files */
+		char		 ozi_name[MAXNAMELEN]; 
+		__u64		 ozi_key; 
 	};
 };
 #define DT_IT2DT(it) (&((struct osd_zap_it *)it)->ozi_obj->oo_dt)
 
-/* cached SA attributes */
+
 struct osa_attr {
 	uint64_t	mode;
 	uint64_t	gid;
@@ -186,13 +186,13 @@ struct osa_attr {
 
 #define OSD_INS_CACHE_SIZE	8
 
-/* OI cache entry */
+
 struct osd_idmap_cache {
 	struct osd_device	*oic_dev;
 	struct lu_fid		oic_fid;
-	/** max 2^48 dnodes per dataset, avoid spilling into another word */
+	
 	uint64_t		oic_dnode:DN_MAX_OBJECT_SHIFT,
-				oic_remote:1;      /* FID isn't local */
+				oic_remote:1;      
 };
 
 struct osd_inconsistent_item {
@@ -201,10 +201,10 @@ struct osd_inconsistent_item {
 	 */
 	struct list_head       oii_list;
 
-	/* The right FID <=> oid mapping. */
+	
 	struct osd_idmap_cache oii_cache;
 
-	unsigned int	       oii_insert:1; /* insert or update mapping. */
+	unsigned int	       oii_insert:1; 
 };
 
 struct osd_otable_it {
@@ -218,15 +218,15 @@ struct osd_otable_it {
 	 * If more bits will be introduced in the future and need lock to
 	 * protect, please add comment.
 	 */
-	unsigned int		 ooi_used_outside:1, /* Some user out of OSD  uses the iteration. */
-				 ooi_all_cached:1, /* No more entries can be filled into cache. */
-				 ooi_user_ready:1, /* The user out of OSD is ready to iterate. */
-				 ooi_waiting:1; /* it::next is waiting. */
+	unsigned int		 ooi_used_outside:1, 
+				 ooi_all_cached:1, 
+				 ooi_user_ready:1, 
+				 ooi_waiting:1; 
 };
 
 extern const struct dt_index_operations osd_otable_ops;
 
-/* max.number of regular attributes the callers may ask for */
+
 # define OSD_MAX_IN_BULK (sizeof(struct osa_attr)/sizeof(uint64_t))
 
 struct osd_thread_info {
@@ -251,12 +251,12 @@ struct osd_thread_info {
 	struct osa_attr		 oti_osa;
 	zap_attribute_t		 oti_za;
 #ifdef ZAP_MAXNAMELEN_NEW
-	/* flexible array: zap_attribute_t.za_name[], ensure space allocated */
+	
 	char			 oti_za_name_buffer[MAXNAMELEN];
 #endif
 	zap_attribute_t		 oti_za2;
 #ifdef ZAP_MAXNAMELEN_NEW
-	/* flexible array: zap_attribute_t.za_name[], ensure space allocated */
+	
 	char			 oti_za2_name_buffer[MAXNAMELEN];
 #endif
 	dmu_object_info_t	 oti_doi;
@@ -265,11 +265,11 @@ struct osd_thread_info {
 	struct lquota_id_info	 oti_qi;
 	struct lu_seq_range	 oti_seq_range;
 
-	/* dedicated OI cache for insert (which needs inum) */
+	
 	struct osd_idmap_cache *oti_ins_cache;
 	int		       oti_ins_cache_size;
 	int		       oti_ins_cache_used;
-	/* inc by osd_trans_create and dec by osd_trans_stop */
+	
 	int		       oti_ins_cache_depth;
 	struct lu_buf	       oti_xattr_lbuf;
 	zap_cursor_t	       oti_zc;
@@ -279,7 +279,7 @@ struct osd_thread_info {
 	char			*oti_dir_name;
 	uint64_t		oti_lastid_oid;
 
-	/* just for fake RW now */
+	
 	struct page		**oti_dio_pages;
 	int			oti_dio_pages_used;
 };
@@ -317,14 +317,14 @@ struct osd_oi {
 struct osd_seq {
 	uint64_t	 os_oid;
 	uint64_t	 *os_compat_dirs;
-	int		 os_subdir_count; /* subdir count for each seq */
-	u64		 os_seq;	  /* seq number */
-	struct list_head os_seq_list;     /* list to seq_list */
+	int		 os_subdir_count; 
+	u64		 os_seq;	  
+	struct list_head os_seq_list;     
 };
 
 struct osd_seq_list {
-	rwlock_t	 osl_seq_list_lock;	/* lock for seq_list */
-	struct list_head osl_seq_list;		/* list head for seq */
+	rwlock_t	 osl_seq_list_lock;	
+	struct list_head osl_seq_list;		
 	struct semaphore osl_seq_init_sem;
 };
 
@@ -336,13 +336,13 @@ struct osd_seq_list {
  * osd device.
  */
 struct osd_device {
-	/* super-class */
+	
 	struct dt_device	 od_dt_dev;
-	/* information about underlying file system */
+	
 	struct objset		*od_os;
-	uint64_t		 od_rootid;  /* id of root znode */
-	dnode_t *od_unlinked; /* dnode of unlinked zapobj */
-	/* SA attr mapping->id, name is same as in ZFS (use defines SA_ZPL_) */
+	uint64_t		 od_rootid;  
+	dnode_t *od_unlinked; 
+	
 	sa_attr_type_t		 *z_attr_table;
 
 	struct proc_dir_entry	*od_proc_entry;
@@ -357,8 +357,8 @@ struct osd_device {
 	unsigned int		 od_oi_count;
 	struct osd_seq_list	od_seq_list;
 
-	unsigned int		 od_dev_set_rdonly:1, /**< osd_ro() called */
-				 od_prop_rdonly:1, /**< ZFS property readonly */
+	unsigned int		 od_dev_set_rdonly:1, 
+				 od_prop_rdonly:1, 
 				 od_xattr_in_sa:1,
 				 od_is_ost:1,
 				 od_in_init:1,
@@ -383,10 +383,10 @@ struct osd_device {
 	dnode_t			*od_projectused_dn;
 #endif
 
-	/* quota slave instance for inode */
+	
 	struct qsd_instance	*od_quota_slave_md;
 
-	/* quota slave instance for block */
+	
 	struct qsd_instance	*od_quota_slave_dt;
 
 	struct brw_stats	od_brw_stats;
@@ -412,10 +412,10 @@ struct osd_device {
 	spinlock_t		 od_lock;
 	unsigned long long	 od_readcache_max_filesize;
 
-	/* slots to track per-txg commit callbacks */
+	
 	atomic_t		 od_commit_cb_in_txg[OSD_TXG_MAP_SIZE];
 	wait_queue_head_t	 od_commit_cb_waitq;
-	/* last seen txg, used to count commit callbacks in a specific slot */
+	
 	atomic64_t		 od_last_txg;
 };
 
@@ -433,7 +433,7 @@ enum osd_destroy_type {
 	OSD_DESTROY_ASYNC = 2,
 };
 
-#define OSD_MAX_DBUFS	2	/* how many dbufs to cache in object */
+#define OSD_MAX_DBUFS	2	
 
 struct osd_object {
 	struct dt_object	 oo_dt;
@@ -454,14 +454,14 @@ struct osd_object {
 	 */
 	struct rw_semaphore	 oo_guard;
 
-	/* protected by oo_guard */
+	
 	struct list_head	 oo_unlinked_linkage;
 
-	/* cached attributes */
+	
 	rwlock_t		 oo_attr_lock;
 	struct lu_attr		 oo_attr;
 
-	/* external dnode holding large EAs, protected by oo_guard */
+	
 	uint64_t		 oo_xattr;
 	enum osd_destroy_type	 oo_destroy;
 
@@ -473,18 +473,18 @@ struct osd_object {
 				 oo_late_attr_set:1,
 				 oo_pfid_in_lma:1;
 
-	/* the i_flags in LMA */
+	
 	__u32			 oo_lma_flags;
 	__u32			 oo_next_blocksize;
 	union {
-		int		oo_ea_in_bonus; /* EA bytes we expect */
+		int		oo_ea_in_bonus; 
 		struct {
-			/* record size for index file */
+			
 			unsigned char		 oo_keysize;
 			unsigned char		 oo_recsize;
-			unsigned char		 oo_recusize;	/* unit size */
+			unsigned char		 oo_recusize;	
 		};
-		uint64_t	oo_parent; /* used only at object creation */
+		uint64_t	oo_parent; 
 	};
 	struct lu_object_header *oo_header;
 	dmu_buf_t *oo_dbs[OSD_MAX_DBUFS];
@@ -624,13 +624,13 @@ enum {
 };
 
 extern struct kmem_cache *osd_zapit_cachep;
-/* osd_lproc.c */
+
 extern struct lprocfs_vars lprocfs_osd_obd_vars[];
 
 int osd_procfs_init(struct osd_device *osd, const char *name);
 void osd_procfs_fini(struct osd_device *osd);
 
-/* osd_object.c */
+
 extern char *osd_obj_tag;
 int __osd_obj2dnode(objset_t *os, uint64_t oid, dnode_t **dnp);
 void osd_object_sa_dirty_rele(const struct lu_env *env, struct osd_thandle *oh);
@@ -654,7 +654,7 @@ int __osd_attr_init(const struct lu_env *env, struct osd_device *osd,
 int osd_find_new_dnode(const struct lu_env *env, dmu_tx_t *tx,
 		       uint64_t oid, dnode_t **dnp);
 
-/* osd_oi.c */
+
 int osd_oi_init(const struct lu_env *env, struct osd_device *o, bool reset);
 void osd_oi_fini(const struct lu_env *env, struct osd_device *o);
 int osd_fid_lookup(const struct lu_env *env,
@@ -686,7 +686,7 @@ int osd_obj_find_or_create(const struct lu_env *env, struct osd_device *o,
 
 extern unsigned int osd_oi_count;
 
-/* osd_index.c */
+
 int osd_get_fid_by_oid(const struct lu_env *env, struct osd_device *osd,
 		       uint64_t oid, struct lu_fid *fid);
 int osd_index_try(const struct lu_env *env, struct dt_object *dt,
@@ -712,7 +712,7 @@ int osd_delete_from_remote_parent(const struct lu_env *env,
 int __osd_xattr_load_by_oid(struct osd_device *osd, uint64_t oid,
 			    nvlist_t **sa);
 
-/* osd_scrub.c */
+
 int osd_scrub_setup(const struct lu_env *env, struct osd_device *dev,
 		    time64_t interval, bool resetoi);
 void osd_scrub_cleanup(const struct lu_env *env, struct osd_device *dev);
@@ -743,7 +743,7 @@ int osd_scrub_refresh_mapping(const struct lu_env *env,
 			      bool force, const char *name);
 
 
-/* osd_xattr.c */
+
 int __osd_sa_xattr_schedule_update(const struct lu_env *env,
 				   struct osd_object *obj,
 				   struct osd_thandle *oh);
@@ -792,8 +792,8 @@ int __osd_sa_xattr_update(const struct lu_env *env, struct osd_object *obj,
 			  struct osd_thandle *oh);
 
 #define OSD_BASE_EA_IN_BONUS	(ZFS_SA_BASE_ATTR_SIZE + \
-				 sizeof(__u64) /* VBR VERSION */ + \
-				 sizeof(struct lustre_mdt_attrs) /* LMA */)
+				 sizeof(__u64)  + \
+				 sizeof(struct lustre_mdt_attrs) )
 
 int osd_find_dnsize(struct osd_device *osd, int ea_in_bonus);
 
@@ -803,7 +803,7 @@ static inline int osd_object_is_zap(dnode_t *dn)
 		dn->dn_type == DMU_OT_USERGROUP_USED);
 }
 
-/* XXX: f_ver is not counted, but may differ too */
+
 static inline void osd_fid2str(char *buf, const struct lu_fid *fid, int len)
 {
 	snprintf(buf, len, DFID_NOBRACE, PFID(fid));
@@ -1092,4 +1092,4 @@ osd_index_backup(const struct lu_env *env, struct osd_device *osd, bool backup)
 
 extern char osd_0copy_tag[];
 
-#endif /* _OSD_INTERNAL_H */
+#endif 

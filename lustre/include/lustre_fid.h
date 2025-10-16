@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Yury Umanets <umka@clusterfs.com>
  */
@@ -20,7 +20,7 @@
  *
  * @{
  *
- * http://wiki.lustre.org/index.php/Architecture_-_Interoperability_fids_zfs
+ * http:
  * describes the FID namespace and interoperability requirements for FIDs.
  * The important parts of that document are included here for reference.
  *
@@ -71,7 +71,7 @@
  *   the IDIF range, object ID extraction will be:
  *
  *      o_id = (fid->f_seq & 0x7fff) << 16 | fid->f_oid;
- *      o_seq = 0;  // formerly group number
+ *      o_seq = 0;  
  *
  *   NOTE: This assumes that no more than 2^48-1 objects have ever been created
  *   on any OST, and that no more than 65535 OSTs are in use.  Both are very
@@ -113,7 +113,7 @@
  *   namespace to ensure IDIFs there is only a single resource name for any
  *   object in the DLM.  The OLD OST object DLM resource mapping is:
  *
- *      resource[] = {o_id, o_seq, 0, 0}; // o_seq == 0 for production releases
+ *      resource[] = {o_id, o_seq, 0, 0}; 
  *
  *   The NEW OST object DLM resource mapping is the same for both MDT and OST:
  *
@@ -145,7 +145,7 @@ struct lu_context;
 struct obd_device;
 struct obd_export;
 
-/* Whole sequences space range and zero range definitions */
+
 extern const struct lu_seq_range LUSTRE_SEQ_SPACE_RANGE;
 extern const struct lu_seq_range LUSTRE_SEQ_ZERO_RANGE;
 extern const struct lu_fid LUSTRE_BFL_FID;
@@ -153,35 +153,35 @@ extern const struct lu_fid LU_LPF_FID;
 extern const struct lu_fid LU_BACKEND_LPF_FID;
 
 enum {
-	/* Max Number metadata FIDs allocated in one sequence(128k) */
+	
 	LUSTRE_METADATA_SEQ_MAX_WIDTH = 0x0000000000020000ULL,
 
-	/* Max Number data FIDs allocated in one sequence(32M - 1) */
+	
 	LUSTRE_DATA_SEQ_MAX_WIDTH = 0x0000000001FFFFFFULL,
 
-	/* How many sequences to allocate to a client at once */
+	
 	LUSTRE_SEQ_META_WIDTH = 0x0000000000000001ULL,
 
-	/* seq allocation pool size. */
+	
 	LUSTRE_SEQ_BATCH_WIDTH = LUSTRE_SEQ_META_WIDTH * 1000,
 
-	/* Max number sequences in one super-sequence allocated to MDTs */
+	
 	LUSTRE_SEQ_SUPER_WIDTH = ((1ULL << 30ULL) * LUSTRE_SEQ_META_WIDTH)
 };
 
-/** special OID for local objects */
+
 enum local_oid {
-	/** \see fld_mod_init */
+	
 	FLD_INDEX_OID		= 3UL,
-	/** \see fid_mod_init */
+	
 	FID_SEQ_CTL_OID		= 4UL,
 	FID_SEQ_SRV_OID		= 5UL,
-	/** \see mdd_mod_init */
-	MDD_ROOT_INDEX_OID	= 6UL, /* deprecated in 2.4 */
-	MDD_ORPHAN_OID		= 7UL, /* deprecated in 2.4 */
+	
+	MDD_ROOT_INDEX_OID	= 6UL, 
+	MDD_ORPHAN_OID		= 7UL, 
 	MDD_LOV_OBJ_OID		= 8UL,
 	MDD_CAPA_KEYS_OID	= 9UL,
-	/** \see mdt_mod_init */
+	
 	LAST_RECV_OID		= 11UL,
 	OSD_FS_ROOT_OID		= 13UL,
 	ACCT_USER_OID		= 15UL,
@@ -331,7 +331,7 @@ static inline void filter_fid_cpu_to_le(struct filter_fid *dst,
 		dst->ff_range = cpu_to_le32(src->ff_range);
 	}
 
-	/* XXX: Add more if filter_fid is enlarged in the future. */
+	
 }
 
 static inline void filter_fid_le_to_cpu(struct filter_fid *dst,
@@ -347,9 +347,9 @@ static inline void filter_fid_le_to_cpu(struct filter_fid *dst,
 		dst->ff_range = le32_to_cpu(src->ff_range);
 	}
 
-	/* XXX: Add more if filter_fid is enlarged in the future. */
+	
 }
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 static inline void lu_last_id_fid(struct lu_fid *fid, __u64 seq, __u32 ost_idx)
 {
@@ -370,7 +370,7 @@ static inline bool fid_is_md_operative(const struct lu_fid *fid)
 	       fid_is_norm(fid) || fid_is_root(fid);
 }
 
-/* seq client type */
+
 enum lu_cli_type {
 	LUSTRE_SEQ_METADATA = 1,
 	LUSTRE_SEQ_DATA
@@ -383,9 +383,9 @@ enum lu_mgr_type {
 
 struct lu_server_seq;
 
-/* Client sequence manager interface. */
+
 struct lu_client_seq {
-	/* Sequence-controller export. */
+	
 	struct obd_export	*lcs_exp;
 	struct mutex		lcs_mutex;
 
@@ -396,13 +396,13 @@ struct lu_client_seq {
 	 */
 	struct lu_seq_range	lcs_space;
 
-	/* Seq related debugfs */
+	
 	struct dentry		*lcs_debugfs_entry;
 
-	/* This holds last allocated fid in last obtained seq */
+	
 	struct lu_fid		lcs_fid;
 
-	/* LUSTRE_SEQ_METADATA or LUSTRE_SEQ_DATA */
+	
 	enum lu_cli_type	lcs_type;
 
 	/*
@@ -417,35 +417,35 @@ struct lu_client_seq {
 	 */
 	__u64			lcs_width;
 
-	/* Seq-server for direct talking */
+	
 	struct lu_server_seq	*lcs_srv;
 };
 
-/* server sequence manager interface */
+
 struct lu_server_seq {
-	/* Available sequences space */
+	
 	struct lu_seq_range         lss_space;
 
-	/* keeps highwater in lsr_end for seq allocation algorithm */
+	
 	struct lu_seq_range         lss_lowater_set;
 	struct lu_seq_range         lss_hiwater_set;
 
-	/* Device for server side seq manager need saving seq to backingstore */
+	
 	struct dt_device       *lss_dev;
 
-	/* /seq file object device */
+	
 	struct dt_object       *lss_obj;
 
-	/* Seq related debugfs */
+	
 	struct dentry		*lss_debugfs_entry;
 
-	/* LUSTRE_SEQ_SERVER or LUSTRE_SEQ_CONTROLLER */
+	
 	enum lu_mgr_type       lss_type;
 
-	/* Client interface to request controller */
+	
 	struct lu_client_seq   *lss_cli;
 
-	/* Mutex for protecting allocation */
+	
 	struct mutex		lss_mutex;
 
 	/*
@@ -460,36 +460,36 @@ struct lu_server_seq {
 	 */
 	__u64                   lss_width;
 
-	/* minimum lss_alloc_set size that should be allocated from lss_space */
+	
 	__u64                   lss_set_width;
 
-	/* sync is needed for update operation */
+	
 	__u32                   lss_need_sync;
 
-	 /* Pointer to site object, required to access site fld */
+	 
 	struct seq_server_site  *lss_site;
 };
 
 struct seq_server_site {
 	struct lu_site	     *ss_lu;
-	/* mds number of this site */
+	
 	u32		      ss_node_id;
-	/* Fid location database */
+	
 	struct lu_server_fld *ss_server_fld;
 	struct lu_client_fld *ss_client_fld;
 
-	/* Server Seq Manager */
+	
 	struct lu_server_seq *ss_server_seq;
 
-	/* Controller Seq Manager */
+	
 	struct lu_server_seq *ss_control_seq;
 	struct obd_export    *ss_control_exp;
 
-	/* Client Seq Manager */
+	
 	struct lu_client_seq *ss_client_seq;
 };
 
-/* Server methods */
+
 
 int seq_server_init(const struct lu_env *env, struct lu_server_seq *seq,
 		    struct dt_device *dev, const char *prefix,
@@ -524,7 +524,7 @@ int seq_target_init(const struct lu_env *env,
 void seq_target_fini(const struct lu_env *env,
 		     struct dt_device *dt);
 
-/* Client methods */
+
 void seq_client_init(struct lu_client_seq *seq,
 		     struct obd_export *exp,
 		     enum lu_cli_type type,
@@ -540,7 +540,7 @@ int seq_client_alloc_fid(const struct lu_env *env, struct lu_client_seq *seq,
 int seq_client_get_seq(const struct lu_env *env, struct lu_client_seq *seq,
 		       u64 *seqnr);
 int seq_site_fini(const struct lu_env *env, struct seq_server_site *ss);
-/* Fids common stuff */
+
 int fid_is_local(const struct lu_env *env, struct lu_site *site,
 		 const struct lu_fid *fid);
 
@@ -549,7 +549,7 @@ int client_fid_init(struct obd_device *obd, struct obd_export *exp,
 		    enum lu_cli_type type);
 int client_fid_fini(struct obd_device *obd);
 
-/* fid locking */
+
 
 struct ldlm_namespace;
 
@@ -697,7 +697,7 @@ static inline int ostid_set_id(struct ost_id *oi, __u64 oid)
 	return 0;
 }
 
-/* pack any OST FID into an ostid (id/seq) for the wire/disk */
+
 static inline int fid_to_ostid(const struct lu_fid *fid, struct ost_id *ostid)
 {
 	int rc = 0;
@@ -716,14 +716,14 @@ static inline int fid_to_ostid(const struct lu_fid *fid, struct ost_id *ostid)
 	return rc;
 }
 
-/* The same as osc_build_res_name() */
+
 static inline void ost_fid_build_resid(const struct lu_fid *fid,
 				       struct ldlm_res_id *resname)
 {
 	if (fid_is_mdt0(fid) || fid_is_idif(fid)) {
 		struct ost_id oi;
 
-		oi.oi.oi_id = 0; /* gcc 4.7.2 complains otherwise */
+		oi.oi.oi_id = 0; 
 		if (fid_to_ostid(fid, &oi) != 0)
 			return;
 		ostid_build_res_name(&oi, resname);
@@ -737,7 +737,7 @@ static inline void ost_fid_from_resid(struct lu_fid *fid,
 				      int ost_idx)
 {
 	if (fid_seq_is_mdt0(name->name[LUSTRE_RES_ID_VER_OID_OFF])) {
-		/* old resid */
+		
 		struct ost_id oi;
 
 		memset(&oi, 0, sizeof(oi));
@@ -748,7 +748,7 @@ static inline void ost_fid_from_resid(struct lu_fid *fid,
 		}
 		ostid_to_fid(fid, &oi, ost_idx);
 	} else {
-		/* new resid */
+		
 		fid_extract_from_res_name(fid, name);
 	}
 }
@@ -794,7 +794,7 @@ static inline int fid_set_id(struct lu_fid *fid, u64 oid)
 #define LUSTRE_SEQ_SRV_NAME "seq_srv"
 #define LUSTRE_SEQ_CTL_NAME "seq_ctl"
 
-/* Range common stuff */
+
 static inline void
 range_cpu_to_le(struct lu_seq_range *dst, const struct lu_seq_range *src)
 {
@@ -852,6 +852,6 @@ static inline void range_array_le_to_cpu(struct lu_seq_range_array *dst,
 		range_le_to_cpu(&dst->lsra_lsr[i], &src->lsra_lsr[i]);
 }
 
-/** @} fid */
 
-#endif /* __LUSTRE_FID_H */
+
+#endif 

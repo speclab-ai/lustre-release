@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Author: Eric Barton <eric@bartonsoftware.com>
  */
@@ -37,12 +37,12 @@ static unsigned int conns_per_peer = 1;
 module_param(conns_per_peer, uint, 0444);
 MODULE_PARM_DESC(conns_per_peer, "number of connections per peer");
 
-/* NB: this value is shared by all CPTs, it can grow at runtime */
+
 static int ntx = 512;
 module_param(ntx, int, 0444);
 MODULE_PARM_DESC(ntx, "# of message descriptors allocated for each pool");
 
-/* NB: this value is shared by all CPTs */
+
 static int credits = DEFAULT_CREDITS;
 module_param(credits, int, 0444);
 MODULE_PARM_DESC(credits, "# concurrent sends");
@@ -104,12 +104,12 @@ static int map_on_demand = true;
 module_param(map_on_demand, int, 0444);
 MODULE_PARM_DESC(map_on_demand, "map on demand (obsolete)");
 
-/* NB: this value is shared by all CPTs, it can grow at runtime */
+
 static int fmr_pool_size = 512;
 module_param(fmr_pool_size, int, 0444);
 MODULE_PARM_DESC(fmr_pool_size, "size of fmr pool on each CPT (>= ntx / 4)");
 
-/* NB: this value is shared by all CPTs, it can grow at runtime */
+
 static int fmr_flush_trigger = 384;
 module_param(fmr_flush_trigger, int, 0444);
 MODULE_PARM_DESC(fmr_flush_trigger, "# dirty FMRs that triggers pool flush");
@@ -193,7 +193,7 @@ static int param_set_tos(const char *val, cfs_kernel_param_arg_t *kp)
 	return 0;
 }
 
-/* # messages/RDMAs in-flight */
+
 int
 kiblnd_msg_queue_size(int version, struct lnet_ni *ni)
 {
@@ -212,7 +212,7 @@ kiblnd_tunables_setup(struct lnet_lnd_tunables *lnd_tunables,
 	struct lnet_ioctl_config_o2iblnd_tunables *tunables;
 
 	tunables = &lnd_tunables->lnd_tun_u.lnd_o2ib;
-	/* Current API version */
+	
 	tunables->lnd_version = CURRENT_LND_VERSION;
 
 	if (*kiblnd_tunables.kib_ib_mtu &&

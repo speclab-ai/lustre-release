@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (C) 2015, Trustees of Indiana University
  *
@@ -29,9 +29,9 @@
 #define _GNU_SOURCE
 #endif
 
-/* One week default expiration */
+
 #define SK_DEFAULT_EXPIRE 604800
-/* But only one day in FIPS mode */
+
 #define SK_DEFAULT_EXPIRE_FIPS 86400
 #define SK_DEFAULT_SK_KEYLEN 256
 #define SK_DEFAULT_PRIME_BITS 2048
@@ -89,7 +89,7 @@ static ssize_t get_key_data(char *src, void *buffer, size_t bits)
 	ssize_t rc;
 	int fd;
 
-	/* convert bits to minimum number of bytes */
+	
 	remain = (bits + 7) / 8;
 
 	printf("Reading random data for shared key from '%s'\n", src);
@@ -168,7 +168,7 @@ static int print_config(char *filename)
 	printf("Shared key:\n");
 	print_hex(0, config->skc_shared_key, config->skc_shared_keylen / 8);
 
-	/* Don't print empty keys */
+	
 	for (i = 0; i < SK_MAX_P_BYTES; i++)
 		if (config->skc_p[i] != 0)
 			break;
@@ -191,7 +191,7 @@ static int parse_mgsnids(char *mgsnids, struct sk_keyfile_config *config)
 	int rc = 0;
 	int i;
 
-	/* replace all old values */
+	
 	for (i = 0; i < MAX_MGSNIDS; i++)
 		config->skc_mgsnids[i] = LNET_NID_ANY;
 
@@ -420,7 +420,7 @@ int main(int argc, char **argv)
 		return EXIT_FAILURE;
 	}
 
-	/* init gss logger for foreground (no syslog) which prints to stderr */
+	
 	initerr(NULL, verbose, 1);
 
 	fips_mode = FIPS_mode();
@@ -455,19 +455,19 @@ int main(int argc, char **argv)
 	}
 
 	if (modify) {
-		/* Check if the original file was in ASCII format */
+		
 		bool original_ascii = check_orig_ascii_format(modify);
 
 		config = sk_read_file(modify);
 		if (!config)
 			return EXIT_FAILURE;
 
-		/* Preserve original format unless explicitly overridden */
+		
 		if (original_ascii && !ascii)
 			ascii = true;
 
 		if (type != SK_TYPE_INVALID) {
-			/* generate key when adding client type */
+			
 			if (!(config->skc_type & SK_TYPE_CLIENT) &&
 			    type & SK_TYPE_CLIENT)
 				generate_prime = true;
@@ -483,7 +483,7 @@ int main(int argc, char **argv)
 				generate_prime = true;
 		}
 	} else {
-		/* write mode for a new key */
+		
 		if (!fsname && !mgsnids) {
 			fprintf(stderr,
 				"error: missing --fsname or --mgsnids\n");
@@ -494,7 +494,7 @@ int main(int argc, char **argv)
 		if (!config)
 			return EXIT_FAILURE;
 
-		/* Set the defaults for new key */
+		
 		config->skc_version = SK_CONF_VERSION;
 		config->skc_expire = fips_mode ?
 			SK_DEFAULT_EXPIRE_FIPS : SK_DEFAULT_EXPIRE;
@@ -512,7 +512,7 @@ int main(int argc, char **argv)
 		config->skc_type = type;
 		generate_prime = type & SK_TYPE_CLIENT;
 
-		/* SK_DEFAULT_NODEMAP is made to fit in skc_nodemap */
+		
 		strcpy(config->skc_nodemap, SK_DEFAULT_NODEMAP);
 
 		if (!datafile)
@@ -533,7 +533,7 @@ int main(int argc, char **argv)
 		config->skc_shared_keylen = shared_keylen;
 	if (prime_bits != -1) {
 #ifdef HAVE_OPENSSL_EVP_PKEY
-		/* #define DH_MIN_MODULUS_BITS 512, not exported by OpenSSL */
+		
 		if (prime_bits < 512) {
 			fprintf(stderr,
 				"error: prime length must be at least 512\n");

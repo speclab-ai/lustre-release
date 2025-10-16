@@ -1,9 +1,9 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 #ifndef __LIBCFS_LINUX_WAIT_H
 #define __LIBCFS_LINUX_WAIT_H
 
-/* Make sure we can see if we have TASK_NOLOAD */
+
 #include <linux/sched.h>
 #include <linux/wait.h>
 
@@ -71,7 +71,7 @@ static inline void prepare_to_wait_exclusive_head(
 ({									\
 	__label__ __out;						\
 	wait_queue_entry_t __wq_entry;					\
-	long __ret = ret;	/* explicit shadow */			\
+	long __ret = ret;				\
 									\
 	init_wait(&__wq_entry);						\
 	if (exclusive)							\
@@ -103,7 +103,7 @@ __out:	__ret;								\
 ({									\
 	wait_queue_entry_t __wq_entry;					\
 	unsigned long flags;						\
-	long __ret = ret;	/* explicit shadow */			\
+	long __ret = ret;				\
 	sigset_t __old_blocked, __new_blocked;				\
 									\
 	siginitset(&__new_blocked, LUSTRE_FATAL_SIGS);			\
@@ -118,13 +118,13 @@ __out:	__ret;								\
 									\
 		if (condition)						\
 			break;						\
-		/* We have to do this here because some signals */	\
-		/* are not blockable - ie from strace(1).       */	\
-		/* In these cases we want to schedule_timeout() */	\
-		/* again, because we don't want that to return  */	\
-		/* -EINTR when the RPC actually succeeded.      */	\
-		/* the recalc_sigpending() below will deliver the */	\
-		/* signal properly.                             */	\
+			\
+			\
+			\
+			\
+			\
+			\
+			\
 		if (signal_pending(current)) {				\
 			spin_lock_irqsave(&current->sighand->siglock,	\
 					  flags);			\
@@ -199,7 +199,7 @@ do {									\
 	__ret;								\
 })
 
-#else /* TASK_IDLE */
+#else 
 #ifndef wait_event_idle
 /**
  * wait_event_idle - wait for a condition without contributing to system load
@@ -340,15 +340,15 @@ do {									\
 	__ret;								\
 })
 #endif
-#endif /* TASK_IDLE */
+#endif 
 
-/* ___wait_event_lifo is used for lifo exclusive 'idle' waits */
+
 #ifdef TASK_NOLOAD
 
 #define ___wait_event_lifo(wq_head, condition, ret, cmd)		\
 ({									\
 	wait_queue_entry_t	 __wq_entry;				\
-	long __ret = ret;	/* explicit shadow */			\
+	long __ret = ret;				\
 									\
 	init_wait(&__wq_entry);						\
 	__wq_entry.flags =  WQ_FLAG_EXCLUSIVE;				\
@@ -369,7 +369,7 @@ do {									\
 ({									\
 	wait_queue_entry_t __wq_entry;					\
 	unsigned long flags;						\
-	long __ret = ret;	/* explicit shadow */			\
+	long __ret = ret;				\
 	sigset_t __old_blocked, __new_blocked;				\
 									\
 	siginitset(&__new_blocked, LUSTRE_FATAL_SIGS);			\
@@ -383,7 +383,7 @@ do {									\
 									\
 		if (condition)						\
 			break;						\
-		/* See justification in ___wait_event_idle */		\
+				\
 		if (signal_pending(current)) {				\
 			spin_lock_irqsave(&current->sighand->siglock,	\
 					  flags);			\
@@ -457,6 +457,6 @@ do {									\
 long wait_woken(wait_queue_entry_t *wait, unsigned int mode, long timeout);
 int woken_wake_function(wait_queue_entry_t *wait, unsigned int mode,
 			int sync, void *key);
-#endif /* HAVE_WAIT_WOKEN */
+#endif 
 
-#endif /* __LICBFS_LINUX_WAIT_H */
+#endif 

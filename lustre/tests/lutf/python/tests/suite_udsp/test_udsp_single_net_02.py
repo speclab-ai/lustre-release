@@ -102,8 +102,6 @@ def run():
 		total_send_count_before = 0
 		total_send_count_after = 0
 		for nid_num in USE_NID_NUM:
-			#print({nid_num: getStatNID(before_stats_main, main_nids, nid_num, 'send_count')})
-			#print({nid_num: getStatNID(after_stats_main, main_nids, nid_num, 'send_count')})
 			send_count_before[nid_num] = getStatNID(before_stats_main, main_nids, nid_num, 'send_count')
 			total_send_count_before += send_count_before[nid_num]
 			send_count_after[nid_num] = getStatNID(after_stats_main, main_nids, nid_num, 'send_count')

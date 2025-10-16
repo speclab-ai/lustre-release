@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/write_disjoint.c
  *
@@ -35,7 +35,7 @@
 #include <time.h>
 #include "mpi.h"
 
-/* Chosen arbitrarily.  Actually running this large will take a long time.*/
+
 #define CHUNK_MAX_SIZE (1024 * 1024 * 16)
 
 void rprintf(int rank, int loop, const char *fmt, ...)
@@ -48,7 +48,7 @@ void rprintf(int rank, int loop, const char *fmt, ...)
 
 	vprintf(fmt, ap);
 
-	MPI_Abort(MPI_COMM_WORLD, -1); /* This will exit() according to man */
+	MPI_Abort(MPI_COMM_WORLD, -1); 
 }
 
 #define CHUNK_SIZE(n) chunk_size[(n) % 2]
@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 	error = MPI_Init(&argc, &argv);
 	if (error != MPI_SUCCESS)
 		rprintf(-1, -1, "MPI_Init failed: %d\n", error);
-	/* Parse command line options */
+	
 	while ((c = getopt(argc, argv, "f:n:m:s:")) != EOF) {
 		errno = 0;
 		switch (c) {
@@ -127,7 +127,7 @@ int main(int argc, char *argv[])
 	}
 
 	for (n = 0; n < numloops; n++) {
-		/* reset the environment */
+		
 		if (rank == 0) {
 			ret = truncate(filename, 0);
 			if (ret != 0)
@@ -153,7 +153,7 @@ int main(int argc, char *argv[])
 
 		MPI_Barrier(MPI_COMM_WORLD);
 
-		/* Do the race */
+		
 		offset = rank * CHUNK_SIZE(n);
 		lseek(fd, offset, SEEK_SET);
 
@@ -170,7 +170,7 @@ int main(int argc, char *argv[])
 
 		MPI_Barrier(MPI_COMM_WORLD);
 
-		/* Check the result */
+		
 		if (stat(filename, &stat_buf) < 0)
 			rprintf(rank, n, "error stating %s: %s\n",
 				filename, strerror(errno));
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
 					    chunk_buf[i], CHUNK_SIZE(n)))
 					continue;
 
-				/* print out previous chunk sizes */
+				
 				if (n > 0)
 					printf("loop %d: chunk_size %lu\n",
 					       n - 1, CHUNK_SIZE(n - 1));

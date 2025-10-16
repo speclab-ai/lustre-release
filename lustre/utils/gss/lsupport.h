@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
+
 /*
  * Copyright (c) 2006, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2014, Intel Corporation.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/gss/lsupport.h
  */
@@ -56,11 +56,11 @@ enum lgss_mech {
 };
 
 enum {
-	/* sec part flags */
+	
 	LGSS_ROOT_CRED_ROOT     = 0x01,
 	LGSS_ROOT_CRED_MDT      = 0x02,
 	LGSS_ROOT_CRED_OST      = 0x04,
-	/* service type flags */
+	
 	LGSS_SVC_NULL		= 0x10,
 	LGSS_SVC_AUTH		= 0x20,
 	LGSS_SVC_INTG		= 0x40,
@@ -94,7 +94,7 @@ static inline int gss_buffer_write_file(FILE *f, void *value, size_t length)
 {
 	int rc = 0;
 
-	/* write size of data */
+	
 	if (fwrite(&length, sizeof(__u32), 1, f) != 1) {
 		rc = -errno;
 		goto out;
@@ -103,7 +103,7 @@ static inline int gss_buffer_write_file(FILE *f, void *value, size_t length)
 	if (!length || !value)
 		goto out;
 
-	/* write data itself */
+	
 	if (fwrite(value, length, 1, f) != 1) {
 		rc = -errno;
 		goto out;
@@ -113,4 +113,4 @@ out:
 	return rc;
 }
 
-#endif /* __LSUPPORT_H__ */
+#endif 

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_lock for LOV layer.
  *
@@ -75,7 +75,7 @@ static int lov_sublock_init(const struct lu_env *env,
 		result = cl_lock_init(subenv->lse_env, &lls->sub_lock,
 				      subenv->lse_io);
 	} else {
-		/* error occurs. */
+		
 		result = PTR_ERR(subenv);
 	}
 	RETURN(result);
@@ -130,7 +130,7 @@ static struct lov_lock *lov_lock_sub_init(const struct lu_env *env,
 		struct lov_layout_raid0 *r0 = lov_r0(lov, index);
 
 		for (i = 0; i < r0->lo_nr; i++) {
-			if (likely(r0->lo_sub[i])) {/* spare layout */
+			if (likely(r0->lo_sub[i])) {
 				if (lov_stripe_intersects(lov->lo_lsm, index, i, &ext, &start, &end) ||
 				    (is_trunc && i == lio->lis_trunc_stripe_index[index]))
 					nr++;
@@ -178,7 +178,7 @@ init_sublock:
 
 			lls->sub_index = lov_comp_index(index, i);
 
-			/* initialize sub lock */
+			
 			result = lov_sublock_init(env, lock, lls);
 			if (result < 0)
 				break;
@@ -346,7 +346,7 @@ static int lov_empty_lock_print(const struct lu_env *env, void *cookie,
 	return 0;
 }
 
-/* XXX: more methods will be added later. */
+
 static const struct cl_lock_operations lov_empty_lock_ops = {
 	.clo_fini  = lov_empty_lock_fini,
 	.clo_print = lov_empty_lock_print
@@ -367,4 +367,4 @@ int lov_lock_init_empty(const struct lu_env *env, struct cl_object *obj,
 	RETURN(result);
 }
 
-/** @} lov */
+

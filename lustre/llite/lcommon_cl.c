@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Nikita Danilov <nikita.danilov@sun.com>
  */
@@ -177,7 +177,7 @@ int cl_file_inode_init(struct inode *inode, struct lustre_md *md)
 	} else {
 		result = cl_conf_set(env, lli->lli_clob, &conf);
 		if (result == -EBUSY) {
-			/* ignore the error since I/O will handle it later */
+			
 			result = 0;
 		}
 	}

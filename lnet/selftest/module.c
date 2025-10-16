@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_LNET
@@ -115,7 +115,7 @@ lnet_selftest_init(void)
 	for (i = 0; i < nscheds; i++) {
 		int nthrs = cfs_cpt_weight(lnet_cpt_table(), i);
 
-		/* reserve at least one CPU for LND */
+		
 		nthrs = max(nthrs - 1, 1);
 		lst_test_wq[i] = cfs_cpt_bind_workqueue("lst_t",
 							lnet_cpt_table(), 0,
@@ -155,7 +155,7 @@ error:
 	return rc;
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("LNet Selftest");
 MODULE_VERSION("2.8.0");
 MODULE_LICENSE("GPL");

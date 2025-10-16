@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Code originally extracted from quota directory
  */
@@ -101,9 +101,9 @@ int osc_quota_setdq(struct client_obd *cli, u64 xid, const unsigned int qid[],
 		if ((valid & md_quota_flag(type)) == 0)
 			continue;
 
-		/* lookup the quota IDs in the ID xarray */
+		
 		qtypes = xa_load(&cli->cl_quota_exceeded_ids, qid[type]);
-		if (qtypes) /* ID already cached */
+		if (qtypes) 
 			old = bits = xa_to_value(qtypes);
 		else
 			old = bits = 0;

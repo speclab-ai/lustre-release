@@ -1,11 +1,11 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Di Wang <di.wang@intel.com>
  */
@@ -277,11 +277,11 @@ object_update_result_data_get(const struct object_update_reply *reply,
  * distribution.
  */
 struct thandle_update_records {
-	/* All of updates for the cross-MDT operation, vmalloc'd. */
+	
 	struct llog_update_record	*tur_update_records;
 	size_t				tur_update_records_buf_size;
 
-	/* All of parameters for the cross-MDT operation, vmalloc'd */
+	
 	struct update_params    *tur_update_params;
 	unsigned int		tur_update_param_count;
 	size_t			tur_update_params_buf_size;
@@ -291,12 +291,12 @@ struct thandle_update_records {
 struct top_multiple_thandle {
 	struct dt_device	*tmt_master_sub_dt;
 	struct kref		tmt_refcount;
-	/* Other sub transactions will be listed here. */
+	
 	struct list_head	tmt_sub_thandle_list;
 	spinlock_t		tmt_sub_lock;
 
 	struct list_head	tmt_commit_list;
-	/* All of update records will packed here */
+	
 	struct thandle_update_records *tmt_update_records;
 
 	wait_queue_head_t	tmt_stop_waitq;
@@ -313,7 +313,7 @@ struct top_multiple_thandle {
  */
 struct top_thandle {
 	struct thandle		tt_super;
-	/* The master sub transaction. */
+	
 	struct thandle		*tt_master_sub_thandle;
 
 	struct top_multiple_thandle *tt_multiple_thandle;
@@ -324,7 +324,7 @@ struct sub_thandle_cookie {
 	struct list_head	stc_list;
 };
 
-/* Sub thandle used to track multiple sub thandles under one parent thandle */
+
 struct sub_thandle {
 	struct thandle		*st_sub_th;
 	struct dt_device	*st_dt;
@@ -333,10 +333,10 @@ struct sub_thandle {
 	struct dt_txn_commit_cb	st_stop_dcb;
 	int			st_result;
 
-	/* linked to top_thandle */
+	
 	struct list_head	st_sub_list;
 
-	/* If this sub thandle is committed */
+	
 	bool			st_committed:1,
 				st_stopped:1,
 				st_started:1;
@@ -346,7 +346,7 @@ struct tx_arg;
 typedef int (*tx_exec_func_t)(const struct lu_env *env, struct thandle *th,
 			      struct tx_arg *ta);
 
-/* Structure for holding one update execution */
+
 struct tx_arg {
 	tx_exec_func_t		 exec_fn;
 	tx_exec_func_t		 undo_fn;
@@ -387,15 +387,15 @@ struct tx_arg {
 	} u;
 };
 
-/* Structure for holding all update executations of one transaction */
+
 struct thandle_exec_args {
 	struct thandle		*ta_handle;
-	int			ta_argno;   /* used args */
-	int			ta_alloc_args; /* allocated args count */
+	int			ta_argno;   
+	int			ta_alloc_args; 
 	struct tx_arg		**ta_args;
 };
 
-/* target/out_lib.c */
+
 int out_update_pack(const struct lu_env *env, struct object_update *update,
 		    size_t *max_update_size, enum update_type op,
 		    const struct lu_fid *fid, unsigned int params_count,
@@ -454,7 +454,7 @@ int out_read_pack(const struct lu_env *env, struct object_update *update,
 
 const char *update_op_str(__u16 opcode);
 
-/* target/update_trans.c */
+
 struct thandle *thandle_get_sub_by_dt(const struct lu_env *env,
 				      struct thandle *th,
 				      struct dt_device *sub_dt);
@@ -490,7 +490,7 @@ int sub_thandle_trans_create(const struct lu_env *env,
 			     struct top_thandle *top_th,
 			     struct sub_thandle *st);
 
-/* update_records.c */
+
 size_t update_records_create_size(const struct lu_env *env,
 				  const struct lu_fid *fid,
 				  const struct lu_attr *attr,

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * fs/crypto/hooks.c
  *
@@ -62,7 +62,7 @@ int __llcrypt_prepare_link(struct inode *inode, struct inode *dir,
 	if (err)
 		return err;
 
-	/* ... in case we looked up ciphertext name before key was added */
+	
 	if (dentry->d_flags & DCACHE_ENCRYPTED_NAME)
 		return -ENOKEY;
 
@@ -87,7 +87,7 @@ int __llcrypt_prepare_rename(struct inode *old_dir, struct dentry *old_dentry,
 	if (err)
 		return err;
 
-	/* ... in case we looked up ciphertext name(s) before key was added */
+	
 	if ((old_dentry->d_flags | new_dentry->d_flags) &
 	    DCACHE_ENCRYPTED_NAME)
 		return -ENOKEY;
@@ -185,7 +185,7 @@ int __llcrypt_encrypt_symlink(struct inode *inode, const char *target,
 		return err;
 
 	if (disk_link->name) {
-		/* filesystem-provided buffer */
+		
 		sd = (struct llcrypt_symlink_data *)disk_link->name;
 	} else {
 		sd = kmalloc(disk_link->len, GFP_NOFS);
@@ -206,7 +206,7 @@ int __llcrypt_encrypt_symlink(struct inode *inode, const char *target,
 	 */
 	sd->encrypted_path[ciphertext_len] = '\0';
 
-	/* Cache the plaintext symlink target for later use by get_link() */
+	
 	err = -ENOMEM;
 	inode->i_link = kmemdup(target, len + 1, GFP_NOFS);
 	if (!inode->i_link)
@@ -246,11 +246,11 @@ const char *llcrypt_get_symlink(struct inode *inode, const void *caddr,
 	bool has_key;
 	int err;
 
-	/* This is for encrypted symlinks only */
+	
 	if (WARN_ON(!IS_ENCRYPTED(inode)))
 		return ERR_PTR(-EINVAL);
 
-	/* If the decrypted target is already cached, just return it. */
+	
 	pstr.name = READ_ONCE(inode->i_link);
 	if (pstr.name)
 		return pstr.name;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Miscellaneous fid functions.
  *
@@ -46,24 +46,24 @@ const struct lu_seq_range LUSTRE_SEQ_SPACE_RANGE = {
 	.lsr_end	= (__u64)~0ULL,
 };
 
-/* Zero range, used for init and other purposes. */
+
 const struct lu_seq_range LUSTRE_SEQ_ZERO_RANGE = {
 	.lsr_start = 0,
 };
 
-/* Lustre Big Fs Lock fid. */
+
 const struct lu_fid LUSTRE_BFL_FID = { .f_seq = FID_SEQ_SPECIAL,
 				       .f_oid = FID_OID_SPECIAL_BFL,
 				       .f_ver = 0x0000000000000000 };
 EXPORT_SYMBOL(LUSTRE_BFL_FID);
 
-/** Special fid for "lost+found" special object in .lustre */
+
 const struct lu_fid LU_LPF_FID = { .f_seq = FID_SEQ_DOT_LUSTRE,
 				   .f_oid = FID_OID_DOT_LUSTRE_LPF,
 				   .f_ver = 0x0000000000000000 };
 EXPORT_SYMBOL(LU_LPF_FID);
 
-/** "/lost+found" - special FID for ldiskfs backend, invislbe to client. */
+
 const struct lu_fid LU_BACKEND_LPF_FID = { .f_seq = FID_SEQ_LOCAL_FILE,
 					   .f_oid = OSD_LPF_OID,
 					   .f_ver = 0x0000000000000000 };

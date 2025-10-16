@@ -8,7 +8,6 @@ class Agent:
 		self.name = name
 		pref = load_pref()
 		self.timeout = pref['RPC timeout']
-		#logging.debug('RPC timeout set to: %d' % (self.timeout))
 		if node_type == EN_LUTF_MASTER:
 			nt = 'MASTER'
 		elif node_type == EN_LUTF_AGENT:
@@ -43,7 +42,6 @@ class Agent:
 		rpc = populate_rpc_req(src, self.name, rpc_type, script, cname,
 				       mname, fname, *args, **kwargs)
 		y = yaml.dump(rpc)
-		#by = y.encode('utf-8')
 		rc, yaml_txt = lutf_send_rpc(self.name, y, self.timeout)
 		y = yaml.load(yaml_txt, Loader=yaml.FullLoader)
 		# sanity check

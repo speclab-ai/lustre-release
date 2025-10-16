@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Object Index.
  *
@@ -25,13 +25,13 @@
 #include <obd.h>
 #include <obd_support.h>
 
-/* fid_cpu_to_be() */
+
 #include <lustre_fid.h>
 #include <dt_object.h>
 #include <lustre_scrub.h>
 
 #include "osd_oi.h"
-/* osd_lookup(), struct osd_thread_info */
+
 #include "osd_internal.h"
 
 unsigned int osd_oi_count = OSD_OI_FID_NR;
@@ -152,7 +152,7 @@ static struct inode *osd_oi_index_open(struct osd_thread_info *info,
 		return inode;
 	}
 
-	/* create */
+	
 	dput(dentry);
 	shrink_dcache_parent(osd_sb(osd)->s_root);
 	if (!create)
@@ -395,7 +395,7 @@ int osd_oi_init(struct osd_thread_info *info, struct osd_device *osd,
 	if (oi == NULL)
 		RETURN(-ENOMEM);
 
-	/* try to open existing multiple OIs first */
+	
 	count = osd_oi_table_open(info, osd, oi, sf->sf_oi_count, false);
 	if (count < 0)
 		GOTO(out, rc = count);
@@ -404,7 +404,7 @@ int osd_oi_init(struct osd_thread_info *info, struct osd_device *osd,
 		if (count == sf->sf_oi_count)
 			GOTO(out, rc = count);
 
-		/* Trust the counted number of OI files if it is sane */
+		
 		if ((count & (count - 1)) != 0) {
 			LCONSOLE_WARN("%s: invalid oi count %d, remove them, then set it to %d\n",
 				      osd_dev2name(osd), count, osd_oi_count);
@@ -421,9 +421,9 @@ int osd_oi_init(struct osd_thread_info *info, struct osd_device *osd,
 		goto create;
 	}
 
-	/* if previous failed then try found single OI from old filesystem */
+	
 	rc = osd_oi_open(info, osd, OSD_OI_NAME_BASE, &oi[0], false);
-	if (rc == 0) { /* found single OI from old filesystem */
+	if (rc == 0) { 
 		count = 1;
 		ldiskfs_clear_bit(0, sf->sf_oi_bitmap);
 		if (sf->sf_success_count == 0)
@@ -465,7 +465,7 @@ create:
 		GOTO(out, rc);
 	}
 
-	/* No OIs exist, new filesystem, create OI objects */
+	
 	rc = osd_oi_table_open(info, osd, oi, count, true);
 	LASSERT(ergo(rc >= 0, rc == count));
 
@@ -523,7 +523,7 @@ static int osd_oi_iam_lookup(struct osd_thread_info *oti,
 	if (IS_ERR(ipd))
 		RETURN(-ENOMEM);
 
-	/* got ipd now we can start iterator. */
+	
 	iam_it_init(it, bag, 0, ipd);
 
 	rc = iam_it_get(it, (struct iam_key *)key);
@@ -624,7 +624,7 @@ int osd_oi_lookup(struct osd_thread_info *info, struct osd_device *osd,
 		if (unlikely(fid_is_acct(fid)))
 			return osd_acct_obj_lookup(info, osd, fid, id);
 
-		/* For other special FIDs, try OI first, then do spec lookup */
+		
 		rc = __osd_oi_lookup(info, osd, fid, id);
 		if (rc == -ENOENT)
 			return osd_obj_spec_lookup(info, osd, fid, id, flags);
@@ -706,7 +706,7 @@ int osd_oi_insert(struct osd_thread_info *info, struct osd_device *osd,
 		if (unlikely(osd_id_eq(id, oi_id)))
 			return 1;
 
-		/* Check whether the mapping for oi_id is valid or not. */
+		
 		inode = osd_iget(info, osd, oi_id, 0);
 		if (IS_ERR(inode)) {
 			rc = PTR_ERR(inode);
@@ -785,7 +785,7 @@ int osd_oi_delete(struct osd_thread_info *info,
 
 	CDEBUG(D_INODE, "delete OI for "DFID"\n", PFID(fid));
 
-	/* clear idmap cache */
+	
 	if (lu_fid_eq(fid, &info->oti_cache.oic_fid))
 		fid_zero(&info->oti_cache.oic_fid);
 

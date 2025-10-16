@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2015, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/ */
+
 
 #define DEBUG_SUBSYSTEM S_LNET
 
@@ -17,7 +17,7 @@
 #include <net/ipv6.h>
 #include <linux/file.h>
 #include <linux/pagemap.h>
-/* For sys_open & sys_close */
+
 #include <linux/syscalls.h>
 #include <net/net_namespace.h>
 #include <net/sock.h>
@@ -50,7 +50,7 @@ lnet_sock_write(struct socket *sock, void *buffer, int nob, int timeout)
 		if (timeout != 0) {
 			struct sock *sk = sock->sk;
 
-			/* Set send timeout to remaining time */
+			
 			lock_sock(sk);
 			sk->sk_sndtimeo = jiffies_left;
 			release_sock(sk);
@@ -98,7 +98,7 @@ lnet_sock_read(struct socket *sock, void *buffer, int nob, int timeout)
 		};
 		struct sock *sk = sock->sk;
 
-		/* Set receive timeout to remaining time */
+		
 		lock_sock(sk);
 		sk->sk_rcvtimeo = jiffies_left;
 		release_sock(sk);
@@ -191,7 +191,7 @@ retry:
 
 	sock->sk->sk_reuseport = 1;
 #ifdef HAVE_SOCK_NOT_OWNED_BY_ME
-	/* Set sk_net_refcnt and namespace for orphan cleanup LU-18137 */
+	
 	sock->sk->sk_net_refcnt = 1;
 	get_net(ns);
 	sock_inuse_add(ns, 1);
@@ -272,7 +272,7 @@ retry:
 						      IPPROTO_IPV6, IPV6_V6ONLY,
 						      optval, sizeof(val));
 			}
-#endif /* HAVE_KERNEL_SETSOCKOPT */
+#endif 
 
 			if (interface >= 0 && remaddr && !addr) {
 				struct sockaddr_in6 *rem = (void *)remaddr;
@@ -300,7 +300,7 @@ retry:
 			sin6->sin6_port = htons(local_port);
 			break;
 		}
-#endif /* IS_ENABLED(CONFIG_IPV6) */
+#endif 
 		}
 		rc = kernel_bind(sock, (struct sockaddr *)&locaddr,
 				 sizeof(locaddr));
@@ -365,7 +365,7 @@ lnet_sock_getaddr(struct socket *sock, bool remote,
 		short port = in6->sin6_port;
 
 		if (ipv6_addr_v4mapped(&in6->sin6_addr)) {
-			/* Pretend it is a v4 socket */
+			
 			memset(in, 0, sizeof(*in));
 			in->sin_family = AF_INET;
 			in->sin_port = port;
@@ -558,7 +558,7 @@ static int lnet_inet6_enumerate(struct net_device *dev, int flags,
 	}
 
 	*dev_list = ifaces;
-#endif /* IS_ENABLED(CONFIG_IPV6) */
+#endif 
 	return nip;
 }
 
@@ -576,7 +576,7 @@ int lnet_inet_enumerate(struct lnet_inetdev **dev_list, struct net *ns,
 		int node_id, cpt;
 		int count;
 
-		if (flags & IFF_LOOPBACK) /* skip the loopback IF */
+		if (flags & IFF_LOOPBACK) 
 			continue;
 
 		if (!(flags & IFF_UP)) {

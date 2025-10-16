@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2001, 2002 Cluster File Systems, Inc.
@@ -7,7 +7,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define __USE_FILE_OFFSET64
@@ -36,7 +36,7 @@ static struct ioc_dev ioc_dev_list[10];
 
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(a) ((sizeof(a)) / (sizeof((a)[0])))
-#endif /* !ARRAY_SIZE */
+#endif 
 
 static int
 open_ioc_dev(int dev_id)
@@ -83,7 +83,7 @@ int l_ioctl(int dev_id, unsigned int opc, void *buf)
 	return rc < 0 ? -errno : rc;
 }
 
-/* register a device to send ioctls to. */
+
 int
 register_ioc_dev(int dev_id, const char *dev_name)
 {
@@ -161,7 +161,7 @@ libcfs_ioctl_unpack(struct libcfs_ioctl_data *data, char *pbuf)
 	struct libcfs_ioctl_data *overlay = (struct libcfs_ioctl_data *)pbuf;
 	char *ptr;
 
-	/* Preserve the caller's buffer pointers */
+	
 	overlay->ioc_inlbuf1 = data->ioc_inlbuf1;
 	overlay->ioc_inlbuf2 = data->ioc_inlbuf2;
 

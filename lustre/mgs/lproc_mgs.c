@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  */
 
 #define DEBUG_SUBSYSTEM S_CLASS
@@ -178,7 +178,7 @@ int lproc_mgs_del_live(struct mgs_device *mgs, struct fs_db *fsdb)
 	if (!mgs->mgs_proc_live || !fsdb->fsdb_has_lproc_entry)
 		return 0;
 
-	/* didn't create the proc file for MGSSELF_NAME */
+	
 	if (!test_bit(FSDB_MGS_SELF, &fsdb->fsdb_flags))
 		lprocfs_remove_proc_entry(fsdb->fsdb_name, mgs->mgs_proc_live);
 	return 0;
@@ -187,7 +187,7 @@ int lproc_mgs_del_live(struct mgs_device *mgs, struct fs_db *fsdb)
 LPROC_SEQ_FOPS_RO_TYPE(mgs, hash);
 LPROC_SEQ_FOPS_WR_ONLY(mgs, evict_client);
 LPROC_SEQ_FOPS_RW_TYPE(mgs, ir_timeout);
-/* belongs to export directory */
+
 LDEBUGFS_SEQ_FOPS_RW_TYPE(mgs, nid_stats_clear);
 
 static struct lprocfs_vars lprocfs_mgs_obd_vars[] = {
@@ -260,7 +260,7 @@ static struct attribute *mgs_attrs[] = {
 	NULL,
 };
 
-KOBJ_ATTRIBUTE_GROUPS(mgs); /* creates mgs_groups from mgs_attrs */
+KOBJ_ATTRIBUTE_GROUPS(mgs); 
 
 int lproc_mgs_setup(struct mgs_device *mgs, const char *osd_name)
 {
@@ -329,7 +329,7 @@ int lproc_mgs_setup(struct mgs_device *mgs, const char *osd_name)
 						obd->obd_proc_entry,
 						"../../%s/%.*s",
 						osd_obd->obd_type->typ_name,
-						osd_len, /* Strip "-osd". */
+						osd_len, 
 						osd_name);
 	if (mgs->mgs_proc_osd == NULL)
 		rc = -ENOMEM;
@@ -353,7 +353,7 @@ void lproc_mgs_cleanup(struct mgs_device *mgs)
 	sysfs_remove_link(&obd->obd_kset.kobj, "osd");
 
 	if (mgs->mgs_proc_live != NULL) {
-		/* Should be no live entries */
+		
 		lprocfs_remove(&mgs->mgs_proc_live);
 		mgs->mgs_proc_live = NULL;
 	}

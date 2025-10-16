@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright  2009 Sun Microsystems, Inc. All rights reserved
@@ -160,7 +160,7 @@ static void lod_it_fini(const struct lu_env *env, struct dt_it *di)
 	LOD_CHECK_IT(env, it);
 	it->lit_obj->do_index_ops->dio_it.fini(env, it->lit_it);
 
-	/* the iterator not in use any more */
+	
 	it->lit_obj = NULL;
 	it->lit_it = NULL;
 }
@@ -397,7 +397,7 @@ static struct dt_it *lod_striped_it_init(const struct lu_env *env,
 			break;
 	} while (++index < lo->ldo_dir_stripe_count);
 
-	/* no valid stripe */
+	
 	if (!next || !dt_object_exists(next))
 		return ERR_PTR(-ENODEV);
 
@@ -454,7 +454,7 @@ static void lod_striped_it_fini(const struct lu_env *env, struct dt_it *di)
 		}
 	}
 
-	/* the iterator not in use any more */
+	
 	it->lit_obj = NULL;
 	it->lit_it = NULL;
 	it->lit_stripe_index = 0;
@@ -559,7 +559,7 @@ again:
 		if (rc != 0)
 			RETURN(rc);
 
-		/* skip . and .. for slave stripe */
+		
 		if ((strncmp(ent->lde_name, ".",
 			     le16_to_cpu(ent->lde_namelen)) == 0 &&
 		     le16_to_cpu(ent->lde_namelen) == 1) ||
@@ -575,7 +575,7 @@ again:
 	next->do_index_ops->dio_it.fini(env, it->lit_it);
 	it->lit_it = NULL;
 
-	/* go to next stripe */
+	
 	index = it->lit_stripe_index;
 	while (++index < lo->ldo_dir_stripe_count) {
 		next = lo->ldo_stripe[index];
@@ -879,7 +879,7 @@ int lod_load_lmv_shards(const struct lu_env *env, struct lod_object *lo,
 
 		len = scnprintf(name, sizeof(name),
 				DFID":", PFID(&ent->lde_fid));
-		/* The ent->lde_name is composed of ${FID}:${index} */
+		
 		if (ent->lde_namelen < len + 1 ||
 		    memcmp(ent->lde_name, name, len) != 0) {
 			CDEBUG_LIMIT(lod->lod_lmv_failout ? D_ERROR : D_INFO,
@@ -919,7 +919,7 @@ int lod_load_lmv_shards(const struct lu_env *env, struct lod_object *lo,
 		} while (len < ent->lde_namelen);
 
 		if (len == ent->lde_namelen) {
-			/* Out of LMV EA range. */
+			
 			if (index >= stripes) {
 				CERROR("%s: the shard %.*s for the striped "
 				       "directory "DFID" is out of the known "
@@ -932,7 +932,7 @@ int lod_load_lmv_shards(const struct lu_env *env, struct lod_object *lo,
 				break;
 			}
 
-			/* The slot has been occupied. */
+			
 			if (!fid_is_zero(&lmv1->lmv_stripe_fids[index]) &&
 			    !CFS_FAIL_CHECK(OBD_FAIL_LFSCK_BAD_SLAVE_NAME)) {
 				struct lu_fid fid0;
@@ -950,7 +950,7 @@ int lod_load_lmv_shards(const struct lu_env *env, struct lod_object *lo,
 				break;
 			}
 
-			/* stored as LE mode */
+			
 			lmv1->lmv_stripe_fids[index] = ent->lde_fid;
 
 next:
@@ -1104,7 +1104,7 @@ void lod_adjust_stripe_size(struct lod_layout_component *comp,
 			      comp_end, LOV_MIN_STRIPE_SIZE);
 			comp_end = round_up(comp_end, LOV_MIN_STRIPE_SIZE);
 		}
-		/* check stripe size is multiplier of comp_end */
+		
 		if (comp_end != LUSTRE_EOF &&
 		    comp_end != comp->llc_extent.e_start &&
 		    comp_end % comp->llc_stripe_size) {
@@ -1491,8 +1491,8 @@ static int lod_xattr_get(const struct lu_env *env, struct dt_object *dt,
 		if (rc > (typeof(rc))sizeof(*lmv1))
 			RETURN(rc);
 
-		/* short (<= sizeof(struct lmv_mds_md_v1)) foreign LMV case */
-		/* XXX empty foreign LMV is not allowed */
+		
+		
 		if (rc <= offsetof(typeof(*lfm), lfm_value))
 			RETURN(rc = rc > 0 ? -EINVAL : rc);
 
@@ -1657,7 +1657,7 @@ static int lod_prep_lmv_md(const struct lu_env *env, struct dt_object *dt,
 	LASSERT(lo->ldo_dir_striped != 0);
 	LASSERT(lo->ldo_dir_stripe_count > 0);
 	stripe_count = lo->ldo_dir_stripe_count;
-	/* Only store the LMV EA heahder on the disk. */
+	
 	if (info->lti_ea_store_size < sizeof(*lmm1)) {
 		rc = lod_ea_store_resize(info, sizeof(*lmm1));
 		if (rc != 0)
@@ -1721,7 +1721,7 @@ int lod_parse_dir_striping(const struct lu_env *env, struct lod_object *lo,
 
 	LASSERT(mutex_is_locked(&lo->ldo_layout_mutex));
 
-	/* XXX may be useless as not called for foreign LMV ?? */
+	
 	if (le32_to_cpu(lmv1->lmv_magic) == LMV_MAGIC_FOREIGN)
 		RETURN(0);
 
@@ -1848,11 +1848,11 @@ static int lod_dir_declare_create_stripes(const struct lu_env *env,
 		struct linkea_data	 ldata		= { NULL };
 		struct lu_buf		linkea_buf;
 
-		/* OBD_FAIL_MDS_STRIPE_FID may leave stripe uninitialized */
+		
 		if (!dto)
 			continue;
 
-		/* directory split skip create for existing stripes */
+		
 		if (!(lod_is_splitting(lo) && i < lo->ldo_dir_split_offset)) {
 			rc = lod_sub_declare_create(env, dto, attr, NULL, dof,
 						    th);
@@ -1874,7 +1874,7 @@ static int lod_dir_declare_create_stripes(const struct lu_env *env,
 			if (rc != 0)
 				GOTO(out, rc);
 
-			/* master stripe FID will be put to .. */
+			
 			rec->rec_fid = lu_object_fid(&dt->do_lu);
 			rc = lod_sub_declare_insert(env, dto,
 						  (const struct dt_rec *)rec,
@@ -1991,12 +1991,12 @@ static int lod_mdt_alloc_specific(const struct lu_env *env,
 
 	master_index = lu_site2seq(lod2lu_dev(lod)->ld_site)->ss_node_id;
 	if (!is_specific && stripe_count > 1)
-		/* Set the start index for the 2nd stripe allocation */
+		
 		mdt_indices[1] = (mdt_indices[0] + 1) %
 					(lod->lod_remote_mdt_count + 1);
 
 	for (; stripe_idx < stripe_count; stripe_idx++) {
-		/* Try to find next avaible target */
+		
 		idx = mdt_indices[stripe_idx];
 		for (j = 0; j < lod->lod_remote_mdt_count;
 		     j++, idx = (idx + 1) % (lod->lod_remote_mdt_count + 1)) {
@@ -2034,7 +2034,7 @@ static int lod_mdt_alloc_specific(const struct lu_env *env,
 				continue;
 
 			if (idx == master_index) {
-				/* Allocate the FID locally */
+				
 				tgt_dt = lod->lod_child;
 				rc = dt_fid_alloc(env, tgt_dt, &fid, NULL,
 						  NULL);
@@ -2043,14 +2043,14 @@ static int lod_mdt_alloc_specific(const struct lu_env *env,
 				break;
 			}
 
-			/* check the status of the OSP */
+			
 			tgt = LTD_TGT(ltd, idx);
 			if (!tgt)
 				continue;
 
 			tgt_dt = tgt->ltd_tgt;
 			if (!tgt->ltd_active)
-				/* this OSP doesn't feel well */
+				
 				continue;
 
 			if (tgt->ltd_statfs.os_state & OS_STATFS_NOCREATE)
@@ -2063,7 +2063,7 @@ static int lod_mdt_alloc_specific(const struct lu_env *env,
 			break;
 		}
 
-		/* Can not allocate more stripes */
+		
 		if (j == lod->lod_remote_mdt_count) {
 			CDEBUG(D_INFO, "%s: require stripes %u only get %d\n",
 			       lod2obd(lod)->obd_name, stripe_count,
@@ -2074,7 +2074,7 @@ static int lod_mdt_alloc_specific(const struct lu_env *env,
 		CDEBUG(D_INFO, "Get idx %d, for stripe %d "DFID"\n",
 		       idx, stripe_idx, PFID(&fid));
 		mdt_indices[stripe_idx] = idx;
-		/* Set the start index for next stripe allocation */
+		
 		if (!is_specific && stripe_idx < stripe_count - 1) {
 			/*
 			 * for large dir test, put all other slaves on one
@@ -2091,7 +2091,7 @@ static int lod_mdt_alloc_specific(const struct lu_env *env,
 		LASSERT(tgt_dt != NULL);
 		LASSERT(fid_is_sane(&fid));
 
-		/* fail a remote stripe FID allocation */
+		
 		if (stripe_idx && CFS_FAIL_CHECK(OBD_FAIL_MDS_STRIPE_FID))
 			continue;
 
@@ -2136,16 +2136,16 @@ static int lod_prep_md_striped_create(const struct lu_env *env,
 
 	ENTRY;
 
-	/* The lum has been verifed in lod_verify_md_striping */
+	
 	LASSERT(le32_to_cpu(lum->lum_magic) == LMV_USER_MAGIC ||
 		le32_to_cpu(lum->lum_magic) == LMV_USER_MAGIC_SPECIFIC);
 
 	stripe_count = lo->ldo_dir_stripe_count;
-	/* silently clear OVERSTRIPED flag on single MDT system */
+	
 	if (mdt_count == 1)
 		lo->ldo_dir_hash_type &= ~LMV_HASH_FLAG_OVERSTRIPED;
 	if (lo->ldo_dir_hash_type & LMV_HASH_FLAG_OVERSTRIPED) {
-		/* silently clamp stripe count if MDTs are not specific */
+		
 		if (stripe_count > mdt_count * lod->lod_max_stripes_per_mdt) {
 			if (le32_to_cpu(lum->lum_magic) == LMV_USER_MAGIC)
 				stripe_count = mdt_count *
@@ -2153,7 +2153,7 @@ static int lod_prep_md_striped_create(const struct lu_env *env,
 			else
 				RETURN(-E2BIG);
 		}
-		/* clear OVERSTRIPED if not overstriped */
+		
 		if (stripe_count <= mdt_count &&
 		    le32_to_cpu(lum->lum_magic) == LMV_USER_MAGIC)
 			lo->ldo_dir_hash_type &= ~LMV_HASH_FLAG_OVERSTRIPED;
@@ -2165,7 +2165,7 @@ static int lod_prep_md_striped_create(const struct lu_env *env,
 	if (!stripes)
 		RETURN(-ENOMEM);
 
-	/* Allocate the first stripe locally */
+	
 	rc = dt_fid_alloc(env, lod->lod_child, &fid, NULL, NULL);
 	if (rc < 0)
 		GOTO(out, rc);
@@ -2196,7 +2196,7 @@ static int lod_prep_md_striped_create(const struct lu_env *env,
 
 			is_specific = true;
 
-			/* Verify we do not exceed the stripes per MDT limit */
+			
 			for (mdt = 0; mdt < mdt_count + 1; mdt++) {
 				stripes_per_mdt = 0;
 				for (i = 0; i < stripe_count; i++) {
@@ -2224,7 +2224,7 @@ static int lod_prep_md_striped_create(const struct lu_env *env,
 				       le32_to_cpu(lum->lum_objects[i].lum_mds);
 		}
 
-		/* stripe 0 is local */
+		
 		idx_array[0] =
 			lu_site2seq(lod2lu_dev(lod)->ld_site)->ss_node_id;
 		rc = lod_mdt_alloc_specific(env, lo, stripes, idx_array,
@@ -2449,7 +2449,7 @@ static int lod_dir_layout_set(const struct lu_env *env,
 	if (!lmv_is_sane2(lmv))
 		RETURN(-EINVAL);
 
-	/* adjust hash for dir merge, which may not be set in user command */
+	
 	if (lmv_is_merging(lmv) &&
 	    !(lmv->lmv_migrate_hash & LMV_HASH_TYPE_MASK))
 		lmv->lmv_merge_hash |=
@@ -2462,7 +2462,7 @@ static int lod_dir_layout_set(const struct lu_env *env,
 	if (rc)
 		RETURN(rc);
 
-	/* directory restripe may update stripe LMV directly */
+	
 	if (!lo->ldo_dir_stripe_count)
 		RETURN(0);
 
@@ -2548,7 +2548,7 @@ static int lod_dir_declare_xattr_set(const struct lu_env *env,
 	if (strcmp(name, XATTR_NAME_LINK) == 0)
 		RETURN(0);
 
-	/* set xattr to each stripes, if needed */
+	
 	rc = lod_striping_load(env, lo);
 	if (rc != 0)
 		RETURN(rc);
@@ -2612,7 +2612,7 @@ lod_obj_stripe_replace_parent_fid_cb(const struct lu_env *env,
 		ff->ff_parent = *lu_object_fid(&lo->ldo_obj.do_lu);
 	}
 
-	/* rewrite filter_fid */
+	
 	ff->ff_parent.f_ver = stripe_idx;
 	ff->ff_layout.ol_stripe_size = comp->llc_stripe_size;
 	ff->ff_layout.ol_stripe_count = comp->llc_stripe_count;
@@ -2662,7 +2662,7 @@ static int lod_replace_parent_fid(const struct lu_env *env,
 
 	LASSERT(S_ISREG(dt->do_lu.lo_header->loh_attr));
 
-	/* set xattr to each stripes, if needed */
+	
 	rc = lod_striping_load(env, lo);
 	if (rc != 0)
 		RETURN(rc);
@@ -3034,7 +3034,7 @@ static int lod_declare_layout_set(const struct lu_env *env,
 		for (j = 0; j < lo->ldo_comp_cnt; j++) {
 			lod_comp = &lo->ldo_comp_entries[j];
 
-			/* lfs only put one flag in each entry */
+			
 			if ((flags && id != lod_comp->llc_id) ||
 			    (mirror_flag && mirror_id !=
 					    mirror_id_of(lod_comp->llc_id)))
@@ -3178,10 +3178,10 @@ static int lod_declare_layout_del(const struct lu_env *env,
 		}
 		left--;
 
-		/* Mark the component as deleted */
+		
 		lod_comp->llc_id = LCME_ID_INVAL;
 
-		/* Not instantiated component */
+		
 		if (lod_comp->llc_stripe == NULL)
 			continue;
 
@@ -3268,7 +3268,7 @@ static int lod_declare_modify_layout(const struct lu_env *env,
 	if (rc)
 		GOTO(unlock, rc);
 
-	/* the layout to be modified must be a composite layout */
+	
 	if (!lo->ldo_is_composite) {
 		CDEBUG(D_LAYOUT, "%s: object "DFID" isn't a composite file.\n",
 		       lod2obd(d)->obd_name, PFID(lu_object_fid(&dt->do_lu)));
@@ -3311,7 +3311,7 @@ static int lod_layout_convert(struct lu_buf *buf)
 	int rc = 0;
 	ENTRY;
 
-	/* realloc buffer to a composite layout which contains one component */
+	
 	blob_size = lov_mds_md_size(le16_to_cpu(lmm->lmm_stripe_count),
 				    le32_to_cpu(lmm->lmm_magic));
 	size = sizeof(*lcm) + sizeof(*lcme) + blob_size;
@@ -3384,17 +3384,17 @@ static int lod_declare_layout_merge(const struct lu_env *env,
 	if (mbuf->lb_len < sizeof(*merge_lcm))
 		RETURN(-EINVAL);
 
-	/* must be an existing layout from disk */
+	
 	if (le32_to_cpu(merge_lcm->lcm_magic) != LOV_MAGIC_COMP_V1)
 		RETURN(-EINVAL);
 
 	merge_entry_count = le16_to_cpu(merge_lcm->lcm_entry_count);
 
-	/* do not allow to merge two mirrored files */
+	
 	if (le16_to_cpu(merge_lcm->lcm_mirror_count))
 		RETURN(-EBUSY);
 
-	/* verify the target buffer */
+	
 	rc = lod_get_lov_ea(env, lo);
 	if (rc <= 0)
 		RETURN(rc ? : -ENODATA);
@@ -3415,16 +3415,16 @@ static int lod_declare_layout_merge(const struct lu_env *env,
 	if (rc)
 		RETURN(rc);
 
-	/* info->lti_ea_buf could be reallocated in lod_layout_convert() */
+	
 	cur_lcm = info->lti_ea_buf.lb_buf;
 	cur_entry_count = le16_to_cpu(cur_lcm->lcm_entry_count);
 
-	/* 'lcm_mirror_count + 1' is the current # of mirrors the file has */
+	
 	mirror_count = le16_to_cpu(cur_lcm->lcm_mirror_count) + 1;
 	if (mirror_count + 1 > LUSTRE_MIRROR_COUNT_MAX)
 		RETURN(-ERANGE);
 
-	/* size of new layout */
+	
 	size = le32_to_cpu(cur_lcm->lcm_size) +
 	       le32_to_cpu(merge_lcm->lcm_size) - sizeof(*cur_lcm);
 
@@ -3466,7 +3466,7 @@ static int lod_declare_layout_merge(const struct lu_env *env,
 
 	mirror_id = mirror_id_of(id) + 1;
 
-	/* check if first entry in new layout is DOM */
+	
 	lmm = (struct lov_mds_md_v1 *)((char *)merge_lcm +
 					merge_lcm->lcm_entries[0].lcme_offset);
 	merge_has_dom = lov_pattern(le32_to_cpu(lmm->lmm_pattern)) &
@@ -3493,7 +3493,7 @@ static int lod_declare_layout_merge(const struct lu_env *env,
 		offset += le32_to_cpu(lcme->lcme_size);
 	}
 
-	/* fixup layout information */
+	
 	lcm->lcm_size = cpu_to_le32(size);
 	lcm->lcm_entry_count = cpu_to_le16(cur_entry_count + merge_entry_count);
 	lcm->lcm_mirror_count = cpu_to_le16(mirror_count);
@@ -3534,7 +3534,7 @@ static int lod_declare_layout_split(const struct lu_env *env,
 		RETURN(rc);
 
 	lod_obj_inc_layout_gen(lo);
-	/* fix on-disk layout gen */
+	
 	lcm->lcm_layout_gen = cpu_to_le32(lo->ldo_layout_gen);
 
 	rc = lod_sub_declare_xattr_set(env, dt_object_child(dt), mbuf,
@@ -3564,7 +3564,7 @@ static int lod_layout_declare_or_purge_mirror(const struct lu_env *env,
 	mutex_lock(&lo->ldo_layout_mutex);
 
 	if (!declare) {
-		/* prepare sub-objects array */
+		
 		for (i = 0; i < comp_v1->lcm_entry_count; i++) {
 			entry = &comp_v1->lcm_entries[i];
 
@@ -3582,7 +3582,7 @@ static int lod_layout_declare_or_purge_mirror(const struct lu_env *env,
 		}
 	}
 
-	k = 0;	/* sub_objs index */
+	k = 0;	
 	for (i = 0; i < comp_v1->lcm_entry_count; i++) {
 		struct lov_ost_data_v1 *objs;
 		struct lu_object *o, *n;
@@ -3656,13 +3656,13 @@ static int lod_layout_declare_or_purge_mirror(const struct lu_env *env,
 				sub_objs[k] = dto;
 				k++;
 			}
-		} /* for each stripe */
-	} /* for each component in the mirror */
+		} 
+	} 
 out:
 	if (!declare) {
 		i = 0;
 		if (!rc) {
-			/* destroy the sub objects */
+			
 			for (; i < k; i++) {
 				rc = lod_sub_destroy(env, sub_objs[i], th);
 				if (rc)
@@ -3708,7 +3708,7 @@ static int lod_declare_layout_purge(const struct lu_env *env,
 	if (cpu_to_le32(LOV_MAGIC_COMP_V1) != LOV_MAGIC_COMP_V1)
 		lustre_swab_lov_comp_md_v1(comp_v1);
 
-	/* from now on, @buf contains cpu endian data */
+	
 
 	if (comp_v1->lcm_mirror_count != 0) {
 		CERROR("%s: can only purge one mirror from "DFID"\n",
@@ -3716,12 +3716,12 @@ static int lod_declare_layout_purge(const struct lu_env *env,
 		RETURN(-EINVAL);
 	}
 
-	/* delcare sub objects deletion in the mirror stored in @buf */
+	
 	rc = lod_layout_declare_or_purge_mirror(env, dt, buf, th, true);
 	RETURN(rc);
 }
 
-/* delete sub objects from the mirror stored in @buf */
+
 static int lod_layout_purge(const struct lu_env *env, struct dt_object *dt,
 			    const struct lu_buf *buf, struct thandle *th)
 {
@@ -4098,7 +4098,7 @@ static int lod_xattr_set_default_lov_on_dir(const struct lu_env *env,
 
 	ENTRY;
 
-	/* get existing striping config */
+	
 	rc = lod_get_default_lov_striping(env, lod_dt_obj(dt), lds, NULL);
 	if (rc)
 		RETURN(rc);
@@ -4114,7 +4114,7 @@ static int lod_xattr_set_default_lov_on_dir(const struct lu_env *env,
 				     v1->lmm_stripe_offset,
 				     NULL);
 
-	/* Retain the pool name if it is not given */
+	
 	if (v1->lmm_magic == LOV_USER_MAGIC_V1 && pool[0] != '\0' &&
 	    !is_del) {
 		struct lod_thread_info *info = lod_env_info(env);
@@ -4159,7 +4159,7 @@ static int lod_xattr_set_default_lov_on_dir(const struct lu_env *env,
 			lum = (struct lov_user_md_v1 *)((char *)comp_v1 +
 							offset);
 			if (le32_to_cpu(lum->lmm_magic) != LOV_USER_MAGIC_V1)
-				/* the i-th component includes pool info */
+				
 				break;
 			if (lum->lmm_pattern & cpu_to_le32(LOV_PATTERN_MDT))
 				size += sizeof(struct lov_user_md_v1);
@@ -4291,7 +4291,7 @@ static int lod_xattr_set_lmv(const struct lu_env *env, struct dt_object *dt,
 	int rc;
 	ENTRY;
 
-	/* lum is used to know whether it's replay */
+	
 	LASSERT(lum);
 	if (!S_ISDIR(dt->do_lu.lo_header->loh_attr))
 		RETURN(-ENOTDIR);
@@ -4338,11 +4338,11 @@ static int lod_xattr_set_lmv(const struct lu_env *env, struct dt_object *dt,
 		struct lu_buf linkea_buf;
 		bool stripe_created = false;
 
-		/* OBD_FAIL_MDS_STRIPE_FID may leave stripe uninitialized */
+		
 		if (!dto)
 			continue;
 
-		/* fail a remote stripe creation */
+		
 		if (i && CFS_FAIL_CHECK(OBD_FAIL_MDS_STRIPE_CREATE))
 			continue;
 
@@ -4512,7 +4512,7 @@ static int lod_dir_striping_create_internal(const struct lu_env *env,
 	if (!LMVEA_DELETE_VALUES(lo->ldo_dir_stripe_count,
 				 lo->ldo_dir_stripe_offset)) {
 		if (!lmu->lb_buf) {
-			/* mkdir by default LMV */
+			
 			struct lmv_user_md_v1 *v1 = info->lti_ea_buf.lb_buf;
 			int stripe_count = lo->ldo_dir_stripe_count;
 
@@ -4543,7 +4543,7 @@ static int lod_dir_striping_create_internal(const struct lu_env *env,
 		if (rc != 0)
 			RETURN(rc);
 	} else if (lmu->lb_buf) {
-		/* foreign LMV EA case */
+		
 		if (declare) {
 			struct lmv_foreign_md *lfm = lmu->lb_buf;
 
@@ -4561,7 +4561,7 @@ static int lod_dir_striping_create_internal(const struct lu_env *env,
 		}
 	}
 
-	/* Transfer default LMV striping from the parent */
+	
 	if (lds != NULL && lds->lds_dir_def_striping_set &&
 	    lds->lds_dir_def_max_inherit != LMV_INHERIT_END &&
 	    lds->lds_dir_def_max_inherit != LMV_INHERIT_NONE &&
@@ -4606,7 +4606,7 @@ static int lod_dir_striping_create_internal(const struct lu_env *env,
 			RETURN(rc);
 	}
 
-	/* Transfer default LOV striping from the parent */
+	
 	if (lds != NULL && lds->lds_def_striping_set &&
 	    lds->lds_def_comp_cnt != 0) {
 		struct lov_mds_md *lmm;
@@ -4767,17 +4767,17 @@ static int lod_layout_repeat_comp(const struct lu_env *env,
 		memcpy(&comp_array[i + offset], &lo->ldo_comp_entries[i],
 		       sizeof(*comp_array));
 
-		/* Duplicate this component in to the next slot */
+		
 		if (i == index) {
 			new_comp = &comp_array[i + 1];
 			memcpy(&comp_array[i + 1], &lo->ldo_comp_entries[i],
 			       sizeof(*comp_array));
-			/* We must now skip this new component when copying */
+			
 			offset = 1;
 		}
 	}
 
-	/* Set up copied component */
+	
 	new_comp->llc_flags &= ~LCME_FL_INIT;
 	new_comp->llc_stripe = NULL;
 	new_comp->llc_stripes_allocated = 0;
@@ -4811,7 +4811,7 @@ static int lod_layout_repeat_comp(const struct lu_env *env,
 	lo->ldo_comp_entries = comp_array;
 	lo->ldo_comp_cnt = new_cnt;
 
-	/* Generate an id for the new component */
+	
 	mirror_id = mirror_id_of(new_comp->llc_id);
 	new_comp->llc_id = LCME_ID_INVAL;
 	new_comp->llc_id = lod_gen_component_id(lo, mirror_id, index + 1);
@@ -4830,7 +4830,7 @@ static int lod_layout_data_init(struct lod_thread_info *info, __u32 comp_cnt)
 {
 	ENTRY;
 
-	/* clear memory region that will be used for layout change */
+	
 	memset(&info->lti_layout_attr, 0, sizeof(struct lu_attr));
 	info->lti_count = 0;
 
@@ -4890,7 +4890,7 @@ static int lod_layout_del_prep_layout(const struct lu_env *env,
 		lod_comp = &lo->ldo_comp_entries[i];
 
 		if (lod_comp->llc_id != LCME_ID_INVAL) {
-			/* Build array of things to keep */
+			
 			info->lti_comp_idx[info->lti_count++] = i;
 			continue;
 		}
@@ -4910,7 +4910,7 @@ static int lod_layout_del_prep_layout(const struct lu_env *env,
 		CDEBUG(D_LAYOUT, "deleting comp %d, left %d\n", i,
 		       lo->ldo_comp_cnt - deleted);
 
-		/* No striping info for this component */
+		
 		if (lod_comp->llc_stripe == NULL)
 			continue;
 
@@ -4941,7 +4941,7 @@ static int lod_layout_del_prep_layout(const struct lu_env *env,
 		lod_comp->llc_stripes_allocated = 0;
 	}
 
-	/* info->lti_count has the amount of left components */
+	
 	LASSERTF(info->lti_count >= 0 && info->lti_count < lo->ldo_comp_cnt,
 		 "left = %d, lo->ldo_comp_cnt %d\n", (int)info->lti_count,
 		 (int)lo->ldo_comp_cnt);
@@ -5002,7 +5002,7 @@ static int lod_layout_del(const struct lu_env *env, struct dt_object *dt,
 	if (rc < 0)
 		GOTO(out, rc);
 
-	/* Only do this if we didn't delete all components */
+	
 	if (lo->ldo_comp_cnt > 0) {
 		lo->ldo_mirrors[0].lme_end = lo->ldo_comp_cnt - 1;
 		lod_obj_inc_layout_gen(lo);
@@ -5096,7 +5096,7 @@ static int lod_xattr_set(const struct lu_env *env,
 		RETURN(rc);
 	} else if (S_ISDIR(dt->do_lu.lo_header->loh_attr) &&
 		   strcmp(name, XATTR_NAME_DEFAULT_LMV) == 0) {
-		/* default LMVEA */
+		
 		rc = lod_xattr_set_default_lmv_on_dir(env, dt, buf, name, fl,
 						      th);
 		RETURN(rc);
@@ -5104,7 +5104,7 @@ static int lod_xattr_set(const struct lu_env *env,
 		   (strcmp(name, XATTR_NAME_LOV) == 0 ||
 		    strcmp(name, XATTR_LUSTRE_LOV) == 0 ||
 		    allowed_lustre_lov(name))) {
-		/* layout has been changed by others in the transaction */
+		
 		rc = lod_check_layout_gen_intrans(info, lo);
 		if (rc > 0) {
 			CDEBUG(D_LAYOUT,
@@ -5120,7 +5120,7 @@ static int lod_xattr_set(const struct lu_env *env,
 		 * already have during req replay, declare_xattr_set()
 		 * defines striping, then create() does the work */
 		if (fl & LU_XATTR_REPLACE) {
-			/* free stripes, then update disk */
+			
 			lod_striping_free(env, lod_dt_obj(dt));
 
 			rc = lod_sub_xattr_set(env, next, buf, name, fl, th);
@@ -5143,7 +5143,7 @@ static int lod_xattr_set(const struct lu_env *env,
 			rc = lod_sub_xattr_set(env, next, buf, name,
 						      fl, th);
 		} else if (strcmp(name, XATTR_LUSTRE_LOV".del") == 0) {
-			/* delete component(s) */
+			
 			LASSERT(lod_dt_obj(dt)->ldo_comp_cached);
 			rc = lod_layout_del(env, dt, th);
 		} else {
@@ -5173,7 +5173,7 @@ static int lod_xattr_set(const struct lu_env *env,
 		RETURN(rc);
 	}
 
-	/* then all other xattr */
+	
 	rc = lod_xattr_set_internal(env, dt, buf, name, fl, th);
 
 	RETURN(rc);
@@ -5303,7 +5303,7 @@ int lod_comp_copy_ost_lists(struct lod_layout_component *lod_comp,
 			 lod_comp->llc_ostlist.op_size);
 	}
 
-	/* copy ost list from lmm */
+	
 	lod_comp->llc_ostlist.op_count = v3->lmm_stripe_count;
 	lod_comp->llc_ostlist.op_size = v3->lmm_stripe_count * sizeof(__u32);
 	OBD_ALLOC(lod_comp->llc_ostlist.op_array,
@@ -5403,7 +5403,7 @@ static int lod_get_default_lov_striping(const struct lu_env *env,
 		want_composite = false;
 	}
 
-	/* realloc default comp entries if necessary */
+	
 	rc = lod_def_striping_comp_resize(lds, entry_count);
 	if (rc < 0)
 		RETURN(rc);
@@ -5432,7 +5432,7 @@ static int lod_get_default_lov_striping(const struct lu_env *env,
 
 			if (want_composite) {
 				llc->llc_extent = lcm->lcm_entries[i].lcme_extent;
-				/* We only inherit certain flags from the layout */
+				
 				llc->llc_flags = lcm->lcm_entries[i].lcme_flags &
 					LCME_TEMPLATE_FLAGS;
 			}
@@ -5465,7 +5465,7 @@ static int lod_get_default_lov_striping(const struct lu_env *env,
 		if (append_pool != NULL) {
 			pool = append_pool;
 		} else if (v1->lmm_magic == LOV_USER_MAGIC_V3) {
-			/* XXX: sanity check here */
+			
 			v3 = (struct lov_user_md_v3 *)v1;
 			if (v3->lmm_pool_name[0] != '\0')
 				pool = v3->lmm_pool_name;
@@ -5625,12 +5625,12 @@ static void lod_striping_from_default(struct lod_object *lo,
 
 			*obj_comp = *def_comp;
 			if (def_comp->llc_pool != NULL) {
-				/* pointer was copied from def_comp */
+				
 				obj_comp->llc_pool = NULL;
 				lod_obj_set_pool(lo, i, def_comp->llc_pool);
 			}
 
-			/* copy ost list */
+			
 			if (def_comp->llc_ostlist.op_array &&
 			    def_comp->llc_ostlist.op_count) {
 				OBD_ALLOC(obj_comp->llc_ostlist.op_array,
@@ -5759,7 +5759,7 @@ static void lod_ah_init(const struct lu_env *env,
 		int max_stripe_count = 0;
 		int mdt_count = d->lod_remote_mdt_count + 1;
 
-		/* other default values are 0 */
+		
 		lc->ldo_dir_stripe_offset = LMV_OFFSET_DEFAULT;
 
 		/* no default striping configuration is needed for
@@ -5768,7 +5768,7 @@ static void lod_ah_init(const struct lu_env *env,
 		if (ah->dah_eadata != NULL && ah->dah_eadata_len != 0 &&
 		    le32_to_cpu(lum1->lum_magic) == LMV_MAGIC_FOREIGN) {
 			lc->ldo_is_foreign = true;
-			/* keep stripe_count 0 and stripe_offset -1 */
+			
 			CDEBUG(D_INFO, "no default striping for foreign dir\n");
 			RETURN_EXIT;
 		}
@@ -5776,7 +5776,7 @@ static void lod_ah_init(const struct lu_env *env,
 		if (likely(lp != NULL))
 			lod_get_default_striping(env, lp, ah, lds);
 
-		/* It should always honour the specified stripes */
+		
 		if (ah->dah_eadata && ah->dah_eadata_len &&
 		    !ah->dah_eadata_is_dmv &&
 		    (le32_to_cpu(lum1->lum_magic) == LMV_USER_MAGIC ||
@@ -5819,39 +5819,39 @@ static void lod_ah_init(const struct lu_env *env,
 					le32_to_cpu(lum1->lum_hash_type);
 				lds->lds_dir_def_max_inherit =
 					lum1->lum_max_inherit;
-				/* it will be decreased by 1 later in setting */
+				
 				if (lum1->lum_max_inherit >= LMV_INHERIT_END &&
 				    lum1->lum_max_inherit < LMV_INHERIT_MAX)
 					lds->lds_dir_def_max_inherit++;
 				lds->lds_dir_def_max_inherit_rr =
 					lum1->lum_max_inherit_rr;
 				lds->lds_dir_def_striping_set = 1;
-				/* don't inherit LOV from ROOT */
+				
 				if (lds->lds_def_striping_set &&
 				    fid_is_root(lod_object_fid(lp)))
 					lds->lds_def_striping_set = 0;
 				lc->ldo_def_striping = lds;
 			} else if (lds->lds_def_striping_set &&
 				   !fid_is_root(lod_object_fid(lp))) {
-				/* don't inherit default LMV for "lfs mkdir" */
+				
 				lds->lds_dir_def_striping_set = 0;
 				lc->ldo_def_striping = lds;
 			}
 		} else {
-			/* inherit default striping except ROOT */
+			
 			if ((lds->lds_def_striping_set ||
 			     lds->lds_dir_def_striping_set) &&
 			    !fid_is_root(lod_object_fid(lp)))
 				lc->ldo_def_striping = lds;
 
-			/* transfer defaults LMV to new directory */
+			
 			lod_striping_from_default(lc, lds, child_mode);
 
-			/* set count 0 to create normal directory */
+			
 			if (lc->ldo_dir_stripe_count == 1)
 				lc->ldo_dir_stripe_count = 0;
 
-			/* do not save default LMV on server */
+			
 			if (ah->dah_dmv_imp_inherit) {
 				lds->lds_dir_def_striping_set = 0;
 				if (!lds->lds_def_striping_set)
@@ -5878,7 +5878,7 @@ static void lod_ah_init(const struct lu_env *env,
 		} else if (lc->ldo_dir_hash_type & LMV_HASH_FLAG_OVERSTRIPED) {
 			max_stripe_count *= d->lod_max_stripes_per_mdt;
 		}
-		/* shrink the stripe_count to max stripe count */
+		
 		if (lc->ldo_dir_stripe_count > max_stripe_count &&
 		    !CFS_FAIL_CHECK(OBD_FAIL_LARGE_STRIPE)) {
 			lc->ldo_dir_stripe_count = max_stripe_count;
@@ -5891,7 +5891,7 @@ static void lod_ah_init(const struct lu_env *env,
 				(lc->ldo_dir_hash_type & LMV_HASH_FLAG_KNOWN) |
 				d->lod_mdt_descs.ltd_lmv_desc.ld_pattern;
 
-		/* make sure all fscrypt metadata stays on same mdt */
+		
 		if (child->do_lu.lo_header->loh_attr & LOHA_FSCRYPT_MD) {
 			lc->ldo_dir_stripe_count = 0;
 			lds->lds_dir_def_stripe_offset =
@@ -5907,7 +5907,7 @@ static void lod_ah_init(const struct lu_env *env,
 		RETURN_EXIT;
 	}
 
-	/* child object regular file*/
+	
 
 	if (!lod_object_will_be_striped(S_ISREG(child_mode),
 					lu_object_fid(&child->do_lu)))
@@ -5929,7 +5929,7 @@ static void lod_ah_init(const struct lu_env *env,
 		}
 	}
 
-	/* Initialize lod_device::lod_md_root object reference */
+	
 	if (d->lod_md_root == NULL) {
 		struct dt_object *root;
 		struct lod_object *lroot;
@@ -6074,7 +6074,7 @@ static int lod_declare_init_size(const struct lu_env *env,
 			stripe_count = lod_comp->llc_stripe_count;
 			stripe_size = lod_comp->llc_stripe_size;
 
-			/* next mirror */
+			
 			if (stripe_count == 0)
 				continue;
 
@@ -6132,7 +6132,7 @@ int lod_declare_striped_create(const struct lu_env *env, struct dt_object *dt,
 		GOTO(out, rc = -ENOMEM);
 
 	if (!dt_object_remote(next)) {
-		/* choose OST and generate appropriate objects */
+		
 		rc = lod_prepare_create(env, lo, attr, lovea, th);
 		if (rc)
 			GOTO(out, rc);
@@ -6209,7 +6209,7 @@ static int lod_declare_create(const struct lu_env *env, struct dt_object *dt,
 	 * it's lod_ah_init() that has decided the object will be striped
 	 */
 	if (dof->dof_type == DFT_REGULAR) {
-		/* callers don't want stripes */
+		
 		/* XXX: all tricky interactions with ->ah_make_hint() decided
 		 * to use striping, then ->declare_create() behaving differently
 		 * should be cleaned */
@@ -6252,7 +6252,7 @@ static int lod_declare_create(const struct lu_env *env, struct dt_object *dt,
 						rc = -EREMOTE;
 					else
 						rc = -EPROTO;
-					/* refresh statfs */
+					
 					dt_statfs(env, mdt->ltd_tgt,
 						  &mdt->ltd_statfs);
 					no_create = (mdt->ltd_statfs.os_state &
@@ -6300,7 +6300,7 @@ static __u32 lod_gen_component_id(struct lod_object *lo,
 	if (likely(id <= SEQ_ID_MAX))
 		RETURN(pflr_id(mirror_id, id & SEQ_ID_MASK));
 
-	/* Layout generation wraps, need to check collisions. */
+	
 	start = id & SEQ_ID_MASK;
 	end = SEQ_ID_MAX;
 again:
@@ -6310,7 +6310,7 @@ again:
 			if (pflr_id(mirror_id, id) == lod_comp->llc_id)
 				break;
 		}
-		/* Found the ununsed ID */
+		
 		if (i == lo->ldo_comp_cnt)
 			RETURN(pflr_id(mirror_id, id));
 	}
@@ -6358,7 +6358,7 @@ int lod_striped_create(const struct lu_env *env, struct dt_object *dt,
 	LASSERT((lo->ldo_comp_cnt != 0 && lo->ldo_comp_entries != NULL) ||
 		lo->ldo_is_foreign);
 
-	mirror_id = 0; /* non-flr file's mirror_id is 0 */
+	mirror_id = 0; 
 	if (lo->ldo_mirror_count > 1) {
 		for (i = 0; i < lo->ldo_comp_cnt; i++) {
 			lod_comp = &lo->ldo_comp_entries[i];
@@ -6368,7 +6368,7 @@ int lod_striped_create(const struct lu_env *env, struct dt_object *dt,
 		}
 	}
 
-	/* create all underlying objects */
+	
 	for (i = 0; i < lo->ldo_comp_cnt; i++) {
 		lod_comp = &lo->ldo_comp_entries[i];
 
@@ -6468,7 +6468,7 @@ static int lod_create(const struct lu_env *env, struct dt_object *dt,
 	int		    rc;
 	ENTRY;
 
-	/* create local object */
+	
 	rc = lod_sub_create(env, dt_object_child(dt), attr, hint, dof, th);
 	if (rc != 0)
 		RETURN(rc);
@@ -6531,7 +6531,7 @@ static int lod_declare_destroy(const struct lu_env *env, struct dt_object *dt,
 	if (rc)
 		RETURN(rc);
 
-	/* declare destroy for all underlying objects */
+	
 	if (S_ISDIR(dt->do_lu.lo_header->loh_attr)) {
 		rc = next->do_ops->do_index_try(env, next,
 						&dt_directory_features);
@@ -6571,7 +6571,7 @@ static int lod_declare_destroy(const struct lu_env *env, struct dt_object *dt,
 	if (!lod_obj_is_striped(dt))
 		RETURN(0);
 
-	/* declare destroy all striped objects */
+	
 	if (S_ISDIR(dt->do_lu.lo_header->loh_attr)) {
 		for (i = 0; i < lo->ldo_dir_stripe_count; i++) {
 			stripe = lo->ldo_stripe[i];
@@ -6622,7 +6622,7 @@ static int lod_destroy(const struct lu_env *env, struct dt_object *dt,
 
 	ENTRY;
 
-	/* destroy sub-stripe of master object */
+	
 	if (S_ISDIR(dt->do_lu.lo_header->loh_attr)) {
 		rc = next->do_ops->do_index_try(env, next,
 						&dt_directory_features);
@@ -6663,7 +6663,7 @@ static int lod_destroy(const struct lu_env *env, struct dt_object *dt,
 	if (!lod_obj_is_striped(dt))
 		RETURN(0);
 
-	/* destroy all striped objects */
+	
 	if (S_ISDIR(dt->do_lu.lo_header->loh_attr)) {
 		for (i = 0; i < lo->ldo_dir_stripe_count; i++) {
 			stripe = lo->ldo_stripe[i];
@@ -6781,7 +6781,7 @@ static int lod_object_unlock(const struct lu_env *env, struct dt_object *dt,
 	 * the lock by lockh directly */
 	LASSERT(!dt_object_remote(dt_object_child(dt)));
 
-	/* locks were unlocked in MDT layer */
+	
 	for (i = 0; i < slave_locks->ha_count; i++)
 		LASSERT(!lustre_handle_is_used(&slave_locks->ha_handles[i]));
 
@@ -6823,7 +6823,7 @@ static int lod_object_lock(const struct lu_env *env,
 	int rc;
 	ENTRY;
 
-	/* remote object lock */
+	
 	if (!einfo->ei_enq_slave) {
 		LASSERT(dt_object_remote(dt));
 		return dt_object_lock(env, dt_object_child(dt), lh, einfo,
@@ -6837,19 +6837,19 @@ static int lod_object_lock(const struct lu_env *env,
 	if (rc != 0)
 		RETURN(rc);
 
-	/* No stripes */
+	
 	if (lo->ldo_dir_stripe_count == 0)
 		RETURN(0);
 
 	slave_locks_size = offsetof(typeof(*slave_locks),
 				    ha_handles[lo->ldo_dir_stripe_count]);
-	/* Freed in lod_object_unlock */
+	
 	OBD_ALLOC(slave_locks, slave_locks_size);
 	if (!slave_locks)
 		RETURN(-ENOMEM);
 	slave_locks->ha_count = lo->ldo_dir_stripe_count;
 
-	/* striped directory lock */
+	
 	for (i = 0; i < lo->ldo_dir_stripe_count; i++) {
 		struct lustre_handle lockh;
 		struct ldlm_res_id *res_id;
@@ -6989,7 +6989,7 @@ static bool lod_sel_osts_allowed(const struct lu_env *env,
 			if (index != lod_comp->llc_ost_indices[j])
 				continue;
 
-			/* already handled */
+			
 			if (j < i)
 				break;
 
@@ -7023,9 +7023,9 @@ static bool lod_sel_osts_allowed(const struct lu_env *env,
 			break;
 		}
 
-		/* In bytes */
+		
 		available = sfs->os_bavail * sfs->os_bsize;
-		/* 'available' is relative to the allocation threshold */
+		
 		available -= (__u64) info.os_reserved_mb_low << 20;
 
 		CDEBUG(D_LAYOUT, "ost %d lowwm: %d highwm: %d, "
@@ -7073,7 +7073,7 @@ static void lod_sel_adjust_extents(const struct lu_env *env,
 	__u64 start;
 	int i;
 
-	/* Extension space component */
+	
 	lod_comp = &lo->ldo_comp_entries[index];
 	next = &lo->ldo_comp_entries[index + 1];
 	prev = &lo->ldo_comp_entries[index - 1];
@@ -7081,7 +7081,7 @@ static void lod_sel_adjust_extents(const struct lu_env *env,
 	LASSERT(lod_comp != NULL && prev != NULL && next != NULL);
 	LASSERT(lod_comp->llc_flags & LCME_FL_EXTENSION);
 
-	/* Previous is being removed */
+	
 	if (prev && prev->llc_id == LCME_ID_INVAL)
 		new_start = prev->llc_extent.e_start;
 	else
@@ -7093,7 +7093,7 @@ static void lod_sel_adjust_extents(const struct lu_env *env,
 		start = lod_comp->llc_extent.e_start;
 		lod_comp->llc_extent.e_start = new_start;
 
-		/* We only move zero length extendable components */
+		
 		if (!(start == lod_comp->llc_extent.e_end))
 			break;
 
@@ -7103,7 +7103,7 @@ static void lod_sel_adjust_extents(const struct lu_env *env,
 	}
 }
 
-/* Calculate the proposed 'new end' for a component we're extending */
+
 static __u64 lod_extension_new_end(__u64 extension_size, __u64 extent_end,
 				   __u32 stripe_size, __u64 component_end,
 				   __u64 extension_end)
@@ -7112,7 +7112,7 @@ static __u64 lod_extension_new_end(__u64 extension_size, __u64 extent_end,
 
 	LASSERT(extension_size != 0 && stripe_size != 0);
 
-	/* Round up to extension size */
+	
 	if (extent_end == OBD_OBJECT_EOF) {
 		new_end = OBD_OBJECT_EOF;
 	} else {
@@ -7122,7 +7122,7 @@ static __u64 lod_extension_new_end(__u64 extension_size, __u64 extent_end,
 		new_end = roundup(new_end, extension_size);
 		new_end += component_end;
 
-		/* Component end must be min stripe size aligned */
+		
 		if (new_end % stripe_size) {
 			CDEBUG(D_LAYOUT, "new component end is not aligned "
 			       "by the stripe size %u: [%llu, %llu) ext size "
@@ -7132,12 +7132,12 @@ static __u64 lod_extension_new_end(__u64 extension_size, __u64 extent_end,
 			new_end = roundup(new_end, stripe_size);
 		}
 
-		/* Overflow */
+		
 		if (new_end < extent_end)
 			new_end = OBD_OBJECT_EOF;
 	}
 
-	/* Don't extend past the end of the extension component */
+	
 	if (new_end > extension_end)
 		new_end = extension_end;
 
@@ -7250,7 +7250,7 @@ static int lod_sel_handler(const struct lu_env *env,
 	int rc = 0;
 	ENTRY;
 
-	/* First component cannot be extension space */
+	
 	if (index == 0) {
 		CERROR("%s: "DFID" first component cannot be extension space\n",
 		       lod2obd(d)->obd_name, PFID(lod_object_fid(lo)));
@@ -7262,7 +7262,7 @@ static int lod_sel_handler(const struct lu_env *env,
 	if ((index + 1) < *max_comp)
 		next = &lo->ldo_comp_entries[index + 1];
 
-	/* extension size uses the stripe size field as KiB */
+	
 	extension_size = lod_comp->llc_stripe_size * SEL_UNIT_SIZE;
 
 	CDEBUG(D_LAYOUT, "prev start %llu, extension start %llu, extension end"
@@ -7305,7 +7305,7 @@ static int lod_sel_handler(const struct lu_env *env,
 	sd->sd_repeat = 0;
 	sd->sd_force = 0;
 
-	/* Extend previous component */
+	
 	if (rc == 0) {
 		new_end = lod_extension_new_end(extension_size, extent->e_end,
 						prev->llc_stripe_size,
@@ -7322,7 +7322,7 @@ static int lod_sel_handler(const struct lu_env *env,
 			change--;
 		}
 	} else {
-		/* rc == 1, failed to extend current component */
+		
 		LASSERT(rc == 1);
 		if (next) {
 			/* Normal 'spillover' case - Remove the extension
@@ -7380,7 +7380,7 @@ static int lod_sel_handler(const struct lu_env *env,
 	       prev->llc_extent.e_start, lod_comp->llc_extent.e_start,
 	       lod_comp->llc_extent.e_end, *max_comp, lo->ldo_comp_cnt);
 
-	/* Layout changed successfully */
+	
 	RETURN(0);
 }
 
@@ -7420,7 +7420,7 @@ static int lod_declare_update_extents(const struct lu_env *env,
 	int change = 0;
 	ENTRY;
 
-	/* This makes us work on the components of the chosen mirror */
+	
 	if (lo->ldo_mirrors) {
 		start_index = lo->ldo_mirrors[pick].lme_start;
 		max_comp = lo->ldo_mirrors[pick].lme_end + 1;
@@ -7436,7 +7436,7 @@ static int lod_declare_update_extents(const struct lu_env *env,
 	for (i = start_index; i < max_comp; i++) {
 		lod_comp = &lo->ldo_comp_entries[i];
 
-		/* We've passed all components of interest */
+		
 		if (lod_comp->llc_extent.e_start >= extent->e_end)
 			break;
 
@@ -7447,7 +7447,7 @@ static int lod_declare_update_extents(const struct lu_env *env,
 			if (rc < 0)
 				GOTO(out, rc);
 
-			/* Nothing has changed behind the prev one */
+			
 			i -= 2;
 			continue;
 		}
@@ -7469,13 +7469,13 @@ static int lod_declare_update_extents(const struct lu_env *env,
 
 	EXIT;
 out:
-	/* The amount of components has changed, adjust the lti_comp_idx */
+	
 	rc2 = lod_layout_data_init(info, lo->ldo_comp_cnt);
 
 	return rc < 0 ? rc : rc2 < 0 ? rc2 : layout_changed;
 }
 
-/* If striping is already instantiated or INIT'ed DOM? */
+
 static bool lod_is_instantiation_needed(struct lod_layout_component *comp)
 {
 	if (comp->llc_magic == LOV_MAGIC_FOREIGN)
@@ -7539,7 +7539,7 @@ static int lod_declare_update_plain(const struct lu_env *env,
 		rc = lod_get_lov_ea(env, lo);
 		if (rc <= 0)
 			GOTO(out, rc);
-		/* old on-disk EA is stored in info->lti_buf */
+		
 		comp_v1 = (struct lov_comp_md_v1 *)info->lti_buf.lb_buf;
 		replay = true;
 		layout_changed = true;
@@ -7548,13 +7548,13 @@ static int lod_declare_update_plain(const struct lu_env *env,
 		if (rc)
 			GOTO(out, rc);
 	} else {
-		/* non replay path */
+		
 		rc = lod_striping_load(env, lo);
 		if (rc)
 			GOTO(out, rc);
 	}
 
-	/* Make sure defined layout covers the requested write range. */
+	
 	lod_comp = &lo->ldo_comp_entries[lo->ldo_comp_cnt - 1];
 	if (lo->ldo_comp_cnt > 1 &&
 	    lod_comp->llc_extent.e_end != OBD_OBJECT_EOF &&
@@ -7591,7 +7591,7 @@ static int lod_declare_update_plain(const struct lu_env *env,
 			break;
 
 		if (!replay) {
-			/* If striping is instantiated or INIT'ed DOM skip */
+			
 			if (!lod_is_instantiation_needed(lod_comp))
 				continue;
 		} else {
@@ -7610,7 +7610,7 @@ static int lod_declare_update_plain(const struct lu_env *env,
 		 * replay it needs replay the instantiation.
 		 */
 
-		/* A released component is being extended */
+		
 		if (lod_comp->llc_pattern & LOV_PATTERN_F_RELEASED)
 			GOTO(out, rc = -EINVAL);
 
@@ -7792,11 +7792,11 @@ static int lod_primary_pick(const struct lu_env *env, struct lod_object *lo,
 			continue;
 		}
 
-		/* 2nd pick is for the primary mirror containing unavail OST */
+		
 		if (lo->ldo_mirrors[index].lme_prefer && second_pick < 0)
 			second_pick = index;
 
-		/* 3rd pick is for non-primary mirror containing unavail OST */
+		
 		if (second_pick < 0 && third_pick < 0)
 			third_pick = index;
 
@@ -7807,7 +7807,7 @@ static int lod_primary_pick(const struct lu_env *env, struct lod_object *lo,
 		if (picked >= 0 && !lo->ldo_mirrors[index].lme_prefer)
 			continue;
 
-		/* check the availability of OSTs */
+		
 		lod_foreach_mirror_comp(lod_comp, lo, index) {
 			if (!lod_comp_inited(lod_comp) || !lod_comp->llc_stripe)
 				continue;
@@ -7822,10 +7822,10 @@ static int lod_primary_pick(const struct lu_env *env, struct lod_object *lo,
 				ost_avail = !!rc;
 				if (!ost_avail)
 					break;
-			} /* for all dt object in one component */
+			} 
 			if (!ost_avail)
 				break;
-		} /* for all components in a mirror */
+		} 
 
 		/**
 		 * the OSTs where allocated objects locates in the components
@@ -7834,7 +7834,7 @@ static int lod_primary_pick(const struct lu_env *env, struct lod_object *lo,
 		if (!ost_avail)
 			continue;
 
-		/* this mirror has all OSTs available */
+		
 		picked = index;
 
 		/**
@@ -7843,9 +7843,9 @@ static int lod_primary_pick(const struct lu_env *env, struct lod_object *lo,
 		 */
 		if (lo->ldo_mirrors[index].lme_prefer)
 			break;
-	} /* for all mirrors */
+	} 
 
-	/* failed to pick a sound mirror, lower our expectation */
+	
 	if (picked < 0)
 		picked = second_pick;
 	if (picked < 0)
@@ -7941,7 +7941,7 @@ static int lod_layout_pccro_check(const struct lu_env *env,
 	return lo->ldo_flr_state & LCM_FL_PCC_RDONLY ? -EALREADY : 0;
 }
 
-/* Check if the dir layout conforms the requested one */
+
 static int lod_dir_layout_check(const struct lu_env *env,
 				struct dt_object *dt,
 				struct md_layout_change *mlc)
@@ -7992,7 +7992,7 @@ static int lod_dir_layout_check(const struct lu_env *env,
 		}
 	}
 
-	/* all compatibility check passed */
+	
 	RETURN(-EALREADY);
 }
 
@@ -8288,7 +8288,7 @@ static int lod_declare_update_rdonly(const struct lu_env *env,
 		       PFID(lod_object_fid(lo)),
 		       lo->ldo_mirrors[picked].lme_id);
 
-		/* Update extents of primary before staling */
+		
 		rc = lod_declare_update_extents(env, lo, &extent, th, picked,
 						write);
 		if (rc < 0)
@@ -8303,16 +8303,16 @@ static int lod_declare_update_rdonly(const struct lu_env *env,
 			extent.e_end = OBD_OBJECT_EOF;
 		}
 
-		/* stale overlapping components from other mirrors */
+		
 		rc = lod_stale_components(env, lo, picked, &extent, th);
 		if (rc < 0)
 			GOTO(out, rc);
 
-		/* restore truncate intent extent */
+		
 		if (layout->lai_opc == LAYOUT_INTENT_TRUNC)
 			extent.e_end = extent.e_start;
 
-		/* instantiate components for the picked mirror, start from 0 */
+		
 		extent.e_start = 0;
 
 		lod_foreach_mirror_comp(lod_comp, lo, picked) {
@@ -8328,7 +8328,7 @@ static int lod_declare_update_rdonly(const struct lu_env *env,
 		}
 
 		lo->ldo_flr_state = LCM_FL_WRITE_PENDING;
-	} else { /* MD_LAYOUT_RESYNC */
+	} else { 
 		int i;
 
 		/**
@@ -8337,7 +8337,7 @@ static int lod_declare_update_rdonly(const struct lu_env *env,
 		 * could be picked as the primary mirror.
 		 */
 		if (mlc->mlc_mirror_id == 0) {
-			/* normal resync */
+			
 			for (i = 0; i < lo->ldo_mirror_count; i++) {
 				if (lo->ldo_mirrors[i].lme_stale)
 					continue;
@@ -8356,14 +8356,14 @@ static int lod_declare_update_rdonly(const struct lu_env *env,
 			if (rc)
 				GOTO(out, rc);
 		} else {
-			/* mirror write, try to init its all components */
+			
 			rc = lod_prepare_resync_mirror(env, lo,
 						       mlc->mlc_mirror_id);
 			if (rc)
 				GOTO(out, rc);
 		}
 
-		/* change the file state to SYNC_PENDING */
+		
 		lo->ldo_flr_state = LCM_FL_SYNC_PENDING;
 	}
 
@@ -8407,7 +8407,7 @@ static int lod_declare_update_write_pending(const struct lu_env *env,
 	LASSERT(mlc->mlc_opc == MD_LAYOUT_WRITE ||
 		mlc->mlc_opc == MD_LAYOUT_RESYNC);
 
-	/* look for the first preferred mirror */
+	
 	for (i = 0; i < lo->ldo_mirror_count; i++) {
 		if (lo->ldo_mirrors[i].lme_stale)
 			continue;
@@ -8420,7 +8420,7 @@ static int lod_declare_update_write_pending(const struct lu_env *env,
 		break;
 	}
 	if (primary < 0) {
-		/* no primary, use any in-sync */
+		
 		for (i = 0; i < lo->ldo_mirror_count; i++) {
 			if (lo->ldo_mirrors[i].lme_stale)
 				continue;
@@ -8459,7 +8459,7 @@ static int lod_declare_update_write_pending(const struct lu_env *env,
 		CDEBUG(D_LAYOUT, DFID": intent to write: "DEXT"\n",
 		       PFID(lod_object_fid(lo)), PEXT(&extent));
 
-		/* 1. Update extents of primary before staling */
+		
 		rc = lod_declare_update_extents(env, lo, &extent, th, primary,
 						write);
 		if (rc < 0)
@@ -8474,7 +8474,7 @@ static int lod_declare_update_write_pending(const struct lu_env *env,
 			extent.e_end = OBD_OBJECT_EOF;
 		}
 
-		/* 2. stale overlapping components */
+		
 		rc = lod_stale_components(env, lo, primary, &extent, th);
 		if (rc < 0)
 			GOTO(out, rc);
@@ -8482,7 +8482,7 @@ static int lod_declare_update_write_pending(const struct lu_env *env,
 		/* 3. find the components which need instantiating.
 		 * instantiate [0, mlc->mlc_intent->e_end) */
 
-		/* restore truncate intent extent */
+		
 		if (layout->lai_opc == LAYOUT_INTENT_TRUNC)
 			extent.e_end = extent.e_start;
 		extent.e_start = 0;
@@ -8500,9 +8500,9 @@ static int lod_declare_update_write_pending(const struct lu_env *env,
 			info->lti_comp_idx[info->lti_count++] =
 						lod_comp_index(lo, lod_comp);
 		}
-	} else { /* MD_LAYOUT_RESYNC */
+	} else { 
 		if (mlc->mlc_mirror_id == 0) {
-			/* normal resync */
+			
 			lod_foreach_mirror_comp(lod_comp, lo, primary) {
 				if (!lod_comp_inited(lod_comp))
 					break;
@@ -8514,14 +8514,14 @@ static int lod_declare_update_write_pending(const struct lu_env *env,
 			if (rc)
 				GOTO(out, rc);
 		} else {
-			/* mirror write, try to init its all components */
+			
 			rc = lod_prepare_resync_mirror(env, lo,
 						       mlc->mlc_mirror_id);
 			if (rc)
 				GOTO(out, rc);
 		}
 
-		/* change the file state to SYNC_PENDING */
+		
 		lo->ldo_flr_state = LCM_FL_SYNC_PENDING;
 	}
 
@@ -8576,7 +8576,7 @@ static int lod_declare_update_sync_pending(const struct lu_env *env,
 		return lod_declare_update_write_pending(env, lo, mlc, th);
 	}
 
-	/* MD_LAYOUT_RESYNC_DONE */
+	
 
 	for (i = 0; i < lo->ldo_comp_cnt; i++) {
 		struct lod_layout_component *lod_comp;
@@ -8600,7 +8600,7 @@ static int lod_declare_update_sync_pending(const struct lu_env *env,
 		}
 	}
 
-	/* valid check */
+	
 	for (i = 0; i < mlc->mlc_resync_count; i++) {
 		if (mlc->mlc_resync_ids[i] == LCME_ID_INVAL)
 			continue;
@@ -8893,7 +8893,7 @@ static int dt_dir_is_empty(const struct lu_env *env,
 		else if (rc == 1)
 			rc = 0;
 	} else if (!rc) {
-		/* Huh? Index contains no zero key? */
+		
 		rc = -EIO;
 	}
 
@@ -8924,7 +8924,7 @@ static int lod_dir_declare_layout_shrink(const struct lu_env *env,
 	if (!dt_try_as_dir(env, dt, true))
 		return -ENOTDIR;
 
-	/* shouldn't be called on plain directory */
+	
 	LASSERT(lo->ldo_dir_stripe_count);
 
 	lmv_buf->lb_buf = &info->lti_lmv.lmv_md_v1;
@@ -9024,7 +9024,7 @@ static int lod_dir_declare_layout_split(const struct lu_env *env,
 	 * this function).
 	 */
 	if (le32_to_cpu(lum->lum_hash_type) & LMV_HASH_FLAG_OVERSTRIPED) {
-		/* silently clamp stripe count if it exceeds limit */
+		
 		if (stripe_count > mdt_count * lod->lod_max_stripes_per_mdt)
 			stripe_count = mdt_count * lod->lod_max_stripes_per_mdt;
 		if (stripe_count > mdt_count)
@@ -9115,7 +9115,7 @@ static int lod_dir_layout_detach(const struct lu_env *env,
 	ENTRY;
 
 	if (!lo->ldo_dir_stripe_count) {
-		/* plain directory delete .. */
+		
 		rc = lod_sub_delete(env, next,
 				    (const struct dt_key *)dotdot, th);
 		RETURN(rc);
@@ -9614,10 +9614,10 @@ void lod_striping_free_nolock(const struct lu_env *env, struct lod_object *lo)
 		lo->ldo_obj.do_index_ops = NULL;
 	} else if (lo->ldo_comp_entries != NULL) {
 		for (i = 0; i < lo->ldo_comp_cnt; i++) {
-			/* free lod_layout_component::llc_stripe array */
+			
 			lod_comp = &lo->ldo_comp_entries[i];
 
-			/* HSM layout component */
+			
 			if (lod_comp->llc_magic == LOV_MAGIC_FOREIGN)
 				continue;
 			if (lod_comp->llc_stripe == NULL)
@@ -9658,10 +9658,10 @@ static void lod_object_free(const struct lu_env *env, struct lu_object *o)
 {
 	struct lod_object *lo = lu2lod_obj(o);
 
-	/* release all underlying object pinned */
+	
 	lod_striping_free(env, lo);
 	lu_object_fini(o);
-	/* lo doesn't contain a lu_object_header, so we don't need call_rcu */
+	
 	OBD_SLAB_FREE_PTR(lo, lod_object_kmem);
 }
 

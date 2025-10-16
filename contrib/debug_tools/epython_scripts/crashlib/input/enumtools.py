@@ -31,8 +31,6 @@ class NameSet:
         self.name_to_value = {}
 
         self._next_value = 0
-#        self._sorted_values = []
-#        self._sorted_names = []
 
         if mapping is not None:
             self.addMap(mapping)
@@ -62,8 +60,6 @@ class NameSet:
         self.name_to_value[name] = value
         if value not in self.value_to_name:
             self.value_to_name[value] = name
- #       self._sorted_values = []
- #       self._sorted_names = []
 
         setattr(self, name, value)
 
@@ -81,8 +77,6 @@ class NameSet:
 
 #    def somethingUsingSortedArrays:
 #        if not self._sorted_values:
-#            self._sorted_values = sorted(self.value_to_name.keys())
-#            self._sorted_names = sorted(self.name_to_value.keys())
 
 
 

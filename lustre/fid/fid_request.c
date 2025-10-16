@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Sequence Manager
  *
@@ -24,7 +24,7 @@
 #include <obd_class.h>
 #include <obd_support.h>
 #include <lustre_fid.h>
-/* mdc RPC locks */
+
 #include <lustre_mdc.h>
 #include "fid_internal.h"
 
@@ -48,11 +48,11 @@ static int seq_client_rpc(struct lu_client_seq *seq,
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 
-	/* Init operation code */
+	
 	op = req_capsule_client_get(&req->rq_pill, &RMF_SEQ_OPC);
 	*op = opc;
 
-	/* Zero out input range, this is not recovery yet. */
+	
 	in = req_capsule_client_get(&req->rq_pill, &RMF_SEQ_RANGE);
 	lu_seq_range_init(in);
 
@@ -92,7 +92,7 @@ static int seq_client_rpc(struct lu_client_seq *seq,
 		debug_mask = D_INFO;
 	}
 
-	/* Allow seq client RPC during recovery time. */
+	
 	req->rq_allow_replay = 1;
 
 	ptlrpc_at_set_req_timeout(req);
@@ -126,7 +126,7 @@ out_req:
 	return rc;
 }
 
-/* Request sequence-controller node to allocate new super-sequence. */
+
 int seq_client_alloc_super(struct lu_client_seq *seq,
 			   const struct lu_env *env)
 {
@@ -159,7 +159,7 @@ int seq_client_alloc_super(struct lu_client_seq *seq,
 	RETURN(rc);
 }
 
-/* Request sequence-controller node to allocate new meta-sequence. */
+
 static int seq_client_alloc_meta(const struct lu_env *env,
 				 struct lu_client_seq *seq)
 {
@@ -196,7 +196,7 @@ static int seq_client_alloc_meta(const struct lu_env *env,
 	RETURN(rc);
 }
 
-/* Allocate new sequence for client. */
+
 static int seq_client_alloc_seq(const struct lu_env *env,
 				struct lu_client_seq *seq, u64 *seqnr)
 {
@@ -303,7 +303,7 @@ int seq_client_alloc_fid(const struct lu_env *env,
 
 	if (unlikely(!fid_is_zero(&seq->lcs_fid) &&
 		     fid_oid(&seq->lcs_fid) < seq->lcs_width)) {
-		/* Just bump last allocated fid and return to caller. */
+		
 		seq->lcs_fid.f_oid++;
 		rc = 0;
 	} else {
@@ -407,7 +407,7 @@ void seq_client_init(struct lu_client_seq *seq,
 	else
 		seq->lcs_width = LUSTRE_DATA_SEQ_MAX_WIDTH;
 
-	/* Make sure that things are clear before work is started. */
+	
 	seq_client_flush(seq);
 
 	if (exp)
@@ -439,7 +439,7 @@ int client_fid_init(struct obd_device *obd,
 
 	snprintf(prefix, MAX_OBD_NAME + 5, "cli-%s", obd->obd_name);
 
-	/* Init client side sequence-manager */
+	
 	seq_client_init(cli->cl_seq, exp, type, prefix, NULL);
 	OBD_FREE(prefix, MAX_OBD_NAME + 5);
 
@@ -500,7 +500,7 @@ static void __exit fid_exit(void)
 	debugfs_remove_recursive(seq_debugfs_dir);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre File IDentifier");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

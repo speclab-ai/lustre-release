@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: LGPL-2.1+
+
 /*
  * (C) Copyright 2017 Commissariat a l'energie atomique et aux energies
  *     alternatives
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustreapi library for filesystem changelog
  *
@@ -48,19 +48,19 @@ static int chlg_dev_path(char *path, size_t path_len, const char *device)
  * Read chunks of CHANGELOG_BUFFER_SZ bytes.
  */
 struct changelog_private {
-	/* Ensure that the structure is valid and initialized */
+	
 	int				 clp_magic;
-	/* File descriptor on the changelog character device */
+	
 	int				 clp_fd;
-	/* Changelog delivery mode */
+	
 	enum changelog_send_flag	 clp_send_flags;
-	/* Changelog extra flags */
+	
 	enum changelog_send_extra_flag	 clp_send_extra_flags;
-	/* Available bytes in buffer */
+	
 	size_t				 clp_buf_len;
-	/* Current position in buffer */
+	
 	char				*clp_buf_pos;
-	/* Read buffer with records read from system */
+	
 	char				 clp_buf[];
 };
 
@@ -86,7 +86,7 @@ int llapi_changelog_start(void **priv, enum changelog_send_flag flags,
 	if (rc != 0)
 		return rc;
 
-	/* Set up the receiver control struct */
+	
 	cp = calloc(1, sizeof(*cp) + CHANGELOG_BUFFER_SZ);
 	if (cp == NULL)
 		return -ENOMEM;
@@ -97,7 +97,7 @@ int llapi_changelog_start(void **priv, enum changelog_send_flag flags,
 	cp->clp_buf_len = 0;
 	cp->clp_buf_pos = cp->clp_buf;
 
-	/* Set up the receiver */
+	
 	cp->clp_fd = open(cdev_path, O_RDONLY);
 	if (cp->clp_fd < 0) {
 		rc = -errno;
@@ -153,7 +153,7 @@ out_free_cp:
 	return rc;
 }
 
-/** Finish reading from a changelog */
+
 int llapi_changelog_fini(void **priv)
 {
 	struct changelog_private *cp = *priv;
@@ -221,10 +221,10 @@ llapi_changelog_repack_rec(const struct changelog_rec *rec,
 	if (!new_rec)
 		return NULL;
 
-	/* Copy the changelog record header but reset the flags */
+	
 	memcpy((char *)new_rec, (char *)rec, sizeof(struct changelog_rec));
 
-	/* Keep the lower bits of cr_flags */
+	
 	new_rec->cr_flags = (rec->cr_flags & CLF_FLAGMASK) | CLF_VERSION;
 	if ((crf_wanted & CLF_RENAME) && (rec->cr_flags & CLF_RENAME)) {
 		new_rec->cr_flags |= CLF_RENAME;
@@ -284,7 +284,7 @@ llapi_changelog_repack_rec(const struct changelog_rec *rec,
 	}
 
 no_extras:
-	/* Lastly move the variable-length name field */
+	
 	memcpy(changelog_rec_name(new_rec),
 	       changelog_rec_name(rec), rec->cr_namelen);
 
@@ -337,7 +337,7 @@ int llapi_changelog_recv(void *priv, struct changelog_rec **rech)
 
 		refresh = chlg_read_bulk(cp);
 		if (refresh == 0) {
-			/* EOF */
+			
 			rc = 1;
 			goto out;
 		} else if (refresh < 0) {
@@ -353,7 +353,7 @@ out:
 	return rc;
 }
 
-/** Release the changelog record when done with it. */
+
 int llapi_changelog_free(struct changelog_rec **rech)
 {
 	free(*rech);

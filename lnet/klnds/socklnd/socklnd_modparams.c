@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
  *
  * Copyright (c) 2011, 2012, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Author: Eric Barton <eric@bartonsoftware.com>
  */
@@ -144,7 +144,7 @@ static unsigned int conns_per_peer = DEFAULT_CONNS_PER_PEER;
 module_param(conns_per_peer, uint, 0644);
 MODULE_PARM_DESC(conns_per_peer, "number of connections per peer");
 
-/* By default skip_mr_route_setup is 0 (do not skip) */
+
 static unsigned int skip_mr_route_setup;
 module_param(skip_mr_route_setup, uint, 0444);
 MODULE_PARM_DESC(skip_mr_route_setup, "skip automatic setup of linux routes for MR");
@@ -223,7 +223,7 @@ static int ksocklnd_ni_get_eth_intf_speed(struct lnet_ni *ni)
 
 	DECLARE_CONST_IN_IFADDR(ifa);
 
-	/* check if ni has interface assigned */
+	
 	if (!ni->ni_net_ns || !ni->ni_interface)
 		return 0;
 
@@ -232,7 +232,7 @@ static int ksocklnd_ni_get_eth_intf_speed(struct lnet_ni *ni)
 		int flags = dev_get_flags(dev);
 		struct in_device *in_dev;
 
-		if (flags & IFF_LOOPBACK) /* skip the loopback IF */
+		if (flags & IFF_LOOPBACK) 
 			continue;
 
 		if (!(flags & IFF_UP))
@@ -284,7 +284,7 @@ static int ksocklnd_ni_get_eth_intf_speed(struct lnet_ni *ni)
 		struct ethtool_link_ksettings cmd;
 		int ethtool_ret;
 
-		/* Some devices may not be providing link settings */
+		
 		ethtool_ret = __ethtool_get_link_ksettings(dev, &cmd);
 		if (!ethtool_ret)
 			ret = cmd.base.speed;
@@ -298,7 +298,7 @@ static int ksocklnd_ni_get_eth_intf_speed(struct lnet_ni *ni)
 
 static int ksocklnd_speed2cpp(int speed)
 {
-	/* Use the minimum of 1Gbps to avoid calling ilog2 with 0 */
+	
 	if (speed < 1000)
 		speed = 1000;
 
@@ -330,7 +330,7 @@ int ksocknal_tunables_init(void)
 	ksock_default_tunables.lnd_conns_per_peer = conns_per_peer;
 	ksock_default_tunables.lnd_tos = tos;
 
-	/* initialize ksocknal_tunables structure */
+	
 	ksocknal_tunables.ksnd_timeout            = &sock_timeout;
 	ksocknal_tunables.ksnd_nscheds		  = &nscheds;
 	ksocknal_tunables.ksnd_nconnds            = &nconnds;
@@ -399,7 +399,7 @@ void ksocknal_tunables_setup(struct lnet_lnd_tunables *lnd_tunables,
 	struct lnet_ioctl_config_socklnd_tunables *tunables;
 
 	tunables = &lnd_tunables->lnd_tun_u.lnd_sock;
-	/* Current API version */
+	
 	tunables->lnd_version = CURRENT_LND_VERSION;
 
 	if (net_tunables->lct_peer_timeout == -1)

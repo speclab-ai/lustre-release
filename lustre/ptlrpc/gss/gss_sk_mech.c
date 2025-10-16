@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (C) 2013, 2015, Trustees of Indiana University
@@ -118,8 +118,8 @@ static int sk_fill_context(rawobj_t *inbuf, struct sk_ctx *skc)
 	char sk_crypt[CRYPTO_MAX_ALG_NAME];
 	u32 tmp;
 
-	/* see sk_serialize_kctx() for format from userspace side */
-	/*  1. Version */
+	
+	
 	if (gss_get_bytes(&ptr, end, &tmp, sizeof(tmp))) {
 		CERROR("Failed to read shared key interface version\n");
 		return -1;
@@ -129,7 +129,7 @@ static int sk_fill_context(rawobj_t *inbuf, struct sk_ctx *skc)
 		return -1;
 	}
 
-	/* 2. HMAC type */
+	
 	if (gss_get_bytes(&ptr, end, &sk_hmac, sizeof(sk_hmac))) {
 		CERROR("Failed to read HMAC algorithm type\n");
 		return -1;
@@ -143,7 +143,7 @@ static int sk_fill_context(rawobj_t *inbuf, struct sk_ctx *skc)
 		return -1;
 	}
 
-	/* 3. crypt type */
+	
 	if (gss_get_bytes(&ptr, end, &sk_crypt, sizeof(sk_crypt))) {
 		CERROR("Failed to read crypt algorithm type\n");
 		return -1;
@@ -155,28 +155,28 @@ static int sk_fill_context(rawobj_t *inbuf, struct sk_ctx *skc)
 		return -1;
 	}
 
-	/* 4. expiration time */
+	
 	if (gss_get_bytes(&ptr, end, &tmp, sizeof(tmp))) {
 		CERROR("Failed to read context expiration time\n");
 		return -1;
 	}
 	skc->sc_expire = tmp + ktime_get_real_seconds();
 
-	/* 5. host random is used as nonce for encryption */
+	
 	if (gss_get_bytes(&ptr, end, &skc->sc_host_random,
 			  sizeof(skc->sc_host_random))) {
 		CERROR("Failed to read host random\n");
 		return -1;
 	}
 
-	/* 6. peer random is used as nonce for decryption */
+	
 	if (gss_get_bytes(&ptr, end, &skc->sc_peer_random,
 			  sizeof(skc->sc_peer_random))) {
 		CERROR("Failed to read peer random\n");
 		return -1;
 	}
 
-	/* 7. HMAC key */
+	
 	if (gss_get_rawobj(&ptr, end, &skc->sc_hmac_key)) {
 		CERROR("Failed to read HMAC key\n");
 		return -1;
@@ -187,7 +187,7 @@ static int sk_fill_context(rawobj_t *inbuf, struct sk_ctx *skc)
 		return -1;
 	}
 
-	/* 8. Session key, can be empty if not using privacy mode */
+	
 	if (gss_get_rawobj(&ptr, end, &skc->sc_session_kb.kb_key)) {
 		CERROR("Failed to read session key\n");
 		return -1;
@@ -224,7 +224,7 @@ __u32 gss_import_sec_context_sk(rawobj_t *inbuf, struct gss_ctx *gss_context)
 	if (sk_fill_context(inbuf, skc))
 		goto out_err;
 
-	/* Only privacy mode needs to initialize keys */
+	
 	if (skc->sc_session_kb.kb_key.len > 0) {
 		privacy = true;
 		if (gss_keyblock_init(&skc->sc_session_kb,
@@ -267,7 +267,7 @@ __u32 gss_copy_reverse_context_sk(struct gss_ctx *gss_context_old,
 	if (gss_keyblock_dup(&skc_new->sc_session_kb, &skc_old->sc_session_kb))
 		goto out_err;
 
-	/* Only privacy mode needs to initialize keys */
+	
 	if (skc_new->sc_session_kb.kb_key.len > 0)
 		if (gss_keyblock_init(&skc_new->sc_session_kb,
 				      cfs_crypto_crypt_name(skc_new->sc_crypt),
@@ -512,7 +512,7 @@ __u32 gss_wrap_sk(struct gss_ctx *gss_context, rawobj_t *gss_header,
 			      &skw.skw_cipher, 1))
 		return GSS_S_FAILURE;
 
-	/* HMAC covers the SK header, GSS header, and ciphertext */
+	
 	msgbufs[0] = skw.skw_header;
 	msgbufs[1] = *gss_header;
 	msgbufs[2] = skw.skw_cipher;
@@ -563,7 +563,7 @@ __u32 gss_unwrap_sk(struct gss_ctx *gss_context, rawobj_t *gss_header,
 	if (rc != GSS_S_COMPLETE)
 		return rc;
 
-	/* HMAC covers the SK header, GSS header, and ciphertext */
+	
 	msgbufs[0] = skw.skw_header;
 	msgbufs[1] = *gss_header;
 	msgbufs[2] = skw.skw_cipher;
@@ -699,14 +699,14 @@ static __u32 sk_decrypt_bulk(struct crypto_sync_skcipher *tfm, __u8 *iv,
 		 * decryption.  Similar to what gss_cli_ctx_unwrap_bulk does for
 		 * integrity only mode */
 		if (adj_nob) {
-			/* cipher text must not exceed transferred size */
+			
 			if (ciov->bv_len + cnob > desc->bd_nob_transferred)
 				ciov->bv_len =
 					desc->bd_nob_transferred - cnob;
 
 			piov->bv_len = ciov->bv_len;
 
-			/* plain text must not exceed bulk's size */
+			
 			if (ciov->bv_len + pnob > desc->bd_nob)
 				piov->bv_len = desc->bd_nob - pnob;
 		} else {
@@ -755,7 +755,7 @@ static __u32 sk_decrypt_bulk(struct crypto_sync_skcipher *tfm, __u8 *iv,
 	}
 	skcipher_request_zero(req);
 
-	/* if needed, clear up the rest unused iovs */
+	
 	if (adj_nob)
 		while (i < desc->bd_iov_count)
 			desc->bd_vec[i++].bv_len = 0;
@@ -913,7 +913,7 @@ static struct subflavor_desc gss_sk_sfs[] = {
 };
 
 static struct gss_api_mech gss_sk_mech = {
-	/* .gm_owner uses default NULL value for THIS_MODULE */
+	
 	.gm_name        = "sk",
 	.gm_oid         = (rawobj_t) {
 		.len = 12,

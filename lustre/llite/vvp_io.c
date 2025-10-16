@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2008, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Implementation of cl_io for VVP layer.
  *
@@ -60,13 +60,13 @@ static bool can_populate_pages(const struct lu_env *env, struct cl_io *io,
 		if (ll_layout_version_get(lli) != vio->vui_layout_gen ||
 		    CFS_FAIL_CHECK_RESET(OBD_FAIL_LLITE_LOST_LAYOUT, 0)) {
 			io->ci_need_restart = 1;
-			/* this will cause a short read/write */
+			
 			io->ci_continue = 0;
 			rc = false;
 		}
 		fallthrough;
 	case CIT_FAULT:
-		/* fault is okay because we've already had a page. */
+		
 		fallthrough;
 	default:
 		break;
@@ -184,7 +184,7 @@ static int vvp_prep_size(const struct lu_env *env, struct cl_object *obj,
 	return result;
 }
 
-/* io operations. */
+
 static int vvp_io_one_lock_index(const struct lu_env *env, struct cl_io *io,
 				 __u32 enqflags, enum cl_lock_mode mode,
 				 pgoff_t start, pgoff_t end)
@@ -293,7 +293,7 @@ static void vvp_io_fini(const struct lu_env *env, const struct cl_io_slice *ios)
 		filemap_invalidate_unlock(inode->i_mapping);
 		io->ci_invalidate_page_cache = 0;
 	}
-#endif /* HAVE_INVALIDATE_LOCK */
+#endif 
 
 	if (io->ci_restore_needed) {
 		/* file was detected release, we need to restore it
@@ -334,15 +334,15 @@ static void vvp_io_fini(const struct lu_env *env, const struct cl_io_slice *ios)
 			       DFID" layout changed from %d to %d.\n",
 			       PFID(lu_object_fid(&obj->co_lu)),
 			       vio->vui_layout_gen, gen);
-			/* today successful restore is the only possible case */
-			/* restore was done, clear restoring state */
+			
+			
 			clear_bit(LLIF_FILE_RESTORING,
 				  &ll_i2info(vvp_object_inode(obj))->lli_flags);
 		}
 		GOTO(out, 0);
 	}
 
-	/* dynamic layout change needed, send layout intent RPC. */
+	
 	if (io->ci_need_write_intent || io->ci_need_pccro_clear) {
 		enum layout_intent_opc opc = LAYOUT_INTENT_WRITE;
 
@@ -372,7 +372,7 @@ static void vvp_io_fini(const struct lu_env *env, const struct cl_io_slice *ios)
 
 	if (!io->ci_need_restart &&
 	    !io->ci_ignore_layout && io->ci_verify_layout) {
-		/* check layout version */
+		
 		ll_layout_refresh(inode, &gen);
 		io->ci_need_restart = vio->vui_layout_gen != gen;
 		if (io->ci_need_restart) {
@@ -431,11 +431,11 @@ static int vvp_mmap_locks(const struct lu_env *env,
 
 	LASSERT(io->ci_type == CIT_READ || io->ci_type == CIT_WRITE);
 
-	/* nfs or loop back device write */
+	
 	if (vio->vui_iter == NULL)
 		RETURN(0);
 
-	/* No MM (e.g. NFS)? No vmas too. */
+	
 	if (mm == NULL)
 		RETURN(0);
 
@@ -463,7 +463,7 @@ static int vvp_mmap_locks(const struct lu_env *env,
 			int flags = CEF_MUST;
 
 			if (ll_file_nolock(file)) {
-				/* For no lock case is not allowed for mmap */
+				
 				result = -EINVAL;
 				break;
 			}
@@ -550,7 +550,7 @@ static int vvp_io_rw_lock(const struct lu_env *env, struct cl_io *io,
 	if (vio->vui_fd) {
 		int flags;
 
-		/* Group lock held means no lockless any more */
+		
 		if (vio->vui_fd->lfd_file_flags & LL_FILE_GROUP_LOCKED)
 			io->ci_dio_lock = 1;
 
@@ -587,7 +587,7 @@ static int vvp_io_fault_lock(const struct lu_env *env,
 {
 	struct cl_io *io   = ios->cis_io;
 	struct vvp_io *vio = cl2vvp_io(env, ios);
-	/* XXX LDLM_FL_CBPENDING */
+	
 	return vvp_io_one_lock_index(env,
 				     io, 0,
 				     vvp_mode_from_vma(vio->u.fault.ft_vma),
@@ -669,7 +669,7 @@ static int vvp_do_vmtruncate(struct inode *inode, size_t size)
 {
 	int result;
 
-	/* Only ll_inode_size_lock is taken at this level.  */
+	
 	ll_inode_size_lock(inode);
 	result = inode_newsize_ok(inode, size);
 	if (result < 0) {
@@ -761,7 +761,7 @@ static void vvp_io_setattr_end(const struct lu_env *env,
 		mutex_unlock(&lli->lli_setattr_mutex);
 		trunc_sem_up_write(&lli->lli_trunc_sem);
 
-		/* Update size and blocks for LSOM */
+		
 		if (!io->ci_ignore_layout)
 			ll_merge_attr(env, inode);
 	} else if (cl_io_is_fallocate(io)) {
@@ -790,7 +790,7 @@ static void vvp_io_setattr_fini(const struct lu_env *env,
 	vvp_io_fini(env, ios);
 
 	if (restore_needed && !ios->cis_io->ci_restore_needed) {
-		/* restore finished, set data modified flag for HSM */
+		
 		set_bit(LLIF_DATA_MODIFIED, &ll_i2info(inode)->lli_flags);
 	}
 }
@@ -853,7 +853,7 @@ static int vvp_io_read_start(const struct lu_env *env,
 			 "Read ino %lu, %zu bytes, offset %lld, size %llu\n",
 			 inode->i_ino, crw_bytes, pos, i_size_read(inode));
 
-	/* initialize read-ahead window once per syscall */
+	
 	if (!vio->vui_ra_valid) {
 		vio->vui_ra_valid = true;
 		vio->vui_ra_start_idx = pos >> PAGE_SHIFT;
@@ -873,7 +873,7 @@ static int vvp_io_read_start(const struct lu_env *env,
 		       vio->vui_ra_pages);
 	}
 
-	/* BUG: 5972 */
+	
 	file_accessed(file);
 	LASSERT(vio->vui_iocb->ki_pos == pos);
 	iter = *vio->vui_iter;
@@ -893,7 +893,7 @@ static int vvp_io_read_start(const struct lu_env *env,
 			io->ci_bytes += result;
 			total_bytes_read += result;
 		}
-	/* got a short read or -EIO and we raced with page invalidation retry */
+	
 	} while (read_seqretry(&ll_i2info(inode)->lli_page_inv_lock, seq) &&
 		 ((result >= 0 && iov_iter_count(&iter) > 0)
 		  || result == -EIO));
@@ -942,13 +942,13 @@ static int vvp_io_commit_sync(const struct lu_env *env, struct cl_io *io,
 	cl_page_list_splice(plist, &queue->c2_qin);
 	rc = cl_io_submit_sync(env, io, CRT_WRITE, queue, 0);
 
-	/* plist is not sorted any more */
+	
 	cl_page_list_splice(&queue->c2_qin, plist);
 	cl_page_list_splice(&queue->c2_qout, plist);
 	cl_2queue_fini(env, queue);
 
 	if (rc == 0) {
-		/* calculate bytes */
+		
 		bytes = plist->pl_nr << PAGE_SHIFT;
 		bytes -= from + PAGE_SIZE - to;
 
@@ -961,7 +961,7 @@ static int vvp_io_commit_sync(const struct lu_env *env, struct cl_io *io,
 			SetPageUptodate(cl_page_vmpage(page));
 			cl_page_disown(env, io, page);
 
-			/* held in ll_cl_init() */
+			
 			cl_page_put(env, page);
 		}
 	}
@@ -1046,7 +1046,7 @@ static void vvp_set_batch_dirty(struct folio_batch *fbatch)
 	}
 #endif
 
-	/* account_page_dirtied is available directly or via kallsyms */
+	
 #ifdef HAVE_KALLSYMS_LOOKUP_NAME
 	for (pgno = i = 0; i < count; i++) {
 		npgs = fbatch_at_npgs(fbatch, i);
@@ -1084,7 +1084,7 @@ static void vvp_set_batch_dirty(struct folio_batch *fbatch)
 		npgs = fbatch_at_npgs(fbatch, i);
 		for (pg = 0; pg < npgs; pg++) {
 			page = fbatch_at_pg(fbatch, i, pg);
-			/* if the i'th page was unlocked above, skip it here */
+			
 			if ((skip_pages >> pgno++) & 1)
 				continue;
 
@@ -1103,7 +1103,7 @@ static void vvp_set_batch_dirty(struct folio_batch *fbatch)
 	       count, dirtied);
 
 	if (mapping->host && dirtied) {
-		/* !PageAnon && !swapper_space */
+		
 		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
 	}
 #endif
@@ -1145,7 +1145,7 @@ static void write_commit_callback(const struct lu_env *env, struct cl_io *io,
 	EXIT;
 }
 
-/* make sure the page list is contiguous */
+
 static bool page_list_sanity_check(struct cl_object *obj,
 				   struct cl_page_list *plist)
 {
@@ -1167,7 +1167,7 @@ static bool page_list_sanity_check(struct cl_object *obj,
 	return true;
 }
 
-/* Return how many bytes have queued or written */
+
 int vvp_io_write_commit(const struct lu_env *env, struct cl_io *io,
 			enum cl_io_priority prio)
 {
@@ -1191,19 +1191,19 @@ int vvp_io_write_commit(const struct lu_env *env, struct cl_io *io,
 
 	LASSERT(page_list_sanity_check(obj, queue));
 
-	/* submit IO with async write */
+	
 	rc = cl_io_commit_async(env, io, queue,
 				vio->u.readwrite.vui_from,
 				vio->u.readwrite.vui_to,
 				write_commit_callback, prio);
-	npages -= queue->pl_nr; /* already committed pages */
+	npages -= queue->pl_nr; 
 	if (npages > 0) {
-		/* calculate how many bytes were written */
+		
 		bytes = npages << PAGE_SHIFT;
 
-		/* first page */
+		
 		bytes -= vio->u.readwrite.vui_from;
-		if (queue->pl_nr == 0) /* last page */
+		if (queue->pl_nr == 0) 
 			bytes -= PAGE_SIZE - vio->u.readwrite.vui_to;
 		LASSERTF(bytes > 0, "bytes = %d, pages = %d\n", bytes, npages);
 
@@ -1212,13 +1212,13 @@ int vvp_io_write_commit(const struct lu_env *env, struct cl_io *io,
 		CDEBUG(D_VFSTRACE, "Committed %d pages %d bytes, tot: %ld\n",
 			npages, bytes, vio->u.readwrite.vui_written);
 
-		/* the first page must have been written. */
+		
 		vio->u.readwrite.vui_from = 0;
 	}
 	LASSERT(page_list_sanity_check(obj, queue));
 	LASSERT(ergo(rc == 0, queue->pl_nr == 0));
 
-	/* out of quota, try sync write */
+	
 	if ((rc == -EDQUOT && !cl_io_is_mkwrite(io)) || prio > IO_PRIO_NORMAL) {
 		struct ll_inode_info *lli = ll_i2info(inode);
 
@@ -1246,7 +1246,7 @@ int vvp_io_write_commit(const struct lu_env *env, struct cl_io *io,
 
 		cl_page_disown(env, io, page);
 
-		/* held in ll_cl_init() */
+		
 		cl_page_put(env, page);
 	}
 	cl_page_list_fini(env, queue);
@@ -1311,7 +1311,7 @@ static int vvp_io_write_start(const struct lu_env *env,
 		RETURN(-EFBIG);
 	}
 
-	/* Tests to verify we take the i_mutex correctly */
+	
 	if (CFS_FAIL_CHECK(OBD_FAIL_LLITE_IMUTEX_SEC) && !lock_inode)
 		RETURN(-EINVAL);
 
@@ -1326,7 +1326,7 @@ static int vvp_io_write_start(const struct lu_env *env,
 	}
 
 	if (vio->vui_iter == NULL) {
-		/* from a temp io in ll_cl_init(). */
+		
 		result = 0;
 	} else {
 		/*
@@ -1364,7 +1364,7 @@ static int vvp_io_write_start(const struct lu_env *env,
 
 	if (result > 0) {
 		result = vvp_io_write_commit(env, io, IO_PRIO_NORMAL);
-		/* Simulate short commit */
+		
 		if (CFS_FAULT_CHECK(OBD_FAIL_LLITE_SHORT_COMMIT)) {
 			vio->u.readwrite.vui_written >>= 1;
 			if (vio->u.readwrite.vui_written > 0)
@@ -1398,7 +1398,7 @@ static int vvp_io_write_start(const struct lu_env *env,
 			io->ci_continue = 0;
 		if (result > 0)
 			result = 0;
-		/* move forward */
+		
 		if (result == -EIOCBQUEUED) {
 			io->ci_bytes += vio->u.readwrite.vui_written;
 			vio->vui_iocb->ki_pos = pos +
@@ -1426,7 +1426,7 @@ static void vvp_io_write_end(const struct lu_env *env,
 
 	vvp_io_rw_end(env, ios);
 
-	/* Update size and blocks for LSOM (best effort) */
+	
 	if (!io->ci_ignore_layout && cl_io_is_sync_write(io))
 		ll_merge_attr_try(env, inode);
 }
@@ -1440,7 +1440,7 @@ static int vvp_io_kernel_fault(struct vvp_fault_io *cfio)
 	cfio->ft_flags_valid = 1;
 
 	if (vmf->page) {
-		/* success, vmpage is locked */
+		
 		LL_CDEBUG_PAGE(D_PAGE, vmf->page, "got addr %p type NOPAGE\n",
 			       get_vmf_address(vmf));
 		if (unlikely(!(cfio->ft_flags & VM_FAULT_LOCKED))) {
@@ -1498,7 +1498,7 @@ static int vvp_io_fault_start(const struct lu_env *env,
 
 	trunc_sem_down_read_nowait(&lli->lli_trunc_sem);
 
-	/* offset of the last byte on the page */
+	
 	offset = ((fio->ft_index + 1) << PAGE_SHIFT) - 1;
 	LASSERT((offset >> PAGE_SHIFT) == fio->ft_index);
 	result = vvp_prep_size(env, obj, io, 0, offset + 1, NULL);
@@ -1507,7 +1507,7 @@ static int vvp_io_fault_start(const struct lu_env *env,
 
 	CFS_FAIL_TIMEOUT(OBD_FAIL_LLITE_FAULT_PAUSE, cfs_fail_val);
 
-	/* must return locked page */
+	
 	if (fio->ft_mkwrite) {
 		LASSERT(cfio->ft_vmpage != NULL);
 		vmpage = cfio->ft_vmpage;
@@ -1579,20 +1579,20 @@ static int vvp_io_fault_start(const struct lu_env *env,
 	if (IS_ERR(page))
 		GOTO(out, result = PTR_ERR(page));
 
-	/* if page will be written, then add this page into cache earlier. */
+	
 	if (fio->ft_mkwrite) {
 		wait_on_page_writeback(vmpage);
 		if (!PageDirty(vmpage)) {
 			struct cl_page_list *plist = &vio->u.fault.ft_queue;
 			int to = PAGE_SIZE;
 
-			/* vvp_page_assume() calls wait_on_page_writeback(). */
+			
 			cl_page_assume(env, io, page);
 
 			cl_page_list_init(plist);
 			cl_page_list_add(plist, page, true);
 
-			/* size fixup */
+			
 			if (last_index == cl_page_index(page))
 				to = ((size - 1) & ~PAGE_MASK) + 1;
 
@@ -1634,7 +1634,7 @@ static int vvp_io_fault_start(const struct lu_env *env,
 
 				cl_page_put(env, page);
 
-				/* we're in big trouble, what can we do now? */
+				
 				if (result == -EDQUOT)
 					result = -ENOSPC;
 				GOTO(out, result);
@@ -1651,7 +1651,7 @@ static int vvp_io_fault_start(const struct lu_env *env,
 	 */
 	LASSERT(!fio->ft_mkwrite || fio->ft_index <= last_index);
 	if (fio->ft_index == last_index)
-		/* Last page is mapped partially. */
+		
 		fio->ft_bytes = size - (fio->ft_index << PAGE_SHIFT);
 	else
 		fio->ft_bytes = PAGE_SIZE;
@@ -1660,7 +1660,7 @@ static int vvp_io_fault_start(const struct lu_env *env,
 	EXIT;
 
 out:
-	/* return unlocked vmpage to avoid deadlocking */
+	
 	if (vmpage != NULL)
 		unlock_page(vmpage);
 
@@ -1695,7 +1695,7 @@ static void vvp_io_fsync_end(const struct lu_env *env,
 	struct inode *inode = vvp_object_inode(ios->cis_obj);
 	struct cl_io *io = ios->cis_io;
 
-	/* Update size and blocks for LSOM (best effort) */
+	
 	if (!io->ci_ignore_layout)
 		ll_merge_attr_try(env, inode);
 }
@@ -1715,7 +1715,7 @@ static int vvp_io_read_ahead(const struct lu_env *env,
 		if (unlikely(vio->vui_fd->lfd_file_flags &
 			     LL_FILE_GROUP_LOCKED)) {
 			ra->cra_end_idx = CL_PAGE_EOF;
-			result = 1; /* no need to call down */
+			result = 1; 
 		}
 	}
 
@@ -1728,7 +1728,7 @@ static int vvp_io_lseek_lock(const struct lu_env *env,
 	struct cl_io *io = ios->cis_io;
 	__u64 lock_start = io->u.ci_lseek.ls_start;
 	__u64 lock_end = OBD_OBJECT_EOF;
-	__u32 enqflags = CEF_MUST; /* always take client lock */
+	__u32 enqflags = CEF_MUST; 
 
 	return vvp_io_one_lock(env, io, enqflags, CLM_READ,
 			       lock_start, lock_end);
@@ -1857,7 +1857,7 @@ int vvp_io_init(const struct lu_env *env, struct cl_object *obj,
 		else
 			vio->vui_tot_bytes = bytes;
 
-		/* this might sleep */
+		
 		lustre_get_jobid(ji.ji_jobid, sizeof(ji.ji_jobid));
 		ji.ji_uid = from_kuid(&init_user_ns, current_uid());
 		ji.ji_gid = from_kgid(&init_user_ns, current_gid());
@@ -1898,7 +1898,7 @@ int vvp_io_init(const struct lu_env *env, struct cl_object *obj,
 #ifdef HAVE_INVALIDATE_LOCK
 	if (io->ci_invalidate_page_cache)
 		filemap_invalidate_lock(inode->i_mapping);
-#endif /* HAVE_INVALIDATE_LOCK */
+#endif 
 
 	io->ci_result = result < 0 ? result : 0;
 	RETURN(result);

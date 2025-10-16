@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf.h
  *
@@ -26,7 +26,7 @@ extern char *outlog;
 
 #define OUT_LOG_NAME "lutf_out.log"
 #define OUT_PY_LOG "lutf_py.log"
-#define LARGE_LOG_FILE 400000000 /* 400 MB */
+#define LARGE_LOG_FILE 400000000 
 
 static inline void lutf_log_print(bool error, char *color1, char *color2,
 				  char *file, int line, char *fmt, ...)
@@ -37,7 +37,7 @@ static inline void lutf_log_print(bool error, char *color1, char *color2,
 	struct stat st;
 	va_list args;
 
-	/* check if the log file has grown too large */
+	
 	stat(outlog, &st);
 	if (st.st_size > LARGE_LOG_FILE)
 		out = freopen(outlog, "w", out);
@@ -75,18 +75,18 @@ typedef struct lutf_listener_info_s {
 
 typedef struct lutf_config_params_s {
 	lutf_listener_info_t l_info;
-	lutf_run_mode_t shell; /* run in [non]-interactive or daemon mode */
-	char *cfg_path; /* path to config file */
-	char *lutf_path; /* path to lutf */
-	char *py_path; /* other python specific paths */
-	char *master_name; /* name of master. Important if I'm an agent */
-	char *suite; /* name of suite to run. Run all if not present */
+	lutf_run_mode_t shell; 
+	char *cfg_path; 
+	char *lutf_path; 
+	char *py_path; 
+	char *master_name; 
+	char *suite; 
 	char *suite_list; /* list of suites to run. Takes precedence
 			     over single suite parameter */
-	char *script; /* name of script to run. Suite must be specified */
-	char *pattern; /* file match pattern */
-	char *results_file; /* path to results file */
-	char *tmp_dir; /* directory to put temporary files */
+	char *script; 
+	char *pattern; 
+	char *results_file; 
+	char *tmp_dir; 
 	struct cYAML *agents; /* list of agents to wait for before
 			       * starting the test
 			       */
@@ -145,4 +145,4 @@ lutf_rc_t readTcpMessage(int iFd, char *pcBuffer,
 
 lutf_rc_t closeTcpConnection(int iTcpSocket);
 
-#endif /* LUTF_H */
+#endif 

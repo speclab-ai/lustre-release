@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -51,12 +51,12 @@ lquota_disk_find_create(const struct lu_env *env, struct dt_device *dev,
 	int rc;
 	ENTRY;
 
-	/* Set up local storage */
+	
 	rc = local_oid_storage_init(env, dev, fid, &los);
 	if (rc)
 		RETURN(ERR_PTR(rc));
 
-	/* lookup/create slave index file */
+	
 	obj = local_index_find_or_create(env, los, parent, name, LQUOTA_MODE,
 					 idx_feat);
 	if (IS_ERR(obj))
@@ -83,7 +83,7 @@ static inline int lquota_disk_slv_filename(const struct lu_fid *glb_fid,
 {
 	char	*name, *uuid_str;
 
-	/* In most case, the uuid is NULL terminated */
+	
 	if (uuid->uuid[sizeof(*uuid) - 1] != '\0') {
 		OBD_ALLOC(uuid_str, sizeof(*uuid));
 		if (uuid_str == NULL)
@@ -155,7 +155,7 @@ struct dt_object *lquota_disk_dir_find_create(const struct lu_env *env,
 		RETURN(ERR_PTR(rc));
 
 	if (parent == NULL) {
-		/* Fetch dt object associated with root directory */
+		
 		rc = dt_root_get(env, dev, &qti->qti_fid);
 		if (rc)
 			GOTO(out, rc);
@@ -168,7 +168,7 @@ struct dt_object *lquota_disk_dir_find_create(const struct lu_env *env,
 		lu_object_get(&parent->do_lu);
 	}
 
-	/* create quota directory to be used for all quota index files */
+	
 	qt_dir = local_file_find_or_create(env, los, parent, name, S_IFDIR |
 					   S_IRUGO | S_IWUSR | S_IXUGO);
 	if (IS_ERR(qt_dir))
@@ -232,13 +232,13 @@ struct dt_object *lquota_disk_glb_find_create(const struct lu_env *env,
 	sprintf(qti->qti_buf, "0x%x", fid->f_oid);
 
 	if (local) {
-		/* We use the sequence reserved for local named objects */
+		
 		lu_local_name_obj_fid(&qti->qti_fid, 1);
 		glb_idx = lquota_disk_find_create(env, dev, parent,
 						  &qti->qti_fid, idx_feat,
 						  qti->qti_buf);
 	} else {
-		/* look-up/create global index on disk */
+		
 		glb_idx = local_index_find_or_create_with_fid(env, dev, fid,
 							      parent,
 							      qti->qti_buf,
@@ -253,7 +253,7 @@ struct dt_object *lquota_disk_glb_find_create(const struct lu_env *env,
 		RETURN(glb_idx);
 	}
 
-	/* install index operation vector */
+	
 	if (glb_idx->do_index_ops == NULL) {
 		int rc;
 
@@ -300,17 +300,17 @@ struct dt_object *lquota_disk_slv_find(const struct lu_env *env,
 	CDEBUG(D_QUOTA, "lookup slave index file for %s\n",
 	       obd_uuid2str(uuid));
 
-	/* generate filename associated with the slave */
+	
 	rc = lquota_disk_slv_filename(glb_fid, uuid, qti->qti_buf);
 	if (rc)
 		RETURN(ERR_PTR(rc));
 
-	/* lookup slave index file */
+	
 	rc = dt_lookup_dir(env, parent, qti->qti_buf, &qti->qti_fid);
 	if (rc)
                 RETURN(ERR_PTR(rc));
 
-	/* name is found, get the object */
+	
 	slv_idx = dt_locate(env, dev, &qti->qti_fid);
 	if (IS_ERR(slv_idx))
 		RETURN(slv_idx);
@@ -369,7 +369,7 @@ struct dt_object *lquota_disk_slv_find_create(const struct lu_env *env,
 	CDEBUG(D_QUOTA, "lookup/create slave index file for %s\n",
 	       obd_uuid2str(uuid));
 
-	/* generate filename associated with the slave */
+	
 	rc = lquota_disk_slv_filename(glb_fid, uuid, qti->qti_buf);
 	if (rc)
 		RETURN(ERR_PTR(rc));
@@ -391,7 +391,7 @@ struct dt_object *lquota_disk_slv_find_create(const struct lu_env *env,
 		if (rc)
 			RETURN(ERR_PTR(rc));
 
-		/* use predefined fid in the reserved oid list */
+		
 		if ((type == LDD_F_SV_TYPE_MDT && pool_type == LQUOTA_RES_MD) ||
 		    (type == LDD_F_SV_TYPE_OST && pool_type == LQUOTA_RES_DT))
 			qti->qti_fid.f_oid = qtype2slv_oid(qtype);
@@ -406,10 +406,10 @@ struct dt_object *lquota_disk_slv_find_create(const struct lu_env *env,
 							      LQUOTA_MODE,
 							&dt_quota_slv_features);
 	} else {
-		/* allocate fid dynamically if index does not exist already */
+		
 		qti->qti_fid.f_oid = LQUOTA_GENERATED_OID;
 
-		/* lookup/create slave index file */
+		
 		slv_idx = lquota_disk_find_create(env, dev, parent,
 						  &qti->qti_fid,
 						  &dt_quota_slv_features,
@@ -419,7 +419,7 @@ struct dt_object *lquota_disk_slv_find_create(const struct lu_env *env,
 	if (IS_ERR(slv_idx))
 		RETURN(slv_idx);
 
-	/* install index operation vector */
+	
 	if (slv_idx->do_index_ops == NULL) {
 		rc = slv_idx->do_ops->do_index_try(env, slv_idx,
 						   &dt_quota_slv_features);
@@ -496,7 +496,7 @@ int lquota_disk_for_each_slv(const struct lu_env *env, struct dt_object *parent,
 		int		 len;
 
 		len = iops->key_size(env, it);
-		/* IAM iterator can return record with zero len. */
+		
 		if (len == 0 || len <= strlen(name) || len >= LQUOTA_NAME_MAX)
 			goto next;
 
@@ -514,7 +514,7 @@ int lquota_disk_for_each_slv(const struct lu_env *env, struct dt_object *parent,
 		memcpy(&qti->qti_buf, key, len);
 		qti->qti_buf[len] = '\0';
 
-		/* lookup fid associated with this slave index file */
+		
 		rc = dt_lookup_dir(env, parent, qti->qti_buf, &qti->qti_fid);
 		if (rc)
 			break;
@@ -558,7 +558,7 @@ int lquota_disk_read(const struct lu_env *env, struct dt_object *obj,
 	LASSERT(dt_object_exists(obj));
 	LASSERT(obj->do_index_ops != NULL);
 
-	/* lookup on-disk record from index file */
+	
 	dt_read_lock(env, obj, 0);
 	rc = dt_lookup(env, obj, rec, (struct dt_key *)&id->qid_uid);
 	dt_read_unlock(env, obj);
@@ -593,13 +593,13 @@ int lquota_disk_declare_write(const struct lu_env *env, struct thandle *th,
 	if (rc)
 		RETURN(rc);
 
-	/* declare insertion of updated record */
+	
 	rc = dt_declare_insert(env, obj, (struct dt_rec *)&qti->qti_rec, key,
 			       th);
 	if (rc)
 		RETURN(rc);
 
-	/* we might have to update the version of the global index too */
+	
 	rc = dt_declare_version_set(env, obj, th);
 
 	RETURN(rc);
@@ -632,28 +632,28 @@ int lquota_disk_write(const struct lu_env *env, struct thandle *th,
 	LASSERT(dt_object_exists(obj));
 	LASSERT(obj->do_index_ops != NULL);
 
-	/* lock index */
+	
 	dt_write_lock(env, obj, 0);
 
-	/* check whether there is already an existing record for this ID */
+	
 	rc = dt_lookup(env, obj, (struct dt_rec *)&qti->qti_rec, key);
 	if (rc == 0) {
-		/* delete existing record in order to replace it */
+		
 		rc = dt_delete(env, obj, key, th);
 		if (rc)
 			GOTO(out, rc);
 	} else if (rc == -ENOENT) {
-		/* probably first insert */
+		
 		rc = 0;
 	} else {
 		GOTO(out, rc);
 	}
 
 	if (rec != NULL) {
-		/* insert record with updated quota settings */
+		
 		rc = dt_insert(env, obj, rec, key, th);
 		if (rc) {
-			/* try to insert the old one */
+			
 			rc = dt_insert(env, obj, (struct dt_rec *)&qti->qti_rec,
 				       key, th);
 			LASSERTF(rc == 0, "failed to insert record in quota "
@@ -694,10 +694,10 @@ int lquota_disk_delete(const struct lu_env *env, struct thandle *th,
 	LASSERT(dt_object_exists(obj));
 	LASSERT(obj->do_index_ops != NULL);
 
-	/* lock index */
+	
 	dt_write_lock(env, obj, 0);
 
-	/* check whether there is already an existing record for this ID */
+	
 	rc = dt_lookup(env, obj, (struct dt_rec *)&qti->qti_rec, key);
 	if (rc == 0) {
 		rc = dt_delete(env, obj, key, th);
@@ -768,7 +768,7 @@ int lquota_disk_write_glb(const struct lu_env *env, struct dt_object *obj,
 	if (IS_ERR(th))
 		RETURN(PTR_ERR(th));
 
-	/* the entry with 0 key can always be found in IAM file. */
+	
 	if (id == 0) {
 		rc = dt_declare_delete(env, obj, key, th);
 		if (rc)

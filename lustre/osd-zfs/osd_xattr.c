@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Functions to manipulate extended attributes and system attributes
  *
@@ -97,12 +97,12 @@ __osd_sa_xattr_get(const struct lu_env *env, struct osd_object *obj,
 		return rc;
 
 	if (buf == NULL || buf->lb_buf == NULL) {
-		/* return the required size by *sizep */
+		
 		return 0;
 	}
 
 	if (*sizep > buf->lb_len)
-		return -ERANGE; /* match ldiskfs error */
+		return -ERANGE; 
 
 	memcpy(buf->lb_buf, nv_value, *sizep);
 	return 0;
@@ -117,11 +117,11 @@ int __osd_xattr_get_large(const struct lu_env *env, struct osd_device *osd,
 	uint64_t xa_data_obj, size;
 	int rc;
 
-	/* are there any extended attributes? */
+	
 	if (xattr == ZFS_NO_OBJECT)
 		return -ENOENT;
 
-	/* Lookup the object number containing the xattr data */
+	
 	rc = -zap_lookup(osd->od_os, xattr, name, sizeof(uint64_t), 1,
 			&xa_data_obj);
 	if (rc)
@@ -136,7 +136,7 @@ int __osd_xattr_get_large(const struct lu_env *env, struct osd_device *osd,
 	if (rc)
 		goto out_rele;
 
-	/* Get the xattr value length / object size */
+	
 	rc = -sa_lookup(sa_hdl, SA_ZPL_SIZE(osd), &size, 8);
 	if (rc)
 		goto out;
@@ -149,11 +149,11 @@ int __osd_xattr_get_large(const struct lu_env *env, struct osd_device *osd,
 	*sizep = (int)size;
 
 	if (buf == NULL || buf->lb_buf == NULL) {
-		/* We only need to return the required size */
+		
 		goto out;
 	}
 	if (*sizep > buf->lb_len) {
-		rc = -ERANGE; /* match ldiskfs error */
+		rc = -ERANGE; 
 		goto out;
 	}
 
@@ -193,7 +193,7 @@ int osd_xattr_get_internal(const struct lu_env *env, struct osd_object *obj,
 	if (unlikely(!dt_object_exists(&obj->oo_dt) || obj->oo_destroyed))
 		return -ENOENT;
 
-	/* check SA_ZPL_DXATTR first then fallback to directory xattr */
+	
 	rc = __osd_sa_xattr_get(env, obj, buf, name, sizep);
 	if (rc != -ENOENT)
 		return rc;
@@ -226,7 +226,7 @@ int osd_xattr_get_lma(const struct lu_env *env, struct osd_object *obj,
 	if (unlikely(obj->oo_destroyed))
 		goto out_lma;
 
-	/* check SA_ZPL_DXATTR first then fallback to directory xattr */
+	
 	rc = __osd_sa_xattr_get(env, obj, buf, XATTR_NAME_LMA, &size);
 	if (!rc && unlikely(size < sizeof(struct lustre_mdt_attrs)))
 		rc = -EINVAL;
@@ -329,7 +329,7 @@ out:
 	RETURN(rc);
 }
 
-/* the function is used to declare EAs when SA is not supported */
+
 static void __osd_xattr_declare_legacy(const struct lu_env *env,
 				       struct osd_object *obj,
 				       int vallen, const char *name,
@@ -341,9 +341,9 @@ static void __osd_xattr_declare_legacy(const struct lu_env *env,
 	int rc;
 
 	if (obj->oo_xattr == ZFS_NO_OBJECT) {
-		/* xattr zap + entry */
+		
 		dmu_tx_hold_zap(tx, DMU_NEW_OBJECT, TRUE, (char *) name);
-		/* xattr value obj */
+		
 		dmu_tx_hold_sa_create(tx, ZFS_SA_BASE_ATTR_SIZE);
 		dmu_tx_hold_write(tx, DMU_NEW_OBJECT, 0, vallen);
 		return;
@@ -400,7 +400,7 @@ void __osd_xattr_declare_set(const struct lu_env *env, struct osd_object *obj,
 		return;
 	}
 
-	/* declare EA in SA */
+	
 	if (dt_object_exists(&obj->oo_dt)) {
 		LASSERT(obj->oo_sa_hdl);
 		/* XXX: it should be possible to skip spill declaration if
@@ -416,9 +416,9 @@ void __osd_xattr_declare_set(const struct lu_env *env, struct osd_object *obj,
 	 * in osd_declare_object_create() yet
 	 */
 	if (obj->oo_ea_in_bonus > bonuslen) {
-		/* spill has been declared already */
+		
 	} else if (obj->oo_ea_in_bonus + vallen > bonuslen) {
-		/* we're about to exceed bonus, let's declare spill */
+		
 		dmu_tx_hold_spill(tx, DMU_NEW_OBJECT);
 	}
 	obj->oo_ea_in_bonus += vallen;
@@ -507,7 +507,7 @@ int __osd_sa_attr_init(const struct lu_env *env, struct osd_object *obj,
 	SA_ADD_BULK_ATTR(bulk, cnt, SA_ZPL_RDEV(osd), NULL, &osa->rdev, 8);
 	LASSERT(cnt <= ARRAY_SIZE(osd_oti_get(env)->oti_attr_bulk));
 
-	/* Update the SA for additions, modifications, and removals. */
+	
 	rc = -nvlist_size(obj->oo_sa_xattr, &size, NV_ENCODE_XDR);
 	if (rc)
 		return rc;
@@ -543,7 +543,7 @@ int __osd_sa_xattr_update(const struct lu_env *env, struct osd_object *obj,
 
 	obj->oo_late_xattr = 0;
 
-	/* Update the SA for additions, modifications, and removals. */
+	
 	rc = -nvlist_size(obj->oo_sa_xattr, &size, NV_ENCODE_XDR);
 	if (rc)
 		return rc;
@@ -584,7 +584,7 @@ int __osd_sa_xattr_schedule_update(const struct lu_env *env,
 	LASSERT(obj->oo_sa_hdl);
 	LASSERT(obj->oo_sa_xattr);
 
-	/* schedule batched SA update in osd_object_sa_dirty_rele() */
+	
 	obj->oo_late_xattr = 1;
 	osd_object_sa_dirty_add(obj, oh);
 
@@ -610,7 +610,7 @@ int __osd_sa_xattr_set(const struct lu_env *env, struct osd_object *obj,
 	if (buf->lb_len > OBD_MAX_EA_SIZE) {
 		too_big = 1;
 	} else {
-		/* Prevent the DXATTR SA from consuming the entire SA region */
+		
 		rc = -nvlist_size(obj->oo_sa_xattr, &size, NV_ENCODE_XDR);
 		if (rc)
 			return rc;
@@ -644,7 +644,7 @@ int __osd_sa_xattr_set(const struct lu_env *env, struct osd_object *obj,
 		return rc;
 	}
 
-	/* Ensure xattr doesn't exist in ZAP */
+	
 	if (obj->oo_xattr != ZFS_NO_OBJECT) {
 		struct osd_device *osd = osd_obj2dev(obj);
 		uint64_t           objid;
@@ -714,7 +714,7 @@ __osd_xattr_set(const struct lu_env *env, struct osd_object *obj,
 			rc = -EEXIST;
 			goto out;
 		}
-		/* Entry already exists. We'll truncate the existing object. */
+		
 		rc = __osd_obj2dnode(osd->od_os, xa_data_obj, &xa_data_dn);
 		if (rc)
 			goto out;
@@ -765,11 +765,11 @@ __osd_xattr_set(const struct lu_env *env, struct osd_object *obj,
 		if (rc)
 			goto out_sa;
 	} else {
-		/* There was an error looking up the xattr name */
+		
 		goto out;
 	}
 
-	/* Finally write the xattr value */
+	
 	dmu_write(osd->od_os, xa_data_obj, 0, buf->lb_len, buf->lb_buf, tx);
 
 	size = buf->lb_len;
@@ -934,7 +934,7 @@ __osd_xattr_declare_del(const struct lu_env *env, struct osd_object *obj,
 	uint64_t xa_data_obj;
 	int rc;
 
-	/* update SA_ZPL_DXATTR if xattr was in SA */
+	
 	dmu_tx_hold_sa(tx, obj->oo_sa_hdl, 0);
 
 	if (obj->oo_xattr == ZFS_NO_OBJECT)
@@ -942,7 +942,7 @@ __osd_xattr_declare_del(const struct lu_env *env, struct osd_object *obj,
 
 	rc = -zap_lookup(osd->od_os, obj->oo_xattr, name, 8, 1, &xa_data_obj);
 	if (rc == 0) {
-		/* Entry exists. Will delete the existing obj and ZAP entry */
+		
 		dmu_tx_hold_bonus(tx, xa_data_obj);
 		dmu_tx_hold_free(tx, xa_data_obj, 0, DMU_OBJECT_END);
 		dmu_tx_hold_zap(tx, obj->oo_xattr, FALSE, (char *) name);
@@ -954,7 +954,7 @@ __osd_xattr_declare_del(const struct lu_env *env, struct osd_object *obj,
 		return;
 	}
 
-	/* An error happened */
+	
 	tx->tx_err = -rc;
 }
 
@@ -1016,7 +1016,7 @@ static int __osd_xattr_del(const struct lu_env *env, struct osd_object *obj,
 	if (unlikely(!dt_object_exists(&obj->oo_dt) || obj->oo_destroyed))
 		return -ENOENT;
 
-	/* try remove xattr from SA at first */
+	
 	rc = __osd_sa_xattr_del(env, obj, name, oh);
 	if (rc != -ENOENT)
 		return rc;
@@ -1029,7 +1029,7 @@ static int __osd_xattr_del(const struct lu_env *env, struct osd_object *obj,
 	if (rc == -ENOENT) {
 		rc = 0;
 	} else if (rc == 0) {
-		/* Entry exists. We'll delete the existing obj and ZAP entry */
+		
 		rc = -dmu_object_free(osd->od_os, xa_data_obj, oh->ot_tx);
 		if (rc)
 			return rc;
@@ -1085,9 +1085,9 @@ void osd_declare_xattrs_destroy(const struct lu_env *env,
 	int rc;
 
 	if (oid == ZFS_NO_OBJECT)
-		return; /* Nothing to do for SA xattrs */
+		return; 
 
-	/* Declare to free the ZAP holding xattrs */
+	
 	dmu_tx_hold_free(tx, oid, 0, DMU_OBJECT_END);
 
 	rc = osd_zap_cursor_init(&zc, osd->od_os, oid, 0);
@@ -1126,13 +1126,13 @@ int osd_xattrs_destroy(const struct lu_env *env,
 	uint64_t xid;
 	int rc;
 
-	/* The transaction must have been assigned to a transaction group. */
+	
 	LASSERT(tx->tx_txg != 0);
 
 	if (obj->oo_xattr == ZFS_NO_OBJECT)
-		return 0; /* Nothing to do for SA xattrs */
+		return 0; 
 
-	/* Free the ZAP holding the xattrs */
+	
 	rc = osd_zap_cursor_init(&zc, osd->od_os, obj->oo_xattr, 0);
 	if (rc)
 		return rc;
@@ -1217,7 +1217,7 @@ int osd_xattr_list(const struct lu_env *env, struct dt_object *dt,
 
 	counted = rc;
 
-	/* continue with dnode xattr if any */
+	
 	if (obj->oo_xattr == ZFS_NO_OBJECT)
 		GOTO(out, rc = counted);
 
@@ -1244,7 +1244,7 @@ int osd_xattr_list(const struct lu_env *env, struct dt_object *dt,
 
 		zap_cursor_advance(zc);
 	}
-	if (rc == -ENOENT) /* no more kes in the index */
+	if (rc == -ENOENT) 
 		rc = 0;
 	else if (unlikely(rc < 0))
 		GOTO(out_fini, rc);

@@ -33,20 +33,20 @@
 
 #include <krb5.h>
 
-/* Hopefully big enough to hold any serialized context */
+
 #define MAX_CTX_LEN 4096
 
-/* New context format flag values */
+
 #define KRB5_CTX_FLAG_INITIATOR         0x00000001
 #define KRB5_CTX_FLAG_CFX               0x00000002
 #define KRB5_CTX_FLAG_ACCEPTOR_SUBKEY   0x00000004
 
 #if HAVE_KRB5INT_DERIVE_KEY
-/* Taken from crypto_int.h */
+
 enum deriv_alg {
-	DERIVE_RFC3961,		/* RFC 3961 section 5.1 */
+	DERIVE_RFC3961,		
 #ifdef CAMELLIA
-	DERIVE_SP800_108_CMAC,	/* NIST SP 800-108 with CMAC as PRF */
+	DERIVE_SP800_108_CMAC,	
 #endif
 };
 
@@ -70,7 +70,7 @@ extern krb5_error_code krb5int_derive_key(const void *enc,
 extern krb5_error_code krb5_k_create_key(krb5_context context,
 					 const krb5_keyblock *key_data,
 					 krb5_key *out);
-#else /* !HAVE_KRB5INT_DERIVE_KEY */
+#else 
 
 extern krb5_error_code krb5_derive_key(const void *enc,
 				       const krb5_keyblock *inkey,
@@ -83,4 +83,4 @@ int serialize_context_for_kernel(gss_ctx_id_t *ctx, gss_buffer_desc *buf,
 int serialize_spkm3_ctx(gss_ctx_id_t *ctx, gss_buffer_desc *buf);
 int serialize_krb5_ctx(gss_ctx_id_t *ctx, gss_buffer_desc *buf);
 
-#endif /* _CONTEXT_H_ */
+#endif 

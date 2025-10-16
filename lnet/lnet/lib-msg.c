@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (c) 2003, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
@@ -6,7 +6,7 @@
  * Copyright (c) 2012, 2017, Intel Corporation.
  */
 
-/* This file is part of Lustre, http://www.lustre.org/
+/* This file is part of Lustre, http:
  *
  * Message decoding, parsing and finalizing routines
  */
@@ -45,7 +45,7 @@ lnet_build_msg_event(struct lnet_msg *msg, enum lnet_event_kind ev_type)
 	ev->msg_type = msg->msg_type;
 
 	if (ev_type == LNET_EVENT_SEND) {
-		/* event for active message */
+		
 		ev->target.nid	  = hdr->dest_nid;
 		ev->target.pid	  = hdr->dest_pid;
 		ev->initiator.nid = LNET_ANY_NID;
@@ -54,13 +54,13 @@ lnet_build_msg_event(struct lnet_msg *msg, enum lnet_event_kind ev_type)
 		ev->source.pid    = the_lnet.ln_pid;
 		ev->sender	  = LNET_ANY_NID;
 	} else {
-		/* event for passive message */
+		
 		ev->target.pid	  = hdr->dest_pid;
 		ev->target.nid	  = hdr->dest_nid;
 		ev->initiator.pid = hdr->src_pid;
-		/* Multi-Rail: resolve src_nid to "primary" peer NID */
+		
 		ev->initiator.nid = msg->msg_initiator;
-		/* Multi-Rail: track source NID. */
+		
 		ev->source.pid	  = hdr->src_pid;
 		ev->source.nid	  = hdr->src_nid;
 		ev->rlength	  = hdr->payload_length;
@@ -70,27 +70,27 @@ lnet_build_msg_event(struct lnet_msg *msg, enum lnet_event_kind ev_type)
 	}
 
 	switch (ev_type) {
-	case LNET_EVENT_PUT: /* passive PUT */
+	case LNET_EVENT_PUT: 
 		ev->pt_index   = hdr->msg.put.ptl_index;
 		ev->match_bits = hdr->msg.put.match_bits;
 		ev->hdr_data   = hdr->msg.put.hdr_data;
 		return;
 
-	case LNET_EVENT_GET: /* passive GET */
+	case LNET_EVENT_GET: 
 		ev->pt_index   = hdr->msg.get.ptl_index;
 		ev->match_bits = hdr->msg.get.match_bits;
 		ev->hdr_data   = 0;
 		return;
 
-	case LNET_EVENT_ACK: /* ACK */
+	case LNET_EVENT_ACK: 
 		ev->match_bits = hdr->msg.ack.match_bits;
 		ev->mlength    = hdr->msg.ack.mlength;
 		return;
 
-	case LNET_EVENT_REPLY: /* REPLY */
+	case LNET_EVENT_REPLY: 
 		return;
 
-	case LNET_EVENT_SEND: /* active message */
+	case LNET_EVENT_SEND: 
 		if (msg->msg_type == LNET_MSG_PUT) {
 			ev->pt_index   = le32_to_cpu(hdr->msg.put.ptl_index);
 			ev->match_bits = le64_to_cpu(hdr->msg.put.match_bits);
@@ -144,24 +144,24 @@ lnet_msg_commit(struct lnet_msg *msg, int cpt)
 	struct lnet_msg_container *container = the_lnet.ln_msg_containers[cpt];
 	struct lnet_counters_common *common;
 
-	/* A routed message can be committed for both receiving and sending */
+	
 	LASSERT(!msg->msg_tx_committed);
 
 	if (msg->msg_sending) {
 		LASSERT(!msg->msg_receiving);
 
-		/* Set the message deadline using msg send NI */
+		
 		msg->msg_deadline = get_msg_deadline(msg->msg_txni);
 		msg->msg_tx_cpt = cpt;
 		msg->msg_tx_committed = 1;
-		if (msg->msg_rx_committed) { /* routed message REPLY */
+		if (msg->msg_rx_committed) { 
 			LASSERT(msg->msg_onactivelist);
 			return;
 		}
 	} else {
 		LASSERT(!msg->msg_sending);
 
-		/* Set the message deadline using msg recv NI */
+		
 		msg->msg_deadline = get_msg_deadline(msg->msg_rxni);
 		msg->msg_rx_cpt = cpt;
 		msg->msg_rx_committed = 1;
@@ -190,7 +190,7 @@ lnet_msg_decommit_tx(struct lnet_msg *msg, int status)
 
 	common = &(the_lnet.ln_counters[msg->msg_tx_cpt]->lct_common);
 	switch (ev->type) {
-	default: /* routed message */
+	default: 
 		LASSERT(msg->msg_routing);
 		LASSERT(msg->msg_rx_committed);
 		LASSERT(ev->type == 0);
@@ -200,11 +200,11 @@ lnet_msg_decommit_tx(struct lnet_msg *msg, int status)
 		goto incr_stats;
 
 	case LNET_EVENT_PUT:
-		/* should have been decommitted */
+		
 		LASSERT(!msg->msg_rx_committed);
-		/* overwritten while sending ACK */
+		
 		LASSERT(msg->msg_type == LNET_MSG_ACK);
-		msg->msg_type = LNET_MSG_PUT; /* fix type */
+		msg->msg_type = LNET_MSG_PUT; 
 		break;
 
 	case LNET_EVENT_SEND:
@@ -218,7 +218,7 @@ lnet_msg_decommit_tx(struct lnet_msg *msg, int status)
 		/* overwritten while sending reply, we should never be
 		 * here for optimized GET */
 		LASSERT(msg->msg_type == LNET_MSG_REPLY);
-		msg->msg_type = LNET_MSG_GET; /* fix type */
+		msg->msg_type = LNET_MSG_GET; 
 		break;
 	}
 
@@ -244,7 +244,7 @@ lnet_msg_decommit_rx(struct lnet_msg *msg, int status)
 	struct lnet_counters_common *common;
 	struct lnet_event *ev = &msg->msg_ev;
 
-	LASSERT(!msg->msg_tx_committed); /* decommitted or never committed */
+	LASSERT(!msg->msg_tx_committed); 
 	LASSERT(msg->msg_rx_committed);
 
 	if (status != 0)
@@ -310,13 +310,13 @@ lnet_msg_decommit(struct lnet_msg *msg, int cpt, int status)
 	LASSERT(msg->msg_tx_committed || msg->msg_rx_committed);
 	LASSERT(msg->msg_onactivelist);
 
-	if (msg->msg_tx_committed) { /* always decommit for sending first */
+	if (msg->msg_tx_committed) { 
 		LASSERT(cpt == msg->msg_tx_cpt);
 		lnet_msg_decommit_tx(msg, status);
 	}
 
 	if (msg->msg_rx_committed) {
-		/* forwarding msg committed for both receiving and sending */
+		
 		if (cpt != msg->msg_rx_cpt) {
 			lnet_net_unlock(cpt);
 			cpt2 = msg->msg_rx_cpt;
@@ -340,7 +340,7 @@ void
 lnet_msg_attach_md(struct lnet_msg *msg, struct lnet_libmd *md,
 		   unsigned int offset, unsigned int mlen)
 {
-	/* NB: @offset and @len are only useful for receiving */
+	
 	/* Here, we attach the MD on lnet_msg and mark it busy and
 	 * decrementing its threshold. Come what may, the lnet_msg "owns"
 	 * the MD until a call to lnet_msg_detach_md or lnet_finalize()
@@ -348,7 +348,7 @@ lnet_msg_attach_md(struct lnet_msg *msg, struct lnet_libmd *md,
 	LASSERT(!msg->msg_routing);
 
 	msg->msg_md = md;
-	if (msg->msg_receiving) { /* committed for receiving */
+	if (msg->msg_receiving) { 
 		msg->msg_offset = offset;
 		msg->msg_wanted = mlen;
 	}
@@ -359,7 +359,7 @@ lnet_msg_attach_md(struct lnet_msg *msg, struct lnet_libmd *md,
 		md->md_threshold--;
 	}
 
-	/* build umd in event */
+	
 	lnet_md2handle(&msg->msg_ev.md_handle, md);
 	lnet_md_deconstruct(md, &msg->msg_ev);
 }
@@ -374,7 +374,7 @@ lnet_complete_msg_locked(struct lnet_msg *msg, int cpt)
 	LASSERT(msg->msg_onactivelist);
 
 	if (status == 0 && msg->msg_ack) {
-		/* Only send an ACK if the PUT completed successfully */
+		
 
 		lnet_msg_decommit(msg, cpt, 0);
 
@@ -409,10 +409,10 @@ lnet_complete_msg_locked(struct lnet_msg *msg, int cpt)
 		 */
 		return rc;
 
-	} else if (status == 0 &&	/* OK so far */
+	} else if (status == 0 &&	
 		   (msg->msg_routing && !msg->msg_sending)) {
-		/* not forwarded */
-		LASSERT(!msg->msg_receiving);	/* called back recv already */
+		
+		LASSERT(!msg->msg_receiving);	
 		lnet_net_unlock(cpt);
 
 		rc = lnet_send(NULL, msg, NULL);
@@ -439,7 +439,7 @@ lnet_complete_msg_locked(struct lnet_msg *msg, int cpt)
 	return 0;
 }
 
-/* must hold net_lock/0 */
+
 void
 lnet_ni_add_to_recoveryq_locked(struct lnet_ni *ni,
 				struct list_head *recovery_queue, time64_t now)
@@ -450,7 +450,7 @@ lnet_ni_add_to_recoveryq_locked(struct lnet_ni *ni,
 	if (atomic_read(&ni->ni_healthv) == LNET_MAX_HEALTH_VALUE)
 		return;
 
-	/* This NI is going on the recovery queue, so take a ref on it */
+	
 	lnet_ni_addref_locked(ni, 0);
 
 	lnet_ni_set_next_ping(ni, now);
@@ -472,7 +472,7 @@ lnet_handle_local_failure(struct lnet_ni *local_ni)
 	 * and the recovery queue.
 	 */
 	lnet_net_lock(0);
-	/* the mt could've shutdown and cleaned up the queues */
+	
 	if (the_lnet.ln_mt_state != LNET_MT_STATE_RUNNING) {
 		lnet_net_unlock(0);
 		return;
@@ -484,7 +484,7 @@ lnet_handle_local_failure(struct lnet_ni *local_ni)
 	lnet_net_unlock(0);
 }
 
-/* must hold net_lock/0 */
+
 void
 lnet_handle_remote_failure_locked(struct lnet_peer_ni *lpni)
 {
@@ -505,12 +505,12 @@ lnet_handle_remote_failure_locked(struct lnet_peer_ni *lpni)
 static void
 lnet_handle_remote_failure(struct lnet_peer_ni *lpni)
 {
-	/* lpni could be NULL if we're in the LOLND case */
+	
 	if (!lpni)
 		return;
 
 	lnet_net_lock(0);
-	/* the mt could've shutdown and cleaned up the queues */
+	
 	if (the_lnet.ln_mt_state != LNET_MT_STATE_RUNNING) {
 		lnet_net_unlock(0);
 		return;
@@ -661,10 +661,10 @@ lnet_attempt_msg_resend(struct lnet_msg *msg)
 	int my_slot;
 	int cpt;
 
-	/* we can only resend tx_committed messages */
+	
 	LASSERT(msg->msg_tx_committed);
 
-	/* don't resend recovery messages */
+	
 	if (msg->msg_recovery) {
 		CDEBUG(D_NET, "msg %s->%s is a recovery ping. retry# %d\n",
 			libcfs_nidstr(&msg->msg_from),
@@ -688,7 +688,7 @@ lnet_attempt_msg_resend(struct lnet_msg *msg)
 	cpt = msg->msg_tx_cpt;
 	lnet_net_lock(cpt);
 
-	/* check if the message has exceeded the number of retries */
+	
 	if (msg->msg_retry_count >= lnet_retry_count) {
 		CDEBUG(D_NET, "%s->%s exceeded retry count %d\n",
 			libcfs_nidstr(&msg->msg_from),
@@ -700,7 +700,7 @@ lnet_attempt_msg_resend(struct lnet_msg *msg)
 		return -ENOTRECOVERABLE;
 	}
 
-	/* check again under lock */
+	
 	if (the_lnet.ln_mt_state != LNET_MT_STATE_RUNNING) {
 		lnet_net_unlock(cpt);
 		return -ESHUTDOWN;
@@ -713,7 +713,7 @@ lnet_attempt_msg_resend(struct lnet_msg *msg)
 					container->msc_nfinalizers,
 					container->msc_resenders);
 
-	/* enough threads are resending */
+	
 	if (my_slot == -1) {
 		lnet_net_unlock(cpt);
 		return 0;
@@ -825,7 +825,7 @@ lnet_health_check(struct lnet_msg *msg)
 	cpt = msg->msg_tx_committed ? msg->msg_tx_cpt : msg->msg_rx_cpt;
 	lnet_net_lock(cpt);
 
-	/* if we're shutting down no point in handling health. */
+	
 	if (the_lnet.ln_mt_state != LNET_MT_STATE_RUNNING) {
 		lnet_net_unlock(cpt);
 		return -1;
@@ -925,7 +925,7 @@ lnet_health_check(struct lnet_msg *msg)
 			lnet_net_unlock(0);
 		}
 
-		/* we can finalize this message */
+		
 		return -1;
 	case LNET_MSG_STATUS_LOCAL_INTERRUPT:
 	case LNET_MSG_STATUS_LOCAL_DROPPED:
@@ -962,7 +962,7 @@ lnet_health_check(struct lnet_msg *msg)
 		LBUG();
 	}
 
-	/* no resend is needed */
+	
 	return -1;
 }
 
@@ -981,7 +981,7 @@ lnet_msg_detach_md(struct lnet_msg *msg, int status)
 		 */
 		lnet_md_wait_handling(md, cpt);
 
-	/* Now it's safe to drop my caller's ref */
+	
 	md->md_refcount--;
 	LASSERT(md->md_refcount >= 0);
 
@@ -1045,7 +1045,7 @@ lnet_is_health_check(struct lnet_msg *msg)
 		return false;
 	}
 
-	/* Check for status inconsistencies */
+	
 	if ((!status && msg->msg_health_status != LNET_MSG_STATUS_OK) ||
 	     (status && msg->msg_health_status == LNET_MSG_STATUS_OK)) {
 		CDEBUG(D_NET, "Msg %p is in inconsistent state, don't perform health "
@@ -1101,7 +1101,7 @@ lnet_send_error_simulation(struct lnet_msg *msg,
 	if (list_empty(&the_lnet.ln_drop_rules))
 	    return false;
 
-	/* match only health rules */
+	
 	if (!lnet_drop_rule_match(&msg->msg_hdr, NULL, hstatus))
 		return false;
 
@@ -1157,7 +1157,7 @@ lnet_finalize(struct lnet_msg *msg, int status)
 
 again:
 	if (!msg->msg_tx_committed && !msg->msg_rx_committed) {
-		/* not committed to network yet */
+		
 		LASSERT(!msg->msg_onactivelist);
 		lnet_msg_free(msg);
 		return;
@@ -1180,7 +1180,7 @@ again:
 						container->msc_nfinalizers,
 						container->msc_finalizers);
 
-	/* enough threads are resending */
+	
 	if (my_slot == -1) {
 		lnet_net_unlock(cpt);
 		return;
@@ -1260,7 +1260,7 @@ lnet_msg_container_setup(struct lnet_msg_container *container, int cpt)
 	INIT_LIST_HEAD(&container->msc_finalizing);
 	INIT_LIST_HEAD(&container->msc_resending);
 
-	/* number of CPUs */
+	
 	container->msc_nfinalizers = cfs_cpt_weight(lnet_cpt_table(), cpt);
 	if (container->msc_nfinalizers == 0)
 		container->msc_nfinalizers = 1;

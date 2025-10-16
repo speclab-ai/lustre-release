@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -182,7 +182,7 @@ static struct osp_xattr_entry *osp_oac_xattr_alloc(const char *name,
 
 	oxe->oxe_namelen = namelen;
 	memcpy(oxe->oxe_name, name, namelen);
-	/* One ref is for the caller, the other is for the entry on the list. */
+	
 	atomic_set(&oxe->oxe_ref, 2);
 
 	return oxe;
@@ -373,29 +373,29 @@ osp_oac_xattr_assignment(struct osp_object *obj, struct osp_xattr_entry *oxe,
 	old = osp_oac_xattr_find_locked(obj, oxe->oxe_name, namelen);
 	if (likely(old)) {
 		if (new) {
-			/* Unlink the 'old'. */
+			
 			list_del_init(&old->oxe_list);
 
-			/* Drop the ref for 'old' on list. */
+			
 			osp_oac_xattr_put(old);
 
-			/* Drop the ref for current using. */
+			
 			osp_oac_xattr_put(oxe);
 			oxe = new;
 
-			/* Insert 'new' into list. */
+			
 			list_add_tail(&new->oxe_list, &obj->opo_xattr_list);
 		} else if (unlink_only) {
-			/* Unlink the 'old'. */
+			
 			list_del_init(&old->oxe_list);
 
-			/* Drop the ref for 'old' on list. */
+			
 			osp_oac_xattr_put(old);
 		} else {
 			__osp_oac_xattr_assignment(obj, oxe, buf);
 		}
 	} else if (new) {
-		/* Drop the ref for current using. */
+		
 		osp_oac_xattr_put(oxe);
 		oxe = new;
 
@@ -602,7 +602,7 @@ int osp_attr_get(const struct lu_env *env, struct dt_object *dt,
 
 	down_read(&obj->opo_invalidate_sem);
 	if (invalidated == atomic_read(&obj->opo_invalidate_seq)) {
-		/* no invalited has came so far, we can cache the attrs */
+		
 		cache = 1;
 	}
 
@@ -711,7 +711,7 @@ static int osp_declare_attr_set(const struct lu_env *env, struct dt_object *dt,
 	if (!(attr->la_valid & LA_REMOTE_ATTR_SET))
 		RETURN(0);
 
-	/* track all UID/GID, projid, and layout version changes via llog */
+	
 	rc = osp_sync_declare_add(env, o, MDS_SETATTR64_REC, th);
 
 	return 0;
@@ -785,10 +785,10 @@ static int osp_attr_set(const struct lu_env *env, struct dt_object *dt,
 			struct osp_device *osp = lu2osp_dev(dt->do_lu.lo_dev);
 
 			rc = osp_sync_add(env, o, MDS_SETATTR64_REC, th, attr);
-			/* send layout version to OST ASAP */
+			
 			if (attr->la_valid & LA_LAYOUT_VERSION)
 				wake_up(&osp->opd_sync_waitq);
-			/* XXX: send new uid/gid to OST ASAP? */
+			
 		}
 	} else {
 		struct lu_attr	*la;
@@ -802,7 +802,7 @@ static int osp_attr_set(const struct lu_env *env, struct dt_object *dt,
 		if (rc != 0)
 			RETURN(rc);
 
-		/* Update the OSP object attributes cache. */
+		
 		la = &o->opo_attr;
 		spin_lock(&o->opo_lock);
 		if (attr->la_valid & LA_UID) {
@@ -877,7 +877,7 @@ static int osp_xattr_get_interpterer(const struct lu_env *env,
 unlock:
 	spin_unlock(&obj->opo_lock);
 
-	/* Put the reference obtained in the osp_declare_xattr_get(). */
+	
 	osp_oac_xattr_put(oxe);
 
 	return 0;
@@ -1054,7 +1054,7 @@ unlock:
 
 	down_read(&obj->opo_invalidate_sem);
 	if (invalidated != atomic_read(&obj->opo_invalidate_seq)) {
-		/* invalidated has been requested, we can't cache the result */
+		
 		if (rc < 0) {
 			if (rc == -ENOENT)
 				dt->do_lu.lo_header->loh_attr &= ~LOHA_EXISTS;
@@ -1141,7 +1141,7 @@ unlock:
 		GOTO(out, rc);
 	}
 
-	/* For detecting EA size. */
+	
 	if (!buf->lb_buf)
 		GOTO(out, rc);
 
@@ -1347,7 +1347,7 @@ int osp_xattr_del(const struct lu_env *env, struct dt_object *dt,
 
 	oxe = osp_oac_xattr_find(o, name, true);
 	if (oxe != NULL)
-		/* Drop the ref for entry on list. */
+		
 		osp_oac_xattr_put(oxe);
 
 	return 0;
@@ -1388,14 +1388,14 @@ int osp_invalidate(const struct lu_env *env, struct dt_object *dt)
 	CDEBUG(D_HA, "Invalidate osp_object "DFID"\n",
 	       PFID(lu_object_fid(&dt->do_lu)));
 
-	/* serialize attr/EA set vs. invalidation */
+	
 	down_write(&obj->opo_invalidate_sem);
 
-	/* this should invalidate all in-flights */
+	
 	atomic_inc(&obj->opo_invalidate_seq);
 
 	spin_lock(&obj->opo_lock);
-	/* do not mark new objects stale */
+	
 	if (obj->opo_attr.la_valid)
 		obj->opo_stale = 1;
 	obj->opo_non_exist = 0;
@@ -1479,14 +1479,14 @@ static int osp_declare_create(const struct lu_env *env, struct dt_object *dt,
 	 *	was found to be racy, so we disabled that. there is no
 	 *	point in making useless but expensive llog declaration.
 	 */
-	/* rc = osp_sync_declare_add(env, o, MDS_UNLINK64_REC, th); */
+	
 
 	local_th = osp_get_storage_thandle(env, th, d);
 	if (IS_ERR(local_th))
 		RETURN(PTR_ERR(local_th));
 
 	if (unlikely(!fid_is_zero(fid))) {
-		/* replay case: caller knows fid */
+		
 		osp_objid_buf_prep(&osi->osi_lb, &osi->osi_off, NULL,
 				   d->opd_index);
 		rc = dt_declare_record_write(env, d->opd_last_used_oid_file,
@@ -1511,14 +1511,14 @@ static int osp_declare_create(const struct lu_env *env, struct dt_object *dt,
 		LASSERT(o->opo_reserved == 0);
 		o->opo_reserved = 1;
 
-		/* common for all OSPs file hystorically */
+		
 		osp_objid_buf_prep(&osi->osi_lb, &osi->osi_off, NULL,
 				   d->opd_index);
 		rc = dt_declare_record_write(env, d->opd_last_used_oid_file,
 					     &osi->osi_lb, osi->osi_off,
 					     local_th);
 	} else {
-		/* not needed in the cache anymore */
+		
 		set_bit(LU_OBJECT_HEARD_BANSHEE,
 			    &dt->do_lu.lo_header->loh_flags);
 	}
@@ -1573,7 +1573,7 @@ static int osp_create(const struct lu_env *env, struct dt_object *dt,
 
 	o->opo_non_exist = 0;
 	if (o->opo_reserved) {
-		/* regular case, fid is assigned holding transaction open */
+		
 		 osp_object_assign_fid(env, d, o);
 	} else {
 		replay = true;
@@ -1612,7 +1612,7 @@ static int osp_create(const struct lu_env *env, struct dt_object *dt,
 	 * used and OST either keep them, if they exist or recreate
 	 */
 
-	/* we might have lost precreated objects */
+	
 	if (unlikely(d->opd_gap_count) > 0) {
 		LASSERT(d->opd_pre != NULL);
 		spin_lock(&d->opd_pre_lock);
@@ -1723,7 +1723,7 @@ static int osp_destroy(const struct lu_env *env, struct dt_object *dt,
 			RETURN(rc);
 	}
 
-	/* not needed in cache any more */
+	
 	set_bit(LU_OBJECT_HEARD_BANSHEE, &dt->do_lu.lo_header->loh_flags);
 
 	RETURN(rc);
@@ -1810,7 +1810,7 @@ static int osp_it_fetch(const struct lu_env *env, struct osp_it *it)
 	int			  i;
 	ENTRY;
 
-	/* 1MB bulk */
+	
 	npages = min_t(unsigned int, OFD_MAX_BRW_SIZE, 1 << 20);
 	npages /= PAGE_SIZE;
 
@@ -1967,7 +1967,7 @@ process_page:
 				       it->ooi_cur_idxpage->lip_magic,
 				       LIP_MAGIC, it->ooi_pos_page,
 				       it->ooi_pos_lu_page);
-				/* Skip this lu_page next time. */
+				
 				it->ooi_pos_ent = idxpage->lip_nr - 1;
 				RETURN(-EINVAL);
 			}
@@ -2358,7 +2358,7 @@ static void osp_object_release(const struct lu_env *env, struct lu_object *o)
 			     (d->opd_pre_recovering || d->opd_pre_status)))
 			wake_up(&d->opd_pre_waitq);
 
-		/* not needed in cache any more */
+		
 		set_bit(LU_OBJECT_HEARD_BANSHEE, &o->lo_header->loh_flags);
 	}
 

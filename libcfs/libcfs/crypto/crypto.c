@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * This contains encryption functions for per-file encryption.
  *
@@ -164,7 +164,7 @@ void llcrypt_generate_iv(union llcrypt_iv *iv, u64 lblk_num,
 		crypto_cipher_encrypt_one(ci->ci_essiv_tfm, iv->raw, iv->raw);
 }
 
-/* Encrypt or decrypt a single filesystem block of file contents */
+
 int llcrypt_crypt_block(const struct inode *inode, llcrypt_direction_t rw,
 			u64 lblk_num, struct page *src_page,
 			struct page *dest_page, unsigned int len,
@@ -451,7 +451,7 @@ int llcrypt_initialize(unsigned int cop_flags)
 {
 	int i, res = -ENOMEM;
 
-	/* No need to allocate a bounce page pool if this FS won't use it. */
+	
 	if (cop_flags & LL_CFLG_OWN_PAGES)
 		return 0;
 

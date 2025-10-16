@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -9,7 +9,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/utils/llverfs.c
  *
@@ -58,7 +58,7 @@
 #  include <ext2fs/ext2fs.h>
 #else
 #  ifndef EXT2_TOPDIR_FL
-#    define EXT2_TOPDIR_FL		0x00020000 /* Top of directory tree */
+#    define EXT2_TOPDIR_FL		0x00020000 
 #  endif
 static int fsetflags(const char *path, unsigned int flag)
 {
@@ -87,24 +87,24 @@ out:
 #define ONE_GB ((unsigned long long)(1024 * 1024 * 1024))
 #define BLOCKSIZE 4096
 
-/* Structure for writing test pattern */
+
 struct block_data {
 	unsigned long long bd_offset;
 	unsigned long long bd_time;
 	unsigned long long bd_inode;
 };
-static char *progname;		    /* name by which this program was run. */
-static unsigned verbose = 1;	    /* prints offset in kB, operation rate */
-static int readoption;		    /* run test in read-only (verify) mode */
-static int writeoption;		    /* run test in write_only mode */
-char *testdir;			    /* name of device to be tested. */
-static unsigned full = 1;	    /* flag to full check */
-static int error_count;		    /* number of IO errors hit during run */
-char filecount[PATH_MAX];	    /* file with total number of files written*/
-static unsigned long num_files;	    /* Total number of files for read/write */
-static loff_t file_size = 4*ONE_GB; /* Size of each file */
-static unsigned files_in_dir = 32;  /* number of files in each directioy */
-static unsigned int num_dirs;	    /* total number of directories */
+static char *progname;		    
+static unsigned verbose = 1;	    
+static int readoption;		    
+static int writeoption;		    
+char *testdir;			    
+static unsigned full = 1;	    
+static int error_count;		    
+char filecount[PATH_MAX];	    
+static unsigned long num_files;	    
+static loff_t file_size = 4*ONE_GB; 
+static unsigned files_in_dir = 32;  
+static unsigned int num_dirs;	    
 const int dirmode = S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
 static int isatty_flag;
 static int perms =  S_IRWXU | S_IRGRP | S_IROTH;
@@ -346,7 +346,7 @@ static int read_chunks(int fd, unsigned long long offset,
 			}
 			offset += chunksize;
 
-			/* Need to reset position after read error */
+			
 			if (nread < chunksize &&
 			    lseek64(fd, offset, SEEK_SET) == -1) {
 				fprintf(stderr,
@@ -536,7 +536,7 @@ static int dir_write(char *chunk_buf, size_t chunksize,
 			progname, filecount, strerror(errno));
 		return 5;
 	}
-	/* reserve space for the countfile */
+	
 	if (fprintf(countfile, "%lu", num_files) < 1 ||
 	    fflush(countfile) != 0) {
 		fprintf(stderr, "\n%s: writing %s failed :%s\n",
@@ -545,7 +545,7 @@ static int dir_write(char *chunk_buf, size_t chunksize,
 		goto out;
 	}
 
-	/* calculate total bytes that need to be written */
+	
 	total_bytes = calc_total_bytes("write");
 	if (total_bytes <= 0) {
 		fprintf(stderr, "\n%s: unable to calculate total bytes\n",
@@ -645,7 +645,7 @@ static int dir_read(char *chunk_buf, size_t chunksize,
 	unsigned long long total_bytes;
 	unsigned long long curr_bytes = 0;
 
-	/* calculate total bytes that need to be read */
+	
 	total_bytes = calc_total_bytes("read");
 	if (total_bytes <= 0) {
 		fprintf(stderr, "\n%s: unable to calculate total bytes\n",
@@ -706,18 +706,18 @@ static int dir_read(char *chunk_buf, size_t chunksize,
 
 int main(int argc, char **argv)
 {
-	time_t time_st = 0;		/* Default timestamp */
-	size_t chunksize = ONE_MB;	/* IO chunk size(defailt=1MB) */
-	char *chunk_buf;		/* chunk buffer */
+	time_t time_st = 0;		
+	size_t chunksize = ONE_MB;	
+	char *chunk_buf;		
 	int error = 0;
 	FILE *countfile = NULL;
-	unsigned long dir_num = 0, dir_num_orig = 0;/* starting directory */
+	unsigned long dir_num = 0, dir_num_orig = 0;
 	int c;
 
 	progname = strrchr(argv[0], '/') ? strrchr(argv[0], '/') + 1 : argv[0];
 	while ((c = getopt_long(argc, argv, "c:hln:o:pqrs:t:vw",
 				      long_opts, NULL)) != -1) {
-		unsigned long val;    /* Staging value for num_dirs */
+		unsigned long val;    
 
 		switch (c) {
 		case 'c':
@@ -732,7 +732,7 @@ int main(int argc, char **argv)
 			full = 1;
 			break;
 		case 'n':
-			/* num_dirs cannot be negative */
+			
 			if (optarg[0] == '-')
 				goto out_num_dirs;
 			val = strtoul(optarg, NULL, 0);
@@ -745,7 +745,7 @@ out_num_dirs:
 				progname);
 			usage(1);
 			return -1;
-		case 'o': /* offset */
+		case 'o': 
 			dir_num = strtoul(optarg, NULL, 0);
 			break;
 		case 'p':
@@ -812,7 +812,7 @@ out_num_dirs:
 			goto guess;
 		}
 
-		/* find device name using filesystem */
+		
 		while ((tempmnt = getmntent(fp)) != NULL) {
 			if (strcmp(tempmnt->mnt_dir, testdir) == 0)
 				break;

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file contains methods for OBD Filter Device (OFD)
  * Lock Value Block (LVB) operations.
@@ -158,7 +158,7 @@ out_lvb:
 	if (rc != 0)
 		OST_LVB_SET_ERR(lvb->lvb_blocks, rc);
 out:
-	/* Don't free lvb data on lookup error */
+	
 	return rc;
 }
 
@@ -220,7 +220,7 @@ static int ofd_lvbo_update(struct ldlm_resource *res, struct ldlm_lock *lock,
 		GOTO(out, rc = 0);
 	}
 
-	/* Update the LVB from the network message */
+	
 	if (req != NULL) {
 		struct ost_lvb *rpc_lvb;
 		bool lvb_type;
@@ -286,7 +286,7 @@ static int ofd_lvbo_update(struct ldlm_resource *res, struct ldlm_lock *lock,
 	}
 
 disk_update:
-	/* Update the LVB from the disk inode */
+	
 	ost_fid_from_resid(&info->fti_fid, &res->lr_name,
 			   ofd->ofd_lut.lut_lsd.lsd_osd_index);
 	fo = ofd_object_find(env, ofd, &info->fti_fid);
@@ -374,7 +374,7 @@ static int ofd_lvbo_fill(struct ldlm_lock *lock, void *buf, int *buflen)
 	struct ldlm_resource *res = lock->l_resource;
 	int lvb_len;
 
-	/* Former lvbo_init not allocate the "LVB". */
+	
 	if (unlikely(res->lr_lvb_len == 0))
 		return 0;
 

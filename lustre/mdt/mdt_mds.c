@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Lustre Metadata Service Layer
  *
@@ -20,13 +20,13 @@
 #include <linux/module.h>
 
 #include <obd_support.h>
-/* struct ptlrpc_request */
+
 #include <lustre_net.h>
-/* struct obd_export */
+
 #include <lustre_export.h>
-/* struct obd_device */
+
 #include <obd.h>
-/* lu2dt_dev() */
+
 #include <dt_object.h>
 #include <lustre_mds.h>
 #include "mdt_internal.h"
@@ -36,7 +36,7 @@
 #include <uapi/linux/lustre/lustre_param.h>
 
 struct mds_device {
-	/* super-class */
+	
 	struct md_device	 mds_md_dev;
 	struct ptlrpc_service	*mds_regular_service;
 	struct ptlrpc_service	*mds_readpage_service;
@@ -96,7 +96,7 @@ module_param(mds_rdpg_num_cpts, charp, 0444);
 MODULE_PARM_DESC(mds_rdpg_num_cpts,
 		 "CPU partitions MDS readpage threads should run on");
 
-/* device init/fini methods */
+
 static void mds_stop_ptlrpc_service(struct mds_device *m)
 {
 	ENTRY;
@@ -292,7 +292,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 		GOTO(err_mds_svc, rc);
 	}
 
-	/* Object update service */
+	
 	conf = (typeof(conf)) {
 		.psc_name		= LUSTRE_MDT_NAME "_out",
 		.psc_watchdog_factor	= MDT_SERVICE_WATCHDOG_FACTOR,
@@ -412,7 +412,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 		GOTO(err_mds_svc, rc);
 	}
 
-	/* FLD service start */
+	
 	memset(&conf, 0, sizeof(conf));
 	conf = (typeof(conf)) {
 		.psc_name	     = LUSTRE_MDT_NAME "_fld",
@@ -574,7 +574,7 @@ static struct lu_device *mds_device_alloc(const struct lu_env *env,
 	LASSERT(obd != NULL);
 
 	l->ld_obd = obd;
-	/* set this lu_device to obd, because error handling need it */
+	
 	obd->obd_lu_dev = l;
 
 	rc = lprocfs_obd_setup(obd, true);
@@ -596,7 +596,7 @@ static struct lu_device *mds_device_alloc(const struct lu_env *env,
 	return l;
 }
 
-/* type constructor/destructor: mdt_type_init, mdt_type_fini */
+
 LU_TYPE_INIT_FINI(mds, &mdt_thread_key);
 
 static const struct lu_device_type_operations mds_device_type_ops = {
@@ -637,7 +637,7 @@ static int mds_health_check(const struct lu_env *env, struct obd_device *obd)
 	return rc != 0 ? 1 : 0;
 }
 
-/* ioctls on obd dev */
+
 static int mds_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 			 void *karg, void __user *uarg)
 {
@@ -652,7 +652,7 @@ static int mds_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 	       obd->obd_name, cmd, len, karg, uarg);
 
 	data = karg;
-	/* we only support nodemap ioctls, for now */
+	
 	if (cmd != OBD_IOC_NODEMAP)
 		GOTO(out, rc = -EINVAL);
 

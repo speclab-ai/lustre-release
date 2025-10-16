@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2002, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Phil Schwan <phil@clusterfs.com>
  * Author: Peter Braam <braam@clusterfs.com>
@@ -41,7 +41,7 @@ void lov_tgts_getref(struct obd_device *obd)
 {
 	struct lu_tgt_descs *ltd = &obd->u.lov.lov_ost_descs;
 
-	/* nobody gets through here until lov_putref is done */
+	
 	mutex_lock(&ltd->ltd_mutex);
 	atomic_inc(&ltd->ltd_refcount);
 	mutex_unlock(&ltd->ltd_mutex);
@@ -55,7 +55,7 @@ void lov_tgts_putref(struct obd_device *obd)
 	struct lov_obd *lov = &obd->u.lov;
 
 	mutex_lock(&ltd->ltd_mutex);
-	/* ok to dec to 0 more than once -- ltd_exp's will be null */
+	
 	if (atomic_dec_and_test(&ltd->ltd_refcount) && ltd->ltd_death_row) {
 		struct lov_tgt_desc *tgt, *n;
 		LIST_HEAD(kill);
@@ -76,7 +76,7 @@ void lov_tgts_putref(struct obd_device *obd)
 
 		list_for_each_entry_safe(tgt, n, &kill, ltd_kill) {
 			list_del(&tgt->ltd_kill);
-			/* Disconnect */
+			
 			__lov_del_obd(obd, tgt);
 		}
 	} else {
@@ -113,7 +113,7 @@ static int lov_connect_osc(struct obd_device *obd, u32 index, int activate,
 		RETURN(rc);
 	}
 
-	/* override the sp_me from lov */
+	
 	tgt_obd->u.cli.cl_sp_me = lov->lov_sp_me;
 
 	if (data && (data->ocd_connect_flags & OBD_CONNECT_INDEX))
@@ -159,7 +159,7 @@ static int lov_connect_osc(struct obd_device *obd, u32 index, int activate,
 	       obd_uuid2str(tgt_uuid), tgt_obd->obd_name, activate ? "":"in");
 
 	if (lov->lov_tgts_kobj) {
-		/* Even if we failed, that's ok */
+		
 		rc = sysfs_create_link(lov->lov_tgts_kobj,
 				       &tgt_obd->obd_kset.kobj,
 				       tgt_obd->obd_name);
@@ -191,7 +191,7 @@ static int lov_connect(const struct lu_env *env, struct obd_export **exp,
 
 	*exp = class_conn2export(&conn);
 
-	/* Why should there ever be more than 1 connect? */
+	
 	lov->lov_connects++;
 	LASSERT(lov->lov_connects == 1);
 
@@ -210,7 +210,7 @@ static int lov_connect(const struct lu_env *env, struct obd_export **exp,
 		if (obd_uuid_empty(&tgt->ltd_uuid))
 			continue;
 
-		/* Flags will be lowest common denominator */
+		
 		rc = lov_connect_osc(obd, tgt->ltd_index, tgt->ltd_activate,
 				     &lov->lov_ocd);
 		if (rc) {
@@ -218,7 +218,7 @@ static int lov_connect(const struct lu_env *env, struct obd_export **exp,
 			       obd->obd_name, tgt->ltd_index, rc);
 			continue;
 		}
-		/* connect to administrative disabled ost */
+		
 		if (!tgt->ltd_exp)
 			continue;
 
@@ -291,7 +291,7 @@ static int lov_disconnect(struct obd_export *exp)
 	if (!lov->lov_ost_descs.ltd_tgts_size)
 		goto out;
 
-	/* Only disconnect the underlying layers on the final disconnect. */
+	
 	if (lov->lov_connects == 0) {
 		CWARN("%s: was disconnected already #%d\n",
 		      obd->obd_name, lov->lov_connects);
@@ -300,24 +300,24 @@ static int lov_disconnect(struct obd_export *exp)
 
 	lov->lov_connects--;
 	if (lov->lov_connects > 0) {
-		/* why should there be more than 1 connect? */
+		
 		CWARN("%s: unexpected disconnect #%d\n",
 		      obd->obd_name, lov->lov_connects);
 		goto out;
 	}
 
-	/* hold another ref so lov_del_obd() doesn't spin in putref each time */
+	
 	lov_tgts_getref(obd);
 	lov_foreach_tgt(lov, tgt) {
 		if (tgt->ltd_exp) {
-			/* Disconnection is the last we know about an OBD */
+			
 			lov_del_target(obd, tgt->ltd_index, NULL, tgt->ltd_gen);
 		}
 	}
 	lov_tgts_putref(obd);
 
 out:
-	rc = class_disconnect(exp); /* bz 9811 */
+	rc = class_disconnect(exp); 
 	RETURN(rc);
 }
 
@@ -446,7 +446,7 @@ static int lov_notify(struct obd_device *obd, struct obd_device *watched,
 		}
 	}
 
-	/* Pass the notification up the chain. */
+	
 	rc = obd_notify_observer(obd, watched, ev);
 
 out_notify_lock:
@@ -479,7 +479,7 @@ static int lov_add_target(struct obd_device *obd, struct obd_uuid *uuidp,
 		RETURN(-EINVAL);
 
 	mutex_lock(&ltd->ltd_mutex);
-	/* check that the index is allocated in the bitmap */
+	
 	if (index < ltd->ltd_tgts_size &&
 	    test_bit(index, ltd->ltd_tgt_bitmap) && lov_tgt(lov, index)) {
 		rc = -EEXIST;
@@ -498,7 +498,7 @@ static int lov_add_target(struct obd_device *obd, struct obd_uuid *uuidp,
 	CDEBUG(D_CONFIG, "%s: Adding target %s\n", obd->obd_name, uuidp->uuid);
 	tgt->ltd_uuid = *uuidp;
 	tgt->ltd_obd = tgt_obd;
-	/* XXX - add a sanity check on the generation number. */
+	
 	tgt->ltd_gen = gen;
 	tgt->ltd_index = index;
 	tgt->ltd_activate = active;
@@ -533,7 +533,7 @@ static int lov_add_target(struct obd_device *obd, struct obd_uuid *uuidp,
 	if (rc)
 		GOTO(out, rc);
 
-	/* connect to administrative disabled ost */
+	
 	if (!tgt->ltd_exp)
 		GOTO(out, rc = 0);
 
@@ -550,7 +550,7 @@ out:
 	RETURN(rc);
 }
 
-/* Schedule a target for deletion */
+
 int lov_del_target(struct obd_device *obd, u32 index, struct obd_uuid *uuidp,
 		   int gen)
 {
@@ -566,7 +566,7 @@ int lov_del_target(struct obd_device *obd, u32 index, struct obd_uuid *uuidp,
 		RETURN(-EINVAL);
 	}
 
-	/* to make sure there's no ongoing lov_notify() now */
+	
 	down_write(&lov->lov_notify_lock);
 	lov_tgts_getref(obd);
 	tgt = lov_tgt(lov, index);
@@ -590,7 +590,7 @@ int lov_del_target(struct obd_device *obd, u32 index, struct obd_uuid *uuidp,
 
 	tgt->ltd_reap = 1;
 	ltd->ltd_death_row++;
-	/* we really delete it from lov_tgts_putref() */
+	
 out:
 	lov_tgts_putref(obd);
 	up_write(&lov->lov_notify_lock);
@@ -647,7 +647,7 @@ void lov_fix_desc_stripe_count(__u32 *val)
 
 void lov_fix_desc_pattern(__u32 *val)
 {
-	/* from lov_setstripe */
+	
 	if ((*val != 0) && !lov_pattern_supported_normal_comp(*val)) {
 		LCONSOLE_WARN("lov: Unknown stripe pattern: %#x\n", *val);
 		*val = 0;
@@ -758,7 +758,7 @@ int lov_cleanup(struct obd_device *obd)
 	}
 
 	list_for_each_entry_safe(pool, tmp, &lov->lov_pool_list, pool_list) {
-		/* free pool structs */
+		
 		CDEBUG(D_INFO, "delete pool %p\n", pool);
 		/* In the function below, .hs_keycmp resolves to
 		 * pool_hashkey_keycmp() */
@@ -771,7 +771,7 @@ int lov_cleanup(struct obd_device *obd)
 
 	lov_tgts_getref(obd);
 	lov_foreach_tgt(lov, tgt) {
-		/* Inactive targets may never have connected */
+		
 		if (tgt->ltd_active)
 			/* We should never get here - these
 			 * should have been removed in the
@@ -813,7 +813,7 @@ int lov_process_config_base(struct obd_device *obd, struct lustre_cfg *lcfg,
 		u32 index;
 		int gen;
 
-		/* lov_modify_tgts add  0:lov_mdsA  1:ost1_UUID  2:0  3:1 */
+		
 		if (LUSTRE_CFG_BUFLEN(lcfg, 1) > sizeof(obd_uuid.uuid))
 			GOTO(out, rc = -EINVAL);
 
@@ -854,7 +854,7 @@ int lov_process_config_base(struct obd_device *obd, struct lustre_cfg *lcfg,
 		       obd->obd_name, lcfg->lcfg_command, -EINVAL);
 		GOTO(out, rc = -EINVAL);
 	}
-	} /* end switch */
+	} 
 out:
 	RETURN(rc);
 }
@@ -957,7 +957,7 @@ static int lov_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 	CDEBUG(D_IOCTL, "%s: cmd=%x len=%u karg=%pK uarg=%pK\n",
 	       exp->exp_obd->obd_name, cmd, len, karg, uarg);
 
-	/* exit early for unknown ioctl types. */
+	
 	if (unlikely(_IOC_TYPE(cmd) != 'f' && !IOC_OSC_SET_ACTIVE_ALLOW(cmd)))
 		RETURN(OBD_IOC_DEBUG(D_IOCTL, obd->obd_name, cmd, "unknown",
 				     -ENOTTY));
@@ -984,7 +984,7 @@ static int lov_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 			RETURN(-ENODEV);
 
 		if (!test_bit(index, lov->lov_ost_descs.ltd_tgt_bitmap))
-			/* Try again with the next index */
+			
 			RETURN(-EAGAIN);
 
 		tgt = lov_tgt(lov, index);
@@ -996,7 +996,7 @@ static int lov_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 		if (!tgt->ltd_active && imp->imp_state != LUSTRE_IMP_IDLE)
 			RETURN(-ENODATA);
 
-		/* copy UUID */
+		
 		if (copy_to_user(data->ioc_pbuf2, obd2cli_tgt(osc_obd),
 				 min_t(unsigned long, data->ioc_plen2,
 				       sizeof(struct obd_uuid))))
@@ -1005,7 +1005,7 @@ static int lov_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 		memcpy(&flags, data->ioc_inlbuf1, sizeof(flags));
 		flags = flags & LL_STATFS_NODELAY ? OBD_STATFS_NODELAY : 0;
 
-		/* got statfs data */
+		
 		rc = obd_statfs(NULL, tgt->ltd_exp, &stat_buf,
 				ktime_get_seconds() - OBD_STATFS_CACHE_SECONDS,
 				flags);
@@ -1092,11 +1092,11 @@ static int lov_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 			struct obd_device *osc_obd;
 			int err;
 
-			/* OST was disconnected */
+			
 			if (!tgt->ltd_exp)
 				continue;
 
-			/* ll_umount_begin() sets force on lov, pass to osc */
+			
 			osc_obd = class_exp2obd(tgt->ltd_exp);
 			if (osc_obd)
 				osc_obd->obd_force = obd->obd_force;
@@ -1158,7 +1158,7 @@ static int lov_get_info(const struct lu_env *env, struct obd_export *exp,
 		u32 result = 0;
 
 		lov_foreach_tgt(&obd->u.lov, tgt) {
-			/* OST was disconnected */
+			
 			if (!tgt->ltd_exp)
 				continue;
 
@@ -1212,11 +1212,11 @@ static int lov_set_info_async(const struct lu_env *env, struct obd_export *exp,
 		do_inactive = true;
 
 	lov_foreach_tgt(lov, tgt) {
-		/* OST was disconnected */
+		
 		if (!tgt->ltd_exp)
 			continue;
 
-		/* OST is inactive and we don't want inactive OSCs */
+		
 		if (!tgt->ltd_active && !do_inactive)
 			continue;
 
@@ -1226,7 +1226,7 @@ static int lov_set_info_async(const struct lu_env *env, struct obd_export *exp,
 			rc = err;
 	}
 
-	/* cycle through MDC target for Data-on-MDT */
+	
 	for (i = 0; i < LOV_MDC_TGT_MAX; i++) {
 		struct obd_device *mdc;
 
@@ -1301,7 +1301,7 @@ static int lov_quotactl(struct obd_device *obd, struct obd_export *exp,
 	if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA)
 		lst = (struct list_head *)(uintptr_t)(oqctl->qc_iter_list);
 
-	/* for lov tgt */
+	
 	lov_tgts_getref(obd);
 	lov_foreach_tgt(lov, tgt) {
 		int err;
@@ -1412,7 +1412,7 @@ static void __exit lov_exit(void)
 	lu_kmem_fini(lov_caches);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Logical Object Volume");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

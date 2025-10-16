@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2014, 2017, Intel Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Fan, Yong <fan.yong@intel.com>
  */
@@ -45,24 +45,24 @@ struct lfsck_layout_seq {
 };
 
 struct lfsck_layout_slave_target {
-	/* link into lfsck_layout_slave_data::llsd_master_list. */
+	
 	struct list_head	llst_list;
-	/* The position for next record in the rbtree for iteration. */
+	
 	struct lu_fid		llst_fid;
-	/* Dummy hash for iteration against the rbtree. */
+	
 	__u64			llst_hash;
 	__u64			llst_gen;
 	struct kref		llst_ref;
 	__u32			llst_index;
-	/* How many times we have failed to get the master status. */
+	
 	int			llst_failures;
 };
 
 struct lfsck_layout_slave_data {
-	/* list for lfsck_layout_seq */
+	
 	struct list_head	 llsd_seq_list;
 
-	/* list for the masters involve layout verification. */
+	
 	struct list_head	 llsd_master_list;
 	spinlock_t		 llsd_lock;
 	__u64			 llsd_touch_gen;
@@ -344,7 +344,7 @@ static int lfsck_layout_verify_header_v1v3(struct dt_object *obj,
 	pattern = le32_to_cpu(lmm->lmm_pattern);
 	*dom = !!(lov_pattern(pattern) & LOV_PATTERN_MDT);
 
-	/* XXX: DoM file verification will be supportted via LU-11081. */
+	
 	if (lov_pattern(pattern) & LOV_PATTERN_MDT) {
 #if 0
 		if (start != 0) {
@@ -380,9 +380,9 @@ static int lfsck_layout_verify_header_foreign(struct dt_object *obj,
 					      struct lov_foreign_md *lfm,
 					      size_t len)
 {
-	/* magic has been verified already */
+	
 	__u32 value_len = le32_to_cpu(lfm->lfm_length);
-	/* type and flags are not checked for instance */
+	
 
 	CDEBUG(D_INFO,
 	       "foreign LOV EA, magic %x, len %u, type %x, flags %x, for file "DFID"\n",
@@ -395,7 +395,7 @@ static int lfsck_layout_verify_header_foreign(struct dt_object *obj,
 		       "foreign LOV EA internal size %u does not match EA full size %zu for file "DFID"\n",
 		       value_len, len, PFID(lfsck_dto2fid(obj)));
 
-	/* nothing to repair */
+	
 	return -ENODATA;
 }
 
@@ -570,7 +570,7 @@ static inline int lfsck_rbtree_cmp(struct lfsck_rbtree_node *lrn,
 	return 0;
 }
 
-/* The caller should hold llsd->llsd_rb_lock. */
+
 static struct lfsck_rbtree_node *
 lfsck_rbtree_search(struct lfsck_layout_slave_data *llsd,
 		    const struct lu_fid *fid, bool *exact)
@@ -598,10 +598,10 @@ lfsck_rbtree_search(struct lfsck_layout_slave_data *llsd,
 	if (exact == NULL)
 		return NULL;
 
-	/* If there is no exactly matched one, then to the next valid one. */
+	
 	*exact = false;
 
-	/* The rbtree is empty. */
+	
 	if (rc == 0)
 		return NULL;
 
@@ -610,7 +610,7 @@ lfsck_rbtree_search(struct lfsck_layout_slave_data *llsd,
 
 	node = rb_next(prev);
 
-	/* The end of the rbtree. */
+	
 	if (node == NULL)
 		return NULL;
 
@@ -659,7 +659,7 @@ static void lfsck_rbtree_free(struct lfsck_rbtree_node *lrn)
 	OBD_FREE_PTR(lrn);
 }
 
-/* The caller should hold lock. */
+
 static struct lfsck_rbtree_node *
 lfsck_rbtree_insert(struct lfsck_layout_slave_data *llsd,
 		    struct lfsck_rbtree_node *lrn)
@@ -734,7 +734,7 @@ static void lfsck_rbtree_cleanup(const struct lu_env *env,
 	struct lfsck_rbtree_node *lrn;
 
 	lfsck->li_bottom->dd_record_fid_accessed = 0;
-	/* Invalid the rbtree, then no others will use it. */
+	
 	down_write(&llsd->llsd_rb_rwsem);
 	llsd->llsd_rbtree_valid = 0;
 	up_write(&llsd->llsd_rb_rwsem);
@@ -802,7 +802,7 @@ static void lfsck_rbtree_update_bitmap(const struct lu_env *env,
 	}
 
 	idx = fid_oid(fid) & LFSCK_RBTREE_BITMAP_MASK;
-	/* Any accessed object must be a known object. */
+	
 	if (!test_and_set_bit(idx, lrn->lrn_known_bitmap))
 		atomic_inc(&lrn->lrn_known_count);
 	if (accessed && !test_and_set_bit(idx, lrn->lrn_accessed_bitmap))
@@ -1414,7 +1414,7 @@ lfsck_layout_lastid_load(const struct lu_env *env,
 	if (IS_ERR(obj))
 		RETURN(PTR_ERR(obj));
 
-	/* LAST_ID crashed, to be rebuilt */
+	
 	if (dt_object_exists(obj) == 0) {
 		if (!(lo->ll_flags & LF_CRASHED_LASTID)) {
 			LASSERT(lfsck->li_out_notify != NULL);
@@ -1711,7 +1711,7 @@ static int lfsck_layout_get_def_stripesize(const struct lu_env *env,
 	if (IS_ERR(root))
 		return PTR_ERR(root);
 
-	/* Get the default stripe size via xattr_get on the backend root. */
+	
 	rc = dt_xattr_get(env, root, lfsck_buf_get(env, lum, sizeof(*lum)),
 			  XATTR_NAME_LOV);
 	if (rc > 0) {
@@ -2044,7 +2044,7 @@ static int lfsck_layout_add_comp(const struct lu_env *env,
 			buf->lb_buf + offset, size);
 	}
 
-	/* 3. Recalculate the enter offset for the component [pos, count-1] */
+	
 	for (i = count - 1; i >= pos; i--) {
 		lcm->lcm_entries[i + 1] = lcm->lcm_entries[i];
 		lcm->lcm_entries[i + 1].lcme_offset =
@@ -2052,7 +2052,7 @@ static int lfsck_layout_add_comp(const struct lu_env *env,
 						lcme_offset) + added);
 	}
 
-	/* 4. Recalculate the enter offset for the component [0, pos) */
+	
 	for (i = 0; i < pos; i++) {
 		lcm->lcm_entries[i].lcme_offset =
 			cpu_to_le32(le32_to_cpu(lcm->lcm_entries[i].
@@ -2060,7 +2060,7 @@ static int lfsck_layout_add_comp(const struct lu_env *env,
 	}
 
 	offset = sizeof(*lcm) + sizeof(*lcme) * (count + 1) + size;
-	/* 4. Insert the new component header (entry) at the slot 'pos'. */
+	
 	lcme = &lcm->lcm_entries[pos];
 	lcme->lcme_id = cpu_to_le32(ol->ol_comp_id);
 	lcme->lcme_flags = cpu_to_le32(LCME_FL_INIT);
@@ -2074,12 +2074,12 @@ static int lfsck_layout_add_comp(const struct lu_env *env,
 		pattern |= LOV_PATTERN_F_HOLE;
 
 	lmm = buf->lb_buf + offset;
-	/* 5. Insert teh new component body at the 'offset'. */
+	
 	objs = __lfsck_layout_new_v1_lovea(lmm, lfsck_dto2fid(parent),
 					   ol->ol_stripe_size, ea_off,
 					   pattern, ol->ol_stripe_count);
 
-	/* 6. Update mirror related flags and version. */
+	
 	lfsck_layout_update_lcm(lcm, lcme, rec->lor_layout_version,
 				rec->lor_range);
 
@@ -2464,7 +2464,7 @@ again:
 	if (rc != 0)
 		GOTO(log, rc);
 
-	/* Recheck whether the name conflict with othrs after taken ldlm lock */
+	
 	rc = dt_lookup_dir(env, lfsck->li_lpf_obj, name, tfid);
 	if (unlikely(rc == 0)) {
 		lfsck_unlock(llh);
@@ -2480,7 +2480,7 @@ again:
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* The 1st transaction. */
+	
 	th = lfsck_trans_create(env, dev, lfsck);
 	if (IS_ERR(th))
 		GOTO(unlock, rc = PTR_ERR(th));
@@ -2533,7 +2533,7 @@ again:
 		dt_trans_stop(env, dev, th);
 		th = NULL;
 
-		/* The 2nd transaction. */
+		
 		rc = __lfsck_layout_update_pfid(env, com, cobj, pfid,
 						&rec->lor_layout, ea_off,
 						rec->lor_layout_version,
@@ -2651,7 +2651,7 @@ static int lfsck_layout_slave_conditional_destroy(const struct lu_env *env,
 		GOTO(put, rc = -ENOENT);
 	}
 
-	/* Get obj's attr without lock firstly. */
+	
 	rc = dt_attr_get(env, obj, la);
 	dt_read_unlock(env, obj);
 	if (rc != 0)
@@ -2660,14 +2660,14 @@ static int lfsck_layout_slave_conditional_destroy(const struct lu_env *env,
 	if (likely(la->la_ctime != 0 || la->la_mode & S_ISUID))
 		GOTO(put, rc = -ETXTBSY);
 
-	/* Acquire extent lock on [0, EOF] to sync with all possible written. */
+	
 	LASSERT(lfsck->li_namespace != NULL);
 
 	memset(policy, 0, sizeof(*policy));
 	policy->l_extent.end = OBD_OBJECT_EOF;
 	ost_fid_build_resid(fid, resid);
 
-	/* LU-17344: check the validity of the ldlm_res_id */
+	
 	if (unlikely(resid->name[0] == 0)) {
 		CERROR("%s: the res_id "DLDLMRES" built by the FID "DFID" (the obj %p) is invalid\n",
 		       lfsck_lfsck2name(lfsck), resid->name[0], resid->name[1],
@@ -2685,7 +2685,7 @@ static int lfsck_layout_slave_conditional_destroy(const struct lu_env *env,
 		GOTO(put, rc = -EIO);
 
 	dt_write_lock(env, obj, 0);
-	/* Get obj's attr within lock again. */
+	
 	rc = dt_attr_get(env, obj, la);
 	if (rc != 0)
 		GOTO(unlock, rc);
@@ -2795,7 +2795,7 @@ static int lfsck_layout_conflict_create(const struct lu_env *env,
 	 * a new MDT-object for the orphan OST-object.
 	 */
 	if (rc == -ETXTBSY) {
-		/* No need the layout lock on the original parent. */
+		
 		lfsck_ibits_unlock(&lh, LCK_EX);
 
 		fid_zero(&rec->lor_rec.lor_fid);
@@ -2955,7 +2955,7 @@ again:
 		goto again;
 	} else if (rc == -ENODATA || rc == 0) {
 		lovea_size = lfsck_lovea_size(ol, ea_off);
-		/* If the declared is not big enough, re-try. */
+		
 		if (buf->lb_len < lovea_size) {
 			rc = lovea_size;
 			goto again;
@@ -2985,7 +2985,7 @@ again:
 	lmm = buf->lb_buf;
 	rc1 = lfsck_layout_verify_header(parent, lmm, lovea_size);
 
-	/* If the LOV EA crashed, the rebuild it. */
+	
 	if (rc1 == -EINVAL) {
 		if (bk->lb_param & LPF_DRYRUN)
 			GOTO(unlock_parent, rc = 1);
@@ -2998,7 +2998,7 @@ again:
 		GOTO(unlock_parent, rc);
 	}
 
-	/* For other unknown magic/pattern, keep the current LOV EA. */
+	
 	if (rc1 == -EOPNOTSUPP)
 		GOTO(unlock_parent, rc1 = 0);
 
@@ -3054,13 +3054,13 @@ further:
 		GOTO(unlock_parent, rc = -EINVAL);
 	LASSERT(count > 0);
 
-	/* Exceed the current end of MDT-object layout EA. Then extend it. */
+	
 	if (count <= ea_off) {
 		if (bk->lb_param & LPF_DRYRUN)
 			GOTO(unlock_parent, rc = 1);
 
 		lovea_size = lov_mds_md_size(ea_off + 1, magic);
-		/* If the declared is not big enough, re-try. */
+		
 		if (buf->lb_len < lovea_size) {
 			rc = lovea_size;
 			goto again;
@@ -3199,7 +3199,7 @@ further:
 		}
 	}
 
-	/* MDT-obj exists, but related layout EA slot is occupied by others */
+	
 	if (bk->lb_param & LPF_DRYRUN)
 		GOTO(unlock_parent, rc = 1);
 
@@ -3290,7 +3290,7 @@ put:
 	if (rc <= 0)
 		lfsck_object_put(env, parent);
 	else
-		/* The layout EA is changed, need to be reloaded next time. */
+		
 		dt_object_put_nocache(env, parent);
 
 out:
@@ -3382,7 +3382,7 @@ static int lfsck_layout_scan_orphan(const struct lu_env *env,
 
 		key = iops->key(env, di);
 		com->lc_fid_latest_scanned_phase2 = *(struct lu_fid *)key;
-		/* Remote target OST may be runnning old LFSCK */
+		
 		memset(rec, 0, sizeof(*rec));
 		rc = iops->rec(env, di, (struct dt_rec *)rec, 0);
 		if (rc == 0)
@@ -3445,7 +3445,7 @@ static int lfsck_lov2layout(struct lov_mds_md_v1 *lmm, struct filter_fid *ff,
 			}
 		}
 
-		/* The comp has been removed, do nothing. */
+		
 		if (i == count)
 			GOTO(out, rc = 1);
 
@@ -3611,13 +3611,13 @@ static int __lfsck_layout_repair_dangling(const struct lu_env *env,
 				}
 			}
 
-			/* Someone removed the component, do nothing. */
+			
 			GOTO(unlock2, rc = 0);
 		}
 
 check:
 		count = le16_to_cpu(lmm->lmm_stripe_count);
-		/* Someone changed the LOV EA, do nothing. */
+		
 		if (count <= ea_off)
 			GOTO(unlock2, rc = 0);
 
@@ -3633,7 +3633,7 @@ check:
 		ostid_le_to_cpu(&objs->l_ost_oi, oi);
 		idx2 = le32_to_cpu(objs->l_ost_idx);
 		rc = ostid_to_fid(tfid, oi, idx2);
-		/* Someone changed the LOV EA, do nothing. */
+		
 		if (rc != 0 || !lu_fid_eq(tfid, cfid))
 			GOTO(unlock2, rc);
 	}
@@ -3705,7 +3705,7 @@ static int lfsck_layout_repair_dangling(const struct lu_env *env,
 	if (IS_ERR(parent))
 		GOTO(log, rc = PTR_ERR(parent));
 
-	/* The MDT-object has been removed. */
+	
 	if (dt_object_exists(parent) == 0)
 		GOTO(log, rc = 0);
 
@@ -3717,7 +3717,7 @@ static int lfsck_layout_repair_dangling(const struct lu_env *env,
 	if (IS_ERR(child))
 		GOTO(log, rc = PTR_ERR(child));
 
-	/* The OST-object has been created. */
+	
 	if (unlikely(dt_object_exists(child) != 0))
 		GOTO(log, rc = 0);
 
@@ -3826,7 +3826,7 @@ static int lfsck_layout_repair_unmatched_pair(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(unlock2, rc);
 
-	/* Get the latest parent's owner. */
+	
 	rc = dt_attr_get(env, parent, la);
 	if (rc != 0)
 		GOTO(unlock2, rc);
@@ -3905,7 +3905,7 @@ static int lfsck_layout_repair_multiple_references(const struct lu_env *env,
 	 * as dangling referened case when the layout LFSCK run next time.
 	 */
 
-	/* The 1st transaction. */
+	
 	o = lu_object_anon(env, d, NULL);
 	if (IS_ERR(o))
 		GOTO(log, rc = PTR_ERR(o));
@@ -3951,7 +3951,7 @@ static int lfsck_layout_repair_multiple_references(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(log, rc);
 
-	/* The 2nd transaction. */
+	
 
 	/* XXX: Generally, we should use bottom device (OSD) to update parent
 	 *	LOV EA. But because the LOD-object still references the wrong
@@ -4031,7 +4031,7 @@ set:
 	ostid_le_to_cpu(&objs->l_ost_oi, oi);
 	index = le32_to_cpu(objs->l_ost_idx);
 	rc = ostid_to_fid(&tfid, oi, index);
-	/* Someone changed layout during the LFSCK, no need to repair then. */
+	
 	if (rc == 0 && !lu_fid_eq(&tfid, lu_object_fid(&llr->llr_child->do_lu)))
 		GOTO(unlock, rc = 0);
 
@@ -4107,7 +4107,7 @@ static int lfsck_layout_repair_owner(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* Use the dt_object lock to serialize with destroy and attr_set. */
+	
 	dt_read_lock(env, parent, 0);
 	if (unlikely(lfsck_is_dead_obj(parent)))
 		GOTO(unlock, rc = 1);
@@ -4116,12 +4116,12 @@ static int lfsck_layout_repair_owner(const struct lu_env *env,
 	if (version == -EOPNOTSUPP)
 		version = 0;
 
-	/* Get the latest parent's owner. */
+	
 	rc = dt_attr_get(env, parent, pla);
 	if (rc != 0)
 		GOTO(unlock, rc);
 
-	/* Some others chown/chgrp during the LFSCK, needs to do nothing. */
+	
 	if (unlikely((!version && tla->la_ctime == 0) ||
 		     tla->la_uid != pla->la_uid || tla->la_gid != pla->la_gid))
 		rc = 1;
@@ -4415,7 +4415,7 @@ static int lfsck_layout_repair_encflag(const struct lu_env *env,
 	if (rc != 0)
 		GOTO(stop, rc);
 
-	/* Use the dt_object lock to serialize with destroy and attr_set. */
+	
 	dt_read_lock(env, parent, 0);
 	if (unlikely(lfsck_is_dead_obj(parent)))
 		GOTO(unlock, rc = 1);
@@ -4485,10 +4485,10 @@ static int lfsck_layout_assistant_handler_p1(const struct lu_env *env,
 
 	if (!(bk->lb_param & LPF_DRYRUN) &&
 	    pla->la_valid & LA_FLAGS && pla->la_flags & LUSTRE_ENCRYPT_FL) {
-		/* MDT-inode is encrypted */
+		
 		struct lu_buf lb = { .lb_buf = NULL, .lb_len = 0 };
 
-		/* if OST-inode is missing encryption.c xattr, fix it */
+		
 		if (dt_xattr_get(env, child, &lb,
 				 LL_XATTR_NAME_ENCRYPTION_CONTEXT) >= 0)
 			goto check_fid;
@@ -4607,7 +4607,7 @@ out:
 		} else if (rc == -ENOTCONN || rc == -ESHUTDOWN ||
 			   rc == -ETIMEDOUT || rc == -EHOSTDOWN ||
 			   rc == -EHOSTUNREACH) {
-			/* cannot touch target server? mark LFSCK INCOMPLETE */
+			
 			CDEBUG(D_LFSCK,
 			       "%s: layout LFSCK assistant fail to talk with OST %x: rc = %d\n",
 			       lfsck_lfsck2name(lfsck), llr->llr_ost_idx, rc);
@@ -5250,8 +5250,8 @@ static int lfsck_layout_slave_check_pairs(const struct lu_env *env,
 	memset(lr, 0, sizeof(*lr));
 	lr->lr_event = LE_PAIRS_VERIFY;
 	lr->lr_active = LFSCK_TYPE_LAYOUT;
-	lr->lr_fid = *cfid; /* OST-object itself FID. */
-	lr->lr_fid2 = *pfid; /* The claimed parent FID. */
+	lr->lr_fid = *cfid; 
+	lr->lr_fid2 = *pfid; 
 	lr->lr_comp_id = comp_id;
 
 	ptlrpc_request_set_replen(req);
@@ -5300,7 +5300,7 @@ log:
 	return rc;
 }
 
-/* layout APIs */
+
 
 static void lfsck_layout_slave_quit(const struct lu_env *env,
 				    struct lfsck_component *com);
@@ -5442,7 +5442,7 @@ static int lfsck_layout_prep(const struct lu_env *env,
 	pos->lp_dir_cookie = 0;
 	if (lo->ll_status == LS_COMPLETED ||
 	    lo->ll_status == LS_PARTIAL ||
-	    /* To handle orphan, must scan from the beginning. */
+	    
 	    (start != NULL && start->ls_flags & LPF_OST_ORPHAN)) {
 		int rc;
 
@@ -5575,7 +5575,7 @@ log:
 	return 0;
 }
 
-/* Pre-fetch the attribute for each stripe in the given layout EA. */
+
 static int lfsck_layout_scan_stripes(const struct lu_env *env,
 				     struct lfsck_component *com,
 				     struct dt_object *parent,
@@ -5846,7 +5846,7 @@ again:
 	}
 
 fix:
-	/* Inconsistent lmm_oi, should be repaired. */
+	
 	bad_oi = true;
 
 	if (bk->lb_param & LPF_DRYRUN) {
@@ -6025,7 +6025,7 @@ static int lfsck_layout_slave_exec_oit(const struct lu_env *env,
 
 	if (oid > lls->lls_lastid) {
 		if (!(lo->ll_flags & LF_CRASHED_LASTID)) {
-			/* OFD may create new objects during LFSCK scanning. */
+			
 			rc = lfsck_layout_lastid_reload(env, com, lls);
 			if (unlikely(rc != 0)) {
 				CDEBUG(D_LFSCK,
@@ -6881,7 +6881,7 @@ static int lfsck_layout_query(const struct lu_env *env,
 	return rc;
 }
 
-/* with lfsck::li_lock held */
+
 static int lfsck_layout_slave_join(const struct lu_env *env,
 				   struct lfsck_component *com,
 				   struct lfsck_start_param *lsp)
@@ -7146,7 +7146,7 @@ static int lfsck_fid_match_idx(const struct lu_env *env,
 	struct lu_seq_range *range = &lfsck_env_info(env)->lti_range;
 	int rc;
 
-	/* All abnormal cases will be returned to MDT0. */
+	
 	if (!fid_is_norm(fid)) {
 		if (idx == 0)
 			return 1;
@@ -7268,7 +7268,7 @@ static struct dt_it *lfsck_orphan_it_init(const struct lu_env *env,
 			struct rb_node			*next;
 			struct lfsck_rbtree_node	*lrn;
 
-			/* No need to record the fid accessing anymore. */
+			
 			dev->dd_record_fid_accessed = 0;
 
 			node = rb_first(&llsd->llsd_rb_root);
@@ -7287,7 +7287,7 @@ static struct dt_it *lfsck_orphan_it_init(const struct lu_env *env,
 		up_write(&llsd->llsd_rb_rwsem);
 	}
 
-	/* read lock the rbtree when init, and unlock when fini */
+	
 	down_read(&llsd->llsd_rb_rwsem);
 	it->loi_com = com;
 	com = NULL;
@@ -7328,7 +7328,7 @@ static void lfsck_orphan_it_fini(const struct lu_env *env,
 		llst = it->loi_llst;
 		LASSERT(llst != NULL);
 
-		/* Save the key and hash for iterate next. */
+		
 		llst->llst_fid = it->loi_key;
 		llst->llst_hash = it->loi_hash;
 		kref_put(&llst->llst_ref, lfsck_layout_llst_put);

@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2020, 2022, DDN/Whamcloud Storage Corporation.
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Batch Metadata Updating on the client
  *
@@ -134,7 +134,7 @@ static int batch_prep_update_req(struct batch_update_head *head,
 		buf = list_entry(head->buh_buf_list.next,
 				 struct batch_update_buffer, bub_item);
 
-		/* Check whether it can be packed inline */
+		
 		if (buf->bub_end + sizeof(struct but_update_header) <
 		    OUT_UPDATE_MAX_INLINE_SIZE) {
 			rc = batch_prep_inline_update_req(head, req, repsize);
@@ -163,7 +163,7 @@ static int batch_prep_update_req(struct batch_update_head *head,
 	list_for_each_entry(buf, &head->buh_buf_list, bub_item) {
 		bub->bub_size = buf->bub_size;
 		bub++;
-		/* First *and* last might be partial pages, hence +1 */
+		
 		page_count += DIV_ROUND_UP(buf->bub_size, PAGE_SIZE) + 1;
 	}
 
@@ -407,7 +407,7 @@ static int batch_update_interpret(const struct lu_env *env,
 		RETURN(0);
 
 	ptlrpc_put_mod_rpc_slot(req);
-	/* Unpack the results from the reply message. */
+	
 	if (req->rq_repmsg != NULL && req->rq_replied) {
 		reply = req_capsule_server_sized_get(&req->rq_pill,
 						     &RMF_BUT_REPLY,
@@ -504,7 +504,7 @@ static int batch_update_request_add(struct batch_update_head **headp,
 		if (rc == -E2BIG) {
 			int rc2;
 
-			/* Create new batch object update buffer */
+			
 			rc2 = batch_update_buffer_create(head,
 				max_len + offsetof(struct batch_update_request,
 						   burq_reqmsg[0]) + 1);
@@ -530,7 +530,7 @@ static int batch_update_request_add(struct batch_update_head **headp,
 	if (rc)
 		GOTO(out, rc);
 
-	/* Unplug the batch queue if accumulated enough update requests. */
+	
 	if (bh->lbt_max_count && head->buh_update_count >= bh->lbt_max_count) {
 		rc = batch_send_update_req(NULL, head);
 		*headp = NULL;
@@ -575,7 +575,7 @@ static void cli_batch_resend_work(struct work_struct *data)
 			continue;
 		}
 
-		/* reused the allocated buffer */
+		
 		if (i >= index) {
 			list_move_tail(&buf->bub_item, &head->buh_buf_list);
 			head->buh_update_count += buf->bub_req->burq_count;
@@ -600,7 +600,7 @@ repeat:
 			if (msgsz >= max_len) {
 				int rc2;
 
-				/* Create new batch update buffer */
+				
 				rc2 = batch_update_buffer_create(head, msgsz +
 					offsetof(struct batch_update_request,
 						 burq_reqmsg[0]) + 1);

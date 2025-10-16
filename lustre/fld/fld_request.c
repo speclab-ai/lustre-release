@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * FLD (Fids Location Database)
  *
@@ -177,7 +177,7 @@ int fld_client_add_target(struct lu_client_fld *fld,
 }
 EXPORT_SYMBOL(fld_client_add_target);
 
-/* Remove export from FLD */
+
 int fld_client_del_target(struct lu_client_fld *fld, u64 idx)
 {
 	struct lu_fld_target *target, *tmp;
@@ -365,7 +365,7 @@ again:
 	ptlrpc_at_set_req_timeout(req);
 
 	if (CFS_FAIL_CHECK(OBD_FAIL_FLD_QUERY_REQ) && req->rq_no_delay) {
-		/* the same error returned by ptlrpc_import_delay_req */
+		
 		rc = -EAGAIN;
 		req->rq_status = rc;
 	} else {
@@ -373,7 +373,7 @@ again:
 	}
 
 	if (rc == -ENOENT) {
-		/* Don't loop forever on non-existing FID sequences. */
+		
 		GOTO(out_req, rc);
 	}
 
@@ -383,7 +383,7 @@ again:
 		    imp->imp_connect_flags_orig & OBD_CONNECT_MDS_MDS &&
 		    OCD_HAS_FLAG(&imp->imp_connect_data, LIGHTWEIGHT) &&
 		    rc != -ENOTSUPP) {
-			/* LWP is not replayable, retry after a while */
+			
 			rc = -EAGAIN;
 		}
 		if (rc == -EAGAIN) {
@@ -433,7 +433,7 @@ int fld_client_lookup(struct lu_client_fld *fld, u64 seq, u32 flags,
 	if (rc == 0)
 		RETURN(0);
 
-	/* Can not find it in the cache */
+	
 	target = fld_client_get_target(fld, seq);
 	LASSERT(target != NULL);
 	origin = target;
@@ -450,7 +450,7 @@ again:
 		LASSERT(env != NULL);
 		rc = fld_server_lookup(env, target->ft_srv, seq, res);
 	} else
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 	{
 		rc = fld_client_rpc(target->ft_exp, res, FLD_QUERY, NULL);
 	}
@@ -503,7 +503,7 @@ static int __init fld_init(void)
 	rc = fld_server_mod_init();
 	if (rc)
 		return rc;
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 	fld_debugfs_dir = debugfs_create_dir(LUSTRE_FLD_NAME,
 					     debugfs_lustre_root);
@@ -514,12 +514,12 @@ static void __exit fld_exit(void)
 {
 #ifdef HAVE_SERVER_SUPPORT
 	fld_server_mod_exit();
-#endif /* HAVE_SERVER_SUPPORT */
+#endif 
 
 	debugfs_remove_recursive(fld_debugfs_dir);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre FID Location Database");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

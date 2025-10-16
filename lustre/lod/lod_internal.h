@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright  2009 Sun Microsystems, Inc. All rights reserved
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Alex Zhuravlev <alexey.zhuravlev@intel.com>
  * Author: Mikhail Pershin <mike.pershin@intel.com>
@@ -26,7 +26,7 @@ enum lod_uses_hint {
 	LOD_USES_DEFAULT_STRIPE,
 };
 
-/* Special values to remove LOV EA from disk */
+
 #define LOVEA_DELETE_VALUES(size, count, offset, pool)			\
 	((size) == 0 && (count) == 0 &&					\
 	 (offset) == (typeof(offset))(-1) && (pool) == NULL)
@@ -36,22 +36,22 @@ enum lod_uses_hint {
 
 struct lod_pool_desc {
 	char			 pool_name[LOV_MAXPOOLNAME + 1];
-	struct lu_tgt_pool	 pool_obds;	/* pool members */
+	struct lu_tgt_pool	 pool_obds;	
 	struct kref		 pool_refcount;
 	struct lu_qos_rr	 pool_rr;
-	struct rhash_head	 pool_hash;	/* access by poolname */
+	struct rhash_head	 pool_hash;	
 	struct list_head	 pool_list;
 	struct rcu_head		 pool_rcu;
 	struct proc_dir_entry	*pool_proc_entry;
-	struct obd_device	*pool_lobd;	/* owner */
+	struct obd_device	*pool_lobd;	
 	time64_t		 pool_spill_expire;
 	struct proc_dir_entry	*pool_spill_proc_entry;
 	bool			 pool_spill_is_active;
 	unsigned int		 pool_spill_threshold_pct;
 	atomic_t		 pool_spill_hit;
 	char			 pool_spill_target[LOV_MAXPOOLNAME + 1];
-	bool			 pool_same_space; /* targets in pool balanced*/
-	time64_t		 pool_same_space_expire; /*uses ld_qos_maxage*/
+	bool			 pool_same_space; 
+	time64_t		 pool_same_space_expire; 
 	struct dentry		*pool_debugfs;
 };
 
@@ -71,16 +71,16 @@ bool lod_pool_exists(struct lod_device *lod, char *poolname);
 #define MDT_TGT(lod, index)   LTD_TGT(&lod->lod_mdt_descs, index)
 
 struct lod_avoid_guide {
-	/* ids of OSSs avoid guidance */
+	
 	__u32			*lag_oss_avoid_array;
-	/* number of filled array items */
+	
 	unsigned int		lag_oaa_count;
-	/* number of allocated array items */
+	
 	unsigned int		lag_oaa_size;
-	/* bitmap of OSTs avoid guidance */
+	
 	unsigned long		*lag_ost_avoid_bitmap;
 	u32			lag_ost_avoid_size;
-	/* how many OSTs are available for alloc */
+	
 	__u32			lag_ost_avail;
 };
 
@@ -100,36 +100,36 @@ struct lod_device {
 			      lod_child_got_update_log:1,
 			      lod_dist_txn_check_space:1;
 
-	/* protect ld_active_tgt_count, ltd_active and lod_md_root */
+	
 	spinlock_t	     lod_lock;
 
-	/* Description of OST */
+	
 	struct lod_tgt_descs  lod_ost_descs;
-	/* Description of MDT */
+	
 	struct lod_tgt_descs  lod_mdt_descs;
 
-	/* Recovery thread for lod_child */
+	
 	struct task_struct   *lod_child_recovery_task;
 
-	/* maximum EA size underlied OSD may have */
+	
 	unsigned int	      lod_osd_max_easize;
-	/* maximum size of MDT stripe for Data-on-MDT files. */
+	
 	unsigned int          lod_dom_stripesize_max_kb;
-	/* current DOM default stripe size adjusted by threshold */
+	
 	unsigned int	      lod_dom_stripesize_cur_kb;
-	/* Threshold at which DOM default stripe will start decreasing */
+	
 	__u64		      lod_dom_threshold_free_mb;
 
-	/* Local OSD statfs cache */
+	
 	spinlock_t	      lod_lsfs_lock;
 	time64_t	      lod_lsfs_age;
 	__u64		      lod_lsfs_total_mb;
 	__u64		      lod_lsfs_free_mb;
 
-	/* OST pool data */
+	
 	int			lod_pool_count;
-	struct rhashtable	lod_pools_hash_body; /* used for key access */
-	struct list_head	lod_pool_list; /* used for sequential access */
+	struct rhashtable	lod_pools_hash_body; 
+	struct list_head	lod_pool_list; 
 	struct proc_dir_entry  *lod_pool_proc_entry;
 	struct proc_dir_entry  *lod_spill_proc_entry;
 
@@ -139,13 +139,13 @@ struct lod_device {
 	struct dentry	       *lod_debugfs;
 	struct dentry	       *lod_pool_debugfs;
 
-	/* ROOT object, used to fetch FS default striping */
+	
 	struct lod_object      *lod_md_root;
 
-	/* max stripe count if stripe count is set to -1. 0 means unlimited */
+	
 	unsigned int		lod_max_stripecount;
 	unsigned int		lod_max_mdt_stripecount;
-	/* valid range: [1, LMV_MAX_STRIPES_PER_MDT] */
+	
 	unsigned int		lod_max_stripes_per_mdt;
 };
 
@@ -159,9 +159,9 @@ struct lod_layout_component {
 	__u32			  llc_id;
 	__u32			  llc_flags;
 	__u32			  llc_magic;
-	__u64			  llc_timestamp; /* snapshot time */
+	__u64			  llc_timestamp; 
 	union {
-		struct { /* plain layout V1/V3. */
+		struct { 
 			__u32			  llc_pattern;
 			__u32			  llc_stripe_size;
 			__u16			  llc_layout_gen;
@@ -169,19 +169,19 @@ struct lod_layout_component {
 			__u16			  llc_stripe_count;
 			__u16			  llc_stripes_allocated;
 			char			 *llc_pool;
-			/* ost list specified by LOV_USER_MAGIC_SPECIFIC lum */
+			
 			struct lu_tgt_pool	  llc_ostlist;
 			struct dt_object	**llc_stripe;
 			__u32			 *llc_ost_indices;
 		};
-		struct { /* Foreign mirror layout component */
+		struct { 
 			__u32			  llc_length;
 			__u32			  llc_type;
 			__u32			  llc_foreign_flags;
 			union {
-				/* Basic HSM layout information */
+				
 				struct lov_hsm_base	 llc_hsm;
-				/* Other kinds of foreign types (i.e. DAOS) */
+				
 				char			*llc_value;
 			};
 		};
@@ -189,51 +189,51 @@ struct lod_layout_component {
 };
 
 struct lod_default_striping {
-	/* default LOV */
-	/* current layout component count */
+	
+	
 	__u16				lds_def_comp_cnt;
 	__u16				lds_def_mirror_cnt;
-	/* the largest comp count ever used */
+	
 	__u32				lds_def_comp_size_cnt;
 	struct lod_layout_component	*lds_def_comp_entries;
-	/* default LMV */
+	
 	__u32				lds_dir_def_stripe_count;
 	__u32				lds_dir_def_stripe_offset;
 	__u32				lds_dir_def_hash_type;
 	__u8				lds_dir_def_max_inherit;
 	__u8				lds_dir_def_max_inherit_rr;
-					/* default file striping flags (LOV) */
+					
 	__u32				lds_def_striping_set:1,
 					lds_def_striping_is_composite:1,
-					/* default dir striping flags (LMV) */
+					
 					lds_dir_def_striping_set:1;
 };
 
 enum layout_verify_flags {
-	LVF_ALL_STALE		= BIT(0), /* check not all stale mirrors */
+	LVF_ALL_STALE		= BIT(0), 
 };
 
 struct lod_mirror_entry {
 	__u16	lme_stale:1,
 		lme_prefer:1,
 		lme_hsm:1;
-	/* mirror id */
+	
 	__u16	lme_id;
-	/* preference */
+	
 	__u16	lme_preference;
-	/* start,end index of this mirror in ldo_comp_entries */
+	
 	__u16	lme_start;
 	__u16	lme_end;
 };
 
 struct lod_object {
-	/* common fields for both files and directories */
+	
 	struct dt_object		ldo_obj;
 	struct mutex			ldo_layout_mutex;
-					/* foreign file/directory */
+					
 	__u32				ldo_is_foreign:1;
 	union {
-		/* file stripe (LOV) */
+		
 		struct {
 			__u32		ldo_layout_gen;
 			/* Layout component count for a regular file.
@@ -247,21 +247,21 @@ struct lod_object {
 					ldo_flr_state:4,
 					ldo_comp_cached:1;
 		};
-		/* directory stripe (LMV) */
+		
 		struct {
-			/* Slave stripe count for striped directory. */
+			
 			__u16		ldo_dir_stripe_count;
-			/* How many stripes allocated for a striped directory */
+			
 			__u16		ldo_dir_stripes_allocated;
 			__u32		ldo_dir_stripe_offset;
 			__u32		ldo_dir_hash_type;
 			__u32		ldo_dir_migrate_offset;
 			__u32		ldo_dir_migrate_hash;
 			__u32		ldo_dir_layout_version;
-			/* Is a slave stripe of striped directory? */
+			
 			__u32		ldo_dir_slave_stripe:1,
 					ldo_dir_striped:1,
-					/* the stripe has been loaded */
+					
 					ldo_dir_stripe_loaded:1;
 			/*
 			 * This default LMV is parent default LMV, which will be
@@ -274,19 +274,19 @@ struct lod_object {
 	};
 	union {
 		struct {
-			/* foreign/raw format LOV */
+			
 			char				*ldo_foreign_lov;
 			size_t				 ldo_foreign_lov_size;
 		};
 		struct {
-			/* foreign/raw format LMV */
+			
 			char				*ldo_foreign_lmv;
 			size_t				 ldo_foreign_lmv_size;
 		};
 		struct {
-			/* file stripe (LOV) */
+			
 			struct lod_layout_component	*ldo_comp_entries;
-			/* slave stripes of striped directory (LMV) */
+			
 			struct dt_object		**ldo_stripe;
 		};
 	};
@@ -373,7 +373,7 @@ static inline void lod_obj_inc_layout_gen(struct lod_object *lo)
 	__u32 preserve = lo->ldo_layout_gen & ~LCME_ID_MASK;
 	lo->ldo_layout_gen++;
 	lo->ldo_layout_gen |= preserve;
-	/* Zero is not a valid generation */
+	
 	if (unlikely((lo->ldo_layout_gen & LCME_ID_MASK) == 0)) {
 		lo->ldo_layout_gen++;
 		lo->ldo_layout_gen &= ~LU_LAYOUT_RESYNC;
@@ -381,18 +381,18 @@ static inline void lod_obj_inc_layout_gen(struct lod_object *lo)
 }
 
 struct lod_it {
-	struct dt_object	*lit_obj; /* object from the layer below */
-	/* stripe offset of iteration */
+	struct dt_object	*lit_obj; 
+	
 	__u32			lit_stripe_index;
 	__u32			lit_attr;
-	struct dt_it		*lit_it;  /* iterator from the layer below */
+	struct dt_it		*lit_it;  
 };
 
 #define LOD_OBJS_INTRANS 4
 struct lod_thread_info {
-	/* per-thread buffer for LOV EA, may be vmalloc'd */
+	
 	struct lu_buf                   lti_ea_buf;
-	/* per-thread buffer for LMV EA */
+	
 	struct lu_buf			lti_buf;
 	struct ost_id			lti_ostid;
 	struct lu_fid			lti_fid;
@@ -400,7 +400,7 @@ struct lod_thread_info {
 	struct lu_attr			lti_attr;
 	struct lod_it			lti_it;
 	struct ldlm_res_id		lti_res_id;
-	/* used to hold lu_dirent, sizeof(struct lu_dirent) + NAME_MAX */
+	
 	char				lti_key[sizeof(struct lu_dirent) +
 						NAME_MAX];
 	struct dt_object_format		lti_format;
@@ -410,14 +410,14 @@ struct lod_thread_info {
 	struct llog_catid		lti_cid;
 	struct llog_cookie		lti_cookie;
 	struct lustre_cfg		lti_lustre_cfg;
-	/* used to store parent default striping in create */
+	
 	struct lod_default_striping	lti_def_striping;
 	struct filter_fid		lti_ff;
 	__u32				*lti_comp_idx;
 	size_t				lti_comp_size;
 	size_t				lti_count;
 	struct lu_attr			lti_layout_attr;
-	/* object allocation avoid guide info */
+	
 	struct lod_avoid_guide		lti_avoid;
 	union lmv_mds_md		lti_lmv;
 	struct dt_allocation_hint	lti_ah;
@@ -631,7 +631,7 @@ static inline void lod_layout_get_pool(struct lod_layout_component *entries,
 #define lod_foreach_mdt(lod, mdt) ltd_foreach_tgt(&(lod)->lod_mdt_descs, mdt)
 #define lod_foreach_ost(lod, ost) ltd_foreach_tgt(&(lod)->lod_ost_descs, ost)
 
-/* lod_dev.c */
+
 extern struct kmem_cache *lod_object_kmem;
 int lod_fld_lookup(const struct lu_env *env, struct lod_device *lod,
 		   const struct lu_fid *fid, __u32 *tgt, int *flags);
@@ -641,7 +641,7 @@ void lod_sub_fini_llog(const struct lu_env *env,
 		       struct dt_device *dt, struct task_struct **taskp);
 int lodname2mdt_index(char *lodname, __u32 *mdt_index);
 
-/* lod_lov.c */
+
 void lod_getref(struct lod_tgt_descs *ltd);
 void lod_putref(struct lod_device *lod, struct lod_tgt_descs *ltd);
 int lod_add_device(const struct lu_env *env, struct lod_device *lod,
@@ -743,7 +743,7 @@ int lod_alloc_comp_entries(struct lod_object *lo, int mirror_cnt, int comp_cnt);
 int lod_fill_mirrors(struct lod_object *lo);
 int lod_init_comp_foreign(struct lod_layout_component *lod_comp, void *lmm);
 
-/* lod_pool.c */
+
 struct lod_pool_desc *lod_find_pool(struct lod_device *lod, const char *poolname);
 void lod_pool_putref(struct lod_pool_desc *pool);
 int lod_pool_del(struct obd_device *obd, char *poolname);
@@ -776,7 +776,7 @@ struct lod_obj_stripe_cb_data {
 	bool				locd_declare;
 };
 
-/* lod_qos.c */
+
 int lod_mdt_alloc_qos(const struct lu_env *env, struct lod_object *lo,
 		      struct dt_object **stripes, u32 stripe_idx,
 		      u32 stripe_count);
@@ -805,11 +805,11 @@ __u16 lod_get_stripe_count(struct lod_device *lod, struct lod_object *lo,
 void lod_qos_statfs_update(const struct lu_env *env, struct lod_device *lod,
 			   struct lu_tgt_descs *ltd);
 
-/* lproc_lod.c */
+
 int lod_procfs_init(struct lod_device *lod);
 void lod_procfs_fini(struct lod_device *lod);
 
-/* lod_object.c */
+
 extern const struct dt_object_operations lod_obj_ops;
 extern const struct lu_object_operations lod_lu_obj_ops;
 
@@ -834,7 +834,7 @@ int lod_comp_copy_ost_lists(struct lod_layout_component *lod_comp,
 void lod_adjust_stripe_size(struct lod_layout_component *comp,
 			    __u32 def_stripe_size);
 
-/* lod_sub_object.c */
+
 struct thandle *lod_sub_get_thandle(const struct lu_env *env,
 				    struct thandle *th,
 				    const struct dt_object *sub_obj,

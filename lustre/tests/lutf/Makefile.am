@@ -1,6 +1,5 @@
 SUBDIRS = src
 DIST_SUBDIRS = src
-
 nobase_noinst_DATA = swig_templates/lutf_missing_definitions.h
 nobase_noinst_DATA += swig_templates/typemap.template
 nobase_noinst_DATA += swig_templates/liblnetconfig.template
@@ -24,7 +23,6 @@ nobase_noinst_SCRIPTS += $(wildcard python/tests/suite_udsp/*.py)
 nobase_noinst_SCRIPTS += $(wildcard python/tests/suite_routing/*.py)
 nobase_noinst_SCRIPTS += $(wildcard python/tests/suite_dynamic-nids/*.py)
 EXTRA_DIST=$(nobase_noinst_DATA) $(nobase_noinst_SCRIPTS)
-
 noinst_testdir = $(libdir)/lustre/tests/lutf
 nobase_noinst_test_DATA = $(nobase_noinst_DATA)
 nobase_noinst_test_SCRIPTS = $(nobase_noinst_SCRIPTS)

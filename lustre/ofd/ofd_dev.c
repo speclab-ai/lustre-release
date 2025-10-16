@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2009, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * This file contains OSD API methods for OBD Filter Device (OFD),
  * request handlers and supplemental functions to set OFD up and clean it up.
@@ -63,7 +63,7 @@
 
 #include "ofd_internal.h"
 
-/* Slab for OFD object allocation */
+
 static struct kmem_cache *ofd_object_kmem;
 static struct lu_kmem_descr ofd_caches[] = {
 	{
@@ -171,7 +171,7 @@ static int ofd_stack_init(const struct lu_env *env,
 		bitmap_copy(lmd_flags, lmd->lmd_flags, LMD_FLG_NUM_FLAGS);
 	}
 
-	/* find bottom osd */
+	
 	OBD_ALLOC(osdname, MTI_NAME_MAXLEN);
 	if (osdname == NULL)
 		RETURN(-ENOMEM);
@@ -218,7 +218,7 @@ static void ofd_stack_fini(const struct lu_env *env, struct ofd_device *m,
 	ENTRY;
 
 	lu_site_purge(env, top->ld_site, ~0);
-	/* process cleanup, pass mdt obd name to get obd umount flags */
+	
 	lustre_cfg_bufs_reset(&bufs, obd->obd_name);
 	if (obd->obd_force)
 		strcat(flags, "F");
@@ -272,7 +272,7 @@ static void ofd_stack_pre_fini(const struct lu_env *env, struct ofd_device *m,
 	EXIT;
 }
 
-/* For interoperability, see mdt_interop_param[]. */
+
 static struct cfg_interop_param ofd_interop_param[] = {
 	{ "ost.quota_type",	NULL },
 	{ NULL }
@@ -339,7 +339,7 @@ static int ofd_process_config(const struct lu_env *env, struct lu_device *d,
 
 	switch (cfg->lcfg_command) {
 	case LCFG_PARAM: {
-		/* For interoperability */
+		
 		struct cfg_interop_param *ptr = NULL;
 		struct lustre_cfg *old_cfg = NULL;
 		char *param = NULL;
@@ -385,7 +385,7 @@ static int ofd_process_config(const struct lu_env *env, struct lu_device *d,
 		}
 		CDEBUG(D_CONFIG, "pass param %s down the stack.\n",
 		       param);
-		/* we don't understand; pass it on */
+		
 		rc = next->ld_ops->ldo_process_config(env, next, cfg);
 		break;
 	}
@@ -394,7 +394,7 @@ static int ofd_process_config(const struct lu_env *env, struct lu_device *d,
 		break;
 	}
 	default:
-		/* others are passed further */
+		
 		rc = next->ld_ops->ldo_process_config(env, next, cfg);
 		break;
 	}
@@ -610,7 +610,7 @@ static int ofd_prepare(const struct lu_env *env, struct lu_device *pdev,
 	if (info == NULL)
 		RETURN(-EFAULT);
 
-	/* initialize lower device */
+	
 	rc = next->ld_ops->ldo_prepare(env, dev, next);
 	if (rc != 0)
 		RETURN(rc);
@@ -860,7 +860,7 @@ static int ofd_set_info_hdl(struct tgt_session_info *tsi)
 		repbody = req_capsule_server_get(tsi->tsi_pill, &RMF_OST_BODY);
 		*repbody = *body;
 
-		/** handle grant shrink, similar to a read request */
+		
 		tgt_grant_prepare_read(tsi->tsi_env, tsi->tsi_exp,
 				       &repbody->oa);
 	} else if (KEY_IS(KEY_EVICT_BY_NID)) {
@@ -1100,7 +1100,7 @@ static int ofd_get_info_hdl(struct tgt_session_info *tsi)
 
 	ENTRY;
 
-	/* this common part for get_info rpc */
+	
 	key = req_capsule_client_get(tsi->tsi_pill, &RMF_GETINFO_KEY);
 	if (key == NULL) {
 		DEBUG_REQ(D_HA, tgt_ses_req(tsi), "no get_info key");
@@ -1303,13 +1303,13 @@ static int ofd_getattr_hdl(struct tgt_session_info *tsi)
 	if (rc == 0) {
 		__u64 curr_version;
 
-		/* Queue repair of UID/GID/PROJID if not set */
+		
 		ofd_repair_resource_ids(tsi->tsi_env, fo, &repbody->oa, false);
 
 		obdo_from_la(&repbody->oa, &fti->fti_attr,
 			     OFD_VALID_FLAGS | LA_UID | LA_GID | LA_PROJID);
 
-		/* Store object version in reply */
+		
 		curr_version = dt_version_get(tsi->tsi_env,
 					      ofd_object_child(fo));
 		if ((__s64)curr_version != -EOPNOTSUPP) {
@@ -1402,7 +1402,7 @@ static int ofd_setattr_hdl(struct tgt_session_info *tsi)
 	la_from_obdo(&fti->fti_attr, &body->oa, body->oa.o_valid);
 	fti->fti_attr.la_valid &= ~LA_TYPE;
 
-	/* setting objects attributes (including owner/group) */
+	
 	rc = ofd_attr_set(tsi->tsi_env, fo, &fti->fti_attr, &body->oa);
 	if (rc != 0)
 		GOTO(out_put, rc);
@@ -1495,7 +1495,7 @@ static int ofd_orphans_destroy(const struct lu_env *env,
 		rc = ofd_destroy_by_fid(env, ofd, fid, 1);
 		if (rc != 0 && rc != -ENOENT && rc != -ESTALE &&
 		    likely(rc != -EREMCHG && rc != -EINPROGRESS))
-			/* this is pretty fatal... */
+			
 			CEMERG("%s: error destroying precreated id "
 			       DFID": rc = %d\n",
 			       ofd_name(ofd), PFID(fid), rc);
@@ -1519,7 +1519,7 @@ done:
 		ofd_seq_last_oid_set(oseq, oid);
 		rc = ofd_seq_last_oid_write(env, ofd, oseq);
 	} else {
-		/* don't reuse orphan object, return last used objid */
+		
 		rc = ostid_set_id(oi, last);
 	}
 
@@ -1608,20 +1608,20 @@ static int ofd_create_hdl(struct tgt_session_info *tsi)
 		 * upon write replay, see ofd_preprw_write() */
 		GOTO(out_nolock, rc = 0);
 	}
-	/* former ofd_handle_precreate */
+	
 	if ((oa->o_valid & OBD_MD_FLFLAGS) &&
 	    (oa->o_flags & OBD_FL_DELORPHAN)) {
 		exp->exp_filter_data.fed_lastid_gen = ofd->ofd_lastid_gen;
 
 		CFS_FAIL_TIMEOUT(OBD_FAIL_OST_DELORPHAN_DELAY, cfs_fail_val);
-		/* destroy orphans */
+		
 		if (lustre_msg_get_conn_cnt(tgt_ses_req(tsi)->rq_reqmsg) <
 		    exp->exp_conn_cnt) {
 			CERROR("%s: dropping old orphan cleanup request\n",
 			       ofd_name(ofd));
 			GOTO(out_nolock, rc = -ESTALE);
 		}
-		/* This causes inflight precreates to abort and drop lock */
+		
 		oseq->os_destroys_in_progress = 1;
 		mutex_lock(&oseq->os_create_lock);
 		if (!oseq->os_destroys_in_progress) {
@@ -1643,7 +1643,7 @@ static int ofd_create_hdl(struct tgt_session_info *tsi)
 				 PFID(&oseq->os_oi.oi_fid),
 				 ofd_seq_last_oid(oseq));
 
-			/* Let MDS know that we are so far ahead. */
+			
 			rc = ostid_set_id(&rep_oa->o_oi,
 					  ofd_seq_last_oid(oseq) + 1);
 		} else if (diff < 0) {
@@ -1651,13 +1651,13 @@ static int ofd_create_hdl(struct tgt_session_info *tsi)
 						 ofd, rep_oa);
 			oseq->os_destroys_in_progress = 0;
 		} else {
-			/* XXX: Used by MDS for the first time! */
+			
 			oseq->os_destroys_in_progress = 0;
 		}
 	} else {
 		if (unlikely(exp->exp_filter_data.fed_lastid_gen !=
 			     ofd->ofd_lastid_gen)) {
-			/* Keep the export ref so we can send the reply. */
+			
 			ofd_obd_disconnect(class_export_get(exp));
 			GOTO(out_nolock, rc = -ENOTCONN);
 		}
@@ -1673,10 +1673,10 @@ static int ofd_create_hdl(struct tgt_session_info *tsi)
 		 * must be specfied */
 		if ((!fid_seq_is_mdt(seq) && !fid_seq_is_norm(seq) &&
 		     !fid_seq_is_idif(seq)) || oid == 0) {
-			diff = 1; /* shouldn't we create this right now? */
+			diff = 1; 
 		} else {
 			diff = oid - ofd_seq_last_oid(oseq);
-			/* Do sync create if the seq is about to used up */
+			
 			sync_trans = ofd_seq_is_exhausted(ofd, oa);
 			if (sync_trans < 0)
 				GOTO(out, rc = sync_trans);
@@ -1687,7 +1687,7 @@ static int ofd_create_hdl(struct tgt_session_info *tsi)
 					 ofd_name(ofd), PFID(&oa->o_oi.oi_fid),
 					 oid, -diff, PFID(&oseq->os_oi.oi_fid),
 					 ofd_seq_last_oid(oseq));
-				/* Let MDS know that we are so far ahead. */
+				
 				rc = ostid_set_id(&rep_oa->o_oi,
 						  ofd_seq_last_oid(oseq) + 1);
 			}
@@ -1707,21 +1707,21 @@ static int ofd_create_hdl(struct tgt_session_info *tsi)
 		 * (possibly filling the OST), only precreate the last batch.
 		 * LFSCK will eventually clean up any orphans. LU-14 */
 		if (diff > 5 * OST_MAX_PRECREATE) {
-			/* Message below is checked in conf-sanity test_122b */
+			
 			LCONSOLE_WARN("%s: precreate FID "DOSTID" is over %lld higher than LAST_ID "DOSTID", only precreating the last %llu objects. OST replaced or reformatted?\n",
 				      ofd_name(ofd), POSTID(&oa->o_oi), diff,
 				      POSTID(&oseq->os_oi),
 				      min(seq_width, (__u64)OST_MAX_PRECREATE));
-			/* From last created */
+			
 			diff = min(seq_width, (__u64)OST_MAX_PRECREATE);
 			ofd_seq_last_oid_set(oseq, ostid_id(&oa->o_oi) - diff);
-			/* no sync_trans when recreating last batch */
+			
 			sync_trans = 0;
 		}
 
 		if (!(oa->o_valid & OBD_MD_FLFLAGS) ||
 		    !(oa->o_flags & OBD_FL_DELORPHAN)) {
-			/* don't enforce grant during orphan recovery */
+			
 			granted = tgt_grant_create(tsi->tsi_env,
 						ofd_obd(ofd)->obd_self_export,
 						&diff);
@@ -1834,8 +1834,8 @@ static int ofd_destroy_hdl(struct tgt_session_info *tsi)
 	if (CFS_FAIL_CHECK(OBD_FAIL_OST_EROFS))
 		RETURN(-EROFS);
 
-	/* This is old case for clients before Lustre 2.4 */
-	/* If there's a DLM request, cancel the locks mentioned in it */
+	
+	
 	if (req_capsule_field_present(tsi->tsi_pill, &RMF_DLM_REQ,
 				      RCL_CLIENT)) {
 		struct ldlm_request *dlm;
@@ -1852,11 +1852,11 @@ static int ofd_destroy_hdl(struct tgt_session_info *tsi)
 
 	repbody = req_capsule_server_get(tsi->tsi_pill, &RMF_OST_BODY);
 
-	/* check that o_misc makes sense */
+	
 	if (body->oa.o_valid & OBD_MD_FLOBJCOUNT)
 		count = body->oa.o_misc;
 	else
-		count = 1; /* default case - single destroy */
+		count = 1; 
 
 	CDEBUG(D_HA, "%s: Destroy object "DOSTID" count %d\n", ofd_name(ofd),
 	       POSTID(&body->oa.o_oi), count);
@@ -1869,7 +1869,7 @@ static int ofd_destroy_hdl(struct tgt_session_info *tsi)
 			CDEBUG(D_INODE,
 			       "%s: destroying non-existent object "DFID"\n",
 			       ofd_name(ofd), PFID(fid));
-			/* rewrite rc with -ENOENT only if it is 0 */
+			
 			if (rc == 0)
 				rc = lrc;
 		} else if (lrc != 0) {
@@ -1958,7 +1958,7 @@ static int ofd_sync_hdl(struct tgt_session_info *tsi)
 
 	repbody = req_capsule_server_get(tsi->tsi_pill, &RMF_OST_BODY);
 
-	/* if no objid is specified, it means "sync whole filesystem" */
+	
 	if (!fid_is_zero(&tsi->tsi_fid)) {
 		fo = ofd_object_find_exists(tsi->tsi_env, ofd, &tsi->tsi_fid);
 		if (IS_ERR(fo))
@@ -1984,7 +1984,7 @@ static int ofd_sync_hdl(struct tgt_session_info *tsi)
 		obdo_from_la(&repbody->oa, &fti->fti_attr,
 			     OFD_VALID_FLAGS);
 	else
-		/* don't return rc from getattr */
+		
 		rc = 0;
 	EXIT;
 put:
@@ -2058,7 +2058,7 @@ static int ofd_fallocate_hdl(struct tgt_session_info *tsi)
 	if (tsi->tsi_exp->exp_old_falloc && start >= end)
 		RETURN(-EOPNOTSUPP);
 #endif
-	/* client should already limit len >= 0 */
+	
 	if (start >= end)
 		RETURN(-EINVAL);
 
@@ -2130,10 +2130,10 @@ out:
 
 			ldlm_res_lvbo_update(res, NULL, 0);
 			res_lvb = res->lr_lvb_data;
-			/* Blocks */
+			
 			repbody->oa.o_valid |= OBD_MD_FLBLOCKS;
 			repbody->oa.o_blocks = res_lvb->lvb_blocks;
-			/* Size */
+			
 			repbody->oa.o_valid |= OBD_MD_FLSIZE;
 			repbody->oa.o_size = res_lvb->lvb_size;
 
@@ -2182,11 +2182,11 @@ static int ofd_punch_hdl(struct tgt_session_info *tsi)
 	if (repbody == NULL)
 		RETURN(err_serious(-ENOMEM));
 
-	/* punch start,end are passed in o_size,o_blocks throught wire */
+	
 	start = oa->o_size;
 	end = oa->o_blocks;
 
-	if (end != OBD_OBJECT_EOF) /* Only truncate is supported */
+	if (end != OBD_OBJECT_EOF) 
 		RETURN(-EPROTO);
 
 	/* standard truncate optimization: if file body is completely
@@ -2283,7 +2283,7 @@ static int ofd_ladvise_prefetch(const struct lu_env *env,
 	if (end <= start)
 		GOTO(out_unlock, rc);
 
-	/* We need page aligned offset and length */
+	
 	start_index = start >> PAGE_SHIFT;
 	end_index = (end - 1) >> PAGE_SHIFT;
 	pages = end_index - start_index + 1;
@@ -2403,7 +2403,7 @@ static int ofd_ladvise_hdl(struct tgt_session_info *tsi)
 			break;
 		}
 
-		/* Handle different advice types */
+		
 		switch (ladvise->lla_advice) {
 		default:
 			rc = -EOPNOTSUPP;
@@ -2573,7 +2573,7 @@ static void ofd_prolong_extent_locks(struct tgt_session_info *tsi,
 			 * region exclusively. */
 			if (ldlm_extent_contain(&lock->l_policy_data.l_extent,
 						&data->lpa_extent)) {
-				/* bingo */
+				
 				LASSERT(lock->l_export == data->lpa_export);
 				ldlm_lock_prolong_one(lock, data);
 				ldlm_lock_put(lock);
@@ -2873,12 +2873,12 @@ static void ofd_hp_brw(struct tgt_session_info *tsi)
 	ENTRY;
 
 	ioo = req_capsule_client_get(tsi->tsi_pill, &RMF_OBD_IOOBJ);
-	LASSERT(ioo != NULL); /* must exist after request preprocessing */
+	LASSERT(ioo != NULL); 
 	if (ioo->ioo_bufcnt > 0) {
 		rnb = req_capsule_client_get(tsi->tsi_pill, &RMF_NIOBUF_REMOTE);
-		LASSERT(rnb != NULL); /* must exist after request preprocessing */
+		LASSERT(rnb != NULL); 
 
-		/* no high priority if server lock is needed */
+		
 		if (rnb->rnb_flags & OBD_BRW_SRVLOCK ||
 		    (lustre_msg_get_flags(tgt_ses_req(tsi)->rq_reqmsg)
 		     & MSG_REPLAY))
@@ -2898,8 +2898,8 @@ static void ofd_hp_brw(struct tgt_session_info *tsi)
  */
 static void ofd_hp_punch(struct tgt_session_info *tsi)
 {
-	LASSERT(tsi->tsi_ost_body != NULL); /* must exists if we are here */
-	/* no high-priority if server lock is needed */
+	LASSERT(tsi->tsi_ost_body != NULL); 
+	
 	if ((tsi->tsi_ost_body->oa.o_valid & OBD_MD_FLFLAGS &&
 	     tsi->tsi_ost_body->oa.o_flags & OBD_FL_SRVLOCK) ||
 	    tgt_conn_flags(tsi) & OBD_CONNECT_MDS ||
@@ -2942,7 +2942,7 @@ TGT_OST_HDL(HAS_REPLY | IS_MUTABLE,
 TGT_OST_HDL(HAS_REPLY,	OST_STATFS,	ofd_statfs_hdl),
 TGT_OST_HDL_HP(HAS_BODY | HAS_REPLY,	OST_BRW_READ,	tgt_brw_read,
 							ofd_hp_brw),
-/* don't set CORPUS flag for brw_write because -ENOENT may be valid case */
+
 TGT_OST_HDL_HP(HAS_BODY | IS_MUTABLE,	OST_BRW_WRITE,	tgt_brw_write,
 							ofd_hp_brw),
 TGT_OST_HDL_HP(HAS_BODY | HAS_REPLY | IS_MUTABLE,
@@ -2996,7 +2996,7 @@ static struct tgt_opc_slice ofd_common_slice[] = {
 	}
 };
 
-/* context key constructor/destructor: ofd_key_init(), ofd_key_fini() */
+
 LU_KEY_INIT_FINI(ofd, struct ofd_thread_info);
 
 /**
@@ -3084,14 +3084,14 @@ static int ofd_init0(const struct lu_env *env, struct ofd_device *m,
 	INIT_LIST_HEAD(&m->ofd_inconsistency_list);
 	spin_lock_init(&m->ofd_inconsistency_lock);
 
-	m->ofd_access_log_mask = -1; /* Log all accesses if enabled. */
+	m->ofd_access_log_mask = -1; 
 
 	spin_lock_init(&m->ofd_batch_lock);
 	init_rwsem(&m->ofd_lastid_rwsem);
 
 	m->ofd_dt_dev.dd_lu_dev.ld_ops = &ofd_lu_ops;
 	m->ofd_dt_dev.dd_lu_dev.ld_obd = obd;
-	/* set this lu_device to obd, because error handling need it */
+	
 	obd->obd_lu_dev = &m->ofd_dt_dev.dd_lu_dev;
 
 	m->ofd_enable_resource_id_repair = 1;
@@ -3103,7 +3103,7 @@ static int ofd_init0(const struct lu_env *env, struct ofd_device *m,
 	init_waitqueue_head(&m->ofd_id_repair_waitq);
 	atomic_set(&m->ofd_id_repair_queued, 0);
 
-	/* No connection accepted until configurations will finish */
+	
 	spin_lock(&obd->obd_dev_lock);
 	obd->obd_no_conn = 1;
 	spin_unlock(&obd->obd_dev_lock);
@@ -3129,7 +3129,7 @@ static int ofd_init0(const struct lu_env *env, struct ofd_device *m,
 	}
 
 	snprintf(info->fti_u.name, sizeof(info->fti_u.name), "%s-%s",
-		 "filter"/*LUSTRE_OST_NAME*/, obd->obd_uuid.uuid);
+		 "filter", obd->obd_uuid.uuid);
 	m->ofd_namespace = ldlm_namespace_new(obd, info->fti_u.name,
 					      LDLM_NAMESPACE_SERVER,
 					      LDLM_NAMESPACE_GREEDY,
@@ -3141,7 +3141,7 @@ static int ofd_init0(const struct lu_env *env, struct ofd_device *m,
 		m->ofd_namespace = NULL;
 		GOTO(err_fini_stack, rc);
 	}
-	/* set obd_namespace for compatibility with old code */
+	
 	obd->obd_namespace = m->ofd_namespace;
 	ldlm_register_intent(m->ofd_namespace, ofd_intent_policy);
 	m->ofd_namespace->ns_lvbo = &ofd_lvbo;
@@ -3358,7 +3358,7 @@ static struct lu_device *ofd_device_alloc(const struct lu_env *env,
 	return l;
 }
 
-/* type constructor/destructor: ofd_type_init(), ofd_type_fini() */
+
 LU_TYPE_INIT_FINI(ofd, &ofd_thread_key);
 
 static const struct lu_device_type_operations ofd_device_type_ops = {
@@ -3440,7 +3440,7 @@ static void __exit ofd_exit(void)
 	lu_kmem_fini(ofd_caches);
 }
 
-MODULE_AUTHOR("OpenSFS, Inc. <http://www.lustre.org/>");
+MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Object Filtering Device");
 MODULE_VERSION(LUSTRE_VERSION_STRING);
 MODULE_LICENSE("GPL");

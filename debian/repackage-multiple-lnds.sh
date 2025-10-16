@@ -1,9 +1,7 @@
 #!/bin/bash
-# Repackage LNDs into multiple packages:
 KVERS=$1
 VER=$2
 LMDEB=$(ls $3)
-
 origin=$(dirname $(realpath $LMDEB))
 modpkg=$(basename -s .deb $LMDEB)
 arch=$(echo $modpkg | cut -d_ -f3)
@@ -12,10 +10,7 @@ gnipkg="lustre-lnet-module-gnilnd-${KVERS}_${VER}_${arch}"
 sockpkg="lustre-lnet-module-socklnd-${KVERS}_${VER}_${arch}"
 o2ibpkg="lustre-lnet-module-o2iblnd-${KVERS}_${VER}_${arch}"
 in_kernel_o2ibpkg="lustre-lnet-module-in-kernel-o2iblnd-${KVERS}_${VER}_${arch}"
-
 VERBOSE=''
-
-# expand the modules package:
 cd debian/tmp/re-pkg/${modpkg}
 ar x ../../../../$LMDEB
 cd DEBIAN; tar xf ../control.tar*; cd ..
@@ -24,9 +19,6 @@ mv debian-binary DEBIAN
 rm data.tar* control.tar*
 modpath=$(dirname $(find . -name ksocklnd.ko))
 cd ..
-
-# NOTE: pwd is debian/tmp/re-pkg
-
 if [[ "x${VERBOSE}" = "x-v" ]] ; then
 	echo "repackage-multiple-lnds"
 	echo "  DEB:      '${LMDEB}'"
@@ -36,14 +28,11 @@ if [[ "x${VERBOSE}" = "x-v" ]] ; then
 	echo "  origin:   '${origin}'"
 	echo "  modpath:  '${modpath}'"
 fi
-
 for pkg in ${modpkg} ${kfipkg} ${gnipkg} ${sockpkg} ${o2ibpkg} ${in_kernel_o2ibpkg}
 do
     mkdir -p ${pkg}/DEBIAN
     mkdir -p ${pkg}/${modpath}
 done
-
-# Migate individual lnds to new packages
 if [[ -f ${modpkg}/${modpath}/kkfilnd.ko ]] ; then
     [[ x${VERBOSE} = 'x-v' ]] && echo "Repackage kkfilnd.ko"
     mv ${modpkg}/${modpath}/kkfilnd.ko ${kfipkg}/${modpath}/
@@ -94,7 +83,5 @@ if [[ -f ${modpkg}/${modpath}/in-kernel-ko2iblnd.ko ]] ; then
     dpkg-deb --build ${in_kernel_o2ibpkg}
     cp ${VERBOSE} ${in_kernel_o2ibpkg}.deb ${origin}
 fi
-
-# Rebuilding lustre-[client|server]-modules without lnet lnd drivers
 dpkg-deb --build ${modpkg}
 cp ${VERBOSE} ${modpkg}.deb ${origin}

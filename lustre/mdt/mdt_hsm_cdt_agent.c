@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * (C) Copyright 2012 Commissariat a l'energie atomique et aux energies
@@ -65,11 +65,11 @@ int mdt_hsm_agent_register(struct mdt_thread_info *mti,
 	int			 rc;
 	ENTRY;
 
-	/* no coordinator started, so we cannot serve requests */
+	
 	if (!cdt_getref_try(cdt)) {
 		LCONSOLE_WARN("HSM coordinator thread is not running - "
 			      "denying agent registration.\n");
-		/* The client will resend the request if starting */
+		
 		RETURN(cdt->cdt_state == CDT_RUNNING ? -EINPROGRESS : -ENXIO);
 	}
 
@@ -119,7 +119,7 @@ out_free:
 		OBD_FREE_PTR_ARRAY(ha->ha_archive_id, ha->ha_archive_cnt);
 	OBD_FREE_PTR(ha);
 out:
-	/* wake the coordinator to potentially schedule requests */
+	
 	if (rc == -EEXIST || rc == 0)
 		mdt_hsm_cdt_event(cdt);
 
@@ -181,7 +181,7 @@ int mdt_hsm_agent_unregister(struct mdt_thread_info *mti,
 	int			 rc;
 	ENTRY;
 
-	/* no coordinator started, so we cannot serve requests */
+	
 	if (!cdt_getref_try(cdt))
 		RETURN(-ENXIO);
 
@@ -266,15 +266,15 @@ int mdt_hsm_find_best_agent(struct coordinator *cdt, __u32 archive,
 	struct hsm_agent	*ha;
 	ENTRY;
 
-	/* Choose an export to send a copytool req to */
+	
 	down_read(&cdt->cdt_agent_lock);
 	list_for_each_entry(ha, &cdt->cdt_agents, ha_list) {
 		for (i = 0; (i < ha->ha_archive_cnt) &&
 			      (ha->ha_archive_id[i] != archive); i++) {
-			/* nothing to do, just skip unmatching records */
+			
 		}
 
-		/* archive count == 0 means copy tool serves any backend */
+		
 		if (ha->ha_archive_cnt != 0 && i == ha->ha_archive_cnt)
 			continue;
 
@@ -298,15 +298,15 @@ static int mdt_hsm_send_action_to_each_archive(struct mdt_thread_info *mti,
 	__u32 archive_mask = 0;
 	struct coordinator *cdt = &mti->mti_mdt->mdt_coordinator;
 	int i;
-	/* return error by default in case all archive_ids have unregistered */
+	
 	int rc = -EAGAIN;
 	ENTRY;
 
-	/* send action to all registered archive_ids */
+	
 	down_read(&cdt->cdt_agent_lock);
 	list_for_each_entry(ha, &cdt->cdt_agents, ha_list) {
 		for (i = 0; (i < ha->ha_archive_cnt); i++) {
-			/* only send once for each archive_id */
+			
 			if (BIT(ha->ha_archive_id[i]) & archive_mask)
 				continue;
 			archive_mask |= BIT(ha->ha_archive_id[i]);
@@ -331,7 +331,7 @@ static int mdt_hsm_send_action_to_each_archive(struct mdt_thread_info *mti,
 				       ha->ha_archive_id[i]);
 			}
 		}
-		/* early exit from loop due to error? */
+		
 		if (i != ha->ha_archive_cnt)
 			break;
 	}
@@ -392,7 +392,7 @@ static int hsr_hal_copy(struct hsm_scan_request *rq, void *buf, size_t buf_size)
 	hal->hal_count = 0;
 
 	hai = hai_first(hal);
-	/* Copy only valid hai base on a record status */
+	
 	list_for_each_entry(car, &rq->hsr_cars, car_scan_list) {
 		shai = &car->car_hai;
 		hal->hal_flags = car->car_flags;
@@ -456,7 +456,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 		 */
 		list_for_each_entry(car, &rq->hsr_cars, car_scan_list) {
 			hai = &car->car_hai;
-			/* only removes are concerned */
+			
 			if (hai->hai_action != HSMA_REMOVE) {
 				/* count if other actions than HSMA_REMOVE,
 				 * to return original error/rc */
@@ -464,7 +464,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 				continue;
 			}
 
-			/* send remove request to all registered archive_ids */
+			
 			rc2 = mdt_hsm_send_action_to_each_archive(mti, hai);
 			if (rc2)
 				break;
@@ -478,7 +478,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 
 			car->car_hmm->mr_rec.arr_status = ARS_SUCCEED;
 		}
-		/* only remove requests with archive_id=0 */
+		
 		if (notrmcount == 0)
 			GOTO(update_records, rc = rc2);
 
@@ -493,7 +493,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 	CDEBUG(D_HSM, "Agent %s selected for archive %d request %px items %d\n",
 	       obd_uuid2str(&uuid), archive_id, rq, rq->hsr_count);
 
-	/* Check if request is still valid (cf file hsm flags) */
+	
 	list_for_each_entry(car, &rq->hsr_cars, car_scan_list) {
 		struct mdt_object *obj;
 		struct md_hsm hsm;
@@ -518,7 +518,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 		if (!mdt_hsm_is_action_compat(hai, archive_id, car->car_flags,
 					      &hsm)) {
 
-			/* incompatible request, we abort the request */
+			
 			fail_request++;
 			car->car_hmm->mr_rec.arr_status = ARS_FAILED;
 
@@ -535,7 +535,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 	if (fail_request)
 		CDEBUG(D_HSM, "Some HSM actions are invalid, skipping it\n");
 
-	/* nothing to send to agent */
+	
 	if (fail_request == rq->hsr_count)
 		GOTO(update_records, rc = 0);
 
@@ -568,7 +568,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 	if (exp == NULL || exp->exp_disconnected) {
 		if (exp != NULL)
 			class_export_put(exp);
-		/* This should clean up agents on evicted exports */
+		
 		rc = -ENOENT;
 		CERROR("%s: agent uuid (%s) not found, unregistering:"
 		       " rc = %d\n",
@@ -577,7 +577,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 		GOTO(update_records, rc);
 	}
 
-	/* send request to agent */
+	
 	rc = do_set_info_async(exp->exp_imp_reverse, LDLM_SET_INFO,
 			       LUSTRE_OBD_VERSION,
 			       sizeof(KEY_HSM_COPYTOOL_SEND),
@@ -597,7 +597,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 	}
 
 update_records:
-	/* for purge record updates do hsm_cancel_all_actions() */
+	
 	if (purge)
 		GOTO(out_free, rc);
 
@@ -614,7 +614,7 @@ update_records:
 		if (car->car_hmm->mr_rec.arr_status == ARS_WAITING && !rc)
 			car->car_hmm->mr_rec.arr_status = ARS_STARTED;
 
-		/* update llog record with ARS_ status */
+		
 		rc2 = mdt_hsm_agent_modify_record(mti->mti_env, mdt,
 						  car->car_hmm);
 		if (!rc2)
@@ -724,7 +724,7 @@ static void mdt_hsm_agent_debugfs_stop(struct seq_file *s, void *v)
 	up_read(&cdt->cdt_agent_lock);
 }
 
-/* hsm agent list debugfs functions */
+
 static const struct seq_operations mdt_hsm_agent_debugfs_ops = {
 	.start	= mdt_hsm_agent_debugfs_start,
 	.next	= mdt_hsm_agent_debugfs_next,
@@ -752,7 +752,7 @@ static int ldebugfs_open_hsm_agent(struct inode *inode, struct file *file)
 	RETURN(rc);
 }
 
-/* methods to access hsm agent list */
+
 const struct file_operations mdt_hsm_agent_fops = {
 	.owner		= THIS_MODULE,
 	.open		= ldebugfs_open_hsm_agent,

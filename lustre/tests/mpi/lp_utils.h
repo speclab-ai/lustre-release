@@ -1,10 +1,10 @@
-/* SPDX-License-Identifier: GPL-2.0-only */
+
 /*
  * Copyright (c) 2004, 2010, Oracle and/or its affiliates. All rights reserved.
  * Use is subject to license terms.
  */
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lp_utils.h
  *
@@ -97,4 +97,4 @@ extern void remove_file(char *name);
 extern void remove_file_or_dir(char *name);
 extern void fill_stride(char *buf, int buf_size, long long rank, long long _off);
 
-#endif /* __LP_UTILS_H__ */
+#endif 

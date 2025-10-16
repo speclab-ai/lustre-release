@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright 2014, 2015 Cray Inc, all rights reserved.
@@ -16,8 +16,8 @@
 #include <lustre/lustreapi.h>
 #include "llapi_test_utils.h"
 
-static bool is_bitmap;		/* use old bitmap interface */
-static char lustre_dir[PATH_MAX - 5];	/* Lustre test directory */
+static bool is_bitmap;		
+static char lustre_dir[PATH_MAX - 5];	
 
 static void usage(char *prog)
 {
@@ -99,7 +99,7 @@ static void test3(void)
 	}
 
 #if 0
-	/* BUG? Should that fail or not? */
+	
 	rc = llapi_hsm_copytool_register(&ctdata, fsmountdir, -1, NULL, 0);
 	ASSERTF(rc == -EINVAL, "llapi_hsm_copytool_register error: %s",
 		strerror(-rc));
@@ -139,7 +139,7 @@ static void test5(void)
 	ASSERTF(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 
-	/* Hopefully there is nothing lingering */
+	
 	for (i = 0; i < 1000; i++) {
 		rc = llapi_hsm_copytool_recv(ctdata, &hal, &msgsize);
 		ASSERTF(rc == -EAGAIN, "llapi_hsm_copytool_recv error: %s",
@@ -203,7 +203,7 @@ static void test7(void)
 	ASSERTF(fd >= 0, "llapi_hsm_copytool_get_fd failed: %s",
 		strerror(-rc));
 
-	/* Ensure it's read-only */
+	
 	rc = write(fd, &rc, 1);
 	ASSERTF(rc == -1 && errno == EBADF, "write error: %d, %s",
 		rc, strerror(errno));
@@ -216,14 +216,14 @@ static void test7(void)
 	fds[0].events = POLLIN;
 	rc = poll(fds, 1, 10);
 	ASSERTF(rc == 0, "poll failed: %d, %s",
-		rc, strerror(errno)); /* no event */
+		rc, strerror(errno)); 
 
 	rc = llapi_hsm_copytool_unregister(&ctdata);
 	ASSERTF(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 }
 
-/* Create the testfile of a given length. It returns a valid file descriptor. */
+
 static char testfile[PATH_MAX];
 static int create_testfile(size_t length)
 {
@@ -234,7 +234,7 @@ static int create_testfile(size_t length)
 		      lustre_dir);
 	ASSERTF((rc > 0 && rc < sizeof(testfile)), "invalid name for testfile");
 
-	/* Remove old test file, if any. */
+	
 	unlink(testfile);
 
 	/* Use truncate so we can create a file (almost) as big as we
@@ -260,7 +260,7 @@ static void test50(void)
 
 	fd = create_testfile(100);
 
-	/* With fd variant */
+	
 	rc = llapi_hsm_state_get_fd(fd, &hus);
 	ASSERTF(rc == 0, "llapi_hsm_state_get_fd failed: %s", strerror(-rc));
 	ASSERTF(hus.hus_states == 0, "state=%u", hus.hus_states);
@@ -272,7 +272,7 @@ static void test50(void)
 	rc = close(fd);
 	ASSERTF(rc == 0, "close failed: %s", strerror(errno));
 
-	/* Without fd */
+	
 	rc = llapi_hsm_state_get(testfile, &hus);
 	ASSERTF(rc == 0, "llapi_hsm_state_get failed: %s", strerror(-rc));
 	ASSERTF(hus.hus_states == 0, "state=%u", hus.hus_states);
@@ -306,7 +306,7 @@ static void test51(void)
 	rc = llapi_hsm_state_set_fd(fd, 0, 0, 0);
 	ASSERTF(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	/* Set archive id */
+	
 	if (is_bitmap)
 		test_count = 32;
 	else
@@ -326,7 +326,7 @@ static void test51(void)
 	}
 
 	if (is_bitmap) {
-		/* Invalid archive numbers */
+		
 		rc = llapi_hsm_state_set_fd(fd, HS_EXISTS, 0, 33);
 		ASSERTF(rc == -EINVAL, "llapi_hsm_state_set_fd: %s",
 			strerror(-rc));
@@ -412,7 +412,7 @@ static void test51(void)
 	rc = llapi_hsm_state_set_fd(fd, 0, HS_NOARCHIVE, 0);
 	ASSERTF(rc == 0, "llapi_hsm_state_set_fd failed: %s", strerror(-rc));
 
-	/* Bogus flags for good measure. */
+	
 	rc = llapi_hsm_state_set_fd(fd, 0x00080000, 0, 0);
 	ASSERTF(rc == -EINVAL, "llapi_hsm_state_set_fd: %s", strerror(-rc));
 
@@ -429,7 +429,7 @@ static void test52(void)
 	int fd;
 	struct hsm_current_action hca;
 
-	/* No fd equivalent, so close it. */
+	
 	fd = create_testfile(100);
 	close(fd);
 
@@ -443,7 +443,7 @@ static void test52(void)
 		strerror(-rc));
 }
 
-/* Helper to simulate archiving a file. No actual data movement happens. */
+
 static void helper_archiving(void (*progress)
 		      (struct hsm_copyaction_private *hcp, size_t length),
 		      const size_t length)
@@ -465,7 +465,7 @@ static void helper_archiving(void (*progress)
 	ASSERTF(rc == 0, "llapi_hsm_copytool_register failed: %s",
 		strerror(-rc));
 
-	/* Create and send the archive request. */
+	
 	hur = llapi_hsm_user_request_alloc(1, 0);
 	ASSERTF(hur != NULL, "llapi_hsm_user_request_alloc returned NULL");
 
@@ -487,7 +487,7 @@ static void helper_archiving(void (*progress)
 
 	free(hur);
 
-	/* Read the request */
+	
 	rc = llapi_hsm_copytool_recv(ctdata, &hal, &msgsize);
 	ASSERTF(rc == 0, "llapi_hsm_copytool_recv failed: %s", strerror(-rc));
 	ASSERTF(hal->hal_count == 1, "hal_count=%d", hal->hal_count);
@@ -497,7 +497,7 @@ static void helper_archiving(void (*progress)
 	ASSERTF(hai->hai_action == HSMA_ARCHIVE,
 		"hai_action=%d", hai->hai_action);
 
-	/* "Begin" archiving */
+	
 	hcp = NULL;
 	rc = llapi_hsm_action_begin(&hcp, ctdata, hai, -1, 0, false);
 	ASSERTF(rc == 0, "llapi_hsm_action_begin failed: %s", strerror(-rc));
@@ -506,17 +506,17 @@ static void helper_archiving(void (*progress)
 	if (progress)
 		progress(hcp, length);
 
-	/* Done archiving */
+	
 	rc = llapi_hsm_action_end(&hcp, &hai->hai_extent, 0, 0);
 	ASSERTF(rc == 0, "llapi_hsm_action_end failed: %s", strerror(-rc));
 	ASSERTF(hcp == NULL, "hcp is NULL");
 
-	/* Close HSM client */
+	
 	rc = llapi_hsm_copytool_unregister(&ctdata);
 	ASSERTF(rc == 0, "llapi_hsm_copytool_unregister failed: %s",
 		strerror(-rc));
 
-	/* Final check */
+	
 	rc = llapi_hsm_state_get(testfile, &hus);
 	ASSERTF(rc == 0, "llapi_hsm_state_get failed: %s", strerror(-rc));
 	ASSERTF(hus.hus_states == (HS_EXISTS | HS_ARCHIVED),
@@ -539,7 +539,7 @@ static void test101_progress(struct hsm_copyaction_private *hcp, size_t length)
 	struct hsm_extent he;
 	struct hsm_current_action hca;
 
-	/* Report progress. 1 byte at a time :) */
+	
 	for (i = 0; i < length; i++) {
 		he.offset = i;
 		he.length = 1;
@@ -574,7 +574,7 @@ static void test102_progress(struct hsm_copyaction_private *hcp, size_t length)
 	struct hsm_extent he;
 	struct hsm_current_action hca;
 
-	/* Report progress. 1 byte at a time :) */
+	
 	for (i = length-1; i >= 0; i--) {
 		he.offset = i;
 		he.length = 1;
@@ -690,7 +690,7 @@ static void test105_progress(struct hsm_copyaction_private *hcp, size_t length)
 	ASSERTF(hca.hca_action == HUA_ARCHIVE,
 		"hca_state=%u", hca.hca_action);
 
-	/* BUG - offset should be 2*length, or length should be 8*length */
+	
 	ASSERTF(hca.hca_location.length == 10*length,
 		"length=%llu", (unsigned long long)hca.hca_location.length);
 }

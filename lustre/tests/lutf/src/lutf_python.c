@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * lustre/tests/lutf/lutf_python.c
  *
@@ -56,7 +56,7 @@ static lutf_rc_t python_run_interactive_shell(void)
 	PyRun_SimpleString("import sys\n");
 	PyRun_SimpleString("import readline\n");
 
-	/* all other paths are figured out within python */
+	
 	snprintf(buf, sizeof(buf),
 		"sys.path.append(os.path.join('%s', 'python', 'infra'))",
 		g_lutf_cfg.lutf_path ? : "NULL");
@@ -95,7 +95,7 @@ static lutf_rc_t python_run_interactive_shell(void)
 			return EN_LUTF_RC_TIMEOUT;
 		}
 
-		/* update the LUTF internal database */
+		
 		PyRun_SimpleString("agents.reload()");
 		PDEBUG("Agents reloaded. Dumping");
 		PyRun_SimpleString("agents.dump()");
@@ -154,7 +154,7 @@ static lutf_rc_t python_run_interactive_shell(void)
 		PyRun_SimpleString("shell.push('sys.ps1 = \"lutf>>> \"')\n");
 		PyRun_SimpleString("shell.push('sys.ps2 = \"lutf... \"')\n");
 
-		/* import base lutf module */
+		
 		g_py_inited = true;
 		intro = "shell.interact(\"Welcome to the Lustre Unit Test Framework (LUTF)\\n\""
 			"\"Convenience Functions: R() = dumpGlobalTestResults(), A() = agents.dump(), I() = me.dump_intfs(), X() = me.exit()\")";

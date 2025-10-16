@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 #ifndef _LINUX_SHRINKER_LUSTRE_H
 #define _LINUX_SHRINKER_LUSTRE_H
 
@@ -38,4 +38,4 @@ struct shrinker *ll_shrinker_alloc(unsigned int flags,
 void ll_shrinker_register(struct shrinker *shrinker);
 void ll_shrinker_free(struct shrinker *shrinker);
 
-#endif /* _LINUX_SHRINKER_LUSTRE_H */
+#endif 

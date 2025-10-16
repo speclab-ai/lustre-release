@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2018, DataDirect Networks Storage.
@@ -27,9 +27,9 @@
  * Data Integrity Field tuple.
  */
 struct t10_pi_tuple {
-       __be16 guard_tag;        /* Checksum */
-       __be16 app_tag;          /* Opaque storage */
-       __be32 ref_tag;          /* Target LBA or indirect LBA */
+       __be16 guard_tag;        
+       __be16 app_tag;          
+       __be32 ref_tag;          
 };
 
 #define T10_PI_APP_ESCAPE cpu_to_be16(0xffff)
@@ -100,7 +100,7 @@ static blk_status_t osd_dif_generate(struct osd_blk_integrity_iter *iter,
 
 		if (type == OSD_T10_TYPE1)
 			pi->ref_tag = cpu_to_be32(lower_32_bits(iter->seed));
-		else /* if (type == OSD_T10_TYPE3) */
+		else 
 			pi->ref_tag = 0;
 
 		iter->data_buf += iter->interval;
@@ -515,7 +515,7 @@ int osd_bio_integrity_handle(struct osd_device *osd, struct bio *bio,
 		gfp |= __GFP_ZERO;
 	}
 
-	/* Allocate kernel buffer for protection data */
+	
 #ifdef HAVE_BIP_ITER_BIO_INTEGRITY_PAYLOAD
 	len = bio_integrity_bytes(bi, bio_sectors(bio));
 #else
@@ -536,7 +536,7 @@ int osd_bio_integrity_handle(struct osd_device *osd, struct bio *bio,
 	start = ((unsigned long)buf) >> PAGE_SHIFT;
 	nr_pages = end - start;
 
-	/* Allocate bio integrity payload and integrity vectors */
+	
 	bip = bio_integrity_alloc(bio, GFP_NOIO, nr_pages);
 	if (IS_ERR(bip)) {
 		CERROR("%s: could not allocate data integrity bioset\n",
@@ -557,7 +557,7 @@ int osd_bio_integrity_handle(struct osd_device *osd, struct bio *bio,
 		bip->bip_flags |= BIP_IP_CHECKSUM;
 #endif
 
-	/* Map it */
+	
 	offset = offset_in_page(buf);
 	buf_ptr = buf;
 	for (i = 0; i < nr_pages && len > 0; i++) {
@@ -605,7 +605,7 @@ int osd_bio_integrity_handle(struct osd_device *osd, struct bio *bio,
 		osd_bio_integrity_process(bio, buf, generate_fn);
 #endif
 
-		/* Verify and inject fault only when writing */
+		
 		if (unlikely(CFS_FAIL_CHECK(OBD_FAIL_OST_INTEGRITY_CMP))) {
 			struct super_block *sb = osd_sb(osd);
 			struct osd_bio_private *b_priv = bio->bi_private;

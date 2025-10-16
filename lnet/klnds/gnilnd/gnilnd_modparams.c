@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /* Copyright (C) 2004 Cluster File Systems, Inc.
  *
  * Copyright (C) 2009-2012 Cray, Inc.
  */
 
-/* This file is part of Lustre, http://www.lustre.org.
+/* This file is part of Lustre, http:
  *
  * Derived from work by: Eric Barton <eric@bartonsoftware.com>
  * Author: Nic Henke <nic@cray.com>
@@ -32,7 +32,7 @@ static int concurrent_sends = 0;
 module_param(concurrent_sends, int, 0444);
 MODULE_PARM_DESC(concurrent_sends, "# concurrent HW sends to 1 peer");
 
-/* default for 2k nodes @ 16 peer credits */
+
 static int fma_cq_size = 32768;
 module_param(fma_cq_size, int, 0444);
 MODULE_PARM_DESC(fma_cq_size, "size of the completion queue");
@@ -43,7 +43,7 @@ static int timeout = GNILND_BASE_TIMEOUT;
 module_param(timeout, int, 0444);
 MODULE_PARM_DESC(timeout, "communications timeout (seconds)");
 
-/* time to wait between datagram timeout and sending of next dgram */
+
 static int min_reconnect_interval = GNILND_MIN_RECONNECT_TO;
 module_param(min_reconnect_interval, int, 0644);
 MODULE_PARM_DESC(min_reconnect_interval, "minimum connection retry interval (seconds)");
@@ -264,7 +264,7 @@ kgnilnd_tunables_init(void)
 		rc = -EINVAL;
 		GOTO(out, rc);
 	case GNILND_CHECKSUM_OFF:
-		/* no checksumming */
+		
 		break;
 	case GNILND_CHECKSUM_SMSG_HEADER:
 		LCONSOLE_INFO("SMSG header only checksumming enabled\n");

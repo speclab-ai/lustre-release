@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
@@ -8,7 +8,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Subsystem Description:
  * FLD is FID Location Database, which stores where (IE, on which MDT)
@@ -54,49 +54,49 @@ struct lu_fld_hash {
 struct fld_cache_entry {
 	struct list_head	fce_lru;
 	struct list_head	fce_list;
-	/* fld cache entries are sorted on range->lsr_start field. */
+	
 	struct lu_seq_range	fce_range;
 };
 
 struct fld_cache {
-	/* Cache guard, protects fci_hash as immutable after init is finished */
+	
 	rwlock_t		fci_lock;
 
-	/* Cache shrink threshold */
+	
 	int			fci_threshold;
 
-	/* Prefered number of cached entries */
+	
 	int			fci_cache_size;
 
-	/* Current number of cached entries. Protected by \a fci_lock */
+	
 	int			fci_cache_count;
 
-	/* LRU list fld entries. */
+	
 	struct list_head	fci_lru;
 
-	/* sorted fld entries. */
+	
 	struct list_head	fci_entries_head;
 
-	/* Cache statistics. */
+	
 	struct fld_stats	fci_stat;
 
-	/* Cache name used for debug and messages. */
+	
 	char			fci_name[LUSTRE_MDT_MAXNAMELEN];
 };
 
 enum {
-	/* 4M of FLD cache will not hurt client a lot. */
+	
 	FLD_SERVER_CACHE_SIZE      = (4 * 0x100000),
 
-	/* 1M of FLD cache will not hurt client a lot. */
+	
 	FLD_CLIENT_CACHE_SIZE      = (1 * 0x100000)
 };
 
 enum {
-	/* Cache threshold is 10 percent of size. */
+	
 	FLD_SERVER_CACHE_THRESHOLD = 10,
 
-	/* Cache threshold is 10 percent of size. */
+	
 	FLD_CLIENT_CACHE_THRESHOLD = 10
 };
 
@@ -139,7 +139,7 @@ int fld_server_read(const struct lu_env *env, struct lu_server_fld *fld,
 extern const struct file_operations fld_debugfs_seq_fops;
 extern struct dentry *fld_debugfs_dir;
 
-# endif /* HAVE_SERVER_SUPPORT */
+# endif 
 
 int fld_client_rpc(struct obd_export *exp, struct lu_seq_range *range,
 		   __u32 fld_op, struct ptlrpc_request **reqp);
@@ -177,4 +177,4 @@ fld_target_name(const struct lu_fld_target *tar)
 	return tar->ft_exp->exp_obd->obd_name;
 }
 
-#endif /* __FLD_INTERNAL_H */
+#endif 

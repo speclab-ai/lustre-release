@@ -1,4 +1,4 @@
-/* SPDX-License-Identifier: GPL-2.0 */
+
 
 /*
  * Copyright (c) 2012, 2017, Intel Corporation.
@@ -30,7 +30,7 @@ extern int (*tgt_lfsck_in_notify_local)(const struct lu_env *env,
  * reduce stack consumption.
  */
 struct tgt_thread_info {
-	/* server and client data buffers */
+	
 	struct lr_server_data	 tti_lsd;
 	struct lsd_client_data	 tti_lcd;
 	struct lsd_reply_data	 tti_lrd;
@@ -40,14 +40,14 @@ struct tgt_thread_info {
 	struct lu_attr		 tti_attr;
 	struct lu_fid		 tti_fid1;
 
-	/* transno storage during last_rcvd update */
+	
 	__u64			 tti_transno;
 
-	/* Updates data for OUT target */
+	
 	struct thandle_exec_args tti_tea;
 	union {
 		struct {
-			/* for tgt_readpage()      */
+			
 			struct lu_rdpg     tti_rdpg;
 		} rdpg;
 		struct {
@@ -58,7 +58,7 @@ struct tgt_thread_info {
 			struct obdo		   tti_obdo;
 			struct dt_object	   *tti_dt_object;
 		} update;
-		struct obd_statfs osfs; /* for obd_statfs() in OFD/MDT */
+		struct obd_statfs osfs; 
 	} tti_u;
 	struct lfsck_req_local tti_lrl;
 	struct dt_insert_rec tti_rec;
@@ -79,7 +79,7 @@ static inline struct tgt_thread_info *tgt_th_info(const struct lu_env *env)
 
 int tgt_request_handle(struct ptlrpc_request *req);
 
-/* check if request's xid is equal to last one or not*/
+
 static inline int req_xid_is_last(struct ptlrpc_request *req)
 {
 	struct lsd_client_data *lcd = req->rq_export->exp_target_data.ted_lcd;
@@ -94,7 +94,7 @@ static inline char *dt_obd_name(struct dt_device *dt)
 	return dt->dd_lu_dev.ld_obd->obd_name;
 }
 
-/* out_lib.c */
+
 int out_tx_create_exec(const struct lu_env *env, struct thandle *th,
 		       struct tx_arg *arg);
 struct tx_arg *tx_add_exec(struct thandle_exec_args *ta,
@@ -165,7 +165,7 @@ int out_destroy_add_exec(const struct lu_env *env, struct dt_object *dt_obj,
 			 struct object_update_reply *reply,
 			 int index, const char *file, int line);
 
-/* Update handlers */
+
 int out_handle(struct tgt_session_info *tsi);
 
 #define out_tx_create(env, obj, attr, fid, dof, ta, th, reply, idx) \
@@ -264,18 +264,18 @@ void lustre_tgt_unregister_fs(void);
 void barrier_init(void);
 void barrier_fini(void);
 
-/* FMD tracking data */
+
 struct tgt_fmd_data {
-	struct list_head fmd_list;	  /* linked to tgt_fmd_list */
-	struct lu_fid	 fmd_fid;	  /* FID being written to */
-	__u64		 fmd_mactime_xid; /* xid highest {m,a,c}time setattr */
-	time64_t	 fmd_expire;	  /* time when the fmd should expire */
-	int		 fmd_refcount;	  /* reference counter - list holds 1 */
+	struct list_head fmd_list;	  
+	struct lu_fid	 fmd_fid;	  
+	__u64		 fmd_mactime_xid; 
+	time64_t	 fmd_expire;	  
+	int		 fmd_refcount;	  
 };
 
-/* tgt_fmd.c */
+
 extern struct kmem_cache *tgt_fmd_kmem;
 void tgt_fmd_expire(struct obd_export *exp);
 void tgt_fmd_cleanup(struct obd_export *exp);
 
-#endif /* _TG_INTERNAL_H */
+#endif 

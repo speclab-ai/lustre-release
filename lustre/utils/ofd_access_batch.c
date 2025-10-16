@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: GPL-2.0-only
+
 /*
  * Copyright 2020, DataDirect Networks Storage.
  *
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: John L. Hammond <jhammond@whamcloud.com>
  *
@@ -145,10 +145,10 @@ enum alr_rw {
 	ALR_RW_MAX
 };
 
-/* Entry in the batching hash. */
+
 struct alr_entry {
 	struct fid_hash_node alre_fid_hash_node;
-	time_t alre_time[ALR_RW_MAX]; /* Not strictly needed. */
+	time_t alre_time[ALR_RW_MAX]; 
 	__u64 alre_begin[ALR_RW_MAX];
 	__u64 alre_end[ALR_RW_MAX];
 	__u64 alre_size[ALR_RW_MAX];
@@ -201,7 +201,7 @@ int alr_batch_add(struct alr_batch *alrb, const char *obd_name,
 
 	fhn_init(&fhn, pfid);
 
-	/* Find old or insert sentinel (fhn). Replace sentinel if returned. */
+	
 	p = fid_hash_insert(alrb->alrb_hash, alrb->alrb_hash_shift, &fhn);
 	if (p == &fhn) {
 		size_t alre_size = sizeof(*alre) + strlen(obd_name) + 1;
@@ -261,11 +261,11 @@ struct alr_thread_arg {
 
 static void alre_print_keepalive(struct alr_thread_arg *aa)
 {
-	/* Do not print keepalive if disabled */
+	
 	if (keepalive_interval == 0)
 		return;
 
-	/* If nothing printed during keepalive_interval - send keepalive */
+	
 	if (time(NULL) < (when_last_printed + keepalive_interval))
 		return;
 
@@ -288,7 +288,7 @@ static void alre_print_keepalive_locked(struct alr_thread_arg *aa)
 		FATAL("cannot unlock batch file: %s\n", strerror(rc));
 }
 
-/* Fraction < 100 */
+
 static void *alr_sort_and_print_thread(void *arg)
 {
 	struct alr_entry *alre, *next;
@@ -363,7 +363,7 @@ static void *alr_sort_and_print_thread(void *arg)
 		FATAL("cannot unlock batch file: %s\n", strerror(rc));
 
 out:
-	/* send keepalive */
+	
 	alre_print_keepalive_locked(aa);
 
 	fflush(aa->file);
@@ -378,7 +378,7 @@ out:
 	return NULL;
 }
 
-/* Fraction == 100 */
+
 static void *alr_print_thread_fraction_100(void *arg)
 {
 	struct alr_entry *alre, *next;
@@ -400,7 +400,7 @@ static void *alr_print_thread_fraction_100(void *arg)
 		}
 	}
 
-	/* send keepalive */
+	
 	alre_print_keepalive(aa);
 
 	rc = pthread_mutex_unlock(aa->file_mutex);
@@ -419,7 +419,7 @@ static void *alr_print_thread_fraction_100(void *arg)
 	return NULL;
 }
 
-/* Print, clear, and resize the batch. */
+
 int alr_batch_print(struct alr_batch *alrb, FILE *file,
 		    pthread_mutex_t *file_mutex, int fraction)
 {
@@ -436,7 +436,7 @@ int alr_batch_print(struct alr_batch *alrb, FILE *file,
 	if (aa == NULL)
 		return -ENOMEM;
 
-	/* move all collected items to the temp list */
+	
 	INIT_LIST_HEAD(&aa->list);
 	for (i = 0; i < (1 << alrb->alrb_hash_shift); i++) {
 		if (list_empty(&alrb->alrb_hash[i]))
@@ -461,16 +461,16 @@ int alr_batch_print(struct alr_batch *alrb, FILE *file,
 	/* as sorting may take time and we don't want to lose access
 	 * records we better do sorting and printing in a different thread */
 
-	if (fraction >= 100) /* Print all 100% records */
+	if (fraction >= 100) 
 		rc = pthread_create(&pid, pattr, &alr_print_thread_fraction_100, aa);
 	else
 		rc = pthread_create(&pid, pattr, &alr_sort_and_print_thread, aa);
 	if (rc != 0)
 		goto out;
 
-	aa = NULL; /* Sort and print thread owns it now. */
+	aa = NULL; 
 out:
-	/* Resize hash based on previous count. */
+	
 	new_hash_shift = alrb->alrb_hash_shift;
 
 	while (new_hash_shift < ALR_BATCH_HASH_SHIFT_MAX &&
@@ -498,7 +498,7 @@ out:
 	free(aa);
 
 	if (rc > 0)
-		rc = -rc; /* Fixup pthread return conventions. */
+		rc = -rc; 
 
 	return rc;
 }

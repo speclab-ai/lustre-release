@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-2.0
+
 
 /*
  * Copyright (c) 2013, 2017, Intel Corporation.
@@ -6,7 +6,7 @@
  */
 
 /*
- * This file is part of Lustre, http://www.lustre.org/
+ * This file is part of Lustre, http:
  *
  * Author: Di Wang <di.wang@intel.com>
  */
@@ -41,7 +41,7 @@ int linkea_init(struct linkea_data *ldata)
 		leh->leh_len = __swab64(leh->leh_len);
 		leh->leh_overflow_time = __swab32(leh->leh_overflow_time);
 		leh->leh_padding = __swab32(leh->leh_padding);
-		/* individual entries are swabbed by linkea_entry_unpack() */
+		
 	}
 
 	if (leh->leh_magic != LINK_EA_MAGIC)
@@ -176,7 +176,7 @@ int linkea_add_buf(struct linkea_data *ldata, const struct lu_name *lname,
 }
 EXPORT_SYMBOL(linkea_add_buf);
 
-/** Del the current record from the link ea buf */
+
 void linkea_del_buf(struct linkea_data *ldata, const struct lu_name *lname,
 		    bool is_encrypted)
 {
@@ -286,7 +286,7 @@ int linkea_links_find(struct linkea_data *ldata, const struct lu_name *lname,
 
 	LASSERT(ldata->ld_leh != NULL);
 
-	/* link #0, if leh_reccount == 0 we skip the loop and return -ENOENT */
+	
 	if (likely(ldata->ld_leh->leh_reccount > 0))
 		ldata->ld_lee = (struct link_ea_entry *)(ldata->ld_leh + 1);
 
