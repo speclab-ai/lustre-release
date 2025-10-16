@@ -735,11 +735,11 @@ static int lcfg_param_get_yaml(yaml_parser_t *reply, struct nl_sock *sk,
 	}
 
 	if (strcmp(group, "devices") == 0)
-		cmd = LUSTRE_CMD_DEVICES;
+		cmd = GRUMPLE_CMD_DEVICES;
 	else if (strcmp(group, "target_obd") == 0)
-		cmd = LUSTRE_CMD_TARGETS;
+		cmd = GRUMPLE_CMD_TARGETS;
 	else if (strcmp(group, "stats") == 0)
-		cmd = LUSTRE_CMD_STATS;
+		cmd = GRUMPLE_CMD_STATS;
 
 	if (!cmd)
 		return -EOPNOTSUPP;
@@ -785,7 +785,7 @@ static int lcfg_param_get_yaml(yaml_parser_t *reply, struct nl_sock *sk,
 		goto error;
 
 	if (source[0]) {
-		const char *key = cmd == LUSTRE_CMD_DEVICES ? "name" : "source";
+		const char *key = cmd == GRUMPLE_CMD_DEVICES ? "name" : "source";
 
 		
 		yaml_sequence_start_event_initialize(&event, NULL,
@@ -1026,7 +1026,7 @@ int llapi_get_target_uuids(int fd, struct obd_uuid *uuidp, int *indices,
 		snprintf(buf, sizeof(buf), "%s.%s.target_obd",
 			 type == LOV_TYPE ? "lov" : "lmv", name.uuid);
 
-		rc = lcfg_param_get_yaml(&reply, sk, LUSTRE_GENL_VERSION,
+		rc = lcfg_param_get_yaml(&reply, sk, GRUMPLE_GENL_VERSION,
 					 NLM_F_DUMP, buf);
 		if (rc < 0) {
 			if (rc == -EOPNOTSUPP)

@@ -519,7 +519,7 @@ static struct inode *osd_iget2(struct osd_thread_info *info,
 	} else if ((rc = osd_attach_jinode(inode))) {
 		CDEBUG(D_INODE, "jbd: ino = %u rc = %d\n", id->oii_ino, rc);
 	} else {
-		ldiskfs_clear_inode_state(inode, LDISKFS_STATE_LUSTRE_DESTROY);
+		ldiskfs_clear_inode_state(inode, LDISKFS_STATE_GRUMPLE_DESTROY);
 		if (id->oii_gen == OSD_OII_NOGEN)
 			osd_id_gen(id, inode->i_ino, inode->i_generation);
 
@@ -2526,7 +2526,7 @@ static int osd_object_print(const struct lu_env *env, void *cookie,
 	else
 		d = NULL;
 	return (*p)(env, cookie,
-		    LUSTRE_OSD_LDISKFS_NAME"-object@%p(i:%p:%lu/%u)[%s]",
+		    GRUMPLE_OSD_LDISKFS_NAME"-object@%p(i:%p:%lu/%u)[%s]",
 		    o, o->oo_inode,
 		    o->oo_inode ? o->oo_inode->i_ino : 0UL,
 		    o->oo_inode ? o->oo_inode->i_generation : 0,
@@ -2950,7 +2950,7 @@ static void osd_inode_getattr(const struct lu_env *env,
 	 * to inode flags, and ext4 internally test raw inode
 	 * @i_flags directly. Instead of patching ext4, we do it here.
 	 */
-	attr->la_flags |= LDISKFS_I(inode)->i_flags & LUSTRE_FL_USER_VISIBLE;
+	attr->la_flags |= LDISKFS_I(inode)->i_flags & GRUMPLE_FL_USER_VISIBLE;
 }
 
 static int osd_dirent_count(const struct lu_env *env, struct dt_object *dt,
@@ -3039,13 +3039,13 @@ static int osd_attr_get(const struct lu_env *env, struct dt_object *dt,
 
 	spin_lock(&obj->oo_guard);
 	osd_inode_getattr(env, obj->oo_inode, attr);
-	if (obj->oo_lma_flags & LUSTRE_ORPHAN_FL) {
+	if (obj->oo_lma_flags & GRUMPLE_ORPHAN_FL) {
 		attr->la_valid |= LA_FLAGS;
-		attr->la_flags |= LUSTRE_ORPHAN_FL;
+		attr->la_flags |= GRUMPLE_ORPHAN_FL;
 	}
-	if (obj->oo_lma_flags & LUSTRE_ENCRYPT_FL) {
+	if (obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL) {
 		attr->la_valid |= LA_FLAGS;
-		attr->la_flags |= LUSTRE_ENCRYPT_FL;
+		attr->la_flags |= GRUMPLE_ENCRYPT_FL;
 	}
 	spin_unlock(&obj->oo_guard);
 
@@ -3199,8 +3199,8 @@ static int osd_declare_attr_set(const struct lu_env *env, struct dt_object *dt,
 	}
 
 	
-	if (attr->la_valid & LA_FLAGS && attr->la_flags & LUSTRE_ENCRYPT_FL)
-		obj->oo_lma_flags |= LUSTRE_ENCRYPT_FL;
+	if (attr->la_valid & LA_FLAGS && attr->la_flags & GRUMPLE_ENCRYPT_FL)
+		obj->oo_lma_flags |= GRUMPLE_ENCRYPT_FL;
 
 	RETURN(0);
 }
@@ -3458,7 +3458,7 @@ static int osd_attr_set(const struct lu_env *env,
 	if (!(attr->la_valid & LA_FLAGS))
 		GOTO(out, rc);
 
-	/* If setting LUSTRE_ENCRYPT_FL on an OST object, also set a dummy
+	/* If setting GRUMPLE_ENCRYPT_FL on an OST object, also set a dummy
 	 * enc ctx xattr, with 2 benefits:
 	 * - setting the LL_XATTR_NAME_ENCRYPTION_CONTEXT xattr internally sets
 	 *   the LDISKFS_ENCRYPT_FL flag on the on-disk inode;
@@ -3468,7 +3468,7 @@ static int osd_attr_set(const struct lu_env *env,
 	 * only stored on MDT inodes, at file creation time.
 	 */
 	if (!(LDISKFS_I(obj->oo_inode)->i_flags & LDISKFS_ENCRYPT_FL) &&
-	    attr->la_flags & LUSTRE_ENCRYPT_FL && osd->od_is_ost &&
+	    attr->la_flags & GRUMPLE_ENCRYPT_FL && osd->od_is_ost &&
 	    !CFS_FAIL_CHECK(OBD_FAIL_LFSCK_NO_ENCFLAG)) {
 		struct lu_buf buf;
 
@@ -3485,7 +3485,7 @@ static int osd_attr_set(const struct lu_env *env,
 	}
 
 	
-	if (attr->la_flags & LUSTRE_LMA_FL_MASKS) {
+	if (attr->la_flags & GRUMPLE_LMA_FL_MASKS) {
 		struct grumple_mdt_attrs *lma = &info->oti_ost_attrs.loa_lma;
 
 		LASSERT(!obj->oo_pfid_in_lma);
@@ -3516,7 +3516,7 @@ static int osd_attr_set(const struct lu_env *env,
 			      lma->lma_incompat, rc);
 		else
 			obj->oo_lma_flags =
-				attr->la_flags & LUSTRE_LMA_FL_MASKS;
+				attr->la_flags & GRUMPLE_LMA_FL_MASKS;
 		osd_trans_exec_check(env, handle, OSD_OT_XATTR_SET);
 	}
 
@@ -3594,7 +3594,7 @@ static int osd_mkfile(struct osd_thread_info *info, struct osd_object *obj,
 		 * For new created object, it must be consistent,
 		 * and it is unnecessary to scrub against it.
 		 */
-		ldiskfs_set_inode_state(inode, LDISKFS_STATE_LUSTRE_NOSCRUB);
+		ldiskfs_set_inode_state(inode, LDISKFS_STATE_GRUMPLE_NOSCRUB);
 
 		obj->oo_inode = inode;
 		result = 0;
@@ -3890,7 +3890,7 @@ static int __osd_oi_insert(const struct lu_env *env, struct osd_object *obj,
 			      OI_CHECK_FLD, NULL);
 		
 		ldiskfs_clear_inode_state(obj->oo_inode,
-					  LDISKFS_STATE_LUSTRE_NOSCRUB);
+					  LDISKFS_STATE_GRUMPLE_NOSCRUB);
 		rc = 0;
 	} else {
 		rc = osd_oi_insert(info, osd, fid, id, oh->ot_handle,
@@ -4114,7 +4114,7 @@ static int osd_destroy(const struct lu_env *env, struct dt_object *dt,
 
 	osd_trans_exec_op(env, th, OSD_OT_DESTROY);
 
-	ldiskfs_set_inode_state(inode, LDISKFS_STATE_LUSTRE_DESTROY);
+	ldiskfs_set_inode_state(inode, LDISKFS_STATE_GRUMPLE_DESTROY);
 
 	if (!CFS_FAIL_CHECK(OBD_FAIL_LFSCK_LOST_MDTOBJ2))
 		result = osd_oi_delete(osd_oti_get(env), osd, fid,
@@ -4344,7 +4344,7 @@ static struct inode *osd_create_local_agent_inode(const struct lu_env *env,
 	 * correct gid on remote file, not agent here
 	 */
 	local->i_gid = current_fsgid();
-	ldiskfs_set_inode_state(local, LDISKFS_STATE_LUSTRE_NOSCRUB);
+	ldiskfs_set_inode_state(local, LDISKFS_STATE_GRUMPLE_NOSCRUB);
 
 	/* e2fsck doesn't like empty symlinks.  Store remote FID as symlink.
 	 * That gives e2fsck something to look at and be happy, and allows
@@ -4363,7 +4363,7 @@ static struct inode *osd_create_local_agent_inode(const struct lu_env *env,
 
 	
 #ifdef	HAVE_PROJECT_QUOTA
-	if (LDISKFS_I(pobj->oo_inode)->i_flags & LUSTRE_PROJINHERIT_FL &&
+	if (LDISKFS_I(pobj->oo_inode)->i_flags & GRUMPLE_PROJINHERIT_FL &&
 	    i_projid_read(pobj->oo_inode) != 0) {
 		rc = osd_transfer_project(local, 0, th);
 		if (rc) {
@@ -4546,7 +4546,7 @@ static int osd_create(const struct lu_env *env, struct dt_object *dt,
 			spin_unlock(&obj->oo_guard);
 			osd_dirty_inode(inode, I_DIRTY_DATASYNC);
 			ldiskfs_set_inode_state(inode,
-						LDISKFS_STATE_LUSTRE_DESTROY);
+						LDISKFS_STATE_GRUMPLE_DESTROY);
 			iput(inode);
 			obj->oo_inode = NULL;
 		}
@@ -5761,7 +5761,7 @@ static void osd_take_care_of_agent(const struct lu_env *env,
 static int obj_name2lu_name(struct osd_object *obj, const char *name,
 			    int len, struct lu_name *ln)
 {
-	if (!(obj->oo_lma_flags & LUSTRE_ENCRYPT_FL)) {
+	if (!(obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL)) {
 		ln->ln_name = name;
 		ln->ln_namelen = len;
 	} else {
@@ -6650,7 +6650,7 @@ static int osd_index_declare_ea_insert(const struct lu_env *env,
 		 * to 0, quota enforcement is ignored in this case.
 		 */
 		if (idc->oic_remote &&
-		    LDISKFS_I(inode)->i_flags & LUSTRE_PROJINHERIT_FL &&
+		    LDISKFS_I(inode)->i_flags & GRUMPLE_PROJINHERIT_FL &&
 		    i_projid_read(inode) != 0)
 			rc = osd_declare_attr_qid(env, osd_dt_obj(dt), oh,
 						  0, i_projid_read(inode),
@@ -7265,7 +7265,7 @@ static int osd_ldiskfs_filldir(void *ctx,
 		*fid = obj->oo_dt.do_lu.lo_header->loh_fid;
 	}
 
-	if (obj == NULL || !(obj->oo_lma_flags & LUSTRE_ENCRYPT_FL)) {
+	if (obj == NULL || !(obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL)) {
 		ent->oied_namelen = namelen;
 		memcpy(ent->oied_name, name, namelen);
 	} else {
@@ -8343,7 +8343,7 @@ static void osd_umount(const struct lu_env *env, struct osd_device *o)
 	EXIT;
 }
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 2, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 2, 53, 0)
 # ifndef LDISKFS_HAS_INCOMPAT_FEATURE
 /* Newer kernels provide the ldiskfs_set_feature_largedir() wrapper already,
  * which calls ldiskfs_update_dynamic_rev() to update ancient filesystems.
@@ -8394,17 +8394,17 @@ static int osd_mount(const struct lu_env *env,
 		RETURN(-EINVAL);
 	}
 #endif
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	if (opts != NULL && strstr(opts, "force_over_128tb") != NULL) {
 		CWARN("force_over_128tb option is deprecated.  Filesystems smaller than 1024TB can be created without any force option. Use force_over_1024tb option for filesystems larger than 1024TB.\n");
 	}
 #endif
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 1, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 1, 53, 0)
 	if (opts != NULL && strstr(opts, "force_over_256tb") != NULL) {
 		CWARN("force_over_256tb option is deprecated.  Filesystems smaller than 1024TB can be created without any force options. Use force_over_1024tb option for filesystems larger than 1024TB.\n");
 	}
 #endif
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 2, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 2, 53, 0)
 	if (opts != NULL && strstr(opts, "force_over_512tb") != NULL) {
 		CWARN("force_over_512tb option is deprecated.  Filesystems smaller than 1024TB can be created without any force options. Use force_over_1024tb option for filesystems larger than 1024TB.\n");
 	}
@@ -8509,7 +8509,7 @@ static int osd_mount(const struct lu_env *env,
 		GOTO(out_mnt, rc = -EOPNOTSUPP);
 	}
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 2, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 2, 53, 0)
 #ifdef LDISKFS_MOUNT_DIRDATA
 	if (ldiskfs_has_feature_dirdata(o->od_mnt->mnt_sb))
 		LDISKFS_SB(osd_sb(o))->s_mount_opt |= LDISKFS_MOUNT_DIRDATA;
@@ -8939,7 +8939,7 @@ static int osd_prepare(const struct lu_env *env, struct lu_device *pdev,
 
 
 	if (lsd->lsd_feature_incompat & OBD_COMPAT_OST) {
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 52, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 52, 0)
 		if (lsd->lsd_feature_rocompat & OBD_ROCOMPAT_IDX_IN_IDIF) {
 			osd->od_index_in_idif = 1;
 		} else {
@@ -8993,7 +8993,7 @@ static const struct lu_device_type_operations osd_device_type_ops = {
 
 static struct lu_device_type osd_device_type = {
 	.ldt_tags     = LU_DEVICE_DT,
-	.ldt_name     = LUSTRE_OSD_LDISKFS_NAME,
+	.ldt_name     = GRUMPLE_OSD_LDISKFS_NAME,
 	.ldt_ops      = &osd_device_type_ops,
 	.ldt_ctx_tags = LCT_LOCAL,
 };
@@ -9075,7 +9075,7 @@ static ssize_t delayed_unlink_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(delayed_unlink_mb);
+GRUMPLE_RW_ATTR(delayed_unlink_mb);
 
 
 static ssize_t track_declares_assert_show(struct kobject *kobj,
@@ -9100,7 +9100,7 @@ static ssize_t track_declares_assert_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(track_declares_assert);
+GRUMPLE_RW_ATTR(track_declares_assert);
 
 static ssize_t flush_descriptors_cnt_show(struct kobject *kobj,
 					 struct attribute *attr, char *buf)
@@ -9119,7 +9119,7 @@ static ssize_t flush_descriptors_cnt_store(struct kobject *kobj,
 		return rc;
 	return count;
 }
-LUSTRE_RW_ATTR(flush_descriptors_cnt);
+GRUMPLE_RW_ATTR(flush_descriptors_cnt);
 
 static void osd_flush_fput(struct work_struct *work)
 {
@@ -9159,13 +9159,13 @@ static int __init osd_init(void)
 		return rc;
 
 	rc = class_register_type(&osd_obd_device_ops, NULL, true,
-				 LUSTRE_OSD_LDISKFS_NAME, &osd_device_type);
+				 GRUMPLE_OSD_LDISKFS_NAME, &osd_device_type);
 	if (rc) {
 		lu_kmem_fini(ldiskfs_caches);
 		return rc;
 	}
 
-	kobj = kset_find_obj(grumple_kset, LUSTRE_OSD_LDISKFS_NAME);
+	kobj = kset_find_obj(grumple_kset, GRUMPLE_OSD_LDISKFS_NAME);
 	if (kobj) {
 		rc = sysfs_create_file(kobj,
 				       &grumple_attr_track_declares_assert.attr);
@@ -9210,7 +9210,7 @@ static void __exit osd_exit(void)
 	struct kobject *kobj;
 
 	cancel_work_sync(&flush_fput);
-	kobj = kset_find_obj(grumple_kset, LUSTRE_OSD_LDISKFS_NAME);
+	kobj = kset_find_obj(grumple_kset, GRUMPLE_OSD_LDISKFS_NAME);
 	if (kobj) {
 		sysfs_remove_file(kobj,
 				  &grumple_attr_track_declares_assert.attr);
@@ -9218,13 +9218,13 @@ static void __exit osd_exit(void)
 				  &grumple_attr_flush_descriptors_cnt.attr);
 		kobject_put(kobj);
 	}
-	class_unregister_type(LUSTRE_OSD_LDISKFS_NAME);
+	class_unregister_type(GRUMPLE_OSD_LDISKFS_NAME);
 	lu_kmem_fini(ldiskfs_caches);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
-MODULE_DESCRIPTION("Lustre Object Storage Device ("LUSTRE_OSD_LDISKFS_NAME")");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_DESCRIPTION("Lustre Object Storage Device ("GRUMPLE_OSD_LDISKFS_NAME")");
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(osd_init);

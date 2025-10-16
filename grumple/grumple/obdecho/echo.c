@@ -670,9 +670,9 @@ static int esd_setattr_hdl(struct tgt_session_info *tsi)
  */
 static struct tgt_handler esd_tgt_handlers[] = {
 TGT_RPC_HANDLER(OST_FIRST_OPC, 0, OST_CONNECT, tgt_connect,
-		&RQF_CONNECT, LUSTRE_OBD_VERSION),
+		&RQF_CONNECT, GRUMPLE_OBD_VERSION),
 TGT_RPC_HANDLER(OST_FIRST_OPC, 0, OST_DISCONNECT, tgt_disconnect,
-		&RQF_OST_DISCONNECT, LUSTRE_OBD_VERSION),
+		&RQF_OST_DISCONNECT, GRUMPLE_OBD_VERSION),
 TGT_OST_HDL(HAS_BODY | HAS_REPLY, OST_GETATTR, esd_getattr_hdl),
 TGT_OST_HDL(HAS_BODY | HAS_REPLY | IS_MUTABLE, OST_SETATTR,
 	    esd_setattr_hdl),
@@ -936,7 +936,7 @@ static const struct lu_device_type_operations echo_srv_type_ops = {
 
 struct lu_device_type echo_srv_type = {
 	.ldt_tags = LU_DEVICE_DT,
-	.ldt_name = LUSTRE_ECHO_NAME,
+	.ldt_name = GRUMPLE_ECHO_NAME,
 	.ldt_ops = &echo_srv_type_ops,
 	.ldt_ctx_tags = LCT_DT_THREAD,
 };

@@ -153,7 +153,7 @@ int ptlrpc_resend(struct obd_import *imp)
 	 * Well... what if lctl recover is called twice at the same time?
 	 */
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state != LUSTRE_IMP_RECOVER) {
+	if (imp->imp_state != GRUMPLE_IMP_RECOVER) {
 		spin_unlock(&imp->imp_lock);
 		RETURN(-1);
 	}
@@ -281,9 +281,9 @@ bool ptlrpc_import_in_recovery_disconnect(struct obd_import *imp,
 	bool in_recovery = true;
 
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state < LUSTRE_IMP_DISCON ||
-	    (!disconnect_is_recovery && imp->imp_state == LUSTRE_IMP_DISCON) ||
-	    imp->imp_state >= LUSTRE_IMP_FULL ||
+	if (imp->imp_state < GRUMPLE_IMP_DISCON ||
+	    (!disconnect_is_recovery && imp->imp_state == GRUMPLE_IMP_DISCON) ||
+	    imp->imp_state >= GRUMPLE_IMP_FULL ||
 	    imp->imp_obd->obd_no_recov)
 		in_recovery = false;
 	spin_unlock(&imp->imp_lock);
@@ -298,7 +298,7 @@ int ptlrpc_recover_import(struct obd_import *imp, char *new_uuid, int async)
 
 	ENTRY;
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state == LUSTRE_IMP_NEW || imp->imp_deactive ||
+	if (imp->imp_state == GRUMPLE_IMP_NEW || imp->imp_deactive ||
 	    atomic_read(&imp->imp_inval_count))
 		rc = -EINVAL;
 	spin_unlock(&imp->imp_lock);
@@ -320,7 +320,7 @@ int ptlrpc_recover_import(struct obd_import *imp, char *new_uuid, int async)
 
 	
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state != LUSTRE_IMP_DISCON) {
+	if (imp->imp_state != GRUMPLE_IMP_DISCON) {
 		imp->imp_force_verify = 1;
 		rc = -EALREADY;
 	}

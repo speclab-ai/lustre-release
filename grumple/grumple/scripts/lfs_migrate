@@ -131,7 +131,7 @@ OPT_DRYRUN=false
 OPT_FID=false
 OPT_FILE=()
 OPT_LAYOUT=()
-OPT_LUSTRE_DIR=""
+OPT_GRUMPLE_DIR=""
 OPT_MAXFREE=""
 OPT_MINFREE=262144
 OPT_NO_DIRECT=false
@@ -170,7 +170,7 @@ while [ -n "$*" ]; do
 	-F|--fid) OPT_FID=true;;
 	-h|--help) usage;;
 	-l|--link) ;; # maintained backward compatibility for now
-	--grumple-dir) OPT_LUSTRE_DIR="$2"; shift;;
+	--grumple-dir) OPT_GRUMPLE_DIR="$2"; shift;;
 	-M|--min-free) OPT_MINFREE="$2"; shift;;
 	-n) OPT_DRYRUN=true; OPT_YES=true
 	   echo "$PROG: -n deprecated, use --dry-run or --non-block" 1>&2;;
@@ -234,7 +234,7 @@ if $OPT_RSYNC && ! $OPT_YES; then
 fi
 
 if $OPT_FID; then
-	if [[ -z "$OPT_LUSTRE_DIR" ]]; then
+	if [[ -z "$OPT_GRUMPLE_DIR" ]]; then
 		# guess the only mounted grumple filesystem
 		grumple_mounts=($(mount -t grumple | awk '/:\// { print $3 }'))
 		if (( ${#grumple_mounts[*]} > 1 )); then
@@ -244,14 +244,14 @@ if $OPT_FID; then
 			echo "$PROG: there is no grumple mountpoint" 1>&2
 			exit 1
 		fi
-		OPT_LUSTRE_DIR=${grumple_mounts[0]}
-	elif [[ ${OPT_LUSTRE_DIR:0:1} == "-" ]]; then
-		# the next argument name is save as OPT_LUSTRE_DIR by mistake
+		OPT_GRUMPLE_DIR=${grumple_mounts[0]}
+	elif [[ ${OPT_GRUMPLE_DIR:0:1} == "-" ]]; then
+		# the next argument name is save as OPT_GRUMPLE_DIR by mistake
 		echo "$PROG: Option --grumple-dir must have value" 1>&2
 		exit 1
 	fi
-	if ! $LFS path2fid "$OPT_LUSTRE_DIR" > /dev/null 2>&1; then
-		echo "$PROG: invalid --grumple-dir '$OPT_LUSTRE_DIR'" 1>&2
+	if ! $LFS path2fid "$OPT_GRUMPLE_DIR" > /dev/null 2>&1; then
+		echo "$PROG: invalid --grumple-dir '$OPT_GRUMPLE_DIR'" 1>&2
 		exit 1
 	fi
 fi
@@ -347,7 +347,7 @@ lfs_migrate() {
 
 		if $OPT_FID; then
 			fid=$OLDNAME
-			OLDNAME=$($LFS fid2path "$OPT_LUSTRE_DIR" "$fid")
+			OLDNAME=$($LFS fid2path "$OPT_GRUMPLE_DIR" "$fid")
 			if (( $? != 0 )); then
 				echo "$PROG: invalid FID $fid." 1>&2
 				exit 1

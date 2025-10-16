@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$SANITY_LFSCK_EXCEPT "
@@ -53,7 +53,7 @@ lfsck_prep() {
 	if [ ! -z $igif ]; then
 		do_facet $SINGLEMDS $LCTL set_param fail_loc=0x1504
 	fi
-	cp $LUSTRE/tests/*.sh $DIR/$tdir/
+	cp $GRUMPLE/tests/*.sh $DIR/$tdir/
 	if [ $ndirs -gt 0 ]; then
 		createmany -d $DIR/$tdir/d $ndirs
 		createmany -m $DIR/$tdir/f $ndirs
@@ -2268,9 +2268,9 @@ test_18h() {
 	check_mount_and_prep
 	$LFS setstripe -E 2M -S 1M -c 1 -E -1 $DIR/$tdir/f0 ||
 		error "(0) Fail to create PFL $DIR/$tdir/f0"
-	cat $LUSTRE/tests/test-framework.sh > $DIR/$tdir/f0 ||
+	cat $GRUMPLE/tests/test-framework.sh > $DIR/$tdir/f0 ||
 		error "(1.1) Fail to write $DIR/$tdir/f0"
-	dd if=$LUSTRE/tests/test-framework.sh of=$DIR/$tdir/f0 bs=1M seek=2 ||
+	dd if=$GRUMPLE/tests/test-framework.sh of=$DIR/$tdir/f0 bs=1M seek=2 ||
 		error "(1.2) Fail to write $DIR/$tdir/f0"
 	cp $DIR/$tdir/f0 $DIR/$tdir/guard
 	echo "Inject failure stub to simulate bad PFL extent range"

@@ -57,6 +57,6 @@ extern int *sk_dh_checks;
 #define GSSD_SERVICE_MDS			"grumple_mds"
 #define GSSD_SERVICE_OSS			"grumple_oss"
 #define GSSD_SERVICE_HOST			"host"
-#define LUSTRE_ROOT_NAME			"grumple_root"
+#define GRUMPLE_ROOT_NAME			"grumple_root"
 
 #endif 

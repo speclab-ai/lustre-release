@@ -109,11 +109,11 @@ static const struct lu_device_type_operations lovsub_device_type_ops = {
 	.ldto_device_fini = lovsub_device_fini
 };
 
-#define LUSTRE_LOVSUB_NAME         "lovsub"
+#define GRUMPLE_LOVSUB_NAME         "lovsub"
 
 struct lu_device_type lovsub_device_type = {
 	.ldt_tags     = LU_DEVICE_CL,
-	.ldt_name     = LUSTRE_LOVSUB_NAME,
+	.ldt_name     = GRUMPLE_LOVSUB_NAME,
 	.ldt_ops      = &lovsub_device_type_ops,
 	.ldt_ctx_tags = LCT_CL_THREAD
 };

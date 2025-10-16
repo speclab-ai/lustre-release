@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef _LUSTRE_RSYNC_H_
-#define _LUSTRE_RSYNC_H_
+#ifndef _GRUMPLE_RSYNC_H_
+#define _GRUMPLE_RSYNC_H_
 
 #define LR_NAME_MAXLEN 64
 #define LR_FID_STR_LEN 128

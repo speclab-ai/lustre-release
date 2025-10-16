@@ -3,8 +3,8 @@ set -e
 TESTNAME=$(basename $0 .sh)
 LOG=${LOG:-"$TMP/${TESTNAME}.log"}
 MOUNT_2=${MOUNT_2:-"yes"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$PERFORMANCE_SANITY_EXCEPT "

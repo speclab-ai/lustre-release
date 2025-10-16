@@ -36,7 +36,7 @@ void osd_brw_stats_update(struct osd_device *osd, struct osd_iobuf *iobuf)
 			      iobuf->dr_pextents);
 }
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 53, 0)
 static int symlink_brw_stats;
 module_param(symlink_brw_stats, int, 0644);
 MODULE_PARM_DESC(symlink_brw_stats, "create /proc brw_stats symlink");
@@ -128,7 +128,7 @@ static int osd_stats_init(struct osd_device *osd)
 	ldebugfs_register_brw_stats(osd->od_dt_dev.dd_debugfs_entry,
 				    &osd->od_brw_stats);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 53, 0)
 	osd_symlink_brw_stats(osd);
 #endif
 
@@ -140,7 +140,7 @@ static ssize_t fstype_show(struct kobject *kobj, struct attribute *attr,
 {
 	return sprintf(buf, "ldiskfs\n");
 }
-LUSTRE_RO_ATTR(fstype);
+GRUMPLE_RO_ATTR(fstype);
 
 static ssize_t mntdev_show(struct kobject *kobj, struct attribute *attr,
 			   char *buf)
@@ -155,7 +155,7 @@ static ssize_t mntdev_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%s\n", osd->od_mntdev);
 }
-LUSTRE_RO_ATTR(mntdev);
+GRUMPLE_RO_ATTR(mntdev);
 
 static ssize_t read_cache_enable_show(struct kobject *kobj,
 				      struct attribute *attr,
@@ -193,7 +193,7 @@ static ssize_t read_cache_enable_store(struct kobject *kobj,
 	osd->od_read_cache = !!val;
 	return count;
 }
-LUSTRE_RW_ATTR(read_cache_enable);
+GRUMPLE_RW_ATTR(read_cache_enable);
 
 static ssize_t writethrough_cache_enable_show(struct kobject *kobj,
 					      struct attribute *attr,
@@ -232,7 +232,7 @@ static ssize_t writethrough_cache_enable_store(struct kobject *kobj,
 	osd->od_writethrough_cache = !!val;
 	return count;
 }
-LUSTRE_RW_ATTR(writethrough_cache_enable);
+GRUMPLE_RW_ATTR(writethrough_cache_enable);
 
 static ssize_t enable_projid_xattr_show(struct kobject *kobj,
 					struct attribute *attr,
@@ -271,7 +271,7 @@ static ssize_t enable_projid_xattr_store(struct kobject *kobj,
 	osd->od_enable_projid_xattr = !!val;
 	return count;
 }
-LUSTRE_RW_ATTR(enable_projid_xattr);
+GRUMPLE_RW_ATTR(enable_projid_xattr);
 
 static ssize_t fallocate_zero_blocks_show(struct kobject *kobj,
 					  struct attribute *attr,
@@ -318,7 +318,7 @@ static ssize_t fallocate_zero_blocks_store(struct kobject *kobj,
 	osd->od_fallocate_zero_blocks = val;
 	return count;
 }
-LUSTRE_RW_ATTR(fallocate_zero_blocks);
+GRUMPLE_RW_ATTR(fallocate_zero_blocks);
 
 static ssize_t force_sync_store(struct kobject *kobj, struct attribute *attr,
 				const char *buffer, size_t count)
@@ -336,7 +336,7 @@ static ssize_t force_sync_store(struct kobject *kobj, struct attribute *attr,
 
 	return rc == 0 ? count : rc;
 }
-LUSTRE_WO_ATTR(force_sync);
+GRUMPLE_WO_ATTR(force_sync);
 
 static ssize_t nonrotational_show(struct kobject *kobj, struct attribute *attr,
 				  char *buf)
@@ -373,7 +373,7 @@ static ssize_t nonrotational_store(struct kobject *kobj,
 	osd->od_nonrotational = val;
 	return count;
 }
-LUSTRE_RW_ATTR(nonrotational);
+GRUMPLE_RW_ATTR(nonrotational);
 
 static ssize_t pdo_show(struct kobject *kobj, struct attribute *attr,
 			char *buf)
@@ -395,7 +395,7 @@ static ssize_t pdo_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(pdo);
+GRUMPLE_RW_ATTR(pdo);
 
 static ssize_t auto_scrub_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -432,7 +432,7 @@ static ssize_t auto_scrub_store(struct kobject *kobj, struct attribute *attr,
 	dev->od_scrub.os_scrub.os_auto_scrub_interval = val;
 	return count;
 }
-LUSTRE_RW_ATTR(auto_scrub);
+GRUMPLE_RW_ATTR(auto_scrub);
 
 static ssize_t full_scrub_ratio_show(struct kobject *kobj,
 				     struct attribute *attr,
@@ -473,7 +473,7 @@ static ssize_t full_scrub_ratio_store(struct kobject *kobj,
 	dev->od_full_scrub_ratio = val;
 	return count;
 }
-LUSTRE_RW_ATTR(full_scrub_ratio);
+GRUMPLE_RW_ATTR(full_scrub_ratio);
 
 static ssize_t full_scrub_threshold_rate_show(struct kobject *kobj,
 					      struct attribute *attr,
@@ -512,7 +512,7 @@ static ssize_t full_scrub_threshold_rate_store(struct kobject *kobj,
 	dev->od_full_scrub_threshold_rate = val;
 	return count;
 }
-LUSTRE_RW_ATTR(full_scrub_threshold_rate);
+GRUMPLE_RW_ATTR(full_scrub_threshold_rate);
 
 static ssize_t extent_bytes_allocation_show(struct kobject *kobj,
 					    struct attribute *attr, char *buf)
@@ -530,7 +530,7 @@ static ssize_t extent_bytes_allocation_show(struct kobject *kobj,
 	}
 	return snprintf(buf, PAGE_SIZE, "%u\n", min);
 }
-LUSTRE_RO_ATTR(extent_bytes_allocation);
+GRUMPLE_RO_ATTR(extent_bytes_allocation);
 
 static int ldiskfs_osd_oi_scrub_seq_show(struct seq_file *m, void *data)
 {
@@ -584,7 +584,7 @@ static ssize_t readcache_max_filesize_store(struct kobject *kobj,
 					 OSD_MAX_CACHE_SIZE : val;
 	return count;
 }
-LUSTRE_RW_ATTR(readcache_max_filesize);
+GRUMPLE_RW_ATTR(readcache_max_filesize);
 
 static ssize_t readcache_max_io_mb_show(struct kobject *kobj,
 					struct attribute *attr,
@@ -625,7 +625,7 @@ static ssize_t readcache_max_io_mb_store(struct kobject *kobj,
 	osd->od_readcache_max_iosize = val;
 	return count;
 }
-LUSTRE_RW_ATTR(readcache_max_io_mb);
+GRUMPLE_RW_ATTR(readcache_max_io_mb);
 
 static ssize_t writethrough_max_io_mb_show(struct kobject *kobj,
 					   struct attribute *attr,
@@ -666,9 +666,9 @@ static ssize_t writethrough_max_io_mb_store(struct kobject *kobj,
 	osd->od_writethrough_max_iosize = val;
 	return count;
 }
-LUSTRE_RW_ATTR(writethrough_max_io_mb);
+GRUMPLE_RW_ATTR(writethrough_max_io_mb);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 52, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 52, 0)
 static ssize_t index_in_idif_show(struct kobject *kobj, struct attribute *attr,
 				  char *buf)
 {
@@ -732,7 +732,7 @@ static ssize_t index_in_idif_store(struct kobject *kobj,
 	dev->od_index_in_idif = 1;
 	return count;
 }
-LUSTRE_RW_ATTR(index_in_idif);
+GRUMPLE_RW_ATTR(index_in_idif);
 
 int osd_register_proc_index_in_idif(struct osd_device *osd)
 {
@@ -776,7 +776,7 @@ static ssize_t index_backup_store(struct kobject *kobj, struct attribute *attr,
 	dev->od_index_backup_policy = val;
 	return count;
 }
-LUSTRE_RW_ATTR(index_backup);
+GRUMPLE_RW_ATTR(index_backup);
 
 #ifdef LDISKFS_GET_BLOCKS_VERY_DENSE
 static ssize_t extents_dense_show(struct kobject *kobj, struct attribute *attr,
@@ -804,7 +804,7 @@ static ssize_t extents_dense_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(extents_dense);
+GRUMPLE_RW_ATTR(extents_dense);
 #endif
 
 static struct ldebugfs_vars ldebugfs_osd_obd_vars[] = {
@@ -849,7 +849,7 @@ int osd_procfs_init(struct osd_device *osd, const char *name)
 	/* at the moment there is no linkage between lu_type
 	 * and obd_type, so we lookup obd_type this way
 	 */
-	type = class_search_type(LUSTRE_OSD_LDISKFS_NAME);
+	type = class_search_type(GRUMPLE_OSD_LDISKFS_NAME);
 
 	LASSERT(name);
 	LASSERT(type);

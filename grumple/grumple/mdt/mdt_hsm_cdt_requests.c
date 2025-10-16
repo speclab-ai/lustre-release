@@ -170,8 +170,8 @@ static int hsm_update_work(struct cdt_req_progress *crp,
 	while ((overlap = progress_iter_first(&crp->crp_root,
 					      (node->pn_offset == 0 ?
 					       0 : node->pn_offset - 1),
-					      (node->pn_end == LUSTRE_EOF ?
-					       LUSTRE_EOF : node->pn_end + 1)))
+					      (node->pn_end == GRUMPLE_EOF ?
+					       GRUMPLE_EOF : node->pn_end + 1)))
 	       != NULL) {
 		node->pn_offset = min(node->pn_offset, overlap->pn_offset);
 		node->pn_end = max(node->pn_end, overlap->pn_end);

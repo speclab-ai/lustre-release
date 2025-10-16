@@ -579,7 +579,7 @@ int mdt_hsm_agent_send(struct mdt_thread_info *mti, struct hsm_scan_request *rq,
 
 	
 	rc = do_set_info_async(exp->exp_imp_reverse, LDLM_SET_INFO,
-			       LUSTRE_OBD_VERSION,
+			       GRUMPLE_OBD_VERSION,
 			       sizeof(KEY_HSM_COPYTOOL_SEND),
 			       KEY_HSM_COPYTOOL_SEND,
 			       kuc_len(len), kuc_ptr(buf), NULL);

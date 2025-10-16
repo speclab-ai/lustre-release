@@ -12,8 +12,8 @@
  * Author: Fan, Yong <fan.yong@intel.com>
  */
 
-#ifndef _LUSTRE_LFSCK_USER_H
-# define _LUSTRE_LFSCK_USER_H
+#ifndef _GRUMPLE_LFSCK_USER_H
+# define _GRUMPLE_LFSCK_USER_H
 
 #include <linux/types.h>
 #include <linux/grumple/grumple_user.h>

@@ -240,7 +240,7 @@ static const struct lu_device_type_operations vvp_device_type_ops = {
 
 struct lu_device_type vvp_device_type = {
 	.ldt_tags     = LU_DEVICE_CL,
-	.ldt_name     = LUSTRE_VVP_NAME,
+	.ldt_name     = GRUMPLE_VVP_NAME,
 	.ldt_ops      = &vvp_device_type_ops,
 	.ldt_ctx_tags = LCT_CL_THREAD
 };

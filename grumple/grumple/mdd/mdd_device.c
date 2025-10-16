@@ -94,7 +94,7 @@ static int mdd_connect_to_next(const struct lu_env *env, struct mdd_device *m,
 	}
 
 	data->ocd_connect_flags = OBD_CONNECT_VERSION;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	rc = obd_connect(NULL, &m->mdd_child_exp, obd, &obd->obd_uuid, data,
 			 NULL);
@@ -1037,7 +1037,7 @@ static int mdd_dot_grumple_setup(const struct lu_env *env, struct mdd_device *m)
 
 	ENTRY;
 	
-	fid = LU_DOT_LUSTRE_FID;
+	fid = LU_DOT_GRUMPLE_FID;
 	rc = mdd_local_file_create(env, m, &m->mdd_root_fid,
 				   dot_grumple_name,
 				   S_IFDIR | 0755,
@@ -2350,7 +2350,7 @@ static const struct lu_device_type_operations mdd_device_type_ops = {
 
 static struct lu_device_type mdd_device_type = {
 	.ldt_tags     = LU_DEVICE_MD,
-	.ldt_name     = LUSTRE_MDD_NAME,
+	.ldt_name     = GRUMPLE_MDD_NAME,
 	.ldt_ops      = &mdd_device_type_ops,
 	.ldt_ctx_tags = LCT_MD_THREAD
 };
@@ -2419,7 +2419,7 @@ static int __init mdd_init(void)
 	changelog_orig_logops.lop_write_rec = mdd_changelog_write_rec;
 
 	rc = class_register_type(&mdd_obd_device_ops, NULL, false,
-				 LUSTRE_MDD_NAME, &mdd_device_type);
+				 GRUMPLE_MDD_NAME, &mdd_device_type);
 	if (rc)
 		lu_kmem_fini(mdd_caches);
 	return rc;
@@ -2427,13 +2427,13 @@ static int __init mdd_init(void)
 
 static void __exit mdd_exit(void)
 {
-	class_unregister_type(LUSTRE_MDD_NAME);
+	class_unregister_type(GRUMPLE_MDD_NAME);
 	lu_kmem_fini(mdd_caches);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
-MODULE_DESCRIPTION("Lustre Meta-data Device Driver ("LUSTRE_MDD_NAME")");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_DESCRIPTION("Lustre Meta-data Device Driver ("GRUMPLE_MDD_NAME")");
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(mdd_init);

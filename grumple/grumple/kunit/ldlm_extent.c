@@ -12,7 +12,7 @@
 #include <grumple_lib.h>
 #include "../../ldlm/ldlm_internal.h"
 
-#define LUSTRE_TEST_LDLM_DEVICE "ldlm_test"
+#define GRUMPLE_TEST_LDLM_DEVICE "ldlm_test"
 
 /*
  * Performance tests for ldlm_extent access
@@ -22,7 +22,7 @@ static const struct lu_device_type_operations ldlm_test_type_ops;
 
 static struct lu_device_type ldlm_test_device_type = {
 	.ldt_tags     = LU_DEVICE_MISC,
-	.ldt_name     = LUSTRE_TEST_LDLM_DEVICE,
+	.ldt_name     = GRUMPLE_TEST_LDLM_DEVICE,
 	.ldt_ops      = &ldlm_test_type_ops,
 	.ldt_ctx_tags = LCT_LOCAL
 };
@@ -105,7 +105,7 @@ static int ldlm_extent_init(void)
 	prandom_seed_state(&rstate, 42);
 
 	class_register_type(&extent_ops, NULL, false,
-			    LUSTRE_TEST_LDLM_DEVICE,
+			    GRUMPLE_TEST_LDLM_DEVICE,
 			    &ldlm_test_device_type);
 
 	OBD_ALLOC(name, MAX_OBD_NAME);
@@ -115,7 +115,7 @@ static int ldlm_extent_init(void)
 	snprintf(uuid, MAX_OBD_NAME, "%s_UUID", name);
 
 	grumple_cfg_bufs_set_string(&bufs, 1,
-				   LUSTRE_TEST_LDLM_DEVICE);
+				   GRUMPLE_TEST_LDLM_DEVICE);
 	grumple_cfg_bufs_set_string(&bufs, 2, uuid);
 	OBD_ALLOC(cfg, grumple_cfg_len(bufs.lcfg_bufcount, bufs.lcfg_buflen));
 	grumple_cfg_init(cfg, LCFG_ATTACH, &bufs);
@@ -229,7 +229,7 @@ static int ldlm_extent_init(void)
 
 	ldlm_resource_putref(res);
 	ldlm_namespace_free_post(ns);
-	class_unregister_type(LUSTRE_TEST_LDLM_DEVICE);
+	class_unregister_type(GRUMPLE_TEST_LDLM_DEVICE);
 
 	return 0;
 }

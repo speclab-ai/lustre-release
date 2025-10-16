@@ -2411,10 +2411,10 @@ static int osd_declare_punch(const struct lu_env *env, struct dt_object *dt,
 	 * corrupted content
 	 */
 	if (rc == 0) {
-		if (obj->oo_lma_flags & LUSTRE_ENCRYPT_FL &&
-		    start & ~LUSTRE_ENCRYPTION_MASK)
-			start = (start & LUSTRE_ENCRYPTION_MASK) +
-				LUSTRE_ENCRYPTION_UNIT_SIZE;
+		if (obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL &&
+		    start & ~GRUMPLE_ENCRYPTION_MASK)
+			start = (start & GRUMPLE_ENCRYPTION_MASK) +
+				GRUMPLE_ENCRYPTION_UNIT_SIZE;
 		ll_truncate_pagecache(inode, start);
 		rc = osd_trunc_lock(obj, oh, false);
 	}
@@ -2768,10 +2768,10 @@ void osd_execute_truncate(struct osd_object *obj)
 	/* if object holds encrypted content, we need to make sure we truncate
 	 * on an encryption unit boundary, or block content will get corrupted
 	 */
-	if (obj->oo_lma_flags & LUSTRE_ENCRYPT_FL &&
-	    size & ~LUSTRE_ENCRYPTION_MASK)
-		inode->i_size = (size & LUSTRE_ENCRYPTION_MASK) +
-			LUSTRE_ENCRYPTION_UNIT_SIZE;
+	if (obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL &&
+	    size & ~GRUMPLE_ENCRYPTION_MASK)
+		inode->i_size = (size & GRUMPLE_ENCRYPTION_MASK) +
+			GRUMPLE_ENCRYPTION_UNIT_SIZE;
 	ldiskfs_truncate(inode);
 	inode_unlock(inode);
 	if (inode->i_size != size) {

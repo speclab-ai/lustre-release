@@ -75,7 +75,7 @@ int qmt_intent_policy(const struct lu_env *env, struct lu_device *ld,
 		enum qmt_stype stype;
 		int idx;
 
-		if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] == 0)
+		if (res->lr_name.name[GRUMPLE_RES_ID_QUOTA_SEQ_OFF] == 0)
 			
 			GOTO(out, rc = -EPROTO);
 
@@ -122,7 +122,7 @@ int qmt_intent_policy(const struct lu_env *env, struct lu_device *ld,
 	case IT_QUOTA_CONN:
 		
 
-		if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] != 0)
+		if (res->lr_name.name[GRUMPLE_RES_ID_QUOTA_SEQ_OFF] != 0)
 			
 			GOTO(out, rc = -EPROTO);
 
@@ -173,7 +173,7 @@ int qmt_lvbo_init(struct lu_device *ld, struct ldlm_resource *res)
 		RETURN(-ENOTSUPP);
 
 	if (res->lr_lvb_data ||
-	    res->lr_name.name[LUSTRE_RES_ID_SEQ_OFF] != FID_SEQ_QUOTA_GLB)
+	    res->lr_name.name[GRUMPLE_RES_ID_SEQ_OFF] != FID_SEQ_QUOTA_GLB)
 		RETURN(0);
 
 	env = lu_env_find();
@@ -191,7 +191,7 @@ int qmt_lvbo_init(struct lu_device *ld, struct ldlm_resource *res)
 		GOTO(out, rc);
 	}
 
-	if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] != 0) {
+	if (res->lr_name.name[GRUMPLE_RES_ID_QUOTA_SEQ_OFF] != 0) {
 		/* no ID quota lock associated with UID/GID 0 or with a seq 0,
 		 * we are thus dealing with an ID lock. */
 		struct qmt_pool_info	*pool;
@@ -352,7 +352,7 @@ int qmt_lvbo_update(struct lu_device *ld, struct ldlm_resource *res,
 	if (req == NULL)
 		RETURN(0);
 
-	if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] == 0)
+	if (res->lr_name.name[GRUMPLE_RES_ID_QUOTA_SEQ_OFF] == 0)
 		
 		RETURN(0);
 
@@ -482,13 +482,13 @@ int qmt_lvbo_fill(struct lu_device *ld, struct ldlm_lock *lock, void *lvb,
 	rc = 0;
 
 	if (res->lr_type != LDLM_PLAIN || res->lr_lvb_data == NULL ||
-	    res->lr_name.name[LUSTRE_RES_ID_SEQ_OFF] != FID_SEQ_QUOTA_GLB)
+	    res->lr_name.name[GRUMPLE_RES_ID_SEQ_OFF] != FID_SEQ_QUOTA_GLB)
 		RETURN(-EINVAL);
 
 	env = lu_env_find();
 	LASSERT(env);
 
-	if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] != 0) {
+	if (res->lr_name.name[GRUMPLE_RES_ID_QUOTA_SEQ_OFF] != 0) {
 		/* no ID quota lock associated with UID/GID 0 or with a seq 0,
 		 * we are thus dealing with an ID lock. */
 		struct lquota_entry *lqe = res->lr_lvb_data;
@@ -543,7 +543,7 @@ int qmt_lvbo_free(struct lu_device *ld, struct ldlm_resource *res)
 	if (res->lr_lvb_data == NULL)
 		RETURN(0);
 
-	if (res->lr_name.name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] != 0) {
+	if (res->lr_name.name[GRUMPLE_RES_ID_QUOTA_SEQ_OFF] != 0) {
 		struct lquota_entry *lqe = res->lr_lvb_data;
 
 		queue_work(qmt->qmt_lvbo_free_wq, &lqe->lqe_work);

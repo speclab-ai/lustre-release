@@ -157,7 +157,7 @@ static void __exit obd_mod_rpcs_test_exit(void)
 MODULE_LICENSE("GPL");
 MODULE_AUTHOR("Lijing Chen <lijinc@amazon.com>");
 MODULE_DESCRIPTION("Lustre OBD test module");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 
 module_init(obd_mod_rpcs_test_init);
 module_exit(obd_mod_rpcs_test_exit);

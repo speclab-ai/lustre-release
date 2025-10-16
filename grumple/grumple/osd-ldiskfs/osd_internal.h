@@ -60,8 +60,8 @@ extern struct kmem_cache *dynlock_cachep;
  * ldiskfs_{set,clear,test}_inode_state() only */
 
 
-#define LDISKFS_STATE_LUSTRE_NOSCRUB	31
-#define LDISKFS_STATE_LUSTRE_DESTROY	30
+#define LDISKFS_STATE_GRUMPLE_NOSCRUB	31
+#define LDISKFS_STATE_GRUMPLE_DESTROY	30
 
 
 #define OSD_THANDLE_STATS (0)
@@ -558,13 +558,13 @@ struct osd_quota_leaf {
 struct osd_it_quota {
 	struct osd_object	*oiq_obj;
 	
-	uint			 oiq_blk[LUSTRE_DQTREEDEPTH + 1];
+	uint			 oiq_blk[GRUMPLE_DQTREEDEPTH + 1];
 	
 	loff_t			 oiq_offset;
 	
 	__u64			 oiq_id;
 	
-	uint			 oiq_index[LUSTRE_DQTREEDEPTH + 1];
+	uint			 oiq_index[GRUMPLE_DQTREEDEPTH + 1];
 	
 	struct list_head	 oiq_list;
 };
@@ -821,7 +821,7 @@ extern struct lprocfs_vars lprocfs_osd_obd_vars[];
 int osd_procfs_init(struct osd_device *osd, const char *name);
 void osd_procfs_fini(struct osd_device *osd);
 void osd_brw_stats_update(struct osd_device *osd, struct osd_iobuf *iobuf);
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 52, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 52, 0)
 int osd_register_proc_index_in_idif(struct osd_device *osd);
 #endif
 
@@ -1766,6 +1766,6 @@ static int fill_fn(struct dir_context *buf, const char *name, int namelen,  \
 #define WRAP_FILLDIR_FN(prefix, fill_fn)
 #endif
 
-#define LDISKFS_OSD_USER_MODIFIABLE	LUSTRE_FL_USER_MODIFIABLE
+#define LDISKFS_OSD_USER_MODIFIABLE	GRUMPLE_FL_USER_MODIFIABLE
 
 #endif 

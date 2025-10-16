@@ -12,8 +12,8 @@
  * Author: Di Wang <di.wang@intel.com>
  */
 
-#ifndef _LUSTRE_LMV_H
-#define _LUSTRE_LMV_H
+#ifndef _GRUMPLE_LMV_H
+#define _GRUMPLE_LMV_H
 #include <uapi/linux/grumple/grumple_idl.h>
 
 struct lmv_oinfo {

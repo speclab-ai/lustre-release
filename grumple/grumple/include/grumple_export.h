@@ -175,7 +175,7 @@ struct obd_export {
 	
 	atomic_t		exp_replay_count;
 	atomic_t		exp_locks_count; 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 	struct list_head	exp_locks_list;
 	spinlock_t		exp_locks_list_guard;
 #endif
@@ -504,7 +504,7 @@ static inline int exp_connect_dom_lvb(struct obd_export *exp)
 	return !!(exp_connect_flags2(exp) & OBD_CONNECT2_DOM_LVB);
 }
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
 /* Only needed for interop with older MDS and 2.16+ OSS for rolling upgrade.
  * This is typically unsupported for long periods, especially between large
  * large version differences, so assume this is always true in the future

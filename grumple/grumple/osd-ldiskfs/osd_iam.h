@@ -16,8 +16,8 @@
  * Author: Nikita Danilov <nikita@clusterfs.com>
  */
 
-#ifndef __LINUX_LUSTRE_IAM_H__
-#define __LINUX_LUSTRE_IAM_H__
+#ifndef __LINUX_GRUMPLE_IAM_H__
+#define __LINUX_GRUMPLE_IAM_H__
 
 #include <linux/module.h>
 #ifdef HAVE_LINUX_UNALIGNED_HEADER

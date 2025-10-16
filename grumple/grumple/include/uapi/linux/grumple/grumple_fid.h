@@ -20,8 +20,8 @@
  * Author: Ben Evans.
  */
 
-#ifndef _UAPI_LUSTRE_FID_H_
-#define _UAPI_LUSTRE_FID_H_
+#ifndef _UAPI_GRUMPLE_FID_H_
+#define _UAPI_GRUMPLE_FID_H_
 
 #include <linux/types.h>
 #include <linux/grumple/grumple_idl.h>
@@ -34,16 +34,16 @@ static const struct lu_fid LU_ROOT_FID = {
 };
 
 
-static const struct lu_fid LU_DOT_LUSTRE_FID = {
-	.f_seq = FID_SEQ_DOT_LUSTRE,
-	.f_oid = FID_OID_DOT_LUSTRE,
+static const struct lu_fid LU_DOT_GRUMPLE_FID = {
+	.f_seq = FID_SEQ_DOT_GRUMPLE,
+	.f_oid = FID_OID_DOT_GRUMPLE,
 	.f_ver = 0x0000000000000000
 };
 
 
 static const struct lu_fid LU_OBF_FID = {
-	.f_seq = FID_SEQ_DOT_LUSTRE,
-	.f_oid = FID_OID_DOT_LUSTRE_OBF,
+	.f_seq = FID_SEQ_DOT_GRUMPLE,
+	.f_oid = FID_OID_DOT_GRUMPLE_OBF,
 	.f_ver = 0x0000000000000000
 };
 
@@ -129,7 +129,7 @@ static inline bool fid_seq_is_root(__u64 seq)
 
 static inline bool fid_seq_is_dot(__u64 seq)
 {
-	return seq == FID_SEQ_DOT_LUSTRE;
+	return seq == FID_SEQ_DOT_GRUMPLE;
 }
 
 static inline bool fid_seq_is_default(__u64 seq)
@@ -387,7 +387,7 @@ static inline int lu_fid_cmp(const struct lu_fid *f0,
  * into the range where there may not be many OID values in use, to minimize
  * the risk of conflict.
  *
- * Suppose LUSTRE_SEQ_MAX_WIDTH less than (1 << 24) which is currently true,
+ * Suppose GRUMPLE_SEQ_MAX_WIDTH less than (1 << 24) which is currently true,
  * the time between re-used inode numbers is very long - 2^40 SEQ numbers,
  * or about 2^40 client mounts, if clients create less than 2^24 files/mount.
  */
@@ -426,7 +426,7 @@ static inline __u32 fid_flatten32(const struct lu_fid *fid)
 	/* Map the high bits of the OID into higher bits of the inode number so
 	 * that inodes generated at about the same time have a reduced chance
 	 * of collisions. This will give a period of 2^12 = 1024 unique clients
-	 * (from SEQ) and up to min(LUSTRE_SEQ_MAX_WIDTH, 2^20) = 128k objects
+	 * (from SEQ) and up to min(GRUMPLE_SEQ_MAX_WIDTH, 2^20) = 128k objects
 	 * (from OID), or up to 128M inodes without collisions for new files.
 	 */
 	ino = ((seq & 0x000fffffULL) << 12) + ((seq >> 8) & 0xfffff000) +

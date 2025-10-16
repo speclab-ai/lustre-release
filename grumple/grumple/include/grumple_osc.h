@@ -21,8 +21,8 @@
  * Author: Mikhail Pershin <mike.pershin@intel.com>
  */
 
-#ifndef LUSTRE_OSC_H
-#define LUSTRE_OSC_H
+#ifndef GRUMPLE_OSC_H
+#define GRUMPLE_OSC_H
 
 #include <obd.h>
 #include <cfs_hash.h>
@@ -235,7 +235,7 @@ struct osc_object {
 	struct cl_object	oo_cl;
 	struct lov_oinfo	*oo_oinfo;
 
-#ifdef CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK
+#ifdef CONFIG_GRUMPLE_DEBUG_EXPENSIVE_CHECK
 	/**
 	 * IO context used for invariant checks in osc_lock_has_pages().
 	 */

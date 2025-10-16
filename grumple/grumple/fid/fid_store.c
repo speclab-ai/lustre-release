@@ -188,10 +188,10 @@ int seq_store_init(struct lu_server_seq *seq,
 	int rc;
 	ENTRY;
 
-	name = seq->lss_type == LUSTRE_SEQ_SERVER ?
-		LUSTRE_SEQ_SRV_NAME : LUSTRE_SEQ_CTL_NAME;
+	name = seq->lss_type == GRUMPLE_SEQ_SERVER ?
+		GRUMPLE_SEQ_SRV_NAME : GRUMPLE_SEQ_CTL_NAME;
 
-	if (seq->lss_type == LUSTRE_SEQ_SERVER)
+	if (seq->lss_type == GRUMPLE_SEQ_SERVER)
 		lu_local_obj_fid(&fid, FID_SEQ_SRV_OID);
 	else
 		lu_local_obj_fid(&fid, FID_SEQ_CTL_OID);

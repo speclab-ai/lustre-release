@@ -48,9 +48,9 @@
 
 const char * grumple_svc_name[] =
 {
-	[LUSTRE_GSS_SVC_MGS]    = "MGS",
-	[LUSTRE_GSS_SVC_MDS]    = "MDS",
-	[LUSTRE_GSS_SVC_OSS]    = "OSS",
+	[GRUMPLE_GSS_SVC_MGS]    = "MGS",
+	[GRUMPLE_GSS_SVC_MDS]    = "MDS",
+	[GRUMPLE_GSS_SVC_OSS]    = "OSS",
 };
 
 

@@ -419,7 +419,7 @@ static int tgt_handle_request0(struct tgt_session_info *tsi,
 		if (req_capsule_has_field(tsi->tsi_pill, &RMF_ACL, RCL_SERVER))
 			req_capsule_set_size(tsi->tsi_pill,
 					     &RMF_ACL, RCL_SERVER,
-					     LUSTRE_POSIX_ACL_MAX_SIZE_OLD);
+					     GRUMPLE_POSIX_ACL_MAX_SIZE_OLD);
 
 		if (req_capsule_has_field(tsi->tsi_pill, &RMF_SHORT_IO,
 					  RCL_SERVER)) {
@@ -952,7 +952,7 @@ int tgt_connect_check_sptlrpc(struct ptlrpc_request *req, struct obd_export *exp
 
 	
 	if (unlikely(strcmp(exp->exp_obd->obd_type->typ_name,
-			    LUSTRE_ECHO_NAME) == 0)) {
+			    GRUMPLE_ECHO_NAME) == 0)) {
 		exp->exp_flvr.sf_rpc = SPTLRPC_FLVR_ANY;
 		return 0;
 	}
@@ -973,7 +973,7 @@ int tgt_connect_check_sptlrpc(struct ptlrpc_request *req, struct obd_export *exp
 		 * NID is on the local node, allow any flavor
 		 */
 		if ((strcmp(exp->exp_obd->obd_type->typ_name,
-			    LUSTRE_MGS_NAME) == 0) &&
+			    GRUMPLE_MGS_NAME) == 0) &&
 		    (exp->exp_flvr.sf_rpc == SPTLRPC_FLVR_NULL ||
 		     (exp->exp_connection &&
 		      LNetIsPeerLocal(&exp->exp_connection->c_peer.nid))))
@@ -1063,7 +1063,7 @@ int tgt_connect(struct tgt_session_info *tsi)
 	spin_unlock(&tsi->tsi_exp->exp_lock);
 
 	if (strcmp(tsi->tsi_exp->exp_obd->obd_type->typ_name,
-		   LUSTRE_MDT_NAME) == 0) {
+		   GRUMPLE_MDT_NAME) == 0) {
 		struct lu_nodemap *nm = NULL;
 
 		if (CFS_FAIL_CHECK(OBD_FAIL_MDS_CONNECT_ACCESS))

@@ -138,7 +138,7 @@ static void __exit ptlrpc_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Request Processor and Lock Management");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(ptlrpc_init);

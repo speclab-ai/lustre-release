@@ -386,7 +386,7 @@ static int ll_readdir(struct file *filp, void *cookie, filldir_t filldir)
 	}
 
 	op_data = ll_prep_md_op_data(NULL, inode, inode, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, inode);
+				     GRUMPLE_OPC_ANY, inode);
 	if (IS_ERR(op_data))
 		GOTO(out, rc = PTR_ERR(op_data));
 
@@ -525,7 +525,7 @@ static int ll_dir_setdirstripe(struct dentry *dparent, struct lmv_user_md *lump,
 		mode &= ~current_umask();
 	mode = (mode & (S_IRWXUGO | S_ISVTX)) | S_IFDIR;
 	op_data = ll_prep_md_op_data(NULL, parent, NULL, dirname,
-				     strlen(dirname), mode, LUSTRE_OPC_MKDIR,
+				     strlen(dirname), mode, GRUMPLE_OPC_MKDIR,
 				     lump);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
@@ -683,7 +683,7 @@ int ll_dir_setstripe(struct inode *inode, struct lov_user_md *lump,
 	}
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -771,7 +771,7 @@ int ll_dir_get_default_layout(struct inode *inode, void **plmm, int *plmm_size,
 	ENTRY;
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, lmm_size,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -1513,14 +1513,14 @@ static int quotactl_iter(struct ll_sb_info *sbi, struct if_quotactl *qctl)
 		GOTO(cleanup, rc);
 
 	QCTL_COPY(oqctl, qctl);
-	oqctl->qc_cmd = LUSTRE_Q_ITEROQUOTA;
+	oqctl->qc_cmd = GRUMPLE_Q_ITEROQUOTA;
 	oqctl->qc_iter_list = (uintptr_t)&iter_obd_quota_md_list;
 	rc = obd_quotactl(sbi->ll_md_exp, oqctl);
 	if (rc)
 		GOTO(cleanup, rc);
 
 	QCTL_COPY(oqctl, qctl);
-	oqctl->qc_cmd = LUSTRE_Q_ITEROQUOTA;
+	oqctl->qc_cmd = GRUMPLE_Q_ITEROQUOTA;
 	oqctl->qc_iter_list = (uintptr_t)&iter_obd_quota_dt_list;
 	rc = obd_quotactl(sbi->ll_dt_exp, oqctl);
 	if (rc)
@@ -1699,12 +1699,12 @@ int quotactl_ioctl(struct super_block *sb, struct if_quotactl *qctl)
 	switch (cmd) {
 	case Q_SETQUOTA:
 	case Q_SETINFO:
-	case LUSTRE_Q_SETDEFAULT:
-	case LUSTRE_Q_SETQUOTAPOOL:
-	case LUSTRE_Q_SETINFOPOOL:
-	case LUSTRE_Q_SETDEFAULT_POOL:
-	case LUSTRE_Q_DELETEQID:
-	case LUSTRE_Q_RESETQID:
+	case GRUMPLE_Q_SETDEFAULT:
+	case GRUMPLE_Q_SETQUOTAPOOL:
+	case GRUMPLE_Q_SETINFOPOOL:
+	case GRUMPLE_Q_SETDEFAULT_POOL:
+	case GRUMPLE_Q_DELETEQID:
+	case GRUMPLE_Q_RESETQID:
 		if (!capable(CAP_SYS_ADMIN))
 			RETURN(-EPERM);
 
@@ -1712,17 +1712,17 @@ int quotactl_ioctl(struct super_block *sb, struct if_quotactl *qctl)
 			RETURN(-EROFS);
 		break;
 	case Q_GETQUOTA:
-	case LUSTRE_Q_GETDEFAULT:
-	case LUSTRE_Q_GETQUOTAPOOL:
-	case LUSTRE_Q_GETDEFAULT_POOL:
-	case LUSTRE_Q_ITERQUOTA:
-	case LUSTRE_Q_GETALLQUOTA:
+	case GRUMPLE_Q_GETDEFAULT:
+	case GRUMPLE_Q_GETQUOTAPOOL:
+	case GRUMPLE_Q_GETDEFAULT_POOL:
+	case GRUMPLE_Q_ITERQUOTA:
+	case GRUMPLE_Q_GETALLQUOTA:
 		if (check_owner(type, id) &&
 		    (!capable(CAP_SYS_ADMIN)))
 			RETURN(-EPERM);
 		break;
 	case Q_GETINFO:
-	case LUSTRE_Q_GETINFOPOOL:
+	case GRUMPLE_Q_GETINFOPOOL:
 		break;
 	default:
 		CERROR("%s: unsupported quotactl op: %#x: rc = %d\n",
@@ -1730,15 +1730,15 @@ int quotactl_ioctl(struct super_block *sb, struct if_quotactl *qctl)
 		RETURN(-EOPNOTSUPP);
 	}
 
-	if (cmd == LUSTRE_Q_ITERQUOTA) {
+	if (cmd == GRUMPLE_Q_ITERQUOTA) {
 		rc = quotactl_iter(sbi, qctl);
-	} else if (cmd == LUSTRE_Q_GETALLQUOTA) {
+	} else if (cmd == GRUMPLE_Q_GETALLQUOTA) {
 		rc = quotactl_getallquota(sbi, qctl);
 	} else if (valid != QC_GENERAL) {
 		if (cmd == Q_GETINFO)
 			qctl->qc_cmd = Q_GETOINFO;
 		else if (cmd == Q_GETQUOTA ||
-			 cmd == LUSTRE_Q_GETQUOTAPOOL)
+			 cmd == GRUMPLE_Q_GETQUOTAPOOL)
 			qctl->qc_cmd = Q_GETOQUOTA;
 		else
 			RETURN(-EINVAL);
@@ -1772,7 +1772,7 @@ int quotactl_ioctl(struct super_block *sb, struct if_quotactl *qctl)
 		struct obd_quotactl *oqctl;
 		int oqctl_len = sizeof(*oqctl);
 
-		if (LUSTRE_Q_CMD_IS_POOL(cmd))
+		if (GRUMPLE_Q_CMD_IS_POOL(cmd))
 			oqctl_len += LOV_MAXPOOLNAME + 1;
 
 		OBD_ALLOC(oqctl, oqctl_len);
@@ -1788,7 +1788,7 @@ int quotactl_ioctl(struct super_block *sb, struct if_quotactl *qctl)
 		/* If QIF_SPACE is not set, client should collect the
 		 * space usage from OSSs by itself
 		 */
-		if ((cmd == Q_GETQUOTA || cmd == LUSTRE_Q_GETQUOTAPOOL) &&
+		if ((cmd == Q_GETQUOTA || cmd == GRUMPLE_Q_GETQUOTAPOOL) &&
 		    !(oqctl->qc_dqblk.dqb_valid & QIF_SPACE) &&
 		    !oqctl->qc_dqblk.dqb_curspace) {
 			struct obd_quotactl *oqctl_tmp;
@@ -1798,8 +1798,8 @@ int quotactl_ioctl(struct super_block *sb, struct if_quotactl *qctl)
 			if (oqctl_tmp == NULL)
 				GOTO(out, rc = -ENOMEM);
 
-			if (cmd == LUSTRE_Q_GETQUOTAPOOL) {
-				oqctl_tmp->qc_cmd = LUSTRE_Q_GETQUOTAPOOL;
+			if (cmd == GRUMPLE_Q_GETQUOTAPOOL) {
+				oqctl_tmp->qc_cmd = GRUMPLE_Q_GETQUOTAPOOL;
 				memcpy(oqctl_tmp->qc_poolname,
 				       qctl->qc_poolname,
 				       LOV_MAXPOOLNAME + 1);
@@ -2437,7 +2437,7 @@ out_rmdir:
 			if (IS_ENCRYPTED(inode) &&
 			    !ll_has_encryption_key(inode))
 				st.st_size = round_up(st.st_size,
-						   LUSTRE_ENCRYPTION_UNIT_SIZE);
+						   GRUMPLE_ENCRYPTION_UNIT_SIZE);
 			else
 				st.st_size = body->mbo_size;
 			st.st_blksize	= PAGE_SIZE;
@@ -2465,7 +2465,7 @@ out_rmdir:
 			if (IS_ENCRYPTED(inode) &&
 			    !ll_has_encryption_key(inode))
 				stx.stx_size = round_up(stx.stx_size,
-						   LUSTRE_ENCRYPTION_UNIT_SIZE);
+						   GRUMPLE_ENCRYPTION_UNIT_SIZE);
 			else
 				stx.stx_size = body->mbo_size;
 			stx.stx_blocks = body->mbo_blocks;
@@ -2481,15 +2481,15 @@ out_rmdir:
 
 			stx.stx_attributes_mask = STATX_ATTR_IMMUTABLE |
 						  STATX_ATTR_APPEND;
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 			stx.stx_attributes_mask |= STATX_ATTR_ENCRYPTED;
 #endif
 			if (body->mbo_valid & OBD_MD_FLFLAGS) {
 				stx.stx_attributes |= body->mbo_flags;
-				/* if Lustre specific LUSTRE_ENCRYPT_FL flag is
+				/* if Lustre specific GRUMPLE_ENCRYPT_FL flag is
 				 * set, also set ext4 equivalent to please statx
 				 */
-				if (body->mbo_flags & LUSTRE_ENCRYPT_FL)
+				if (body->mbo_flags & GRUMPLE_ENCRYPT_FL)
 					stx.stx_attributes |=
 						STATX_ATTR_ENCRYPTED;
 			}
@@ -2547,7 +2547,7 @@ out_req:
 		if (copy_from_user(qctl, uarg, sizeof(*qctl)))
 			GOTO(out_quotactl, rc = -EFAULT);
 
-		if (LUSTRE_Q_CMD_IS_POOL(qctl->qc_cmd)) {
+		if (GRUMPLE_Q_CMD_IS_POOL(qctl->qc_cmd)) {
 			char __user *from = uarg +
 					offsetof(typeof(*qctl), qc_poolname);
 			if (copy_from_user(qctl->qc_poolname, from,

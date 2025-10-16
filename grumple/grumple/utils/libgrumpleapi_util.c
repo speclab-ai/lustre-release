@@ -129,7 +129,7 @@ int llapi_get_version_string(char *version, unsigned int version_size)
 	return 0;
 }
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 4, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 4, 53, 0)
 /**
  * Return the build version of the Lustre code.
  *

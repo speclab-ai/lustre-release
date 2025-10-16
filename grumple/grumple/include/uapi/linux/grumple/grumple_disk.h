@@ -15,8 +15,8 @@
  * Author: Nathan Rutman <nathan.rutman@seagate.com>
  */
 
-#ifndef _UAPI_LUSTRE_DISK_H
-#define _UAPI_LUSTRE_DISK_H
+#ifndef _UAPI_GRUMPLE_DISK_H
+#define _UAPI_GRUMPLE_DISK_H
 
 /** \defgroup disk disk
  *
@@ -243,8 +243,8 @@ enum nodemap_idx_type {
 /* This is needed for struct nodemap_cgrumple_rec. Please don't move
  * to grumple_idl.h which will break user land builds.
  */
-#define LUSTRE_NODEMAP_NAME_LENGTH     16
-#define LUSTRE_NODEMAP_GUESS	       "?"
+#define GRUMPLE_NODEMAP_NAME_LENGTH     16
+#define GRUMPLE_NODEMAP_GUESS	       "?"
 
 
 enum nm_flag_bits {
@@ -274,7 +274,7 @@ enum nm_flag2_bits {
  * new ID type or range is needed, a new IDX type should be used.
  */
 struct nodemap_cluster_rec {
-	char			ncr_name[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+	char			ncr_name[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 	enum nm_flag_bits	ncr_flags:8;
 	enum nm_flag2_bits	ncr_flags2:8;
 	__u8			ncr_padding1;	
@@ -342,12 +342,12 @@ struct nodemap_offset_rec {
 };
 
 
-#define LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE \
+#define GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE \
 	(sizeof(struct nodemap_cluster_rec) - (2 * sizeof(__u16)))
 
-#define LUSTRE_NODEMAP_FILESET_SUBID_RANGE 256
+#define GRUMPLE_NODEMAP_FILESET_SUBID_RANGE 256
 
-#define LUSTRE_NODEMAP_FILESET_NUM_MAX 256
+#define GRUMPLE_NODEMAP_FILESET_NUM_MAX 256
 
 enum nm_fileset_flag_bits {
 	NM_FS_FL_READONLY = 0x1,
@@ -365,7 +365,7 @@ struct nodemap_fileset_header_rec {
 
 struct nodemap_fileset_rec {
 	
-	char	nfr_path_fragment[LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE];
+	char	nfr_path_fragment[GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE];
 	__u16	nfr_fragment_id;	
 	__u16	nfr_padding1;		
 };
@@ -504,7 +504,7 @@ struct scrub_file {
 	__u64	sf_items_failed;	    
 	__u64	sf_items_updated_prior;     
 	__u64	sf_items_noscrub;	    /* number of objects skipped due to
-					     * LDISKFS_STATE_LUSTRE_NOSCRUB
+					     * LDISKFS_STATE_GRUMPLE_NOSCRUB
 					     */
 	__u64   sf_items_igif;		    
 	__u32	sf_run_time;		    

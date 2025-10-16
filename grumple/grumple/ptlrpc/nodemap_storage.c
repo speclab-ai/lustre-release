@@ -144,7 +144,7 @@ static int nodemap_cluster_fileset_rec_init(union nodemap_rec *nr,
 	unsigned int fset_offset;
 	int rc = 0;
 
-	if (fragment_size > LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE ||
+	if (fragment_size > GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE ||
 	    fragment_size > strlen(fileset) + 1) {
 		rc = -ENAMETOOLONG;
 		CERROR("%s: Invalid fileset fragment size: rc = %d\n", fileset,
@@ -153,7 +153,7 @@ static int nodemap_cluster_fileset_rec_init(union nodemap_rec *nr,
 	}
 
 	nfr->nfr_fragment_id = cpu_to_le16(fragment_id);
-	fset_offset = fragment_id * LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE;
+	fset_offset = fragment_id * GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE;
 	memcpy(nfr->nfr_path_fragment, fileset + fset_offset, fragment_size);
 
 	return rc;
@@ -286,7 +286,7 @@ static struct dt_object *nodemap_cache_find_create(const struct lu_env *env,
 	if (unlikely(IS_ERR(root_obj)))
 		GOTO(out, nm_obj = root_obj);
 
-	rc = dt_lookup_dir(env, root_obj, LUSTRE_NODEMAP_NAME, &tfid);
+	rc = dt_lookup_dir(env, root_obj, GRUMPLE_NODEMAP_NAME, &tfid);
 	if (rc == -ENOENT) {
 		if (dev->dd_rdonly)
 			GOTO(out_root, nm_obj = ERR_PTR(-EROFS));
@@ -301,7 +301,7 @@ again:
 	if (create_new == NCFC_CREATE_NEW && rc != -ENOENT) {
 		CDEBUG(D_INFO, "removing old index, creating new one\n");
 		rc = local_object_unlink(env, dev, root_obj,
-					 LUSTRE_NODEMAP_NAME);
+					 GRUMPLE_NODEMAP_NAME);
 		if (rc < 0) {
 			
 			CERROR("cannot destroy nodemap index: rc = %d\n",
@@ -312,7 +312,7 @@ again:
 
 retry:
 	nm_obj = local_index_find_or_create(env, los, root_obj,
-						LUSTRE_NODEMAP_NAME,
+						GRUMPLE_NODEMAP_NAME,
 						S_IFREG | S_IRUGO | S_IWUSR,
 						&dt_nodemap_features);
 	if (IS_ERR(nm_obj)) {
@@ -862,7 +862,7 @@ static int nodemap_idx_fileset_fragments_add(
 	if (fset_info == NULL || fset_info->nfi_fileset == NULL ||
 	    fset_info->nfi_fragment_cnt == 0 ||
 	    fset_info->nfi_fragment_cnt >
-		    LUSTRE_NODEMAP_FILESET_SUBID_RANGE - 1)
+		    GRUMPLE_NODEMAP_FILESET_SUBID_RANGE - 1)
 		RETURN(-EINVAL);
 
 	OBD_ALLOC_PTR_ARRAY(nk_array, fset_info->nfi_fragment_cnt);
@@ -875,9 +875,9 @@ static int nodemap_idx_fileset_fragments_add(
 
 	
 	size_remaining = (unsigned int) strlen(fset_info->nfi_fileset) + 1;
-	fragment_size = LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE;
+	fragment_size = GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE;
 	for (i = 0; i < fset_info->nfi_fragment_cnt; i++) {
-		if (size_remaining < LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE)
+		if (size_remaining < GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE)
 			fragment_size = size_remaining;
 
 		rc = nodemap_cluster_fileset_rec_init(
@@ -923,7 +923,7 @@ static int nodemap_idx_fileset_fragments_del(
 
 	if (fset_info == NULL || fset_info->nfi_fragment_cnt == 0 ||
 	    fset_info->nfi_fragment_cnt >
-		    LUSTRE_NODEMAP_FILESET_SUBID_RANGE - 1)
+		    GRUMPLE_NODEMAP_FILESET_SUBID_RANGE - 1)
 		RETURN(-EINVAL);
 
 	OBD_ALLOC_PTR_ARRAY(nk_array, fset_info->nfi_fragment_cnt);
@@ -954,7 +954,7 @@ static int nodemap_idx_fileset_fragments_del(
 static bool nodemap_fileset_is_header(int subid)
 {
 	return ((subid - NODEMAP_FILESET) %
-		LUSTRE_NODEMAP_FILESET_SUBID_RANGE) == 0;
+		GRUMPLE_NODEMAP_FILESET_SUBID_RANGE) == 0;
 }
 
 /**
@@ -978,7 +978,7 @@ static int nodemap_idx_fileset_fragments_clear(const struct lu_nodemap *nodemap,
 	unsigned int count, subid, i;
 	int rc = 0;
 
-	count = LUSTRE_NODEMAP_FILESET_SUBID_RANGE;
+	count = GRUMPLE_NODEMAP_FILESET_SUBID_RANGE;
 
 	/* fset_subid must be a header, otherwise the subid range to clear
 	 * could overlap with the following fileset.
@@ -1008,7 +1008,7 @@ static int nodemap_idx_fileset_fragments_clear(const struct lu_nodemap *nodemap,
 static int nodemap_fileset_get_subid_header(unsigned int fileset_id)
 {
 	return NODEMAP_FILESET +
-	       (fileset_id * LUSTRE_NODEMAP_FILESET_SUBID_RANGE);
+	       (fileset_id * GRUMPLE_NODEMAP_FILESET_SUBID_RANGE);
 }
 
 /**
@@ -1037,9 +1037,9 @@ nodemap_idx_fileset_info_init(struct lu_nodemap_fileset_info *fset_info,
 
 	fset_size = (unsigned int)strlen(fset_info->nfi_fileset) + 1;
 	fset_info->nfi_fragment_cnt =
-		fset_size / LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE;
+		fset_size / GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE;
 
-	if (fset_size % LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE > 0)
+	if (fset_size % GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE > 0)
 		fset_info->nfi_fragment_cnt++;
 }
 
@@ -1596,7 +1596,7 @@ static int nodemap_cluster_rec_helper(struct nodemap_config *config,
 
 	nodemap = cfs_hash_lookup(config->nmc_nodemap_hash, rec->ncr.ncr_name);
 	if (nodemap == NULL) {
-		if (nodemap_id == LUSTRE_NODEMAP_DEFAULT_ID)
+		if (nodemap_id == GRUMPLE_NODEMAP_DEFAULT_ID)
 			nodemap = nodemap_create(rec->ncr.ncr_name, config, 1,
 						 false);
 		else
@@ -1716,10 +1716,10 @@ static int nodemap_cluster_rec_fileset_fragment(const union nodemap_rec *rec,
 	unsigned int fragment_id, fragment_len, fset_offset, fset_len_remain;
 
 	fragment_id = le16_to_cpu(rec->nfr.nfr_fragment_id);
-	fragment_len = LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE;
+	fragment_len = GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE;
 
 	
-	fset_offset = fragment_id * LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE;
+	fset_offset = fragment_id * GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE;
 	fset_len_remain = fileset_size - fset_offset;
 
 	if (fragment_len > fset_len_remain)
@@ -1844,7 +1844,7 @@ static int nodemap_fileset_get_id(int subid)
 	if (subid < NODEMAP_FILESET)
 		RETURN(-EINVAL);
 
-	return (subid - NODEMAP_FILESET) / LUSTRE_NODEMAP_FILESET_SUBID_RANGE;
+	return (subid - NODEMAP_FILESET) / GRUMPLE_NODEMAP_FILESET_SUBID_RANGE;
 }
 
 /**
@@ -1973,8 +1973,8 @@ static int nodemap_process_keyrec(struct nodemap_config *config,
 		} else if (cluster_idx_key >= NODEMAP_FILESET &&
 			   cluster_idx_key <
 				   NODEMAP_FILESET +
-					   (LUSTRE_NODEMAP_FILESET_SUBID_RANGE *
-					    LUSTRE_NODEMAP_FILESET_NUM_MAX)) {
+					   (GRUMPLE_NODEMAP_FILESET_SUBID_RANGE *
+					    GRUMPLE_NODEMAP_FILESET_NUM_MAX)) {
 			rc = nodemap_cluster_fileset_helper(nodemap, rec,
 							    cluster_idx_key);
 		} else {

@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _LUSTREAPI_H_
-#define _LUSTREAPI_H_
+#ifndef _GRUMPLEAPI_H_
+#define _GRUMPLEAPI_H_
 
 /** \defgroup llapi llapi
  *
@@ -577,7 +577,7 @@ int llapi_mv(char *path, struct find_param *param);
 
 struct mntent;
 
-#define HAVE_LLAPI_IS_LUSTRE_MNT
+#define HAVE_LLAPI_IS_GRUMPLE_MNT
 int llapi_is_grumple_mnt(struct mntent *mnt);
 int llapi_quotactl(char *mnt, struct if_quotactl *qctl);
 int llapi_target_iterate(int type_num, char **obd_type, void *args,

@@ -340,8 +340,8 @@ static int ldebugfs_exp_print_nodemap_seq(struct obd_export *exp, void *cb_data)
 
 	
 	server_type = exp->exp_obd->obd_type->typ_name;
-	if (strcmp(server_type, LUSTRE_MDT_NAME) != 0 &&
-	    strcmp(server_type, LUSTRE_OST_NAME) != 0)
+	if (strcmp(server_type, GRUMPLE_MDT_NAME) != 0 &&
+	    strcmp(server_type, GRUMPLE_OST_NAME) != 0)
 		return 0;
 
 	

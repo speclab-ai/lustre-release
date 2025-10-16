@@ -477,7 +477,7 @@ static void ofd_handle_attrs(const struct lu_env *env, struct ofd_device *ofd,
 {
 	bool need_atime = (oa->o_valid & OBD_MD_FLATIME);
 	bool need_encfl = (oa->o_valid & OBD_MD_FLFLAGS &&
-			   oa->o_flags & LUSTRE_ENCRYPT_FL);
+			   oa->o_flags & GRUMPLE_ENCRYPT_FL);
 	struct lu_attr *la;
 	struct dt_object *o;
 	struct thandle *th;
@@ -534,7 +534,7 @@ trans:
 	}
 	if (need_encfl) {
 		la->la_valid |= LA_FLAGS;
-		la->la_flags = LUSTRE_ENCRYPT_FL;
+		la->la_flags = GRUMPLE_ENCRYPT_FL;
 	}
 
 	rc = dt_declare_attr_set(env, o, la, th);
@@ -1038,10 +1038,10 @@ ofd_write_attr_set(const struct lu_env *env, struct ofd_device *ofd,
 	LASSERT(dt_obj != NULL);
 
 	la->la_valid &= LA_UID | LA_GID | LA_PROJID;
-	if (oa->o_valid & OBD_MD_FLFLAGS && oa->o_flags & LUSTRE_ENCRYPT_FL &&
+	if (oa->o_valid & OBD_MD_FLFLAGS && oa->o_flags & GRUMPLE_ENCRYPT_FL &&
 	    !CFS_FAIL_CHECK(OBD_FAIL_LFSCK_NO_ENCFLAG)) {
 		la->la_valid |= LA_FLAGS;
-		la->la_flags = LUSTRE_ENCRYPT_FL;
+		la->la_flags = GRUMPLE_ENCRYPT_FL;
 	}
 
 	rc = ofd_attr_handle_id(env, ofd_obj, la, 0 );
@@ -1497,7 +1497,7 @@ int ofd_commitrw(const struct lu_env *env, int cmd, struct obd_export *exp,
 		} else if (old_rc == 0) {
 			
 			if (strcmp(obd_uuid2str(&exp->exp_client_uuid),
-				   LUSTRE_ECHO_UUID) != 0 ||
+				   GRUMPLE_ECHO_UUID) != 0 ||
 			    exp->exp_connection)
 				old_rc = PTR_ERR(nodemap);
 		}

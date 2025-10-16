@@ -61,43 +61,43 @@ DKMS_CONFIG_OPTS=$(
     && shopt -q -s extglob \
     && \
     {
-	if [[ -n ${LUSTRE_DKMS_DISABLE_CDEBUG} ]] ; then
-		[[ ${LUSTRE_DKMS_DISABLE_CDEBUG,,} == @(y|yes) ]] &&
+	if [[ -n ${GRUMPLE_DKMS_DISABLE_CDEBUG} ]] ; then
+		[[ ${GRUMPLE_DKMS_DISABLE_CDEBUG,,} == @(y|yes) ]] &&
 			echo --disable-libcfs-cdebug ||
 			echo --enable-libcfs-cdebug
 	fi
-	if [[ -n ${LUSTRE_DKMS_DISABLE_TRACE} ]] ; then
-		[[ ${LUSTRE_DKMS_DISABLE_TRACE,,} == @(y|yes) ]] &&
+	if [[ -n ${GRUMPLE_DKMS_DISABLE_TRACE} ]] ; then
+		[[ ${GRUMPLE_DKMS_DISABLE_TRACE,,} == @(y|yes) ]] &&
 			echo --disable-libcfs-trace ||
 			echo --enable-libcfs-trace
 	fi
-	if [[ -n ${LUSTRE_DKMS_DISABLE_ASSERT} ]] ; then
-		[[ ${LUSTRE_DKMS_DISABLE_ASSERT,,} == @(y|yes) ]] &&
+	if [[ -n ${GRUMPLE_DKMS_DISABLE_ASSERT} ]] ; then
+		[[ ${GRUMPLE_DKMS_DISABLE_ASSERT,,} == @(y|yes) ]] &&
 			echo --disable-libcfs-assert ||
 			echo --enable-libcfs-assert
 	fi
-	if [[ -n ${LUSTRE_DKMS_ENABLE_GSS} ]] ; then
-		[[ ${LUSTRE_DKMS_ENABLE_GSS,,} == @(y|yes) ]] &&
+	if [[ -n ${GRUMPLE_DKMS_ENABLE_GSS} ]] ; then
+		[[ ${GRUMPLE_DKMS_ENABLE_GSS,,} == @(y|yes) ]] &&
 			echo --enable-gss ||
 			echo --disable-gss
 	fi
-	if [[ -n ${LUSTRE_DKMS_ENABLE_GSS_KEYRING} ]] ; then
-		[[ ${LUSTRE_DKMS_ENABLE_GSS_KEYRING,,} == @(y|yes) ]] &&
+	if [[ -n ${GRUMPLE_DKMS_ENABLE_GSS_KEYRING} ]] ; then
+		[[ ${GRUMPLE_DKMS_ENABLE_GSS_KEYRING,,} == @(y|yes) ]] &&
 			echo --enable-gss-keyring ||
 			echo --disable-gss-keyring
 	fi
-	if [[ -n ${LUSTRE_DKMS_ENABLE_CRYPTO} ]] ; then
-		[[ ${LUSTRE_DKMS_ENABLE_CRYPTO,,} == @(y|yes) ]] &&
+	if [[ -n ${GRUMPLE_DKMS_ENABLE_CRYPTO} ]] ; then
+		[[ ${GRUMPLE_DKMS_ENABLE_CRYPTO,,} == @(y|yes) ]] &&
 			echo --enable-crypto ||
 			echo --disable-crypto
 	fi
-	if [[ -n ${LUSTRE_DKMS_ENABLE_IOKIT} ]] ; then
-		[[ ${LUSTRE_DKMS_ENABLE_IOKIT,,} == @(y|yes) ]] &&
+	if [[ -n ${GRUMPLE_DKMS_ENABLE_IOKIT} ]] ; then
+		[[ ${GRUMPLE_DKMS_ENABLE_IOKIT,,} == @(y|yes) ]] &&
 			echo --enable-iokit ||
 			echo --disable-iokit
 	fi
-	[[ -n ${LUSTRE_DKMS_CONFIGURE_EXTRA} ]] &&
-		echo ${LUSTRE_DKMS_CONFIGURE_EXTRA}
+	[[ -n ${GRUMPLE_DKMS_CONFIGURE_EXTRA} ]] &&
+		echo ${GRUMPLE_DKMS_CONFIGURE_EXTRA}
     }
 )
 echo "${DKMS_CONFIG_OPTS} " | grep -E -q -- '--disable-gss[^-]|--enable-gss[^-]'

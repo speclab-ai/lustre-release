@@ -229,7 +229,7 @@ static int mgc_target_register(struct obd_export *exp,
 				     RCL_CLIENT, sizeof(*mti) + nidlist_size);
 	}
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MGS_VERSION, MGS_TARGET_REG);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MGS_VERSION, MGS_TARGET_REG);
 	if (rc < 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -360,7 +360,7 @@ static int mgc_nid_notify(struct obd_export *exp,
 	req_capsule_set_size(&req->rq_pill, &RMF_MGS_TARGET_NIDLIST,
 			     RCL_CLIENT, sizeof(*mtn) + nidlist_size);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MGS_VERSION, MGS_TARGET_REG);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MGS_VERSION, MGS_TARGET_REG);
 	if (rc < 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -507,7 +507,7 @@ again:
 	if (!req)
 		GOTO(out, rc = -ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MGS_VERSION, MGS_CONFIG_READ);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MGS_VERSION, MGS_CONFIG_READ);
 	if (rc)
 		GOTO(out, rc);
 
@@ -640,7 +640,7 @@ int mgc_process_config_server(const struct lu_env *env, struct lu_device *lu,
 		
 		struct mgs_target_info *mti;
 
-		if (LUSTRE_CFG_BUFLEN(lcfg, 1) !=
+		if (GRUMPLE_CFG_BUFLEN(lcfg, 1) !=
 		    sizeof(struct mgs_target_info))
 			GOTO(out, rc = -EINVAL);
 

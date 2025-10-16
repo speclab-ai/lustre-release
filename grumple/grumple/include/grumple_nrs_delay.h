@@ -12,8 +12,8 @@
  * Network Request Scheduler (NRS) Delay policy
  */
 
-#ifndef _LUSTRE_NRS_DELAY_H
-#define _LUSTRE_NRS_DELAY_H
+#ifndef _GRUMPLE_NRS_DELAY_H
+#define _GRUMPLE_NRS_DELAY_H
 
 /* \name delay
  *

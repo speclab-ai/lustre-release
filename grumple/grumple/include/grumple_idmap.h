@@ -14,8 +14,8 @@
  * See also grumple_idl.h for wire formats of requests.
  */
 
-#ifndef _LUSTRE_IDMAP_H
-#define _LUSTRE_IDMAP_H
+#ifndef _GRUMPLE_IDMAP_H
+#define _GRUMPLE_IDMAP_H
 
 /** \defgroup idmap idmap
  *

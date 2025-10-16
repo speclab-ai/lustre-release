@@ -13,8 +13,8 @@
  * Basic Lustre library routines.
  */
 
-#ifndef _LUSTRE_LIB_H
-#define _LUSTRE_LIB_H
+#ifndef _GRUMPLE_LIB_H
+#define _GRUMPLE_LIB_H
 
 /** \defgroup lib lib
  *

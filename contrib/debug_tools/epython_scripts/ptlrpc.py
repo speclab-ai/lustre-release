@@ -55,14 +55,14 @@ UNION_IDX = 2
 def size_round(val):
     return ((val + 7) & (~0x7))
 
-LUSTRE_MSG_MAGIC_V2 = 0x0BD00BD3
+GRUMPLE_MSG_MAGIC_V2 = 0x0BD00BD3
 
 def get_ptlrpc_body(req):
     msg = req.rq_reqmsg
     if not msg or msg == None:
         return None
 
-    if msg.lm_magic != LUSTRE_MSG_MAGIC_V2:
+    if msg.lm_magic != GRUMPLE_MSG_MAGIC_V2:
         return None
 
     bufcount = msg.lm_bufcount

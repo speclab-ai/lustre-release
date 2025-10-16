@@ -82,7 +82,7 @@ static int batch_prep_inline_update_req(struct batch_update_head *head,
 	req_capsule_set_size(&req->rq_pill, &RMF_BUT_HEADER, RCL_CLIENT,
 			     buf->bub_end + sizeof(*buh));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_BATCH);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_BATCH);
 	if (rc != 0)
 		RETURN(rc);
 
@@ -149,7 +149,7 @@ static int batch_prep_update_req(struct batch_update_head *head,
 	req_capsule_set_size(&req->rq_pill, &RMF_BUT_BUF, RCL_CLIENT,
 			     head->buh_buf_count * sizeof(*bub));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_BATCH);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_BATCH);
 	if (rc != 0)
 		GOTO(out_req, rc);
 

@@ -49,7 +49,7 @@ static ssize_t seqs_allocated_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%u\n", ofd->ofd_seq_count);
 }
-LUSTRE_RO_ATTR(seqs_allocated);
+GRUMPLE_RO_ATTR(seqs_allocated);
 
 /**
  * Show total number of grants for precreate.
@@ -70,7 +70,7 @@ static ssize_t grant_precreate_show(struct kobject *kobj,
 	return sprintf(buf, "%ld\n",
 		       obd->obd_self_export->exp_target_data.ted_grant);
 }
-LUSTRE_RO_ATTR(grant_precreate);
+GRUMPLE_RO_ATTR(grant_precreate);
 
 /**
  * Show number of precreates allowed in a single transaction.
@@ -125,7 +125,7 @@ static ssize_t precreate_batch_store(struct kobject *kobj,
 	spin_unlock(&ofd->ofd_batch_lock);
 	return count;
 }
-LUSTRE_RW_ATTR(precreate_batch);
+GRUMPLE_RW_ATTR(precreate_batch);
 
 /**
  * Show number of seconds to delay atime
@@ -176,7 +176,7 @@ static ssize_t atime_diff_store(struct kobject *kobj, struct attribute *attr,
 	ofd->ofd_atime_diff = val;
 	return count;
 }
-LUSTRE_RW_ATTR(atime_diff);
+GRUMPLE_RW_ATTR(atime_diff);
 
 /**
  * Show the last used ID for each FID sequence used by OFD.
@@ -268,7 +268,7 @@ static ssize_t degraded_store(struct kobject *kobj, struct attribute *attr,
 	spin_unlock(&ofd->ofd_flags_lock);
 	return count;
 }
-LUSTRE_RW_ATTR(degraded);
+GRUMPLE_RW_ATTR(degraded);
 
 /**
  * enable_resource_id_check_show() - Show if resource ID checking is enabled
@@ -332,7 +332,7 @@ static ssize_t enable_resource_id_check_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(enable_resource_id_check);
+GRUMPLE_RW_ATTR(enable_resource_id_check);
 
 /**
  * enable_resource_id_repair_show() - Show if resource ID repair is enabled
@@ -395,7 +395,7 @@ static ssize_t enable_resource_id_repair_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(enable_resource_id_repair);
+GRUMPLE_RW_ATTR(enable_resource_id_repair);
 
 /**
  * resource_id_repair_queue_count_show() - Show the resource ID repair queue size
@@ -461,7 +461,7 @@ static ssize_t resource_id_repair_queue_count_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(resource_id_repair_queue_count);
+GRUMPLE_RW_ATTR(resource_id_repair_queue_count);
 
 /**
  * Show if the OFD is in no precreate mode.
@@ -512,13 +512,13 @@ static ssize_t no_create_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(no_create);
+GRUMPLE_RW_ATTR(no_create);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
 
 #define no_precreate_show no_create_show
 #define no_precreate_store no_create_store
-LUSTRE_RW_ATTR(no_precreate);
+GRUMPLE_RW_ATTR(no_precreate);
 #endif
 
 /**
@@ -569,7 +569,7 @@ static ssize_t readonly_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(readonly);
+GRUMPLE_RW_ATTR(readonly);
 
 /**
  * Show OFD filesystem type.
@@ -593,7 +593,7 @@ static ssize_t fstype_show(struct kobject *kobj, struct attribute *attr,
 	LASSERT(d->ld_type);
 	return sprintf(buf, "%s\n", d->ld_type->ldt_name);
 }
-LUSTRE_RO_ATTR(fstype);
+GRUMPLE_RO_ATTR(fstype);
 
 /**
  * Show journal handling mode: synchronous or asynchronous.
@@ -655,7 +655,7 @@ static ssize_t sync_journal_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(sync_journal);
+GRUMPLE_RW_ATTR(sync_journal);
 
 static ssize_t brw_size_show(struct kobject *kobj, struct attribute *attr,
 			     char *buf)
@@ -700,7 +700,7 @@ static ssize_t brw_size_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(brw_size);
+GRUMPLE_RW_ATTR(brw_size);
 
 /**
  * Show the limit of soft sync RPCs.
@@ -757,7 +757,7 @@ static ssize_t soft_sync_limit_store(struct kobject *kobj,
 	ofd->ofd_soft_sync_limit = val;
 	return count;
 }
-LUSTRE_RW_ATTR(soft_sync_limit);
+GRUMPLE_RW_ATTR(soft_sync_limit);
 
 /**
  * Show the LFSCK speed limit.
@@ -811,7 +811,7 @@ static ssize_t lfsck_speed_limit_store(struct kobject *kobj,
 
 	return rc != 0 ? rc : count;
 }
-LUSTRE_RW_ATTR(lfsck_speed_limit);
+GRUMPLE_RW_ATTR(lfsck_speed_limit);
 
 /**
  * Show LFSCK layout verification stats from the most recent LFSCK run.
@@ -945,7 +945,7 @@ static ssize_t access_log_mask_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(access_log_mask);
+GRUMPLE_RW_ATTR(access_log_mask);
 
 static ssize_t access_log_size_show(struct kobject *kobj,
 				    struct attribute *attr, char *buf)
@@ -1000,7 +1000,7 @@ static ssize_t access_log_size_store(struct kobject *kobj,
 
 	return rc;
 }
-LUSTRE_RW_ATTR(access_log_size);
+GRUMPLE_RW_ATTR(access_log_size);
 
 static int site_stats_seq_show(struct seq_file *m, void *data)
 {
@@ -1071,26 +1071,26 @@ static ssize_t checksum_t10pi_enforce_store(struct kobject *kobj,
 	spin_unlock(&lut->lut_flags_lock);
 	return count;
 }
-LUSTRE_RW_ATTR(checksum_t10pi_enforce);
+GRUMPLE_RW_ATTR(checksum_t10pi_enforce);
 
-LUSTRE_RW_ATTR(recovery_time_hard);
-LUSTRE_RW_ATTR(recovery_time_soft);
-LUSTRE_RW_ATTR(ir_factor);
+GRUMPLE_RW_ATTR(recovery_time_hard);
+GRUMPLE_RW_ATTR(recovery_time_soft);
+GRUMPLE_RW_ATTR(ir_factor);
 
-LUSTRE_WO_ATTR(evict_client);
-LUSTRE_ATTR(checksum_dump, 0644, dt_checksum_dump_show, dt_checksum_dump_store);
-LUSTRE_ATTR(checksum_type, 0444, dt_checksum_type_show, NULL);
-LUSTRE_RW_ATTR(job_cleanup_interval);
+GRUMPLE_WO_ATTR(evict_client);
+GRUMPLE_ATTR(checksum_dump, 0644, dt_checksum_dump_show, dt_checksum_dump_store);
+GRUMPLE_ATTR(checksum_type, 0444, dt_checksum_type_show, NULL);
+GRUMPLE_RW_ATTR(job_cleanup_interval);
 
-LUSTRE_RO_ATTR(tot_dirty);
-LUSTRE_RO_ATTR(tot_granted);
-LUSTRE_RO_ATTR(tot_pending);
-LUSTRE_RW_ATTR(grant_compat_disable);
-LUSTRE_RO_ATTR(instance);
+GRUMPLE_RO_ATTR(tot_dirty);
+GRUMPLE_RO_ATTR(tot_granted);
+GRUMPLE_RO_ATTR(tot_pending);
+GRUMPLE_RW_ATTR(grant_compat_disable);
+GRUMPLE_RO_ATTR(instance);
 
-LUSTRE_RO_ATTR(num_exports);
-LUSTRE_RW_ATTR(grant_check_threshold);
-LUSTRE_RO_ATTR(eviction_count);
+GRUMPLE_RO_ATTR(num_exports);
+GRUMPLE_RW_ATTR(grant_check_threshold);
+GRUMPLE_RO_ATTR(eviction_count);
 
 LDEBUGFS_SEQ_FOPS_RO_TYPE(ofd, recovery_status);
 LDEBUGFS_SEQ_FOPS_RO_TYPE(ofd, recovery_stale_clients);
@@ -1166,9 +1166,9 @@ void ofd_stats_counter_init(struct lprocfs_stats *stats, unsigned int offset,
 
 LDEBUGFS_SEQ_FOPS_RW_TYPE(ofd, nid_stats_clear);
 
-LUSTRE_OBD_UINT_PARAM_ATTR(at_min);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_max);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_history);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_min);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_max);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_history);
 
 static struct attribute *ofd_attrs[] = {
 	&grumple_attr_access_log_mask.attr,
@@ -1195,7 +1195,7 @@ static struct attribute *ofd_attrs[] = {
 	&grumple_attr_job_cleanup_interval.attr,
 	&grumple_attr_lfsck_speed_limit.attr,
 	&grumple_attr_no_create.attr,
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
 	&grumple_attr_no_precreate.attr,
 #endif
 	&grumple_attr_num_exports.attr,

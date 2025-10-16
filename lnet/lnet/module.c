@@ -42,7 +42,7 @@ int lnet_configure(void *arg)
 		if (rc != 1)
 			goto out;
 
-		rc = LNetNIInit(LNET_PID_LUSTRE);
+		rc = LNetNIInit(LNET_PID_GRUMPLE);
 		if (rc >= 0) {
 			the_lnet.ln_niinit_self = 1;
 			rc = 0;
@@ -384,7 +384,7 @@ lnet_psdev_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
 
 	CDEBUG(D_IOCTL, "lnet ioctl cmd %u\n", cmd);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 	err = libcfs_ioctl(cmd, data);
 	if (err == -EINVAL)
 #endif

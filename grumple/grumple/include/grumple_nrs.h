@@ -12,8 +12,8 @@
  * Network Request Scheduler (NRS)
  */
 
-#ifndef _LUSTRE_NRS_H
-#define _LUSTRE_NRS_H
+#ifndef _GRUMPLE_NRS_H
+#define _GRUMPLE_NRS_H
 
 /**
  * \defgroup nrs Network Request Scheduler

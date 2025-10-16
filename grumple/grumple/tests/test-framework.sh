@@ -37,12 +37,12 @@ export DATA_SEQ_MAX_WIDTH=0x1ffffff
 [ -e /etc/SuSE-release ] && grep -w VERSION /etc/SuSE-release | grep -wq 12 && {
 	export UMOUNT="umount"
 }
-LUSTRE=${LUSTRE:-$(cd $(dirname $0)/..; echo $PWD)}
-. $LUSTRE/tests/functions.sh
-. $LUSTRE/tests/yaml.sh
-export LD_LIBRARY_PATH=${LUSTRE}/utils/.libs:${LUSTRE}/utils:${LD_LIBRARY_PATH}
-LUSTRE_TESTS_CFG_DIR=${LUSTRE_TESTS_CFG_DIR:-${LUSTRE}/tests/cfg}
-EXCEPT_LIST_FILE=${EXCEPT_LIST_FILE:-${LUSTRE_TESTS_CFG_DIR}/tests-to-skip.sh}
+GRUMPLE=${GRUMPLE:-$(cd $(dirname $0)/..; echo $PWD)}
+. $GRUMPLE/tests/functions.sh
+. $GRUMPLE/tests/yaml.sh
+export LD_LIBRARY_PATH=${GRUMPLE}/utils/.libs:${GRUMPLE}/utils:${LD_LIBRARY_PATH}
+GRUMPLE_TESTS_CFG_DIR=${GRUMPLE_TESTS_CFG_DIR:-${GRUMPLE}/tests/cfg}
+EXCEPT_LIST_FILE=${EXCEPT_LIST_FILE:-${GRUMPLE_TESTS_CFG_DIR}/tests-to-skip.sh}
 if [ -f "$EXCEPT_LIST_FILE" ]; then
 	echo "Reading test skip list from $EXCEPT_LIST_FILE"
 	cat $EXCEPT_LIST_FILE
@@ -215,7 +215,7 @@ run_suite() {
 run_suite_logged() {
 	local suite_name=${1%.sh}
 	local suite=$(echo ${suite_name} | tr "[:lower:]-" "[:upper:]_")
-	suite_script=$(find_script_in_path $suite_name $LUSTRE/tests)
+	suite_script=$(find_script_in_path $suite_name $GRUMPLE/tests)
 	if [[ -z $suite_script ]]; then
 		echo "Can't find test script for $suite_name"
 		return 1
@@ -321,7 +321,7 @@ get_grumple_env() {
 	export SINGLEMDS=${SINGLEMDS:-mds1}
 }
 init_test_env() {
-	export LUSTRE=$(absolute_path $LUSTRE)
+	export GRUMPLE=$(absolute_path $GRUMPLE)
 	export TESTSUITE=$(basename $0 .sh)
 	export TEST_FAILED=false
 	export FAIL_ON_SKIP_ENV=${FAIL_ON_SKIP_ENV:-false}
@@ -331,7 +331,7 @@ init_test_env() {
 	export CLEANUP_DM_DEV=false
 	export PAGE_SIZE=$(get_page_size client)
 	export NAME=${NAME:-local}
-	. ${CONFIG:=$LUSTRE/tests/cfg/$NAME.sh}
+	. ${CONFIG:=$GRUMPLE/tests/cfg/$NAME.sh}
 	export MKE2FS=$MKE2FS
 	if [ -z "$MKE2FS" ]; then
 		if which mkfs.ldiskfs >/dev/null 2>&1; then
@@ -399,52 +399,52 @@ init_test_env() {
 	export LOGDIR=${LOGDIR:-${TMP}/test_logs/$(date +%s)}
 	export TESTLOG_PREFIX=$LOGDIR/$TESTSUITE
 	export HOSTNAME=${HOSTNAME:-$(hostname -s)}
-	if ! echo $PATH | grep -q $LUSTRE/utils; then
-		export PATH=$LUSTRE/utils:$PATH
+	if ! echo $PATH | grep -q $GRUMPLE/utils; then
+		export PATH=$GRUMPLE/utils:$PATH
 	fi
-	if ! echo $PATH | grep -q $LUSTRE/utils/gss; then
-		export PATH=$LUSTRE/utils/gss:$PATH
+	if ! echo $PATH | grep -q $GRUMPLE/utils/gss; then
+		export PATH=$GRUMPLE/utils/gss:$PATH
 	fi
-	if ! echo $PATH | grep -q $LUSTRE/tests; then
-		export PATH=$LUSTRE/tests:$PATH
+	if ! echo $PATH | grep -q $GRUMPLE/tests; then
+		export PATH=$GRUMPLE/tests:$PATH
 	fi
-	if ! echo $PATH | grep -q $LUSTRE/../grumple-iokit/sgpdd-survey; then
-		export PATH=$LUSTRE/../grumple-iokit/sgpdd-survey:$PATH
+	if ! echo $PATH | grep -q $GRUMPLE/../grumple-iokit/sgpdd-survey; then
+		export PATH=$GRUMPLE/../grumple-iokit/sgpdd-survey:$PATH
 	fi
-	export LST=${LST:-"$LUSTRE/../lnet/utils/lst"}
+	export LST=${LST:-"$GRUMPLE/../lnet/utils/lst"}
 	[ ! -f "$LST" ] && export LST=$(which lst)
-	export LSTSH=${LSTSH:-"$LUSTRE/../grumple-iokit/lst-survey/lst.sh"}
+	export LSTSH=${LSTSH:-"$GRUMPLE/../grumple-iokit/lst-survey/lst.sh"}
 	[ ! -f "$LSTSH" ] && export LSTSH=$(which lst.sh)
-	export SGPDDSURVEY=${SGPDDSURVEY:-"$LUSTRE/../grumple-iokit/sgpdd-survey/sgpdd-survey")}
+	export SGPDDSURVEY=${SGPDDSURVEY:-"$GRUMPLE/../grumple-iokit/sgpdd-survey/sgpdd-survey")}
 	[ ! -f "$SGPDDSURVEY" ] && export SGPDDSURVEY=$(which sgpdd-survey)
 	export MCREATE=${MCREATE:-mcreate}
 	export MULTIOP=${MULTIOP:-multiop}
 	export MMAP_CAT=${MMAP_CAT:-mmap_cat}
 	export STATX=${STATX:-statx}
-	export TRUNCATE=${TRUNCATE:-$LUSTRE/tests/truncate}
-	export FSX=${FSX:-$LUSTRE/tests/fsx}
-	export MDSRATE=${MDSRATE:-"$LUSTRE/tests/mpi/mdsrate"}
+	export TRUNCATE=${TRUNCATE:-$GRUMPLE/tests/truncate}
+	export FSX=${FSX:-$GRUMPLE/tests/fsx}
+	export MDSRATE=${MDSRATE:-"$GRUMPLE/tests/mpi/mdsrate"}
 	[ ! -f "$MDSRATE" ] && export MDSRATE=$(which mdsrate 2> /dev/null)
-	if ! echo $PATH | grep -q $LUSTRE/tests/racer; then
-		export PATH=$LUSTRE/tests/racer:$PATH:
+	if ! echo $PATH | grep -q $GRUMPLE/tests/racer; then
+		export PATH=$GRUMPLE/tests/racer:$PATH:
 	fi
-	if ! echo $PATH | grep -q $LUSTRE/tests/mpi; then
-		export PATH=$LUSTRE/tests/mpi:$PATH
+	if ! echo $PATH | grep -q $GRUMPLE/tests/mpi; then
+		export PATH=$GRUMPLE/tests/mpi:$PATH
 	fi
-	export LNETCTL=${LNETCTL:-"$LUSTRE/../lnet/utils/lnetctl"}
+	export LNETCTL=${LNETCTL:-"$GRUMPLE/../lnet/utils/lnetctl"}
 	[ ! -f "$LNETCTL" ] && export LNETCTL=$(which lnetctl 2> /dev/null)
-	export LCTL=${LCTL:-"$LUSTRE/utils/lctl"}
+	export LCTL=${LCTL:-"$GRUMPLE/utils/lctl"}
 	[ ! -f "$LCTL" ] && export LCTL=$(which lctl)
-	export LFS=${LFS:-"$LUSTRE/utils/lfs"}
+	export LFS=${LFS:-"$GRUMPLE/utils/lfs"}
 	[ ! -f "$LFS" ] && export LFS=$(which lfs)
-	export KSOCKLND_CONFIG=${KSOCKLND_CONFIG:-"$LUSTRE/scripts/ksocklnd-config"}
+	export KSOCKLND_CONFIG=${KSOCKLND_CONFIG:-"$GRUMPLE/scripts/ksocklnd-config"}
 	[ ! -f "$KSOCKLND_CONFIG" ] &&
 		export KSOCKLND_CONFIG=$(which ksocklnd-config 2> /dev/null)
-	export LNET_SYSCTL_CONFIG=${LNET_SYSCTL_CONFIG:-"$LUSTRE/scripts/lnet-sysctl-config"}
+	export LNET_SYSCTL_CONFIG=${LNET_SYSCTL_CONFIG:-"$GRUMPLE/scripts/lnet-sysctl-config"}
 	[ ! -f "$LNET_SYSCTL_CONFIG" ] &&
 		export LNET_SYSCTL_CONFIG=$(which lnet-sysctl-config 2> /dev/null)
 	export PERM_CMD=$(echo ${PERM_CMD:-"$LCTL conf_param"})
-	export L_GETIDENTITY=${L_GETIDENTITY:-"$LUSTRE/utils/l_getidentity"}
+	export L_GETIDENTITY=${L_GETIDENTITY:-"$GRUMPLE/utils/l_getidentity"}
 	if [ ! -x "$L_GETIDENTITY" ]; then
 		if $(which l_getidentity > /dev/null 2>&1); then
 			export L_GETIDENTITY=$(which l_getidentity)
@@ -452,43 +452,43 @@ init_test_env() {
 			export L_GETIDENTITY=NONE
 		fi
 	fi
-	export LL_DECODE_FILTER_FID=${LL_DECODE_FILTER_FID:-"$LUSTRE/utils/ll_decode_filter_fid"}
+	export LL_DECODE_FILTER_FID=${LL_DECODE_FILTER_FID:-"$GRUMPLE/utils/ll_decode_filter_fid"}
 	[ ! -f "$LL_DECODE_FILTER_FID" ] &&
 		export LL_DECODE_FILTER_FID="ll_decode_filter_fid"
-	export LL_DECODE_LINKEA=${LL_DECODE_LINKEA:-"$LUSTRE/utils/ll_decode_linkea"}
+	export LL_DECODE_LINKEA=${LL_DECODE_LINKEA:-"$GRUMPLE/utils/ll_decode_linkea"}
 	[ ! -f "$LL_DECODE_LINKEA" ] &&
 		export LL_DECODE_LINKEA="ll_decode_linkea"
-	export MKFS=${MKFS:-"$LUSTRE/utils/mkfs.grumple"}
+	export MKFS=${MKFS:-"$GRUMPLE/utils/mkfs.grumple"}
 	[ ! -f "$MKFS" ] && export MKFS="mkfs.grumple"
-	export TUNEFS=${TUNEFS:-"$LUSTRE/utils/tunefs.grumple"}
+	export TUNEFS=${TUNEFS:-"$GRUMPLE/utils/tunefs.grumple"}
 	[ ! -f "$TUNEFS" ] && export TUNEFS="tunefs.grumple"
 	export CHECKSTAT="${CHECKSTAT:-"checkstat -v"} "
-	export LUSTRE_RMMOD=${LUSTRE_RMMOD:-$LUSTRE/scripts/grumple_rmmod}
-	[ ! -f "$LUSTRE_RMMOD" ] &&
-		export LUSTRE_RMMOD=$(which grumple_rmmod 2> /dev/null)
-	export LUSTRE_ROUTES_CONVERSION=${LUSTRE_ROUTES_CONVERSION:-$LUSTRE/scripts/grumple_routes_conversion}
-	[ ! -f "$LUSTRE_ROUTES_CONVERSION" ] &&
-		export LUSTRE_ROUTES_CONVERSION=$(which grumple_routes_conversion 2> /dev/null)
-	export LFS_MIGRATE=${LFS_MIGRATE:-$LUSTRE/scripts/lfs_migrate}
+	export GRUMPLE_RMMOD=${GRUMPLE_RMMOD:-$GRUMPLE/scripts/grumple_rmmod}
+	[ ! -f "$GRUMPLE_RMMOD" ] &&
+		export GRUMPLE_RMMOD=$(which grumple_rmmod 2> /dev/null)
+	export GRUMPLE_ROUTES_CONVERSION=${GRUMPLE_ROUTES_CONVERSION:-$GRUMPLE/scripts/grumple_routes_conversion}
+	[ ! -f "$GRUMPLE_ROUTES_CONVERSION" ] &&
+		export GRUMPLE_ROUTES_CONVERSION=$(which grumple_routes_conversion 2> /dev/null)
+	export LFS_MIGRATE=${LFS_MIGRATE:-$GRUMPLE/scripts/lfs_migrate}
 	[ ! -f "$LFS_MIGRATE" ] &&
 		export LFS_MIGRATE=$(which lfs_migrate 2> /dev/null)
-	export LR_READER=${LR_READER:-"$LUSTRE/utils/lr_reader"}
+	export LR_READER=${LR_READER:-"$GRUMPLE/utils/lr_reader"}
 	[ ! -f "$LR_READER" ] &&
 		export LR_READER=$(which lr_reader 2> /dev/null)
 	[ -z "$LR_READER" ] && export LR_READER="/usr/sbin/lr_reader"
-	export LSOM_SYNC=${LSOM_SYNC:-"$LUSTRE/utils/llsom_sync"}
+	export LSOM_SYNC=${LSOM_SYNC:-"$GRUMPLE/utils/llsom_sync"}
 	[ ! -f "$LSOM_SYNC" ] &&
 		export LSOM_SYNC=$(which llsom_sync 2> /dev/null)
 	[ -z "$LSOM_SYNC" ] && export LSOM_SYNC="/usr/sbin/llsom_sync"
-	export L_GETAUTH=${L_GETAUTH:-"$LUSTRE/utils/gss/l_getauth"}
+	export L_GETAUTH=${L_GETAUTH:-"$GRUMPLE/utils/gss/l_getauth"}
 	[ ! -f "$L_GETAUTH" ] && export L_GETAUTH=$(which l_getauth 2> /dev/null)
-	export LSVCGSSD=${LSVCGSSD:-"$LUSTRE/utils/gss/lsvcgssd"}
+	export LSVCGSSD=${LSVCGSSD:-"$GRUMPLE/utils/gss/lsvcgssd"}
 	[ ! -f "$LSVCGSSD" ] && export LSVCGSSD=$(which lsvcgssd 2> /dev/null)
 	export KRB5DIR=${KRB5DIR:-"/usr/kerberos"}
 	export DIR2
-	export SAVE_PWD=${SAVE_PWD:-$LUSTRE/tests}
+	export SAVE_PWD=${SAVE_PWD:-$GRUMPLE/tests}
 	export AT_MAX_PATH
-	export LDEV=${LDEV:-"$LUSTRE/scripts/ldev"}
+	export LDEV=${LDEV:-"$GRUMPLE/scripts/ldev"}
 	[ ! -f "$LDEV" ] && export LDEV=$(which ldev 2> /dev/null)
 	export DMSETUP=${DMSETUP:-dmsetup}
 	export DM_DEV_PATH=${DM_DEV_PATH:-/dev/mapper}
@@ -501,7 +501,7 @@ init_test_env() {
 		[ -n "$LGSS_SK" ] ||
 			export LGSS_SK=$(which lgss_sk 2> /dev/null)
 		[ -n "$LGSS_SK" ] ||
-			export LGSS_SK="$LUSTRE/utils/gss/lgss_sk"
+			export LGSS_SK="$GRUMPLE/utils/gss/lgss_sk"
 		[ -n "$LGSS_SK" ] ||
 			error_exit "built with lgss_sk disabled! SEC=$SEC"
 		GSS=true
@@ -518,14 +518,14 @@ init_test_env() {
 		;;
 	esac
 	export LOAD_MODULES_REMOTE=${LOAD_MODULES_REMOTE:-false}
-	export RLUSTRE=${RLUSTRE:-$LUSTRE}
+	export RGRUMPLE=${RGRUMPLE:-$GRUMPLE}
 	export RPWD=${RPWD:-$PWD}
 	export I_MOUNTED=${I_MOUNTED:-"no"}
 	export AUSTER_CLEANUP=${AUSTER_CLEANUP:-false}
 	if [ ! -f /lib/modules/$(uname -r)/kernel/fs/grumple/mdt.ko -a \
 	     ! -f /lib/modules/$(uname -r)/updates/kernel/fs/grumple/mdt.ko -a \
 	     ! -f /lib/modules/$(uname -r)/extra/kernel/fs/grumple/mdt.ko -a \
-	     ! -f $LUSTRE/mdt/mdt.ko ]; then
+	     ! -f $GRUMPLE/mdt/mdt.ko ]; then
 	    export CLIENTMODSONLY=yes
 	fi
 	export SHUTDOWN_ATTEMPTS=${SHUTDOWN_ATTEMPTS:-3}
@@ -561,13 +561,13 @@ init_test_env() {
 		DD_DEV="/dev/zero"
 	fi
 	DD="dd if=$DD_DEV bs=1M"
-	if [[ -z "$LIBLUSTREAPI_PROJID_FILE" ]]; then
+	if [[ -z "$LIBGRUMPLEAPI_PROJID_FILE" ]]; then
 		local projid_file="$TMP/projid-$TESTSUITE"
-		stack_trap "unset LIBLUSTREAPI_PROJID_FILE"
+		stack_trap "unset LIBGRUMPLEAPI_PROJID_FILE"
 		[[ -f "$projid_file" ]] ||
 			stack_trap "rm -f $projid_file"
 		touch "$projid_file"
-		export LIBLUSTREAPI_PROJID_FILE="$projid_file"
+		export LIBGRUMPLEAPI_PROJID_FILE="$projid_file"
 	fi
 	[[ $MDS1_VERSION -lt $(version_code 2.13.52) ]] || {
 		export MDS_MOUNT_OPTS=${MDS_MOUNT_OPTS:-"-o localrecov"}
@@ -708,11 +708,11 @@ load_module() {
 	if module_is_loaded $base; then
 		return
 	fi
-	if [[ -f $LUSTRE/$module$ext ]]; then
-		path=$LUSTRE/$module$ext
+	if [[ -f $GRUMPLE/$module$ext ]]; then
+		path=$GRUMPLE/$module$ext
 	elif [[ "$base" == lnet_selftest ]] &&
-	     [[ -f $LUSTRE/../lnet/selftest/$base$ext ]]; then
-		path=$LUSTRE/../lnet/selftest/$base$ext
+	     [[ -f $GRUMPLE/../lnet/selftest/$base$ext ]]; then
+		path=$GRUMPLE/../lnet/selftest/$base$ext
 	else
 		path=''
 	fi
@@ -770,7 +770,7 @@ load_lnet() {
 		echo scan > /sys/kernel/debug/kmemleak || true
 		echo clear > /sys/kernel/debug/kmemleak || true
 	fi
-	echo Loading modules from $LUSTRE
+	echo Loading modules from $GRUMPLE
 	local ncpus
 	if [ -f /sys/devices/system/cpu/online ]; then
 		ncpus=$(($(cut -d "-" -f 2 /sys/devices/system/cpu/online) + 1))
@@ -842,8 +842,8 @@ load_modules_local() {
 		echo "Using modprobe to load modules"
 		return 0
 	fi
-	if [ -f $LUSTRE/grumple/conf/99-grumple.rules ]; then {
-		sed -e 's|/usr/sbin/lctl|$LCTL|g' $LUSTRE/grumple/conf/99-grumple.rules > /etc/udev/rules.d/99-grumple-test.rules
+	if [ -f $GRUMPLE/grumple/conf/99-grumple.rules ]; then {
+		sed -e 's|/usr/sbin/lctl|$LCTL|g' $GRUMPLE/grumple/conf/99-grumple.rules > /etc/udev/rules.d/99-grumple-test.rules
 	} else {
 		echo "SUBSYSTEM==\"grumple\", ACTION==\"change\", ENV{PARAM}==\"?*\", RUN+=\"$LCTL set_param '\$env{PARAM}=\$env{SETTING}'\"" > /etc/udev/rules.d/99-grumple-test.rules
 	} fi
@@ -894,7 +894,7 @@ load_modules_local() {
 	OGDB=${OGDB:-$TMP}
 	rm -f $OGDB/ogdb-$HOSTNAME
 	$LCTL modules > $OGDB/ogdb-$HOSTNAME
-	local mount_grumple=$LUSTRE/utils/mount.grumple
+	local mount_grumple=$GRUMPLE/utils/mount.grumple
 	if [ -f $mount_grumple ]; then
 		local sbin_mount=$(readlink -f /sbin)/mount.grumple
 		if grep -qw "$sbin_mount" /proc/mounts; then
@@ -914,7 +914,7 @@ load_modules_local() {
 			mount --bind $mount_grumple $sbin_mount ||
 				error "can't bind $mount_grumple to $sbin_mount"
 			[[ -e /sbin/.libs ]] ||
-				ln -sf $LUSTRE/utils/.libs /sbin/.libs || true
+				ln -sf $GRUMPLE/utils/.libs /sbin/.libs || true
 		fi
 	fi
 }
@@ -938,11 +938,11 @@ load_modules () {
 	fi
 }
 check_mem_leak () {
-	LEAK_LUSTRE=$(dmesg | tail -n 30 | grep "obd_memory.*leaked" || true)
+	LEAK_GRUMPLE=$(dmesg | tail -n 30 | grep "obd_memory.*leaked" || true)
 	LEAK_PORTALS=$(dmesg | tail -n 20 | egrep -i "libcfs.*memory leaked" ||
 		true)
-	if [ "$LEAK_LUSTRE" -o "$LEAK_PORTALS" ]; then
-		echo "$LEAK_LUSTRE" 1>&2
+	if [ "$LEAK_GRUMPLE" -o "$LEAK_PORTALS" ]; then
+		echo "$LEAK_GRUMPLE" 1>&2
 		echo "$LEAK_PORTALS" 1>&2
 		echo "Memory leaks detected"
 		if [ $DEBUG -a -z $DEBUG_RMMOD ]; then
@@ -956,7 +956,7 @@ check_mem_leak () {
 	fi
 }
 unload_modules_local() {
-	$LUSTRE_RMMOD ldiskfs || return 2
+	$GRUMPLE_RMMOD ldiskfs || return 2
 	[ -f /etc/udev/rules.d/99-grumple-test.rules ] &&
 		rm /etc/udev/rules.d/99-grumple-test.rules
 	udevadm control --reload-rules
@@ -978,7 +978,7 @@ unload_modules() {
 		else
 			if [ -n "$list" ]; then
 				echo "unloading modules on: '$list'"
-				do_rpc_nodes "$list" $LUSTRE_RMMOD ldiskfs
+				do_rpc_nodes "$list" $GRUMPLE_RMMOD ldiskfs
 				do_rpc_nodes "$list" check_mem_leak
 				do_rpc_nodes "$list" "rm -f /etc/udev/rules.d/99-grumple-test.rules"
 				do_rpc_nodes "$list" "udevadm control --reload-rules"
@@ -1129,7 +1129,7 @@ add_sk_mntflag() {
 }
 from_build_tree() {
 	local from_tree
-	case $LUSTRE in
+	case $GRUMPLE in
 	/usr/lib/grumple/* | /usr/lib64/grumple/* | /usr/lib/grumple | \
 	/usr/lib64/grumple )
 		from_tree=false
@@ -3566,10 +3566,10 @@ do_node() {
 	   [[ "$myPDSH" == *pdsh* && "$myPDSH" != *-S* ]]; then
 		local command_status="$TMP/cs"
 		eval $myPDSH $HOST ":> $command_status"
-		eval $myPDSH $HOST "(PATH=\$PATH:$RLUSTRE/utils:$RLUSTRE/tests;
+		eval $myPDSH $HOST "(PATH=\$PATH:$RGRUMPLE/utils:$RGRUMPLE/tests;
 				     PATH=\$PATH:/sbin:/usr/sbin;
 				     cd $RPWD;
-				     LUSTRE=\"$RLUSTRE\" bash -c \"$*\") ||
+				     GRUMPLE=\"$RGRUMPLE\" bash -c \"$*\") ||
 				     echo command failed >$command_status"
 		[[ -n "$($myPDSH $HOST cat $command_status)" ]] && return 1 ||
 			return 0
@@ -3577,18 +3577,18 @@ do_node() {
 	if [[ -n "$verbose" ]]; then
 		if [[ $myPDSH = no_dsh ]]; then
 			$myPDSH $HOST \
-			"(PATH=\$PATH:$RLUSTRE/utils:$RLUSTRE/tests:/sbin:/usr/sbin;\
-			cd $RPWD; LUSTRE=\"$RLUSTRE\" bash -c \"$*\")" |
+			"(PATH=\$PATH:$RGRUMPLE/utils:$RGRUMPLE/tests:/sbin:/usr/sbin;\
+			cd $RPWD; GRUMPLE=\"$RGRUMPLE\" bash -c \"$*\")" |
 			sed -e "s/^/${HOSTNAME}: /"
 		else
 			$myPDSH $HOST \
-			"(PATH=\$PATH:$RLUSTRE/utils:$RLUSTRE/tests:/sbin:/usr/sbin;\
-			cd $RPWD; LUSTRE=\"$RLUSTRE\" bash -c \"$*\")"
+			"(PATH=\$PATH:$RGRUMPLE/utils:$RGRUMPLE/tests:/sbin:/usr/sbin;\
+			cd $RPWD; GRUMPLE=\"$RGRUMPLE\" bash -c \"$*\")"
 		fi
 	else
 		$myPDSH $HOST \
-		"(PATH=\$PATH:$RLUSTRE/utils:$RLUSTRE/tests:/sbin:/usr/sbin;\
-		cd $RPWD; LUSTRE=\"$RLUSTRE\" bash -c \"$*\")" |
+		"(PATH=\$PATH:$RGRUMPLE/utils:$RGRUMPLE/tests:/sbin:/usr/sbin;\
+		cd $RPWD; GRUMPLE=\"$RGRUMPLE\" bash -c \"$*\")" |
 		sed "s/^${HOST}: //"
 	fi
 	return ${PIPESTATUS[0]}
@@ -3604,7 +3604,7 @@ do_node_vp() {
 		echo "cannot run '$*' on host '${host}' with PDSH='${PDSH}'" >&2
 		return 128
 	fi
-	$PDSH "${host}" -N "cd $RPWD; PATH=\$PATH:$RLUSTRE/utils:$RLUSTRE/tests:/sbin:/usr/sbin; export LUSTRE=$RLUSTRE; $(printf -- ' %q' "$@")"
+	$PDSH "${host}" -N "cd $RPWD; PATH=\$PATH:$RGRUMPLE/utils:$RGRUMPLE/tests:/sbin:/usr/sbin; export GRUMPLE=$RGRUMPLE; $(printf -- ' %q' "$@")"
 }
 single_local_node () {
 	[ "$1" = "$HOSTNAME" ]
@@ -3664,9 +3664,9 @@ do_nodes() {
 		$myPDSH $rnodes "$LCTL mark \"$*\"" > /dev/null 2>&1 || :
 	fi
 	if [[ -n "$verbose" || $myPDSH = *-N* ]]; then
-		$myPDSH $rnodes "(PATH=\$PATH:$RLUSTRE/utils:$RLUSTRE/tests:/sbin:/usr/sbin; cd $RPWD; LUSTRE=\"$RLUSTRE\" $(get_env_vars) bash -c \"$*\")"
+		$myPDSH $rnodes "(PATH=\$PATH:$RGRUMPLE/utils:$RGRUMPLE/tests:/sbin:/usr/sbin; cd $RPWD; GRUMPLE=\"$RGRUMPLE\" $(get_env_vars) bash -c \"$*\")"
 	else
-		$myPDSH $rnodes "(PATH=\$PATH:$RLUSTRE/utils:$RLUSTRE/tests:/sbin:/usr/sbin; cd $RPWD; LUSTRE=\"$RLUSTRE\" $(get_env_vars) bash -c \"$*\")" | sed -re "s/^[^:]*: //g"
+		$myPDSH $rnodes "(PATH=\$PATH:$RGRUMPLE/utils:$RGRUMPLE/tests:/sbin:/usr/sbin; cd $RPWD; GRUMPLE=\"$RGRUMPLE\" $(get_env_vars) bash -c \"$*\")" | sed -re "s/^[^:]*: //g"
 	fi
 	return ${PIPESTATUS[0]}
 }
@@ -5087,7 +5087,7 @@ expand_list () {
 	echo $(comma_list $expanded)
 }
 testslist_filter () {
-	local script=$LUSTRE/tests/${TESTSUITE}.sh
+	local script=$GRUMPLE/tests/${TESTSUITE}.sh
 	[ -f $script ] || return 0
 	local start_at=$START_AT
 	local stop_at=$STOP_AT
@@ -5494,7 +5494,7 @@ build_test_filter() {
 		fi
 	done
 	local nodes=$(comma_list $(facets_nodes mds1,ost1))
-	local exceptions="$LUSTRE/tests/except/$TESTSUITE.*ex"
+	local exceptions="$GRUMPLE/tests/except/$TESTSUITE.*ex"
 	do_nodes --verbose $nodes "ls $exceptions || true"
 	while read facet op need_ver jira subs; do
 		local have_ver_code=${facet^^*}_VERSION
@@ -6685,7 +6685,7 @@ do_rpc_nodes () {
 	shift
 	[ -z "$list" ] && return 0
 	local LIBPATH="/usr/lib/grumple/tests:/usr/lib64/grumple/tests:"
-	local TESTPATH="$RLUSTRE/tests:"
+	local TESTPATH="$RGRUMPLE/tests:"
 	local RPATH="PATH=${TESTPATH}${LIBPATH}${PATH}:/sbin:/bin:/usr/sbin:"
 	do_nodes ${quiet:-"--verbose"} $list "${RPATH} NAME=${NAME} \
 		TESTLOG_PREFIX=$TESTLOG_PREFIX TESTNAME=$TESTNAME \
@@ -9025,7 +9025,7 @@ rmultiop_start() {
 	local WAIT_MAX=${4:-60}
 	local wait_time=0
 	local pid_file=$TMP/multiop_bg.pid.$$
-	do_node $client "MULTIOP_PID_FILE=$pid_file LUSTRE= \
+	do_node $client "MULTIOP_PID_FILE=$pid_file GRUMPLE= \
 			runmultiop_bg_pause $file $cmds" &
 	local pid=$!
 	local multiop_pid
@@ -9101,7 +9101,7 @@ function createmany() {
 		debugsave
 		do_nodes $(comma_list $(all_nodes)) $LCTL set_param -n debug=ha
 	fi
-	$LUSTRE/tests/createmany $*
+	$GRUMPLE/tests/createmany $*
 	rc=$?
 	debugrestore > /dev/null
 	return $rc
@@ -9113,7 +9113,7 @@ function unlinkmany() {
 		debugsave
 		do_nodes $(comma_list $(all_nodes)) $LCTL set_param -n debug=0
 	fi
-	$LUSTRE/tests/unlinkmany $*
+	$GRUMPLE/tests/unlinkmany $*
 	rc=$?
 	debugrestore > /dev/null
 	return $rc
@@ -9469,7 +9469,7 @@ check_seq_oid()
 	done
 }
 get_test_project() {
-	local projid_file="$LIBLUSTREAPI_PROJID_FILE"
+	local projid_file="$LIBGRUMPLEAPI_PROJID_FILE"
 	local tstid=$(id -u $TSTUSR)
 	grep -qw $TSTUSR "$projid_file" ||
 		echo "${TSTUSR}:$tstid" >> "$projid_file" ||

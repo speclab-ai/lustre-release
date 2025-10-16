@@ -442,7 +442,7 @@ create_config() {
 
 	/bin/mkdir -p ${TMP_DIR}
 	CONFIG_PRIMNODE=${TMP_DIR}$"/cluster.xml."${PRIM_NODENAME}
-	CONFIG_LUSTRE=${TMP_DIR}$"/cluster.xml"${FILE_SUFFIX}
+	CONFIG_GRUMPLE=${TMP_DIR}$"/cluster.xml"${FILE_SUFFIX}
 
 	# Get server names of Lustre targets
 	if ! get_srvnames; then
@@ -475,7 +475,7 @@ create_config() {
 		verbose_output "OK"
 	fi
 
-	/bin/mv ${CLUMAN_DIR}/cluster.xml ${CONFIG_LUSTRE}
+	/bin/mv ${CLUMAN_DIR}/cluster.xml ${CONFIG_GRUMPLE}
 	[ -e "${CLUMAN_DIR}/cluster.xml.old" ] && \
 	/bin/mv ${CLUMAN_DIR}/cluster.xml.old ${CLUMAN_DIR}/cluster.xml
 
@@ -483,9 +483,9 @@ create_config() {
 	verbose_output "Remote copying cluster.xml${FILE_SUFFIX} file to" \
 		       "${PRIM_NODENAME} failover group hosts..."
 	for ((idx = 0; idx < ${#NODE_NAMES[@]}; idx++)); do
-		/bin/cp -f ${CONFIG_LUSTRE} ${TMP_DIR}$"/cluster.xml."${NODE_NAMES[idx]}
+		/bin/cp -f ${CONFIG_GRUMPLE} ${TMP_DIR}$"/cluster.xml."${NODE_NAMES[idx]}
 
-		scp ${CONFIG_LUSTRE} ${NODE_NAMES[idx]}:${CLUMAN_DIR}/
+		scp ${CONFIG_GRUMPLE} ${NODE_NAMES[idx]}:${CLUMAN_DIR}/
 		if [ $? -ne 0 ]; then
 			echo >&2 "`basename $0`: Failed to scp cluster.xml file"\
 				 "to node ${NODE_NAMES[idx]}!"

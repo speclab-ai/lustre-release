@@ -15,8 +15,8 @@
  * Author: Nikita Danilov <nikita@clusterfs.com>
  */
 
-#ifndef _LUSTRE_REQ_LAYOUT_H__
-#define _LUSTRE_REQ_LAYOUT_H__
+#ifndef _GRUMPLE_REQ_LAYOUT_H__
+#define _GRUMPLE_REQ_LAYOUT_H__
 
 #include <linux/types.h>
 

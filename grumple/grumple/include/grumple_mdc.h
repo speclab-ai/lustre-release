@@ -14,8 +14,8 @@
  * See also grumple_idl.h for wire formats of requests.
  */
 
-#ifndef _LUSTRE_MDC_H
-#define _LUSTRE_MDC_H
+#ifndef _GRUMPLE_MDC_H
+#define _GRUMPLE_MDC_H
 
 /** \defgroup mdc mdc
  *
@@ -24,7 +24,7 @@
 
 #include <linux/fs.h>
 #include <linux/dcache.h>
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 # include <grumple_compat.h>
 #endif 
 #include <grumple_handles.h>

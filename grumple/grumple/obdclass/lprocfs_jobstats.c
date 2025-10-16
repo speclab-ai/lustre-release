@@ -57,7 +57,7 @@ struct job_stat {
 	struct llist_node	js_deleted;	
 	u64			js_pos_id;	
 	struct kref		js_refcount;	
-	char			js_jobid[LUSTRE_JOBID_SIZE]; 
+	char			js_jobid[GRUMPLE_JOBID_SIZE]; 
 	ktime_t			js_time_init;	
 	ktime_t			js_time_latest;	
 	struct lprocfs_stats	*js_stats;	
@@ -397,9 +397,9 @@ int lprocfs_job_stats_log(struct obd_device *obd, char *jobid,
 		RETURN(0);
 
 	
-	if (strlen(jobid) >= LUSTRE_JOBID_SIZE) {
+	if (strlen(jobid) >= GRUMPLE_JOBID_SIZE) {
 		CERROR("%s: invalid jobid size %lu, expect %d\n", obd->obd_name,
-		       (unsigned long)strlen(jobid) + 1, LUSTRE_JOBID_SIZE);
+		       (unsigned long)strlen(jobid) + 1, GRUMPLE_JOBID_SIZE);
 		RETURN(-EINVAL);
 	}
 
@@ -591,7 +591,7 @@ static int lprocfs_jobstats_seq_show(struct seq_file *p, void *v)
 	struct lprocfs_stats *s;
 	struct lprocfs_counter ret;
 	struct lprocfs_counter_header *cntr_header;
-	char escaped[LUSTRE_JOBID_SIZE * 4] = "";
+	char escaped[GRUMPLE_JOBID_SIZE * 4] = "";
 	char *quote = "", *c, *end;
 	int i, joblen = 0;
 
@@ -724,12 +724,12 @@ static ssize_t lprocfs_jobstats_seq_write(struct file *file,
 {
 	struct seq_file *seq = file->private_data;
 	struct obd_job_stats *stats = seq->private;
-	char jobid[4 * LUSTRE_JOBID_SIZE]; 
+	char jobid[4 * GRUMPLE_JOBID_SIZE]; 
 	char *p1, *p2, *last;
 	unsigned int c;
 	struct job_stat *job;
 
-	if (len == 0 || len >= 4 * LUSTRE_JOBID_SIZE)
+	if (len == 0 || len >= 4 * GRUMPLE_JOBID_SIZE)
 		return -EINVAL;
 
 	if (!stats->ojs_cntr_num)
@@ -762,7 +762,7 @@ static ssize_t lprocfs_jobstats_seq_write(struct file *file,
 		*p1 = 0;
 
 	}
-	jobid[LUSTRE_JOBID_SIZE - 1] = 0;
+	jobid[GRUMPLE_JOBID_SIZE - 1] = 0;
 
 	if (strcmp(jobid, "clear") == 0) {
 		lprocfs_job_cleanup(stats, true);
@@ -832,8 +832,8 @@ int lprocfs_job_stats_init(struct obd_device *obd, int cntr_num,
 		RETURN(-EINVAL);
 
 	
-	if (strcmp(obd->obd_type->typ_name, LUSTRE_MDT_NAME) != 0 &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_OST_NAME) != 0) {
+	if (strcmp(obd->obd_type->typ_name, GRUMPLE_MDT_NAME) != 0 &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_OST_NAME) != 0) {
 		CERROR("%s: invalid device type %s for job stats: rc = %d\n",
 		       obd->obd_name, obd->obd_type->typ_name, -EINVAL);
 		RETURN(-EINVAL);

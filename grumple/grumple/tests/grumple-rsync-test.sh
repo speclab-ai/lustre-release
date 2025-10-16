@@ -4,8 +4,8 @@ ONLY=${ONLY:-"$*"}
 KILL=/bin/kill
 LREPL_LOG=$TMP/grumple_rsync.log
 ORIG_PWD=${PWD}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$LRSYNC_EXCEPT "
@@ -24,7 +24,7 @@ elif getent group nogroup; then
 else
 	error "No generic nobody group"
 fi
-export LRSYNC=${LRSYNC:-"$LUSTRE/utils/grumple_rsync"}
+export LRSYNC=${LRSYNC:-"$GRUMPLE/utils/grumple_rsync"}
 [ ! -f "$LRSYNC" ] && export LRSYNC=$(which grumple_rsync)
 export LRSYNC="$LRSYNC -v -c no -d 2"
 DBENCH_TIME=${DBENCH_TIME:-60}

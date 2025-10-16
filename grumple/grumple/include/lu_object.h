@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef __LUSTRE_LU_OBJECT_H
-#define __LUSTRE_LU_OBJECT_H
+#ifndef __GRUMPLE_LU_OBJECT_H
+#define __GRUMPLE_LU_OBJECT_H
 
 #ifdef HAVE_LINUX_STDARG_HEADER
 #include <linux/stdarg.h>

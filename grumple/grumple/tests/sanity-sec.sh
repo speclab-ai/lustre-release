@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env $@
 init_logging
 ALWAYS_EXCEPT="$SANITY_SEC_EXCEPT "
@@ -14,7 +14,7 @@ if ! check_versions; then
 fi
 build_test_filter
 RUNAS_CMD=${RUNAS_CMD:-runas}
-WTL=${WTL:-"$LUSTRE/tests/write_time_limit"}
+WTL=${WTL:-"$GRUMPLE/tests/write_time_limit"}
 CONFDIR=/etc/grumple
 PERM_CONF=$CONFDIR/perm.conf
 FAIL_ON_ERROR=false
@@ -3061,7 +3061,7 @@ test_31() {
 		error "tunefs failed"
 	setupall server_only || error "setupall failed"
 	export KEEP_ZPOOL="$KZPOOL"
-	$LUSTRE_RMMOD || error "$LUSTRE_RMMOD failed (1)"
+	$GRUMPLE_RMMOD || error "$GRUMPLE_RMMOD failed (1)"
 	load_modules || error "Failed to load modules"
 	$LNETCTL set discovery 0 || error "Failed to disable discovery"
 	$LNETCTL lnet configure ||
@@ -3101,7 +3101,7 @@ test_31() {
 			cut -d'.' -f4-" '!=' $nid2
 	done
 	do_facet mgs "$LCTL get_param *.MGS*.exports.*.export"
-	$LUSTRE_RMMOD || error "$LUSTRE_RMMOD failed (2)"
+	$GRUMPLE_RMMOD || error "$GRUMPLE_RMMOD failed (2)"
 	load_modules || error "Failed to load modules"
 	$LNETCTL lnet configure || error "unable to configure lnet on client"
 	infname=inf_$(echo $(hostname -s) | sed s+-+_+g)

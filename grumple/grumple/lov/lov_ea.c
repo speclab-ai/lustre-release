@@ -30,12 +30,12 @@ lu_extent_le_to_cpu(struct lu_extent *dst, const struct lu_extent *src)
 
 /*
  * Find minimum stripe maxbytes value.  For inactive or
- * reconnecting targets use LUSTRE_EXT4_STRIPE_MAXBYTES.
+ * reconnecting targets use GRUMPLE_EXT4_STRIPE_MAXBYTES.
  */
 static loff_t lov_tgt_maxbytes(struct lov_tgt_desc *tgt)
 {
 	struct obd_import *imp;
-	loff_t maxbytes = LUSTRE_EXT4_STRIPE_MAXBYTES;
+	loff_t maxbytes = GRUMPLE_EXT4_STRIPE_MAXBYTES;
 
 	if (!tgt->ltd_active)
 		return maxbytes;
@@ -45,8 +45,8 @@ static loff_t lov_tgt_maxbytes(struct lov_tgt_desc *tgt)
 		return maxbytes;
 
 	spin_lock(&imp->imp_lock);
-	if ((imp->imp_state == LUSTRE_IMP_FULL ||
-	    imp->imp_state == LUSTRE_IMP_IDLE) &&
+	if ((imp->imp_state == GRUMPLE_IMP_FULL ||
+	    imp->imp_state == GRUMPLE_IMP_IDLE) &&
 	    (imp->imp_connect_data.ocd_connect_flags & OBD_CONNECT_MAXBYTES) &&
 	    imp->imp_connect_data.ocd_maxbytes > 0)
 		maxbytes = imp->imp_connect_data.ocd_maxbytes;
@@ -306,7 +306,7 @@ retry_new_ost:
 
 	if (maxbytes) {
 		if (min_stripe_maxbytes == 0)
-			min_stripe_maxbytes = LUSTRE_EXT4_STRIPE_MAXBYTES;
+			min_stripe_maxbytes = GRUMPLE_EXT4_STRIPE_MAXBYTES;
 
 		if (stripe_count == 0)
 			stripe_count = lsme->lsme_stripe_count <= 0 ?
@@ -369,7 +369,7 @@ lov_stripe_md *lsm_unpackmd_v1v3(struct lov_obd *lov, struct lov_mds_md *lmm,
 
 	lsme->lsme_flags = LCME_FL_INIT;
 	lsme->lsme_extent.e_start = 0;
-	lsme->lsme_extent.e_end = LUSTRE_EOF;
+	lsme->lsme_extent.e_end = GRUMPLE_EOF;
 
 	lsm_size = offsetof(typeof(*lsm), lsm_entries[1]);
 	OBD_ALLOC(lsm, lsm_size);
@@ -638,7 +638,7 @@ lsm_unpackmd_comp_md_v1(struct lov_obd *lov, void *buf, size_t buf_size)
 			 * lsm_maxbytes overflowed.
 			 */
 			if (!lsme_is_dom(lsme) &&
-			    (lsme->lsme_extent.e_end != LUSTRE_EOF ||
+			    (lsme->lsme_extent.e_end != GRUMPLE_EOF ||
 			     lsm->lsm_maxbytes <
 			     (loff_t)lsme->lsme_extent.e_start))
 				lsm->lsm_maxbytes = MAX_LFS_FILESIZE;

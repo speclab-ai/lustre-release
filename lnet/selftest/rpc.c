@@ -1631,7 +1631,7 @@ srpc_startup (void)
 
 	srpc_data.rpc_state = SRPC_STATE_NONE;
 
-	rc = LNetNIInit(LNET_PID_LUSTRE);
+	rc = LNetNIInit(LNET_PID_GRUMPLE);
 	if (rc < 0) {
 		CERROR("LNetNIInit() has failed: %d\n", rc);
 		return rc;

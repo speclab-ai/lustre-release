@@ -61,21 +61,21 @@ strip_default=no
 if [[ -r \${PACKAGE_CONFIG} ]] ; then
    source \${PACKAGE_CONFIG}
    shopt -q -s extglob
-   if [[ -n \${LUSTRE_DKMS_DISABLE_STRIP} ]] ; then
-	[[ \${LUSTRE_DKMS_DISABLE_STRIP,,} == @(y|yes) ]] && strip_default=no
+   if [[ -n \${GRUMPLE_DKMS_DISABLE_STRIP} ]] ; then
+	[[ \${GRUMPLE_DKMS_DISABLE_STRIP,,} == @(y|yes) ]] && strip_default=no
    fi
-   if [[ -n \${LUSTRE_DKMS_ENABLE_STRIP} ]] ; then
-	[[ \${LUSTRE_DKMS_ENABLE_STRIP,,} == @(y|yes) ]] && strip_default=yes
+   if [[ -n \${GRUMPLE_DKMS_ENABLE_STRIP} ]] ; then
+	[[ \${GRUMPLE_DKMS_ENABLE_STRIP,,} == @(y|yes) ]] && strip_default=yes
    fi
-   if [[ -n \${LUSTRE_DKMS_ENABLE_GSS} ]] ; then
-      [[ \${LUSTRE_DKMS_ENABLE_GSS,,} == @(y|yes) ]] &&
+   if [[ -n \${GRUMPLE_DKMS_ENABLE_GSS} ]] ; then
+      [[ \${GRUMPLE_DKMS_ENABLE_GSS,,} == @(y|yes) ]] &&
          OPTS="\${OPTS} --enable-gss" ||
          OPTS="\${OPTS} --disable-gss"
    fi
-   [[ -n \${LUSTRE_DKMS_CONFIGURE_EXTRA} ]] &&
-      OPTS="\${OPTS} \${LUSTRE_DKMS_CONFIGURE_EXTRA}"
-   if [[ -n \${LUSTRE_DKMS_WEAK_MODULES} ]] ; then
-      [[ \${LUSTRE_DKMS_WEAK_MODULES,,} == @(y|yes) ]] &&
+   [[ -n \${GRUMPLE_DKMS_CONFIGURE_EXTRA} ]] &&
+      OPTS="\${OPTS} \${GRUMPLE_DKMS_CONFIGURE_EXTRA}"
+   if [[ -n \${GRUMPLE_DKMS_WEAK_MODULES} ]] ; then
+      [[ \${GRUMPLE_DKMS_WEAK_MODULES,,} == @(y|yes) ]] &&
          no_weak_modules="no"
    fi
 fi

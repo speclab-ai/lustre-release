@@ -1,7 +1,7 @@
 
 
-#ifndef _LINUX_XARRAY_LUSTRE_H
-#define _LINUX_XARRAY_LUSTRE_H
+#ifndef _LINUX_XARRAY_GRUMPLE_H
+#define _LINUX_XARRAY_GRUMPLE_H
 /*
  * eXtensible Arrays
  * Copyright (c) 2017 Microsoft Corporation

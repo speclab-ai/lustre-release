@@ -277,7 +277,7 @@ main(int argc, char *argv[])
 		progname = argv[0];
 
 	if (!sk_enabled && !krb_enabled && !null_enabled) {
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 		fprintf(stderr, "warning: no -k, -s, or -z option given, "
 			"assume -k for backward compatibility\n");
 		krb_enabled = 1;

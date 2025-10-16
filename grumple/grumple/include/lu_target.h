@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _LUSTRE_LU_TARGET_H
-#define _LUSTRE_LU_TARGET_H
+#ifndef _GRUMPLE_LU_TARGET_H
+#define _GRUMPLE_LU_TARGET_H
 
 #include <grumple_quota.h>
 #include <grumple_export.h>
@@ -657,87 +657,87 @@ static inline int is_serious(int rc)
 
 #define TGT_MDT_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(MDS_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_MDS_VERSION)
+			GRUMPLE_MDS_VERSION)
 
 #define TGT_MDT_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(MDS_FIRST_OPC, flags, name, fn, NULL,		\
-			LUSTRE_MDS_VERSION)
+			GRUMPLE_MDS_VERSION)
 
 
 #define TGT_OST_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(OST_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_OST_VERSION)
+			GRUMPLE_OST_VERSION)
 #define TGT_OST_HDL_HP(flags, name, fn, hp)				\
 	TGT_RPC_HANDLER_HP(OST_FIRST_OPC, flags, name, fn, hp,		\
-			   &RQF_ ## name, LUSTRE_OST_VERSION)
+			   &RQF_ ## name, GRUMPLE_OST_VERSION)
 
 
 #define TGT_MGS_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(MGS_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_MGS_VERSION)
+			GRUMPLE_MGS_VERSION)
 #define TGT_MGS_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(MGS_FIRST_OPC, flags, name, fn, NULL,		\
-			LUSTRE_MGS_VERSION)
+			GRUMPLE_MGS_VERSION)
 
 /*
  * OBD handler macros and generic functions.
  */
 #define TGT_OBD_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(OBD_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_OBD_VERSION)
+			GRUMPLE_OBD_VERSION)
 #define TGT_OBD_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(OBD_FIRST_OPC, flags, name, fn, NULL,		\
-			LUSTRE_OBD_VERSION)
+			GRUMPLE_OBD_VERSION)
 
 /*
  * DLM handler macros and generic functions.
  */
 #define TGT_DLM_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(LDLM_FIRST_OPC, flags, name, fn, NULL,		\
-			LUSTRE_DLM_VERSION)
+			GRUMPLE_DLM_VERSION)
 #define TGT_DLM_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(LDLM_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_DLM_VERSION)
+			GRUMPLE_DLM_VERSION)
 
 /*
  * LLOG handler macros and generic functions.
  */
 #define TGT_LLOG_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(LLOG_FIRST_OPC, flags, name, fn, NULL,		\
-			LUSTRE_LOG_VERSION)
+			GRUMPLE_LOG_VERSION)
 #define TGT_LLOG_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(LLOG_FIRST_OPC, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_LOG_VERSION)
+			GRUMPLE_LOG_VERSION)
 
 /*
  * Sec context handler macros and generic functions.
  */
 #define TGT_SEC_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(SEC_FIRST_OPC, flags, name, fn, NULL,		\
-			LUSTRE_OBD_VERSION)
+			GRUMPLE_OBD_VERSION)
 
 #define TGT_QUOTA_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(QUOTA_DQACQ, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_MDS_VERSION)
+			GRUMPLE_MDS_VERSION)
 
 
 #define TGT_SEQ_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(SEQ_QUERY, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_MDS_VERSION)
+			GRUMPLE_MDS_VERSION)
 
 
 #define TGT_FLD_HDL_VAR(flags, name, fn)				\
 	TGT_RPC_HANDLER(FLD_QUERY, flags, name, fn, NULL,		\
-			LUSTRE_MDS_VERSION)
+			GRUMPLE_MDS_VERSION)
 
 
 #define TGT_LFSCK_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(LFSCK_FIRST_OPC, flags, name, fn,		\
-			&RQF_ ## name, LUSTRE_OBD_VERSION)
+			&RQF_ ## name, GRUMPLE_OBD_VERSION)
 
 
 #define TGT_UPDATE_HDL(flags, name, fn)					\
 	TGT_RPC_HANDLER(OUT_UPDATE, flags, name, fn, &RQF_ ## name,	\
-			LUSTRE_MDS_VERSION)
+			GRUMPLE_MDS_VERSION)
 
 #endif 

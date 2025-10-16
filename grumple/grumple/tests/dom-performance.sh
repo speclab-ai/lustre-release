@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$DOM_PERFORMANCE_EXCEPT"
@@ -10,7 +10,7 @@ build_test_filter
 SAVED_FAIL_ON_ERROR=$FAIL_ON_ERROR
 FAIL_ON_ERROR=false
 SAVED_DEBUG=$($LCTL get_param -n debug 2> /dev/null)
-. $LUSTRE/tests/functions.sh
+. $GRUMPLE/tests/functions.sh
 check_and_setup_grumple
 clients=${CLIENTS:-$HOSTNAME}
 generate_machine_file $clients $MACHINEFILE ||

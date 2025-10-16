@@ -496,8 +496,8 @@ EXPORT_SYMBOL(osc_io_extent_release);
 static bool osc_import_not_healthy(struct obd_import *imp)
 {
 	return imp->imp_invalid || imp->imp_deactive ||
-	       !(imp->imp_state == LUSTRE_IMP_FULL ||
-		 imp->imp_state == LUSTRE_IMP_IDLE);
+	       !(imp->imp_state == GRUMPLE_IMP_FULL ||
+		 imp->imp_state == GRUMPLE_IMP_IDLE);
 }
 
 int osc_io_iter_init(const struct lu_env *env, const struct cl_io_slice *ios)
@@ -930,7 +930,7 @@ static int osc_io_data_version_start(const struct lu_env *env,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_GETATTR);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_GETATTR);
 	if (rc < 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1334,7 +1334,7 @@ int osc_io_lseek_start(const struct lu_env *env,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_SEEK);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_SEEK);
 	if (rc < 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);

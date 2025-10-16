@@ -179,11 +179,11 @@ static struct dt_it *osd_it_acct_init(const struct lu_env *env,
 	INIT_LIST_HEAD(&it->oiq_list);
 
 	
-	it->oiq_blk[0] = LUSTRE_DQTREEOFF;
+	it->oiq_blk[0] = GRUMPLE_DQTREEOFF;
 
 	/*
 	 * NB: we don't need to store the tree depth since it is always
-	 * equal to LUSTRE_DQTREEDEPTH - 1 (root has depth = 0) for a leaf
+	 * equal to GRUMPLE_DQTREEDEPTH - 1 (root has depth = 0) for a leaf
 	 * block.
 	 */
 	RETURN((struct dt_it *)it);
@@ -238,7 +238,7 @@ static int osd_it_acct_get(const struct lu_env *env, struct dt_it *di,
 	type = fid2type(fid);
 
 	offset = find_tree_dqentry(env, it->oiq_obj, type, dqid,
-				   LUSTRE_DQTREEOFF, 0, it);
+				   GRUMPLE_DQTREEOFF, 0, it);
 	if (offset > 0) { 
 		RETURN(+1);
 	} else if (offset < 0) { 
@@ -305,9 +305,9 @@ static int osd_it_acct_next(const struct lu_env *env, struct dt_it *di)
 	 * Let's first check if there are any remaining valid entry in the
 	 * current leaf block. Start with the next entry after the current one.
 	 */
-	depth = LUSTRE_DQTREEDEPTH;
+	depth = GRUMPLE_DQTREEDEPTH;
 	index = it->oiq_index[depth];
-	if (++index < LUSTRE_DQSTRINBLK) {
+	if (++index < GRUMPLE_DQSTRINBLK) {
 		
 		rc = walk_block_dqentry(env, it->oiq_obj, type,
 					it->oiq_blk[depth], index, it);

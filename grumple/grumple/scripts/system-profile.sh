@@ -2,7 +2,7 @@
 TESTS="oprofile iostat vmstat proc_dump"
 export OUTPUTDIR=/home/op
 export KERNELDIR=/usr/src/linux
-export LUSTREDIR=/usr/src/grumple
+export GRUMPLEDIR=/usr/src/grumple
 export PORTALSDIR=/usr/src/portals
 NAL=socknal
 CTR0_COUNT=10000
@@ -53,17 +53,17 @@ oprofile_stop() {
 	echo "$(date +%T): oprofile stopped...." >>  $OUTPUTDIR/$HOSTNAME/summary
 	for i in obdclass obdecho osc ptlrpc extN obdfilter mds ost mdc llite
 	do
-		oprofpp -l ${LUSTREDIR}/${i}/${i}.o >  ${OUTPUTDIR}/${HOSTNAME}/oprofile/profiling/${i}.prof 2>/dev/null
+		oprofpp -l ${GRUMPLEDIR}/${i}/${i}.o >  ${OUTPUTDIR}/${HOSTNAME}/oprofile/profiling/${i}.prof 2>/dev/null
 	done
-	oprofpp -l ${LUSTREDIR}/mds/mds_extN.o > ${OUTPUTDIR}/${HOSTNAME}/oprofile/profiling/mds_extN.prof 2>/dev/null
+	oprofpp -l ${GRUMPLEDIR}/mds/mds_extN.o > ${OUTPUTDIR}/${HOSTNAME}/oprofile/profiling/mds_extN.prof 2>/dev/null
 	oprofpp -l ${PORTALSDIR}/linux/oslib/portals.o > ${OUTPUTDIR}/${HOSTNAME}/oprofile/profiling/portals.prof 2>/dev/null
 	oprofpp -l ${PORTALSDIR}/linux/${NAL}/k${NAL}.o > ${OUTPUTDIR}/${HOSTNAME}/oprofile/profiling/k${NAL}.prof 2>/dev/null
 	for i in obdclass obdecho osc ptlrpc extN obdfilter ost mdc llite
 	do
-		op_to_source --source-dir=${LUSTREDIR}/${i}/ --output-dir=${OUTPUTDIR}/${HOSTNAME}/oprofile/prof_source/${i}/ ${LUSTREDIR}/${i}/${i}.o 2>/dev/null
+		op_to_source --source-dir=${GRUMPLEDIR}/${i}/ --output-dir=${OUTPUTDIR}/${HOSTNAME}/oprofile/prof_source/${i}/ ${GRUMPLEDIR}/${i}/${i}.o 2>/dev/null
 	done
-	op_to_source --source-dir=${LUSTREDIR}/mds/ --output-dir=${OUTPUTDIR}/${HOSTNAME}/oprofile/prof_source/mds4mds/ ${LUSTREDIR}/mds/mds.o 2>/dev/null
-	op_to_source --source-dir=${LUSTREDIR}/mds/ --output-dir=${OUTPUTDIR}/${HOSTNAME}/oprofile/prof_source/mds4mds_extN/  ${LUSTREDIR}/mds/mds_extN.o 2>/dev/null
+	op_to_source --source-dir=${GRUMPLEDIR}/mds/ --output-dir=${OUTPUTDIR}/${HOSTNAME}/oprofile/prof_source/mds4mds/ ${GRUMPLEDIR}/mds/mds.o 2>/dev/null
+	op_to_source --source-dir=${GRUMPLEDIR}/mds/ --output-dir=${OUTPUTDIR}/${HOSTNAME}/oprofile/prof_source/mds4mds_extN/  ${GRUMPLEDIR}/mds/mds_extN.o 2>/dev/null
 	op_to_source --source-dir=${PORTALSDIR}/linux/oslib/ --output-dir=${OUTPUTDIR}/${HOSTNAME}/oprofile/prof_source/portals ${PORTALSDIR}/linux/oslib/portals.o 2>/dev/null
 	op_to_source --source-dir=${PORTALSDIR}/linux/${NAL}/ --output-dir=${OUTPUTDIR}/${HOSTNAME}/oprofile/prof_source/${NAL} ${PORTALSDIR}/linux/${NAL}/k${NAL}.o 2>/dev/null
 	op_time -l > ${OUTPUTDIR}/${HOSTNAME}/oprofile/globalprofile 2>/dev/null
@@ -97,7 +97,7 @@ case "$1" in
 					;;
 				-l)
 					shift;
-					LUSTREDIR=$1;
+					GRUMPLEDIR=$1;
 					;;
 				-p)
 					shift;
@@ -115,7 +115,7 @@ case "$1" in
 			shift;
 		done
 		echo "kerneldir $KERNELDIR" > /tmp/prof-ctrl
-		echo -e "\ngrumpledir $LUSTREDIR" >> /tmp/prof-ctrl
+		echo -e "\ngrumpledir $GRUMPLEDIR" >> /tmp/prof-ctrl
 		echo -e "\nportalsdir $PORTALSDIR" >> /tmp/prof-ctrl
 		echo -e "\noutputdir $OUTPUTDIR" >> /tmp/prof-ctrl
 		if [ -d ${OUTPUTDIR}/${HOSTNAME} ]; then
@@ -139,7 +139,7 @@ case "$1" in
 	;;
 	stop)
 		KERNELDIR=$(cat /tmp/prof-ctrl | awk '$1 == "kerneldir" {print $2}')
-		LUSTREDIR=$(cat /tmp/prof-ctrl | awk '$1 == "grumpledir" {print $2}')
+		GRUMPLEDIR=$(cat /tmp/prof-ctrl | awk '$1 == "grumpledir" {print $2}')
 		PORTALSDIR=$(cat /tmp/prof-ctrl | awk '$1 == "portalsdir" {print $2}')
 		OUTPUTDIR=$(cat /tmp/prof-ctrl | awk '$1 == "outputdir" {print $2}')
 		for test in $TESTS; do

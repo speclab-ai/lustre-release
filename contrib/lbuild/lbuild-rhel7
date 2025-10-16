@@ -85,7 +85,7 @@ unpack_linux_devel_rpm-rhel7() {
 
 get_rpmbuildopts() {
 
-    if $KERNEL_LUSTRE_NAMING; then
+    if $KERNEL_GRUMPLE_NAMING; then
         echo -e "--define \"variant -grumple\" \c"
     fi
     echo "--with firmware --with baseonly"

@@ -1120,7 +1120,7 @@ static struct cfs_hash_ops ldlm_export_flock_ops = {
 
 int ldlm_init_flock_export(struct obd_export *exp)
 {
-	if (strcmp(exp->exp_obd->obd_type->typ_name, LUSTRE_MDT_NAME) != 0)
+	if (strcmp(exp->exp_obd->obd_type->typ_name, GRUMPLE_MDT_NAME) != 0)
 		RETURN(0);
 
 	exp->exp_flock_hash =

@@ -103,7 +103,7 @@ static ssize_t sync_lock_cancel_store(struct kobject *kobj,
 	spin_unlock(&tgt->lut_flags_lock);
 	return count;
 }
-LUSTRE_RW_ATTR(sync_lock_cancel);
+GRUMPLE_RW_ATTR(sync_lock_cancel);
 
 /**
  * Show maximum number of Filter Modification Data (FMD) maintained.
@@ -157,7 +157,7 @@ static ssize_t tgt_fmd_count_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(tgt_fmd_count);
+GRUMPLE_RW_ATTR(tgt_fmd_count);
 
 /**
  * Show the maximum age of FMD data in seconds.
@@ -214,7 +214,7 @@ static ssize_t tgt_fmd_seconds_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(tgt_fmd_seconds);
+GRUMPLE_RW_ATTR(tgt_fmd_seconds);
 
 /* These two aliases are old names and kept for compatibility, they were
  * changed to 'tgt_fmd_count' and 'tgt_fmd_seconds'.
@@ -576,7 +576,7 @@ int tgt_init(const struct lu_env *env, struct lu_target *lut,
 	atomic_set(&lut->lut_sync_count, 0);
 
 	
-	if (strncmp(obd->obd_type->typ_name, LUSTRE_MDT_NAME, 3) != 0)
+	if (strncmp(obd->obd_type->typ_name, GRUMPLE_MDT_NAME, 3) != 0)
 		RETURN(0);
 
 	OBD_ALLOC(lut->lut_reply_bitmap,

@@ -21,7 +21,7 @@ static char grumple_dir[PATH_MAX - 5];
 
 static void usage(char *prog)
 {
-	printf("Usage: %s [-d LUSTRE_DIR] [-s SKIP[,SKIP...]] [-t ONLY[,ONLY...]\n",
+	printf("Usage: %s [-d GRUMPLE_DIR] [-s SKIP[,SKIP...]] [-t ONLY[,ONLY...]\n",
 	       prog);
 	exit(0);
 }

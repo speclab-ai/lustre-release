@@ -18,7 +18,7 @@ diff -wur a/fs/ext4/dir.c b/fs/ext4/dir.c
  
 -				error = filldir(dirent, de->name,
 -						de->name_len,
-+				if (unlikely(!IS_LUSTRE_MOUNT(inode->i_sb)) &&
++				if (unlikely(!IS_GRUMPLE_MOUNT(inode->i_sb)) &&
 +				    EXT4_I(inode)->i_flags & EXT4_ENCRYPT_FL)
 +					presented_len = critical_chars(de->name,
 +								  de->name_len);
@@ -62,7 +62,7 @@ diff -wur a/fs/ext4/dir.c b/fs/ext4/dir.c
 +		int presented_len = fname->name_len;
 +		char *buf = fname->name;
 +
-+		if (unlikely(!IS_LUSTRE_MOUNT(inode->i_sb)) &&
++		if (unlikely(!IS_GRUMPLE_MOUNT(inode->i_sb)) &&
 +		    EXT4_I(inode)->i_flags & EXT4_ENCRYPT_FL)
 +			presented_len = critical_chars(fname->name,
 +						       fname->name_len);
@@ -176,7 +176,7 @@ diff -wur /dev/null b/fs/ext4/critical_encode.h
 +					 int lookup,
 +					 struct qstr *qstr)
 +{
-+	if (lookup && unlikely(!IS_LUSTRE_MOUNT(dir->i_sb)) &&
++	if (lookup && unlikely(!IS_GRUMPLE_MOUNT(dir->i_sb)) &&
 +	    EXT4_I(dir)->i_flags & EXT4_ENCRYPT_FL &&
 +	    strnchr(iname->name, iname->len, '=')) {
 +		/* Only proceed to critical decode if
@@ -239,7 +239,7 @@ diff -wur a/fs/ext4/namei.c b/fs/ext4/namei.c
 +	/* fname is probably truncated if it is the decoded representation of
 +	 * an encrypted filename not aligned on a 32-byte boundary
 +	 */
-+	probablytrunc = !IS_LUSTRE_MOUNT(dir->i_sb) &&
++	probablytrunc = !IS_GRUMPLE_MOUNT(dir->i_sb) &&
 +		EXT4_I(dir)->i_flags & EXT4_ENCRYPT_FL && namelen & 31;
  	while ((char *) de < dlimit) {
  		/* this code is executed quadratically often */

@@ -52,11 +52,11 @@ static int sptlrpc_info_lprocfs_seq_show(struct seq_file *seq, void *v)
 	struct ptlrpc_sec *sec = NULL;
 	char               str[32];
 
-	LASSERT(strcmp(obd->obd_type->typ_name, LUSTRE_OSC_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_MDC_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_MGC_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_LWP_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_OSP_NAME) == 0);
+	LASSERT(strcmp(obd->obd_type->typ_name, GRUMPLE_OSC_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_MDC_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_MGC_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_LWP_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_OSP_NAME) == 0);
 
 	if (cli->cl_import)
 		sec = sptlrpc_import_sec_ref(cli->cl_import);
@@ -93,11 +93,11 @@ static int sptlrpc_ctxs_lprocfs_seq_show(struct seq_file *seq, void *v)
 	struct client_obd *cli = &obd->u.cli;
 	struct ptlrpc_sec *sec = NULL;
 
-	LASSERT(strcmp(obd->obd_type->typ_name, LUSTRE_OSC_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_MDC_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_MGC_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_LWP_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_OSP_NAME) == 0);
+	LASSERT(strcmp(obd->obd_type->typ_name, GRUMPLE_OSC_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_MDC_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_MGC_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_LWP_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_OSP_NAME) == 0);
 
 	if (cli->cl_import)
 		sec = sptlrpc_import_sec_ref(cli->cl_import);
@@ -170,14 +170,14 @@ out:
 	return rc;
 }
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
 static ssize_t sepol_seq_write_old(struct obd_device *obd,
 				   const char __user *buffer, size_t count)
 {
 	struct client_obd *cli = &obd->u.cli;
 	struct obd_import *imp = cli->cl_import;
 	struct sepol_downcall_data_old *param;
-	size_t maxlen = LUSTRE_NODEMAP_SEPOL_LENGTH + 1;
+	size_t maxlen = GRUMPLE_NODEMAP_SEPOL_LENGTH + 1;
 	size_t size = sizeof(*param);
 	size_t maxparam = sizeof(*param) + maxlen;
 	int len;
@@ -243,7 +243,7 @@ ldebugfs_sptlrpc_sepol_seq_write(struct file *file, const char __user *buffer,
 	struct client_obd *cli = &obd->u.cli;
 	struct obd_import *imp = cli->cl_import;
 	struct sepol_downcall_data *param;
-	size_t maxlen = LUSTRE_NODEMAP_SEPOL_LENGTH + 1;
+	size_t maxlen = GRUMPLE_NODEMAP_SEPOL_LENGTH + 1;
 	size_t size = sizeof(*param);
 	size_t maxparam = size + maxlen;
 	int len;
@@ -256,7 +256,7 @@ ldebugfs_sptlrpc_sepol_seq_write(struct file *file, const char __user *buffer,
 		return rc;
 	}
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
 	{
 		__u32 magic;
 
@@ -347,11 +347,11 @@ LDEBUGFS_SEQ_FOPS_RW_TYPE(srpc, sptlrpc_sepol);
 
 int sptlrpc_lprocfs_cliobd_attach(struct obd_device *obd)
 {
-	if (strcmp(obd->obd_type->typ_name, LUSTRE_OSC_NAME) != 0 &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_MDC_NAME) != 0 &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_MGC_NAME) != 0 &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_LWP_NAME) != 0 &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_OSP_NAME) != 0) {
+	if (strcmp(obd->obd_type->typ_name, GRUMPLE_OSC_NAME) != 0 &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_MDC_NAME) != 0 &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_MGC_NAME) != 0 &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_LWP_NAME) != 0 &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_OSP_NAME) != 0) {
 		CERROR("can't register lproc for obd type %s\n",
 		       obd->obd_type->typ_name);
 		return -EINVAL;

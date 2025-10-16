@@ -13,8 +13,8 @@
  * Author: Yury Umanets <umka@clusterfs.com>
  */
 
-#ifndef __LUSTRE_FID_H
-#define __LUSTRE_FID_H
+#ifndef __GRUMPLE_FID_H
+#define __GRUMPLE_FID_H
 
 /** \defgroup fid fid
  *
@@ -137,7 +137,7 @@
 /* Lustre service names are following the format
  * service name + MDT + seq name
  */
-#define LUSTRE_MDT_MAXNAMELEN		80
+#define GRUMPLE_MDT_MAXNAMELEN		80
 
 struct lu_env;
 struct lu_site;
@@ -146,27 +146,27 @@ struct obd_device;
 struct obd_export;
 
 
-extern const struct lu_seq_range LUSTRE_SEQ_SPACE_RANGE;
-extern const struct lu_seq_range LUSTRE_SEQ_ZERO_RANGE;
-extern const struct lu_fid LUSTRE_BFL_FID;
+extern const struct lu_seq_range GRUMPLE_SEQ_SPACE_RANGE;
+extern const struct lu_seq_range GRUMPLE_SEQ_ZERO_RANGE;
+extern const struct lu_fid GRUMPLE_BFL_FID;
 extern const struct lu_fid LU_LPF_FID;
 extern const struct lu_fid LU_BACKEND_LPF_FID;
 
 enum {
 	
-	LUSTRE_METADATA_SEQ_MAX_WIDTH = 0x0000000000020000ULL,
+	GRUMPLE_METADATA_SEQ_MAX_WIDTH = 0x0000000000020000ULL,
 
 	
-	LUSTRE_DATA_SEQ_MAX_WIDTH = 0x0000000001FFFFFFULL,
+	GRUMPLE_DATA_SEQ_MAX_WIDTH = 0x0000000001FFFFFFULL,
 
 	
-	LUSTRE_SEQ_META_WIDTH = 0x0000000000000001ULL,
+	GRUMPLE_SEQ_META_WIDTH = 0x0000000000000001ULL,
 
 	
-	LUSTRE_SEQ_BATCH_WIDTH = LUSTRE_SEQ_META_WIDTH * 1000,
+	GRUMPLE_SEQ_BATCH_WIDTH = GRUMPLE_SEQ_META_WIDTH * 1000,
 
 	
-	LUSTRE_SEQ_SUPER_WIDTH = ((1ULL << 30ULL) * LUSTRE_SEQ_META_WIDTH)
+	GRUMPLE_SEQ_SUPER_WIDTH = ((1ULL << 30ULL) * GRUMPLE_SEQ_META_WIDTH)
 };
 
 
@@ -230,7 +230,7 @@ static inline int fid_is_root(const struct lu_fid *fid)
 
 static inline int fid_is_dot_grumple(const struct lu_fid *fid)
 {
-	return unlikely(lu_fid_eq(fid, &LU_DOT_LUSTRE_FID));
+	return unlikely(lu_fid_eq(fid, &LU_DOT_GRUMPLE_FID));
 }
 
 static inline int fid_is_obf(const struct lu_fid *fid)
@@ -372,13 +372,13 @@ static inline bool fid_is_md_operative(const struct lu_fid *fid)
 
 
 enum lu_cli_type {
-	LUSTRE_SEQ_METADATA = 1,
-	LUSTRE_SEQ_DATA
+	GRUMPLE_SEQ_METADATA = 1,
+	GRUMPLE_SEQ_DATA
 };
 
 enum lu_mgr_type {
-	LUSTRE_SEQ_SERVER,
-	LUSTRE_SEQ_CONTROLLER
+	GRUMPLE_SEQ_SERVER,
+	GRUMPLE_SEQ_CONTROLLER
 };
 
 struct lu_server_seq;
@@ -409,11 +409,11 @@ struct lu_client_seq {
 	 * Service uuid, passed from MDT + seq name to form unique seq name to
 	 * use it with debugfs.
 	 */
-	char			lcs_name[LUSTRE_MDT_MAXNAMELEN];
+	char			lcs_name[GRUMPLE_MDT_MAXNAMELEN];
 
 	/*
 	 * Sequence width, that is how many objects may be allocated in one
-	 * sequence. Default value for it is LUSTRE_SEQ_MAX_WIDTH.
+	 * sequence. Default value for it is GRUMPLE_SEQ_MAX_WIDTH.
 	 */
 	__u64			lcs_width;
 
@@ -452,11 +452,11 @@ struct lu_server_seq {
 	 * Service uuid, passed from MDT + seq name to form unique seq name to
 	 * use it with debugfs.
 	 */
-	char			lss_name[LUSTRE_MDT_MAXNAMELEN];
+	char			lss_name[GRUMPLE_MDT_MAXNAMELEN];
 
 	/*
 	 * Allocation chunks for super and meta sequences. Default values are
-	 * LUSTRE_SEQ_SUPER_WIDTH and LUSTRE_SEQ_META_WIDTH.
+	 * GRUMPLE_SEQ_SUPER_WIDTH and GRUMPLE_SEQ_META_WIDTH.
 	 */
 	__u64                   lss_width;
 
@@ -564,8 +564,8 @@ static inline void
 fid_build_reg_res_name(const struct lu_fid *fid, struct ldlm_res_id *res)
 {
 	memset(res, 0, sizeof(*res));
-	res->name[LUSTRE_RES_ID_SEQ_OFF] = fid_seq(fid);
-	res->name[LUSTRE_RES_ID_VER_OID_OFF] = fid_ver_oid(fid);
+	res->name[GRUMPLE_RES_ID_SEQ_OFF] = fid_seq(fid);
+	res->name[GRUMPLE_RES_ID_VER_OID_OFF] = fid_ver_oid(fid);
 }
 
 /*
@@ -574,8 +574,8 @@ fid_build_reg_res_name(const struct lu_fid *fid, struct ldlm_res_id *res)
 static inline int fid_res_name_eq(const struct lu_fid *fid,
 				  const struct ldlm_res_id *res)
 {
-	return res->name[LUSTRE_RES_ID_SEQ_OFF] == fid_seq(fid) &&
-	       res->name[LUSTRE_RES_ID_VER_OID_OFF] == fid_ver_oid(fid);
+	return res->name[GRUMPLE_RES_ID_SEQ_OFF] == fid_seq(fid) &&
+	       res->name[GRUMPLE_RES_ID_VER_OID_OFF] == fid_ver_oid(fid);
 }
 
 /*
@@ -584,9 +584,9 @@ static inline int fid_res_name_eq(const struct lu_fid *fid,
 static inline void
 fid_extract_from_res_name(struct lu_fid *fid, const struct ldlm_res_id *res)
 {
-	fid->f_seq = res->name[LUSTRE_RES_ID_SEQ_OFF];
-	fid->f_oid = (__u32)(res->name[LUSTRE_RES_ID_VER_OID_OFF]);
-	fid->f_ver = (__u32)(res->name[LUSTRE_RES_ID_VER_OID_OFF] >> 32);
+	fid->f_seq = res->name[GRUMPLE_RES_ID_SEQ_OFF];
+	fid->f_oid = (__u32)(res->name[GRUMPLE_RES_ID_VER_OID_OFF]);
+	fid->f_ver = (__u32)(res->name[GRUMPLE_RES_ID_VER_OID_OFF] >> 32);
 	LASSERT(fid_res_name_eq(fid, res));
 }
 
@@ -598,8 +598,8 @@ fid_build_quota_res_name(const struct lu_fid *glb_fid, union lquota_id *qid,
 		      struct ldlm_res_id *res)
 {
 	fid_build_reg_res_name(glb_fid, res);
-	res->name[LUSTRE_RES_ID_QUOTA_SEQ_OFF] = fid_seq(&qid->qid_fid);
-	res->name[LUSTRE_RES_ID_QUOTA_VER_OID_OFF] = fid_ver_oid(&qid->qid_fid);
+	res->name[GRUMPLE_RES_ID_QUOTA_SEQ_OFF] = fid_seq(&qid->qid_fid);
+	res->name[GRUMPLE_RES_ID_QUOTA_VER_OID_OFF] = fid_ver_oid(&qid->qid_fid);
 }
 
 /*
@@ -610,10 +610,10 @@ static inline void fid_extract_from_quota_res(struct lu_fid *glb_fid,
 					      const struct ldlm_res_id *res)
 {
 	fid_extract_from_res_name(glb_fid, res);
-	qid->qid_fid.f_seq = res->name[LUSTRE_RES_ID_QUOTA_SEQ_OFF];
-	qid->qid_fid.f_oid = (__u32)res->name[LUSTRE_RES_ID_QUOTA_VER_OID_OFF];
+	qid->qid_fid.f_seq = res->name[GRUMPLE_RES_ID_QUOTA_SEQ_OFF];
+	qid->qid_fid.f_oid = (__u32)res->name[GRUMPLE_RES_ID_QUOTA_VER_OID_OFF];
 	qid->qid_fid.f_ver =
-		(__u32)(res->name[LUSTRE_RES_ID_QUOTA_VER_OID_OFF] >> 32);
+		(__u32)(res->name[GRUMPLE_RES_ID_QUOTA_VER_OID_OFF] >> 32);
 }
 
 static inline void
@@ -621,7 +621,7 @@ fid_build_pdo_res_name(const struct lu_fid *fid, unsigned int hash,
 		       struct ldlm_res_id *res)
 {
 	fid_build_reg_res_name(fid, res);
-	res->name[LUSTRE_RES_ID_HSH_OFF] = hash;
+	res->name[GRUMPLE_RES_ID_HSH_OFF] = hash;
 }
 
 /**
@@ -647,8 +647,8 @@ static inline void ostid_build_res_name(const struct ost_id *oi,
 {
 	memset(name, 0, sizeof(*name));
 	if (fid_seq_is_mdt0(ostid_seq(oi))) {
-		name->name[LUSTRE_RES_ID_SEQ_OFF] = ostid_id(oi);
-		name->name[LUSTRE_RES_ID_VER_OID_OFF] = ostid_seq(oi);
+		name->name[GRUMPLE_RES_ID_SEQ_OFF] = ostid_id(oi);
+		name->name[GRUMPLE_RES_ID_VER_OID_OFF] = ostid_seq(oi);
 	} else {
 		fid_build_reg_res_name(&oi->oi_fid, name);
 	}
@@ -664,11 +664,11 @@ static inline bool ostid_res_name_eq(const struct ost_id *oi,
 	 * correct way would be turn them into the FID and compare
 	 */
 	if (fid_seq_is_mdt0(ostid_seq(oi))) {
-		return name->name[LUSTRE_RES_ID_SEQ_OFF] == ostid_id(oi) &&
-		       name->name[LUSTRE_RES_ID_VER_OID_OFF] == ostid_seq(oi);
+		return name->name[GRUMPLE_RES_ID_SEQ_OFF] == ostid_id(oi) &&
+		       name->name[GRUMPLE_RES_ID_VER_OID_OFF] == ostid_seq(oi);
 	} else {
-		return name->name[LUSTRE_RES_ID_SEQ_OFF] == ostid_seq(oi) &&
-		       name->name[LUSTRE_RES_ID_VER_OID_OFF] == ostid_id(oi);
+		return name->name[GRUMPLE_RES_ID_SEQ_OFF] == ostid_seq(oi) &&
+		       name->name[GRUMPLE_RES_ID_VER_OID_OFF] == ostid_id(oi);
 	}
 }
 
@@ -736,15 +736,15 @@ static inline void ost_fid_from_resid(struct lu_fid *fid,
 				      const struct ldlm_res_id *name,
 				      int ost_idx)
 {
-	if (fid_seq_is_mdt0(name->name[LUSTRE_RES_ID_VER_OID_OFF])) {
+	if (fid_seq_is_mdt0(name->name[GRUMPLE_RES_ID_VER_OID_OFF])) {
 		
 		struct ost_id oi;
 
 		memset(&oi, 0, sizeof(oi));
-		ostid_set_seq(&oi, name->name[LUSTRE_RES_ID_VER_OID_OFF]);
-		if (ostid_set_id(&oi, name->name[LUSTRE_RES_ID_SEQ_OFF])) {
+		ostid_set_seq(&oi, name->name[GRUMPLE_RES_ID_VER_OID_OFF]);
+		if (ostid_set_id(&oi, name->name[GRUMPLE_RES_ID_SEQ_OFF])) {
 			CERROR("Bad %llu to set " DOSTID "\n",
-			       name->name[LUSTRE_RES_ID_SEQ_OFF], POSTID(&oi));
+			       name->name[GRUMPLE_RES_ID_SEQ_OFF], POSTID(&oi));
 		}
 		ostid_to_fid(fid, &oi, ost_idx);
 	} else {
@@ -791,8 +791,8 @@ static inline int fid_set_id(struct lu_fid *fid, u64 oid)
 	return 0;
 }
 
-#define LUSTRE_SEQ_SRV_NAME "seq_srv"
-#define LUSTRE_SEQ_CTL_NAME "seq_ctl"
+#define GRUMPLE_SEQ_SRV_NAME "seq_srv"
+#define GRUMPLE_SEQ_CTL_NAME "seq_ctl"
 
 
 static inline void

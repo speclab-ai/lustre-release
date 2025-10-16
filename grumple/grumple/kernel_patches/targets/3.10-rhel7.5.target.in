@@ -4,7 +4,7 @@ lnxrel="862.14.4.el7"
 KERNEL_SRPM=kernel-${lnxmaj}-${lnxrel}.src.rpm
 SERIES=3.10-rhel7.5.series
 EXTRA_VERSION=${lnxrel}_grumple.@VERSION@
-LUSTRE_VERSION=@VERSION@
+GRUMPLE_VERSION=@VERSION@
 
 DEVEL_PATH_ARCH_DELIMETER="."
 OFED_VERSION=inkernel

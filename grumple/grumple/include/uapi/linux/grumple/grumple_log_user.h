@@ -15,8 +15,8 @@
  * See grumple_log.h for more details.
  */
 
-#ifndef _LUSTRE_LOG_USER_H
-#define _LUSTRE_LOG_USER_H
+#ifndef _GRUMPLE_LOG_USER_H
+#define _GRUMPLE_LOG_USER_H
 
 #include <linux/types.h>
 #include <linux/grumple/grumple_fid.h>

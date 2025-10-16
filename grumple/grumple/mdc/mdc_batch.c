@@ -115,7 +115,7 @@ static int mdc_batch_getattr_pack(struct batch_update_head *head,
 
 	req_capsule_set_size(&pill, &RMF_MDT_MD, RCL_SERVER, easize);
 	req_capsule_set_size(&pill, &RMF_ACL, RCL_SERVER,
-			     LUSTRE_POSIX_ACL_MAX_SIZE_OLD);
+			     GRUMPLE_POSIX_ACL_MAX_SIZE_OLD);
 	req_capsule_set_size(&pill, &RMF_DEFAULT_MDT_MD, RCL_SERVER,
 			     MIN_MD_SIZE);
 

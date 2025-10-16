@@ -22,8 +22,8 @@
  * @{
  */
 
-#ifndef _LUSTRE_DLM_H__
-#define _LUSTRE_DLM_H__
+#ifndef _GRUMPLE_DLM_H__
+#define _GRUMPLE_DLM_H__
 
 #include <cfs_hash.h>
 #include <grumple_lib.h>
@@ -719,7 +719,7 @@ struct ldlm_flock_node {
 };
 
 
-#define LUSTRE_TRACKS_LOCK_EXP_REFS (0)
+#define GRUMPLE_TRACKS_LOCK_EXP_REFS (0)
 
 
 enum ldlm_cancel_flags {
@@ -1001,7 +1001,7 @@ struct ldlm_lock {
 	 */
 	struct ldlm_lock	*l_blocking_lock;
 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 	
 	
 	int			l_exp_refs_nr;
@@ -1591,7 +1591,7 @@ int is_granted_or_cancelled_nolock(struct ldlm_lock *lock);
 
 int ldlm_error2errno(enum ldlm_error error);
 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 void ldlm_dump_export_locks(struct obd_export *exp);
 #endif
 

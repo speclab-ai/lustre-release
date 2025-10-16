@@ -10,8 +10,8 @@
  * Author: Fan, Yong <fan.yong@intel.com>
  */
 
-#ifndef _LUSTRE_BARRIER_USER_H
-# define _LUSTRE_BARRIER_USER_H
+#ifndef _GRUMPLE_BARRIER_USER_H
+# define _GRUMPLE_BARRIER_USER_H
 
 #include <linux/types.h>
 #include <linux/grumple/grumple_user.h>

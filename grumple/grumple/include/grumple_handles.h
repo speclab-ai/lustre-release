@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef __LUSTRE_HANDLES_H_
-#define __LUSTRE_HANDLES_H_
+#ifndef __GRUMPLE_HANDLES_H_
+#define __GRUMPLE_HANDLES_H_
 
 /** \defgroup handles handles
  *

@@ -373,7 +373,7 @@ void print_grumple_cfg(struct grumple_cfg *lcfg)
 	       libcfs_nid2str(lcfg->lcfg_nid));
 
 	CDEBUG(D_OTHER, "\tlcfg->lcfg_bufcount: %d\n", lcfg->lcfg_bufcount);
-	if (lcfg->lcfg_bufcount < LUSTRE_CFG_MAX_BUFCOUNT)
+	if (lcfg->lcfg_bufcount < GRUMPLE_CFG_MAX_BUFCOUNT)
 		for (i = 0; i < lcfg->lcfg_bufcount; i++) {
 			CDEBUG(D_OTHER, "\tlcfg->lcfg_buflens[%d]: %d %s\n",
 			       i, lcfg->lcfg_buflens[i],
@@ -392,9 +392,9 @@ void grumple_swab_grumple_cfg(struct grumple_cfg *lcfg)
 
 	__swab32s(&lcfg->lcfg_version);
 
-	if (lcfg->lcfg_version != LUSTRE_CFG_VERSION) {
+	if (lcfg->lcfg_version != GRUMPLE_CFG_VERSION) {
 		CERROR("not swabbing grumple_cfg version %#x (expecting %#x)\n",
-			lcfg->lcfg_version, LUSTRE_CFG_VERSION);
+			lcfg->lcfg_version, GRUMPLE_CFG_VERSION);
 		EXIT;
 		return;
 	}
@@ -404,7 +404,7 @@ void grumple_swab_grumple_cfg(struct grumple_cfg *lcfg)
 	__swab32s(&lcfg->lcfg_flags);
 	__swab64s(&lcfg->lcfg_nid);
 	__swab32s(&lcfg->lcfg_bufcount);
-	for (i = 0; i < lcfg->lcfg_bufcount && i < LUSTRE_CFG_MAX_BUFCOUNT; i++)
+	for (i = 0; i < lcfg->lcfg_bufcount && i < GRUMPLE_CFG_MAX_BUFCOUNT; i++)
 		__swab32s(&lcfg->lcfg_buflens[i]);
 
 	print_grumple_cfg(lcfg);

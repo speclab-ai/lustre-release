@@ -7497,7 +7497,7 @@ static int lnet_peer_ni_show_start(struct netlink_callback *cb)
 					GOTO(report_err, rc = -ENOMEM);
 				}
 
-				lpi->pid = LNET_PID_LUSTRE;
+				lpi->pid = LNET_PID_GRUMPLE;
 				lpi->nid = lp->lp_primary_nid;
 			}
 		}
@@ -8602,7 +8602,7 @@ static int lnet_ping_show_dump(struct sk_buff *msg,
 				continue;
 
 			nid_attr = nla_nest_start(msg, count + 1);
-			if (id->pid == LNET_PID_LUSTRE)
+			if (id->pid == LNET_PID_GRUMPLE)
 				idstr = libcfs_nidstr(&result->nid);
 			else
 				idstr = libcfs_idstr(result);
@@ -8886,7 +8886,7 @@ static int lnet_ping_cmd(struct sk_buff *skb, struct genl_info *info)
 					continue;
 
 				nid_attr = nla_nest_start(reply, i + 1);
-				if (id.pid == LNET_PID_LUSTRE)
+				if (id.pid == LNET_PID_GRUMPLE)
 					idstr = libcfs_nidstr(&found->nid);
 				else
 					idstr = libcfs_idstr(found);
@@ -10725,7 +10725,7 @@ static int lnet_ping(struct lnet_processid *id, struct lnet_nid *src_nid,
 		n_ids = lnet_interfaces_max;
 
 	if (id->pid == LNET_PID_ANY)
-		id->pid = LNET_PID_LUSTRE;
+		id->pid = LNET_PID_GRUMPLE;
 
 	
 	id_bytes += lnet_ping_sts_size(&LNET_ANY_NID) * n_ids;
@@ -10853,7 +10853,7 @@ lnet_discover(struct lnet_processid *pid, u32 force,
 		return -EINVAL;
 
 	if (pid->pid == LNET_PID_ANY)
-		pid->pid = LNET_PID_LUSTRE;
+		pid->pid = LNET_PID_GRUMPLE;
 
 	cpt = lnet_net_lock_current();
 	lpni = lnet_peerni_by_nid_locked(&pid->nid, NULL, cpt);

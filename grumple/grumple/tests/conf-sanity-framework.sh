@@ -2,8 +2,8 @@
 set -e
 ONLY=${ONLY:-"$*"}
 PTLDEBUG=${PTLDEBUG:--1}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 STORED_MDSSIZE=$MDSSIZE
 STORED_OSTSIZE=$OSTSIZE
 mds1_FSTYPE=${mds1_FSTYPE:-$(facet_fstype mds1)}

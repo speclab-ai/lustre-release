@@ -16,8 +16,8 @@
  * The definitions below are used in the kernel and userspace.
  */
 
-#ifndef __LUSTRE_KERNELCOMM_H__
-#define __LUSTRE_KERNELCOMM_H__
+#ifndef __GRUMPLE_KERNELCOMM_H__
+#define __GRUMPLE_KERNELCOMM_H__
 
 #include <grumple_compat/linux/generic-radix-tree.h>
 #include <net/genetlink.h>
@@ -32,122 +32,122 @@
  *					to piece togther messages for
  *					sending and receiving.
  *
- * @LUSTRE_DEVICE_ATTR_UNSPEC:		unspecified attribute to catch errors
+ * @GRUMPLE_DEVICE_ATTR_UNSPEC:		unspecified attribute to catch errors
  *
- * @LUSTRE_DEVICE_ATTR_HDR:		Netlink group this data is for
+ * @GRUMPLE_DEVICE_ATTR_HDR:		Netlink group this data is for
  *					(NLA_NUL_STRING)
- * @LUSTRE_DEVICE_ATTR_INDEX:		device number used as an index (NLA_U16)
- * @LUSTRE_DEVICE_ATTR_STATUS:		status of the device (NLA_STRING)
- * @LUSTRE_DEVICE_ATTR_CLASS:		class the device belongs to (NLA_STRING)
- * @LUSTRE_DEVICE_ATTR_NAME:		name of the device (NLA_STRING)
- * @LUSTRE_DEVICE_ATTR_UUID:		UUID of the device (NLA_STRING)
- * @LUSTRE_DEVICE_ATTR_REFCOUNT:	refcount of the device (NLA_U32)
+ * @GRUMPLE_DEVICE_ATTR_INDEX:		device number used as an index (NLA_U16)
+ * @GRUMPLE_DEVICE_ATTR_STATUS:		status of the device (NLA_STRING)
+ * @GRUMPLE_DEVICE_ATTR_CLASS:		class the device belongs to (NLA_STRING)
+ * @GRUMPLE_DEVICE_ATTR_NAME:		name of the device (NLA_STRING)
+ * @GRUMPLE_DEVICE_ATTR_UUID:		UUID of the device (NLA_STRING)
+ * @GRUMPLE_DEVICE_ATTR_REFCOUNT:	refcount of the device (NLA_U32)
  */
 enum grumple_device_attrs {
-	LUSTRE_DEVICE_ATTR_UNSPEC = 0,
+	GRUMPLE_DEVICE_ATTR_UNSPEC = 0,
 
-	LUSTRE_DEVICE_ATTR_HDR,
-	LUSTRE_DEVICE_ATTR_INDEX,
-	LUSTRE_DEVICE_ATTR_STATUS,
-	LUSTRE_DEVICE_ATTR_CLASS,
-	LUSTRE_DEVICE_ATTR_NAME,
-	LUSTRE_DEVICE_ATTR_UUID,
-	LUSTRE_DEVICE_ATTR_REFCOUNT,
+	GRUMPLE_DEVICE_ATTR_HDR,
+	GRUMPLE_DEVICE_ATTR_INDEX,
+	GRUMPLE_DEVICE_ATTR_STATUS,
+	GRUMPLE_DEVICE_ATTR_CLASS,
+	GRUMPLE_DEVICE_ATTR_NAME,
+	GRUMPLE_DEVICE_ATTR_UUID,
+	GRUMPLE_DEVICE_ATTR_REFCOUNT,
 
-	__LUSTRE_DEVICE_ATTR_MAX_PLUS_ONE
+	__GRUMPLE_DEVICE_ATTR_MAX_PLUS_ONE
 };
 
-#define LUSTRE_DEVICE_ATTR_MAX (__LUSTRE_DEVICE_ATTR_MAX_PLUS_ONE - 1)
+#define GRUMPLE_DEVICE_ATTR_MAX (__GRUMPLE_DEVICE_ATTR_MAX_PLUS_ONE - 1)
 
 /**
  * enum grumple_param_list_attrs	      - General header to list all sources
  *					supporting an specific query.
  *
- * @LUSTRE_PARAM_ATTR_UNSPEC:		unspecified attribute to catch errors
+ * @GRUMPLE_PARAM_ATTR_UNSPEC:		unspecified attribute to catch errors
  *
- * @LUSTRE_PARAM_ATTR_HDR:		groups params belong to (NLA_NUL_STRING)
- * @LUSTRE_PARAM_ATTR_SOURCE:		source of the params (NLA_STRING)
+ * @GRUMPLE_PARAM_ATTR_HDR:		groups params belong to (NLA_NUL_STRING)
+ * @GRUMPLE_PARAM_ATTR_SOURCE:		source of the params (NLA_STRING)
  */
 enum grumple_param_list_attrs {
-	LUSTRE_PARAM_ATTR_UNSPEC = 0,
+	GRUMPLE_PARAM_ATTR_UNSPEC = 0,
 
-	LUSTRE_PARAM_ATTR_HDR,
-	LUSTRE_PARAM_ATTR_SOURCE,
+	GRUMPLE_PARAM_ATTR_HDR,
+	GRUMPLE_PARAM_ATTR_SOURCE,
 
-	__LUSTRE_PARAM_ATTR_MAX_PLUS_ONE
+	__GRUMPLE_PARAM_ATTR_MAX_PLUS_ONE
 };
 
-#define LUSTRE_PARAM_ATTR_MAX (__LUSTRE_PARAM_ATTR_MAX_PLUS_ONE - 1)
+#define GRUMPLE_PARAM_ATTR_MAX (__GRUMPLE_PARAM_ATTR_MAX_PLUS_ONE - 1)
 
 /**
  * enum grumple_stats_attrs	     - Lustre stats netlink attributes used
  *				       to compose messages for sending or
  *				       receiving.
  *
- * @LUSTRE_STATS_ATTR_UNSPEC:	       unspecified attribute to catch errors
- * @LUSTRE_STATS_ATTR_PAD:	       padding for 64-bit attributes, ignore
+ * @GRUMPLE_STATS_ATTR_UNSPEC:	       unspecified attribute to catch errors
+ * @GRUMPLE_STATS_ATTR_PAD:	       padding for 64-bit attributes, ignore
  *
- * @LUSTRE_STATS_ATTR_HDR:	       groups stats belong to (NLA_NUL_STRING)
- * @LUSTRE_STATS_ATTR_SOURCE:	       source of the stats (NLA_STRING)
- * @LUSTRE_STATS_ATTR_TIMESTAMP:       time of collection in nanoseconds
+ * @GRUMPLE_STATS_ATTR_HDR:	       groups stats belong to (NLA_NUL_STRING)
+ * @GRUMPLE_STATS_ATTR_SOURCE:	       source of the stats (NLA_STRING)
+ * @GRUMPLE_STATS_ATTR_TIMESTAMP:       time of collection in nanoseconds
  *				       (NLA_S64)
- * @LUSTRE_STATS_ATTR_START_TIME:      start time of collection (NLA_S64)
- * @LUSTRE_STATS_ATTR_ELPASE_TIME:     elpase time of collection (NLA_S64)
- * @LUSTRE_STATS_ATTR_DATASET:	       bookmarks for that stats data
+ * @GRUMPLE_STATS_ATTR_START_TIME:      start time of collection (NLA_S64)
+ * @GRUMPLE_STATS_ATTR_ELPASE_TIME:     elpase time of collection (NLA_S64)
+ * @GRUMPLE_STATS_ATTR_DATASET:	       bookmarks for that stats data
  *				       (NLA_NESTED)
  */
 enum grumple_stats_attrs {
-	LUSTRE_STATS_ATTR_UNSPEC = 0,
-	LUSTRE_STATS_ATTR_PAD = LUSTRE_STATS_ATTR_UNSPEC,
+	GRUMPLE_STATS_ATTR_UNSPEC = 0,
+	GRUMPLE_STATS_ATTR_PAD = GRUMPLE_STATS_ATTR_UNSPEC,
 
-	LUSTRE_STATS_ATTR_HDR,
-	LUSTRE_STATS_ATTR_SOURCE,
-	LUSTRE_STATS_ATTR_TIMESTAMP,
-	LUSTRE_STATS_ATTR_START_TIME,
-	LUSTRE_STATS_ATTR_ELAPSE_TIME,
-	LUSTRE_STATS_ATTR_DATASET,
+	GRUMPLE_STATS_ATTR_HDR,
+	GRUMPLE_STATS_ATTR_SOURCE,
+	GRUMPLE_STATS_ATTR_TIMESTAMP,
+	GRUMPLE_STATS_ATTR_START_TIME,
+	GRUMPLE_STATS_ATTR_ELAPSE_TIME,
+	GRUMPLE_STATS_ATTR_DATASET,
 
-	__LUSTRE_STATS_ATTR_MAX_PLUS_ONE,
+	__GRUMPLE_STATS_ATTR_MAX_PLUS_ONE,
 };
 
-#define LUSTRE_STATS_ATTR_MAX	(__LUSTRE_STATS_ATTR_MAX_PLUS_ONE - 1)
+#define GRUMPLE_STATS_ATTR_MAX	(__GRUMPLE_STATS_ATTR_MAX_PLUS_ONE - 1)
 
 /**
  * enum grumple_stats_dataset_attrs    - Lustre stats counter's netlink
  *					attributes used to compose messages
  *					for sending or receiving.
  *
- * @LUSTRE_STATS_ATTR_DATASET_UNSPEC:	unspecified attribute to catch errors
- * @LUSTRE_STATS_ATTR_DATASET_PAD:	padding for 64-bit attributes, ignore
+ * @GRUMPLE_STATS_ATTR_DATASET_UNSPEC:	unspecified attribute to catch errors
+ * @GRUMPLE_STATS_ATTR_DATASET_PAD:	padding for 64-bit attributes, ignore
  *
- * @LUSTRE_STATS_ATTR_DATASET_NAME:	name of counter (NLA_NUL_STRING)
- * @LUSTRE_STATS_ATTR_DATASET_COUNT:	counter interation (NLA_U64)
- * @LUSTRE_STATS_ATTR_DATASET_UNITS:	units of counter values (NLA_STRING)
- * @LUSTRE_STATS_ATTR_DATASET_MINIMUM:	smallest counter value collected
+ * @GRUMPLE_STATS_ATTR_DATASET_NAME:	name of counter (NLA_NUL_STRING)
+ * @GRUMPLE_STATS_ATTR_DATASET_COUNT:	counter interation (NLA_U64)
+ * @GRUMPLE_STATS_ATTR_DATASET_UNITS:	units of counter values (NLA_STRING)
+ * @GRUMPLE_STATS_ATTR_DATASET_MINIMUM:	smallest counter value collected
  *					(NLA_U64)
- * @LUSTRE_STATS_ATTR_DATASET_MAXIMUM:	largest count value collected (NLA_U64)
- * @LUSTRE_STATS_ATTR_DATASET_SUM:	total of all values of the counter
+ * @GRUMPLE_STATS_ATTR_DATASET_MAXIMUM:	largest count value collected (NLA_U64)
+ * @GRUMPLE_STATS_ATTR_DATASET_SUM:	total of all values of the counter
  *					(NLA_U64)
- * @LUSTRE_STATS_ATTR_DATASET_SUMSQUARE: Sum of the square of all values.
+ * @GRUMPLE_STATS_ATTR_DATASET_SUMSQUARE: Sum of the square of all values.
  *					 Allows user land apps to calculate
  *					 standard deviation. (NLA_U64)
  */
 enum grumple_stats_dataset_attrs {
-	LUSTRE_STATS_ATTR_DATASET_UNSPEC = 0,
-	LUSTRE_STATS_ATTR_DATASET_PAD = LUSTRE_STATS_ATTR_DATASET_UNSPEC,
+	GRUMPLE_STATS_ATTR_DATASET_UNSPEC = 0,
+	GRUMPLE_STATS_ATTR_DATASET_PAD = GRUMPLE_STATS_ATTR_DATASET_UNSPEC,
 
-	LUSTRE_STATS_ATTR_DATASET_NAME,
-	LUSTRE_STATS_ATTR_DATASET_COUNT,
-	LUSTRE_STATS_ATTR_DATASET_UNITS,
-	LUSTRE_STATS_ATTR_DATASET_MINIMUM,
-	LUSTRE_STATS_ATTR_DATASET_MAXIMUM,
-	LUSTRE_STATS_ATTR_DATASET_SUM,
-	LUSTRE_STATS_ATTR_DATASET_SUMSQUARE,
+	GRUMPLE_STATS_ATTR_DATASET_NAME,
+	GRUMPLE_STATS_ATTR_DATASET_COUNT,
+	GRUMPLE_STATS_ATTR_DATASET_UNITS,
+	GRUMPLE_STATS_ATTR_DATASET_MINIMUM,
+	GRUMPLE_STATS_ATTR_DATASET_MAXIMUM,
+	GRUMPLE_STATS_ATTR_DATASET_SUM,
+	GRUMPLE_STATS_ATTR_DATASET_SUMSQUARE,
 
-	__LUSTRE_STATS_ATTR_DATASET_MAX_PLUS_ONE,
+	__GRUMPLE_STATS_ATTR_DATASET_MAX_PLUS_ONE,
 };
 
-#define LUSTRE_STATS_ATTR_DATASET_MAX	(__LUSTRE_STATS_ATTR_DATASET_MAX_PLUS_ONE - 1)
+#define GRUMPLE_STATS_ATTR_DATASET_MAX	(__GRUMPLE_STATS_ATTR_DATASET_MAX_PLUS_ONE - 1)
 
 struct grumple_stats_list {
 	GENRADIX(struct lprocfs_stats *)	gfl_list;
@@ -166,45 +166,45 @@ int grumple_stats_done(struct netlink_callback *cb);
  *					to piece togther messages for
  *					sending and receiving.
  *
- * @LUSTRE_TARGET_ATTR_UNSPEC:		unspecified attribute to catch errors
+ * @GRUMPLE_TARGET_ATTR_UNSPEC:		unspecified attribute to catch errors
  *
- * @LUSTRE_TARGET_ATTR_HDR:		Netlink group this data is for
+ * @GRUMPLE_TARGET_ATTR_HDR:		Netlink group this data is for
  *					(NLA_NUL_STRING)
- * @LUSTRE_TARGET_ATTR_SOURCE:		obd device targets belong too
+ * @GRUMPLE_TARGET_ATTR_SOURCE:		obd device targets belong too
  *					(NLA_STRING)
- * @LUSTRE_TARGET_ATTR_PROP_LIST:	list of target properties (NLA_NESTED)
+ * @GRUMPLE_TARGET_ATTR_PROP_LIST:	list of target properties (NLA_NESTED)
  */
 enum grumple_target_attrs {
-	LUSTRE_TARGET_ATTR_UNSPEC = 0,
+	GRUMPLE_TARGET_ATTR_UNSPEC = 0,
 
-	LUSTRE_TARGET_ATTR_HDR,
-	LUSTRE_TARGET_ATTR_SOURCE,
-	LUSTRE_TARGET_ATTR_PROP_LIST,
+	GRUMPLE_TARGET_ATTR_HDR,
+	GRUMPLE_TARGET_ATTR_SOURCE,
+	GRUMPLE_TARGET_ATTR_PROP_LIST,
 
-	__LUSTRE_TARGET_ATTR_MAX_PLUS_ONE,
+	__GRUMPLE_TARGET_ATTR_MAX_PLUS_ONE,
 };
 
-#define LUSTRE_TARGET_ATTR_MAX	(__LUSTRE_TARGET_ATTR_MAX_PLUS_ONE - 1)
+#define GRUMPLE_TARGET_ATTR_MAX	(__GRUMPLE_TARGET_ATTR_MAX_PLUS_ONE - 1)
 
 /**
  * enum grumple_target_props_attrs
  *
- * @LUSTRE_TARGET_PROP_ATTR_UNSPEC:	unspecified attribute to catch errors
- * @LUSTRE_TARGET_PROP_ATTR_INDEX:	target number used as an index (NLA_U16)
- * @LUSTRE_DEVICE_PROP_ATTR_UUID:	UUID of the target (NLA_STRING)
- * @LUSTRE_DEVICE_PROP_ATTR_STATUS:	status of the target (NLA_STRING)
+ * @GRUMPLE_TARGET_PROP_ATTR_UNSPEC:	unspecified attribute to catch errors
+ * @GRUMPLE_TARGET_PROP_ATTR_INDEX:	target number used as an index (NLA_U16)
+ * @GRUMPLE_DEVICE_PROP_ATTR_UUID:	UUID of the target (NLA_STRING)
+ * @GRUMPLE_DEVICE_PROP_ATTR_STATUS:	status of the target (NLA_STRING)
  */
 enum grumple_target_prop_attrs {
-	LUSTRE_TARGET_PROP_ATTR_UNSPEC = 0,
+	GRUMPLE_TARGET_PROP_ATTR_UNSPEC = 0,
 
-	LUSTRE_TARGET_PROP_ATTR_INDEX,
-	LUSTRE_TARGET_PROP_ATTR_UUID,
-	LUSTRE_TARGET_PROP_ATTR_STATUS,
+	GRUMPLE_TARGET_PROP_ATTR_INDEX,
+	GRUMPLE_TARGET_PROP_ATTR_UUID,
+	GRUMPLE_TARGET_PROP_ATTR_STATUS,
 
-	__LUSTRE_TARGET_PROP_ATTR_MAX_PLUS_ONE,
+	__GRUMPLE_TARGET_PROP_ATTR_MAX_PLUS_ONE,
 };
 
-#define LUSTRE_TARGET_PROP_ATTR_MAX	(__LUSTRE_TARGET_PROP_ATTR_MAX_PLUS_ONE - 1)
+#define GRUMPLE_TARGET_PROP_ATTR_MAX	(__GRUMPLE_TARGET_PROP_ATTR_MAX_PLUS_ONE - 1)
 
 
 typedef int (*libcfs_kkuc_cb_t)(void *data, void *cb_arg);

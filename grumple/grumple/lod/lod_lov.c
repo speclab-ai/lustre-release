@@ -135,7 +135,7 @@ int lod_add_device(const struct lu_env *env, struct lod_device *lod,
 
 	obd_str2uuid(&obd_uuid, osp);
 
-	obd = class_find_client_obd(&obd_uuid, LUSTRE_OSP_NAME,
+	obd = class_find_client_obd(&obd_uuid, GRUMPLE_OSP_NAME,
 				&lod->lod_dt_dev.dd_lu_dev.ld_obd->obd_uuid);
 	if (obd == NULL) {
 		CERROR("can't find %s device\n", osp);
@@ -154,10 +154,10 @@ int lod_add_device(const struct lu_env *env, struct lod_device *lod,
 
 	data->ocd_connect_flags = OBD_CONNECT_INDEX | OBD_CONNECT_VERSION |
 				  OBD_CONNECT_FLAGS2;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 	data->ocd_index = index;
 
-	if (strcmp(LUSTRE_OSC_NAME, type) == 0) {
+	if (strcmp(GRUMPLE_OSC_NAME, type) == 0) {
 		for_ost = true;
 		data->ocd_connect_flags |= OBD_CONNECT_AT |
 					   OBD_CONNECT_FULL20 |
@@ -279,7 +279,7 @@ out_cleanup:
 	 * objects from the MDT stack. See LU-7184. */
 	lcfg = &lod_env_info(env)->lti_grumple_cfg;
 	memset(lcfg, 0, sizeof(*lcfg));
-	lcfg->lcfg_version = LUSTRE_CFG_VERSION;
+	lcfg->lcfg_version = GRUMPLE_CFG_VERSION;
 	lcfg->lcfg_command = LCFG_CLEANUP;
 	lu_dev->ld_ops->ldo_process_config(env, lu_dev, lcfg);
 
@@ -372,7 +372,7 @@ int lod_del_device(const struct lu_env *env, struct lod_device *lod,
 
 	obd_str2uuid(&uuid, osp);
 
-	obd = class_find_client_obd(&uuid, LUSTRE_OSP_NAME,
+	obd = class_find_client_obd(&uuid, GRUMPLE_OSP_NAME,
 				   &lod->lod_dt_dev.dd_lu_dev.ld_obd->obd_uuid);
 	if (obd == NULL) {
 		CERROR("can't find %s device\n", osp);
@@ -638,7 +638,7 @@ int lod_fill_mirrors(struct lod_object *lo)
 			RETURN(-EINVAL);
 
 		if (mirror_hsm && (lod_comp->llc_extent.e_start != 0 ||
-				   lod_comp->llc_extent.e_end != LUSTRE_EOF))
+				   lod_comp->llc_extent.e_end != GRUMPLE_EOF))
 			RETURN(-EINVAL);
 
 		mirror_id = mirror_id_of(lod_comp->llc_id);
@@ -1349,7 +1349,7 @@ int lod_parse_striping(const struct lu_env *env, struct lod_object *lo,
 			}
 
 			lod_comp->llc_extent.e_end = le64_to_cpu(ext->e_end);
-			if (lod_comp->llc_extent.e_end != LUSTRE_EOF &&
+			if (lod_comp->llc_extent.e_end != GRUMPLE_EOF &&
 			    lod_comp->llc_extent.e_end &
 			    (LOV_MIN_STRIPE_SIZE - 1)) {
 				CDEBUG(D_LAYOUT,
@@ -2156,11 +2156,11 @@ recheck:
 		if (le64_to_cpu(ext->e_start) > le64_to_cpu(ext->e_end) ||
 		    le64_to_cpu(ext->e_start) & (LOV_MIN_STRIPE_SIZE - 1) ||
 		    ((__s64)le64_to_cpu(ext->e_start) < 0 &&
-		    le64_to_cpu(ext->e_start) != LUSTRE_EOF) ||
-		    (le64_to_cpu(ext->e_end) != LUSTRE_EOF &&
+		    le64_to_cpu(ext->e_start) != GRUMPLE_EOF) ||
+		    (le64_to_cpu(ext->e_end) != GRUMPLE_EOF &&
 		    le64_to_cpu(ext->e_end) & (LOV_MIN_STRIPE_SIZE - 1)) ||
 		    ((__s64)le64_to_cpu(ext->e_end) < 0 &&
-		    le64_to_cpu(ext->e_end) != LUSTRE_EOF)) {
+		    le64_to_cpu(ext->e_end) != GRUMPLE_EOF)) {
 			CDEBUG(D_LAYOUT, "invalid extent "DEXT"\n",
 			       le64_to_cpu(ext->e_start),
 			       le64_to_cpu(ext->e_end));
@@ -2235,7 +2235,7 @@ recheck:
 				       le64_to_cpu(ext->e_start));
 				RETURN(-EINVAL);
 			}
-			if (le64_to_cpu(ext->e_end) != LUSTRE_EOF) {
+			if (le64_to_cpu(ext->e_end) != GRUMPLE_EOF) {
 				CDEBUG(D_LAYOUT, "Invalid HSM component with %llu extent end\n",
 				       le64_to_cpu(ext->e_end));
 				RETURN(-EINVAL);
@@ -2325,7 +2325,7 @@ recheck:
 		if (rc)
 			RETURN(rc);
 
-		if (prev_end == LUSTRE_EOF || ext->e_start == prev_end)
+		if (prev_end == GRUMPLE_EOF || ext->e_start == prev_end)
 			continue;
 
 		
@@ -2457,16 +2457,16 @@ int lod_pools_init(struct lod_device *lod, struct grumple_cfg *lcfg)
 	LASSERT(obd != NULL);
 	obd->obd_lu_dev = &lod->lod_dt_dev.dd_lu_dev;
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 1) < 1) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 1) < 1) {
 		CERROR("LOD setup requires a descriptor\n");
 		RETURN(-EINVAL);
 	}
 
 	desc = (struct lov_desc *)grumple_cfg_buf(lcfg, 1);
 
-	if (sizeof(*desc) > LUSTRE_CFG_BUFLEN(lcfg, 1)) {
+	if (sizeof(*desc) > GRUMPLE_CFG_BUFLEN(lcfg, 1)) {
 		CERROR("descriptor size wrong: %d > %d\n",
-		       (int)sizeof(*desc), LUSTRE_CFG_BUFLEN(lcfg, 1));
+		       (int)sizeof(*desc), GRUMPLE_CFG_BUFLEN(lcfg, 1));
 		RETURN(-EINVAL);
 	}
 
@@ -2490,7 +2490,7 @@ int lod_pools_init(struct lod_device *lod, struct grumple_cfg *lcfg)
 	
 	lod_fix_lmv_desc(&lod->lod_mdt_descs.ltd_lmv_desc);
 
-	lod->lod_sp_me = LUSTRE_SP_CLI;
+	lod->lod_sp_me = GRUMPLE_SP_CLI;
 
 	
 	lod->lod_pool_count = 0;

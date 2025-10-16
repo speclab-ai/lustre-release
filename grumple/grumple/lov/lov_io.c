@@ -2062,7 +2062,7 @@ int lov_io_layout_at(struct lov_io *lio, __u64 offset)
 	LASSERT(lov->lo_type == LLT_COMP);
 
 	
-	if (offset == LUSTRE_EOF)
+	if (offset == GRUMPLE_EOF)
 		return -1;
 
 	if (lov_is_flr(lov)) {

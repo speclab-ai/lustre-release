@@ -1,5 +1,5 @@
 AM_CFLAGS  := -fPIC -D_GNU_SOURCE \
-	      -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DLUSTRE_UTILS=1 $(UTILS_CFLAGS)
+	      -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 -DGRUMPLE_UTILS=1 $(UTILS_CFLAGS)
 AM_LDFLAGS := $(UTILS_LDFLAGS)
 if UTILS
 if GSS
@@ -103,7 +103,7 @@ libgrumpleapi_la_SOURCES = libhsm_scanner.c \
 libgrumpleapi_la_CFLAGS = -fPIC -D_GNU_SOURCE $(LIBNL3_CFLAGS) \
 			 -I $(top_builddir)/lnet/utils \
 			 -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64 \
-			 -DLUSTRE_UTILS=1
+			 -DGRUMPLE_UTILS=1
 libgrumpleapi_la_LDFLAGS = $(LIBREADLINE) -version-info 1:0:0 \
 			  -Wl,--version-script=libgrumpleapi.map
 libgrumpleapi_la_LIBADD = $(top_builddir)/libcfs/libcfs/libcfs.la \

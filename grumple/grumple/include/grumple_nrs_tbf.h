@@ -12,8 +12,8 @@
  * Network Request Scheduler (NRS) Token Bucket Filter(TBF) policy
  */
 
-#ifndef _LUSTRE_NRS_TBF_H
-#define _LUSTRE_NRS_TBF_H
+#ifndef _GRUMPLE_NRS_TBF_H
+#define _GRUMPLE_NRS_TBF_H
 
 /* \name tbf
  *
@@ -62,7 +62,7 @@ struct nrs_tbf_key {
 	struct lnet_nid		tk_nid;
 	__u32			tk_opcode;
 	struct tbf_id		tk_id;	
-	char			tk_jobid[LUSTRE_JOBID_SIZE];
+	char			tk_jobid[GRUMPLE_JOBID_SIZE];
 };
 
 struct nrs_tbf_client {

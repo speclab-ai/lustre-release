@@ -1,6 +1,6 @@
 
-#ifndef _LINUX_SHRINKER_LUSTRE_H
-#define _LINUX_SHRINKER_LUSTRE_H
+#ifndef _LINUX_SHRINKER_GRUMPLE_H
+#define _LINUX_SHRINKER_GRUMPLE_H
 
 #include <linux/atomic.h>
 #include <linux/mm.h>

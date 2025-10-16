@@ -26,45 +26,45 @@ grumple_o2iblnd_show_tun(struct cYAML *lndparams,
 {
 	if (cYAML_create_number(lndparams, "peercredits_hiw",
 				lnd_cfg->lnd_peercredits_hiw) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "map_on_demand",
 				lnd_cfg->lnd_map_on_demand) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "concurrent_sends",
 				lnd_cfg->lnd_concurrent_sends) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "fmr_pool_size",
 				lnd_cfg->lnd_fmr_pool_size) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "fmr_flush_trigger",
 				lnd_cfg->lnd_fmr_flush_trigger) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "fmr_cache",
 				lnd_cfg->lnd_fmr_cache) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "ntx",
 				lnd_cfg->lnd_ntx) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "conns_per_peer",
 				lnd_cfg->lnd_conns_per_peer) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "timeout",
 				lnd_cfg->lnd_timeout) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "tos",
 				lnd_cfg->lnd_tos) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 static int
@@ -73,9 +73,9 @@ grumple_efalnd_show_tun(struct cYAML *lndparams,
 {
 	if (cYAML_create_number(lndparams, "nqps",
 				lnd_cfg->lnd_nqps) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 static int
@@ -84,17 +84,17 @@ grumple_socklnd_show_tun(struct cYAML *lndparams,
 {
 	if (cYAML_create_number(lndparams, "conns_per_peer",
 				lnd_cfg->lnd_conns_per_peer) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "timeout",
 				lnd_cfg->lnd_timeout) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "tos",
 				lnd_cfg->lnd_tos) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 #ifdef HAVE_KFILND
@@ -105,30 +105,30 @@ grumple_kfilnd_show_tun(struct cYAML *lndparams,
 {
 	if (cYAML_create_number(lndparams, "prov_major_version",
 				lnd_cfg->lnd_prov_major_version) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "prov_minor_version",
 				lnd_cfg->lnd_prov_minor_version) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "auth_key",
 				lnd_cfg->lnd_auth_key) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_string(lndparams, "traffic_class",
 				lnd_cfg->lnd_traffic_class_str) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (!backup &&
 	    cYAML_create_number(lndparams, "traffic_class_num",
 				lnd_cfg->lnd_traffic_class) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (cYAML_create_number(lndparams, "timeout",
 				lnd_cfg->lnd_timeout) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 #endif
 
@@ -139,9 +139,9 @@ grumple_gnilnd_show_tun(struct cYAML *lndparams,
 {
 	if (cYAML_create_number(lndparams, "timeout",
 				lnd_cfg->lnd_timeout) == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 #endif
 
@@ -170,10 +170,10 @@ grumple_net_show_tunables(struct cYAML *tunables,
 					== NULL)
 		goto out;
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 
 out:
-	return LUSTRE_CFG_RC_OUT_OF_MEM;
+	return GRUMPLE_CFG_RC_OUT_OF_MEM;
 }
 
 int
@@ -182,7 +182,7 @@ grumple_ni_show_tunables(struct cYAML *lnd_tunables,
 			struct lnet_lnd_tunables *lnd,
 			bool backup)
 {
-	int rc = LUSTRE_CFG_RC_NO_MATCH;
+	int rc = GRUMPLE_CFG_RC_NO_MATCH;
 
 	if (net_type == O2IBLND)
 		rc = grumple_o2iblnd_show_tun(lnd_tunables,

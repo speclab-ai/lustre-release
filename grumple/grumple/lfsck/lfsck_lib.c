@@ -531,9 +531,9 @@ int lfsck_lock(const struct lu_env *env, struct lfsck_instance *lfsck,
 		return rc;
 
 	llh->llh_reg_mode = mode;
-	resid->name[LUSTRE_RES_ID_HSH_OFF] = ll_full_name_hash(NULL, name,
+	resid->name[GRUMPLE_RES_ID_HSH_OFF] = ll_full_name_hash(NULL, name,
 							       strlen(name));
-	LASSERT(resid->name[LUSTRE_RES_ID_HSH_OFF] != 0);
+	LASSERT(resid->name[GRUMPLE_RES_ID_HSH_OFF] != 0);
 	rc = __lfsck_ibits_lock(env, lfsck, obj, resid, &llh->llh_reg_lh,
 				bits, llh->llh_reg_mode);
 	if (rc != 0)
@@ -1614,7 +1614,7 @@ static int lfsck_fid_init(struct lfsck_instance *lfsck)
 		GOTO(out, rc = -ENOMEM);
 
 	snprintf(prefix, MAX_OBD_NAME + 7, "lfsck-%s", lfsck_lfsck2name(lfsck));
-	seq_client_init(lfsck->li_seq, NULL, LUSTRE_SEQ_METADATA, prefix,
+	seq_client_init(lfsck->li_seq, NULL, GRUMPLE_SEQ_METADATA, prefix,
 			     ss->ss_server_seq);
 	OBD_FREE(prefix, MAX_OBD_NAME + 7);
 
@@ -2419,7 +2419,7 @@ int lfsck_async_request(const struct lu_env *env, struct obd_export *exp,
 	if (req == NULL)
 		return -ENOMEM;
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OBD_VERSION, request);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OBD_VERSION, request);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 
@@ -3947,7 +3947,7 @@ void lfsck_tgt_free(struct kref *kref)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre File System Checker");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(lfsck_init);

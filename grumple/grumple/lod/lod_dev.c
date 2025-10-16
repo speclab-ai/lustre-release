@@ -1008,16 +1008,16 @@ static int lod_process_config(const struct lu_env *env,
 				GOTO(out, rc);
 
 			rc = lod_add_device(env, lod, arg1, index, gen,
-					    mdt_index, LUSTRE_OSC_NAME, 1);
+					    mdt_index, GRUMPLE_OSC_NAME, 1);
 		} else if (lcfg->lcfg_command == LCFG_ADD_MDC) {
 			mdt_index = index;
 			rc = lod_add_device(env, lod, arg1, index, gen,
-					    mdt_index, LUSTRE_MDC_NAME, 1);
+					    mdt_index, GRUMPLE_MDC_NAME, 1);
 		} else if (lcfg->lcfg_command == LCFG_LOV_ADD_INA) {
 			
 			mdt_index = 0;
 			rc = lod_add_device(env, lod, arg1, index, gen,
-					    mdt_index, LUSTRE_OSC_NAME, 0);
+					    mdt_index, GRUMPLE_OSC_NAME, 0);
 		} else {
 			rc = lod_del_device(env, lod, &lod->lod_ost_descs,
 					    arg1, index, gen);
@@ -2012,7 +2012,7 @@ static int lod_connect_to_osd(const struct lu_env *env, struct lod_device *lod,
 	}
 
 	data->ocd_connect_flags = OBD_CONNECT_VERSION;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	rc = obd_connect(env, &lod->lod_child_exp, obd, &obd->obd_uuid,
 			 data, NULL);
@@ -2372,7 +2372,7 @@ static const struct lu_device_type_operations lod_device_type_ops = {
 
 static struct lu_device_type lod_device_type = {
 	.ldt_tags     = LU_DEVICE_DT,
-	.ldt_name     = LUSTRE_LOD_NAME,
+	.ldt_name     = GRUMPLE_LOD_NAME,
 	.ldt_ops      = &lod_device_type_ops,
 	.ldt_ctx_tags = LCT_MD_THREAD,
 };
@@ -2505,7 +2505,7 @@ static int lod_obd_set_info_async(const struct lu_env *env,
 }
 
 
-#define QMT0_DEV_NAME_LEN (LUSTRE_MAXFSNAME + sizeof("-QMT0000"))
+#define QMT0_DEV_NAME_LEN (GRUMPLE_MAXFSNAME + sizeof("-QMT0000"))
 static struct obd_device *obd_find_qmt0(char *obd_name)
 {
 	char qmt_name[QMT0_DEV_NAME_LEN];
@@ -2797,14 +2797,14 @@ static int __init lod_init(void)
 		return rc;
 
 	rc = class_register_type(&lod_obd_device_ops, NULL, true,
-				 LUSTRE_LOD_NAME, &lod_device_type);
+				 GRUMPLE_LOD_NAME, &lod_device_type);
 	if (rc) {
 		lu_kmem_fini(lod_caches);
 		return rc;
 	}
 
 	
-	sym = class_add_symlinks(LUSTRE_LOV_NAME, true);
+	sym = class_add_symlinks(GRUMPLE_LOV_NAME, true);
 	if (IS_ERR(sym)) {
 		rc = PTR_ERR(sym);
 		
@@ -2817,7 +2817,7 @@ static int __init lod_init(void)
 
 static void __exit lod_exit(void)
 {
-	struct obd_type *sym = class_search_type(LUSTRE_LOV_NAME);
+	struct obd_type *sym = class_search_type(GRUMPLE_LOV_NAME);
 
 	/* if this was never fully initialized by the lov layer
 	 * then we are responsible for freeing this obd_type
@@ -2830,13 +2830,13 @@ static void __exit lod_exit(void)
 		kobject_put(&sym->typ_kobj);
 	}
 
-	class_unregister_type(LUSTRE_LOD_NAME);
+	class_unregister_type(GRUMPLE_LOD_NAME);
 	lu_kmem_fini(lod_caches);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
-MODULE_DESCRIPTION("Lustre Logical Object Device ("LUSTRE_LOD_NAME")");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_DESCRIPTION("Lustre Logical Object Device ("GRUMPLE_LOD_NAME")");
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(lod_init);

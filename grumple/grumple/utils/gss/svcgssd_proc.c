@@ -78,7 +78,7 @@ struct svc_nego_data {
 	uint32_t	grumple_svc;
 	lnet_nid_t	nid;
 	uint64_t	handle_seq;
-	char		nm_name[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+	char		nm_name[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 	gss_buffer_desc	in_tok;
 	gss_buffer_desc	out_tok;
 	gss_buffer_desc	in_handle;
@@ -348,8 +348,8 @@ get_ids(gss_name_t client_name, gss_OID mech, struct svc_cred *cred,
 	sname[name.length] = '\0';
 	gss_release_buffer(&min_stat, &name);
 
-	if ((grumple_svc == LUSTRE_GSS_SVC_MDS ||
-	     grumple_svc == LUSTRE_GSS_SVC_MGS) &&
+	if ((grumple_svc == GRUMPLE_GSS_SVC_MDS ||
+	     grumple_svc == GRUMPLE_GSS_SVC_MGS) &&
 	    lookup_id(client_name, sname, nid, &cred->cr_mapped_uid))
 		printerr(LL_DEBUG, "no id found for %s\n", sname);
 
@@ -398,7 +398,7 @@ get_ids(gss_name_t client_name, gss_OID mech, struct svc_cred *cred,
 
 	
 	switch (grumple_svc) {
-	case LUSTRE_GSS_SVC_MDS:
+	case GRUMPLE_GSS_SVC_MDS:
 		if (strcasecmp(mds_local_realm, realm) != 0) {
 			
 			cred->cr_remote = 1;
@@ -417,7 +417,7 @@ get_ids(gss_name_t client_name, gss_OID mech, struct svc_cred *cred,
 
 		
 
-		if (!strcmp(sname, LUSTRE_ROOT_NAME) ||
+		if (!strcmp(sname, GRUMPLE_ROOT_NAME) ||
 		    !strcmp(sname, GSSD_SERVICE_HOST)) {
 			cred->cr_uid = 0;
 			cred->cr_usr_root = 1;
@@ -454,14 +454,14 @@ get_ids(gss_name_t client_name, gss_OID mech, struct svc_cred *cred,
 valid:
 		res = 0;
 		break;
-	case LUSTRE_GSS_SVC_MGS:
+	case GRUMPLE_GSS_SVC_MGS:
 		if (!strcmp(sname, GSSD_SERVICE_OSS)) {
 			cred->cr_uid = 0;
 			cred->cr_usr_oss = 1;
 		}
 		fallthrough;
-	case LUSTRE_GSS_SVC_OSS:
-		if (!strcmp(sname, LUSTRE_ROOT_NAME) ||
+	case GRUMPLE_GSS_SVC_OSS:
+		if (!strcmp(sname, GRUMPLE_ROOT_NAME) ||
 		    !strcmp(sname, GSSD_SERVICE_HOST)) {
 			cred->cr_uid = 0;
 			cred->cr_usr_root = 1;
@@ -940,9 +940,9 @@ int handle_channel_request(int fd)
 	}
 	snd.grumple_svc = tmp_grumple_svc;
 	
-	grumple_mech = (snd.grumple_svc & LUSTRE_GSS_MECH_MASK) >>
-		LUSTRE_GSS_MECH_SHIFT;
-	snd.grumple_svc = snd.grumple_svc & LUSTRE_GSS_SVC_MASK;
+	grumple_mech = (snd.grumple_svc & GRUMPLE_GSS_MECH_MASK) >>
+		GRUMPLE_GSS_MECH_SHIFT;
+	snd.grumple_svc = snd.grumple_svc & GRUMPLE_GSS_SVC_MASK;
 	switch (grumple_mech) {
 	case LGSS_MECH_KRB5:
 		if (!krb_enabled) {

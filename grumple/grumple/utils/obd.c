@@ -107,7 +107,7 @@ int lcfg_ioctl(char *func, int dev_id, struct grumple_cfg *lcfg)
 
 	memset(&data, 0, sizeof(data));
 	data.ioc_dev = cur_device;
-	data.ioc_type = LUSTRE_CFG_TYPE;
+	data.ioc_type = GRUMPLE_CFG_TYPE;
 	data.ioc_plen1 = grumple_cfg_len(lcfg->lcfg_bufcount,
 					lcfg->lcfg_buflens);
 	data.ioc_pbuf1 = (void *)lcfg;
@@ -157,7 +157,7 @@ int lcfg_mgs_ioctl(const char *func, int dev_id, struct grumple_cfg *lcfg)
 	rc = data.ioc_dev = get_mgs_device();
 	if (rc < 0)
 		goto out;
-	data.ioc_type = LUSTRE_CFG_TYPE;
+	data.ioc_type = GRUMPLE_CFG_TYPE;
 	data.ioc_plen1 = grumple_cfg_len(lcfg->lcfg_bufcount,
 					lcfg->lcfg_buflens);
 	data.ioc_pbuf1 = (void *)lcfg;
@@ -886,7 +886,7 @@ int jt_obd_no_transno(int argc, char **argv)
 	return 0;
 
 old_ioctl:
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	memset(&data, 0, sizeof(data));
 	data.ioc_dev = cur_device;
 
@@ -974,7 +974,7 @@ int jt_obd_abort_recovery_mdt(int argc, char **argv)
 static int lcfg_get_nm_offset_limit(char *nodemap)
 {
 	
-	char param[LUSTRE_NODEMAP_NAME_LENGTH + 16 + 1];
+	char param[GRUMPLE_NODEMAP_NAME_LENGTH + 16 + 1];
 	char *buf = NULL;
 	size_t buflen;
 	glob_t paths;
@@ -1048,7 +1048,7 @@ int jt_get_version(int argc, char **argv)
 
 	rc = llapi_get_version_string(version, sizeof(version));
 	if (rc)
-		printf("Lustre version: %s\n", LUSTRE_VERSION_STRING);
+		printf("Lustre version: %s\n", GRUMPLE_VERSION_STRING);
 	else
 		printf("Lustre version: %s\n", version);
 
@@ -3495,7 +3495,7 @@ void pool_cmd_interpret_err(enum lcfg_command_type cmd, char *cmdname,
 	case -ENAMETOOLONG:
 		fprintf(stderr,
 			"%s: either the pool or file system name is too long (max pool name len is %d and file system name is %d)\n",
-			jt_cmdname(cmdname), LOV_MAXPOOLNAME, LUSTRE_MAXFSNAME);
+			jt_cmdname(cmdname), LOV_MAXPOOLNAME, GRUMPLE_MAXFSNAME);
 		return;
 	case -EINVAL:
 		fprintf(stderr,
@@ -3756,7 +3756,7 @@ static int pool_cmd(enum lcfg_command_type cmd, char *cmdname,
 	if (rc < 0)
 		goto out;
 
-	data.ioc_type = LUSTRE_CFG_TYPE;
+	data.ioc_type = GRUMPLE_CFG_TYPE;
 	data.ioc_plen1 = grumple_cfg_len(lcfg->lcfg_bufcount,
 					lcfg->lcfg_buflens);
 	data.ioc_pbuf1 = (void *)lcfg;
@@ -3951,7 +3951,7 @@ getdev:
 	if (rc < 0)
 		goto out;
 
-	data.ioc_type = LUSTRE_CFG_TYPE;
+	data.ioc_type = GRUMPLE_CFG_TYPE;
 	data.ioc_plen1 = grumple_cfg_len(lcfg->lcfg_bufcount,
 					lcfg->lcfg_buflens);
 	data.ioc_pbuf1 = (void *)lcfg;
@@ -4036,7 +4036,7 @@ int jt_nodemap_activate(int argc, char **argv)
  */
 int jt_nodemap_add(int argc, char **argv)
 {
-	char nm_to_send[LUSTRE_NODEMAP_NAME_LENGTH*2 + 2];
+	char nm_to_send[GRUMPLE_NODEMAP_NAME_LENGTH*2 + 2];
 	char *nodemap_name = NULL, *parent_nm = NULL;
 	bool dynamic = false;
 	int c, rc = EXIT_SUCCESS;
@@ -4477,7 +4477,7 @@ int jt_nodemap_del_range(int argc, char **argv)
  */
 int jt_nodemap_banlist_add(int argc, char **argv)
 {
-	char *nodemap_name = LUSTRE_NODEMAP_GUESS;
+	char *nodemap_name = GRUMPLE_NODEMAP_GUESS;
 	char nid_range[2 * LNET_NIDSTR_SIZE + 2];
 	char *nodemap_range = NULL;
 	int c, rc = EXIT_SUCCESS;
@@ -4535,7 +4535,7 @@ int jt_nodemap_banlist_add(int argc, char **argv)
  */
 int jt_nodemap_banlist_del(int argc, char **argv)
 {
-	char *nodemap_name = LUSTRE_NODEMAP_GUESS;
+	char *nodemap_name = GRUMPLE_NODEMAP_GUESS;
 	char nid_range[2 * LNET_NIDSTR_SIZE + 2];
 	char *nodemap_range = NULL;
 	int c, rc = EXIT_SUCCESS;
@@ -4628,7 +4628,7 @@ int jt_nodemap_set_fileset(int argc, char **argv)
 		return CMD_HELP;
 	}
 
-#if LUSTRE_VERSION_CODE > OBD_OCD_VERSION(2, 17, 52, 0)
+#if GRUMPLE_VERSION_CODE > OBD_OCD_VERSION(2, 17, 52, 0)
 	fprintf(stdout,
 		"This command is deprecated, please use nodemap_fileset_{add/del} instead.\n");
 #endif
@@ -5304,7 +5304,7 @@ int jt_nodemap_info(int argc, char **argv)
 
 	
 	if (optind < argc) {
-#if LUSTRE_VERSION_CODE > OBD_OCD_VERSION(2, 17, 53, 0)
+#if GRUMPLE_VERSION_CODE > OBD_OCD_VERSION(2, 17, 53, 0)
 		fprintf(stdout,
 			"Positional parameters are deprecated. Please use --name and --property instead.\n");
 #endif
@@ -5966,7 +5966,7 @@ struct llog_pool_name {
 };
 
 struct llog_pool_list_data {
-	char lpld_fsname[LUSTRE_MAXFSNAME + 1];
+	char lpld_fsname[GRUMPLE_MAXFSNAME + 1];
 	char lpld_poolname[LOV_MAXPOOLNAME + 1];
 	bool lpld_exists;
 	struct list_head lpld_list_head;
@@ -6208,7 +6208,7 @@ int parse_pool_cmd_args(int argc, char **argv, bool *wait,
 
 	if (fsname_len == 0)
 		return -EINVAL;
-	if (fsname_len > LUSTRE_MAXFSNAME) {
+	if (fsname_len > GRUMPLE_MAXFSNAME) {
 		fprintf(stderr, "%s: fsname is too long\n", cmdname);
 		return -ENAMETOOLONG;
 	}
@@ -6327,7 +6327,7 @@ int jt_pool_cmd(int argc, char **argv)
 	enum lcfg_command_type cmd;
 	bool wait_client;
 	char *fullpool;
-	char fsname[LUSTRE_MAXFSNAME + 1];
+	char fsname[GRUMPLE_MAXFSNAME + 1];
 	char poolname[LOV_MAXPOOLNAME + 1];
 	int i, rc;
 	int ostargc = 0;

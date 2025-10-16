@@ -296,7 +296,7 @@ static struct llapi_layout_comp *__llapi_comp_alloc(unsigned int num_stripes)
 	comp->llc_stripe_offset = LLAPI_LAYOUT_DEFAULT;
 	comp->llc_pool_name[0] = '\0';
 	comp->llc_extent.e_start = 0;
-	comp->llc_extent.e_end = LUSTRE_EOF;
+	comp->llc_extent.e_end = GRUMPLE_EOF;
 	comp->llc_flags = 0;
 	comp->llc_id = 0;
 	INIT_LIST_HEAD(&comp->llc_list);
@@ -332,7 +332,7 @@ static struct llapi_layout_comp *__llapi_comp_hsm_alloc(uint32_t length)
 	comp->llc_archive_id = 0;
 	comp->llc_archive_ver = 0;
 	comp->llc_extent.e_start = 0;
-	comp->llc_extent.e_end = LUSTRE_EOF;
+	comp->llc_extent.e_end = GRUMPLE_EOF;
 	comp->llc_flags = 0;
 	comp->llc_id = 0;
 	INIT_LIST_HEAD(&comp->llc_list);
@@ -552,7 +552,7 @@ struct llapi_layout *llapi_layout_get_by_xattr(void *lov_xattr,
 
 	llapi_layout_swab_lov_user_md(lum, lov_xattr_size);
 
-#if LUSTRE_VERSION_CODE > OBD_OCD_VERSION(2, 16, 53, 0)
+#if GRUMPLE_VERSION_CODE > OBD_OCD_VERSION(2, 16, 53, 0)
 #define LLAPI_LXF_CHECK_OLD 0x0001
 	if (flags & LLAPI_LXF_CHECK_OLD)
 		flags = (flags & ~LLAPI_LXF_CHECK_OLD) | LLAPI_LAYOUT_GET_CHECK;
@@ -646,7 +646,7 @@ struct llapi_layout *llapi_layout_get_by_xattr(void *lov_xattr,
 				comp->llc_timestamp = ent->lcme_timestamp;
 		} else {
 			comp->llc_extent.e_start = 0;
-			comp->llc_extent.e_end = LUSTRE_EOF;
+			comp->llc_extent.e_end = GRUMPLE_EOF;
 			comp->llc_id = 0;
 			comp->llc_flags = 0;
 		}
@@ -777,7 +777,7 @@ int llapi_layout_set_by_xattr(int fd, struct lov_user_md *lum)
 		return -1;
 	}
 
-	rc = fsetxattr(fd, XATTR_LUSTRE_LOV, lum, lum_size, 0);
+	rc = fsetxattr(fd, XATTR_GRUMPLE_LOV, lum, lum_size, 0);
 	return rc;
 }
 
@@ -1114,7 +1114,7 @@ struct llapi_layout *llapi_layout_get_by_fd(int fd,
 	if (lum == NULL)
 		return NULL;
 
-	bytes_read = fgetxattr(fd, XATTR_LUSTRE_LOV, lum, lum_len);
+	bytes_read = fgetxattr(fd, XATTR_GRUMPLE_LOV, lum, lum_len);
 	if (bytes_read < 0) {
 		if (errno == EOPNOTSUPP)
 			errno = ENOTTY;
@@ -2096,7 +2096,7 @@ char *llapi_lov_pattern_string(enum lov_pattern pattern, char *buf,
  */
 static bool llapi_layout_mirror_count_is_valid(uint16_t count)
 {
-	return count <= LUSTRE_MIRROR_COUNT_MAX;
+	return count <= GRUMPLE_MIRROR_COUNT_MAX;
 }
 
 /**
@@ -2370,11 +2370,11 @@ int llapi_layout_comp_add(struct llapi_layout *layout)
 	layout->llot_cur_comp = new;
 
 	/* We need to set a temporary non-zero value for "end" when we call
-	 * comp_extent_set, so we use LUSTRE_EOF-1, which is > all allowed
+	 * comp_extent_set, so we use GRUMPLE_EOF-1, which is > all allowed
 	 * for the end of the previous component.  (If we're adding this
 	 * component, the end of the previous component cannot be EOF.) */
 	if (llapi_layout_comp_extent_set(layout, last->llc_extent.e_end,
-					LUSTRE_EOF - 1)) {
+					GRUMPLE_EOF - 1)) {
 		(void)llapi_layout_comp_del(layout);
 		layout->llot_is_composite = composite;
 		return -1;
@@ -2636,7 +2636,7 @@ int llapi_layout_file_comp_add(const char *path,
 	}
 	lum_size = ((struct lov_comp_md_v1 *)lum)->lcm_size;
 
-	rc = fsetxattr(fd, XATTR_LUSTRE_LOV".add", lum, lum_size, 0);
+	rc = fsetxattr(fd, XATTR_GRUMPLE_LOV".add", lum, lum_size, 0);
 	if (rc < 0) {
 		tmp_errno = errno;
 		rc = -1;
@@ -2684,7 +2684,7 @@ int llapi_layout_file_comp_del(const char *path, uint32_t id, uint32_t flags)
 	if (layout == NULL)
 		return -1;
 
-	llapi_layout_comp_extent_set(layout, 0, LUSTRE_EOF);
+	llapi_layout_comp_extent_set(layout, 0, GRUMPLE_EOF);
 	comp = __llapi_layout_cur_comp(layout);
 	if (comp == NULL) {
 		tmp_errno = errno;
@@ -2757,7 +2757,7 @@ int llapi_layout_file_comp_del(const char *path, uint32_t id, uint32_t flags)
 		goto out;
 	}
 
-	rc = fsetxattr(fd, XATTR_LUSTRE_LOV".del", lum, lum_size, 0);
+	rc = fsetxattr(fd, XATTR_GRUMPLE_LOV".del", lum, lum_size, 0);
 	if (rc < 0) {
 		tmp_errno = errno;
 		rc = -1;
@@ -2970,7 +2970,7 @@ int llapi_layout_file_comp_set(const char *path, uint32_t *ids, uint32_t *flags,
 		goto out;
 	}
 
-	rc = fsetxattr(fd, XATTR_LUSTRE_LOV".set.flags", lum, lum_size, 0);
+	rc = fsetxattr(fd, XATTR_GRUMPLE_LOV".set.flags", lum, lum_size, 0);
 	if (rc < 0) {
 		tmp_errno = errno;
 		goto out;
@@ -3350,7 +3350,7 @@ int llapi_mirror_resync_many_params(int fd, struct llapi_layout *layout,
 	void *buf;
 	uint64_t pos = start;
 	uint64_t data_off = pos, data_end = pos;
-	uint64_t mirror_end = LUSTRE_EOF;
+	uint64_t mirror_end = GRUMPLE_EOF;
 	uint32_t src = 0;
 	int i;
 	int rc;
@@ -3606,9 +3606,9 @@ out_free:
 		}
 
 		/* Ignore truncate error on encrypted file without the
-		 * key if tried on LUSTRE_ENCRYPTION_UNIT_SIZE boundary.
+		 * key if tried on GRUMPLE_ENCRYPTION_UNIT_SIZE boundary.
 		 */
-		if (rc < 0 && (rc != -ENOKEY || pos & ~LUSTRE_ENCRYPTION_MASK))
+		if (rc < 0 && (rc != -ENOKEY || pos & ~GRUMPLE_ENCRYPTION_MASK))
 			comp->lrc_synced = false;
 	}
 
@@ -3751,7 +3751,7 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 		first_comp = true;
 		/* Most checks apply only within one mirror, this is an
 		 * exception. */
-		if (prev && prev->llc_extent.e_end != LUSTRE_EOF) {
+		if (prev && prev->llc_extent.e_end != GRUMPLE_EOF) {
 			args->lsa_rc = LSE_INCOMPLETE_MIRROR;
 			goto out_err;
 		}
@@ -3862,7 +3862,7 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 		
 		if ((comp->llc_flags & LCME_FL_EXTENSION) &&
 		    (prev->llc_stripe_size != LLAPI_LAYOUT_DEFAULT)) {
-			if (comp->llc_extent.e_end != LUSTRE_EOF &&
+			if (comp->llc_extent.e_end != GRUMPLE_EOF &&
 			    comp->llc_extent.e_end % prev->llc_stripe_size) {
 				args->lsa_rc = LSE_ALIGN_END;
 				goto out_err;
@@ -3874,7 +3874,7 @@ static int llapi_layout_sanity_cb(struct llapi_layout *layout,
 			}
 		} else if (!(comp->llc_flags & LCME_FL_EXTENSION) &&
 			   (comp->llc_stripe_size != LLAPI_LAYOUT_DEFAULT)) {
-			if (comp->llc_extent.e_end != LUSTRE_EOF &&
+			if (comp->llc_extent.e_end != GRUMPLE_EOF &&
 			    comp->llc_extent.e_end !=
 			    comp->llc_extent.e_start &&
 			    comp->llc_extent.e_end % comp->llc_stripe_size) {

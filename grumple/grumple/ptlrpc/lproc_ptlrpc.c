@@ -25,7 +25,7 @@
 static struct ll_rpc_opcode {
 	__u32       opcode;
 	const char *opname;
-} ll_rpc_opcode_table[LUSTRE_MAX_OPCODES] = {
+} ll_rpc_opcode_table[GRUMPLE_MAX_OPCODES] = {
 	{ OST_REPLY,        "ost_reply" },
 	{ OST_GETATTR,      "ost_getattr" },
 	{ OST_SETATTR,      "ost_setattr" },
@@ -151,7 +151,7 @@ const char *ll_opcode2str(__u32 opcode)
 	__u32 offset = opcode_offset(opcode);
 
 	
-	if (offset == -1 || offset >= LUSTRE_MAX_OPCODES) {
+	if (offset == -1 || offset >= GRUMPLE_MAX_OPCODES) {
 		snprintf(unknown_opcode, sizeof(unknown_opcode),
 			 "unknown-opcode-%u", opcode);
 		return unknown_opcode;
@@ -181,7 +181,7 @@ int ll_str2opcode(const char *ops)
 {
 	int i;
 
-	for (i = 0; i < LUSTRE_MAX_OPCODES; i++) {
+	for (i = 0; i < GRUMPLE_MAX_OPCODES; i++) {
 		if (ll_rpc_opcode_table[i].opname != NULL &&
 		    strcmp(ll_rpc_opcode_table[i].opname, ops) == 0)
 			return ll_rpc_opcode_table[i].opcode;
@@ -213,7 +213,7 @@ ptlrpc_ldebugfs_register(struct dentry *root, char *dir, char *name,
 	else
 		svc_debugfs_entry = root;
 
-	svc_stats = ldebugfs_stats_alloc(EXTRA_MAX_OPCODES + LUSTRE_MAX_OPCODES,
+	svc_stats = ldebugfs_stats_alloc(EXTRA_MAX_OPCODES + GRUMPLE_MAX_OPCODES,
 					 name, svc_debugfs_entry, 0);
 	if (!svc_stats)
 		return;
@@ -240,7 +240,7 @@ ptlrpc_ldebugfs_register(struct dentry *root, char *dir, char *name,
 		lprocfs_counter_init(svc_stats, PTLRPC_LAST_CNTR + i,
 				     config | extra_type, ll_eopcode2str(i));
 	}
-	for (i = 0; i < LUSTRE_MAX_OPCODES; i++) {
+	for (i = 0; i < GRUMPLE_MAX_OPCODES; i++) {
 		__u32 opcode = ll_rpc_opcode_table[i].opcode;
 
 		lprocfs_counter_init(svc_stats, EXTRA_MAX_OPCODES + i,
@@ -268,7 +268,7 @@ static ssize_t req_buffer_history_len_show(struct kobject *kobj,
 
 	return scnprintf(buf, PAGE_SIZE, "%d\n", total);
 }
-LUSTRE_RO_ATTR(req_buffer_history_len);
+GRUMPLE_RO_ATTR(req_buffer_history_len);
 
 static ssize_t req_buffer_history_max_show(struct kobject *kobj,
 					   struct attribute *attr,
@@ -330,7 +330,7 @@ static ssize_t req_buffer_history_max_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(req_buffer_history_max);
+GRUMPLE_RW_ATTR(req_buffer_history_max);
 
 static ssize_t req_buffers_max_show(struct kobject *kobj,
 				    struct attribute *attr,
@@ -367,7 +367,7 @@ static ssize_t req_buffers_max_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(req_buffers_max);
+GRUMPLE_RW_ATTR(req_buffers_max);
 
 static ssize_t threads_min_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -405,7 +405,7 @@ static ssize_t threads_min_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(threads_min);
+GRUMPLE_RW_ATTR(threads_min);
 
 static ssize_t threads_started_show(struct kobject *kobj,
 				    struct attribute *attr,
@@ -422,7 +422,7 @@ static ssize_t threads_started_show(struct kobject *kobj,
 
 	return sprintf(buf, "%d\n", total);
 }
-LUSTRE_RO_ATTR(threads_started);
+GRUMPLE_RO_ATTR(threads_started);
 
 static ssize_t threads_max_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -460,7 +460,7 @@ static ssize_t threads_max_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(threads_max);
+GRUMPLE_RW_ATTR(threads_max);
 
 /**
  * nrs_state2str() - Translates @state values to human-readable strings.
@@ -1158,7 +1158,7 @@ static ssize_t high_priority_ratio_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(high_priority_ratio);
+GRUMPLE_RW_ATTR(high_priority_ratio);
 
 static struct attribute *ptlrpc_svc_attrs[] = {
 	&grumple_attr_high_priority_ratio.attr,
@@ -1258,7 +1258,7 @@ void ptlrpc_lprocfs_rpc_sent(struct ptlrpc_request *req, long amount)
 	if (svc_stats == NULL || opc <= 0)
 		return;
 
-	LASSERT(opc < LUSTRE_MAX_OPCODES);
+	LASSERT(opc < GRUMPLE_MAX_OPCODES);
 	if (!(op == LDLM_ENQUEUE || op == MDS_REINT))
 		lprocfs_counter_add(svc_stats, opc + EXTRA_MAX_OPCODES, amount);
 }
@@ -1333,7 +1333,7 @@ ssize_t ping_show(struct kobject *kobj, struct attribute *attr,
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 
-	req->rq_send_state = LUSTRE_IMP_FULL;
+	req->rq_send_state = GRUMPLE_IMP_FULL;
 
 	rc = ptlrpc_queue_wait(req);
 	ptlrpc_req_put(req);
@@ -1493,7 +1493,7 @@ enable_pmqos_store(struct kobject *kobj, struct attribute *attr,
 	return count;
 }
 
-LUSTRE_RW_ATTR(enable_pmqos);
+GRUMPLE_RW_ATTR(enable_pmqos);
 
 static ssize_t
 pmqos_latency_max_usec_show(struct kobject *kobj, struct attribute *attr,
@@ -1519,7 +1519,7 @@ pmqos_latency_max_usec_store(struct kobject *kobj, struct attribute *attr,
 	return count;
 }
 
-LUSTRE_RW_ATTR(pmqos_latency_max_usec);
+GRUMPLE_RW_ATTR(pmqos_latency_max_usec);
 
 static ssize_t
 pmqos_default_duration_usec_show(struct kobject *kobj,
@@ -1546,7 +1546,7 @@ pmqos_default_duration_usec_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(pmqos_default_duration_usec);
+GRUMPLE_RW_ATTR(pmqos_default_duration_usec);
 
 static ssize_t
 pmqos_use_stats_for_duration_show(struct kobject *kobj,
@@ -1574,7 +1574,7 @@ pmqos_use_stats_for_duration_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(pmqos_use_stats_for_duration);
+GRUMPLE_RW_ATTR(pmqos_use_stats_for_duration);
 
 static struct attribute *ptlrpc_attrs[] = {
 	&grumple_attr_enable_pmqos.attr,

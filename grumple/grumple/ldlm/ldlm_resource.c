@@ -105,7 +105,7 @@ static ssize_t resource_count_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%lld\n", res);
 }
-LUSTRE_RO_ATTR(resource_count);
+GRUMPLE_RO_ATTR(resource_count);
 
 static ssize_t lock_count_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -118,7 +118,7 @@ static ssize_t lock_count_show(struct kobject *kobj, struct attribute *attr,
 					LPROCFS_FIELDS_FLAGS_SUM);
 	return sprintf(buf, "%lld\n", locks);
 }
-LUSTRE_RO_ATTR(lock_count);
+GRUMPLE_RO_ATTR(lock_count);
 
 static ssize_t lock_unused_count_show(struct kobject *kobj,
 				      struct attribute *attr,
@@ -129,7 +129,7 @@ static ssize_t lock_unused_count_show(struct kobject *kobj,
 
 	return sprintf(buf, "%d\n", ns->ns_nr_unused);
 }
-LUSTRE_RO_ATTR(lock_unused_count);
+GRUMPLE_RO_ATTR(lock_unused_count);
 
 static ssize_t lru_size_show(struct kobject *kobj, struct attribute *attr,
 			     char *buf)
@@ -220,7 +220,7 @@ static ssize_t lru_size_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(lru_size);
+GRUMPLE_RW_ATTR(lru_size);
 
 static ssize_t lru_cancel_batch_show(struct kobject *kobj,
 				 struct attribute *attr, char *buf)
@@ -246,7 +246,7 @@ static ssize_t lru_cancel_batch_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(lru_cancel_batch);
+GRUMPLE_RW_ATTR(lru_cancel_batch);
 
 static ssize_t ns_recalc_pct_show(struct kobject *kobj,
 				  struct attribute *attr, char *buf)
@@ -275,7 +275,7 @@ static ssize_t ns_recalc_pct_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(ns_recalc_pct);
+GRUMPLE_RW_ATTR(ns_recalc_pct);
 
 static ssize_t lru_max_age_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -313,7 +313,7 @@ static ssize_t lru_max_age_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(lru_max_age);
+GRUMPLE_RW_ATTR(lru_max_age);
 
 static ssize_t early_lock_cancel_show(struct kobject *kobj,
 				      struct attribute *attr,
@@ -345,7 +345,7 @@ static ssize_t early_lock_cancel_store(struct kobject *kobj,
 		ns->ns_connect_flags |= OBD_CONNECT_CANCELSET;
 	return count;
 }
-LUSTRE_RW_ATTR(early_lock_cancel);
+GRUMPLE_RW_ATTR(early_lock_cancel);
 
 static ssize_t dirty_age_limit_show(struct kobject *kobj,
 				    struct attribute *attr, char *buf)
@@ -372,7 +372,7 @@ static ssize_t dirty_age_limit_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(dirty_age_limit);
+GRUMPLE_RW_ATTR(dirty_age_limit);
 
 static ssize_t dump_stack_on_error_show(struct kobject *kobj,
 				     struct attribute *attr, char *buf)
@@ -404,7 +404,7 @@ static ssize_t dump_stack_on_error_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(dump_stack_on_error);
+GRUMPLE_RW_ATTR(dump_stack_on_error);
 
 #ifdef HAVE_SERVER_SUPPORT
 static ssize_t ctime_age_limit_show(struct kobject *kobj,
@@ -431,7 +431,7 @@ static ssize_t ctime_age_limit_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(ctime_age_limit);
+GRUMPLE_RW_ATTR(ctime_age_limit);
 
 static ssize_t lock_timeouts_show(struct kobject *kobj, struct attribute *attr,
 				  char *buf)
@@ -441,7 +441,7 @@ static ssize_t lock_timeouts_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%d\n", ns->ns_timeouts);
 }
-LUSTRE_RO_ATTR(lock_timeouts);
+GRUMPLE_RO_ATTR(lock_timeouts);
 
 static ssize_t max_nolock_bytes_show(struct kobject *kobj,
 				     struct attribute *attr, char *buf)
@@ -469,7 +469,7 @@ static ssize_t max_nolock_bytes_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_nolock_bytes);
+GRUMPLE_RW_ATTR(max_nolock_bytes);
 
 static ssize_t contention_seconds_show(struct kobject *kobj,
 				       struct attribute *attr, char *buf)
@@ -495,7 +495,7 @@ static ssize_t contention_seconds_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(contention_seconds);
+GRUMPLE_RW_ATTR(contention_seconds);
 
 static ssize_t contended_locks_show(struct kobject *kobj,
 				    struct attribute *attr, char *buf)
@@ -523,7 +523,7 @@ static ssize_t contended_locks_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(contended_locks);
+GRUMPLE_RW_ATTR(contended_locks);
 
 static ssize_t max_parallel_ast_show(struct kobject *kobj,
 				     struct attribute *attr, char *buf)
@@ -551,7 +551,7 @@ static ssize_t max_parallel_ast_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_parallel_ast);
+GRUMPLE_RW_ATTR(max_parallel_ast);
 
 #endif 
 

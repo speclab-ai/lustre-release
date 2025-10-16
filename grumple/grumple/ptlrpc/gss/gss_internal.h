@@ -96,35 +96,35 @@ enum ptlrpc_gss_proc {
 };
 
 enum ptlrpc_gss_tgt {
-        LUSTRE_GSS_TGT_MGS              = 0,
-        LUSTRE_GSS_TGT_MDS              = 1,
-        LUSTRE_GSS_TGT_OSS              = 2,
+        GRUMPLE_GSS_TGT_MGS              = 0,
+        GRUMPLE_GSS_TGT_MDS              = 1,
+        GRUMPLE_GSS_TGT_OSS              = 2,
 };
 
 enum ptlrpc_gss_header_flags {
-	LUSTRE_GSS_PACK_BULK            = 1,
-	LUSTRE_GSS_PACK_USER            = 2,
-	LUSTRE_GSS_PACK_KCSUM           = 4,
+	GRUMPLE_GSS_PACK_BULK            = 1,
+	GRUMPLE_GSS_PACK_USER            = 2,
+	GRUMPLE_GSS_PACK_KCSUM           = 4,
 };
 
 static inline
 __u32 import_to_gss_svc(struct obd_import *imp)
 {
-	int cl_sp_to = LUSTRE_SP_ANY;
+	int cl_sp_to = GRUMPLE_SP_ANY;
 
 	if (imp->imp_obd)
 		cl_sp_to = imp->imp_obd->u.cli.cl_sp_to;
 
 	switch (cl_sp_to) {
-	case LUSTRE_SP_MDT:
-		return LUSTRE_GSS_TGT_MDS;
-	case LUSTRE_SP_OST:
-		return LUSTRE_GSS_TGT_OSS;
-	case LUSTRE_SP_MGC:
-	case LUSTRE_SP_MGS:
-		return LUSTRE_GSS_TGT_MGS;
-	case LUSTRE_SP_CLI:
-	case LUSTRE_SP_ANY:
+	case GRUMPLE_SP_MDT:
+		return GRUMPLE_GSS_TGT_MDS;
+	case GRUMPLE_SP_OST:
+		return GRUMPLE_GSS_TGT_OSS;
+	case GRUMPLE_SP_MGC:
+	case GRUMPLE_SP_MGS:
+		return GRUMPLE_GSS_TGT_MGS;
+	case GRUMPLE_SP_CLI:
+	case GRUMPLE_SP_ANY:
 	default:
 		return 0;
 	}

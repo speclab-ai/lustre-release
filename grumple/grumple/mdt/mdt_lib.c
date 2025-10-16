@@ -1315,11 +1315,11 @@ static int mdt_setattr_unpack_rec(struct mdt_thread_info *info)
 	la->la_valid = mdt_attr_valid_xlate(rec->sa_valid, rr, ma);
 	la->la_mode  = rec->sa_mode;
 
-	if (rec->sa_attr_flags & ~LUSTRE_FL_USER_VISIBLE) {
+	if (rec->sa_attr_flags & ~GRUMPLE_FL_USER_VISIBLE) {
 		CDEBUG(D_INODE, "Unsupported flags: %x\n", rec->sa_attr_flags);
 		RETURN(-EOPNOTSUPP);
 	}
-	la->la_flags = rec->sa_attr_flags & LUSTRE_FL_USER_MODIFIABLE;
+	la->la_flags = rec->sa_attr_flags & GRUMPLE_FL_USER_MODIFIABLE;
 
 	nodemap = nodemap_get_from_exp(info->mti_exp);
 	if (IS_ERR(nodemap))
@@ -2253,7 +2253,7 @@ int mdt_pack_encctx_in_reply(struct mdt_thread_info *info,
 		if (dt && dt->do_ops && dt->do_ops->do_attr_get)
 			dt_attr_get(info->mti_env, mdt_obj2dt(child), &la);
 
-		if (la.la_valid & LA_FLAGS && la.la_flags & LUSTRE_ENCRYPT_FL) {
+		if (la.la_valid & LA_FLAGS && la.la_flags & GRUMPLE_ENCRYPT_FL) {
 			buffer = &info->mti_buf;
 
 			

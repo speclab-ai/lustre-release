@@ -262,7 +262,7 @@ out:
 				rc = -1;
 			}
 
-			(*idspp)[i].pid = LNET_PID_LUSTRE;
+			(*idspp)[i].pid = LNET_PID_GRUMPLE;
 			i++;
 		}
 

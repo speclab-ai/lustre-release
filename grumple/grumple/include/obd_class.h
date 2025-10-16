@@ -328,7 +328,7 @@ void class_put_profile(struct grumple_profile *lprof);
 void class_del_profiles(void);
 
 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 
 void __class_export_add_lock_ref(struct obd_export *, struct ldlm_lock *);
 void __class_export_del_lock_ref(struct obd_export *, struct ldlm_lock *);
@@ -2020,8 +2020,8 @@ extern unsigned int obd_dump_on_eviction;
 static inline bool do_dump_on_eviction(struct obd_device *exp_obd)
 {
 	if (obd_lbug_on_eviction &&
-	    strncmp(exp_obd->obd_type->typ_name, LUSTRE_MGC_NAME,
-		    strlen(LUSTRE_MGC_NAME))) {
+	    strncmp(exp_obd->obd_type->typ_name, GRUMPLE_MGC_NAME,
+		    strlen(GRUMPLE_MGC_NAME))) {
 		CERROR("LBUG upon eviction\n");
 		LBUG();
 	}

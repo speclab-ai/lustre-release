@@ -739,7 +739,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 
 	
 	{
-		.olm_name		= LUSTRE_NODEMAP_NAME,
+		.olm_name		= GRUMPLE_NODEMAP_NAME,
 	},
 
 	
@@ -765,8 +765,8 @@ static const struct osd_lf_map osd_dl_maps[] = {
 	{
 		.olm_name		= "fid",
 		.olm_fid		= {
-			.f_seq	= FID_SEQ_DOT_LUSTRE,
-			.f_oid	= FID_OID_DOT_LUSTRE_OBF,
+			.f_seq	= FID_SEQ_DOT_GRUMPLE,
+			.f_oid	= FID_OID_DOT_GRUMPLE_OBF,
 		},
 	},
 
@@ -774,8 +774,8 @@ static const struct osd_lf_map osd_dl_maps[] = {
 	{
 		.olm_name		= "lost+found",
 		.olm_fid		= {
-			.f_seq	= FID_SEQ_DOT_LUSTRE,
-			.f_oid	= FID_OID_DOT_LUSTRE_LPF,
+			.f_seq	= FID_SEQ_DOT_GRUMPLE,
+			.f_oid	= FID_OID_DOT_GRUMPLE_LPF,
 		},
 	},
 
@@ -1199,7 +1199,7 @@ static int osd_ios_ROOT_sd(const struct lu_env *env, struct osd_device *dev,
 	}
 
 	oid = zde->lzd_reg.zde_dnode;
-	rc = osd_ios_scan_one(env, dev, &LU_DOT_LUSTRE_FID, parent, oid,
+	rc = osd_ios_scan_one(env, dev, &LU_DOT_GRUMPLE_FID, parent, oid,
 			      dot_grumple_name, 0);
 	if (rc)
 		RETURN(rc);

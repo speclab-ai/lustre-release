@@ -150,11 +150,11 @@ static inline int mdc_prep_elc_req(struct obd_export *exp,
 				   struct ptlrpc_request *req, int opc,
 				   struct list_head *cancels, int count)
 {
-	return ldlm_prep_elc_req(exp, req, LUSTRE_MDS_VERSION, opc, 0, cancels,
+	return ldlm_prep_elc_req(exp, req, GRUMPLE_MDS_VERSION, opc, 0, cancels,
 				 count);
 }
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 int mdc_unpack_acl(struct req_capsule *pill, struct grumple_md *md);
 #else
 static inline

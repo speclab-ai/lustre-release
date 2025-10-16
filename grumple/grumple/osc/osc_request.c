@@ -96,7 +96,7 @@ static int osc_getattr(const struct lu_env *env, struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_GETATTR);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_GETATTR);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -140,7 +140,7 @@ static int osc_setattr(const struct lu_env *env, struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_SETATTR);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_SETATTR);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -202,7 +202,7 @@ int osc_setattr_async(struct obd_export *exp, struct obdo *oa,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_SETATTR);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_SETATTR);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -275,7 +275,7 @@ int osc_ladvise_base(struct obd_export *exp, struct obdo *oa,
 
 	req_capsule_set_size(&req->rq_pill, &RMF_OST_LADVISE, RCL_CLIENT,
 			     num_advise * sizeof(*ladvise));
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_LADVISE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_LADVISE);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -326,7 +326,7 @@ static int osc_create(const struct lu_env *env, struct obd_export *exp,
 	if (req == NULL)
 		GOTO(out, rc = -ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_CREATE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_CREATE);
 	if (rc) {
 		ptlrpc_request_free(req);
 		GOTO(out, rc);
@@ -372,7 +372,7 @@ int osc_punch_send(struct obd_export *exp, struct obdo *oa,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_PUNCH);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_PUNCH);
 	if (rc < 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -429,7 +429,7 @@ int osc_fallocate_base(struct obd_export *exp, struct obdo *oa,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_FALLOCATE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_FALLOCATE);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -509,7 +509,7 @@ int osc_sync_base(struct osc_object *obj, struct obdo *oa,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_SYNC);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_SYNC);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -618,7 +618,7 @@ static int osc_destroy(const struct lu_env *env, struct obd_export *exp,
 		RETURN(-ENOMEM);
 	}
 
-	rc = ldlm_prep_elc_req(exp, req, LUSTRE_OST_VERSION, OST_DESTROY,
+	rc = ldlm_prep_elc_req(exp, req, GRUMPLE_OST_VERSION, OST_DESTROY,
 			       0, &cancels, count);
 	if (rc) {
 		ptlrpc_request_free(req);
@@ -888,7 +888,7 @@ static int osc_should_shrink_grant(struct client_obd *client)
 		 */
 		int brw_size = client->cl_max_pages_per_rpc << PAGE_SHIFT;
 
-		if (client->cl_import->imp_state == LUSTRE_IMP_FULL &&
+		if (client->cl_import->imp_state == GRUMPLE_IMP_FULL &&
 		    client->cl_avail_grant > brw_size)
 			return 1;
 		osc_update_next_shrink(client);
@@ -998,7 +998,7 @@ void osc_init_grant(struct client_obd *cli, struct obd_connect_data *ocd)
 	 */
 	spin_lock(&cli->cl_loi_list_lock);
 	cli->cl_avail_grant = ocd->ocd_grant;
-	if (cli->cl_import->imp_state != LUSTRE_IMP_EVICTED) {
+	if (cli->cl_import->imp_state != GRUMPLE_IMP_EVICTED) {
 		unsigned long consumed = cli->cl_reserved_grant;
 
 		if (OCD_HAS_FLAG(ocd, GRANT_PARAM))
@@ -1457,7 +1457,7 @@ static inline void osc_finalize_bounce_page(struct page **pagep)
 static inline void osc_release_bounce_pages(struct brw_page **pga,
 					    u32 page_count)
 {
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	struct page **pa = NULL;
 	int i, j = 0;
 
@@ -1600,7 +1600,7 @@ osc_brw_prep_request(int cmd, struct client_obd *cli, struct obdo *oa,
 			pgoff_t index_orig = 0;
 
 retry_encrypt:
-			nunits = round_up(nunits, LUSTRE_ENCRYPTION_UNIT_SIZE);
+			nunits = round_up(nunits, GRUMPLE_ENCRYPTION_UNIT_SIZE);
 			/* The page can already be locked when we arrive here.
 			 * This is possible when cl_page_assume/vvp_page_assume
 			 * is stuck on wait_on_page_writeback with page lock
@@ -1700,7 +1700,7 @@ retry_encrypt:
 			struct brw_page *pg = pga[i];
 			u32 nunits = (pg->bp_off & ~PAGE_MASK) + pg->bp_count;
 
-			nunits = round_up(nunits, LUSTRE_ENCRYPTION_UNIT_SIZE);
+			nunits = round_up(nunits, GRUMPLE_ENCRYPTION_UNIT_SIZE);
 			/* count/off are forced to cover the whole encryption
 			 * unit size so that all encrypted data is stored on the
 			 * OST, so adjust bp_{count,off}_diff for the size of
@@ -1755,7 +1755,7 @@ retry_encrypt:
 		req_capsule_set_size(pill, &RMF_SHORT_IO, RCL_SERVER,
 				     short_io_size);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, opc);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, opc);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1817,7 +1817,7 @@ no_bulk:
 			body->oa.o_valid |= OBD_MD_FLFLAGS;
 			body->oa.o_flags = 0;
 		}
-		body->oa.o_flags |= LUSTRE_ENCRYPT_FL;
+		body->oa.o_flags |= GRUMPLE_ENCRYPT_FL;
 	}
 
 	if (short_io_size != 0) {
@@ -2379,7 +2379,7 @@ static int osc_brw_fini_request(struct ptlrpc_request *req, int rc)
 				
 				if (memchr_inv(page_address(brwpg->bp_page) +
 					       offs, 0,
-					       LUSTRE_ENCRYPTION_UNIT_SIZE) ==
+					       GRUMPLE_ENCRYPTION_UNIT_SIZE) ==
 						NULL) {
 					/* if page is empty forward info to
 					 * upper layers (ll_io_zero_page) by
@@ -2406,7 +2406,7 @@ static int osc_brw_fini_request(struct ptlrpc_request *req, int rc)
 						(PAGE_SHIFT - blockbits)) +
 						(offs >> blockbits);
 					for (i = offs; i < offs +
-					     LUSTRE_ENCRYPTION_UNIT_SIZE;
+					     GRUMPLE_ENCRYPTION_UNIT_SIZE;
 					     i += blocksize, lblk_num++) {
 						rc =
 						  llcrypt_decrypt_block_inplace(
@@ -2419,13 +2419,13 @@ static int osc_brw_fini_request(struct ptlrpc_request *req, int rc)
 				} else {
 					rc = llcrypt_decrypt_pagecache_blocks(
 						brwpg->bp_page,
-						LUSTRE_ENCRYPTION_UNIT_SIZE,
+						GRUMPLE_ENCRYPTION_UNIT_SIZE,
 						offs);
 				}
 				if (rc)
 					GOTO(out, rc);
 
-				offs += LUSTRE_ENCRYPTION_UNIT_SIZE;
+				offs += GRUMPLE_ENCRYPTION_UNIT_SIZE;
 			}
 		}
 	}
@@ -3424,7 +3424,7 @@ static int osc_statfs_async(struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_STATFS);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_STATFS);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -3479,7 +3479,7 @@ static int osc_statfs(const struct lu_env *env, struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_STATFS);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_STATFS);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -3629,7 +3629,7 @@ static int osc_get_info(const struct lu_env *env, struct obd_export *exp,
 	req_capsule_set_size(&req->rq_pill, &RMF_GETINFO_VALLEN,
 			     RCL_CLIENT, sizeof(*vallen));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_GET_INFO);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_GET_INFO);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -3747,7 +3747,7 @@ int osc_set_info_async(const struct lu_env *env, struct obd_export *exp,
 	if (!KEY_IS(KEY_GRANT_SHRINK))
 		req_capsule_set_size(&req->rq_pill, &RMF_SETINFO_VAL,
 				     RCL_CLIENT, vallen);
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_SET_INFO);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_SET_INFO);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -4261,11 +4261,11 @@ static int __init osc_init(void)
 		GOTO(out_req_pool, rc);
 
 	rc = class_register_type(&osc_obd_ops, NULL, false,
-				 LUSTRE_OSC_NAME, &osc_device_type);
+				 GRUMPLE_OSC_NAME, &osc_device_type);
 	if (rc < 0)
 		GOTO(out_stop_grant, rc);
 
-	type = class_search_type(LUSTRE_OSC_NAME);
+	type = class_search_type(GRUMPLE_OSC_NAME);
 	ldebugfs_add_symlink("osc_cache", type->typ_name, "../../shrinker/%s",
 			     shrinker_debugfs_path(osc_cache_shrinker));
 	kobject_put(&type->typ_kobj);
@@ -4285,7 +4285,7 @@ out_kmem:
 
 static void __exit osc_exit(void)
 {
-	class_unregister_type(LUSTRE_OSC_NAME);
+	class_unregister_type(GRUMPLE_OSC_NAME);
 	ptlrpc_free_rq_pool(osc_rq_pool);
 	osc_stop_grant_work();
 	ll_shrinker_free(osc_cache_shrinker);
@@ -4294,7 +4294,7 @@ static void __exit osc_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Object Storage Client (OSC)");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(osc_init);

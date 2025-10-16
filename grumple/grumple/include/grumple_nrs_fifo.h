@@ -12,8 +12,8 @@
  * Network Request Scheduler (NRS) First-in First-out (FIFO) policy
  */
 
-#ifndef _LUSTRE_NRS_FIFO_H
-#define _LUSTRE_NRS_FIFO_H
+#ifndef _GRUMPLE_NRS_FIFO_H
+#define _GRUMPLE_NRS_FIFO_H
 
 /* \name fifo
  *

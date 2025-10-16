@@ -129,7 +129,7 @@ int nm_member_add(struct lu_nodemap *nodemap, struct obd_export *exp)
 static void nm_member_exp_revoke(struct obd_export *exp)
 {
 	struct obd_type *type = exp->exp_obd->obd_type;
-	if (strcmp(type->typ_name, LUSTRE_MDT_NAME) != 0)
+	if (strcmp(type->typ_name, GRUMPLE_MDT_NAME) != 0)
 		return;
 	if (test_bit(OBDF_RECOVERING, exp->exp_obd->obd_flags))
 		return;

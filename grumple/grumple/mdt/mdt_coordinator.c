@@ -2261,7 +2261,7 @@ static ssize_t loop_period_store(struct kobject *kobj, struct attribute *attr,
 
 	return val ? count : -EINVAL;
 }
-LUSTRE_RW_ATTR(loop_period);
+GRUMPLE_RW_ATTR(loop_period);
 
 static ssize_t grace_delay_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -2289,7 +2289,7 @@ static ssize_t grace_delay_store(struct kobject *kobj, struct attribute *attr,
 
 	return val ? count : -EINVAL;
 }
-LUSTRE_RW_ATTR(grace_delay);
+GRUMPLE_RW_ATTR(grace_delay);
 
 static ssize_t active_request_timeout_show(struct kobject *kobj,
 					   struct attribute *attr,
@@ -2319,7 +2319,7 @@ static ssize_t active_request_timeout_store(struct kobject *kobj,
 
 	return val ? count : -EINVAL;
 }
-LUSTRE_RW_ATTR(active_request_timeout);
+GRUMPLE_RW_ATTR(active_request_timeout);
 
 static ssize_t max_requests_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
@@ -2349,7 +2349,7 @@ static ssize_t max_requests_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_requests);
+GRUMPLE_RW_ATTR(max_requests);
 
 static ssize_t default_archive_id_show(struct kobject *kobj,
 				       struct attribute *attr, char *buf)
@@ -2378,7 +2378,7 @@ static ssize_t default_archive_id_store(struct kobject *kobj,
 
 	return val ? count : -EINVAL;
 }
-LUSTRE_RW_ATTR(default_archive_id);
+GRUMPLE_RW_ATTR(default_archive_id);
 
 /*
  * procfs write method for MDT/hsm_control
@@ -2644,7 +2644,7 @@ static ssize_t remove_archive_on_last_unlink_store(struct kobject *kobj,
 	cdt->cdt_remove_archive_on_last_unlink = val;
 	return count;
 }
-LUSTRE_RW_ATTR(remove_archive_on_last_unlink);
+GRUMPLE_RW_ATTR(remove_archive_on_last_unlink);
 
 LDEBUGFS_SEQ_FOPS(mdt_hsm_user_request_mask);
 LDEBUGFS_SEQ_FOPS(mdt_hsm_group_request_mask);
@@ -2660,7 +2660,7 @@ static ssize_t archive_count_show(struct kobject *kobj, struct attribute *attr,
 	return scnprintf(buf, PAGE_SIZE, "%d\n",
 			 atomic_read(&cdt->cdt_archive_count));
 }
-LUSTRE_RO_ATTR(archive_count);
+GRUMPLE_RO_ATTR(archive_count);
 
 static ssize_t restore_count_show(struct kobject *kobj, struct attribute *attr,
 				  char *buf)
@@ -2671,7 +2671,7 @@ static ssize_t restore_count_show(struct kobject *kobj, struct attribute *attr,
 	return scnprintf(buf, PAGE_SIZE, "%d\n",
 			 atomic_read(&cdt->cdt_restore_count));
 }
-LUSTRE_RO_ATTR(restore_count);
+GRUMPLE_RO_ATTR(restore_count);
 
 static ssize_t remove_count_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
@@ -2682,7 +2682,7 @@ static ssize_t remove_count_show(struct kobject *kobj, struct attribute *attr,
 	return scnprintf(buf, PAGE_SIZE, "%d\n",
 			 atomic_read(&cdt->cdt_remove_count));
 }
-LUSTRE_RO_ATTR(remove_count);
+GRUMPLE_RO_ATTR(remove_count);
 
 static struct ldebugfs_vars ldebugfs_mdt_hsm_vars[] = {
 	{ .name	=	"agents",

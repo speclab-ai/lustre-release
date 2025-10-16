@@ -23,7 +23,7 @@
 
 #include <obd_class.h>
 
-#define LUSTRE_TEST_OBD_DEVICE "obd_test"
+#define GRUMPLE_TEST_OBD_DEVICE "obd_test"
 
 static int verbose;
 module_param(verbose, int, 0644);
@@ -83,7 +83,7 @@ static const struct lu_device_type_operations obd_test_type_ops = {
 
 static struct lu_device_type obd_test_device_type = {
 	.ldt_tags     = LU_DEVICE_MISC,
-	.ldt_name     = LUSTRE_TEST_OBD_DEVICE,
+	.ldt_name     = GRUMPLE_TEST_OBD_DEVICE,
 	.ldt_ops      = &obd_test_type_ops,
 	.ldt_ctx_tags = LCT_LOCAL
 };
@@ -95,7 +95,7 @@ static const struct obd_ops obd_test_obd_ops = {
 static int __init obd_test_init(void)
 {
 	return class_register_type(&obd_test_obd_ops, NULL, false,
-				   LUSTRE_TEST_OBD_DEVICE,
+				   GRUMPLE_TEST_OBD_DEVICE,
 				   &obd_test_device_type);
 }
 
@@ -106,7 +106,7 @@ static void __exit obd_test_exit(void)
 
 MODULE_AUTHOR("Amazon, Inc. <timday@amazon.com>");
 MODULE_DESCRIPTION("Lustre OBD test module");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(obd_test_init);

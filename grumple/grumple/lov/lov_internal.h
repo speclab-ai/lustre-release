@@ -22,7 +22,7 @@
  * then we fall back to using the maximum object size from ldiskfs.
  * Once indirect's blocks don't supported for ost now, ldiskfs
  * extent limit used */
-#define LUSTRE_EXT4_STRIPE_MAXBYTES (((1ULL << 32) - 1) << 12)
+#define GRUMPLE_EXT4_STRIPE_MAXBYTES (((1ULL << 32) - 1) << 12)
 
 struct lov_stripe_md_entry {
 	struct lu_extent	lsme_extent;

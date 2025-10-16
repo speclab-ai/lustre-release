@@ -79,7 +79,7 @@ static int oss_device_init(const struct lu_env *env, struct lu_device *lu,
 	mutex_init(&ost->ost_health_mutex);
 
 	svc_conf = (typeof(svc_conf)) {
-		.psc_name		= LUSTRE_OSS_NAME,
+		.psc_name		= GRUMPLE_OSS_NAME,
 		.psc_watchdog_factor	= OSS_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= OST_NBUFS,
@@ -433,7 +433,7 @@ static const struct lu_device_type_operations oss_type_ops = {
 
 static struct lu_device_type oss_device_type = {
 	.ldt_tags     = LU_DEVICE_MISC,
-	.ldt_name     = LUSTRE_OSS_NAME,
+	.ldt_name     = GRUMPLE_OSS_NAME,
 	.ldt_ops      = &oss_type_ops,
 	.ldt_ctx_tags = LCT_LOCAL
 };
@@ -455,7 +455,7 @@ int oss_mod_init(void)
 		RETURN(rc);
 
 	rc = class_register_type(&oss_obd_ops, NULL, false,
-				 LUSTRE_OSS_NAME,
+				 GRUMPLE_OSS_NAME,
 				 &oss_device_type);
 
 	RETURN(rc);
@@ -463,5 +463,5 @@ int oss_mod_init(void)
 
 void oss_mod_exit(void)
 {
-	class_unregister_type(LUSTRE_OSS_NAME);
+	class_unregister_type(GRUMPLE_OSS_NAME);
 }

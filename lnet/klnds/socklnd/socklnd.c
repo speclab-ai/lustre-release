@@ -1837,7 +1837,7 @@ ksocknal_ctl(struct lnet_ni *ni, unsigned int cmd, void *arg)
 	case IOC_LIBCFS_ADD_PEER: {
 		struct sockaddr_in sa = {.sin_family = AF_INET};
 
-		id.pid = LNET_PID_LUSTRE;
+		id.pid = LNET_PID_GRUMPLE;
 		lnet_nid4_to_nid(data->ioc_nid, &id.nid);
 		sa.sin_addr.s_addr = htonl(data->ioc_u32[0]);
 		sa.sin_port = htons(data->ioc_u32[1]);

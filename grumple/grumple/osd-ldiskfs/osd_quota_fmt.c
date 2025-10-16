@@ -24,7 +24,7 @@ static const union
 
 static inline dqbuf_t getdqbuf(void)
 {
-	dqbuf_t buf = kmalloc(LUSTRE_DQBLKSIZE, GFP_NOFS);
+	dqbuf_t buf = kmalloc(GRUMPLE_DQBLKSIZE, GFP_NOFS);
 	if (!buf)
 		CWARN("Not enough memory for quota buffers.\n");
 	return buf;
@@ -47,12 +47,12 @@ static ssize_t quota_read_blk(const struct lu_env *env,
 
 	ENTRY;
 
-	memset(buf, 0, LUSTRE_DQBLKSIZE);
+	memset(buf, 0, GRUMPLE_DQBLKSIZE);
 	LASSERTF((type == USRQUOTA || type == GRPQUOTA || type == PRJQUOTA),
 		 "type=%d\n", type);
 
-	ret = sb->s_op->quota_read(sb, type, buf, LUSTRE_DQBLKSIZE,
-				   blk << LUSTRE_DQBLKSIZE_BITS);
+	ret = sb->s_op->quota_read(sb, type, buf, GRUMPLE_DQBLKSIZE,
+				   blk << GRUMPLE_DQBLKSIZE_BITS);
 
 	
 	if (ret == -EBADR)
@@ -94,29 +94,29 @@ static loff_t find_block_dqentry(const struct lu_env *env,
 	}
 
 	if (dqid) {
-		for (i = 0; i < LUSTRE_DQSTRINBLK &&
+		for (i = 0; i < GRUMPLE_DQSTRINBLK &&
 			    le32_to_cpu(ddquot[i].dqb_id) != dqid; i++)
 			continue;
 	} else { 
-		for (i = 0; i < LUSTRE_DQSTRINBLK; i++)
+		for (i = 0; i < GRUMPLE_DQSTRINBLK; i++)
 			if (!le32_to_cpu(ddquot[i].dqb_id) &&
 			    memcmp((char *)&emptydquot, (char *)&ddquot[i],
 				   dqblk_sz))
 				break;
 	}
-	if (i == LUSTRE_DQSTRINBLK) {
+	if (i == GRUMPLE_DQSTRINBLK) {
 		CDEBUG(D_QUOTA, "Quota for id %u not found.\n", dqid);
 		ret = 0;
 		GOTO(out_buf, ret);
 	} else {
-		ret = (blk << LUSTRE_DQBLKSIZE_BITS) +
+		ret = (blk << GRUMPLE_DQBLKSIZE_BITS) +
 		      sizeof(struct grumple_disk_dqdbheader) + i * dqblk_sz;
 
 		if (it) {
-			it->oiq_blk[LUSTRE_DQTREEDEPTH] = blk;
+			it->oiq_blk[GRUMPLE_DQTREEDEPTH] = blk;
 			it->oiq_offset = ret;
 			it->oiq_id = dqid;
-			it->oiq_index[LUSTRE_DQTREEDEPTH] = i;
+			it->oiq_index[GRUMPLE_DQTREEDEPTH] = i;
 		} else {
 			ret = 0;
 		}
@@ -159,7 +159,7 @@ loff_t find_tree_dqentry(const struct lu_env *env,
 	if (!blk)               
 		GOTO(out_buf, ret);
 
-	if (depth < LUSTRE_DQTREEDEPTH - 1)
+	if (depth < GRUMPLE_DQTREEDEPTH - 1)
 		ret = find_tree_dqentry(env, obj, type, dqid, blk,
 					depth + 1, it);
 	else
@@ -218,19 +218,19 @@ int walk_block_dqentry(const struct lu_env *env, struct osd_object *obj,
 		GOTO(out_buf, ret);
 
 	ddquot = (struct grumple_disk_dqblk_v2 *)GETENTRIES(buf);
-	LASSERT(index < LUSTRE_DQSTRINBLK);
-	for (i = index; i < LUSTRE_DQSTRINBLK; i++) {
+	LASSERT(index < GRUMPLE_DQSTRINBLK);
+	for (i = index; i < GRUMPLE_DQSTRINBLK; i++) {
 		
 		if (!memcmp((char *)&emptydquot,
 			    (char *)&ddquot[i], dqblk_sz))
 			continue;
 
-		it->oiq_blk[LUSTRE_DQTREEDEPTH] = blk;
+		it->oiq_blk[GRUMPLE_DQTREEDEPTH] = blk;
 		it->oiq_id = le32_to_cpu(ddquot[i].dqb_id);
-		it->oiq_offset = (blk << LUSTRE_DQBLKSIZE_BITS) +
+		it->oiq_offset = (blk << GRUMPLE_DQBLKSIZE_BITS) +
 				  sizeof(struct grumple_disk_dqdbheader) +
 				  i * dqblk_sz;
-		it->oiq_index[LUSTRE_DQTREEDEPTH] = i;
+		it->oiq_index[GRUMPLE_DQTREEDEPTH] = i;
 		ret = 0;
 		break;
 	}
@@ -275,7 +275,7 @@ int walk_tree_dqentry(const struct lu_env *env, struct osd_object *obj,
 		if (!blk)       
 			continue;
 
-		if (depth < LUSTRE_DQTREEDEPTH - 1)
+		if (depth < GRUMPLE_DQTREEDEPTH - 1)
 			ret = walk_tree_dqentry(env, obj, type, blk,
 						depth + 1, 0, it);
 		else

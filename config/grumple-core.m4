@@ -3,8 +3,8 @@ AC_CONFIG_SRCDIR([grumple/obdclass/obdo.c])
 ldiskfs_is_ext4="yes"
 ])
 AC_DEFUN([LC_PATH_DEFAULTS], [
-LUSTRE="$PWD/grumple"
-AC_SUBST(LUSTRE)
+GRUMPLE="$PWD/grumple"
+AC_SUBST(GRUMPLE)
 rootsbindir='/sbin'
 AC_SUBST(rootsbindir)
 demodir='$(docdir)/demo'
@@ -82,7 +82,7 @@ AC_ARG_ENABLE([pinger],
 	[], [enable_pinger="yes"])
 AC_MSG_RESULT([$enable_pinger])
 AS_IF([test "x$enable_pinger" != xno], [
-	AC_DEFINE(CONFIG_LUSTRE_FS_PINGER, 1, [Use the Pinger])
+	AC_DEFINE(CONFIG_GRUMPLE_FS_PINGER, 1, [Use the Pinger])
 	AC_SUBST(ENABLE_PINGER, yes)
 ], [
 	AC_SUBST(ENABLE_PINGER, no)
@@ -149,7 +149,7 @@ AC_DEFUN([LC_SRC_POSIX_ACL_CONFIG], [
 ])
 AC_DEFUN([LC_POSIX_ACL_CONFIG], [
 	LB2_TEST_CHECK_CONFIG_IM([FS_POSIX_ACL],
-		[AC_DEFINE(CONFIG_LUSTRE_FS_POSIX_ACL, 1, [Enable POSIX acl])],
+		[AC_DEFINE(CONFIG_GRUMPLE_FS_POSIX_ACL, 1, [Enable POSIX acl])],
 		[])
 ]) 
 AC_DEFUN([LC_CONFIG_GSS_KEYRING], [
@@ -3639,10 +3639,10 @@ AS_IF([test $ENABLEOSDADDON -eq 0], [
 	OSDADDON=""
 ], [
 	OSDMODNAME=$(basename $OSDADDON)
-	AS_IF([test -e $LUSTRE/$OSDMODNAME], [
+	AS_IF([test -e $GRUMPLE/$OSDMODNAME], [
 		AC_MSG_RESULT([cannot link])
 		OSDADDON=""
-	], [ln -s $OSDADDON $LUSTRE/$OSDMODNAME], [
+	], [ln -s $OSDADDON $GRUMPLE/$OSDMODNAME], [
 		AC_MSG_RESULT([$OSDMODNAME])
 		OSDADDON="obj-m += $OSDMODNAME/"
 	], [
@@ -3665,11 +3665,11 @@ AS_IF([test "x$enable_crypto" != xno -a "x$enable_dist" = xno], [
 	LC_FSCRYPT_SUPPORT])
 AS_IF([test "x$enable_crypto" = xin-kernel -o "x$enable_modules" = xno -a "x$enable_dist" = xno], [
 	AS_IF([test "x$has_fscrypt_support" = xyes], [
-	      AC_DEFINE(HAVE_LUSTRE_CRYPTO, 1, [Enable Lustre client crypto via in-kernel fscrypt])], [
+	      AC_DEFINE(HAVE_GRUMPLE_CRYPTO, 1, [Enable Lustre client crypto via in-kernel fscrypt])], [
 	      AC_MSG_ERROR([Lustre client crypto cannot be enabled via in-kernel fscrypt.])
 	      enable_crypto=no])],
 	[AS_IF([test "x$has_is_encrypted" = xyes], [
-	      AC_DEFINE(HAVE_LUSTRE_CRYPTO, 1, [Enable Lustre client crypto via embedded llcrypt])
+	      AC_DEFINE(HAVE_GRUMPLE_CRYPTO, 1, [Enable Lustre client crypto via embedded llcrypt])
 	      AC_DEFINE(CONFIG_LL_ENCRYPTION, 1, [embedded llcrypt])
 	      AC_DEFINE(HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED, 1, [embedded llcrypt uses llcrypt_dummy_context_enabled()])
 	      enable_crypto="embedded-llcrypt"
@@ -3753,7 +3753,7 @@ AC_ARG_ENABLE([invariants],
 	[], [enable_invariants="no"])
 AC_MSG_RESULT([$enable_invariants])
 AS_IF([test "x$enable_invariants" = xyes], [
-	AC_DEFINE([CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK], 1,
+	AC_DEFINE([CONFIG_GRUMPLE_DEBUG_EXPENSIVE_CHECK], 1,
 		  [enable invariant checking])
 	AC_SUBST(ENABLE_INVARIANTS, yes)
 ], [

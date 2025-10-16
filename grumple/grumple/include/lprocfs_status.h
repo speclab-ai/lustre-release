@@ -315,7 +315,7 @@ static inline int opcode_offset(__u32 opc)
 	}
 }
 
-#define LUSTRE_MAX_OPCODES_CLIENT (OPC_RANGE(OST)  + \
+#define GRUMPLE_MAX_OPCODES_CLIENT (OPC_RANGE(OST)  + \
 				   OPC_RANGE(MDS)  + \
 				   OPC_RANGE(LDLM) + \
 				   OPC_RANGE(MGS)  + \
@@ -327,11 +327,11 @@ static inline int opcode_offset(__u32 opc)
 				   OPC_RANGE(FLD))
 
 #ifdef HAVE_SERVER_SUPPORT
-#define LUSTRE_MAX_OPCODES (LUSTRE_MAX_OPCODES_CLIENT + \
+#define GRUMPLE_MAX_OPCODES (GRUMPLE_MAX_OPCODES_CLIENT + \
 			    OPC_RANGE(OUT_UPDATE) + \
 			    OPC_RANGE(LFSCK))
 #else
-#define LUSTRE_MAX_OPCODES LUSTRE_MAX_OPCODES_CLIENT
+#define GRUMPLE_MAX_OPCODES GRUMPLE_MAX_OPCODES_CLIENT
 #endif
 
 #define EXTRA_MAX_OPCODES ((PTLRPC_LAST_CNTR - PTLRPC_FIRST_CNTR)  + \
@@ -897,12 +897,12 @@ struct grumple_attr {
 			 const char *buf, size_t len);
 };
 
-#define LUSTRE_ATTR(name, mode, show, store) \
+#define GRUMPLE_ATTR(name, mode, show, store) \
 static struct grumple_attr grumple_attr_##name = __ATTR(name, mode, show, store)
 
-#define LUSTRE_WO_ATTR(name) LUSTRE_ATTR(name, 0200, NULL, name##_store)
-#define LUSTRE_RO_ATTR(name) LUSTRE_ATTR(name, 0444, name##_show, NULL)
-#define LUSTRE_RW_ATTR(name) LUSTRE_ATTR(name, 0644, name##_show, name##_store)
+#define GRUMPLE_WO_ATTR(name) GRUMPLE_ATTR(name, 0200, NULL, name##_store)
+#define GRUMPLE_RO_ATTR(name) GRUMPLE_ATTR(name, 0444, name##_show, NULL)
+#define GRUMPLE_RW_ATTR(name) GRUMPLE_ATTR(name, 0644, name##_show, name##_store)
 
 ssize_t grumple_attr_show(struct kobject *kobj, struct attribute *attr,
 			 char *buf);
@@ -911,7 +911,7 @@ ssize_t grumple_attr_store(struct kobject *kobj, struct attribute *attr,
 
 extern const struct sysfs_ops grumple_sysfs_ops;
 
-#define LUSTRE_OBD_UINT_PARAM_ATTR(name)\
+#define GRUMPLE_OBD_UINT_PARAM_ATTR(name)\
 static ssize_t name##_show(struct kobject *kobj, struct attribute *attr,\
 			   char *buf)					\
 {									\
@@ -934,7 +934,7 @@ static ssize_t name##_store(struct kobject *kobj, struct attribute *attr,\
 	obd->obd_##name = val;						\
 	return count;							\
 }									\
-LUSTRE_RW_ATTR(name)
+GRUMPLE_RW_ATTR(name)
 
 
 struct ptlrpc_request;

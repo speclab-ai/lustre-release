@@ -490,7 +490,7 @@ static void seq_server_debugfs_init(struct lu_server_seq *seq)
 	ldebugfs_add_vars(seq->lss_debugfs_entry,
 			  seq_server_debugfs_list, seq);
 
-	if (seq->lss_type == LUSTRE_SEQ_CONTROLLER)
+	if (seq->lss_type == GRUMPLE_SEQ_CONTROLLER)
 		debugfs_create_file("fldb", 0644, seq->lss_debugfs_entry,
 				    seq, &seq_fld_debugfs_seq_fops);
 }
@@ -500,7 +500,7 @@ int seq_server_init(const struct lu_env *env, struct lu_server_seq *seq,
 		    enum lu_mgr_type type, struct seq_server_site *ss,
 		    bool set_batch_width)
 {
-	int rc, is_srv = (type == LUSTRE_SEQ_SERVER);
+	int rc, is_srv = (type == GRUMPLE_SEQ_SERVER);
 	ENTRY;
 
 	LASSERT(dev != NULL);
@@ -526,12 +526,12 @@ int seq_server_init(const struct lu_env *env, struct lu_server_seq *seq,
 
 	lu_seq_range_init(&seq->lss_lowater_set);
 	lu_seq_range_init(&seq->lss_hiwater_set);
-	seq->lss_set_width = set_batch_width ? LUSTRE_SEQ_BATCH_WIDTH : 0;
+	seq->lss_set_width = set_batch_width ? GRUMPLE_SEQ_BATCH_WIDTH : 0;
 
 	mutex_init(&seq->lss_mutex);
 
 	seq->lss_width = is_srv ?
-		LUSTRE_SEQ_META_WIDTH : LUSTRE_SEQ_SUPER_WIDTH;
+		GRUMPLE_SEQ_META_WIDTH : GRUMPLE_SEQ_SUPER_WIDTH;
 
 	snprintf(seq->lss_name, sizeof(seq->lss_name),
 		 "%s-%s", (is_srv ? "srv" : "ctl"), prefix);
@@ -545,8 +545,8 @@ int seq_server_init(const struct lu_env *env, struct lu_server_seq *seq,
 
 		
 		seq->lss_space = is_srv ?
-			LUSTRE_SEQ_ZERO_RANGE :
-			LUSTRE_SEQ_SPACE_RANGE;
+			GRUMPLE_SEQ_ZERO_RANGE :
+			GRUMPLE_SEQ_SPACE_RANGE;
 
 		seq->lss_space.lsr_index = ss->ss_node_id;
 		LCONSOLE_INFO("%s: No data found on store. Initialize space.\n",

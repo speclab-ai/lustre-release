@@ -64,7 +64,7 @@ static ssize_t active_store(struct kobject *kobj, struct attribute *attr,
 
 	return rc ?: count;
 }
-LUSTRE_RW_ATTR(active);
+GRUMPLE_RW_ATTR(active);
 
 static ssize_t max_rpcs_in_flight_show(struct kobject *kobj,
 				       struct attribute *attr,
@@ -117,7 +117,7 @@ static ssize_t max_rpcs_in_flight_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_rpcs_in_flight);
+GRUMPLE_RW_ATTR(max_rpcs_in_flight);
 
 static ssize_t max_dirty_mb_show(struct kobject *kobj,
 				 struct attribute *attr,
@@ -158,13 +158,13 @@ static ssize_t max_dirty_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_dirty_mb);
+GRUMPLE_RW_ATTR(max_dirty_mb);
 
-LUSTRE_ATTR(ost_conn_uuid, 0444, conn_uuid_show, NULL);
-LUSTRE_RO_ATTR(conn_uuid);
+GRUMPLE_ATTR(ost_conn_uuid, 0444, conn_uuid_show, NULL);
+GRUMPLE_RO_ATTR(conn_uuid);
 
-LUSTRE_RW_ATTR(pinger_recov);
-LUSTRE_RW_ATTR(ping);
+GRUMPLE_RW_ATTR(pinger_recov);
+GRUMPLE_RW_ATTR(ping);
 
 static int osc_cached_mb_seq_show(struct seq_file *m, void *v)
 {
@@ -273,7 +273,7 @@ static ssize_t osc_unevict_cached_mb_store(struct kobject *kobj,
 
 	return -EINVAL;
 }
-LUSTRE_RW_ATTR(osc_unevict_cached_mb);
+GRUMPLE_RW_ATTR(osc_unevict_cached_mb);
 
 static ssize_t cur_dirty_bytes_show(struct kobject *kobj,
 				    struct attribute *attr,
@@ -286,7 +286,7 @@ static ssize_t cur_dirty_bytes_show(struct kobject *kobj,
 	return scnprintf(buf, PAGE_SIZE, "%lu\n",
 			 cli->cl_dirty_pages << PAGE_SHIFT);
 }
-LUSTRE_RO_ATTR(cur_dirty_bytes);
+GRUMPLE_RO_ATTR(cur_dirty_bytes);
 
 static ssize_t cur_grant_bytes_show(struct kobject *kobj,
 				    struct attribute *attr,
@@ -320,12 +320,12 @@ static ssize_t cur_grant_bytes_store(struct kobject *kobj,
 		return 0;
 
 	with_imp_locked(obd, imp, rc)
-		if (imp->imp_state == LUSTRE_IMP_FULL)
+		if (imp->imp_state == GRUMPLE_IMP_FULL)
 			rc = osc_shrink_grant_to_target(cli, val);
 
 	return rc ? rc : count;
 }
-LUSTRE_RW_ATTR(cur_grant_bytes);
+GRUMPLE_RW_ATTR(cur_grant_bytes);
 
 static ssize_t cur_lost_grant_bytes_show(struct kobject *kobj,
 					 struct attribute *attr,
@@ -337,7 +337,7 @@ static ssize_t cur_lost_grant_bytes_show(struct kobject *kobj,
 
 	return scnprintf(buf, PAGE_SIZE, "%lu\n", cli->cl_lost_grant);
 }
-LUSTRE_RO_ATTR(cur_lost_grant_bytes);
+GRUMPLE_RO_ATTR(cur_lost_grant_bytes);
 
 static ssize_t cur_dirty_grant_bytes_show(struct kobject *kobj,
 					  struct attribute *attr,
@@ -349,7 +349,7 @@ static ssize_t cur_dirty_grant_bytes_show(struct kobject *kobj,
 
 	return scnprintf(buf, PAGE_SIZE, "%lu\n", cli->cl_dirty_grant);
 }
-LUSTRE_RO_ATTR(cur_dirty_grant_bytes);
+GRUMPLE_RO_ATTR(cur_dirty_grant_bytes);
 
 static ssize_t grant_shrink_interval_show(struct kobject *kobj,
 					  struct attribute *attr,
@@ -384,7 +384,7 @@ static ssize_t grant_shrink_interval_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(grant_shrink_interval);
+GRUMPLE_RW_ATTR(grant_shrink_interval);
 
 static ssize_t enable_page_cache_shrink_show(struct kobject *kobj,
 					     struct attribute *attr,
@@ -408,7 +408,7 @@ static ssize_t enable_page_cache_shrink_store(struct kobject *kobj,
 	osc_page_cache_shrink_enabled = val;
 	return count;
 }
-LUSTRE_RW_ATTR(enable_page_cache_shrink);
+GRUMPLE_RW_ATTR(enable_page_cache_shrink);
 
 static ssize_t checksums_show(struct kobject *kobj,
 			      struct attribute *attr,
@@ -438,9 +438,9 @@ static ssize_t checksums_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(checksums);
+GRUMPLE_RW_ATTR(checksums);
 
-LUSTRE_RW_ATTR(checksum_type);
+GRUMPLE_RW_ATTR(checksum_type);
 
 static ssize_t resend_count_show(struct kobject *kobj,
 				 struct attribute *attr,
@@ -470,7 +470,7 @@ static ssize_t resend_count_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(resend_count);
+GRUMPLE_RW_ATTR(resend_count);
 
 static ssize_t checksum_dump_show(struct kobject *kobj,
 				  struct attribute *attr,
@@ -500,7 +500,7 @@ static ssize_t checksum_dump_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(checksum_dump);
+GRUMPLE_RW_ATTR(checksum_dump);
 
 static ssize_t destroys_in_flight_show(struct kobject *kobj,
 				       struct attribute *attr,
@@ -512,10 +512,10 @@ static ssize_t destroys_in_flight_show(struct kobject *kobj,
 	return sprintf(buf, "%u\n",
 		       atomic_read(&obd->u.cli.cl_destroy_in_flight));
 }
-LUSTRE_RO_ATTR(destroys_in_flight);
+GRUMPLE_RO_ATTR(destroys_in_flight);
 
-LUSTRE_RW_ATTR(max_pages_per_rpc);
-LUSTRE_RW_ATTR(short_io_bytes);
+GRUMPLE_RW_ATTR(max_pages_per_rpc);
+GRUMPLE_RW_ATTR(short_io_bytes);
 
 static int osc_unstable_stats_seq_show(struct seq_file *m, void *v)
 {
@@ -590,7 +590,7 @@ static ssize_t idle_timeout_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(idle_timeout);
+GRUMPLE_RW_ATTR(idle_timeout);
 
 static ssize_t idle_connect_store(struct kobject *kobj, struct attribute *attr,
 				  const char *buffer, size_t count)
@@ -611,7 +611,7 @@ static ssize_t idle_connect_store(struct kobject *kobj, struct attribute *attr,
 
 	return rc ?: count;
 }
-LUSTRE_WO_ATTR(idle_connect);
+GRUMPLE_WO_ATTR(idle_connect);
 
 static ssize_t grant_shrink_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
@@ -654,7 +654,7 @@ static ssize_t grant_shrink_store(struct kobject *kobj, struct attribute *attr,
 
 	return rc ?: count;
 }
-LUSTRE_RW_ATTR(grant_shrink);
+GRUMPLE_RW_ATTR(grant_shrink);
 
 LDEBUGFS_SEQ_FOPS_RO_TYPE(osc, connect_flags);
 LDEBUGFS_SEQ_FOPS_RO_TYPE(osc, server_uuid);
@@ -895,10 +895,10 @@ static struct ldebugfs_vars ldebugfs_osc_obd_vars[] = {
 	{ NULL }
 };
 
-LUSTRE_OBD_UINT_PARAM_ATTR(at_min);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_max);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_history);
-LUSTRE_OBD_UINT_PARAM_ATTR(ldlm_enqueue_min);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_min);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_max);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_history);
+GRUMPLE_OBD_UINT_PARAM_ATTR(ldlm_enqueue_min);
 
 static struct attribute *osc_attrs[] = {
 	&grumple_attr_active.attr,

@@ -146,7 +146,7 @@ ptlrpcd_select_pc(struct ptlrpc_request *req)
 	int		cpt;
 	int		idx;
 
-	if (req != NULL && req->rq_send_state != LUSTRE_IMP_FULL)
+	if (req != NULL && req->rq_send_state != GRUMPLE_IMP_FULL)
 		return &ptlrpcd_rcv;
 
 	cpt = cfs_cpt_current(cfs_cpt_tab, 1);
@@ -218,7 +218,7 @@ void ptlrpcd_add_req(struct ptlrpc_request *req)
 		 * linked.
 		 */
 		LASSERT(req->rq_phase == RQ_PHASE_NEW);
-		LASSERT(req->rq_send_state == LUSTRE_IMP_REPLAY);
+		LASSERT(req->rq_send_state == GRUMPLE_IMP_REPLAY);
 
 		
 		atomic_inc(&req->rq_set->set_remaining);

@@ -119,7 +119,7 @@ ll_iget_for_nfs(struct super_block *sb, struct lu_fid *fid, struct lu_fid *paren
 		RETURN(ERR_PTR(-ESTALE));
 	}
 
-	/* Both LU_DOT_LUSTRE_FID and LU_OBF_FID are special fids that
+	/* Both LU_DOT_GRUMPLE_FID and LU_OBF_FID are special fids that
 	 * don't match to a real searchable file, so they need special
 	 * handling.
 	 */
@@ -145,7 +145,7 @@ ll_iget_for_nfs(struct super_block *sb, struct lu_fid *fid, struct lu_fid *paren
 			 */
 			if (!is_dot_grumple) {
 				tmp = search_inode_for_grumple(sb,
-							      &LU_DOT_LUSTRE_FID);
+							      &LU_DOT_GRUMPLE_FID);
 				if (IS_ERR(tmp)) {
 					inode_unlock(d_inode(sb->s_root));
 					obf = ERR_CAST(tmp);
@@ -209,8 +209,8 @@ free_dot:
 #ifndef FILEID_INVALID
 #define FILEID_INVALID 0xff
 #endif
-#ifndef FILEID_LUSTRE
-#define FILEID_LUSTRE  0x97
+#ifndef FILEID_GRUMPLE
+#define FILEID_GRUMPLE  0x97
 #endif
 
 /**
@@ -250,7 +250,7 @@ static int ll_encode_fh(struct inode *inode, u32 *fh, int *plen,
 		fid_zero(&lfh->lfh_parent);
 	*plen = fileid_len;
 
-	RETURN(FILEID_LUSTRE);
+	RETURN(FILEID_GRUMPLE);
 }
 
 static inline int
@@ -336,7 +336,7 @@ static int ll_get_name(struct dentry *dentry, char *name, struct dentry *child)
 		GOTO(out, rc = -EINVAL);
 
 	op_data = ll_prep_md_op_data(NULL, dir, dir, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, dir);
+				     GRUMPLE_OPC_ANY, dir);
 	if (IS_ERR(op_data))
 		GOTO(out, rc = PTR_ERR(op_data));
 
@@ -361,7 +361,7 @@ static struct dentry *ll_fh_to_dentry(struct super_block *sb, struct fid *fid,
 {
 	struct grumple_file_handle *lfh = (struct grumple_file_handle *)fid;
 
-	if (fh_type != FILEID_LUSTRE)
+	if (fh_type != FILEID_GRUMPLE)
 		RETURN(ERR_PTR(-EPROTO));
 
 	RETURN(ll_iget_for_nfs(sb, &lfh->lfh_child, &lfh->lfh_parent));
@@ -372,7 +372,7 @@ static struct dentry *ll_fh_to_parent(struct super_block *sb, struct fid *fid,
 {
 	struct grumple_file_handle *lfh = (struct grumple_file_handle *)fid;
 
-	if (fh_type != FILEID_LUSTRE)
+	if (fh_type != FILEID_GRUMPLE)
 		RETURN(ERR_PTR(-EPROTO));
 
 	RETURN(ll_iget_for_nfs(sb, &lfh->lfh_parent, NULL));
@@ -403,7 +403,7 @@ int ll_dir_get_parent_fid(struct inode *dir, struct lu_fid *parent_fid)
 
 	op_data = ll_prep_md_op_data(NULL, dir, NULL, dotdot,
 				     strlen(dotdot), lmmsize,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 

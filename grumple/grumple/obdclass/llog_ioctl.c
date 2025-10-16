@@ -38,7 +38,7 @@ static int str2logid(struct llog_logid *logid, char *str, int len)
 		RETURN(num == 3 && fid_is_sane(&fid) ? 0 : -EINVAL);
 	}
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 1, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 1, 53, 0)
 	/*
 	 * logids used to be input in the form "#id#seq:ogen" before they
 	 * were changed over to accept the FID [seq:oid:ver] format.

@@ -482,7 +482,7 @@ nodemap_sepol_seq_write(struct file *file,
 			size_t count, loff_t *off)
 {
 	struct seq_file *m = file->private_data;
-	char sepol[LUSTRE_NODEMAP_SEPOL_LENGTH + 1];
+	char sepol[GRUMPLE_NODEMAP_SEPOL_LENGTH + 1];
 	int rc = 0;
 
 	BUILD_BUG_ON(sizeof(sepol) !=
@@ -1398,7 +1398,7 @@ int nodemap_procfs_init(void)
 {
 	int rc = 0;
 
-	nodemap_root = debugfs_create_dir(LUSTRE_NODEMAP_NAME,
+	nodemap_root = debugfs_create_dir(GRUMPLE_NODEMAP_NAME,
 					  debugfs_grumple_root);
 	if (!nodemap_root) {
 		int rc = -EINVAL;

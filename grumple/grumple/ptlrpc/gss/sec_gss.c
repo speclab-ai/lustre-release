@@ -596,9 +596,9 @@ int gss_cli_ctx_sign(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 
 	svc = SPTLRPC_FLVR_SVC(req->rq_flvr.sf_rpc);
 	if (req->rq_pack_bulk)
-		flags |= LUSTRE_GSS_PACK_BULK;
+		flags |= GRUMPLE_GSS_PACK_BULK;
 	if (req->rq_pack_udesc)
-		flags |= LUSTRE_GSS_PACK_USER;
+		flags |= GRUMPLE_GSS_PACK_USER;
 
 redo:
 	seq = atomic_inc_return(&gctx->gc_seq);
@@ -759,7 +759,7 @@ int gss_cli_ctx_verify(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 
 	switch (ghdr->gh_proc) {
 	case PTLRPC_GSS_PROC_DATA:
-		pack_bulk = ghdr->gh_flags & LUSTRE_GSS_PACK_BULK;
+		pack_bulk = ghdr->gh_flags & GRUMPLE_GSS_PACK_BULK;
 
 		if (!req->rq_early &&
 		    !equi(req->rq_pack_bulk == 1, pack_bulk)) {
@@ -886,9 +886,9 @@ int gss_cli_ctx_seal(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 	ghdr->gh_handle.len = gctx->gc_handle.len;
 	memcpy(ghdr->gh_handle.data, gctx->gc_handle.data, gctx->gc_handle.len);
 	if (req->rq_pack_bulk)
-		ghdr->gh_flags |= LUSTRE_GSS_PACK_BULK;
+		ghdr->gh_flags |= GRUMPLE_GSS_PACK_BULK;
 	if (req->rq_pack_udesc)
-		ghdr->gh_flags |= LUSTRE_GSS_PACK_USER;
+		ghdr->gh_flags |= GRUMPLE_GSS_PACK_USER;
 
 redo:
 	ghdr->gh_seq = atomic_inc_return(&gctx->gc_seq);
@@ -966,7 +966,7 @@ int gss_cli_ctx_unseal(struct ptlrpc_cli_ctx *ctx, struct ptlrpc_request *req)
 
 	switch (ghdr->gh_proc) {
 	case PTLRPC_GSS_PROC_DATA:
-		pack_bulk = ghdr->gh_flags & LUSTRE_GSS_PACK_BULK;
+		pack_bulk = ghdr->gh_flags & GRUMPLE_GSS_PACK_BULK;
 
 		if (!req->rq_early && !equi(req->rq_pack_bulk == 1,
 					    pack_bulk)) {
@@ -1858,10 +1858,10 @@ int gss_svc_sign(struct ptlrpc_request *req, struct ptlrpc_reply_state *rs,
 		grumple_shrink_msg(rs->rs_repbuf, 1, req->rq_replen, 1);
 
 	if (req->rq_pack_bulk)
-		flags |= LUSTRE_GSS_PACK_BULK;
+		flags |= GRUMPLE_GSS_PACK_BULK;
 
 	rc = gss_sign_msg(rs->rs_repbuf, grctx->src_ctx->gsc_mechctx,
-			  LUSTRE_SP_ANY, flags, PTLRPC_GSS_PROC_DATA,
+			  GRUMPLE_SP_ANY, flags, PTLRPC_GSS_PROC_DATA,
 			  grctx->src_wirectx.gw_seq, svc, NULL);
 	if (rc < 0)
 		RETURN(rc);
@@ -1939,7 +1939,7 @@ int gss_svc_handle_init(struct ptlrpc_request *req, struct gss_wire_ctx *gw)
 
 	req->rq_ctx_init = 1;
 
-	if (gw->gw_flags & LUSTRE_GSS_PACK_BULK) {
+	if (gw->gw_flags & GRUMPLE_GSS_PACK_BULK) {
 		rc = SECSVC_DROP;
 		CDEBUG(D_SEC, "unexpected bulk flag: rc = %d\n", rc);
 		RETURN(rc);
@@ -2047,7 +2047,7 @@ int gss_svc_handle_init(struct ptlrpc_request *req, struct gss_wire_ctx *gw)
 			 grctx->src_ctx->gsc_uid,
 		       libcfs_nidstr(&req->rq_peer.nid));
 
-	if (gw->gw_flags & LUSTRE_GSS_PACK_USER) {
+	if (gw->gw_flags & GRUMPLE_GSS_PACK_USER) {
 		if (reqbuf->lm_bufcount < 4) {
 			rc = SECSVC_DROP;
 			CDEBUG(D_SEC, "%s: missing user descriptor: rc = %d\n",
@@ -2119,7 +2119,7 @@ verified:
 	swabbed = req_capsule_req_need_swab(&req->rq_pill);
 
 	
-	if (gw->gw_flags & LUSTRE_GSS_PACK_USER) {
+	if (gw->gw_flags & GRUMPLE_GSS_PACK_USER) {
 		if (msg->lm_bufcount < (offset + 1)) {
 			CERROR("no user desc included\n");
 			RETURN(-EINVAL);
@@ -2136,7 +2136,7 @@ verified:
 	}
 
 	
-	if (gw->gw_flags & LUSTRE_GSS_PACK_BULK) {
+	if (gw->gw_flags & GRUMPLE_GSS_PACK_BULK) {
 		if (msg->lm_bufcount < (offset + 1)) {
 			CERROR("missing bulk sec descriptor\n");
 			RETURN(-EINVAL);
@@ -2196,7 +2196,7 @@ int gss_svc_unseal_request(struct ptlrpc_request *req,
 		RETURN(-EINVAL);
 	}
 
-	if (gw->gw_flags & LUSTRE_GSS_PACK_USER) {
+	if (gw->gw_flags & GRUMPLE_GSS_PACK_USER) {
 		if (msg->lm_bufcount < offset + 1) {
 			CERROR("no user descriptor included\n");
 			RETURN(-EINVAL);
@@ -2212,7 +2212,7 @@ int gss_svc_unseal_request(struct ptlrpc_request *req,
 		offset++;
 	}
 
-	if (gw->gw_flags & LUSTRE_GSS_PACK_BULK) {
+	if (gw->gw_flags & GRUMPLE_GSS_PACK_BULK) {
 		if (msg->lm_bufcount < offset + 1) {
 			CERROR("no bulk checksum included\n");
 			RETURN(-EINVAL);
@@ -2313,7 +2313,7 @@ int gss_svc_handle_destroy(struct ptlrpc_request *req, struct gss_wire_ctx *gw)
 
 	gss_svc_upcall_destroy_ctx(grctx->src_ctx);
 
-	if (gw->gw_flags & LUSTRE_GSS_PACK_USER) {
+	if (gw->gw_flags & GRUMPLE_GSS_PACK_USER) {
 		if (req->rq_reqbuf->lm_bufcount < 4) {
 			CERROR("missing user descriptor, ignore it\n");
 			RETURN(SECSVC_OK);
@@ -2630,14 +2630,14 @@ static int gss_svc_seal(struct ptlrpc_request *req,
 	ghdr = (struct gss_header *) ((char *) rs->rs_repbuf +
 			rs->rs_repbuf_len - PTLRPC_GSS_HEADER_SIZE);
 	ghdr->gh_version = PTLRPC_GSS_VERSION;
-	ghdr->gh_sp = LUSTRE_SP_ANY;
+	ghdr->gh_sp = GRUMPLE_SP_ANY;
 	ghdr->gh_flags = 0;
 	ghdr->gh_proc = PTLRPC_GSS_PROC_DATA;
 	ghdr->gh_seq = grctx->src_wirectx.gw_seq;
 	ghdr->gh_svc = SPTLRPC_SVC_PRIV;
 	ghdr->gh_handle.len = 0;
 	if (req->rq_pack_bulk)
-		ghdr->gh_flags |= LUSTRE_GSS_PACK_BULK;
+		ghdr->gh_flags |= GRUMPLE_GSS_PACK_BULK;
 
 	
 	token_buflen = gss_mech_payload(gctx->gsc_mechctx, msglen, 1);
@@ -2904,7 +2904,7 @@ static void __exit sptlrpc_gss_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre GSS security policy");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(sptlrpc_gss_init);

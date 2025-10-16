@@ -1036,9 +1036,9 @@ static struct dentry *ll_lookup_it(struct inode *parent, struct dentry *dentry,
 		RETURN(ERR_PTR(-EROFS));
 
 	if (it->it_op & IT_CREAT)
-		opc = LUSTRE_OPC_CREATE;
+		opc = GRUMPLE_OPC_CREATE;
 	else
-		opc = LUSTRE_OPC_LOOKUP;
+		opc = GRUMPLE_OPC_LOOKUP;
 
 	rc = ll_prepare_lookup(parent, dentry, &fname, &fid);
 	if (rc)
@@ -1134,7 +1134,7 @@ getctx:
 #ifdef CONFIG_LL_ENCRYPTION
 			rc = lsi->lsi_cop->get_context(ref_inode,
 						       ctx, ctx_size);
-#elif defined(HAVE_LUSTRE_CRYPTO)
+#elif defined(HAVE_GRUMPLE_CRYPTO)
 			rc = ref_inode->i_sb->s_cop->get_context(ref_inode,
 								 ctx, ctx_size);
 #else
@@ -1931,7 +1931,7 @@ again:
 			from_kuid(&init_user_ns, current_fsuid()),
 			from_kgid(&init_user_ns, current_fsgid()),
 			current_cap(), rdev, &request);
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 58, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 58, 0)
 	/*
 	 * server < 2.12.58 doesn't pack default LMV in intent_getattr reply,
 	 * fetch default LMV here.
@@ -2045,7 +2045,7 @@ static int ll_mknod(struct mnt_idmap *map, struct inode *dir,
 	case S_IFIFO:
 	case S_IFSOCK:
 		err = ll_new_node(dir, dchild, NULL, mode, old_encode_dev(rdev),
-				  LUSTRE_OPC_MKNOD);
+				  GRUMPLE_OPC_MKNOD);
 		break;
 	case S_IFDIR:
 		err = -EPERM;
@@ -2121,7 +2121,7 @@ static int ll_symlink(struct mnt_idmap *map, struct inode *dir,
 		GOTO(out, err);
 
 	err = ll_new_node(dir, dchild, oldpath, S_IFLNK | 0777,
-			  (__u64)&disk_link, LUSTRE_OPC_SYMLINK);
+			  (__u64)&disk_link, GRUMPLE_OPC_SYMLINK);
 
 	if (disk_link.name != (unsigned char *)oldpath)
 		kfree(disk_link.name);
@@ -2162,7 +2162,7 @@ static int ll_link(struct dentry *old_dentry, struct inode *dir,
 		GOTO(clear, err);
 
 	op_data = ll_prep_md_op_data(NULL, src, dir, name->name, name->len,
-				     0, LUSTRE_OPC_ANY, NULL);
+				     0, GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		GOTO(clear, err = PTR_ERR(op_data));
 
@@ -2212,12 +2212,12 @@ static inline int do_mkdir(struct inode *dir, struct dentry *dchild,
 
 	mode = (mode & (S_IRWXUGO | S_ISVTX)) | S_IFDIR;
 	if (!sbi->ll_intent_mkdir_enabled) {
-		rc = ll_new_node(dir, dchild, NULL, mode, 0, LUSTRE_OPC_MKDIR);
+		rc = ll_new_node(dir, dchild, NULL, mode, 0, GRUMPLE_OPC_MKDIR);
 		GOTO(out_tally, rc);
 	}
 
 	mkdir_it.it_create_mode = mode;
-	rc = ll_new_node_prepare(dir, dchild, mode, LUSTRE_OPC_MKDIR, &encrypt,
+	rc = ll_new_node_prepare(dir, dchild, mode, GRUMPLE_OPC_MKDIR, &encrypt,
 				 NULL, &op_data, &lum, &data, &datalen, NULL);
 	if (rc)
 		GOTO(out_tally, rc);
@@ -2310,7 +2310,7 @@ static int ll_rmdir(struct inode *dir, struct dentry *dchild)
 		GOTO(out, rc = -EPERM);
 
 	op_data = ll_prep_md_op_data(NULL, dir, NULL, name->name, name->len,
-				     S_IFDIR, LUSTRE_OPC_ANY, NULL);
+				     S_IFDIR, GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		GOTO(out, rc = PTR_ERR(op_data));
 
@@ -2365,7 +2365,7 @@ int ll_rmdir_entry(struct inode *dir, char *name, int namelen)
 	       encode_fn_dname(namelen, name), PFID(ll_inode2fid(dir)), dir);
 
 	op_data = ll_prep_md_op_data(NULL, dir, NULL, name, strlen(name),
-				     S_IFDIR, LUSTRE_OPC_ANY, NULL);
+				     S_IFDIR, GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 	op_data->op_cli_flags |= CLI_RM_ENTRY;
@@ -2411,7 +2411,7 @@ static int ll_unlink(struct inode *dir, struct dentry *dchild)
 		GOTO(clear, rc = -EPERM);
 
 	op_data = ll_prep_md_op_data(NULL, dir, NULL, name->name, name->len, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		GOTO(clear, rc = PTR_ERR(op_data));
 
@@ -2509,7 +2509,7 @@ static int ll_rename(struct mnt_idmap *map,
 		mode = tgt_dchild->d_inode->i_mode;
 
 	op_data = ll_prep_md_op_data(NULL, src, tgt, NULL, 0, mode,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		GOTO(out, err = PTR_ERR(op_data));
 

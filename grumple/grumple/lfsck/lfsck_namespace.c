@@ -4590,7 +4590,7 @@ static int lfsck_namespace_exec_oit(const struct lu_env *env,
 	ENTRY;
 	rc = dt_attr_get(env, obj, &la);
 	if (unlikely(rc || (la.la_valid & LA_FLAGS &&
-			    la.la_flags & LUSTRE_ORPHAN_FL))) {
+			    la.la_flags & GRUMPLE_ORPHAN_FL))) {
 		CDEBUG(D_INFO,
 		       "%s: skip orphan "DFID", %llx/%x: rc = %d\n",
 		       lfsck_lfsck2name(lfsck), PFID(fid),

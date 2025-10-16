@@ -365,7 +365,7 @@ config_log_add(struct obd_device *obd, char *logname,
 
 #ifdef HAVE_SERVER_SUPPORT
 	if (!IS_MGS(lsi) && cfg->cfg_sub_clds & CONFIG_SUB_NODEMAP) {
-		nodemap_cld = config_log_find_or_add(obd, LUSTRE_NODEMAP_NAME,
+		nodemap_cld = config_log_find_or_add(obd, GRUMPLE_NODEMAP_NAME,
 						     NULL, MGS_CFG_T_NODEMAP,
 						     cfg);
 		if (IS_ERR(nodemap_cld)) {
@@ -999,7 +999,7 @@ int mgc_enqueue(struct obd_export *exp, enum ldlm_type type,
 	 * ldlm_lock_match (see rev 1.1.2.11.2.47)
 	 */
 	req = ptlrpc_request_alloc_pack(class_exp2cliimp(exp),
-					&RQF_LDLM_ENQUEUE, LUSTRE_DLM_VERSION,
+					&RQF_LDLM_ENQUEUE, GRUMPLE_DLM_VERSION,
 					LDLM_ENQUEUE);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
@@ -1077,7 +1077,7 @@ static int mgc_set_info_async(const struct lu_env *env, struct obd_export *exp,
 			at_reset(at, INITIAL_CONNECT_TIMEOUT);
 		}
 
-		if (imp->imp_state == LUSTRE_IMP_DISCON || value > 1)
+		if (imp->imp_state == GRUMPLE_IMP_DISCON || value > 1)
 			ptlrpc_reconnect_import(imp);
 
 		RETURN(0);
@@ -1559,7 +1559,7 @@ again:
 	if (req == NULL)
 		GOTO(out, rc = -ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MGS_VERSION, MGS_CONFIG_READ);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MGS_VERSION, MGS_CONFIG_READ);
 	if (rc)
 		GOTO(out, rc);
 
@@ -1747,8 +1747,8 @@ static bool mgc_import_in_recovery(struct obd_import *imp)
 	bool in_recovery = true;
 
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state == LUSTRE_IMP_FULL ||
-	    imp->imp_state == LUSTRE_IMP_CLOSED)
+	if (imp->imp_state == GRUMPLE_IMP_FULL ||
+	    imp->imp_state == GRUMPLE_IMP_CLOSED)
 		in_recovery = false;
 	spin_unlock(&imp->imp_lock);
 
@@ -1848,7 +1848,7 @@ restart:
 						!mgc_import_in_recovery(imp),
 						timeout);
 
-			if (imp->imp_state == LUSTRE_IMP_FULL) {
+			if (imp->imp_state == GRUMPLE_IMP_FULL) {
 				retry = true;
 				goto restart;
 			} else {
@@ -2037,7 +2037,7 @@ static const struct lu_device_type_operations mgc_type_ops = {
 
 static struct lu_device_type mgc_device_type = {
 	.ldt_tags     = LU_DEVICE_MISC,
-	.ldt_name     = LUSTRE_MGC_NAME,
+	.ldt_name     = GRUMPLE_MGC_NAME,
 	.ldt_ops      = &mgc_type_ops,
 	.ldt_ctx_tags = LCT_LOCAL
 };
@@ -2096,18 +2096,18 @@ static int __init mgc_init(void)
 		return rc;
 
 	return class_register_type(&mgc_obd_ops, NULL, false,
-				   LUSTRE_MGC_NAME,
+				   GRUMPLE_MGC_NAME,
 				   &mgc_device_type);
 }
 
 static void __exit mgc_exit(void)
 {
-	class_unregister_type(LUSTRE_MGC_NAME);
+	class_unregister_type(GRUMPLE_MGC_NAME);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Management Client");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(mgc_init);

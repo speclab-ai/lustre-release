@@ -17,7 +17,7 @@
 # LUTF_SHELL: If specified it'll run the python interpreter (optional)
 # MASTER_PORT: The port on which the master will listen
 # TELNET_PORT: The port on which a telnet session can be established to the agent
-# LUSTRE: The path to the grumple tests directory
+# GRUMPLE: The path to the grumple tests directory
 # LUTFPATH: Path to the lutf directory
 #
 # Author: Amir Shehata <ashehata@whamcloud.com>
@@ -119,7 +119,7 @@ class LUTF:
 			if 'suite' in self.__cfg_yaml['lutf']:
 				del(self.__cfg_yaml['lutf']['suite'])
 
-		self.__check_env_var('grumple-path', 'LUSTRE')
+		self.__check_env_var('grumple-path', 'GRUMPLE')
 		self.__check_env_var('script', 'ONLY')
 		self.__check_env_var('pattern')
 		self.__check_env_var('results')
@@ -216,7 +216,7 @@ class LUTF:
 
 	def check_environment(self):
 		needed_vars = ['LUTFPATH', 'TELNET_PORT', 'MASTER_PORT',
-				'HOSTNAME', 'LD_LIBRARY_PATH', 'PATH', 'LUSTRE']
+				'HOSTNAME', 'LD_LIBRARY_PATH', 'PATH', 'GRUMPLE']
 
 		for var in needed_vars:
 			try:
@@ -271,8 +271,8 @@ def configure_lutf_environment():
 	restart = 0
 	old = os.environ.get("LD_LIBRARY_PATH")
 
-	# Find or set LUSTRE location
-	grumple = os.environ.get("LUSTRE")
+	# Find or set GRUMPLE location
+	grumple = os.environ.get("GRUMPLE")
 
 	if not grumple:
 		grumple = "./grumple/"

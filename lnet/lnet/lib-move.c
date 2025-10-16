@@ -1971,7 +1971,7 @@ lnet_handle_send(struct lnet_send_data *sd)
 
 	if (routing) {
 		msg->msg_target_is_router = 1;
-		msg->msg_target.pid = LNET_PID_LUSTRE;
+		msg->msg_target.pid = LNET_PID_GRUMPLE;
 		/*
 		 * since we're routing we want to ensure that the
 		 * msg_hdr.dest_nid is set to the final destination. When
@@ -4170,7 +4170,7 @@ lnet_send_ping(struct lnet_nid *dest_nid,
 		rc = -rc; 
 		goto fail_error;
 	}
-	id.pid = LNET_PID_LUSTRE;
+	id.pid = LNET_PID_GRUMPLE;
 	id.nid = *dest_nid;
 
 	rc = LNetGet(NULL, *mdh, &id,

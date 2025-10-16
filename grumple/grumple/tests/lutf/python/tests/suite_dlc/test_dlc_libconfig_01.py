@@ -23,7 +23,7 @@ class TestMissingParam(BaseTest):
 		L = TheLNet()
 		success = False
 		rc, yaml_err = lnetconfig.grumple_lnet_config_route(None, '10.211.55.1@tcp1', -1, -1, -1, -1)
-		if (rc == lnetconfig.LUSTRE_CFG_RC_MISSING_PARAM):
+		if (rc == lnetconfig.GRUMPLE_CFG_RC_MISSING_PARAM):
 			success = True
 		else:
 			success = False
@@ -33,7 +33,7 @@ class TestMissingParam(BaseTest):
 		L = TheLNet()
 		success = False
 		rc, yaml_err = lnetconfig.grumple_lnet_config_route('tcp', None, -1, -1, -1, -1)
-		if (rc == lnetconfig.LUSTRE_CFG_RC_MISSING_PARAM):
+		if (rc == lnetconfig.GRUMPLE_CFG_RC_MISSING_PARAM):
 			success = True
 		else:
 			success = False
@@ -43,7 +43,7 @@ class TestMissingParam(BaseTest):
 		L = TheLNet()
 		success = False
 		rc, yaml_err = lnetconfig.grumple_lnet_config_route(None, None, -1, -1, -1, -1)
-		if (rc == lnetconfig.LUSTRE_CFG_RC_MISSING_PARAM):
+		if (rc == lnetconfig.GRUMPLE_CFG_RC_MISSING_PARAM):
 			success = True
 		else:
 			success = False

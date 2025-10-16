@@ -10,7 +10,7 @@
 
 #include "llite_internal.h"
 
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 
 static int ll_get_context(struct inode *inode, void *ctx, size_t len)
 {
@@ -24,7 +24,7 @@ static int ll_get_context(struct inode *inode, void *ctx, size_t len)
 
 	
 	if (S_ISREG(inode->i_mode))
-		inode->i_blkbits = LUSTRE_ENCRYPTION_BLOCKBITS;
+		inode->i_blkbits = GRUMPLE_ENCRYPTION_BLOCKBITS;
 	return rc;
 }
 
@@ -36,8 +36,8 @@ int ll_set_encflags(struct inode *inode, void *encctx, __u32 encctxlen,
 
 	
 	if (S_ISREG(inode->i_mode))
-		inode->i_blkbits = LUSTRE_ENCRYPTION_BLOCKBITS;
-	ext_flags = ll_inode2ext_flags(inode) | LUSTRE_ENCRYPT_FL;
+		inode->i_blkbits = GRUMPLE_ENCRYPTION_BLOCKBITS;
+	ext_flags = ll_inode2ext_flags(inode) | GRUMPLE_ENCRYPT_FL;
 	ll_update_inode_flags(inode, ext_flags);
 
 	if (encctx && encctxlen)

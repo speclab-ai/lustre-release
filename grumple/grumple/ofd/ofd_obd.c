@@ -178,7 +178,7 @@ static int ofd_parse_connect_data(const struct lu_env *env,
 	/*
 	 * Save connect_data we have so far because tgt_grant_connect()
 	 * uses it to calculate grant, and we want to save the client
-	 * version before it is overwritten by LUSTRE_VERSION_CODE.
+	 * version before it is overwritten by GRUMPLE_VERSION_CODE.
 	 */
 	exp->exp_connect_data = *data;
 	if (OCD_HAS_FLAG(data, GRANT))
@@ -233,7 +233,7 @@ static int ofd_parse_connect_data(const struct lu_env *env,
 	if (data->ocd_connect_flags & OBD_CONNECT_MAXBYTES)
 		data->ocd_maxbytes = ofd->ofd_lut.lut_dt_conf.ddp_maxbytes;
 
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	if (OCD_HAS_FLAG(data, PINGLESS) && !ptlrpc_pinger_suppress_pings())
 		data->ocd_connect_flags &= ~OBD_CONNECT_PINGLESS;

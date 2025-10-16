@@ -427,7 +427,7 @@ static int lov_notify(struct obd_device *obd, struct obd_device *watched,
 
 		LASSERT(watched);
 
-		if (strcmp(watched->obd_type->typ_name, LUSTRE_OSC_NAME)) {
+		if (strcmp(watched->obd_type->typ_name, GRUMPLE_OSC_NAME)) {
 			CERROR("unexpected notification of %s %s\n",
 			       watched->obd_type->typ_name, watched->obd_name);
 			GOTO(out_notify_lock, rc = -EINVAL);
@@ -474,7 +474,7 @@ static int lov_add_target(struct obd_device *obd, struct obd_uuid *uuidp,
 		RETURN(-EINVAL);
 	}
 
-	tgt_obd = class_find_client_obd(uuidp, LUSTRE_OSC_NAME, &obd->obd_uuid);
+	tgt_obd = class_find_client_obd(uuidp, GRUMPLE_OSC_NAME, &obd->obd_uuid);
 	if (tgt_obd == NULL)
 		RETURN(-EINVAL);
 
@@ -676,7 +676,7 @@ int lov_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 	int rc;
 	ENTRY;
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 1) < 1) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 1) < 1) {
 		CERROR("%s: LOV setup requires a descriptor: rc = %d\n",
 		       obd->obd_name, -EINVAL);
 		RETURN(-EINVAL);
@@ -684,10 +684,10 @@ int lov_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 
 	desc = (struct lov_desc *)grumple_cfg_buf(lcfg, 1);
 
-	if (sizeof(*desc) > LUSTRE_CFG_BUFLEN(lcfg, 1)) {
+	if (sizeof(*desc) > GRUMPLE_CFG_BUFLEN(lcfg, 1)) {
 		CERROR("%s: descriptor size wrong: %d > %d: rc = %d\n",
 		       obd->obd_name, (int)sizeof(*desc),
-		       LUSTRE_CFG_BUFLEN(lcfg, 1), -EINVAL);
+		       GRUMPLE_CFG_BUFLEN(lcfg, 1), -EINVAL);
 		RETURN(-EINVAL);
 	}
 
@@ -712,7 +712,7 @@ int lov_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 	desc->ld_active_tgt_count = 0;
 	ltd->ltd_lov_desc = *desc;
 
-	lov->lov_sp_me = LUSTRE_SP_CLI;
+	lov->lov_sp_me = GRUMPLE_SP_CLI;
 	init_rwsem(&lov->lov_notify_lock);
 
 	INIT_LIST_HEAD(&lov->lov_pool_list);
@@ -814,7 +814,7 @@ int lov_process_config_base(struct obd_device *obd, struct grumple_cfg *lcfg,
 		int gen;
 
 		
-		if (LUSTRE_CFG_BUFLEN(lcfg, 1) > sizeof(obd_uuid.uuid))
+		if (GRUMPLE_CFG_BUFLEN(lcfg, 1) > sizeof(obd_uuid.uuid))
 			GOTO(out, rc = -EINVAL);
 
 		obd_str2uuid(&obd_uuid,  grumple_cfg_buf(lcfg, 1));
@@ -993,7 +993,7 @@ static int lov_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 			RETURN(-EINVAL);
 
 		imp = osc_obd->u.cli.cl_import;
-		if (!tgt->ltd_active && imp->imp_state != LUSTRE_IMP_IDLE)
+		if (!tgt->ltd_active && imp->imp_state != GRUMPLE_IMP_IDLE)
 			RETURN(-ENODATA);
 
 		
@@ -1058,7 +1058,7 @@ static int lov_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 
 		LASSERT(tgt && tgt->ltd_exp);
 		imp = class_exp2cliimp(tgt->ltd_exp);
-		if (!tgt->ltd_active && imp->imp_state != LUSTRE_IMP_IDLE) {
+		if (!tgt->ltd_active && imp->imp_state != GRUMPLE_IMP_IDLE) {
 			qctl->qc_valid = QC_OSTIDX;
 			qctl->obd_uuid = tgt->ltd_uuid;
 			RETURN(-ENODATA);
@@ -1165,7 +1165,7 @@ static int lov_get_info(const struct lu_env *env, struct obd_export *exp,
 			cli = &tgt->ltd_obd->u.cli;
 			imp = cli->cl_import;
 
-			if (imp == NULL || imp->imp_state != LUSTRE_IMP_FULL)
+			if (imp == NULL || imp->imp_state != GRUMPLE_IMP_FULL)
 				continue;
 
 			if (result == 0)
@@ -1280,16 +1280,16 @@ static int lov_quotactl(struct obd_device *obd, struct obd_export *exp,
 
 	ENTRY;
 	if (oqctl->qc_cmd != Q_GETOQUOTA &&
-	    oqctl->qc_cmd != LUSTRE_Q_SETQUOTA &&
-	    oqctl->qc_cmd != LUSTRE_Q_GETQUOTAPOOL &&
-	    oqctl->qc_cmd != LUSTRE_Q_ITEROQUOTA) {
+	    oqctl->qc_cmd != GRUMPLE_Q_SETQUOTA &&
+	    oqctl->qc_cmd != GRUMPLE_Q_GETQUOTAPOOL &&
+	    oqctl->qc_cmd != GRUMPLE_Q_ITEROQUOTA) {
 		rc = -EFAULT;
 		CERROR("%s: bad quota opc %x for lov obd: rc = %d\n",
 		       obd->obd_name, oqctl->qc_cmd, rc);
 		RETURN(rc);
 	}
 
-	if (oqctl->qc_cmd == LUSTRE_Q_GETQUOTAPOOL) {
+	if (oqctl->qc_cmd == GRUMPLE_Q_GETQUOTAPOOL) {
 		pool = lov_pool_find(obd, oqctl->qc_poolname);
 		if (!pool)
 			RETURN(-ENOENT);
@@ -1298,7 +1298,7 @@ static int lov_quotactl(struct obd_device *obd, struct obd_export *exp,
 		oqctl->qc_cmd = Q_GETOQUOTA;
 	}
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA)
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA)
 		lst = (struct list_head *)(uintptr_t)(oqctl->qc_iter_list);
 
 	
@@ -1323,7 +1323,7 @@ static int lov_quotactl(struct obd_device *obd, struct obd_export *exp,
 			continue;
 		}
 
-		if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA)
+		if (oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA)
 			err = obd_quota_iter(tgt->ltd_exp, oqctl, lst);
 		else
 			err = obd_quotactl(tgt->ltd_exp, oqctl);
@@ -1396,7 +1396,7 @@ static int __init lov_init(void)
 	}
 
 	rc = class_register_type(&lov_obd_ops, NULL, true,
-				 LUSTRE_LOV_NAME, &lov_device_type);
+				 GRUMPLE_LOV_NAME, &lov_device_type);
 	if (rc) {
 		kmem_cache_destroy(lov_oinfo_slab);
 		lu_kmem_fini(lov_caches);
@@ -1407,14 +1407,14 @@ static int __init lov_init(void)
 
 static void __exit lov_exit(void)
 {
-	class_unregister_type(LUSTRE_LOV_NAME);
+	class_unregister_type(GRUMPLE_LOV_NAME);
 	kmem_cache_destroy(lov_oinfo_slab);
 	lu_kmem_fini(lov_caches);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Logical Object Volume");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(lov_init);

@@ -6,8 +6,8 @@ set -o pipefail
 MOUNT=${MOUNT:-/mnt/grumple}
 DIR=${DIR:-$MOUNT/$HOSTNAME}
 SCRIPT=$(realpath "$0")
-LUSTRE=${LUSTRE:-$(dirname "$SCRIPT")/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname "$SCRIPT")/..}
+. $GRUMPLE/tests/test-framework.sh
 
 CHROOT="no"
 PREFIX="on"

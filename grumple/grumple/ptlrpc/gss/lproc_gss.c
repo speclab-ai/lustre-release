@@ -109,7 +109,7 @@ static ssize_t init_channel_store(struct kobject *kobj, struct attribute *attr,
 	}
 	return count;
 }
-LUSTRE_WO_ATTR(init_channel);
+GRUMPLE_WO_ATTR(init_channel);
 
 static ssize_t
 krb5_allow_old_client_csum_show(struct kobject *kobj,
@@ -133,7 +133,7 @@ krb5_allow_old_client_csum_store(struct kobject *kobj,
 	krb5_allow_old_client_csum = val;
 	return count;
 }
-LUSTRE_RW_ATTR(krb5_allow_old_client_csum);
+GRUMPLE_RW_ATTR(krb5_allow_old_client_csum);
 
 #ifdef HAVE_GSS_KEYRING
 static ssize_t gss_check_upcall_ns_show(struct kobject *kobj,
@@ -156,7 +156,7 @@ static ssize_t gss_check_upcall_ns_store(struct kobject *kobj,
 	gss_check_upcall_ns = val;
 	return count;
 }
-LUSTRE_RW_ATTR(gss_check_upcall_ns);
+GRUMPLE_RW_ATTR(gss_check_upcall_ns);
 #endif 
 
 static ssize_t rsi_upcall_show(struct kobject *kobj, struct attribute *attr,
@@ -199,7 +199,7 @@ out:
 	OBD_FREE(kbuf, count + 1);
 	return rc;
 }
-LUSTRE_RW_ATTR(rsi_upcall);
+GRUMPLE_RW_ATTR(rsi_upcall);
 
 static ssize_t ldebugfs_rsi_info_seq_write(struct file *file,
 					   const char __user *buffer,
@@ -280,7 +280,7 @@ static ssize_t rsi_entry_expire_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(rsi_entry_expire);
+GRUMPLE_RW_ATTR(rsi_entry_expire);
 
 static ssize_t rsi_acquire_expire_show(struct kobject *kobj,
 				       struct attribute *attr, char *buf)
@@ -306,7 +306,7 @@ static ssize_t rsi_acquire_expire_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(rsi_acquire_expire);
+GRUMPLE_RW_ATTR(rsi_acquire_expire);
 
 static ssize_t ldebugfs_rsc_info_seq_write(struct file *file,
 					   const char __user *buffer,
@@ -443,7 +443,7 @@ static ssize_t debug_level_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(debug_level);
+GRUMPLE_RW_ATTR(debug_level);
 
 static struct attribute *gss_attrs[] = {
 	&grumple_attr_init_channel.attr,

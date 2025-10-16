@@ -448,10 +448,10 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 			size_t len;
 
 			len = strlen(optarg);
-			if (len < 1 || len > LUSTRE_MAXFSNAME) {
+			if (len < 1 || len > GRUMPLE_MAXFSNAME) {
 				fprintf(stderr,
 					"%s: filesystem name must be 1-%d chars\n",
-					progname, LUSTRE_MAXFSNAME);
+					progname, GRUMPLE_MAXFSNAME);
 				return 1;
 			}
 
@@ -545,7 +545,7 @@ static int parse_opts(int argc, char *const argv[], struct mkfs_opts *mop,
 		case 'V':
 			++version;
 			fprintf(stdout, "%s %s\n", progname,
-				LUSTRE_VERSION_STRING);
+				GRUMPLE_VERSION_STRING);
 			return 0;
 #ifndef TUNEFS
 		case 'b': {

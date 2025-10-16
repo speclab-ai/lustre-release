@@ -15,7 +15,7 @@ index 0144c3a..848b7bb 100644
  #define EXT4_MOUNT_INIT_INODE_TABLE	0x80000000 /* Initialize uninitialized itables */
  
 +/* we know this is a Lustre mount thanks to the DIRDATA flag */
-+#define IS_LUSTRE_MOUNT(sb)	test_opt((sb), DIRDATA)
++#define IS_GRUMPLE_MOUNT(sb)	test_opt((sb), DIRDATA)
 +
  /*
   * Mount flags set either automatically (could not be set by mount option)
@@ -30,7 +30,7 @@ index 2de9443..97649e9 100644
  
 -	if (flags & EXT4_ENCRYPT_FL)
 +	if (flags & EXT4_ENCRYPT_FL &&
-+	    unlikely(!IS_LUSTRE_MOUNT(inode->i_sb)))
++	    unlikely(!IS_GRUMPLE_MOUNT(inode->i_sb)))
  		new_fl |= S_ENCRYPTED;
  	if (flags & EXT4_CASEFOLD_FL)
  		new_fl |= S_CASEFOLD;
@@ -40,7 +40,7 @@ index 2de9443..97649e9 100644
  		stat->attributes |= STATX_ATTR_COMPRESSED;
 -	if (flags & EXT4_ENCRYPT_FL)
 +	if (flags & EXT4_ENCRYPT_FL &&
-+	    unlikely(!IS_LUSTRE_MOUNT(inode->i_sb)))
++	    unlikely(!IS_GRUMPLE_MOUNT(inode->i_sb)))
  		stat->attributes |= STATX_ATTR_ENCRYPTED;
  	if (flags & EXT4_IMMUTABLE_FL)
  		stat->attributes |= STATX_ATTR_IMMUTABLE;

@@ -383,7 +383,7 @@ int jt_lcfg_param(int argc, char **argv)
 	struct grumple_cfg_bufs bufs;
 	int i;
 
-	if (argc >= LUSTRE_CFG_MAX_BUFCOUNT)
+	if (argc >= GRUMPLE_CFG_MAX_BUFCOUNT)
 		return CMD_HELP;
 
 	grumple_cfg_bufs_reset(&bufs, NULL);
@@ -411,11 +411,11 @@ static int lcfg_setparam_perm(const char *func, char *buf, bool del)
 	 * if they are the intended targets. They will blindly
 	 * try to set the parameter, and ENOTFOUND means it wasn't
 	 * for them.
-	 * Target name LUSTRE_CFG_ALL_TARGETS means call on all targets. It is
+	 * Target name GRUMPLE_CFG_ALL_TARGETS means call on all targets. It is
 	 * left here in case some filtering will be added in
 	 * future.
 	 */
-	grumple_cfg_bufs_set_string(&bufs, 0, LUSTRE_CFG_ALL_TARGETS);
+	grumple_cfg_bufs_set_string(&bufs, 0, GRUMPLE_CFG_ALL_TARGETS);
 	grumple_cfg_bufs_set_string(&bufs, 1, buf);
 	if (del)
 		grumple_cfg_bufs_set_string(&bufs, 2, "del");
@@ -646,8 +646,8 @@ static int yaml_get_device_index(char *source)
 	
 	yaml_emitter_initialize(&request);
 	rc = yaml_emitter_set_output_netlink(&request, sk, "grumple",
-					     LUSTRE_GENL_VERSION,
-					     LUSTRE_CMD_DEVICES, NLM_F_DUMP);
+					     GRUMPLE_GENL_VERSION,
+					     GRUMPLE_CMD_DEVICES, NLM_F_DUMP);
 	if (rc == 0)
 		goto error;
 
@@ -873,7 +873,7 @@ int jt_device_list(int argc, char **argv)
 	optind = 1;
 
 	
-	rc = llapi_param_display_value("devices", LUSTRE_GENL_VERSION, flags,
+	rc = llapi_param_display_value("devices", GRUMPLE_GENL_VERSION, flags,
 				       stdout);
 	if (rc == 0)
 		return 0;

@@ -599,7 +599,7 @@ static int mdt_finish_open(struct mdt_thread_info *info,
 		RETURN(-ENOENT);
 	}
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if (exp_connect_flags(exp) & OBD_CONNECT_ACL) {
 		struct lu_nodemap *nodemap = nodemap_get_from_exp(exp);
 		if (IS_ERR(nodemap))
@@ -1416,7 +1416,7 @@ static void mdt_pack_attr_acl(struct mdt_thread_info *info,
 		mdt_pack_attr2body(info, repbody, &ma->ma_attr,
 				   mdt_object_fid(o));
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if (exp_connect_flags(req->rq_export) & OBD_CONNECT_ACL) {
 		nodemap = nodemap_get_from_exp(req->rq_export);
 		if (IS_ERR(nodemap))
@@ -2368,7 +2368,7 @@ static int mdt_close_handle_layouts(struct mdt_thread_info *info,
 		buf->lb_len = sizeof(mrd);
 		buf->lb_buf = &mrd;
 		rc = mo_xattr_set(info->mti_env, mdt_object_child(o), buf,
-				  XATTR_LUSTRE_LOV,
+				  XATTR_GRUMPLE_LOV,
 				  ma->ma_attr_flags & MDS_CLOSE_LAYOUT_SPLIT ?
 				  LU_XATTR_SPLIT : LU_XATTR_MERGE);
 		if (rc == 0 && ma->ma_attr.la_valid & (LA_SIZE | LA_BLOCKS |

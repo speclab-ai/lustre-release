@@ -227,7 +227,7 @@ static ssize_t identity_expire_store(struct kobject *kobj,
 
 	return entry_expire_store(mdt->mdt_identity_cache, buffer, count);
 }
-LUSTRE_RW_ATTR(identity_expire);
+GRUMPLE_RW_ATTR(identity_expire);
 
 static ssize_t identity_acquire_expire_show(struct kobject *kobj,
 					    struct attribute *attr, char *buf)
@@ -268,7 +268,7 @@ static ssize_t identity_acquire_expire_store(struct kobject *kobj,
 
 	return acquire_expire_store(mdt->mdt_identity_cache, buffer, count);
 }
-LUSTRE_RW_ATTR(identity_acquire_expire);
+GRUMPLE_RW_ATTR(identity_acquire_expire);
 
 static ssize_t identity_upcall_show(struct kobject *kobj,
 				    struct attribute *attr, char *buf)
@@ -315,7 +315,7 @@ static ssize_t identity_upcall_store(struct kobject *kobj,
 	       hash->uc_upcall);
 	return count;
 }
-LUSTRE_RW_ATTR(identity_upcall);
+GRUMPLE_RW_ATTR(identity_upcall);
 
 static ssize_t flush_store(struct upcall_cache *cache,
 			   const char *buffer, size_t count)
@@ -341,7 +341,7 @@ static ssize_t identity_flush_store(struct kobject *kobj,
 
 	return flush_store(mdt->mdt_identity_cache, buffer, count);
 }
-LUSTRE_WO_ATTR(identity_flush);
+GRUMPLE_WO_ATTR(identity_flush);
 
 static ssize_t identity_info_store(struct kobject *kobj,
 				   struct attribute *attr,
@@ -404,7 +404,7 @@ out:
 
 	return rc ? rc : count;
 }
-LUSTRE_WO_ATTR(identity_info);
+GRUMPLE_WO_ATTR(identity_info);
 
 static ssize_t identity_int_expire_show(struct kobject *kobj,
 					struct attribute *attr, char *buf)
@@ -427,7 +427,7 @@ static ssize_t identity_int_expire_store(struct kobject *kobj,
 
 	return entry_expire_store(mdt->mdt_identity_cache_int, buffer, count);
 }
-LUSTRE_RW_ATTR(identity_int_expire);
+GRUMPLE_RW_ATTR(identity_int_expire);
 
 static ssize_t identity_int_acquire_expire_show(struct kobject *kobj,
 						struct attribute *attr,
@@ -452,7 +452,7 @@ static ssize_t identity_int_acquire_expire_store(struct kobject *kobj,
 
 	return acquire_expire_store(mdt->mdt_identity_cache_int, buffer, count);
 }
-LUSTRE_RW_ATTR(identity_int_acquire_expire);
+GRUMPLE_RW_ATTR(identity_int_acquire_expire);
 
 static ssize_t identity_int_flush_store(struct kobject *kobj,
 					struct attribute *attr,
@@ -464,7 +464,7 @@ static ssize_t identity_int_flush_store(struct kobject *kobj,
 
 	return flush_store(mdt->mdt_identity_cache_int, buffer, count);
 }
-LUSTRE_WO_ATTR(identity_int_flush);
+GRUMPLE_WO_ATTR(identity_int_flush);
 
 static ssize_t mdt_evict_client_store(struct kobject *kobj,
 				      struct attribute *attr,
@@ -504,7 +504,7 @@ static ssize_t mdt_evict_client_store(struct kobject *kobj,
 out:
 	return rc < 0 ? rc : count;
 }
-LUSTRE_ATTR(evict_client, 0200, NULL, mdt_evict_client_store);
+GRUMPLE_ATTR(evict_client, 0200, NULL, mdt_evict_client_store);
 
 static int site_stats_seq_show(struct seq_file *m, void *data)
 {
@@ -543,7 +543,7 @@ static ssize_t commit_on_sharing_store(struct kobject *kobj,
 	mdt_enable_cos(mdt, val);
 	return count;
 }
-LUSTRE_RW_ATTR(commit_on_sharing);
+GRUMPLE_RW_ATTR(commit_on_sharing);
 
 static ssize_t local_recovery_show(struct kobject *kobj,
 				      struct attribute *attr, char *buf)
@@ -571,7 +571,7 @@ static ssize_t local_recovery_store(struct kobject *kobj,
 	obd2obt(obd)->obt_lut->lut_local_recovery = !!val;
 	return count;
 }
-LUSTRE_RW_ATTR(local_recovery);
+GRUMPLE_RW_ATTR(local_recovery);
 
 static int mdt_root_squash_seq_show(struct seq_file *m, void *data)
 {
@@ -678,7 +678,7 @@ static ssize_t enable_cap_mask_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(enable_cap_mask);
+GRUMPLE_RW_ATTR(enable_cap_mask);
 
 static ssize_t enable_remote_dir_gid_show(struct kobject *kobj,
 					  struct attribute *attr, char *buf)
@@ -708,7 +708,7 @@ static ssize_t enable_remote_dir_gid_store(struct kobject *kobj,
 	mdt->mdt_enable_remote_dir_gid = val;
 	return count;
 }
-LUSTRE_RW_ATTR(enable_remote_dir_gid);
+GRUMPLE_RW_ATTR(enable_remote_dir_gid);
 
 static ssize_t enable_chprojid_gid_show(struct kobject *kobj,
 					struct attribute *attr, char *buf)
@@ -738,7 +738,7 @@ static ssize_t enable_chprojid_gid_store(struct kobject *kobj,
 	mdt->mdt_enable_chprojid_gid = val;
 	return count;
 }
-LUSTRE_RW_ATTR(enable_chprojid_gid);
+GRUMPLE_RW_ATTR(enable_chprojid_gid);
 
 #define MDT_BOOL_RW_ATTR(name)						\
 static ssize_t name##_show(struct kobject *kobj, struct attribute *attr,\
@@ -767,7 +767,7 @@ static ssize_t name##_store(struct kobject *kobj, struct attribute *attr,\
 	mdt->mdt_##name = val;						\
 	return count;							\
 }									\
-LUSTRE_RW_ATTR(name)
+GRUMPLE_RW_ATTR(name)
 
 MDT_BOOL_RW_ATTR(readonly);
 MDT_BOOL_RW_ATTR(evict_tgt_nids);
@@ -848,7 +848,7 @@ static ssize_t enable_resource_id_check_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(enable_resource_id_check);
+GRUMPLE_RW_ATTR(enable_resource_id_check);
 
 static ssize_t enable_pin_gid_show(struct kobject *kobj,
 				   struct attribute *attr, char *buf)
@@ -879,7 +879,7 @@ static ssize_t enable_pin_gid_store(struct kobject *kobj,
 	mdt->mdt_enable_pin_gid = val;
 	return count;
 }
-LUSTRE_RW_ATTR(enable_pin_gid);
+GRUMPLE_RW_ATTR(enable_pin_gid);
 
 /**
  * Show if the MDT is in no create mode.
@@ -928,7 +928,7 @@ static ssize_t no_create_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(no_create);
+GRUMPLE_RW_ATTR(no_create);
 
 /**
  * Show MDT async commit count.
@@ -968,7 +968,7 @@ static ssize_t async_commit_count_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(async_commit_count);
+GRUMPLE_RW_ATTR(async_commit_count);
 
 /**
  * Show MDT sync count.
@@ -1007,7 +1007,7 @@ static ssize_t sync_count_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(sync_count);
+GRUMPLE_RW_ATTR(sync_count);
 
 static const char *dom_open_lock_modes[NUM_DOM_LOCK_ON_OPEN_MODES] = {
 	[NO_DOM_LOCK_ON_OPEN] = "never",
@@ -1096,7 +1096,7 @@ static ssize_t dom_lock_store(struct kobject *kobj, struct attribute *attr,
 	mdt->mdt_opts.mo_dom_lock = val;
 	return count;
 }
-LUSTRE_RW_ATTR(dom_lock);
+GRUMPLE_RW_ATTR(dom_lock);
 
 static ssize_t dir_split_count_show(struct kobject *kobj,
 				     struct attribute *attr,
@@ -1131,7 +1131,7 @@ static ssize_t dir_split_count_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(dir_split_count);
+GRUMPLE_RW_ATTR(dir_split_count);
 
 static ssize_t dir_split_delta_show(struct kobject *kobj,
 				    struct attribute *attr,
@@ -1163,7 +1163,7 @@ static ssize_t dir_split_delta_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(dir_split_delta);
+GRUMPLE_RW_ATTR(dir_split_delta);
 
 static ssize_t enable_remote_subdir_mount_show(struct kobject *kobj,
 					       struct attribute *attr,
@@ -1180,7 +1180,7 @@ static ssize_t enable_remote_subdir_mount_store(struct kobject *kobj,
 	LCONSOLE_WARN("enable_remote_subdir_mount is deprecated, it's always enabled.\n");
 	return count;
 }
-LUSTRE_RW_ATTR(enable_remote_subdir_mount);
+GRUMPLE_RW_ATTR(enable_remote_subdir_mount);
 
 /**
  * Show if the OFD enforces T10PI checksum.
@@ -1242,7 +1242,7 @@ static ssize_t checksum_t10pi_enforce_store(struct kobject *kobj,
 	spin_unlock(&lut->lut_flags_lock);
 	return count;
 }
-LUSTRE_RW_ATTR(checksum_t10pi_enforce);
+GRUMPLE_RW_ATTR(checksum_t10pi_enforce);
 
 /**
  * Show MDT Maximum modify RPCs in flight.
@@ -1289,7 +1289,7 @@ static ssize_t max_mod_rpcs_in_flight_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_mod_rpcs_in_flight);
+GRUMPLE_RW_ATTR(max_mod_rpcs_in_flight);
 
 static ssize_t job_xattr_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -1380,32 +1380,32 @@ LDEBUGFS_SEQ_FOPS_RO_TYPE(mdt, hash);
 
 LDEBUGFS_SEQ_FOPS_RW_TYPE(mdt, nid_stats_clear);
 
-LUSTRE_ATTR(checksum_dump, 0644, dt_checksum_dump_show, dt_checksum_dump_store);
-LUSTRE_ATTR(checksum_type, 0444, dt_checksum_type_show, NULL);
+GRUMPLE_ATTR(checksum_dump, 0644, dt_checksum_dump_show, dt_checksum_dump_store);
+GRUMPLE_ATTR(checksum_type, 0444, dt_checksum_type_show, NULL);
 
-LUSTRE_RW_ATTR(job_cleanup_interval);
-LUSTRE_RW_ATTR(job_xattr);
-LUSTRE_RW_ATTR(hsm_control);
+GRUMPLE_RW_ATTR(job_cleanup_interval);
+GRUMPLE_RW_ATTR(job_xattr);
+GRUMPLE_RW_ATTR(hsm_control);
 
-LUSTRE_RW_ATTR(recovery_time_hard);
-LUSTRE_RW_ATTR(recovery_time_soft);
-LUSTRE_RW_ATTR(ir_factor);
+GRUMPLE_RW_ATTR(recovery_time_hard);
+GRUMPLE_RW_ATTR(recovery_time_soft);
+GRUMPLE_RW_ATTR(ir_factor);
 
-LUSTRE_RO_ATTR(tot_dirty);
-LUSTRE_RO_ATTR(tot_granted);
-LUSTRE_RO_ATTR(tot_pending);
-LUSTRE_RW_ATTR(grant_compat_disable);
-LUSTRE_RO_ATTR(instance);
+GRUMPLE_RO_ATTR(tot_dirty);
+GRUMPLE_RO_ATTR(tot_granted);
+GRUMPLE_RO_ATTR(tot_pending);
+GRUMPLE_RW_ATTR(grant_compat_disable);
+GRUMPLE_RO_ATTR(instance);
 
-LUSTRE_RO_ATTR(num_exports);
-LUSTRE_RW_ATTR(grant_check_threshold);
-LUSTRE_RO_ATTR(eviction_count);
+GRUMPLE_RO_ATTR(num_exports);
+GRUMPLE_RW_ATTR(grant_check_threshold);
+GRUMPLE_RO_ATTR(eviction_count);
 
 
-LUSTRE_OBD_UINT_PARAM_ATTR(at_min);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_max);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_history);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_unhealthy_factor);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_min);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_max);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_history);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_unhealthy_factor);
 
 static struct attribute *mdt_attrs[] = {
 	&grumple_attr_at_min.attr,

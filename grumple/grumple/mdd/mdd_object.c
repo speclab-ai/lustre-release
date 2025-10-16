@@ -221,7 +221,7 @@ int mdd_la_get(const struct lu_env *env, struct mdd_object *obj,
 		return rc;
 	}
 
-	if (la->la_valid & LA_FLAGS && la->la_flags & LUSTRE_ORPHAN_FL)
+	if (la->la_valid & LA_FLAGS && la->la_flags & GRUMPLE_ORPHAN_FL)
 		obj->mod_flags |= ORPHAN_OBJ | DEAD_OBJ;
 
 	return 0;
@@ -334,7 +334,7 @@ static int mdd_object_print(const struct lu_env *env, void *cookie,
 	struct mdd_object *mdd = lu2mdd_obj((struct lu_object *)o);
 
 	return (*p)(env, cookie,
-		    LUSTRE_MDD_NAME"-object@%p(open_count=%d, valid=%x, cltime=%lldns, flags=%lx)",
+		    GRUMPLE_MDD_NAME"-object@%p(open_count=%d, valid=%x, cltime=%lldns, flags=%lx)",
 		    mdd, mdd->mod_count, mdd->mod_valid,
 		    ktime_to_ns(mdd->mod_cltime), mdd->mod_flags);
 }
@@ -595,7 +595,7 @@ int mdd_attr_set_internal(const struct lu_env *env, struct mdd_object *obj,
 	ENTRY;
 
 	rc = mdo_attr_set(env, obj, attr, handle);
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if (!rc && (attr->la_valid & LA_MODE) && needacl)
 		rc = mdd_acl_chmod(env, obj, attr->la_mode, handle);
 #endif
@@ -638,8 +638,8 @@ static bool is_project_state_change(const struct lu_attr *oattr,
 		return true;
 
 	if ((la->la_valid & LA_FLAGS) &&
-	    (la->la_flags & LUSTRE_PROJINHERIT_FL) !=
-	    (oattr->la_flags & LUSTRE_PROJINHERIT_FL))
+	    (la->la_flags & GRUMPLE_PROJINHERIT_FL) !=
+	    (oattr->la_flags & GRUMPLE_PROJINHERIT_FL))
 		return true;
 
 	return false;
@@ -733,9 +733,9 @@ static int mdd_fix_attr(const struct lu_env *env, struct mdd_object *obj,
 	
 	if (la->la_valid & LA_FLAGS) {
 		unsigned int oldflags = oattr->la_flags &
-				(LUSTRE_IMMUTABLE_FL | LUSTRE_APPEND_FL);
+				(GRUMPLE_IMMUTABLE_FL | GRUMPLE_APPEND_FL);
 		unsigned int newflags = la->la_flags &
-				(LUSTRE_IMMUTABLE_FL | LUSTRE_APPEND_FL);
+				(GRUMPLE_IMMUTABLE_FL | GRUMPLE_APPEND_FL);
 
 		if ((uc->uc_fsuid != oattr->la_uid) &&
 		    !cap_raised(uc->uc_cap, CAP_FOWNER))
@@ -749,8 +749,8 @@ static int mdd_fix_attr(const struct lu_env *env, struct mdd_object *obj,
 			RETURN(-EPERM);
 
 		if (!S_ISDIR(oattr->la_mode)) {
-			la->la_flags &= ~(LUSTRE_DIRSYNC_FL | LUSTRE_TOPDIR_FL);
-		} else if (la->la_flags & LUSTRE_ENCRYPT_FL) {
+			la->la_flags &= ~(GRUMPLE_DIRSYNC_FL | GRUMPLE_TOPDIR_FL);
+		} else if (la->la_flags & GRUMPLE_ENCRYPT_FL) {
 			/* when trying to add encryption flag on dir,
 			 * make sure it is empty
 			 */
@@ -761,7 +761,7 @@ static int mdd_fix_attr(const struct lu_env *env, struct mdd_object *obj,
 		}
 	}
 
-	if (oattr->la_flags & (LUSTRE_IMMUTABLE_FL | LUSTRE_APPEND_FL) &&
+	if (oattr->la_flags & (GRUMPLE_IMMUTABLE_FL | GRUMPLE_APPEND_FL) &&
 	    (la->la_valid & ~LA_FLAGS) &&
 	    !(flags & MDS_PERM_BYPASS))
 		RETURN(-EPERM);
@@ -1157,7 +1157,7 @@ static int mdd_declare_attr_set(const struct lu_env *env,
 	if (rc)
 		return rc;
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if (attr->la_valid & LA_MODE) {
 		mdd_read_lock(env, obj, DT_TGT_CHILD);
 		rc = mdo_xattr_get(env, obj, &LU_BUF_NULL,
@@ -1394,9 +1394,9 @@ int mdd_attr_set(const struct lu_env *env, struct md_object *obj,
 	if (la_copy->la_valid) {
 		rc = mdd_attr_set_internal(env, mdd_obj, la_copy, handle, 1);
 
-		if (rc == -EDQUOT && la_copy->la_flags & LUSTRE_SET_SYNC_FL) {
+		if (rc == -EDQUOT && la_copy->la_flags & GRUMPLE_SET_SYNC_FL) {
 			
-			la_copy->la_flags &= ~LUSTRE_SET_SYNC_FL;
+			la_copy->la_flags &= ~GRUMPLE_SET_SYNC_FL;
 			la_copy->la_gid = attr->la_gid;
 			mdd_attr_set_internal(env, mdd_obj, la_copy, handle, 1);
 		}
@@ -1438,7 +1438,7 @@ static int mdd_xattr_sanity_check(const struct lu_env *env,
 
 	ENTRY;
 
-	if (attr->la_flags & (LUSTRE_IMMUTABLE_FL | LUSTRE_APPEND_FL))
+	if (attr->la_flags & (GRUMPLE_IMMUTABLE_FL | GRUMPLE_APPEND_FL))
 		RETURN(-EPERM);
 
 	if (strncmp(XATTR_USER_PREFIX, name,
@@ -1484,7 +1484,7 @@ mdd_xattr_changelog_type(const struct lu_env *env, struct mdd_device *mdd,
 {
 	
 	if (strcmp(XATTR_NAME_LOV, xattr_name) == 0 ||
-	    strcmp(XATTR_LUSTRE_LOV, xattr_name) == 0 ||
+	    strcmp(XATTR_GRUMPLE_LOV, xattr_name) == 0 ||
 	    allowed_grumple_lov(xattr_name))
 		return CL_LAYOUT;
 
@@ -2110,7 +2110,7 @@ retry:
 	if (rc)
 		RETURN(rc);
 
-	if (strcmp(name, XATTR_LUSTRE_LOV) == 0 &&
+	if (strcmp(name, XATTR_GRUMPLE_LOV) == 0 &&
 	    (fl == LU_XATTR_MERGE || fl == LU_XATTR_SPLIT)) {
 		struct md_rejig_data *mrd = buf->lb_buf;
 		struct md_object *victim = mrd->mrd_obj;
@@ -3681,7 +3681,7 @@ static int mdd_open_sanity_check(const struct lu_env *env,
 		open_flags &= ~MDS_OPEN_TRUNC;
 
 	
-	if (attr->la_flags & LUSTRE_APPEND_FL) {
+	if (attr->la_flags & GRUMPLE_APPEND_FL) {
 		if ((open_flags & MDS_FMODE_WRITE) &&
 		    !(open_flags & MDS_OPEN_APPEND))
 			RETURN(-EPERM);

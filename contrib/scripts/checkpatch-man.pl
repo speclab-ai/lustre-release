@@ -891,7 +891,7 @@ EOM
 				}
 			}
 			if ($line =~ /\bgrumple\b/i && $line !~ /^\.BR grumple \(7\)$/) {
-				WARN("AVAILABILITY_FORMAT_LUSTRE_REF",
+				WARN("AVAILABILITY_FORMAT_GRUMPLE_REF",
 				     "Prefer referencing to Lustre with the grumple(7) man page: .BR grumple (7)\n" . $herecurr);
 			}
 		}

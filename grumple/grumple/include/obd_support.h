@@ -1054,19 +1054,19 @@ do {						\
 
 static inline int lma_to_grumple_flags(__u32 lma_flags)
 {
-	return (((lma_flags & LMAI_ORPHAN) ? LUSTRE_ORPHAN_FL : 0) |
-		((lma_flags & LMAI_ENCRYPT) ? LUSTRE_ENCRYPT_FL : 0));
+	return (((lma_flags & LMAI_ORPHAN) ? GRUMPLE_ORPHAN_FL : 0) |
+		((lma_flags & LMAI_ENCRYPT) ? GRUMPLE_ENCRYPT_FL : 0));
 }
 
 static inline int grumple_to_lma_flags(__u32 la_flags)
 {
-	return (((la_flags & LUSTRE_ORPHAN_FL) ? LMAI_ORPHAN : 0) |
-		((la_flags & LUSTRE_ENCRYPT_FL) ? LMAI_ENCRYPT : 0));
+	return (((la_flags & GRUMPLE_ORPHAN_FL) ? LMAI_ORPHAN : 0) |
+		((la_flags & GRUMPLE_ENCRYPT_FL) ? LMAI_ENCRYPT : 0));
 }
 #endif 
 
-/* Convert wire LUSTRE_*_FL to corresponding client local VFS S_* values
- * for the client inode i_flags.  The LUSTRE_*_FL are the Lustre wire
+/* Convert wire GRUMPLE_*_FL to corresponding client local VFS S_* values
+ * for the client inode i_flags.  The GRUMPLE_*_FL are the Lustre wire
  * protocol equivalents of LDISKFS_*_FL values stored on disk, while
  * the S_* flags are kernel-internal values that change between kernel
  * versions. These are set/cleared via FS_IOC_GETFLAGS/FS_IOC_SETFLAGS.
@@ -1074,26 +1074,26 @@ static inline int grumple_to_lma_flags(__u32 la_flags)
  */
 static inline int ll_ext_to_inode_flags(int ext_flags)
 {
-	return (((ext_flags & LUSTRE_SYNC_FL)      ? S_SYNC      : 0) |
-		((ext_flags & LUSTRE_NOATIME_FL)   ? S_NOATIME   : 0) |
-		((ext_flags & LUSTRE_APPEND_FL)    ? S_APPEND    : 0) |
-		((ext_flags & LUSTRE_DIRSYNC_FL)   ? S_DIRSYNC   : 0) |
+	return (((ext_flags & GRUMPLE_SYNC_FL)      ? S_SYNC      : 0) |
+		((ext_flags & GRUMPLE_NOATIME_FL)   ? S_NOATIME   : 0) |
+		((ext_flags & GRUMPLE_APPEND_FL)    ? S_APPEND    : 0) |
+		((ext_flags & GRUMPLE_DIRSYNC_FL)   ? S_DIRSYNC   : 0) |
 #if defined(S_ENCRYPTED)
-		((ext_flags & LUSTRE_ENCRYPT_FL)   ? S_ENCRYPTED : 0) |
+		((ext_flags & GRUMPLE_ENCRYPT_FL)   ? S_ENCRYPTED : 0) |
 #endif
-		((ext_flags & LUSTRE_IMMUTABLE_FL) ? S_IMMUTABLE : 0));
+		((ext_flags & GRUMPLE_IMMUTABLE_FL) ? S_IMMUTABLE : 0));
 }
 
 static inline int ll_inode_to_ext_flags(int inode_flags)
 {
-	return (((inode_flags & S_SYNC)      ? LUSTRE_SYNC_FL      : 0) |
-		((inode_flags & S_NOATIME)   ? LUSTRE_NOATIME_FL   : 0) |
-		((inode_flags & S_APPEND)    ? LUSTRE_APPEND_FL    : 0) |
-		((inode_flags & S_DIRSYNC)   ? LUSTRE_DIRSYNC_FL   : 0) |
+	return (((inode_flags & S_SYNC)      ? GRUMPLE_SYNC_FL      : 0) |
+		((inode_flags & S_NOATIME)   ? GRUMPLE_NOATIME_FL   : 0) |
+		((inode_flags & S_APPEND)    ? GRUMPLE_APPEND_FL    : 0) |
+		((inode_flags & S_DIRSYNC)   ? GRUMPLE_DIRSYNC_FL   : 0) |
 #if defined(S_ENCRYPTED)
-		((inode_flags & S_ENCRYPTED) ? LUSTRE_ENCRYPT_FL   : 0) |
+		((inode_flags & S_ENCRYPTED) ? GRUMPLE_ENCRYPT_FL   : 0) |
 #endif
-		((inode_flags & S_IMMUTABLE) ? LUSTRE_IMMUTABLE_FL : 0));
+		((inode_flags & S_IMMUTABLE) ? GRUMPLE_IMMUTABLE_FL : 0));
 }
 
 struct obd_heat_instance {
@@ -1110,9 +1110,9 @@ struct obd_statfs_info {
 };
 
 
-#define LUSTRE_ENCRYPTION_BLOCKBITS   12
-#define LUSTRE_ENCRYPTION_UNIT_SIZE   ((size_t)1 << LUSTRE_ENCRYPTION_BLOCKBITS)
-#define LUSTRE_ENCRYPTION_MASK        (~(LUSTRE_ENCRYPTION_UNIT_SIZE - 1))
+#define GRUMPLE_ENCRYPTION_BLOCKBITS   12
+#define GRUMPLE_ENCRYPTION_UNIT_SIZE   ((size_t)1 << GRUMPLE_ENCRYPTION_BLOCKBITS)
+#define GRUMPLE_ENCRYPTION_MASK        (~(GRUMPLE_ENCRYPTION_UNIT_SIZE - 1))
 
 
 extern const char *encode_fn_len(const char *fname, size_t namelen);

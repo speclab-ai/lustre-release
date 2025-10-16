@@ -1,8 +1,8 @@
 #!/bin/bash
 ONLY=${ONLY:-"$*"}
 ORIG_PWD=${PWD}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$OST_POOLS_EXCEPT"

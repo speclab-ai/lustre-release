@@ -91,7 +91,7 @@ int llapi_project_open(const char *name, struct ll_project_handle **hdl,
 	}
 
 	
-	projid_env = secure_getenv("LIBLUSTREAPI_PROJID_FILE");
+	projid_env = secure_getenv("LIBGRUMPLEAPI_PROJID_FILE");
 	if (projid_env)
 		projid_file = projid_env;
 	file = fopen(projid_file, mode);

@@ -750,16 +750,16 @@ int gss_svc_upcall_install_rvs_ctx(struct obd_import *imp,
 		(ctx_expiry - ktime_get_real_seconds());
 
 	switch (imp->imp_obd->u.cli.cl_sp_to) {
-	case LUSTRE_SP_MDT:
+	case GRUMPLE_SP_MDT:
 		rscp->sc_ctx.gsc_usr_mds = 1;
 		break;
-	case LUSTRE_SP_OST:
+	case GRUMPLE_SP_OST:
 		rscp->sc_ctx.gsc_usr_oss = 1;
 		break;
-	case LUSTRE_SP_CLI:
+	case GRUMPLE_SP_CLI:
 		rscp->sc_ctx.gsc_usr_root = 1;
 		break;
-	case LUSTRE_SP_MGS:
+	case GRUMPLE_SP_MGS:
 		
 		rscp->sc_ctx.gsc_usr_mds = 1;
 		rscp->sc_ctx.gsc_usr_oss = 1;
@@ -909,7 +909,7 @@ int gss_svc_upcall_handle_init(struct ptlrpc_request *req,
 		grctx->src_ctx = &rscp->sc_ctx;
 	}
 
-	if (gw->gw_flags & LUSTRE_GSS_PACK_KCSUM) {
+	if (gw->gw_flags & GRUMPLE_GSS_PACK_KCSUM) {
 		grctx->src_ctx->gsc_mechctx->hash_func = gss_digest_hash;
 	} else if (!strcmp(grctx->src_ctx->gsc_mechctx->mech_type->gm_name,
 			   "krb5") &&

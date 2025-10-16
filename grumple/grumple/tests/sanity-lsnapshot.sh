@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$SANITY_LSNAPSHOT_EXCEPT "
@@ -53,7 +53,7 @@ run_test 0 "create grumple snapshot"
 test_1a() {
 	mkdir -p $DIR/$tdir || lss_err "(1) Fail to mkdir $DIR/$tdir"
 	rm -f $DIR/$tdir/test-framework.sh
-	cp $LUSTRE/tests/test-framework.sh $DIR/$tdir/ ||
+	cp $GRUMPLE/tests/test-framework.sh $DIR/$tdir/ ||
 		lss_err "(2) Fail to copy"
 	cancel_lru_locks mdc
 	cancel_lru_locks osc

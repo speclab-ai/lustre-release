@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT=$MMP_EXCEPT
@@ -66,7 +66,7 @@ disable_mmp() {
 mark_mmp_block() {
     local facet=$1
     local device=$2
-    do_facet $facet "$LUSTRE/tests/mmp_mark.sh $device"
+    do_facet $facet "$GRUMPLE/tests/mmp_mark.sh $device"
     return ${PIPESTATUS[0]}
 }
 reset_mmp_block() {

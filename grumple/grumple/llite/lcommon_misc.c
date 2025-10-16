@@ -84,7 +84,7 @@ int cl_ocd_update(struct obd_device *host, struct obd_device *watched,
 
 	ENTRY;
 
-	if (!strcmp(watched->obd_type->typ_name, LUSTRE_OSC_NAME) &&
+	if (!strcmp(watched->obd_type->typ_name, GRUMPLE_OSC_NAME) &&
 	    test_bit(OBDF_SET_UP, watched->obd_flags) &&
 	    !watched->obd_stopping) {
 		cli = &watched->u.cli;

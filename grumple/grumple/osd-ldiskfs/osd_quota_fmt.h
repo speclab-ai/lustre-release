@@ -38,8 +38,8 @@ struct grumple_disk_dqblk_v2 {
 };
 
 
-#define LUSTRE_DQSTRINBLK \
-		((LUSTRE_DQBLKSIZE - sizeof(struct grumple_disk_dqdbheader)) \
+#define GRUMPLE_DQSTRINBLK \
+		((GRUMPLE_DQBLKSIZE - sizeof(struct grumple_disk_dqdbheader)) \
 		 / sizeof(struct grumple_disk_dqblk_v2))
 #define GETENTRIES(buf) (((char *)buf)+sizeof(struct grumple_disk_dqdbheader))
 
@@ -81,16 +81,16 @@ struct grumple_disk_dqdbheader {
 };
 
 
-#define LUSTRE_DQINFOOFF	sizeof(struct grumple_disk_dqheader)
-#define LUSTRE_DQBLKSIZE_BITS	10
+#define GRUMPLE_DQINFOOFF	sizeof(struct grumple_disk_dqheader)
+#define GRUMPLE_DQBLKSIZE_BITS	10
 
-#define LUSTRE_DQBLKSIZE	(1 << LUSTRE_DQBLKSIZE_BITS)
+#define GRUMPLE_DQBLKSIZE	(1 << GRUMPLE_DQBLKSIZE_BITS)
 
-#define LUSTRE_DQTREEOFF	1
+#define GRUMPLE_DQTREEOFF	1
 
-#define LUSTRE_DQTREEDEPTH	4
+#define GRUMPLE_DQTREEDEPTH	4
 
 #define GETIDINDEX(id, depth)	(((id) >> \
-				((LUSTRE_DQTREEDEPTH - (depth) - 1) * 8)) & \
+				((GRUMPLE_DQTREEDEPTH - (depth) - 1) * 8)) & \
 				0xff)
 #endif 

@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$SANITY_SCRUB_EXCEPT"
@@ -64,7 +64,7 @@ scrub_prep() {
 		echo "creating $nfiles files on mds$n"
 		test_mkdir -i $((n - 1)) -c1 $DIR/$tdir/mds$n ||
 			error "Failed to create directory mds$n"
-		cp $LUSTRE/tests/*.sh $DIR/$tdir/mds$n ||
+		cp $GRUMPLE/tests/*.sh $DIR/$tdir/mds$n ||
 			error "Failed to copy files to mds$n"
 		mkdir -p $DIR/$tdir/mds$n/d_$tfile ||
 			error "mkdir failed on mds$n"
@@ -82,7 +82,7 @@ scrub_prep() {
 	[ ! -z $inject ] && [ $inject -eq 2 ] && {
 		do_nodes $mdts "$LCTL set_param fail_loc=0x198"
 		for ((n = 1; n <= $MDSCOUNT; n++)); do
-			cp $LUSTRE/tests/runas $DIR/$tdir/mds$n ||
+			cp $GRUMPLE/tests/runas $DIR/$tdir/mds$n ||
 				error "Fail to copy runas to MDS$n"
 		done
 		do_nodes $mdts "$LCTL set_param fail_loc=0"
@@ -204,7 +204,7 @@ scrub_check_data() {
 	local error_id=$1
 	local n
 	for n in $(seq $MDSCOUNT); do
-		diff -q $LUSTRE/tests/test-framework.sh \
+		diff -q $GRUMPLE/tests/test-framework.sh \
 			$DIR/$tdir/mds$n/test-framework.sh ||
 			error "($error_id) File data check failed"
 	done
@@ -214,7 +214,7 @@ scrub_check_data2() {
 	local error_id=$2
 	local n
 	for n in $(seq $MDSCOUNT); do
-		diff -q $LUSTRE/tests/$filename \
+		diff -q $GRUMPLE/tests/$filename \
 			$DIR/$tdir/mds$n/$filename ||
 			error "($error_id) File data check failed"
 	done

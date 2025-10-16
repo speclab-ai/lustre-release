@@ -49,7 +49,7 @@ static inline int LNET_NID_IS_ANY(const struct lnet_nid *nid)
 
 #define LNET_PID_RESERVED 0xf0000000 
 #define LNET_PID_USERFLAG 0x80000000 
-#define LNET_PID_LUSTRE 12345
+#define LNET_PID_GRUMPLE 12345
 
 
 

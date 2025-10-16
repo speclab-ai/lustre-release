@@ -915,7 +915,7 @@ int mdt_close_unpack(struct mdt_thread_info *info);
 int mdt_reint_unpack(struct mdt_thread_info *info, __u32 op);
 void mdt_fix_lov_magic(struct mdt_thread_info *info, void *eadata);
 int mdt_reint_rec(struct mdt_thread_info *info, struct mdt_lock_handle *lh);
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 int mdt_pack_acl2body(struct mdt_thread_info *info, struct mdt_body *repbody,
 		      struct mdt_object *o, struct lu_nodemap *nodemap);
 #endif
@@ -1197,7 +1197,7 @@ static inline int mdt_fail_write(const struct lu_env *env,
 				 struct dt_device *dd, int id)
 {
 	if (CFS_FAIL_CHECK_ORSET(id, CFS_FAIL_ONCE)) {
-		CERROR(LUSTRE_MDT_NAME": cfs_fail_loc=%x, fail write ops\n",
+		CERROR(GRUMPLE_MDT_NAME": cfs_fail_loc=%x, fail write ops\n",
 		       id);
 		return dt_ro(env, dd);
 		
@@ -1451,7 +1451,7 @@ static inline bool mdt_changelog_allow(struct mdt_thread_info *info)
 	int rc;
 
 	if (info == NULL || info->mti_body == NULL)
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 3, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 3, 0)
 		
 		return true;
 #else
@@ -1495,7 +1495,7 @@ static inline int mdt_check_enc(struct mdt_thread_info *info,
 	ma.ma_need = MA_INODE;
 	mdt_attr_get_complex(info, obj, &ma);
 	if (ma.ma_attr.la_valid & LA_FLAGS &&
-	    ma.ma_attr.la_flags & LUSTRE_ENCRYPT_FL)
+	    ma.ma_attr.la_flags & GRUMPLE_ENCRYPT_FL)
 		rc = -ENOKEY;
 
 	if (rc)
@@ -1536,7 +1536,7 @@ int mdt_is_remote_object(struct mdt_thread_info *info,
 			 struct mdt_object *child);
 
 static unsigned int max_mod_rpcs_per_client = OBD_MAX_RIF_DEFAULT;
-#if OBD_OCD_VERSION(3, 0, 53, 0) > LUSTRE_VERSION_CODE
+#if OBD_OCD_VERSION(3, 0, 53, 0) > GRUMPLE_VERSION_CODE
 static inline bool mdt_max_mod_rpcs_changed(struct mdt_device *mdt)
 {
 	return max_mod_rpcs_per_client != OBD_MAX_RIF_DEFAULT &&

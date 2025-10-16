@@ -121,7 +121,7 @@ static unsigned int get_first_free_id(struct rb_root *root)
  * Return:
  * * %0 on success
  * * %-EEXIST if the fileset id already exists
- * * %-ENOSPC if the fileset id exceeds LUSTRE_NODEMAP_FILESET_NUM_MAX
+ * * %-ENOSPC if the fileset id exceeds GRUMPLE_NODEMAP_FILESET_NUM_MAX
  */
 int fileset_alt_add(struct lu_nodemap *nodemap, struct lu_fileset_alt *fileset)
 {
@@ -133,7 +133,7 @@ int fileset_alt_add(struct lu_nodemap *nodemap, struct lu_fileset_alt *fileset)
 	if (fileset->nfa_id == 0)
 		fileset->nfa_id = get_first_free_id(root);
 
-	if (fileset->nfa_id > LUSTRE_NODEMAP_FILESET_NUM_MAX - 1)
+	if (fileset->nfa_id > GRUMPLE_NODEMAP_FILESET_NUM_MAX - 1)
 		return -ENOSPC;
 
 	

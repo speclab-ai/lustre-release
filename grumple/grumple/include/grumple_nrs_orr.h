@@ -13,8 +13,8 @@
  * Round Robin (ORR and TRR) policies
  */
 
-#ifndef _LUSTRE_NRS_ORR_H
-#define _LUSTRE_NRS_ORR_H
+#ifndef _GRUMPLE_NRS_ORR_H
+#define _GRUMPLE_NRS_ORR_H
 
 #include <grumple_compat/linux/xarray.h>
 

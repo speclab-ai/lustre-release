@@ -87,7 +87,7 @@ static int osc_page_print(const struct lu_env *env,
 	struct osc_object *obj = osc_page_object(opg);
 	struct client_obd *cli = &osc_export(obj)->exp_obd->u.cli;
 
-	return (*printer)(env, cookie, LUSTRE_OSC_NAME"-page@%p %lu: "
+	return (*printer)(env, cookie, GRUMPLE_OSC_NAME"-page@%p %lu: "
 			  "1< %d %c %c > "
 			  "2< %lld %u %u %#x %#x | %p %p > "
 			  "3< %d %d > "

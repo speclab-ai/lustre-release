@@ -351,7 +351,7 @@ out_lcfg:
 
 #ifdef OBD_GET_VERSION
 	case_OBD_IOC_DEPRECATED(OBD_GET_VERSION, "obdclass", 2, 15) {
-		size_t vstr_size = sizeof(LUSTRE_VERSION_STRING);
+		size_t vstr_size = sizeof(GRUMPLE_VERSION_STRING);
 
 		if (!data->ioc_inlbuf1) {
 			rc = OBD_IOC_ERROR("obdclass", cmd, "no buffer passed",
@@ -365,7 +365,7 @@ out_lcfg:
 			GOTO(out, rc);
 		}
 
-		strscpy(data->ioc_bulk, LUSTRE_VERSION_STRING, vstr_size);
+		strscpy(data->ioc_bulk, GRUMPLE_VERSION_STRING, vstr_size);
 
 		if (copy_to_user(uarg, data, len))
 			rc = -EFAULT;
@@ -781,7 +781,7 @@ static int __init obdclass_init(void)
 {
 	int err;
 
-	LCONSOLE_INFO("Lustre: Build Version: "LUSTRE_VERSION_STRING"\n");
+	LCONSOLE_INFO("Lustre: Build Version: "GRUMPLE_VERSION_STRING"\n");
 
 	err = libcfs_setup();
 	if (err)
@@ -1072,7 +1072,7 @@ EXPORT_SYMBOL(obd_heat_add);
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Class Driver");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(obdclass_init);

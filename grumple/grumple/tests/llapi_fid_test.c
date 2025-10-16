@@ -478,9 +478,9 @@ static void test31(void)
 	ASSERTF(fd >= 0, "llapi_open_by_fid for " DFID_NOBRACE ": %s",
 		PFID(&LU_ROOT_FID), strerror(errno));
 
-	fd = llapi_open_by_fid(mainpath, &LU_DOT_LUSTRE_FID, O_RDONLY);
+	fd = llapi_open_by_fid(mainpath, &LU_DOT_GRUMPLE_FID, O_RDONLY);
 	ASSERTF(fd >= 0, "llapi_open_by_fid for " DFID_NOBRACE ": %s",
-		PFID(&LU_DOT_LUSTRE_FID), strerror(errno));
+		PFID(&LU_DOT_GRUMPLE_FID), strerror(errno));
 
 	fd = llapi_open_by_fid(mainpath, &LU_OBF_FID, O_RDONLY);
 	ASSERTF(fd >= 0, "llapi_open_by_fid for " DFID_NOBRACE ": %s",

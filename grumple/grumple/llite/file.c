@@ -86,14 +86,14 @@ static void ll_prepare_close(struct inode *inode, struct md_op_data *op_data,
 {
 	ENTRY;
 	ll_prep_md_op_data(op_data, inode, NULL, NULL,
-			   0, 0, LUSTRE_OPC_ANY, NULL);
+			   0, 0, GRUMPLE_OPC_ANY, NULL);
 
 	op_data->op_attr.ia_mode = inode->i_mode;
 	op_data->op_attr.ia_atime = inode_get_atime(inode);
 	op_data->op_attr.ia_mtime = inode_get_mtime(inode);
 	op_data->op_attr.ia_ctime = inode_get_ctime(inode);
 	/* In case of encrypted file without the key, visible size was rounded
-	 * up to next LUSTRE_ENCRYPTION_UNIT_SIZE, and clear text size was
+	 * up to next GRUMPLE_ENCRYPTION_UNIT_SIZE, and clear text size was
 	 * stored into lli_lazysize in ll_merge_attr(), so set proper file size
 	 * now that we are closing.
 	 */
@@ -497,16 +497,16 @@ static inline int ll_dom_readpage(void *data, struct page *page)
 				
 				if (memcmp(page_address(page) + offs,
 					   page_address(ZERO_PAGE(0)),
-					   LUSTRE_ENCRYPTION_UNIT_SIZE) == 0)
+					   GRUMPLE_ENCRYPTION_UNIT_SIZE) == 0)
 					break;
 
 				rc = llcrypt_decrypt_pagecache_blocks(page,
-						    LUSTRE_ENCRYPTION_UNIT_SIZE,
+						    GRUMPLE_ENCRYPTION_UNIT_SIZE,
 								      offs);
 				if (rc)
 					break;
 
-				offs += LUSTRE_ENCRYPTION_UNIT_SIZE;
+				offs += GRUMPLE_ENCRYPTION_UNIT_SIZE;
 			}
 		}
 	}
@@ -747,7 +747,7 @@ retry:
 	}
 
 	op_data = ll_prep_md_op_data(NULL, parent->d_inode, de->d_inode,
-				     name, len, 0, LUSTRE_OPC_OPEN, NULL);
+				     name, len, 0, GRUMPLE_OPC_OPEN, NULL);
 	if (IS_ERR(op_data)) {
 		kfree(name);
 		GOTO(out_put, rc = PTR_ERR(op_data));
@@ -1395,7 +1395,7 @@ ll_lease_open(struct inode *inode, struct file *file, fmode_t fmode,
 		RETURN(ERR_PTR(-ENOMEM));
 
 	op_data = ll_prep_md_op_data(NULL, inode, inode, NULL, 0, 0,
-					LUSTRE_OPC_ANY, NULL);
+					GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		GOTO(out, rc = PTR_ERR(op_data));
 
@@ -1595,7 +1595,7 @@ static int ll_lease_file_resync(struct obd_client_handle *och,
 
 	ENTRY;
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -1687,13 +1687,13 @@ static int ll_merge_attr_nolock(const struct lu_env *env, struct inode *inode)
 
 	if (IS_ENCRYPTED(inode) && !ll_has_encryption_key(inode)) {
 		/* Without the key, round up encrypted file size to next
-		 * LUSTRE_ENCRYPTION_UNIT_SIZE. Clear text size is put in
+		 * GRUMPLE_ENCRYPTION_UNIT_SIZE. Clear text size is put in
 		 * lli_lazysize for proper file size setting at close time.
 		 */
 		lli->lli_attr_valid |= OBD_MD_FLLAZYSIZE;
 		lli->lli_lazysize = attr->cat_size;
 		attr->cat_size = round_up(attr->cat_size,
-					  LUSTRE_ENCRYPTION_UNIT_SIZE);
+					  GRUMPLE_ENCRYPTION_UNIT_SIZE);
 	}
 	i_size_write(inode, attr->cat_size);
 	inode->i_blocks = attr->cat_blocks;
@@ -2030,7 +2030,7 @@ restart:
 
 	if (cl_io_rw_init(env, io, iot, *ppos, per_bytes) == 0) {
 		if (iocb_ki_flags_check(flags, APPEND))
-			range_lock_init(&range, 0, LUSTRE_EOF);
+			range_lock_init(&range, 0, GRUMPLE_EOF);
 		else
 			range_lock_init(&range, *ppos, *ppos + per_bytes - 1);
 
@@ -2764,7 +2764,7 @@ int ll_lov_getstripe_ea_info(struct inode *inode, const char *filename,
 
 	namesize = filename ? strlen(filename) : 0;
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, filename, namesize,
-				     lmmsize, LUSTRE_OPC_ANY, NULL);
+				     lmmsize, GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -2977,7 +2977,7 @@ static ssize_t ll_lov_setstripe(struct inode *inode, struct file *file,
 			struct iattr attr = { 0 };
 
 			rc = cl_setattr_ost(inode, &attr, OP_XVALID_FLAGS,
-					    LUSTRE_ENCRYPT_FL);
+					    GRUMPLE_ENCRYPT_FL);
 		}
 	}
 	cl_lov_delay_create_clear(&file->f_flags);
@@ -3191,8 +3191,8 @@ static int ll_do_fiemap(struct inode *inode, struct fiemap *fiemap,
 
 	ENTRY;
 	
-	if (fiemap->fm_flags & ~LUSTRE_FIEMAP_FLAGS_COMPAT) {
-		fiemap->fm_flags &= ~LUSTRE_FIEMAP_FLAGS_COMPAT;
+	if (fiemap->fm_flags & ~GRUMPLE_FIEMAP_FLAGS_COMPAT) {
+		fiemap->fm_flags &= ~GRUMPLE_FIEMAP_FLAGS_COMPAT;
 		return -EBADR;
 	}
 
@@ -3715,7 +3715,7 @@ static int ll_swap_layouts(struct file *file1, struct file *file2,
 	msl.msl_flags = 0;
 	rc = -ENOMEM;
 	op_data = ll_prep_md_op_data(NULL, llss->inode1, llss->inode2, NULL, 0,
-				     0, LUSTRE_OPC_ANY, &msl);
+				     0, GRUMPLE_OPC_ANY, &msl);
 	if (IS_ERR(op_data))
 		GOTO(free, rc = PTR_ERR(op_data));
 
@@ -3764,7 +3764,7 @@ int ll_hsm_state_set(struct inode *inode, struct hsm_state_set *hss)
 	}
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, hss);
+				     GRUMPLE_OPC_ANY, hss);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -3787,7 +3787,7 @@ static int ll_hsm_data_version_sync(struct inode *inode, __u64 data_version)
 		RETURN(-EINVAL);
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -4214,7 +4214,7 @@ int ll_set_project(struct inode *inode, __u32 xflags, __u32 projid)
 		RETURN(rc);
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -4736,7 +4736,7 @@ out:
 			RETURN(-ENOMEM);
 
 		op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-					     LUSTRE_OPC_ANY, hus);
+					     GRUMPLE_OPC_ANY, hus);
 		if (IS_ERR(op_data)) {
 			rc = PTR_ERR(op_data);
 		} else {
@@ -4781,7 +4781,7 @@ out:
 			RETURN(-ENOMEM);
 
 		op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-					     LUSTRE_OPC_ANY, hca);
+					     GRUMPLE_OPC_ANY, hca);
 		if (IS_ERR(op_data)) {
 			OBD_FREE_PTR(hca);
 			RETURN(PTR_ERR(op_data));
@@ -5059,7 +5059,7 @@ out_detach_free:
 		OBD_FREE_PTR(detach);
 		RETURN(rc);
 	}
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 	case LL_IOC_PCC_STATE: {
 		struct lu_pcc_state __user *ustate = uarg;
 		struct lu_pcc_state *state;
@@ -5132,11 +5132,11 @@ static loff_t ll_lseek(struct file *file, loff_t offset, int whence)
 	cl_env_put(env, &refcheck);
 
 	/* Without the key, SEEK_HOLE return value has to be
-	 * rounded up to next LUSTRE_ENCRYPTION_UNIT_SIZE.
+	 * rounded up to next GRUMPLE_ENCRYPTION_UNIT_SIZE.
 	 */
 	if (IS_ENCRYPTED(inode) && !ll_has_encryption_key(inode) &&
 	    whence == SEEK_HOLE)
-		retval = round_up(retval, LUSTRE_ENCRYPTION_UNIT_SIZE);
+		retval = round_up(retval, GRUMPLE_ENCRYPTION_UNIT_SIZE);
 
 	RETURN(retval);
 }
@@ -5442,7 +5442,7 @@ static int ll_file_flock_async_unlock(struct inode *inode,
 		RETURN(rc);
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -5654,7 +5654,7 @@ ll_file_flock(struct file *file, int cmd, struct file_lock *file_lock)
 	       flock.l_flock.start, flock.l_flock.end);
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -5773,7 +5773,7 @@ int ll_get_fid_by_name(struct inode *parent, const char *name,
 
 	ENTRY;
 	op_data = ll_prep_md_op_data(NULL, parent, NULL, name, namelen, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -5884,7 +5884,7 @@ int ll_migrate(struct inode *parent, struct file *file, struct lmv_user_md *lum,
 		GOTO(out_iput, rc = -EPERM);
 
 	op_data = ll_prep_md_op_data(NULL, parent, NULL, name, namelen,
-				     child_inode->i_mode, LUSTRE_OPC_ANY, NULL);
+				     child_inode->i_mode, GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		GOTO(out_iput, rc = PTR_ERR(op_data));
 
@@ -6137,7 +6137,7 @@ static int ll_inode_revalidate(struct dentry *dentry, enum ldlm_intent_flags op)
 	}
 
 	op_data = ll_prep_md_op_data(NULL, dir, inode, name, namelen, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (parent)
 		dput(parent);
 	if (IS_ERR(op_data))
@@ -6387,14 +6387,14 @@ fill_attr:
 	}
 
 	stat->attributes_mask = STATX_ATTR_IMMUTABLE | STATX_ATTR_APPEND;
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	stat->attributes_mask |= STATX_ATTR_ENCRYPTED;
 #endif
 	stat->attributes |= ll_inode_to_ext_flags(inode->i_flags);
-	/* if Lustre specific LUSTRE_ENCRYPT_FL flag is set, also set
+	/* if Lustre specific GRUMPLE_ENCRYPT_FL flag is set, also set
 	 * ext4 equivalent to please statx
 	 */
-	if (stat->attributes & LUSTRE_ENCRYPT_FL)
+	if (stat->attributes & GRUMPLE_ENCRYPT_FL)
 		stat->attributes |= STATX_ATTR_ENCRYPTED;
 	stat->result_mask &= request_mask;
 #endif
@@ -6990,7 +6990,7 @@ static int ll_layout_intent(struct inode *inode, struct layout_intent *intent)
 
 	ENTRY;
 	op_data = ll_prep_md_op_data(NULL, inode, inode, NULL,
-				     0, 0, LUSTRE_OPC_ANY, NULL);
+				     0, 0, GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 

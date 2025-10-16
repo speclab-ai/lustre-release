@@ -32,16 +32,16 @@ class SimpleLustreNode(BaseTest):
 		self.__mounted = False
 
 		if self.get_nodenum(['mds(.*?)_HOST', 'mdt(.*?)_HOST', 'mgs(.*?)_HOST']):
-			self.__role = LUSTRE_NODE_ROLE_MGS
+			self.__role = GRUMPLE_NODE_ROLE_MGS
 		elif self.get_nodenum(['ost(.*?)_HOST', 'oss(.*?)_HOST']):
-			self.__role = LUSTRE_NODE_ROLE_OST
+			self.__role = GRUMPLE_NODE_ROLE_OST
 		elif 'client'.upper() in me.name:
-			self.__role = LUSTRE_NODE_ROLE_CLIENT
+			self.__role = GRUMPLE_NODE_ROLE_CLIENT
 			self.__fio = FioTraffic()
 		elif self.get_nodenum(['rtr(.*?)_HOST']):
-			self.__role = LUSTRE_NODE_ROLE_ROUTER
+			self.__role = GRUMPLE_NODE_ROLE_ROUTER
 		else:
-			self.__role = LUSTRE_NODE_ROLE_UNDEFINED
+			self.__role = GRUMPLE_NODE_ROLE_UNDEFINED
 			if self.__exceptions:
 				raise LUTFError("Unknown Lustre node type")
 
@@ -52,11 +52,11 @@ class SimpleLustreNode(BaseTest):
 		return me.my_hostname()
 
 	def get_mount_point(self):
-		if self.__role == LUSTRE_NODE_ROLE_MGS:
+		if self.__role == GRUMPLE_NODE_ROLE_MGS:
 			return self.__mds_mountp
-		elif self.__role == LUSTRE_NODE_ROLE_OST:
+		elif self.__role == GRUMPLE_NODE_ROLE_OST:
 			return self.__ost_mountp
-		elif self.__role == LUSTRE_NODE_ROLE_CLIENT:
+		elif self.__role == GRUMPLE_NODE_ROLE_CLIENT:
 			return self.__client_mountp
 		return None
 
@@ -128,11 +128,11 @@ class SimpleLustreNode(BaseTest):
 		'''
 		Configure the mount based on the environment variables set
 		'''
-		if self.__role == LUSTRE_NODE_ROLE_MGS:
+		if self.__role == GRUMPLE_NODE_ROLE_MGS:
 			self.__configure_mds(force_format, mgs_nids=mgs_nids, index=index)
-		elif self.__role == LUSTRE_NODE_ROLE_OST:
+		elif self.__role == GRUMPLE_NODE_ROLE_OST:
 			self.__configure_ost(force_format, mgs_nids=mgs_nids, index=index)
-		elif self.__role == LUSTRE_NODE_ROLE_CLIENT:
+		elif self.__role == GRUMPLE_NODE_ROLE_CLIENT:
 			self.__configure_client(mgs_nids)
 		self.__mounted = True
 
@@ -140,11 +140,11 @@ class SimpleLustreNode(BaseTest):
 		'''
 		Unconfigure Lustre module
 		'''
-		if self.__role == LUSTRE_NODE_ROLE_MGS:
+		if self.__role == GRUMPLE_NODE_ROLE_MGS:
 			self.__unconfigure_mount(self.__mds_mountp)
-		elif self.__role == LUSTRE_NODE_ROLE_OST:
+		elif self.__role == GRUMPLE_NODE_ROLE_OST:
 			self.__unconfigure_mount(self.__ost_mountp)
-		elif self.__role == LUSTRE_NODE_ROLE_CLIENT:
+		elif self.__role == GRUMPLE_NODE_ROLE_CLIENT:
 			self.__unconfigure_mount(self.__client_mountp)
 		self.__mounted = False
 

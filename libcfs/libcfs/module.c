@@ -54,7 +54,7 @@ struct lnet_debugfs_symlink_def {
 
 static struct dentry *lnet_debugfs_root;
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 /* remove deprecated libcfs ioctl handling, since /dev/lnet has
  * moved to lnet and there is no way to call these ioctls until
  * after the lnet module is loaded.  They are replaced by writing

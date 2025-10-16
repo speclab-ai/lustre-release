@@ -16,4 +16,4 @@ Index: linux-stage/fs/ext4/xattr.c
 +	if (ext4_xattr_inode_get_hash(inode) == 0 &&
  	    EXT4_XATTR_INODE_GET_PARENT(inode) == parent->i_ino &&
  	    inode->i_generation == parent->i_generation) {
- 		ext4_set_inode_state(inode, EXT4_STATE_LUSTRE_EA_INODE);
+ 		ext4_set_inode_state(inode, EXT4_STATE_GRUMPLE_EA_INODE);

@@ -140,7 +140,7 @@ static ssize_t qsd_enabled_seq_write(struct file *file,
 {
 	struct seq_file *m = file->private_data;
 	struct qsd_instance *qsd = m->private;
-	char fsname[LUSTRE_MAXFSNAME + 1];
+	char fsname[GRUMPLE_MAXFSNAME + 1];
 	int enabled = 0;
 	char valstr[5];
 	int pool, rc;

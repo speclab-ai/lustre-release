@@ -122,7 +122,7 @@ int mgs_fs_setup(const struct lu_env *env, struct mgs_device *mgs)
 	
 	nm_config_file_obj = local_index_find_or_create(env, mgs->mgs_los,
 							mgs->mgs_configs_dir,
-							LUSTRE_NODEMAP_NAME,
+							GRUMPLE_NODEMAP_NAME,
 							S_IFREG | 0644,
 							&dt_nodemap_features);
 	if (IS_ERR(nm_config_file_obj))

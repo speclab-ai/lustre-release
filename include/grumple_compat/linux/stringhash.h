@@ -1,7 +1,7 @@
 
 
-#ifndef __LINUX_STRINGHASH_LUSTRE_H
-#define __LINUX_STRINGHASH_LUSTRE_H
+#ifndef __LINUX_STRINGHASH_GRUMPLE_H
+#define __LINUX_STRINGHASH_GRUMPLE_H
 
 #include <linux/dcache.h>
 #include <linux/types.h>

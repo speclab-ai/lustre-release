@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$REPLAY_SINGLE_EXCEPT "
@@ -1635,7 +1635,7 @@ test_70b () {
 		$LFS setdirstripe -D -c$MDSCOUNT $DIR/$tdir
 	fi
 	do_nodesv $clients "set -x; MISSING_DBENCH_OK=$MISSING_DBENCH_OK \
-		PATH=\$PATH:$LUSTRE/utils:$LUSTRE/tests/:$DBENCH_LIB \
+		PATH=\$PATH:$GRUMPLE/utils:$GRUMPLE/tests/:$DBENCH_LIB \
 		DBENCH_LIB=$DBENCH_LIB TESTSUITE=$TESTSUITE TESTNAME=$TESTNAME \
 		MOUNT=$MOUNT DIR=$DIR/$tdir/\\\$(hostname) LCTL=$LCTL $cmd" &
 	pid=$!

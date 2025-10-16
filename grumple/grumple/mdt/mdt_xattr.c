@@ -53,7 +53,7 @@ static int mdt_getxattr_pack_reply(struct mdt_thread_info *info)
 		    !strncmp(xattr_name, user_string, sizeof(user_string) - 1))
 			RETURN(-EOPNOTSUPP);
 
-		if (strcmp(xattr_name, XATTR_LUSTRE_PIN) == 0)
+		if (strcmp(xattr_name, XATTR_GRUMPLE_PIN) == 0)
 			xattr_name = XATTR_NAME_PIN;
 
 		size = mo_xattr_get(info->mti_env,
@@ -106,7 +106,7 @@ static int mdt_getxattr_pack_reply(struct mdt_thread_info *info)
 
 	if (req_capsule_has_field(pill, &RMF_ACL, RCL_SERVER))
 		req_capsule_set_size(pill, &RMF_ACL, RCL_SERVER,
-				     LUSTRE_POSIX_ACL_MAX_SIZE_OLD);
+				     GRUMPLE_POSIX_ACL_MAX_SIZE_OLD);
 
 	req_capsule_set_size(pill, &RMF_EADATA, RCL_SERVER,
 			     info->mti_body->mbo_eadatasize == 0 ? 0 : size);
@@ -135,7 +135,7 @@ static int mdt_nodemap_map_acl(struct mdt_thread_info *info, void *buf,
 	    strcmp(name, XATTR_NAME_ACL_DEFAULT) == 0) {
 		if (size > info->mti_mdt->mdt_max_ea_size ||
 		     (!exp_connect_large_acl(exp) &&
-		      size > LUSTRE_POSIX_ACL_MAX_SIZE_OLD))
+		      size > GRUMPLE_POSIX_ACL_MAX_SIZE_OLD))
 			GOTO(out, rc = -ERANGE);
 
 		nodemap = nodemap_get_from_exp(exp);
@@ -274,7 +274,7 @@ int mdt_getxattr(struct mdt_thread_info *info)
 		const char *xattr_name = req_capsule_client_get(info->mti_pill,
 								&RMF_NAME);
 
-		if (strcmp(xattr_name, XATTR_LUSTRE_PIN) == 0)
+		if (strcmp(xattr_name, XATTR_GRUMPLE_PIN) == 0)
 			xattr_name = XATTR_NAME_PIN;
 
 		rc = mo_xattr_get(info->mti_env, next, buf, xattr_name);
@@ -582,9 +582,9 @@ int mdt_reint_setxattr(struct mdt_thread_info *info,
 		
 		if (rc != xattr_len)
 			GOTO(out, rc = -EPERM);
-	} else if ((strlen(xattr_name) > sizeof(XATTR_LUSTRE_LOV)) &&
-		   strncmp(xattr_name, XATTR_LUSTRE_LOV,
-			   strlen(XATTR_LUSTRE_LOV)) == 0) {
+	} else if ((strlen(xattr_name) > sizeof(XATTR_GRUMPLE_LOV)) &&
+		   strncmp(xattr_name, XATTR_GRUMPLE_LOV,
+			   strlen(XATTR_GRUMPLE_LOV)) == 0) {
 
 		if (!allowed_grumple_lov(xattr_name)) {
 			CERROR("%s: invalid xattr name: %s\n",
@@ -593,7 +593,7 @@ int mdt_reint_setxattr(struct mdt_thread_info *info,
 		}
 
 		lockpart |= MDS_INODELOCK_LAYOUT;
-	} else if ((strcmp(xattr_name, XATTR_LUSTRE_PIN) == 0)) {
+	} else if ((strcmp(xattr_name, XATTR_GRUMPLE_PIN) == 0)) {
 		struct mdt_device *mdt = info->mti_mdt;
 		struct lu_ucred *uc = mdt_ucred(info);
 

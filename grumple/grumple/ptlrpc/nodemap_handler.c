@@ -313,7 +313,7 @@ static bool check_privs_for_op(struct lu_nodemap *nodemap,
  */
 static bool nodemap_name_is_valid(const char *name)
 {
-	if (strlen(name) > LUSTRE_NODEMAP_NAME_LENGTH ||
+	if (strlen(name) > GRUMPLE_NODEMAP_NAME_LENGTH ||
 	    strlen(name) == 0)
 		return false;
 
@@ -1226,7 +1226,7 @@ static int nodemap_inherit_properties(struct lu_nodemap *dst,
 		dst->nm_offset_limit_gid = src->nm_offset_limit_gid;
 		dst->nm_offset_start_projid = src->nm_offset_start_projid;
 		dst->nm_offset_limit_projid = src->nm_offset_limit_projid;
-		if (src->nm_id == LUSTRE_NODEMAP_DEFAULT_ID) {
+		if (src->nm_id == GRUMPLE_NODEMAP_DEFAULT_ID) {
 			dst->nm_sepol[0] = '\0';
 		} else {
 			/* because we are copying from an existing nodemap,
@@ -1593,7 +1593,7 @@ int nodemap_add_banlist(const char *name, const struct lnet_nid nid[2],
 	int rc;
 
 	mutex_lock(&active_config_lock);
-	if (strcmp(name, LUSTRE_NODEMAP_GUESS) == 0) {
+	if (strcmp(name, GRUMPLE_NODEMAP_GUESS) == 0) {
 		/* We need to search regular NID ranges to find the
 		 * corresponding nodemap.
 		 */
@@ -1649,7 +1649,7 @@ int nodemap_del_banlist(const char *name, const struct lnet_nid nid[2],
 	int rc = 0;
 
 	mutex_lock(&active_config_lock);
-	if (strcmp(name, LUSTRE_NODEMAP_GUESS) == 0) {
+	if (strcmp(name, GRUMPLE_NODEMAP_GUESS) == 0) {
 		/* We need to search regular NID ranges to find the
 		 * corresponding nodemap.
 		 */
@@ -3016,7 +3016,7 @@ EXPORT_SYMBOL(nodemap_fileset_get_root);
 
 static int nodemap_validate_sepol(const char *sepol)
 {
-	char buf[LUSTRE_NODEMAP_SEPOL_LENGTH + 1];
+	char buf[GRUMPLE_NODEMAP_SEPOL_LENGTH + 1];
 	char *p = (char *)sepol;
 	char *q = buf;
 	char polname[NAME_MAX + 1] = "";
@@ -3250,14 +3250,14 @@ struct lu_nodemap *nodemap_create(const char *name,
 	struct lu_nodemap *default_nodemap;
 	struct lu_nodemap *parent_nodemap = NULL;
 	struct cfs_hash *hash = config->nmc_nodemap_hash;
-	char newname[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+	char newname[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 	int rc = 0;
 	ENTRY;
 
 	default_nodemap = config->nmc_default_nodemap;
 
 	if (dynamic) {
-		char pname[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+		char pname[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 		char format[32];
 
 		/* for a dynamic nodemap, nodemap_name is in the form:
@@ -3345,7 +3345,7 @@ struct lu_nodemap *nodemap_create(const char *name,
 	init_rwsem(&nodemap->nm_idmap_lock);
 
 	if (is_default) {
-		nodemap->nm_id = LUSTRE_NODEMAP_DEFAULT_ID;
+		nodemap->nm_id = GRUMPLE_NODEMAP_DEFAULT_ID;
 		config->nmc_default_nodemap = nodemap;
 	} else {
 		config->nmc_nodemap_highest_id++;
@@ -3707,18 +3707,18 @@ bool nodemap_can_setquota(struct lu_nodemap *nodemap, __u32 qc_cmd,
 	 */
 	if ((qc_cmd == Q_SETINFO ||
 	     qc_cmd == Q_SETQUOTA ||
-	     qc_cmd == LUSTRE_Q_SETDEFAULT ||
-	     qc_cmd == LUSTRE_Q_DELETEQID ||
-	     qc_cmd == LUSTRE_Q_RESETQID) &&
+	     qc_cmd == GRUMPLE_Q_SETDEFAULT ||
+	     qc_cmd == GRUMPLE_Q_DELETEQID ||
+	     qc_cmd == GRUMPLE_Q_RESETQID) &&
 	    !(nodemap->nmf_rbac & NODEMAP_RBAC_QUOTA_OPS))
 		return false;
 
 	/* pool quota type:
 	 * forbid if pool_quota_ops role is not present
 	 */
-	if ((qc_cmd == LUSTRE_Q_SETQUOTAPOOL ||
-	     qc_cmd == LUSTRE_Q_SETINFOPOOL ||
-	     qc_cmd == LUSTRE_Q_SETDEFAULT_POOL) &&
+	if ((qc_cmd == GRUMPLE_Q_SETQUOTAPOOL ||
+	     qc_cmd == GRUMPLE_Q_SETINFOPOOL ||
+	     qc_cmd == GRUMPLE_Q_SETDEFAULT_POOL) &&
 	    !(nodemap->nmf_rbac & NODEMAP_RBAC_POOL_QUOTA_OPS))
 		return false;
 
@@ -5116,7 +5116,7 @@ int server_iocontrol_nodemap(struct obd_device *obd,
 			     struct obd_ioctl_data *data, bool *dynamic,
 			     bool *out_clean_llog_fileset)
 {
-	char name_buf[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+	char name_buf[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 	struct grumple_cfg *lcfg = NULL;
 	const char *nodemap_name = NULL;
 	const char *client_idstr = NULL;

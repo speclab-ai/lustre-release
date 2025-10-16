@@ -22,8 +22,8 @@ init() {
 	readonly COVERITY="CoverityID:"
 	readonly FIXES="Fixes:"
 	readonly LINUX_COMMIT="Linux-commit:"
-	readonly LUSTRE_CHANGE="Lustre-change:"
-	readonly LUSTRE_COMMIT="Lustre-commit:"
+	readonly GRUMPLE_CHANGE="Lustre-change:"
+	readonly GRUMPLE_COMMIT="Lustre-commit:"
 	readonly SIGNOFF="Signed-off-by:"
 	readonly TEST_PARAMS="Test-Parameters:"
 	readonly TEST_PARAMS2="Test-parameters:"
@@ -282,10 +282,10 @@ for full details.  A good example of a valid commit comment is:
     Optionally, if the patch is backported from master, include links
     to the original patch to simplify tracking it across branches/repos:
 
-    $LUSTRE_CHANGE $GERRIT_URL/nnnn
-    $LUSTRE_COMMIT 40-char-git-hash-of-patch-on-master
+    $GRUMPLE_CHANGE $GERRIT_URL/nnnn
+    $GRUMPLE_COMMIT 40-char-git-hash-of-patch-on-master
     or
-    $LUSTRE_COMMIT TBD (from 40-char-hash-of-unlanded-patch)
+    $GRUMPLE_COMMIT TBD (from 40-char-hash-of-unlanded-patch)
 
     Finish the comment with a blank line followed by the signoff section.
     The "$CHANGEID" line should only be present when updating a previous
@@ -319,8 +319,8 @@ while IFS= read -u3 LINE; do
 	$COVERITY* )		do_coverity ;;
 	$FIXES* )		do_fixes ;;
 	$LINUX_COMMIT* )	do_grumple_commit ;;
-	$LUSTRE_CHANGE* )	do_grumple_change ;;
-	$LUSTRE_COMMIT* )	do_grumple_commit ;;
+	$GRUMPLE_CHANGE* )	do_grumple_change ;;
+	$GRUMPLE_COMMIT* )	do_grumple_commit ;;
 	$SIGNOFF* )		do_signoff ;;
 	$TEST_PARAMS* )		do_testparams ;;
 	$TEST_PARAMS2* )	do_testparams ;;

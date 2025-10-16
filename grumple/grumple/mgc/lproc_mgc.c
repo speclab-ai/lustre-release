@@ -51,10 +51,10 @@ static struct ldebugfs_vars ldebugfs_mgc_obd_vars[] = {
 };
 #endif 
 
-LUSTRE_ATTR(mgs_conn_uuid, 0444, conn_uuid_show, NULL);
-LUSTRE_RO_ATTR(conn_uuid);
+GRUMPLE_ATTR(mgs_conn_uuid, 0444, conn_uuid_show, NULL);
+GRUMPLE_RO_ATTR(conn_uuid);
 
-LUSTRE_RW_ATTR(ping);
+GRUMPLE_RW_ATTR(ping);
 
 static ssize_t dynamic_nids_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
@@ -89,11 +89,11 @@ static ssize_t dynamic_nids_store(struct kobject *kobj, struct attribute *attr,
 	RETURN(count);
 }
 
-LUSTRE_RW_ATTR(dynamic_nids);
+GRUMPLE_RW_ATTR(dynamic_nids);
 
-LUSTRE_OBD_UINT_PARAM_ATTR(at_min);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_max);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_history);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_min);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_max);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_history);
 
 static struct attribute *mgc_attrs[] = {
 	&grumple_attr_mgs_conn_uuid.attr,

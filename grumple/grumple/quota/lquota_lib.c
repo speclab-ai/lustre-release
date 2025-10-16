@@ -371,7 +371,7 @@ int lquotactl_slv(const struct lu_env *env, struct dt_device *dev,
 	ENTRY;
 
 	if (oqctl->qc_cmd != Q_GETOQUOTA &&
-	    oqctl->qc_cmd != LUSTRE_Q_ITEROQUOTA) {
+	    oqctl->qc_cmd != GRUMPLE_Q_ITEROQUOTA) {
 		/* as in many other places, dev->dd_lu_dev.ld_obd->obd_name
 		 * point to an invalid obd_name, to be fixed in LU-1574 */
 		CERROR("%s: Unsupported quotactl command: %x\n",
@@ -393,7 +393,7 @@ int lquotactl_slv(const struct lu_env *env, struct dt_device *dev,
 	if (obj->do_index_ops == NULL)
 		GOTO(out, rc = -EINVAL);
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA) {
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA) {
 		if (lu_device_is_md(dev->dd_lu_dev.ld_site->ls_top_dev))
 			rc = lquota_obj_iter(env, dev, obj, nodemap, NULL,
 					     oqctl, buffer, size, false, true);
@@ -592,7 +592,7 @@ static void __exit lquota_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Quota");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(lquota_init);

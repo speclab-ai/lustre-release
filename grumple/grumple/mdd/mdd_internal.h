@@ -643,7 +643,7 @@ static inline int mdo_declare_xattr_set(const struct lu_env *env,
 		struct lu_attr la = { 0 };
 
 		la.la_valid = LA_FLAGS;
-		la.la_flags = LUSTRE_ENCRYPT_FL;
+		la.la_flags = GRUMPLE_ENCRYPT_FL;
 		rc = dt_declare_attr_set(env, next, &la, handle);
 	}
 	return rc;
@@ -662,7 +662,7 @@ static inline int mdo_xattr_set(const struct lu_env *env,
 
 	/* If we are about to set the LL_XATTR_NAME_ENCRYPTION_CONTEXT
 	 * xattr, it means the file/dir is encrypted. In that case we want
-	 * to set the LUSTRE_ENCRYPT_FL flag as well: it will be stored
+	 * to set the GRUMPLE_ENCRYPT_FL flag as well: it will be stored
 	 * into the LMA, making it more efficient to recognise we are
 	 * dealing with an encrypted file/dir, as LMA info is cached upon
 	 * object init.
@@ -680,9 +680,9 @@ static inline int mdo_xattr_set(const struct lu_env *env,
 		
 		(void)dt_attr_get(env, next, &la);
 		if (la.la_valid & LA_FLAGS)
-			la.la_flags |= LUSTRE_ENCRYPT_FL;
+			la.la_flags |= GRUMPLE_ENCRYPT_FL;
 		else
-			la.la_flags = LUSTRE_ENCRYPT_FL;
+			la.la_flags = GRUMPLE_ENCRYPT_FL;
 		la.la_valid = LA_FLAGS;
 		/* if this is an old client using the old enc xattr name,
 		 * switch to the new name for consistency

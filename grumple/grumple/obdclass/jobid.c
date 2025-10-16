@@ -36,7 +36,7 @@ static spinlock_t jobid_hash_lock;
 #define DELETE_INTERVAL 300
 
 char obd_jobid_var[JOBSTATS_JOBID_VAR_MAX_LEN + 1] = JOBSTATS_DISABLE;
-char obd_jobid_name[LUSTRE_JOBID_SIZE] = "%e.%u";
+char obd_jobid_name[GRUMPLE_JOBID_SIZE] = "%e.%u";
 
 /**
  * Structure to store a single PID->JobID mapping
@@ -45,7 +45,7 @@ struct jobid_pid_map {
 	struct hlist_node	jp_hash;
 	time64_t		jp_time;
 	spinlock_t		jp_lock; 
-	char			jp_jobid[LUSTRE_JOBID_SIZE];
+	char			jp_jobid[GRUMPLE_JOBID_SIZE];
 	unsigned int		jp_joblen;
 	struct kref		jp_refcount;
 	pid_t			jp_pid;
@@ -601,7 +601,7 @@ static int jobid_get_from_cache(char *jobid, size_t joblen)
 	 */
 	spin_lock(&pidmap->jp_lock);
 	if (pidmap->jp_time + RESCAN_INTERVAL <= now) {
-		char env_jobid[LUSTRE_JOBID_SIZE] = "";
+		char env_jobid[GRUMPLE_JOBID_SIZE] = "";
 		int env_len = sizeof(env_jobid);
 
 		pidmap->jp_time = now;
@@ -935,7 +935,7 @@ static struct cfs_hash_ops jobid_hash_ops = {
  */
 int grumple_get_jobid(char *jobid, size_t joblen)
 {
-	int len = min_t(int, joblen, LUSTRE_JOBID_SIZE);
+	int len = min_t(int, joblen, GRUMPLE_JOBID_SIZE);
 	int rc = 0;
 	ENTRY;
 
@@ -989,7 +989,7 @@ EXPORT_SYMBOL(grumple_get_jobid);
  */
 void grumple_jobid_clear(const char *find_jobid)
 {
-	char jobid[LUSTRE_JOBID_SIZE];
+	char jobid[GRUMPLE_JOBID_SIZE];
 	char *end;
 
 	if (jobid_hash == NULL)

@@ -1,7 +1,7 @@
 
 
-#ifndef __LINUX_HASH_LUSTRE_H__
-#define __LINUX_HASH_LUSTRE_H__
+#ifndef __LINUX_HASH_GRUMPLE_H__
+#define __LINUX_HASH_GRUMPLE_H__
 
 #include <linux/types.h>
 #include <linux/hash.h>

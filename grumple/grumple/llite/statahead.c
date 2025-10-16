@@ -446,7 +446,7 @@ sa_prep_data(struct inode *dir, struct inode *child, struct sa_entry *entry)
 
 	op_data = ll_prep_md_op_data(&item->mop_data, dir, child,
 				     entry->se_qstr.name, entry->se_qstr.len, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data)) {
 		OBD_FREE_PTR(item);
 		return (struct md_op_item *)op_data;
@@ -1218,7 +1218,7 @@ static int ll_statahead_by_list(struct ll_statahead_info *sai,
 		u32 flags;
 
 		ret = ll_prep_md_op_data(op_data, dir, dir, NULL, 0, 0,
-					 LUSTRE_OPC_ANY, dir);
+					 GRUMPLE_OPC_ANY, dir);
 		if (IS_ERR(ret)) {
 			rc = PTR_ERR(ret);
 			break;
@@ -1776,7 +1776,7 @@ static int is_first_dirent(struct inode *dir, struct dentry *dentry)
 	ENTRY;
 
 	op_data = ll_prep_md_op_data(NULL, dir, dir, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, dir);
+				     GRUMPLE_OPC_ANY, dir);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 

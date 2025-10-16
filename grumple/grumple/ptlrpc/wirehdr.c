@@ -13,7 +13,7 @@
 
 #define DEBUG_SUBSYSTEM S_RPC
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 # include <linux/fs.h>
 # include <linux/posix_acl_xattr.h>
 #endif 

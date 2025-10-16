@@ -398,7 +398,7 @@ static void null_init_internal(void)
 	null_sec.ps_import = NULL;
 	null_sec.ps_flvr.sf_rpc = SPTLRPC_FLVR_NULL;
 	null_sec.ps_flvr.sf_flags = 0;
-	null_sec.ps_part = LUSTRE_SP_ANY;
+	null_sec.ps_part = GRUMPLE_SP_ANY;
 	null_sec.ps_dying = 0;
 	spin_lock_init(&null_sec.ps_lock);
 	atomic_set(&null_sec.ps_nctx, 1);	

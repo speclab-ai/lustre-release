@@ -129,7 +129,7 @@ static ssize_t blocksize_show(struct kobject *kobj, struct attribute *attr,
 
 	return scnprintf(buf, PAGE_SIZE, "%u\n", osfs.os_bsize);
 }
-LUSTRE_RO_ATTR(blocksize);
+GRUMPLE_RO_ATTR(blocksize);
 
 static ssize_t stat_blocksize_show(struct kobject *kobj, struct attribute *attr,
 				   char *buf)
@@ -161,7 +161,7 @@ static ssize_t stat_blocksize_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(stat_blocksize);
+GRUMPLE_RW_ATTR(stat_blocksize);
 
 static ssize_t kbytestotal_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -185,7 +185,7 @@ static ssize_t kbytestotal_show(struct kobject *kobj, struct attribute *attr,
 
 	return scnprintf(buf, PAGE_SIZE, "%llu\n", result);
 }
-LUSTRE_RO_ATTR(kbytestotal);
+GRUMPLE_RO_ATTR(kbytestotal);
 
 static ssize_t kbytesfree_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -209,7 +209,7 @@ static ssize_t kbytesfree_show(struct kobject *kobj, struct attribute *attr,
 
 	return scnprintf(buf, PAGE_SIZE, "%llu\n", result);
 }
-LUSTRE_RO_ATTR(kbytesfree);
+GRUMPLE_RO_ATTR(kbytesfree);
 
 static ssize_t kbytesavail_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -233,7 +233,7 @@ static ssize_t kbytesavail_show(struct kobject *kobj, struct attribute *attr,
 
 	return scnprintf(buf, PAGE_SIZE, "%llu\n", result);
 }
-LUSTRE_RO_ATTR(kbytesavail);
+GRUMPLE_RO_ATTR(kbytesavail);
 
 static ssize_t filestotal_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -249,7 +249,7 @@ static ssize_t filestotal_show(struct kobject *kobj, struct attribute *attr,
 
 	return scnprintf(buf, PAGE_SIZE, "%llu\n", osfs.os_files);
 }
-LUSTRE_RO_ATTR(filestotal);
+GRUMPLE_RO_ATTR(filestotal);
 
 static ssize_t filesfree_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -265,7 +265,7 @@ static ssize_t filesfree_show(struct kobject *kobj, struct attribute *attr,
 
 	return scnprintf(buf, PAGE_SIZE, "%llu\n", osfs.os_ffree);
 }
-LUSTRE_RO_ATTR(filesfree);
+GRUMPLE_RO_ATTR(filesfree);
 
 static ssize_t maxbytes_show(struct kobject *kobj, struct attribute *attr,
 			     char *buf)
@@ -281,7 +281,7 @@ static ssize_t maxbytes_show(struct kobject *kobj, struct attribute *attr,
 
 	return scnprintf(buf, PAGE_SIZE, "%llu\n", osfs.os_maxbytes);
 }
-LUSTRE_RO_ATTR(maxbytes);
+GRUMPLE_RO_ATTR(maxbytes);
 
 static ssize_t namelen_max_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -334,7 +334,7 @@ static ssize_t namelen_max_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(namelen_max);
+GRUMPLE_RW_ATTR(namelen_max);
 
 static ssize_t statfs_state_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
@@ -350,29 +350,29 @@ static ssize_t statfs_state_show(struct kobject *kobj, struct attribute *attr,
 
 	return lprocfs_statfs_state(buf, PAGE_SIZE, osfs.os_state);
 }
-LUSTRE_RO_ATTR(statfs_state);
+GRUMPLE_RO_ATTR(statfs_state);
 
 static ssize_t client_type_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
 {
 	return sprintf(buf, "local client\n");
 }
-LUSTRE_RO_ATTR(client_type);
+GRUMPLE_RO_ATTR(client_type);
 
-LUSTRE_RW_ATTR(foreign_symlink_enable);
+GRUMPLE_RW_ATTR(foreign_symlink_enable);
 
-LUSTRE_RW_ATTR(foreign_symlink_prefix);
+GRUMPLE_RW_ATTR(foreign_symlink_prefix);
 
-LUSTRE_RW_ATTR(foreign_symlink_upcall);
+GRUMPLE_RW_ATTR(foreign_symlink_upcall);
 
-LUSTRE_WO_ATTR(foreign_symlink_upcall_info);
+GRUMPLE_WO_ATTR(foreign_symlink_upcall_info);
 
 static ssize_t fstype_show(struct kobject *kobj, struct attribute *attr,
 			   char *buf)
 {
 	return sprintf(buf, "grumple\n");
 }
-LUSTRE_RO_ATTR(fstype);
+GRUMPLE_RO_ATTR(fstype);
 
 static ssize_t uuid_show(struct kobject *kobj, struct attribute *attr,
 			 char *buf)
@@ -382,7 +382,7 @@ static ssize_t uuid_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%s\n", sbi->ll_sb_uuid.uuid);
 }
-LUSTRE_RO_ATTR(uuid);
+GRUMPLE_RO_ATTR(uuid);
 
 static int ll_site_stats_seq_show(struct seq_file *m, void *v)
 {
@@ -437,7 +437,7 @@ static ssize_t max_read_ahead_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_read_ahead_mb);
+GRUMPLE_RW_ATTR(max_read_ahead_mb);
 
 static ssize_t max_read_ahead_per_file_mb_show(struct kobject *kobj,
 					       struct attribute *attr,
@@ -478,7 +478,7 @@ static ssize_t max_read_ahead_per_file_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_read_ahead_per_file_mb);
+GRUMPLE_RW_ATTR(max_read_ahead_per_file_mb);
 
 static ssize_t max_read_ahead_whole_mb_show(struct kobject *kobj,
 					    struct attribute *attr, char *buf)
@@ -521,7 +521,7 @@ static ssize_t max_read_ahead_whole_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_read_ahead_whole_mb);
+GRUMPLE_RW_ATTR(max_read_ahead_whole_mb);
 
 static int ll_max_cached_mb_seq_show(struct seq_file *m, void *v)
 {
@@ -793,7 +793,7 @@ static ssize_t pcc_async_threshold_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(pcc_async_threshold);
+GRUMPLE_RW_ATTR(pcc_async_threshold);
 
 static ssize_t pcc_async_affinity_show(struct kobject *kobj,
 				       struct attribute *attr, char *buffer)
@@ -823,7 +823,7 @@ static ssize_t pcc_async_affinity_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(pcc_async_affinity);
+GRUMPLE_RW_ATTR(pcc_async_affinity);
 
 static ssize_t pcc_mode_show(struct kobject *kobj, struct attribute *attr,
 			      char *buffer)
@@ -855,7 +855,7 @@ static ssize_t pcc_mode_store(struct kobject *kobj, struct attribute *attr,
 	super->pccs_mode = mode;
 	return count;
 }
-LUSTRE_RW_ATTR(pcc_mode);
+GRUMPLE_RW_ATTR(pcc_mode);
 
 static ssize_t checksums_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -896,9 +896,9 @@ static ssize_t checksums_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(checksums);
+GRUMPLE_RW_ATTR(checksums);
 
-LUSTRE_ATTR(checksum_pages, 0644, checksums_show, checksums_store);
+GRUMPLE_ATTR(checksum_pages, 0644, checksums_show, checksums_store);
 
 static ssize_t ll_rd_track_id(struct kobject *kobj, char *buf,
 			      enum stats_track_type type)
@@ -949,7 +949,7 @@ static ssize_t stats_track_pid_store(struct kobject *kobj,
 {
 	return ll_wr_track_id(kobj, buffer, count, STATS_TRACK_PID);
 }
-LUSTRE_RW_ATTR(stats_track_pid);
+GRUMPLE_RW_ATTR(stats_track_pid);
 
 static ssize_t stats_track_ppid_show(struct kobject *kobj,
 				     struct attribute *attr,
@@ -965,7 +965,7 @@ static ssize_t stats_track_ppid_store(struct kobject *kobj,
 {
 	return ll_wr_track_id(kobj, buffer, count, STATS_TRACK_PPID);
 }
-LUSTRE_RW_ATTR(stats_track_ppid);
+GRUMPLE_RW_ATTR(stats_track_ppid);
 
 static ssize_t stats_track_gid_show(struct kobject *kobj,
 				    struct attribute *attr,
@@ -981,7 +981,7 @@ static ssize_t stats_track_gid_store(struct kobject *kobj,
 {
 	return ll_wr_track_id(kobj, buffer, count, STATS_TRACK_GID);
 }
-LUSTRE_RW_ATTR(stats_track_gid);
+GRUMPLE_RW_ATTR(stats_track_gid);
 
 static ssize_t enable_statahead_fname_show(struct kobject *kobj,
 					   struct attribute *attr,
@@ -1011,7 +1011,7 @@ static ssize_t enable_statahead_fname_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(enable_statahead_fname);
+GRUMPLE_RW_ATTR(enable_statahead_fname);
 
 static ssize_t statahead_running_max_show(struct kobject *kobj,
 					  struct attribute *attr,
@@ -1047,7 +1047,7 @@ static ssize_t statahead_running_max_store(struct kobject *kobj,
 
 	return -ERANGE;
 }
-LUSTRE_RW_ATTR(statahead_running_max);
+GRUMPLE_RW_ATTR(statahead_running_max);
 
 static ssize_t statahead_batch_max_show(struct kobject *kobj,
 					struct attribute *attr,
@@ -1082,7 +1082,7 @@ static ssize_t statahead_batch_max_store(struct kobject *kobj,
 	sbi->ll_sa_batch_max = val;
 	return count;
 }
-LUSTRE_RW_ATTR(statahead_batch_max);
+GRUMPLE_RW_ATTR(statahead_batch_max);
 
 static ssize_t statahead_max_show(struct kobject *kobj,
 				  struct attribute *attr,
@@ -1117,7 +1117,7 @@ static ssize_t statahead_max_store(struct kobject *kobj,
 	sbi->ll_sa_max = val;
 	return count;
 }
-LUSTRE_RW_ATTR(statahead_max);
+GRUMPLE_RW_ATTR(statahead_max);
 
 static ssize_t statahead_min_show(struct kobject *kobj,
 				  struct attribute *attr,
@@ -1154,7 +1154,7 @@ static ssize_t statahead_min_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(statahead_min);
+GRUMPLE_RW_ATTR(statahead_min);
 
 static ssize_t statahead_timeout_show(struct kobject *kobj,
 				      struct attribute *attr,
@@ -1183,7 +1183,7 @@ static ssize_t statahead_timeout_store(struct kobject *kobj,
 	sbi->ll_sa_timeout = val;
 	return count;
 }
-LUSTRE_RW_ATTR(statahead_timeout);
+GRUMPLE_RW_ATTR(statahead_timeout);
 
 static ssize_t
 statahead_fname_predict_hit_show(struct kobject *kobj, struct attribute *attr,
@@ -1211,7 +1211,7 @@ statahead_fname_predict_hit_store(struct kobject *kobj, struct attribute *attr,
 	sbi->ll_sa_fname_predict_hit = val;
 	return count;
 }
-LUSTRE_RW_ATTR(statahead_fname_predict_hit);
+GRUMPLE_RW_ATTR(statahead_fname_predict_hit);
 
 
 static ssize_t
@@ -1240,7 +1240,7 @@ statahead_fname_match_hit_store(struct kobject *kobj, struct attribute *attr,
 	sbi->ll_sa_fname_match_hit = val;
 	return count;
 }
-LUSTRE_RW_ATTR(statahead_fname_match_hit);
+GRUMPLE_RW_ATTR(statahead_fname_match_hit);
 
 static ssize_t statahead_agl_show(struct kobject *kobj,
 				  struct attribute *attr,
@@ -1274,7 +1274,7 @@ static ssize_t statahead_agl_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(statahead_agl);
+GRUMPLE_RW_ATTR(statahead_agl);
 
 static int ll_statahead_stats_seq_show(struct seq_file *m, void *v)
 {
@@ -1350,7 +1350,7 @@ static ssize_t lazystatfs_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(lazystatfs);
+GRUMPLE_RW_ATTR(lazystatfs);
 
 static ssize_t statfs_max_age_show(struct kobject *kobj, struct attribute *attr,
 				   char *buf)
@@ -1380,7 +1380,7 @@ static ssize_t statfs_max_age_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(statfs_max_age);
+GRUMPLE_RW_ATTR(statfs_max_age);
 
 static ssize_t statfs_project_show(struct kobject *kobj,
 				  struct attribute *attr,
@@ -1414,7 +1414,7 @@ static ssize_t statfs_project_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(statfs_project);
+GRUMPLE_RW_ATTR(statfs_project);
 
 static ssize_t max_easize_show(struct kobject *kobj,
 			       struct attribute *attr,
@@ -1433,7 +1433,7 @@ static ssize_t max_easize_show(struct kobject *kobj,
 	return scnprintf(buf, PAGE_SIZE, "%u\n",
 			 ealen > XATTR_SIZE_MAX ? XATTR_SIZE_MAX : ealen);
 }
-LUSTRE_RO_ATTR(max_easize);
+GRUMPLE_RO_ATTR(max_easize);
 
 /**
  * default_easize_show() - Show default_easize (EA size)
@@ -1500,7 +1500,7 @@ static ssize_t default_easize_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(default_easize);
+GRUMPLE_RW_ATTR(default_easize);
 
 LDEBUGFS_SEQ_FOPS_RO(ll_sbi_flags);
 
@@ -1536,7 +1536,7 @@ static ssize_t xattr_cache_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(xattr_cache);
+GRUMPLE_RW_ATTR(xattr_cache);
 
 static ssize_t intent_mkdir_show(struct kobject *kobj,
 				 struct attribute *attr, char *buf)
@@ -1563,7 +1563,7 @@ static ssize_t intent_mkdir_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(intent_mkdir);
+GRUMPLE_RW_ATTR(intent_mkdir);
 
 static ssize_t tiny_write_show(struct kobject *kobj,
 			       struct attribute *attr,
@@ -1599,7 +1599,7 @@ static ssize_t tiny_write_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(tiny_write);
+GRUMPLE_RW_ATTR(tiny_write);
 
 static ssize_t unaligned_dio_show(struct kobject *kobj,
 				  struct attribute *attr,
@@ -1635,7 +1635,7 @@ static ssize_t unaligned_dio_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(unaligned_dio);
+GRUMPLE_RW_ATTR(unaligned_dio);
 
 static ssize_t parallel_dio_show(struct kobject *kobj,
 				 struct attribute *attr,
@@ -1671,7 +1671,7 @@ static ssize_t parallel_dio_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(parallel_dio);
+GRUMPLE_RW_ATTR(parallel_dio);
 
 static ssize_t hybrid_io_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -1704,7 +1704,7 @@ static ssize_t hybrid_io_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(hybrid_io);
+GRUMPLE_RW_ATTR(hybrid_io);
 
 static ssize_t enable_setstripe_gid_show(struct kobject *kobj,
 					 struct attribute *attr, char *buf)
@@ -1732,7 +1732,7 @@ static ssize_t enable_setstripe_gid_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(enable_setstripe_gid);
+GRUMPLE_RW_ATTR(enable_setstripe_gid);
 
 static ssize_t max_read_ahead_async_active_show(struct kobject *kobj,
 					       struct attribute *attr,
@@ -1777,7 +1777,7 @@ static ssize_t max_read_ahead_async_active_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_read_ahead_async_active);
+GRUMPLE_RW_ATTR(max_read_ahead_async_active);
 
 static ssize_t read_ahead_async_file_threshold_mb_show(struct kobject *kobj,
 						       struct attribute *attr,
@@ -1818,7 +1818,7 @@ read_ahead_async_file_threshold_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(read_ahead_async_file_threshold_mb);
+GRUMPLE_RW_ATTR(read_ahead_async_file_threshold_mb);
 
 static ssize_t read_ahead_range_kb_show(struct kobject *kobj,
 					struct attribute *attr, char *buf)
@@ -1863,7 +1863,7 @@ out:
 
 	return count;
 }
-LUSTRE_RW_ATTR(read_ahead_range_kb);
+GRUMPLE_RW_ATTR(read_ahead_range_kb);
 
 static ssize_t fast_read_show(struct kobject *kobj,
 			      struct attribute *attr,
@@ -1899,7 +1899,7 @@ static ssize_t fast_read_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(fast_read);
+GRUMPLE_RW_ATTR(fast_read);
 
 static ssize_t file_heat_show(struct kobject *kobj,
 			      struct attribute *attr,
@@ -1935,7 +1935,7 @@ static ssize_t file_heat_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(file_heat);
+GRUMPLE_RW_ATTR(file_heat);
 
 static ssize_t heat_decay_percentage_show(struct kobject *kobj,
 					  struct attribute *attr,
@@ -1969,7 +1969,7 @@ static ssize_t heat_decay_percentage_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(heat_decay_percentage);
+GRUMPLE_RW_ATTR(heat_decay_percentage);
 
 static ssize_t heat_period_second_show(struct kobject *kobj,
 				       struct attribute *attr,
@@ -2002,7 +2002,7 @@ static ssize_t heat_period_second_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(heat_period_second);
+GRUMPLE_RW_ATTR(heat_period_second);
 
 static ssize_t opencache_threshold_count_show(struct kobject *kobj,
 					      struct attribute *attr,
@@ -2041,7 +2041,7 @@ static ssize_t opencache_threshold_count_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(opencache_threshold_count);
+GRUMPLE_RW_ATTR(opencache_threshold_count);
 
 static ssize_t opencache_threshold_ms_show(struct kobject *kobj,
 					   struct attribute *attr,
@@ -2071,7 +2071,7 @@ static ssize_t opencache_threshold_ms_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(opencache_threshold_ms);
+GRUMPLE_RW_ATTR(opencache_threshold_ms);
 
 static ssize_t opencache_max_ms_show(struct kobject *kobj,
 				     struct attribute *attr,
@@ -2101,7 +2101,7 @@ static ssize_t opencache_max_ms_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(opencache_max_ms);
+GRUMPLE_RW_ATTR(opencache_max_ms);
 
 static ssize_t inode_cache_show(struct kobject *kobj,
 				struct attribute *attr,
@@ -2131,7 +2131,7 @@ static ssize_t inode_cache_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(inode_cache);
+GRUMPLE_RW_ATTR(inode_cache);
 
 
 #define HYBRID_IO_THRESHOLD_BYTES_MAX (2 * 1024 * 1024 * 1024UL) 
@@ -2167,7 +2167,7 @@ static ssize_t hybrid_io_write_threshold_bytes_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(hybrid_io_write_threshold_bytes);
+GRUMPLE_RW_ATTR(hybrid_io_write_threshold_bytes);
 
 static ssize_t hybrid_io_read_threshold_bytes_show(struct kobject *kobj,
 						   struct attribute *attr,
@@ -2201,7 +2201,7 @@ static ssize_t hybrid_io_read_threshold_bytes_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(hybrid_io_read_threshold_bytes);
+GRUMPLE_RW_ATTR(hybrid_io_read_threshold_bytes);
 
 static ssize_t dir_read_on_open_show(struct kobject *kobj,
 				     struct attribute *attr,
@@ -2236,7 +2236,7 @@ static ssize_t dir_read_on_open_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(dir_read_on_open);
+GRUMPLE_RW_ATTR(dir_read_on_open);
 
 static int ll_unstable_stats_seq_show(struct seq_file *m, void *v)
 {
@@ -2404,10 +2404,10 @@ static ssize_t enable_filename_encryption_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(enable_filename_encryption);
+GRUMPLE_RW_ATTR(enable_filename_encryption);
 #endif 
 
-#if defined(CONFIG_LL_ENCRYPTION) || defined(HAVE_LUSTRE_CRYPTO)
+#if defined(CONFIG_LL_ENCRYPTION) || defined(HAVE_GRUMPLE_CRYPTO)
 static ssize_t filename_enc_use_old_base64_show(struct kobject *kobj,
 						struct attribute *attr,
 						char *buffer)
@@ -2455,7 +2455,7 @@ static ssize_t filename_enc_use_old_base64_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(filename_enc_use_old_base64);
+GRUMPLE_RW_ATTR(filename_enc_use_old_base64);
 #endif 
 
 static int ll_pcc_seq_show(struct seq_file *m, void *v)
@@ -2586,7 +2586,7 @@ static struct attribute *llite_attrs[] = {
 #ifdef CONFIG_LL_ENCRYPTION
 	&grumple_attr_enable_filename_encryption.attr,
 #endif
-#if defined(CONFIG_LL_ENCRYPTION) || defined(HAVE_LUSTRE_CRYPTO)
+#if defined(CONFIG_LL_ENCRYPTION) || defined(HAVE_GRUMPLE_CRYPTO)
 	&grumple_attr_filename_enc_use_old_base64.attr,
 #endif
 	&grumple_attr_uuid.attr,

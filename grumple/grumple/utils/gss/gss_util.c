@@ -328,20 +328,20 @@ int gssd_prepare_creds(int must_srv_mgs, int must_srv_mds, int must_srv_oss)
 gss_cred_id_t gssd_select_svc_cred(int grumple_svc)
 {
         switch (grumple_svc) {
-	case LUSTRE_GSS_SVC_MGS:
+	case GRUMPLE_GSS_SVC_MGS:
 		if (!gssd_cred_mgs_valid) {
                         printerr(0, "ERROR: service cred for mgs not ready\n");
                         return NULL;
 		}
 		return gssd_cred_mgs;
-        case LUSTRE_GSS_SVC_MDS:
+        case GRUMPLE_GSS_SVC_MDS:
                 if (!gssd_cred_mds_valid) {
                         printerr(0, "ERROR: service cred for mds not ready\n");
                         return NULL;
                 }
 		printerr(2, "select mds service cred\n");
                 return gssd_cred_mds;
-        case LUSTRE_GSS_SVC_OSS:
+        case GRUMPLE_GSS_SVC_OSS:
                 if (!gssd_cred_oss_valid) {
                         printerr(0, "ERROR: service cred for oss not ready\n");
                         return NULL;

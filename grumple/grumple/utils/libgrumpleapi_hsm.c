@@ -1049,11 +1049,11 @@ static int create_restore_volatile(struct hsm_copyaction_private *hcp,
 			rnumber = random();
 			if (mdt_index == -1)
 				rc = snprintf(file_path, sizeof(file_path),
-				       "%s/"LUSTRE_VOLATILE_HDR"::%.4X:fd=%.2d",
+				       "%s/"GRUMPLE_VOLATILE_HDR"::%.4X:fd=%.2d",
 				       parent, rnumber, hcp->source_fd);
 			else
 				rc = snprintf(file_path, sizeof(file_path),
-				   "%s/"LUSTRE_VOLATILE_HDR":%.4X:%.4X:fd=%.2d",
+				   "%s/"GRUMPLE_VOLATILE_HDR":%.4X:%.4X:fd=%.2d",
 				   parent, mdt_index, rnumber, hcp->source_fd);
 			if (rc < 0 || rc >= sizeof(file_path)) {
 				fd = -ENAMETOOLONG;

@@ -89,7 +89,7 @@ static ssize_t active_store(struct kobject *kobj, struct attribute *attr,
 
 	return rc ?: count;
 }
-LUSTRE_RW_ATTR(active);
+GRUMPLE_RW_ATTR(active);
 
 /**
  * sync_in_flight_show() - Show number of RPCs in flight
@@ -111,7 +111,7 @@ static ssize_t sync_in_flight_show(struct kobject *kobj,
 
 	return sprintf(buf, "%u\n", atomic_read(&osp->opd_sync_rpcs_in_flight));
 }
-LUSTRE_RO_ATTR(sync_in_flight);
+GRUMPLE_RO_ATTR(sync_in_flight);
 
 /**
  * sync_in_progress_show() - Show number of RPCs in processing
@@ -133,7 +133,7 @@ static ssize_t sync_in_progress_show(struct kobject *kobj,
 
 	return sprintf(buf, "%u\n", atomic_read(&osp->opd_sync_rpcs_in_progress));
 }
-LUSTRE_RO_ATTR(sync_in_progress);
+GRUMPLE_RO_ATTR(sync_in_progress);
 
 /**
  * sync_changes_show() - Show number of changes to sync
@@ -185,7 +185,7 @@ static ssize_t sync_changes_store(struct kobject *kobj, struct attribute *attr,
 
 	return rc == 0 ? count : rc;
 }
-LUSTRE_RW_ATTR(sync_changes);
+GRUMPLE_RW_ATTR(sync_changes);
 
 static ssize_t max_sync_changes_show(struct kobject *kobj,
 				     struct attribute *attr,
@@ -218,7 +218,7 @@ static ssize_t max_sync_changes_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(max_sync_changes);
+GRUMPLE_RW_ATTR(max_sync_changes);
 
 /**
  * max_rpcs_in_flight_show() - Show maximum number of RPCs in flight allowed
@@ -273,7 +273,7 @@ static ssize_t max_rpcs_in_flight_store(struct kobject *kobj,
 	osp->opd_sync_max_rpcs_in_flight = val;
 	return count;
 }
-LUSTRE_RW_ATTR(max_rpcs_in_flight);
+GRUMPLE_RW_ATTR(max_rpcs_in_flight);
 
 static ssize_t max_mod_rpcs_in_flight_show(struct kobject *kobj,
 					   struct attribute *attr,
@@ -311,7 +311,7 @@ static ssize_t max_mod_rpcs_in_flight_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_mod_rpcs_in_flight);
+GRUMPLE_RW_ATTR(max_mod_rpcs_in_flight);
 
 /**
  * max_rpcs_in_progress_show() - Show maximum number of RPCs in processing
@@ -368,7 +368,7 @@ static ssize_t max_rpcs_in_progress_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_rpcs_in_progress);
+GRUMPLE_RW_ATTR(max_rpcs_in_progress);
 
 /**
  * create_count_show() - Show number of objects to precreate next time
@@ -453,7 +453,7 @@ static ssize_t create_count_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(create_count);
+GRUMPLE_RW_ATTR(create_count);
 
 /**
  * max_create_count_show() - Show maximum number of objects to precreate
@@ -522,7 +522,7 @@ static ssize_t max_create_count_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_create_count);
+GRUMPLE_RW_ATTR(max_create_count);
 
 /**
  * prealloc_next_id_show() - Show last id to assign in creation
@@ -563,7 +563,7 @@ static ssize_t prealloc_next_id_show(struct kobject *kobj,
 
 	return sprintf(buf, "%llu\n", id);
 }
-LUSTRE_RO_ATTR(prealloc_next_id);
+GRUMPLE_RO_ATTR(prealloc_next_id);
 
 /**
  * prealloc_last_id_show() - Show last created id OST reported
@@ -595,7 +595,7 @@ static ssize_t prealloc_last_id_show(struct kobject *kobj,
 
 	return sprintf(buf, "%llu\n", id);
 }
-LUSTRE_RO_ATTR(prealloc_last_id);
+GRUMPLE_RO_ATTR(prealloc_last_id);
 
 /**
  * prealloc_next_seq_show() - Show next FID sequence to precreate
@@ -623,7 +623,7 @@ static ssize_t prealloc_next_seq_show(struct kobject *kobj,
 	return sprintf(buf, "%#llx\n", fid_is_idif(fid) ?
 		       fid_seq(fid) & (~0xffff) : fid_seq(fid));
 }
-LUSTRE_RO_ATTR(prealloc_next_seq);
+GRUMPLE_RO_ATTR(prealloc_next_seq);
 
 /**
  * prealloc_last_seq_show() - Show last created FID sequence OST reported
@@ -651,7 +651,7 @@ static ssize_t prealloc_last_seq_show(struct kobject *kobj,
 	return sprintf(buf, "%#llx\n", fid_is_idif(fid) ?
 		       fid_seq(fid) & (~0xffff) : fid_seq(fid));
 }
-LUSTRE_RO_ATTR(prealloc_last_seq);
+GRUMPLE_RO_ATTR(prealloc_last_seq);
 
 /**
  * prealloc_reserved_show() - Show the number of ids reserved by declare
@@ -676,7 +676,7 @@ static ssize_t prealloc_reserved_show(struct kobject *kobj,
 
 	return sprintf(buf, "%llu\n", osp->opd_pre_reserved);
 }
-LUSTRE_RO_ATTR(prealloc_reserved);
+GRUMPLE_RO_ATTR(prealloc_reserved);
 
 /**
  * maxage_show() - Show interval (in seconds) to update statfs data
@@ -731,7 +731,7 @@ static ssize_t maxage_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(maxage);
+GRUMPLE_RW_ATTR(maxage);
 
 /**
  * prealloc_status_show() - Show current precreation status: output 0 means
@@ -757,7 +757,7 @@ static ssize_t prealloc_status_show(struct kobject *kobj,
 
 	return sprintf(buf, "%d\n", osp->opd_pre_status);
 }
-LUSTRE_RO_ATTR(prealloc_status);
+GRUMPLE_RO_ATTR(prealloc_status);
 
 static ssize_t prealloc_force_new_seq_show(struct kobject *kobj,
 					   struct attribute *attr,
@@ -795,7 +795,7 @@ static ssize_t prealloc_force_new_seq_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(prealloc_force_new_seq);
+GRUMPLE_RW_ATTR(prealloc_force_new_seq);
 
 /**
  * destroys_in_flight_show() - destroy in-flight show
@@ -828,7 +828,7 @@ static ssize_t destroys_in_flight_show(struct kobject *kobj,
 		       atomic_read(&osp->opd_sync_rpcs_in_progress) +
 		       atomic_read(&osp->opd_sync_changes));
 }
-LUSTRE_RO_ATTR(destroys_in_flight);
+GRUMPLE_RO_ATTR(destroys_in_flight);
 
 /**
  * old_sync_processed_show() - Show changes synced from previous mount
@@ -850,7 +850,7 @@ static ssize_t old_sync_processed_show(struct kobject *kobj,
 
 	return sprintf(buf, "%d\n", osp->opd_sync_prev_done);
 }
-LUSTRE_RO_ATTR(old_sync_processed);
+GRUMPLE_RO_ATTR(old_sync_processed);
 
 /**
  * lfsck_max_rpcs_in_flight_show() - Show maximum number of RPCs in flight
@@ -907,7 +907,7 @@ static ssize_t lfsck_max_rpcs_in_flight_store(struct kobject *kobj,
 	rc = obd_set_max_rpcs_in_flight(&obd->u.cli, val);
 	return rc ? rc : count;
 }
-LUSTRE_RW_ATTR(lfsck_max_rpcs_in_flight);
+GRUMPLE_RW_ATTR(lfsck_max_rpcs_in_flight);
 
 static ssize_t osp_ping_show(struct kobject *kobj, struct attribute *attr,
 			     char *buffer)
@@ -922,7 +922,7 @@ static ssize_t osp_ping_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_ATTR(ping, 0444, osp_ping_show, NULL);
+GRUMPLE_ATTR(ping, 0444, osp_ping_show, NULL);
 
 static ssize_t osp_conn_uuid_show(struct kobject *kobj, struct attribute *attr,
 				  char *buf)
@@ -946,8 +946,8 @@ static ssize_t osp_conn_uuid_show(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_ATTR(ost_conn_uuid, 0444, osp_conn_uuid_show, NULL);
-LUSTRE_ATTR(mdt_conn_uuid, 0444, osp_conn_uuid_show, NULL);
+GRUMPLE_ATTR(ost_conn_uuid, 0444, osp_conn_uuid_show, NULL);
+GRUMPLE_ATTR(mdt_conn_uuid, 0444, osp_conn_uuid_show, NULL);
 
 LDEBUGFS_SEQ_FOPS_RO_TYPE(osp, connect_flags);
 LDEBUGFS_SEQ_FOPS_RO_TYPE(osp, server_uuid);
@@ -1031,7 +1031,7 @@ static ssize_t reserved_mb_high_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(reserved_mb_high);
+GRUMPLE_RW_ATTR(reserved_mb_high);
 
 /**
  * reserved_mb_low_show() - show low watermark (in MB)
@@ -1084,7 +1084,7 @@ static ssize_t reserved_mb_low_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(reserved_mb_low);
+GRUMPLE_RW_ATTR(reserved_mb_low);
 
 /*
  * Show high watermark of inode.
@@ -1128,7 +1128,7 @@ static ssize_t reserved_ino_high_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(reserved_ino_high);
+GRUMPLE_RW_ATTR(reserved_ino_high);
 
 /*
  * Show low watermark.
@@ -1173,7 +1173,7 @@ static ssize_t reserved_ino_low_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(reserved_ino_low);
+GRUMPLE_RW_ATTR(reserved_ino_low);
 
 static ssize_t force_sync_store(struct kobject *kobj, struct attribute *attr,
 				const char *buffer, size_t count)
@@ -1192,7 +1192,7 @@ static ssize_t force_sync_store(struct kobject *kobj, struct attribute *attr,
 
 	return rc == 0 ? count : rc;
 }
-LUSTRE_WO_ATTR(force_sync);
+GRUMPLE_WO_ATTR(force_sync);
 
 static int osp_sync_error_list_seq_show(struct seq_file *m, void *data)
 {

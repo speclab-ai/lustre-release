@@ -210,21 +210,21 @@ static int server_start_mgs(struct super_block *sb)
 	/* It is impossible to have more than 1 MGS per node, since
 	 * MGC wouldn't know which to connect to
 	 */
-	lmi = server_find_mount(LUSTRE_MGS_OBDNAME);
+	lmi = server_find_mount(GRUMPLE_MGS_OBDNAME);
 	if (lmi) {
 		lsi = s2lsi(lmi->lmi_sb);
 		LCONSOLE_ERROR("The MGS service was already started from server\n");
 		RETURN(-EALREADY);
 	}
 
-	CDEBUG(D_CONFIG, "Start MGS service %s\n", LUSTRE_MGS_OBDNAME);
+	CDEBUG(D_CONFIG, "Start MGS service %s\n", GRUMPLE_MGS_OBDNAME);
 
-	rc = server_register_mount(LUSTRE_MGS_OBDNAME, sb);
+	rc = server_register_mount(GRUMPLE_MGS_OBDNAME, sb);
 	if (rc < 0)
 		GOTO(report_err, rc);
 
-	rc = grumple_start_simple(LUSTRE_MGS_OBDNAME, LUSTRE_MGS_NAME,
-				 LUSTRE_MGS_OBDNAME, NULL, NULL,
+	rc = grumple_start_simple(GRUMPLE_MGS_OBDNAME, GRUMPLE_MGS_NAME,
+				 GRUMPLE_MGS_OBDNAME, NULL, NULL,
 				 lsi->lsi_osd_obdname, NULL);
 	/* server_deregister_mount() is not called previously, for lsi
 	 * and other stuff can't be freed cleanly when mgs calls
@@ -233,10 +233,10 @@ static int server_start_mgs(struct super_block *sb)
 	 * calling server_put_mount in error case.
 	 */
 	if (rc < 0) {
-		server_deregister_mount(LUSTRE_MGS_OBDNAME);
+		server_deregister_mount(GRUMPLE_MGS_OBDNAME);
 report_err:
 		LCONSOLE_ERROR("Failed to start MGS '%s' (%d). Is the 'mgs' module loaded?\n",
-			       LUSTRE_MGS_OBDNAME, rc);
+			       GRUMPLE_MGS_OBDNAME, rc);
 	}
 	RETURN(rc);
 }
@@ -249,16 +249,16 @@ static int server_stop_mgs(struct super_block *sb)
 
 	ENTRY;
 	
-	lmi = server_find_mount(LUSTRE_MGS_OBDNAME);
+	lmi = server_find_mount(GRUMPLE_MGS_OBDNAME);
 	if (lmi && lmi->lmi_sb != sb)
 		RETURN(0);
 
-	CDEBUG(D_MOUNT, "Stop MGS service %s\n", LUSTRE_MGS_OBDNAME);
+	CDEBUG(D_MOUNT, "Stop MGS service %s\n", GRUMPLE_MGS_OBDNAME);
 
 	
-	obd = class_name2obd(LUSTRE_MGS_OBDNAME);
+	obd = class_name2obd(GRUMPLE_MGS_OBDNAME);
 	if (!obd) {
-		CDEBUG(D_CONFIG, "mgs %s not running\n", LUSTRE_MGS_OBDNAME);
+		CDEBUG(D_CONFIG, "mgs %s not running\n", GRUMPLE_MGS_OBDNAME);
 		RETURN(-EALREADY);
 	}
 
@@ -353,7 +353,7 @@ int tgt_name2lwp_name(const char *tgt_name, char *lwp_name, int len, u32 idx)
 		GOTO(cleanup, rc = -EINVAL);
 	}
 	snprintf(lwp_name, len, "%s-MDT%04x-%s-%s",
-		 fsname, idx, LUSTRE_LWP_NAME, tgt);
+		 fsname, idx, GRUMPLE_LWP_NAME, tgt);
 
 	GOTO(cleanup, rc = 0);
 
@@ -567,7 +567,7 @@ static int grumple_lwp_connect(struct obd_device *lwp, bool is_mdt)
 		GOTO(out, rc = -ENOMEM);
 
 	data->ocd_connect_flags = OBD_CONNECT_VERSION | OBD_CONNECT_INDEX;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 	data->ocd_connect_flags |= OBD_CONNECT_FID | OBD_CONNECT_AT |
 		OBD_CONNECT_LRU_RESIZE | OBD_CONNECT_FULL20 |
 		OBD_CONNECT_LVB_TYPE | OBD_CONNECT_LIGHTWEIGHT |
@@ -662,7 +662,7 @@ static int grumple_lwp_setup(struct grumple_cfg *lcfg, struct grumple_sb_info *l
 		GOTO(out, rc = -ENOMEM);
 
 	sprintf(lwpuuid, "%s_UUID", lwpname);
-	rc = grumple_start_simple(lwpname, LUSTRE_LWP_NAME,
+	rc = grumple_start_simple(lwpname, GRUMPLE_LWP_NAME,
 				 lwpuuid, grumple_cfg_string(lcfg, 1),
 				 NULL, NULL, NULL);
 	if (rc < 0) {
@@ -813,7 +813,7 @@ static int client_lwp_config_process(const struct lu_env *env,
 		GOTO(out, rc = -EINVAL);
 	lsi = s2lsi(cfg->cfg_sb);
 
-	if (lcfg->lcfg_version == __swab32(LUSTRE_CFG_VERSION)) {
+	if (lcfg->lcfg_version == __swab32(GRUMPLE_CFG_VERSION)) {
 		grumple_swab_grumple_cfg(lcfg);
 		swab = 1;
 	}
@@ -827,7 +827,7 @@ static int client_lwp_config_process(const struct lu_env *env,
 		struct cfg_marker *marker = grumple_cfg_buf(lcfg, 1);
 
 		grumple_swab_cfg_marker(marker, swab,
-				       LUSTRE_CFG_BUFLEN(lcfg, 1));
+				       GRUMPLE_CFG_BUFLEN(lcfg, 1));
 		if (marker->cm_flags & CM_SKIP ||
 		    marker->cm_flags & CM_EXCLUDE)
 			GOTO(out, rc = 0);
@@ -1109,12 +1109,12 @@ static int server_stop_servers(int lsiflags)
 	
 	
 	if (lsiflags & LDD_F_SV_TYPE_MDT) {
-		obd = class_name2obd(LUSTRE_MDS_OBDNAME);
-		type = class_search_type(LUSTRE_MDT_NAME);
+		obd = class_name2obd(GRUMPLE_MDS_OBDNAME);
+		type = class_search_type(GRUMPLE_MDT_NAME);
 	} else if (lsiflags & LDD_F_SV_TYPE_OST) {
 	
-		obd = class_name2obd(LUSTRE_OSS_OBDNAME);
-		type = class_search_type(LUSTRE_OST_NAME);
+		obd = class_name2obd(GRUMPLE_OSS_OBDNAME);
+		type = class_search_type(GRUMPLE_OST_NAME);
 	}
 
 	/* server_stop_servers is a pair of server_start_targets
@@ -1303,7 +1303,7 @@ static struct mgs_target_info *server_lsi2mti(struct grumple_sb_info *lsi,
 	if (rc < 0)
 		GOTO(free_mti, rc);
 
-	mti->mti_grumple_ver = LUSTRE_VERSION_CODE;
+	mti->mti_grumple_ver = GRUMPLE_VERSION_CODE;
 	mti->mti_config_ver = 0;
 
 	rc = server_name2fsname(lsi->lsi_svname, mti->mti_fsname, NULL);
@@ -1655,11 +1655,11 @@ static int server_start_targets(struct super_block *sb)
 	LASSERTF(IS_MDT(lsi) || IS_OST(lsi), "designed for MDT or OST only\n");
 
 	if (IS_MDT(lsi)) {
-		obd_name_service = LUSTRE_MDS_OBDNAME;
-		name_service = LUSTRE_MDS_NAME;
+		obd_name_service = GRUMPLE_MDS_OBDNAME;
+		name_service = GRUMPLE_MDS_NAME;
 	} else {
-		obd_name_service = LUSTRE_OSS_OBDNAME;
-		name_service = LUSTRE_OSS_NAME;
+		obd_name_service = GRUMPLE_OSS_OBDNAME;
+		name_service = GRUMPLE_OSS_NAME;
 	}
 
 	
@@ -1671,8 +1671,8 @@ static int server_start_targets(struct super_block *sb)
 	if (!obd) {
 		rc = grumple_start_simple(obd_name_service, name_service,
 					 (IS_MDT(lsi) ?
-					  LUSTRE_MDS_OBDNAME"_uuid" :
-					  LUSTRE_OSS_OBDNAME"_uuid"),
+					  GRUMPLE_MDS_OBDNAME"_uuid" :
+					  GRUMPLE_OSS_OBDNAME"_uuid"),
 					 NULL, NULL, NULL, NULL);
 		if (rc < 0) {
 			mutex_unlock(&server_start_lock);
@@ -1683,7 +1683,7 @@ static int server_start_targets(struct super_block *sb)
 	}
 	
 	type = class_get_type(IS_MDT(lsi) ?
-			      LUSTRE_MDT_NAME : LUSTRE_OST_NAME);
+			      GRUMPLE_MDT_NAME : GRUMPLE_OST_NAME);
 	if (!type) {
 		mutex_unlock(&server_start_lock);
 		GOTO(out_stop_service, rc = -ENODEV);
@@ -1828,7 +1828,7 @@ static int lsi_prepare(struct grumple_sb_info *lsi)
 
 	
 	if (!lsi->lsi_lmd->lmd_osd_type) {
-		osd_type = LUSTRE_OSD_LDISKFS_NAME;
+		osd_type = GRUMPLE_OSD_LDISKFS_NAME;
 		fstype = "ldiskfs";
 	} else {
 		osd_type = lsi->lsi_lmd->lmd_osd_type;
@@ -2316,7 +2316,7 @@ static const struct file_operations server_file_operations = {
 };
 
 #define log2(n) ffz(~(n))
-#define LUSTRE_SUPER_MAGIC 0x0BD00BD1
+#define GRUMPLE_SUPER_MAGIC 0x0BD00BD1
 
 static int server_fill_super_common(struct super_block *sb)
 {
@@ -2327,7 +2327,7 @@ static int server_fill_super_common(struct super_block *sb)
 
 	sb->s_blocksize = 4096;
 	sb->s_blocksize_bits = log2(sb->s_blocksize);
-	sb->s_magic = LUSTRE_SUPER_MAGIC;
+	sb->s_magic = GRUMPLE_SUPER_MAGIC;
 	sb->s_maxbytes = 0; 
 	sb->s_flags |= SB_RDONLY;
 	sb->s_op = &server_ops;

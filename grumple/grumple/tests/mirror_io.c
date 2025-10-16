@@ -91,7 +91,7 @@ static size_t get_ids(int fd, unsigned int *ids)
 
 static void check_id(int fd, unsigned int id)
 {
-	unsigned int ids[LUSTRE_MIRROR_COUNT_MAX];
+	unsigned int ids[GRUMPLE_MIRROR_COUNT_MAX];
 	size_t count;
 	bool found = false;
 	int i;

@@ -1,8 +1,8 @@
 #!/bin/bash
 set -e
 SRCDIR=$(dirname $0)
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$DNE_SANITY_EXCEPT "

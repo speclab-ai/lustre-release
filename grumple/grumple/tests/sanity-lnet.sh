@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(cd $(dirname $0)/..; echo $PWD)}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(cd $(dirname $0)/..; echo $PWD)}
+. $GRUMPLE/tests/test-framework.sh
 CLEANUP=${CLEANUP:-:}
 SETUP=${SETUP:-:}
 init_test_env "$@"
-. ${CONFIG:=$LUSTRE/tests/cfg/$NAME.sh}
+. ${CONFIG:=$GRUMPLE/tests/cfg/$NAME.sh}
 init_logging
 ALWAYS_EXCEPT="$SANITY_LNET_EXCEPT "
 always_except LU-10391 253 254
@@ -1157,7 +1157,7 @@ init_router_test_vars() {
 	RPEERS=( "${rnodes_all[@]:${routers_required}:${rpeers_required}}" )
 	local rnodes=$(comma_list ${ROUTERS[@]} ${RPEERS[@]})
 	local all_nodes=$(comma_list ${ROUTERS[@]} ${RPEERS[@]} $HOSTNAME)
-	do_nodes $rnodes $LUSTRE_RMMOD ||
+	do_nodes $rnodes $GRUMPLE_RMMOD ||
 		error "failed to unload modules"
 	do_rpc_nodes $rnodes "load_lnet" ||
 		error "Failed to load LNet"
@@ -1178,7 +1178,7 @@ init_router_test_vars() {
 			awk '/peer_credits:/{print $NF}' |
 			sort -ug | tail -n 1)
 	((NTRB=max_ncpt*(max_pcs+1)))
-	do_nodes $all_nodes $LUSTRE_RMMOD ||
+	do_nodes $all_nodes $GRUMPLE_RMMOD ||
 		error "Failed to unload modules"
 	[[ ${
 		error "No interfaces configured for local host $HOSTNAME"
@@ -1231,7 +1231,7 @@ setup_router_test() {
 			return $?
 	fi
 	local all_nodes=$(comma_list ${ROUTERS[@]} ${RPEERS[@]} $HOSTNAME)
-	do_nodes $all_nodes $LUSTRE_RMMOD ||
+	do_nodes $all_nodes $GRUMPLE_RMMOD ||
 		error "failed to unload modules"
 	mod_opts+=" alive_router_check_interval=5"
 	mod_opts+=" router_ping_timeout=5"
@@ -1296,7 +1296,7 @@ cleanup_router_test() {
 			error "Failed to delete $rpeer -> "\
 				"$LOCAL_NET via ${router_nids[1]} route"
 	done
-	do_nodes $all_nodes $LUSTRE_RMMOD ||
+	do_nodes $all_nodes $GRUMPLE_RMMOD ||
 		error "failed to unload modules"
 	return 0
 }
@@ -3537,9 +3537,9 @@ test_280() {
 	esac
 	[[ -n $lnd ]] || skip "Unsupported NETTYPE $NETTYPE"
 	load_lnet || error "Failed to load lnet"
-	$LUSTRE_RMMOD $lnd || error "Failed to unload $lnd"
+	$GRUMPLE_RMMOD $lnd || error "Failed to unload $lnd"
 	$LNETCTL lnet configure -a
-	$LUSTRE_RMMOD
+	$GRUMPLE_RMMOD
 }
 run_test 280 "Don't panic when request_module fails"
 test_290() {
@@ -3594,8 +3594,8 @@ test_300() {
 	load_lnet
 	local cc_args="-Wall -Werror -std=c99 -c -x c /dev/null -o $out"
 	if ! [[ -d $prefix ]]; then
-		prefix=$LUSTRE/../lnet/include/uapi/linux/lnet
-		cc_args+=" -I $LUSTRE/../lnet/include/uapi"
+		prefix=$GRUMPLE/../lnet/include/uapi/linux/lnet
+		cc_args+=" -I $GRUMPLE/../lnet/include/uapi"
 	fi
 	for header in $prefix/*.h; do
 		if ! [[ -f "$header" ]]; then

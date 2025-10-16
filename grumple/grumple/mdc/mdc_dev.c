@@ -1287,7 +1287,7 @@ static int mdc_io_data_version_start(const struct lu_env *env,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_GETATTR);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_GETATTR);
 	if (rc < 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1576,7 +1576,7 @@ static int mdc_object_fiemap(const struct lu_env *env, struct cl_object *obj,
 	req_capsule_set_size(&req->rq_pill, &RMF_FIEMAP_VAL, RCL_SERVER,
 			     *buflen);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_GET_INFO);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_GET_INFO);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		GOTO(drop_lock, rc);
@@ -1762,7 +1762,7 @@ static const struct lu_device_type_operations mdc_device_type_ops = {
 
 struct lu_device_type mdc_device_type = {
 	.ldt_tags = LU_DEVICE_CL,
-	.ldt_name = LUSTRE_MDC_NAME,
+	.ldt_name = GRUMPLE_MDC_NAME,
 	.ldt_ops = &mdc_device_type_ops,
 	.ldt_ctx_tags = LCT_CL_THREAD
 };

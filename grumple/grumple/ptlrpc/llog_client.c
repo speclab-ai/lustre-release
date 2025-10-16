@@ -84,7 +84,7 @@ static int llog_client_open(const struct lu_env *env,
 		req_capsule_set_size(&req->rq_pill, &RMF_NAME, RCL_CLIENT,
 				     strlen(name) + 1);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_LOG_VERSION,
+	rc = ptlrpc_request_pack(req, GRUMPLE_LOG_VERSION,
 				 LLOG_ORIGIN_HANDLE_CREATE);
 	if (rc) {
 		ptlrpc_request_free(req);
@@ -144,7 +144,7 @@ static int llog_client_next_block(const struct lu_env *env,
 		return PTR_ERR(imp);
 
 	req = ptlrpc_request_alloc_pack(imp, &RQF_LLOG_ORIGIN_HANDLE_NEXT_BLOCK,
-					LUSTRE_LOG_VERSION,
+					GRUMPLE_LOG_VERSION,
 					LLOG_ORIGIN_HANDLE_NEXT_BLOCK);
 	if (IS_ERR(req))
 		GOTO(err_exit, rc = PTR_ERR(req));
@@ -219,7 +219,7 @@ static int llog_client_prev_block(const struct lu_env *env,
 		return PTR_ERR(imp);
 
 	req = ptlrpc_request_alloc_pack(imp, &RQF_LLOG_ORIGIN_HANDLE_PREV_BLOCK,
-					LUSTRE_LOG_VERSION,
+					GRUMPLE_LOG_VERSION,
 					LLOG_ORIGIN_HANDLE_PREV_BLOCK);
 	if (IS_ERR(req))
 		GOTO(err_exit, rc = PTR_ERR(req));
@@ -273,7 +273,7 @@ static int llog_client_read_header(const struct lu_env *env,
 
 	req = ptlrpc_request_alloc_pack(imp,
 					&RQF_LLOG_ORIGIN_HANDLE_READ_HEADER,
-					LUSTRE_LOG_VERSION,
+					GRUMPLE_LOG_VERSION,
 					LLOG_ORIGIN_HANDLE_READ_HEADER);
 	if (IS_ERR(req))
 		GOTO(err_exit, rc = PTR_ERR(req));

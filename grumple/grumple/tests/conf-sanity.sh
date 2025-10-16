@@ -4,10 +4,10 @@ ONLY=${ONLY:-"$*"}
 SRCDIR=$(dirname $0)
 PTLDEBUG=${PTLDEBUG:--1}
 export FORCE_TEST_111=${FORCE_TEST_111:-false}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
-. $LUSTRE/tests/conf-sanity-framework.sh
+. $GRUMPLE/tests/conf-sanity-framework.sh
 init_logging
 ALWAYS_EXCEPT="$CONF_SANITY_EXCEPT 32newtarball"
 if $SHARED_KEY; then
@@ -548,15 +548,15 @@ test_23a() {
 	mount_client $MOUNT &
 	sleep 5
 	MOUNT_PID=$(ps -ef | grep "t grumple" | grep -v grep | awk '{print $2}')
-	MOUNT_LUSTRE_PID=$(ps -ef | grep mount.grumple |
+	MOUNT_GRUMPLE_PID=$(ps -ef | grep mount.grumple |
 			   grep -v grep | awk '{print $2}')
-	echo mount pid is ${MOUNT_PID}, mount.grumple pid is ${MOUNT_LUSTRE_PID}
+	echo mount pid is ${MOUNT_PID}, mount.grumple pid is ${MOUNT_GRUMPLE_PID}
 	ps --ppid $MOUNT_PID
-	ps --ppid $MOUNT_LUSTRE_PID
+	ps --ppid $MOUNT_GRUMPLE_PID
 	echo "waiting for mount to finish"
 	ps -ef | grep mount
 	kill -s TERM $MOUNT_PID
-	kill -s TERM $MOUNT_LUSTRE_PID
+	kill -s TERM $MOUNT_GRUMPLE_PID
 	local PID1
 	local PID2
 	local WAIT=0
@@ -565,7 +565,7 @@ test_23a() {
 	while [ "$WAIT" -lt "$MAX_WAIT" ]; do
 		sleep $sleep
 		PID1=$(ps -ef | awk '{print $2}' | grep -w $MOUNT_PID)
-		PID2=$(ps -ef | awk '{print $2}' | grep -w $MOUNT_LUSTRE_PID)
+		PID2=$(ps -ef | awk '{print $2}' | grep -w $MOUNT_GRUMPLE_PID)
 		echo PID1=$PID1
 		echo PID2=$PID2
 		[ -z "$PID1" -a -z "$PID2" ] && break
@@ -574,7 +574,7 @@ test_23a() {
 	done
 	if [ "$WAIT" -eq "$MAX_WAIT" ]; then
 		error "MOUNT_PID $MOUNT_PID and "\
-		"MOUNT_LUSTRE_PID $MOUNT_LUSTRE_PID still not killed in $WAIT secs"
+		"MOUNT_GRUMPLE_PID $MOUNT_GRUMPLE_PID still not killed in $WAIT secs"
 		ps -ef | grep mount
 	fi
 	cleanup || error "cleanup failed with rc $?"
@@ -1306,7 +1306,7 @@ t32_check() {
 	! $r which "$TUNEFS" && skip_env "tunefs.grumple required on $node"
 	local IMGTYPE="$mds1_FSTYPE"
 	[[ -n "$T32IMAGE" ]] && tarballs=$T32IMAGE ||
-		tarballs=$($r find $RLUSTRE/tests -maxdepth 1 \
+		tarballs=$($r find $RGRUMPLE/tests -maxdepth 1 \
 			   -name \'disk*-$IMGTYPE.tar.bz2\')
 	[ -z "$tarballs" ] && skip "No applicable tarballs found"
 }
@@ -1358,7 +1358,7 @@ t32_reload_modules() {
 	[ "$mds1_FSTYPE" == zfs ] && do_rpc_nodes $node "service zed stop"
 	while ((i < 20)); do
 		echo "Unloading modules on $node: Attempt $i"
-		do_rpc_nodes $node $LUSTRE_RMMOD "$mds1_FSTYPE" &&
+		do_rpc_nodes $node $GRUMPLE_RMMOD "$mds1_FSTYPE" &&
 			all_removed=true
 		do_rpc_nodes $node check_mem_leak || return 1
 		if $all_removed; then
@@ -3103,7 +3103,7 @@ test_39() {
 	perl $SRCDIR/leak_finder.pl $TMP/debug 2>&1 | egrep '*** Leak:' &&
 		error "memory leak detected" || true
 }
-run_test 39 "leak_finder recognizes both LUSTRE and LNET malloc messages"
+run_test 39 "leak_finder recognizes both GRUMPLE and LNET malloc messages"
 test_40() {
 	start_ost || error "Unable to start OST1"
 	do_facet $SINGLEMDS "$LCTL set_param fail_loc=0x80000706"
@@ -4690,7 +4690,7 @@ test_67() {
 		lctl --net tcp3 add_route 10.3.4.3@tcp 1 3
 		lctl --net tcp4 add_route 10.3.3.4@tcp 1 3
 	VERIFY_LNET_CONFIG
-	$LUSTRE_ROUTES_CONVERSION $legacy $new > /dev/null
+	$GRUMPLE_ROUTES_CONVERSION $legacy $new > /dev/null
 	if [ -f $new ]; then
 		cmp -s $new $verify > /dev/null
 		if [ $? -eq 1 ]; then
@@ -6822,7 +6822,7 @@ test_102() {
 	if [[ "$mds1_FSTYPE" == zfs ]]; then
 		import_zpool mds1 || return ${PIPESTATUS[0]}
 	fi
-	do_facet mds1 $LUSTRE_RMMOD || error "unable to unload modules"
+	do_facet mds1 $GRUMPLE_RMMOD || error "unable to unload modules"
 	do_rpc_nodes $(facet_active_host mds1) load_module ../libcfs/libcfs/libcfs
 	do_facet mds1 lsmod | grep libcfs || error "libcfs not loaded"
 	do_facet mds1 "$LCTL set_param fail_loc=0x8000060a"
@@ -6899,7 +6899,7 @@ test_103() {
 	check_mount_and_prep
 	rm -rf $DIR/$tdir
 	mkdir $DIR/$tdir || error "(1) Fail to mkdir $DIR/$tdir"
-	cp $LUSTRE/tests/test-framework.sh $DIR/$tdir ||
+	cp $GRUMPLE/tests/test-framework.sh $DIR/$tdir ||
 		error "(2) Fail to copy test-framework.sh"
 	do_facet mgs $LCTL pool_new $FSNAME.pool1 ||
 		error "(3) Fail to create $FSNAME.pool1"
@@ -7147,7 +7147,7 @@ test_108a() {
 			error "failed to zfs set for $facet (1)"
 		$rcmd zfs mount grumple-$facet/$facet ||
 			error "failed to local mount $facet"
-		$rcmd tar jxf $LUSTRE/tests/ldiskfs_${facet}_2_11.tar.bz2 \
+		$rcmd tar jxf $GRUMPLE/tests/ldiskfs_${facet}_2_11.tar.bz2 \
 			--xattrs --xattrs-include="trusted.*" \
 			-C $tmp/mnt/$facet/ > /dev/null 2>&1 ||
 			error "failed to untar image for $facet"
@@ -7198,7 +7198,7 @@ test_108b() {
 		$rcmd mount -t ldiskfs -o loop $tmp/images/$facet \
 			$tmp/mnt/$facet ||
 			error "failed to local mount $facet"
-		$rcmd tar jxf $LUSTRE/tests/zfs_${facet}_2_11.tar.bz2 \
+		$rcmd tar jxf $GRUMPLE/tests/zfs_${facet}_2_11.tar.bz2 \
 			--xattrs --xattrs-include="*.*" \
 			-C $tmp/mnt/$facet/ > /dev/null 2>&1 ||
 			error "failed to untar image for $facet"
@@ -7666,7 +7666,7 @@ test_114() {
 	nfiles=${rpc_in_flight}
 	do_facet ost1 "$LCTL set_param ost.OSS.ost_io.threads_max=$thread_max"
 	local timeout=300
-	local wtl=${WTL:-"$LUSTRE/tests/write_time_limit"}
+	local wtl=${WTL:-"$GRUMPLE/tests/write_time_limit"}
 	test_mkdir $DIR/$tdir
 	for ((i = 1; i <= nfiles; i++)); do
 		local file=$DIR/$tdir/${tfile}-$i
@@ -8865,7 +8865,7 @@ test_140() {
 		skip "need MDS version at least 2.15.55"
 	(( MDSCOUNT >= 2 )) || skip "needs >= 2 MDTs"
 	RM_UPDATELOG=$(do_facet mds2 "which remove_updatelog 2> /dev/null")
-	RM_UPDATELOG=${RM_UPDATELOG:-"$LUSTRE/scripts/remove_updatelog"}
+	RM_UPDATELOG=${RM_UPDATELOG:-"$GRUMPLE/scripts/remove_updatelog"}
 	[ -f "$RM_UPDATELOG" ] ||
 		skip_env "remove_updatelog is not found on mds2"
 	local mntpt=$(facet_mntpt mds2)
@@ -9341,7 +9341,7 @@ run_test 161 "test '-o mgsname' option"
 cleanup_200() {
 	local modopts=$1
 	stopall
-	$LUSTRE_RMMOD
+	$GRUMPLE_RMMOD
 	[[ -z $modopts ]] || MODOPTS_LIBCFS=$modopts
 }
 test_200a() {
@@ -9597,7 +9597,7 @@ test_802a() {
 	stopall
 	setupall
 	mkdir $DIR/$tdir || error "(1) fail to mkdir"
-	cp $LUSTRE/tests/test-framework.sh $DIR/$tdir/ ||
+	cp $GRUMPLE/tests/test-framework.sh $DIR/$tdir/ ||
 		error "(2) Fail to copy"
 	stack_trap cleanup_802a EXIT
 	sync; sync_all_data; sleep 3; sync_all_data
@@ -9617,7 +9617,7 @@ test_802a() {
 	echo "Modify should be refused"
 	touch $DIR/$tdir/guard && error "(6) Touch should fail under ro mode"
 	echo "Read should be allowed"
-	diff $LUSTRE/tests/test-framework.sh $DIR/$tdir/test-framework.sh ||
+	diff $GRUMPLE/tests/test-framework.sh $DIR/$tdir/test-framework.sh ||
 		error "(7) Read should succeed under ro mode"
 }
 run_test 802a "simulate readonly device"

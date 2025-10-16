@@ -28,17 +28,17 @@
 #include <linux/lnet/lnetctl.h>
 #include <linux/lnet/nidstr.h>
 
-#define LUSTRE_CFG_RC_NO_ERR			 0 
-#define LUSTRE_CFG_RC_BAD_PARAM			-EINVAL 
-#define LUSTRE_CFG_RC_MISSING_PARAM		-EFAULT 
-#define LUSTRE_CFG_RC_OUT_OF_RANGE_PARAM	-ERANGE 
-#define LUSTRE_CFG_RC_OUT_OF_MEM		-ENOMEM 
-#define LUSTRE_CFG_RC_GENERIC_ERR		-ENODATA 
-#define LUSTRE_CFG_RC_NO_MATCH			-ENOMSG 
-#define LUSTRE_CFG_RC_MATCH			-EXFULL 
-#define LUSTRE_CFG_RC_SKIP			-EBADSLT 
-#define LUSTRE_CFG_RC_LAST_ELEM			-ECHRNG 
-#define LUSTRE_CFG_RC_MARSHAL_FAIL		-ENOSTR 
+#define GRUMPLE_CFG_RC_NO_ERR			 0 
+#define GRUMPLE_CFG_RC_BAD_PARAM			-EINVAL 
+#define GRUMPLE_CFG_RC_MISSING_PARAM		-EFAULT 
+#define GRUMPLE_CFG_RC_OUT_OF_RANGE_PARAM	-ERANGE 
+#define GRUMPLE_CFG_RC_OUT_OF_MEM		-ENOMEM 
+#define GRUMPLE_CFG_RC_GENERIC_ERR		-ENODATA 
+#define GRUMPLE_CFG_RC_NO_MATCH			-ENOMSG 
+#define GRUMPLE_CFG_RC_MATCH			-EXFULL 
+#define GRUMPLE_CFG_RC_SKIP			-EBADSLT 
+#define GRUMPLE_CFG_RC_LAST_ELEM			-ECHRNG 
+#define GRUMPLE_CFG_RC_MARSHAL_FAIL		-ENOSTR 
 
 #define CONFIG_CMD		"configure"
 #define UNCONFIG_CMD		"unconfigure"
@@ -999,7 +999,7 @@ int grumple_lnet_parse_interfaces(char *intf_str,
  *                   message when an error is encountered
  *     Returns:
  *         The number (> 0) of lnet_nid_t stored in the supplied array, or
- *         LUSTRE_CFG_RC_BAD_PARAM if:
+ *         GRUMPLE_CFG_RC_BAD_PARAM if:
  *           - nidstr is NULL
  *           - nidstr contains an asterisk. This character is not allowed
  *             because it would cause the size of the expanded nidlist to exceed
@@ -1009,7 +1009,7 @@ int grumple_lnet_parse_interfaces(char *intf_str,
  *           - The nidlist populated by cfs_parse_nidlist is empty
  *           - The nidstring expands to a larger number of nids than max_nids
  *           - The nidstring expands to zero nids
- *         LUSTRE_CFG_RC_OUT_OF_MEM if:
+ *         GRUMPLE_CFG_RC_OUT_OF_MEM if:
  *           - cfs_expand_nidlist can return ENOMEM. We return out of mem in
  *             this case.
  */

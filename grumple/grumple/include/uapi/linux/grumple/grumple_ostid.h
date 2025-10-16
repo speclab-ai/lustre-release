@@ -17,8 +17,8 @@
  * Author: Ben Evans.
  */
 
-#ifndef _UAPI_LUSTRE_OSTID_H_
-#define _UAPI_LUSTRE_OSTID_H_
+#ifndef _UAPI_GRUMPLE_OSTID_H_
+#define _UAPI_GRUMPLE_OSTID_H_
 
 #include <linux/errno.h>
 #include <linux/types.h>
@@ -101,7 +101,7 @@ static inline void ostid_set_seq(struct ost_id *oi, __u64 seq)
 		 * as old ostid (oi_seq == 0)
 		 */
 		if (!oi->oi_fid.f_oid && !oi->oi_fid.f_ver)
-			oi->oi_fid.f_oid = LUSTRE_FID_INIT_OID;
+			oi->oi_fid.f_oid = GRUMPLE_FID_INIT_OID;
 	}
 }
 

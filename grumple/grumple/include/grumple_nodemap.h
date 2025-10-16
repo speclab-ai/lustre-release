@@ -12,15 +12,15 @@
  * Author: Joshua Walgenbach <jjw@iu.edu>
  */
 
-#ifndef _LUSTRE_NODEMAP_H
-#define _LUSTRE_NODEMAP_H
+#ifndef _GRUMPLE_NODEMAP_H
+#define _GRUMPLE_NODEMAP_H
 
 #include <uapi/linux/grumple/grumple_disk.h>
 #include <uapi/linux/grumple/grumple_ioctl.h>
 
-#define LUSTRE_NODEMAP_NAME "nodemap"
+#define GRUMPLE_NODEMAP_NAME "nodemap"
 
-#define LUSTRE_NODEMAP_DEFAULT_ID 0
+#define GRUMPLE_NODEMAP_DEFAULT_ID 0
 
 static const struct nodemap_rbac_name {
 	enum nodemap_rbac_roles nrn_mode;
@@ -49,7 +49,7 @@ static const struct nodemap_captype_name {
 };
 
 struct nodemap_pde {
-	char			 npe_name[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+	char			 npe_name[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 	struct dentry		*npe_debugfs_entry;
 	struct list_head	 npe_list_member;
 };
@@ -95,7 +95,7 @@ struct lu_nodemap_fileset_modify {
 
 struct lu_nodemap {
 	
-	char			 nm_name[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+	char			 nm_name[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 	
 	bool			 nmf_trust_client_ids:1,
 				 nmf_deny_unknown:1,
@@ -160,7 +160,7 @@ struct lu_nodemap {
 	
 	unsigned int		 nm_fileset_alt_sz;
 	
-	char			 nm_sepol[LUSTRE_NODEMAP_SEPOL_LENGTH + 1];
+	char			 nm_sepol[GRUMPLE_NODEMAP_SEPOL_LENGTH + 1];
 	
 	struct list_head	 nm_list;
 	

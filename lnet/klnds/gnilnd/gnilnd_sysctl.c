@@ -225,8 +225,8 @@ static struct ctl_table kgnilnd_table[] = {
 	 */
 	{
 		.procname = "version",
-		.data     = LUSTRE_VERSION_STRING,
-		.maxlen   = sizeof(LUSTRE_VERSION_STRING),
+		.data     = GRUMPLE_VERSION_STRING,
+		.maxlen   = sizeof(GRUMPLE_VERSION_STRING),
 		.mode     = 0444,
 		.proc_handler = &proc_dostring
 	},

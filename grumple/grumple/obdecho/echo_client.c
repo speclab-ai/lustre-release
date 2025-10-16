@@ -183,7 +183,7 @@ struct echo_thread_info {
 	char                    eti_name[ETI_NAME_LEN];
 	struct lu_buf           eti_buf;
 	
-	char                    eti_xattr_buf[LUSTRE_POSIX_ACL_MAX_SIZE_OLD];
+	char                    eti_xattr_buf[GRUMPLE_POSIX_ACL_MAX_SIZE_OLD];
 #endif
 };
 
@@ -476,7 +476,7 @@ static int echo_fid_init(struct echo_device *ed, char *obd_name,
 
 	
 	seq_client_init(ed->ed_cl_seq, NULL,
-			LUSTRE_SEQ_METADATA,
+			GRUMPLE_SEQ_METADATA,
 			prefix, ss->ss_server_seq);
 	ed->ed_cl_seq->lcs_width = ECHO_SEQ_WIDTH;
 	OBD_FREE(prefix, MAX_OBD_NAME + 5);
@@ -626,10 +626,10 @@ static struct lu_device *echo_device_alloc(const struct lu_env *env,
 
 	next = tgt->obd_lu_dev;
 
-	if (strcmp(tgt->obd_type->typ_name, LUSTRE_MDT_NAME) == 0) {
+	if (strcmp(tgt->obd_type->typ_name, GRUMPLE_MDT_NAME) == 0) {
 		ed->ed_next_ismd = 1;
-	} else if (strcmp(tgt->obd_type->typ_name, LUSTRE_OST_NAME) == 0 ||
-		   strcmp(tgt->obd_type->typ_name, LUSTRE_OSC_NAME) == 0) {
+	} else if (strcmp(tgt->obd_type->typ_name, GRUMPLE_OST_NAME) == 0 ||
+		   strcmp(tgt->obd_type->typ_name, GRUMPLE_OSC_NAME) == 0) {
 		ed->ed_next_ismd = 0;
 		rc = echo_site_init(env, ed);
 		if (rc)
@@ -730,7 +730,7 @@ static struct lu_device *echo_device_alloc(const struct lu_env *env,
 			if (rc)
 				GOTO(out, rc);
 		} else {
-			LASSERT(strcmp(tgt_type_name, LUSTRE_OST_NAME) == 0);
+			LASSERT(strcmp(tgt_type_name, GRUMPLE_OST_NAME) == 0);
 		}
 	}
 
@@ -777,7 +777,7 @@ static struct lu_device *echo_device_fini(const struct lu_env *env,
 	struct lu_device *next = ed->ed_next;
 
 	while (next && !ed->ed_next_ismd &&
-	       strcmp(next->ld_type->ldt_name, LUSTRE_OSC_NAME) != 0)
+	       strcmp(next->ld_type->ldt_name, GRUMPLE_OSC_NAME) != 0)
 		next = ldto_device_fini(env, next);
 	return NULL;
 }
@@ -834,7 +834,7 @@ static struct lu_device *echo_device_free(const struct lu_env *env,
 	echo_ed_los_fini(env, ed);
 #endif
 	while (next && !ed->ed_next_ismd &&
-	       strcmp(next->ld_type->ldt_name, LUSTRE_OSC_NAME) != 0)
+	       strcmp(next->ld_type->ldt_name, GRUMPLE_OSC_NAME) != 0)
 		next = ldto_device_free(env, next);
 
 	LASSERT(ed->ed_site == d->ld_site);
@@ -862,7 +862,7 @@ static const struct lu_device_type_operations echo_device_type_ops = {
 
 static struct lu_device_type echo_device_type = {
 	.ldt_tags     = LU_DEVICE_CL,
-	.ldt_name     = LUSTRE_ECHO_CLIENT_NAME,
+	.ldt_name     = GRUMPLE_ECHO_CLIENT_NAME,
 	.ldt_ops      = &echo_device_type_ops,
 	.ldt_ctx_tags = LCT_CL_THREAD | LCT_MD_THREAD | LCT_DT_THREAD,
 };
@@ -1101,7 +1101,7 @@ static int echo_attr_get_complex(const struct lu_env *env,
 		}
 	}
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if ((ma->ma_need & MA_ACL_DEF) && S_ISDIR(mode)) {
 		buf->lb_buf = ma->ma_acl;
 		buf->lb_len = ma->ma_acl_size;
@@ -1183,7 +1183,7 @@ static int echo_set_lmm_size(const struct lu_env *env, struct lu_device *ld,
 {
 	struct echo_thread_info *info = echo_env_info(env);
 
-	if (strcmp(ld->ld_type->ldt_name, LUSTRE_MDD_NAME)) {
+	if (strcmp(ld->ld_type->ldt_name, GRUMPLE_MDD_NAME)) {
 		ma->ma_lmm = (void *)&info->eti_lmm;
 		ma->ma_lmm_size = sizeof(info->eti_lmm);
 	} else {
@@ -1853,7 +1853,7 @@ static int echo_md_handler(struct echo_device *ed, int command,
 		RETURN(-EINVAL);
 	}
 
-	if (strcmp(ld->ld_type->ldt_name, LUSTRE_MDD_NAME)) {
+	if (strcmp(ld->ld_type->ldt_name, GRUMPLE_MDD_NAME)) {
 		CERROR("Only support MDD layer right now!\n");
 		RETURN(-EINVAL);
 	}
@@ -2356,7 +2356,7 @@ echo_client_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 		if (copy_to_user(data->ioc_pbuf1, &seq, data->ioc_plen1))
 			return -EFAULT;
 
-		max_count = LUSTRE_METADATA_SEQ_MAX_WIDTH;
+		max_count = GRUMPLE_METADATA_SEQ_MAX_WIDTH;
 		if (copy_to_user(data->ioc_pbuf2, &max_count,
 				     data->ioc_plen2))
 			return -EFAULT;
@@ -2423,12 +2423,12 @@ static int echo_client_setup(const struct lu_env *env,
 {
 	struct echo_client_obd *ec = &obd->u.echo_client;
 	struct obd_device *tgt;
-	struct obd_uuid echo_uuid = { LUSTRE_ECHO_UUID };
+	struct obd_uuid echo_uuid = { GRUMPLE_ECHO_UUID };
 	struct obd_connect_data *ocd = NULL;
 	int rc;
 
 	ENTRY;
-	if (lcfg->lcfg_bufcount < 2 || LUSTRE_CFG_BUFLEN(lcfg, 1) < 1) {
+	if (lcfg->lcfg_bufcount < 2 || GRUMPLE_CFG_BUFLEN(lcfg, 1) < 1) {
 		CERROR("requires a TARGET OBD name\n");
 		RETURN(-EINVAL);
 	}
@@ -2449,7 +2449,7 @@ static int echo_client_setup(const struct lu_env *env,
 	lu_context_tags_update(ECHO_DT_CTX_TAG);
 	lu_session_tags_update(ECHO_SES_TAG);
 
-	if (!strcmp(tgt->obd_type->typ_name, LUSTRE_MDT_NAME)) {
+	if (!strcmp(tgt->obd_type->typ_name, GRUMPLE_MDT_NAME)) {
 #ifdef HAVE_SERVER_SUPPORT
 		lu_context_tags_update(ECHO_MD_CTX_TAG);
 #else
@@ -2474,7 +2474,7 @@ static int echo_client_setup(const struct lu_env *env,
 	ocd->ocd_connect_flags2 = OBD_CONNECT2_REP_MBITS;
 
 	ocd->ocd_brw_size = DT_MAX_BRW_SIZE;
-	ocd->ocd_version = LUSTRE_VERSION_CODE;
+	ocd->ocd_version = GRUMPLE_VERSION_CODE;
 	ocd->ocd_group = FID_SEQ_ECHO;
 
 	rc = obd_connect(env, &ec->ec_exp, tgt, &echo_uuid, ocd, NULL);
@@ -2581,7 +2581,7 @@ static int __init obdecho_init(void)
 		goto failed_0;
 
 	rc = class_register_type(&echo_obd_ops, NULL, false,
-				 LUSTRE_ECHO_NAME, &echo_srv_type);
+				 GRUMPLE_ECHO_NAME, &echo_srv_type);
 	if (rc != 0)
 		goto failed_1;
 # endif
@@ -2589,7 +2589,7 @@ static int __init obdecho_init(void)
 	rc = lu_kmem_init(echo_caches);
 	if (rc == 0) {
 		rc = class_register_type(&echo_client_obd_ops, NULL, false,
-					 LUSTRE_ECHO_CLIENT_NAME,
+					 GRUMPLE_ECHO_CLIENT_NAME,
 					 &echo_device_type);
 		if (rc)
 			lu_kmem_fini(echo_caches);
@@ -2599,7 +2599,7 @@ static int __init obdecho_init(void)
 	if (rc == 0)
 		RETURN(0);
 
-	class_unregister_type(LUSTRE_ECHO_NAME);
+	class_unregister_type(GRUMPLE_ECHO_NAME);
 failed_1:
 	echo_persistent_pages_fini();
 failed_0:
@@ -2609,18 +2609,18 @@ failed_0:
 
 static void __exit obdecho_exit(void)
 {
-	class_unregister_type(LUSTRE_ECHO_CLIENT_NAME);
+	class_unregister_type(GRUMPLE_ECHO_CLIENT_NAME);
 	lu_kmem_fini(echo_caches);
 
 #ifdef HAVE_SERVER_SUPPORT
-	class_unregister_type(LUSTRE_ECHO_NAME);
+	class_unregister_type(GRUMPLE_ECHO_NAME);
 	echo_persistent_pages_fini();
 #endif
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Echo Client test driver");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(obdecho_init);

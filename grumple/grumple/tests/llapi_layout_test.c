@@ -1308,7 +1308,7 @@ static void test30(void)
 	start[1] = end[0];
 	end[1] = 1 * 1024 * 1024 * 1024; 
 	start[2] = end[1];
-	end[2] = LUSTRE_EOF;
+	end[2] = GRUMPLE_EOF;
 
 	if (num_osts < 2)
 		return;
@@ -1410,7 +1410,7 @@ static void test31(void)
 	start[0] = 0;
 	end[0] = 64 * 1024 * 1024; 
 	start[1] = end[0];
-	end[1] = LUSTRE_EOF;
+	end[1] = GRUMPLE_EOF;
 
 	if (num_osts < 2)
 		return;
@@ -1615,7 +1615,7 @@ static void test34(void)
 	start[2] = end[1];
 	end[2] = 10ull * 1024 * 1024 * 1024; 
 	start[3] = end[2];
-	end[3] = LUSTRE_EOF;
+	end[3] = GRUMPLE_EOF;
 
 	if (num_osts < 2)
 		return;

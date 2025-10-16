@@ -76,7 +76,7 @@ static inline bool str_starts_with(const char *str, const char *prefix)
 	return strncmp(str, prefix, strlen(prefix)) == 0;
 }
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 static int mgs_set_info(struct tgt_session_info *tsi)
 {
 	struct mgs_thread_info *mgi;
@@ -809,7 +809,7 @@ static int mgs_extract_fs_pool(char *arg, char *fsname, char *poolname)
 		return -EINVAL;
 
 	
-	if (len > LUSTRE_MAXFSNAME)
+	if (len > GRUMPLE_MAXFSNAME)
 		return -ENAMETOOLONG;
 
 	strncpy(fsname, arg, len);
@@ -857,7 +857,7 @@ static int __llog_fileset_cleanup_apply(const struct lu_env *env,
 		GOTO(out_cleanup, rc = -ENOMEM);
 
 	
-	grumple_cfg_bufs_reset(bufs, LUSTRE_CFG_ALL_TARGETS);
+	grumple_cfg_bufs_reset(bufs, GRUMPLE_CFG_ALL_TARGETS);
 	grumple_cfg_bufs_set_string(bufs, 1, lcfg_param);
 
 	OBD_ALLOC(lcfg, grumple_cfg_len(bufs->lcfg_bufcount, bufs->lcfg_buflen));
@@ -944,7 +944,7 @@ static int mgs_iocontrol_nodemap(const struct lu_env *env,
 
 	ENTRY;
 
-	if (data->ioc_type != LUSTRE_CFG_TYPE) {
+	if (data->ioc_type != GRUMPLE_CFG_TYPE) {
 		CERROR("%s: unknown cfg record type: %d\n",
 		       mgs->mgs_obd->obd_name, data->ioc_type);
 		GOTO(out, rc = -EINVAL);
@@ -973,7 +973,7 @@ static int mgs_iocontrol_nodemap(const struct lu_env *env,
 	}
 
 	
-	rc = mgs_find_or_make_fsdb(env, mgs, LUSTRE_NODEMAP_NAME, &fsdb);
+	rc = mgs_find_or_make_fsdb(env, mgs, GRUMPLE_NODEMAP_NAME, &fsdb);
 	if (rc < 0) {
 		CWARN("%s: cannot make nodemap fsdb: rc = %d\n",
 		      mgs->mgs_obd->obd_name, rc);
@@ -1001,7 +1001,7 @@ static int mgs_iocontrol_pool(const struct lu_env *env,
 	if (poolname == NULL)
 		RETURN(-ENOMEM);
 
-	if (data->ioc_type != LUSTRE_CFG_TYPE) {
+	if (data->ioc_type != GRUMPLE_CFG_TYPE) {
 		CERROR("%s: unknown cfg record type: %d\n",
 		       mgs->mgs_obd->obd_name, data->ioc_type);
 		GOTO(out_pool, rc = -EINVAL);
@@ -1101,7 +1101,7 @@ static int mgs_iocontrol(unsigned int cmd, struct obd_export *exp, int len,
 	case OBD_IOC_PARAM: {
 		struct grumple_cfg *lcfg;
 
-		if (data->ioc_type != LUSTRE_CFG_TYPE) {
+		if (data->ioc_type != GRUMPLE_CFG_TYPE) {
 			CERROR("%s: unknown cfg record type '%x': rc = %d\n",
 			       obd->obd_name, data->ioc_type, rc);
 			GOTO(out, rc);
@@ -1258,7 +1258,7 @@ static int mgs_connect_to_osd(struct mgs_device *m, const char *nextdev)
 		GOTO(out, rc = -ENOTCONN);
 	}
 
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	rc = obd_connect(NULL, &m->mgs_bottom_exp, obd,
 			 &obd->obd_uuid, data, NULL);
@@ -1278,12 +1278,12 @@ out:
 static struct tgt_handler mgs_mgs_handlers[] = {
 TGT_RPC_HANDLER(MGS_FIRST_OPC,
 		0,			MGS_CONNECT,	 mgs_connect,
-		&RQF_CONNECT, LUSTRE_OBD_VERSION),
+		&RQF_CONNECT, GRUMPLE_OBD_VERSION),
 TGT_RPC_HANDLER(MGS_FIRST_OPC,
 		0,			MGS_DISCONNECT,	 mgs_disconnect,
-		&RQF_MDS_DISCONNECT, LUSTRE_OBD_VERSION),
+		&RQF_MDS_DISCONNECT, GRUMPLE_OBD_VERSION),
 TGT_MGS_HDL_VAR(0,			MGS_EXCEPTION,	 mgs_exception),
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 TGT_MGS_HDL(HAS_REPLY | IS_MUTABLE,	MGS_SET_INFO,	 mgs_set_info),
 #endif
 TGT_MGS_HDL(HAS_REPLY | IS_MUTABLE,	MGS_TARGET_REG,	 mgs_target_reg),
@@ -1309,7 +1309,7 @@ static struct tgt_handler mgs_dlm_handlers[] = {
 	.th_flags = HAS_KEY,
 	.th_act = tgt_enqueue,
 	.th_fmt = &RQF_LDLM_ENQUEUE,
-	.th_version = LUSTRE_DLM_VERSION,
+	.th_version = GRUMPLE_DLM_VERSION,
 	},
 };
 
@@ -1456,7 +1456,7 @@ static int mgs_init0(const struct lu_env *env, struct mgs_device *mgs,
 			   "mgs_ldlm_client", &obd->obd_ldlm_client);
 
 	conf = (typeof(conf)) {
-		.psc_name		= LUSTRE_MGS_NAME,
+		.psc_name		= GRUMPLE_MGS_NAME,
 		.psc_watchdog_factor	= MGS_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= MGS_NBUFS,
@@ -1583,7 +1583,7 @@ static int mgs_object_print(const struct lu_env *env, void *cookie,
 {
 	const struct mgs_object *o = lu2mgs_obj((struct lu_object *) l);
 
-	return (*p)(env, cookie, LUSTRE_MGS_NAME"-object@%p", o);
+	return (*p)(env, cookie, GRUMPLE_MGS_NAME"-object@%p", o);
 }
 
 static const struct lu_object_operations mgs_lu_obj_ops = {
@@ -1721,7 +1721,7 @@ static const struct lu_device_type_operations mgs_device_type_ops = {
 
 static struct lu_device_type mgs_device_type = {
 	.ldt_tags	= LU_DEVICE_DT,
-	.ldt_name	= LUSTRE_MGS_NAME,
+	.ldt_name	= GRUMPLE_MGS_NAME,
 	.ldt_ops	= &mgs_device_type_ops,
 	.ldt_ctx_tags	= LCT_MG_THREAD
 };
@@ -1744,7 +1744,7 @@ static int mgs_obd_reconnect(const struct lu_env *env, struct obd_export *exp,
 			data->ocd_connect_flags2 &= MGS_CONNECT_SUPPORTED2;
 
 		exp->exp_connect_data = *data;
-		data->ocd_version = LUSTRE_VERSION_CODE;
+		data->ocd_version = GRUMPLE_VERSION_CODE;
 	}
 
 	RETURN(mgs_export_stats_init(obd, exp, localdata));
@@ -1838,17 +1838,17 @@ static int __init mgs_init(void)
 		return rc;
 
 	return class_register_type(&mgs_obd_device_ops, NULL, true,
-				   LUSTRE_MGS_NAME, &mgs_device_type);
+				   GRUMPLE_MGS_NAME, &mgs_device_type);
 }
 
 static void __exit mgs_exit(void)
 {
-	class_unregister_type(LUSTRE_MGS_NAME);
+	class_unregister_type(GRUMPLE_MGS_NAME);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Management Server (MGS)");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(mgs_init);

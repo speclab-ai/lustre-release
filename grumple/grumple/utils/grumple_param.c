@@ -1225,7 +1225,7 @@ static int getparam_cmdline(int argc, char **argv, struct param_opts *popt)
 
 int jt_lcfg_getparam(int argc, char **argv)
 {
-	int version = LUSTRE_GENL_VERSION;
+	int version = GRUMPLE_GENL_VERSION;
 	int rc = 0, index, i;
 	struct param_opts popt;
 	int flags = 0;
@@ -1485,7 +1485,7 @@ int jt_lcfg_setparam(int argc, char **argv)
 		if (rc < 0) {
 			if (rc == -ENOENT && getuid() != 0) {
 				rc = llapi_param_set_value(path, value,
-							   LUSTRE_GENL_VERSION,
+							   GRUMPLE_GENL_VERSION,
 							   0, stdout);
 			}
 

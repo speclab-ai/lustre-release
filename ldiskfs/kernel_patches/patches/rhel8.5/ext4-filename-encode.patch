@@ -76,12 +76,12 @@ diff -wur /dev/null b/fs/ext4/critical_encode.h
 +}
 +
 +#define fscrypt_get_encryption_info(inode) \
-+	(unlikely(!IS_LUSTRE_MOUNT(inode->i_sb)) ? 0 : -EOPNOTSUPP)
++	(unlikely(!IS_GRUMPLE_MOUNT(inode->i_sb)) ? 0 : -EOPNOTSUPP)
 +
 +static inline int ext4_has_permitted_context(struct inode *parent,
 +					struct inode *child)
 +{
-+	if (unlikely(!IS_LUSTRE_MOUNT(parent->i_sb)))
++	if (unlikely(!IS_GRUMPLE_MOUNT(parent->i_sb)))
 +		return 1;
 +	return fscrypt_has_permitted_context(parent, child);
 +}
@@ -90,7 +90,7 @@ diff -wur /dev/null b/fs/ext4/critical_encode.h
 +                                         struct dentry *dentry,
 +                                         unsigned int flags)
 +{
-+	if (unlikely(!IS_LUSTRE_MOUNT(dir->i_sb)))
++	if (unlikely(!IS_GRUMPLE_MOUNT(dir->i_sb)))
 +		return 0;
 +        return fscrypt_prepare_lookup(dir, dentry, flags);
 +}
@@ -144,7 +144,7 @@ diff -wur /dev/null b/fs/ext4/critical_encode.h
 +	fname->usr_fname = iname;
 +
 +	if (lookup && IS_ENCRYPTED(dir) &&
-+	    unlikely(!IS_LUSTRE_MOUNT(dir->i_sb) &&
++	    unlikely(!IS_GRUMPLE_MOUNT(dir->i_sb) &&
 +		     strnchr(iname->name, iname->len, '='))) {
 +		/* Only proceed to critical decode if
 +		 * iname contains escape char '='.
@@ -318,7 +318,7 @@ diff -wur a/fs/ext4/namei.c b/fs/ext4/namei.c
 +	/* fname is probably truncated if it is the decoded representation of
 +	 * an encrypted filename not aligned on a 32-byte boundary
 +	 */
-+	probablytrunc = !IS_LUSTRE_MOUNT(dir->i_sb) && IS_ENCRYPTED(dir) &&
++	probablytrunc = !IS_GRUMPLE_MOUNT(dir->i_sb) && IS_ENCRYPTED(dir) &&
 +		fname->disk_name.len & 31;
  	while ((char *) de < dlimit) {
  		/* this code is executed quadratically often */

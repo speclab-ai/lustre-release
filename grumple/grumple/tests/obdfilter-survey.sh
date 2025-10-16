@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$OBDFILTER_SURVEY_EXCEPT "
@@ -17,9 +17,9 @@ size=${size:-1024}
 thrlo=${thrlo:-$(( thrhi / 2))}
 if [[ -x "$OBDSURVEY" ]]; then
 	echo "OBDSURVEY=$OBDSURVEY"
-elif [[ -x $LUSTRE/../grumple-iokit/obdfilter-survey/obdfilter-survey ]]; then
-	echo "LUSTRE=$LUSTRE"
-	OBDSURVEY="$LUSTRE/../grumple-iokit/obdfilter-survey/obdfilter-survey"
+elif [[ -x $GRUMPLE/../grumple-iokit/obdfilter-survey/obdfilter-survey ]]; then
+	echo "GRUMPLE=$GRUMPLE"
+	OBDSURVEY="$GRUMPLE/../grumple-iokit/obdfilter-survey/obdfilter-survey"
 else
 	OBDSURVEY=${OBDSURVEY:-$(which obdfilter-survey)}
 	echo "OBDSURVEY==$OBDSURVEY"

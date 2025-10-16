@@ -13,8 +13,8 @@
  * Lustre public user-space interface definitions.
  */
 
-#ifndef _LUSTRE_USER_H
-#define _LUSTRE_USER_H
+#ifndef _GRUMPLE_USER_H
+#define _GRUMPLE_USER_H
 
 
 #ifndef __KERNEL__
@@ -27,7 +27,7 @@
 
 # define __USE_GNU      1
 # define __USE_XOPEN2K8  1
-# define FILEID_LUSTRE 0x97 
+# define FILEID_GRUMPLE 0x97 
 # define U32_MAX	UINT32_MAX
 #endif 
 
@@ -252,7 +252,7 @@ struct statx {
 
 typedef struct statx lstatx_t;
 
-#define LUSTRE_EOF 0xffffffffffffffffULL
+#define GRUMPLE_EOF 0xffffffffffffffffULL
 
 
 #define LL_SUPER_MAGIC 0x0BD00BD0
@@ -262,7 +262,7 @@ typedef struct statx lstatx_t;
 #define LL_IOC_RESIZE_FS		_IOW('f', 16, __u64)
 
 
-#define LUSTRE_FIEMAP_FLAGS_COMPAT (FIEMAP_FLAG_SYNC | FIEMAP_FLAG_DEVICE_ORDER)
+#define GRUMPLE_FIEMAP_FLAGS_COMPAT (FIEMAP_FLAG_SYNC | FIEMAP_FLAG_DEVICE_ORDER)
 
 enum obd_statfs_state {
 	OS_STATFS_DEGRADED	= 0x00000001, 
@@ -322,7 +322,7 @@ struct obd_statfs_state_name *obd_statfs_state_name_find(__u32 state)
 
 	return NULL;
 };
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
 #define OS_STATFS_NOPRECREATE OS_STATFS_NOCREATE
 #endif
 
@@ -590,7 +590,7 @@ struct ll_futimes_3 {
 /*
  * Maximum number of mirrors currently implemented.
  */
-#define LUSTRE_MIRROR_COUNT_MAX		16
+#define GRUMPLE_MIRROR_COUNT_MAX		16
 
 
 enum ll_lease_mode {
@@ -869,15 +869,15 @@ static inline bool lov_pool_is_reserved(const char *pool)
 #define LOV_V1_INSANE_STRIPE_INDEX (LOV_ALL_STRIPES_WIDE - 1) 
 #define LOV_V1_INSANE_STRIPE_COUNT LOV_V1_INSANE_STRIPE_INDEX 
 
-#define XATTR_LUSTRE_PREFIX	"grumple."
-#define XATTR_LUSTRE_PIN	XATTR_LUSTRE_PREFIX"pin"
-#define XATTR_LUSTRE_LOV	XATTR_LUSTRE_PREFIX"lov"
+#define XATTR_GRUMPLE_PREFIX	"grumple."
+#define XATTR_GRUMPLE_PIN	XATTR_GRUMPLE_PREFIX"pin"
+#define XATTR_GRUMPLE_LOV	XATTR_GRUMPLE_PREFIX"lov"
 
 
-#define allowed_grumple_lov(att) (strcmp((att), XATTR_LUSTRE_LOV".add") == 0 || \
-			strcmp((att), XATTR_LUSTRE_LOV".set") == 0 || \
-			strcmp((att), XATTR_LUSTRE_LOV".set.flags") == 0 || \
-			strcmp((att), XATTR_LUSTRE_LOV".del") == 0)
+#define allowed_grumple_lov(att) (strcmp((att), XATTR_GRUMPLE_LOV".add") == 0 || \
+			strcmp((att), XATTR_GRUMPLE_LOV".set") == 0 || \
+			strcmp((att), XATTR_GRUMPLE_LOV".set.flags") == 0 || \
+			strcmp((att), XATTR_GRUMPLE_LOV".del") == 0)
 
 #define lov_user_ost_data lov_user_ost_data_v1
 struct lov_user_ost_data_v1 {     
@@ -962,7 +962,7 @@ static inline bool lu_extent_is_overlapped(struct lu_extent *e1,
 
 static inline bool lu_extent_is_whole(struct lu_extent *e)
 {
-	return e->e_start == 0 && e->e_end == LUSTRE_EOF;
+	return e->e_start == 0 && e->e_end == GRUMPLE_EOF;
 }
 
 enum lov_comp_md_entry_flags {
@@ -1426,8 +1426,8 @@ static inline const char *obd_uuid2str(const struct obd_uuid *uuid)
 	return uuid->uuid;
 }
 
-#define LUSTRE_MAXFSNAME 8
-#define LUSTRE_MAXINSTANCE 16
+#define GRUMPLE_MAXFSNAME 8
+#define GRUMPLE_MAXINSTANCE 16
 
 /* Extract fsname from uuid (or target name) of a target
  * e.g. (myfs-OST0007_UUID -> myfs)
@@ -1476,28 +1476,28 @@ static inline __u64 toqb(__kernel_size_t space)
 #define Q_FINVALIDATE	0x800104 
 
 
-#define LUSTRE_Q_QUOTAON    0x800002     
-#define LUSTRE_Q_QUOTAOFF   0x800003     
-#define LUSTRE_Q_GETINFO    0x800005     
-#define LUSTRE_Q_SETINFO    0x800006     
-#define LUSTRE_Q_GETQUOTA   0x800007     
-#define LUSTRE_Q_SETQUOTA   0x800008     
+#define GRUMPLE_Q_QUOTAON    0x800002     
+#define GRUMPLE_Q_QUOTAOFF   0x800003     
+#define GRUMPLE_Q_GETINFO    0x800005     
+#define GRUMPLE_Q_SETINFO    0x800006     
+#define GRUMPLE_Q_GETQUOTA   0x800007     
+#define GRUMPLE_Q_SETQUOTA   0x800008     
 
-#define LUSTRE_Q_INVALIDATE  0x80000b     
-#define LUSTRE_Q_FINVALIDATE 0x80000c     
-#define LUSTRE_Q_GETDEFAULT  0x80000d     
-#define LUSTRE_Q_SETDEFAULT  0x80000e     
-#define LUSTRE_Q_GETQUOTAPOOL	0x80000f  
-#define LUSTRE_Q_SETQUOTAPOOL	0x800010  
-#define LUSTRE_Q_GETINFOPOOL	0x800011  
-#define LUSTRE_Q_SETINFOPOOL	0x800012  
-#define LUSTRE_Q_GETDEFAULT_POOL	0x800013  
-#define LUSTRE_Q_SETDEFAULT_POOL	0x800014  
-#define LUSTRE_Q_DELETEQID	0x800015  
-#define LUSTRE_Q_RESETQID	0x800016  
-#define LUSTRE_Q_ITERQUOTA	0x800017  
-#define LUSTRE_Q_ITEROQUOTA	0x800018  
-#define LUSTRE_Q_GETALLQUOTA	0x800019  
+#define GRUMPLE_Q_INVALIDATE  0x80000b     
+#define GRUMPLE_Q_FINVALIDATE 0x80000c     
+#define GRUMPLE_Q_GETDEFAULT  0x80000d     
+#define GRUMPLE_Q_SETDEFAULT  0x80000e     
+#define GRUMPLE_Q_GETQUOTAPOOL	0x80000f  
+#define GRUMPLE_Q_SETQUOTAPOOL	0x800010  
+#define GRUMPLE_Q_GETINFOPOOL	0x800011  
+#define GRUMPLE_Q_SETINFOPOOL	0x800012  
+#define GRUMPLE_Q_GETDEFAULT_POOL	0x800013  
+#define GRUMPLE_Q_SETDEFAULT_POOL	0x800014  
+#define GRUMPLE_Q_DELETEQID	0x800015  
+#define GRUMPLE_Q_RESETQID	0x800016  
+#define GRUMPLE_Q_ITERQUOTA	0x800017  
+#define GRUMPLE_Q_ITEROQUOTA	0x800018  
+#define GRUMPLE_Q_GETALLQUOTA	0x800019  
 /* In the current Lustre implementation, the grace time is either the time
  * or the timestamp to be used after some quota ID exceeds the soft limt,
  * 48 bits should be enough, its high 16 bits can be used as quota flags.
@@ -1527,13 +1527,13 @@ static inline __u64 toqb(__kernel_size_t space)
 #define LQUOTA_FLAG_RESET	0x0004
 #define LQUOTA_FLAG_REVOKE	0x0008
 
-#define LUSTRE_Q_CMD_IS_POOL(cmd)		\
-	(cmd == LUSTRE_Q_GETQUOTAPOOL ||	\
-	 cmd == LUSTRE_Q_SETQUOTAPOOL ||	\
-	 cmd == LUSTRE_Q_SETINFOPOOL ||		\
-	 cmd == LUSTRE_Q_GETINFOPOOL ||		\
-	 cmd == LUSTRE_Q_SETDEFAULT_POOL ||	\
-	 cmd == LUSTRE_Q_GETDEFAULT_POOL)
+#define GRUMPLE_Q_CMD_IS_POOL(cmd)		\
+	(cmd == GRUMPLE_Q_GETQUOTAPOOL ||	\
+	 cmd == GRUMPLE_Q_SETQUOTAPOOL ||	\
+	 cmd == GRUMPLE_Q_SETINFOPOOL ||		\
+	 cmd == GRUMPLE_Q_GETINFOPOOL ||		\
+	 cmd == GRUMPLE_Q_SETDEFAULT_POOL ||	\
+	 cmd == GRUMPLE_Q_GETDEFAULT_POOL)
 
 #define ALLQUOTA 255       
 static inline const char *qtype_name(int qtype)
@@ -1571,7 +1571,7 @@ struct identity_downcall_data {
 	__u32				idd_groups[];
 };
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
 
 #define SEPOL_DOWNCALL_MAGIC_OLD 0x8b8bb842
 struct sepol_downcall_data_old {
@@ -1621,11 +1621,11 @@ QIF_FILESYSTEM)
 /* grumple volatile file support
  * file name header: ".^L^S^T^R:volatile"
  */
-#define LUSTRE_VOLATILE_HDR	".\x0c\x13\x14\x12:VOLATILE"
-#define LUSTRE_VOLATILE_HDR_LEN	14
+#define GRUMPLE_VOLATILE_HDR	".\x0c\x13\x14\x12:VOLATILE"
+#define GRUMPLE_VOLATILE_HDR_LEN	14
 
 enum grumple_quota_version {
-	LUSTRE_QUOTA_V2 = 1
+	GRUMPLE_QUOTA_V2 = 1
 };
 
 
@@ -1980,7 +1980,7 @@ enum changelog_send_flag {
 						       CLFE_SUPPORTED), 8)
 
 
-#define LUSTRE_JOBID_SIZE	32
+#define GRUMPLE_JOBID_SIZE	32
 
 /* This is the minimal changelog record. It can contain extensions
  * such as rename fields or process jobid. Its exact content is described
@@ -2011,7 +2011,7 @@ struct changelog_ext_rename {
 
 
 struct changelog_ext_jobid {
-	char	cr_jobid[LUSTRE_JOBID_SIZE];	
+	char	cr_jobid[GRUMPLE_JOBID_SIZE];	
 };
 
 

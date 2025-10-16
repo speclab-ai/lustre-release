@@ -73,7 +73,7 @@ struct md_identity {
 struct gss_rsi {
 	struct upcall_cache_entry *si_uc_entry;
 	lnet_nid_t		   si_nid4; 
-	char			   si_nm_name[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+	char			   si_nm_name[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 	__u32			   si_grumple_svc;
 	rawobj_t		   si_in_handle;
 	rawobj_t		   si_in_token;

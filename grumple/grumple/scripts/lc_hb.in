@@ -44,7 +44,7 @@ CL_STATUS=${CL_STATUS:-"/usr/bin/cl_status"}
 
 # Service directories and names
 HARES_DIR=${HARES_DIR:-"${HA_DIR}/resource.d"}		# Heartbeat resources
-LUSTRE_SRV=${LUSTRE_SRV:-"Filesystem"}	# Service script provided by Heartbeat
+GRUMPLE_SRV=${GRUMPLE_SRV:-"Filesystem"}	# Service script provided by Heartbeat
 
 TMP_DIR=${HB_TMP_DIR}			# Temporary directory
 HACF_TEMP=${TMP_DIR}/ha.cf.temp
@@ -380,7 +380,7 @@ EOF
 # Create the ha.cf file and scp it to each node's /etc/ha.d/
 create_hacf() {
 	HACF_PRIMNODE=${TMP_DIR}$"/ha.cf."${PRIM_NODENAME}
-	HACF_LUSTRE=${TMP_DIR}$"/ha.cf"${FILE_SUFFIX}
+	HACF_GRUMPLE=${TMP_DIR}$"/ha.cf"${FILE_SUFFIX}
 
 	declare -i idx
 
@@ -390,16 +390,16 @@ create_hacf() {
 		return 0
 	fi
 
-	/bin/cp -f ${HACF_TEMP} ${HACF_LUSTRE}
+	/bin/cp -f ${HACF_TEMP} ${HACF_GRUMPLE}
 
         for ((idx = 0; idx < ${#NODE_NAMES[@]}; idx++)); do
-		echo "node    ${NODE_NAMES[idx]}" >> ${HACF_LUSTRE}
+		echo "node    ${NODE_NAMES[idx]}" >> ${HACF_GRUMPLE}
         done
 
 	# scp ha.cf file to all the nodes
 	for ((idx = 0; idx < ${#NODE_NAMES[@]}; idx++)); do
 		touch ${TMP_DIR}$"/ha.cf."${NODE_NAMES[idx]}
-		scp ${HACF_LUSTRE} ${NODE_NAMES[idx]}:${HA_DIR}/
+		scp ${HACF_GRUMPLE} ${NODE_NAMES[idx]}:${HA_DIR}/
 		if [ $? -ne 0 ]; then
 			error_output "Failed to scp ha.cf file"\
 				 "to node ${NODE_NAMES[idx]}!"
@@ -415,7 +415,7 @@ create_hacf() {
 # Create the haresources file and scp it to the each node's /etc/ha.d/
 create_haresources() {
 	HARES_PRIMNODE=${TMP_DIR}$"/haresources."${PRIM_NODENAME}
-	HARES_LUSTRE=${TMP_DIR}$"/haresources"${FILE_SUFFIX}
+	HARES_GRUMPLE=${TMP_DIR}$"/haresources"${FILE_SUFFIX}
 	declare -i idx
 	local res_line
 
@@ -430,13 +430,13 @@ create_haresources() {
 	# Add the resource group line into the haresources file
 	res_line=${PRIM_NODENAME}
 	for ((idx = 0; idx < ${#TARGET_DEVNAMES[@]}; idx++)); do
-		res_line=${res_line}" "${LUSTRE_SRV}::${TARGET_DEVNAMES[idx]}::${TARGET_MNTPNTS[idx]}::${FS_TYPE}
+		res_line=${res_line}" "${GRUMPLE_SRV}::${TARGET_DEVNAMES[idx]}::${TARGET_MNTPNTS[idx]}::${FS_TYPE}
 			
 		if [ "${HBVER_OPT}" = "${HBVER_HBV1}" ]; then
 			res_line=${res_line}" "${TARGET_SRVNAMES[idx]}"-mon"
 		fi
 	done
-	echo "${res_line}" >> ${HARES_LUSTRE}
+	echo "${res_line}" >> ${HARES_GRUMPLE}
 
 	# Generate the cib.xml file
 	if [ "${HBVER_OPT}" = "${HBVER_HBV2}" ]; then
@@ -444,9 +444,9 @@ create_haresources() {
 		[ -z "`grep haclient /etc/group`" ] && groupadd haclient
 		[ -z "`grep hacluster /etc/passwd`" ] && useradd -g haclient hacluster
 
-		CIB_LUSTRE=${TMP_DIR}$"/cib.xml"${FILE_SUFFIX}
+		CIB_GRUMPLE=${TMP_DIR}$"/cib.xml"${FILE_SUFFIX}
 		python ${CIB_GEN_SCRIPT} --stdout \
-		${HARES_LUSTRE} > ${CIB_LUSTRE}
+		${HARES_GRUMPLE} > ${CIB_GRUMPLE}
 		if [ $? -ne 0 ]; then
 			error_output "Failed to generate cib.xml file"\
 				 "for node ${PRIM_NODENAME}!"
@@ -456,8 +456,8 @@ create_haresources() {
 
 	# scp the haresources file or cib.xml file
 	for ((idx = 0; idx < ${#NODE_NAMES[@]}; idx++)); do
-		/bin/cp -f ${HARES_LUSTRE} ${TMP_DIR}$"/haresources."${NODE_NAMES[idx]}
-		scp ${HARES_LUSTRE} ${NODE_NAMES[idx]}:${HA_DIR}/
+		/bin/cp -f ${HARES_GRUMPLE} ${TMP_DIR}$"/haresources."${NODE_NAMES[idx]}
+		scp ${HARES_GRUMPLE} ${NODE_NAMES[idx]}:${HA_DIR}/
 		if [ $? -ne 0 ]; then
 			error_output "Failed to scp haresources file"\
 				 "to node ${NODE_NAMES[idx]}!"
@@ -465,7 +465,7 @@ create_haresources() {
 		fi
 
 		if [ "${HBVER_OPT}" = "${HBVER_HBV2}" ]; then
-			scp ${CIB_LUSTRE} ${NODE_NAMES[idx]}:${CIB_DIR}/
+			scp ${CIB_GRUMPLE} ${NODE_NAMES[idx]}:${CIB_DIR}/
 			if [ $? -ne 0 ]; then
 				error_output "Failed to scp cib.xml"\
 				 	 "file to node ${NODE_NAMES[idx]}!"
@@ -509,7 +509,7 @@ create_authkeys() {
 # Create the mon.cf file and scp it to the each node's /etc/mon/
 create_moncf() {
 	MONCF_PRIMNODE=${TMP_DIR}$"/mon.cf."${PRIM_NODENAME}
-	MONCF_LUSTRE=${TMP_DIR}$"/mon.cf"${FILE_SUFFIX}
+	MONCF_GRUMPLE=${TMP_DIR}$"/mon.cf"${FILE_SUFFIX}
 	local srv_name params=
 	declare -i idx
 	declare -a OLD_TARGET_SRVNAMES		# targets in other nodes 
@@ -556,13 +556,13 @@ create_moncf() {
 		return 1
 	fi
 
-	/bin/mv *-mon.cfg ${MONCF_LUSTRE}
+	/bin/mv *-mon.cfg ${MONCF_GRUMPLE}
 
 	# scp the mon.cf file to all the nodes
 	for ((idx = 0; idx < ${#NODE_NAMES[@]}; idx++)); do
-		/bin/cp -f ${MONCF_LUSTRE} ${TMP_DIR}$"/mon.cf."${NODE_NAMES[idx]}
+		/bin/cp -f ${MONCF_GRUMPLE} ${TMP_DIR}$"/mon.cf."${NODE_NAMES[idx]}
 
-		scp ${MONCF_LUSTRE} ${NODE_NAMES[idx]}:${MON_DIR}/
+		scp ${MONCF_GRUMPLE} ${NODE_NAMES[idx]}:${MON_DIR}/
 		if [ $? -ne 0 ]; then
 			error_output "Failed to scp mon.cf file"\
 				 "to node ${NODE_NAMES[idx]}!"

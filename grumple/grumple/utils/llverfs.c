@@ -22,8 +22,8 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#ifndef LUSTRE_UTILS
-#define LUSTRE_UTILS
+#ifndef GRUMPLE_UTILS
+#define GRUMPLE_UTILS
 #endif
 #ifndef _LARGEFILE64_SOURCE
 #define _LARGEFILE64_SOURCE

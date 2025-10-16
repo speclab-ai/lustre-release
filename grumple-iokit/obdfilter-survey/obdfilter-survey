@@ -323,14 +323,14 @@ if [[ -x "$LCTL" ]]; then	# full pathname specified
 elif [[ -n "$grumple_root" && -x "$grumple_root/utils/lctl" ]]; then
 	# echo "grumple_root=$grumple_root"
 	LCTL=${grumple_root}/utils/lctl
-elif [[ -n "$LUSTRE" && -x "$LUSTRE/utils/lctl" ]]; then
-	# echo "LUSTRE=$LUSTRE"
-	LCTL=$LUSTRE/utils/lctl
+elif [[ -n "$GRUMPLE" && -x "$GRUMPLE/utils/lctl" ]]; then
+	# echo "GRUMPLE=$GRUMPLE"
+	LCTL=$GRUMPLE/utils/lctl
 else				# hope that it is in the PATH
 	# echo "PATH=$PATH"
 	LCTL=${LCTL:-lctl}
 fi
-echo "using LCTL='$LCTL' grumple_root='$grumple_root' LUSTRE='$LUSTRE'"
+echo "using LCTL='$LCTL' grumple_root='$grumple_root' GRUMPLE='$GRUMPLE'"
 [[ -n "$(which $LCTL)" ]] || { echo "error: lctl not found"; exit 99; }
 
 # split out hostnames from client/ost names

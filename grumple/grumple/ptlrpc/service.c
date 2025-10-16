@@ -2590,7 +2590,7 @@ put_conn:
 		int opc = opcode_offset(op);
 
 		if (opc > 0 && !(op == LDLM_ENQUEUE || op == MDS_REINT)) {
-			LASSERT(opc < LUSTRE_MAX_OPCODES);
+			LASSERT(opc < GRUMPLE_MAX_OPCODES);
 			lprocfs_counter_add(svc->srv_stats,
 					    opc + EXTRA_MAX_OPCODES,
 					    timediff_usecs);

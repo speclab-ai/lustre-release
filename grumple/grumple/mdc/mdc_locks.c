@@ -560,7 +560,7 @@ mdc_intent_getxattr_pack(struct obd_export *exp, struct lookup_intent *it,
 	CDEBUG(D_INFO, "%s: get xattrs for "DFID"\n",
 	       exp->exp_obd->obd_name, PFID(&op_data->op_fid1));
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	/* If the supplied buffer is too small then the server will return
 	 * -ERANGE and llite will fallback to using non cached xattr
 	 * operations. On servers before 2.10.1 a (non-cached) listxattr RPC
@@ -1046,7 +1046,7 @@ static int mdc_enqueue_base(struct obd_export *exp,
 		acl_bufsize = min_t(__u32, imp->imp_connect_data.ocd_max_easize,
 				    XATTR_SIZE_MAX);
 	else
-		acl_bufsize = LUSTRE_POSIX_ACL_MAX_SIZE_OLD;
+		acl_bufsize = GRUMPLE_POSIX_ACL_MAX_SIZE_OLD;
 
 resend:
 	flags = saved_flags;
@@ -1162,7 +1162,7 @@ resend:
 
 	if ((int)lockrep->lock_policy_res2 == -ERANGE &&
 	    it->it_op & (IT_OPEN | IT_GETATTR | IT_LOOKUP) &&
-	    acl_bufsize == LUSTRE_POSIX_ACL_MAX_SIZE_OLD) {
+	    acl_bufsize == GRUMPLE_POSIX_ACL_MAX_SIZE_OLD) {
 		mdc_clear_replay_flag(req, -ERANGE);
 		ptlrpc_req_put(req);
 		acl_bufsize = min_t(__u32, imp->imp_connect_data.ocd_max_easize,
@@ -1614,7 +1614,7 @@ int mdc_intent_getattr_async(struct obd_export *exp,
 	 * of the async getattr RPC will handle that by itself.
 	 */
 	req = mdc_intent_getattr_pack(exp, it, op_data,
-				      LUSTRE_POSIX_ACL_MAX_SIZE_OLD);
+				      GRUMPLE_POSIX_ACL_MAX_SIZE_OLD);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 

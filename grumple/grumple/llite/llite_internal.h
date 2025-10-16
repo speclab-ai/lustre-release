@@ -458,7 +458,7 @@ static inline void trunc_sem_up_write(struct ll_trunc_sem *sem)
 	wake_up_var(&sem->ll_trunc_readers);
 }
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 static inline void lli_clear_acl(struct ll_inode_info *lli)
 {
 	if (lli->lli_posix_acl) {
@@ -602,7 +602,7 @@ static inline bool obd_connect_has_unaligned_dio(struct obd_connect_data *data)
 
 static inline bool obd_connect_has_enc(struct obd_connect_data *data)
 {
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	return data->ocd_connect_flags & OBD_CONNECT_FLAGS2 &&
 		data->ocd_connect_flags2 & OBD_CONNECT2_ENCRYPT;
 #else
@@ -612,14 +612,14 @@ static inline bool obd_connect_has_enc(struct obd_connect_data *data)
 
 static inline void obd_connect_set_enc(struct obd_connect_data *data)
 {
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	data->ocd_connect_flags2 |= OBD_CONNECT2_ENCRYPT;
 #endif
 }
 
 static inline bool obd_connect_has_name_enc(struct obd_connect_data *data)
 {
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	return data->ocd_connect_flags & OBD_CONNECT_FLAGS2 &&
 		data->ocd_connect_flags2 & OBD_CONNECT2_ENCRYPT_NAME;
 #else
@@ -629,14 +629,14 @@ static inline bool obd_connect_has_name_enc(struct obd_connect_data *data)
 
 static inline void obd_connect_set_name_enc(struct obd_connect_data *data)
 {
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	data->ocd_connect_flags2 |= OBD_CONNECT2_ENCRYPT_NAME;
 #endif
 }
 
 static inline bool obd_connect_has_enc_fid2path(struct obd_connect_data *data)
 {
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	return data->ocd_connect_flags & OBD_CONNECT_FLAGS2 &&
 		data->ocd_connect_flags2 & OBD_CONNECT2_ENCRYPT_FID2PATH;
 #else
@@ -646,7 +646,7 @@ static inline bool obd_connect_has_enc_fid2path(struct obd_connect_data *data)
 
 static inline void obd_connect_set_enc_fid2path(struct obd_connect_data *data)
 {
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	data->ocd_connect_flags2 |= OBD_CONNECT2_ENCRYPT_FID2PATH;
 #endif
 }
@@ -1003,7 +1003,7 @@ struct ll_sb_info {
 	u32			  ll_hybrid_io_read_threshold_bytes;
 
 	
-	char			  ll_fsname[LUSTRE_MAXFSNAME + 1];
+	char			  ll_fsname[GRUMPLE_MAXFSNAME + 1];
 
 	
 	struct pcc_super	  ll_pcc_super;
@@ -1413,7 +1413,7 @@ int ll_getattr(struct vfsmount *mnt, struct dentry *de, struct kstat *stat);
 #endif 
 int ll_getattr_dentry(struct dentry *de, struct kstat *stat, u32 request_mask,
 		      unsigned int flags, bool foreign);
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 struct posix_acl *ll_get_acl(
 #ifdef HAVE_ACL_WITH_DENTRY
 	struct mnt_idmap *, struct dentry *, int);
@@ -1777,7 +1777,7 @@ extern const struct xattr_handler *ll_xattr_handlers[];
 #define XATTR_SECURITY_T	3
 #define XATTR_ACL_ACCESS_T	4
 #define XATTR_ACL_DEFAULT_T	5
-#define XATTR_LUSTRE_T		6
+#define XATTR_GRUMPLE_T		6
 #define XATTR_OTHER_T		7
 #define XATTR_ENCRYPTION_T	9
 
@@ -2158,7 +2158,7 @@ int ll_prepare_lookup(struct inode *dir, struct dentry *de,
 int ll_setup_filename(struct inode *dir, const struct qstr *iname,
 		      int lookup, struct llcrypt_name *fname,
 		      struct lu_fid *fid);
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 const char *ll_get_symlink(struct inode *inode, const void *caddr,
 			   unsigned int max_size,
 			   struct delayed_call *done);
@@ -2179,7 +2179,7 @@ static inline char *xattr_for_enc(struct inode *inode)
 	return LL_XATTR_NAME_ENCRYPTION_CONTEXT_OLD;
 }
 
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 extern const struct llcrypt_operations grumple_cryptops;
 #endif
 

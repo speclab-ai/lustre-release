@@ -641,7 +641,7 @@ static int cfs_parser_version(int argc, char **argv)
 	(void) argv;
 
 	fprintf(stdout, "%s %s\n", program_invocation_short_name,
-		LUSTRE_VERSION_STRING);
+		GRUMPLE_VERSION_STRING);
 
 	return 0;
 }

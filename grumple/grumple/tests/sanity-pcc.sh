@@ -8,10 +8,10 @@ ALWAYS_EXCEPT="$SANITY_PCC_EXCEPT "
 ALWAYS_EXCEPT+=""
 ENABLE_PROJECT_QUOTAS=${ENABLE_PROJECT_QUOTAS:-true}
 HSMTOOL_ARCHIVE_FORMAT=v2
-LUSTRE=${LUSTRE:-$(cd $(dirname $0)/..; echo $PWD)}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(cd $(dirname $0)/..; echo $PWD)}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
-. ${CONFIG:=$LUSTRE/tests/cfg/$NAME.sh}
+. ${CONFIG:=$GRUMPLE/tests/cfg/$NAME.sh}
 init_logging
 MULTIOP=${MULTIOP:-multiop}
 OPENFILE=${OPENFILE:-openfile}
@@ -676,7 +676,7 @@ test_4() {
 	mkdir -p $DIR/$tdir || error "mkdir $DIR/$tdir failed"
 	lfs project -sp $project_id $DIR/$tdir ||
 		error "lfs project -sp $project_id $DIR/$tdir failed"
-	$LUSTRE/tests/mmap_sanity -d $DIR/$tdir -m $DIR2/$tdir $excepts ||
+	$GRUMPLE/tests/mmap_sanity -d $DIR/$tdir -m $DIR2/$tdir $excepts ||
 		error "mmap_sanity test failed"
 	sync; sleep 1; sync
 	do_facet $SINGLEAGT $LCTL \

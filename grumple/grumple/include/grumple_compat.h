@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _LUSTRE_COMPAT_H
-#define _LUSTRE_COMPAT_H
+#ifndef _GRUMPLE_COMPAT_H
+#define _GRUMPLE_COMPAT_H
 
 #include <linux/aio.h>
 #include <linux/fs.h>
@@ -255,7 +255,7 @@ static inline int __must_check PTR_ERR_OR_ZERO(__force const void *ptr)
 #endif
 
 #ifdef HAVE_IOP_SET_ACL
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 #if !defined(HAVE_USER_NAMESPACE_ARG) && \
 	!defined(HAVE_POSIX_ACL_UPDATE_MODE) && \
 	!defined(HAVE_MNT_IDMAP_ARG)

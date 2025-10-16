@@ -10,8 +10,8 @@
  * of grumple!
  */
 
-#ifndef _LIBLUSTREAPI_H_
-#define _LIBLUSTREAPI_H_
+#ifndef _LIBGRUMPLEAPI_H_
+#define _LIBGRUMPLEAPI_H_
 
 #include <grumple/grumpleapi.h>
 #warning "Including libgrumpleapi.h is deprecated. Include grumpleapi.h directly."

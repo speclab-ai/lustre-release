@@ -94,7 +94,7 @@ static int mdt_batch_getattr(struct tgt_session_info *tsi)
 	.th_flags	= flags,			\
 	.th_act		= fn,				\
 	.th_fmt		= &RQF_ ## opc,			\
-	.th_version	= LUSTRE_MDS_VERSION,		\
+	.th_version	= GRUMPLE_MDS_VERSION,		\
 	.th_hp		= NULL,				\
 }
 
@@ -255,9 +255,9 @@ int mdt_batch(struct tgt_session_info *tsi)
 				GOTO(out, rc = -EOVERFLOW);
 
 			LASSERT(reqmsg != NULL && repmsg != NULL);
-			LASSERTF(reqmsg->lm_magic == LUSTRE_MSG_MAGIC_V2,
+			LASSERTF(reqmsg->lm_magic == GRUMPLE_MSG_MAGIC_V2,
 				 "Invalid reqmsg magic %x expected %x\n",
-				 reqmsg->lm_magic, LUSTRE_MSG_MAGIC_V2);
+				 reqmsg->lm_magic, GRUMPLE_MSG_MAGIC_V2);
 
 			h = mdt_batch_handler_find(reqmsg->lm_opc);
 			if (unlikely(h == NULL)) {

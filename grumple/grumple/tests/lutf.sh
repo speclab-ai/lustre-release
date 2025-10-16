@@ -7,13 +7,13 @@ export ONLY=${ONLY:-"$*"}
 export SUITE=${SUITE:-"$*"}
 export PATTERN=${PATTERN:-"$*"}
 [ "$SLOW" = "no" ] && EXCEPT_SLOW=""
-LUSTRE=${LUSTRE:-$(dirname "$0")/..}
-. "$LUSTRE/tests/test-framework.sh"
+GRUMPLE=${GRUMPLE:-$(dirname "$0")/..}
+. "$GRUMPLE/tests/test-framework.sh"
 init_test_env "$@"
-. "${CONFIG:=$LUSTRE/tests/cfg/$NAME.sh}"
+. "${CONFIG:=$GRUMPLE/tests/cfg/$NAME.sh}"
 init_logging
 ALWAYS_EXCEPT="$SANITY_LNET_EXCEPT "
-export LNETCTL=${LNETCTL:-"$LUSTRE/../lnet/utils/lnetctl"}
+export LNETCTL=${LNETCTL:-"$GRUMPLE/../lnet/utils/lnetctl"}
 [ ! -f "$LNETCTL" ] &&
 	export LNETCTL=$(which lnetctl 2> /dev/null)
 [[ -z $LNETCTL ]] && skip "Need lnetctl"
@@ -46,14 +46,14 @@ cleanup_testsuite() {
 }
 set_env_vars_on_remote() {
 	local list=$(comma_list $(all_nodes))
-	do_rpc_nodes "$list" "echo $PATH; echo $LUSTRE; echo $LNETCTL; echo $LCTL"
+	do_rpc_nodes "$list" "echo $PATH; echo $GRUMPLE; echo $LNETCTL; echo $LCTL"
 }
 set_env_vars_on_remote
 rm -f /tmp/tf.skip
 set +e
 echo "+++++++++++STARTING LUTF"
 export LUTF_ENV_VARS="$CONFIG"
-"$LUSTRE/tests/lutf/python/config/lutf_start.py"
+"$GRUMPLE/tests/lutf/python/config/lutf_start.py"
 rc=$?
 echo "-----------STOPPING LUTF: $rc"
 if [ -d /tmp/lutf/ ]; then

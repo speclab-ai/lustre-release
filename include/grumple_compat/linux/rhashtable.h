@@ -1,7 +1,7 @@
 
 
-#ifndef _LINUX_RHASHTABLE_LUSTRE_H
-#define _LINUX_RHASHTABLE_LUSTRE_H
+#ifndef _LINUX_RHASHTABLE_GRUMPLE_H
+#define _LINUX_RHASHTABLE_GRUMPLE_H
 
 #include <linux/rhashtable.h>
 

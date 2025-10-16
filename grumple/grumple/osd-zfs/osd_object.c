@@ -926,7 +926,7 @@ static int osd_object_print(const struct lu_env *env, void *cookie,
 {
 	struct osd_object *o = osd_obj(l);
 
-	return (*p)(env, cookie, LUSTRE_OSD_ZFS_NAME"-object@%p", o);
+	return (*p)(env, cookie, GRUMPLE_OSD_ZFS_NAME"-object@%p", o);
 }
 
 static int osd_attr_get(const struct lu_env *env, struct dt_object *dt,
@@ -951,16 +951,16 @@ static int osd_attr_get(const struct lu_env *env, struct dt_object *dt,
 
 	read_lock(&obj->oo_attr_lock);
 	*attr = obj->oo_attr;
-	if (obj->oo_lma_flags & LUSTRE_ORPHAN_FL) {
+	if (obj->oo_lma_flags & GRUMPLE_ORPHAN_FL) {
 		attr->la_valid |= LA_FLAGS;
-		attr->la_flags |= LUSTRE_ORPHAN_FL;
+		attr->la_flags |= GRUMPLE_ORPHAN_FL;
 	}
-	if (obj->oo_lma_flags & LUSTRE_ENCRYPT_FL) {
+	if (obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL) {
 		attr->la_valid |= LA_FLAGS;
-		attr->la_flags |= LUSTRE_ENCRYPT_FL;
+		attr->la_flags |= GRUMPLE_ENCRYPT_FL;
 	}
 	read_unlock(&obj->oo_attr_lock);
-	if (attr->la_valid & LA_FLAGS && attr->la_flags & LUSTRE_ORPHAN_FL)
+	if (attr->la_valid & LA_FLAGS && attr->la_flags & GRUMPLE_ORPHAN_FL)
 		CDEBUG(D_INFO, "%s: set orphan flag on "DFID" (%#llx/%#x)\n",
 		       osd_obj2dev(obj)->od_svname,
 		       PFID(lu_object_fid(&dt->do_lu)),
@@ -1132,8 +1132,8 @@ static int osd_declare_attr_set(const struct lu_env *env, struct dt_object *dt,
 
 	if (attr->la_valid & LA_FLAGS) {
 		
-		if (attr->la_flags & LUSTRE_ENCRYPT_FL)
-			obj->oo_lma_flags |= LUSTRE_ENCRYPT_FL;
+		if (attr->la_flags & GRUMPLE_ENCRYPT_FL)
+			obj->oo_lma_flags |= GRUMPLE_ENCRYPT_FL;
 	}
 
 	if (attr->la_valid & (LA_UID | LA_GID | LA_PROJID)) {
@@ -1279,7 +1279,7 @@ static int osd_attr_set(const struct lu_env *env, struct dt_object *dt,
 		struct lu_buf buf;
 		int size = 0;
 
-		if (la->la_flags & LUSTRE_LMA_FL_MASKS) {
+		if (la->la_flags & GRUMPLE_LMA_FL_MASKS) {
 			LASSERT(!obj->oo_pfid_in_lma);
 			BUILD_BUG_ON(sizeof(info->oti_buf) < sizeof(*lma));
 			lma = (struct grumple_mdt_attrs *)&info->oti_buf;
@@ -1322,7 +1322,7 @@ static int osd_attr_set(const struct lu_env *env, struct dt_object *dt,
 				GOTO(out, rc);
 			} else {
 				obj->oo_lma_flags =
-					la->la_flags & LUSTRE_LMA_FL_MASKS;
+					la->la_flags & GRUMPLE_LMA_FL_MASKS;
 			}
 		}
 	}

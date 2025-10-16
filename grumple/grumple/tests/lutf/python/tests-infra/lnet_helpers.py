@@ -27,7 +27,7 @@ class LNetHelpers(BaseTest):
 		if not target or me.name == target:
 			logging.debug('Initializing LNetHelper')
 			rc = lnetconfig.grumple_lnet_config_lib_init()
-			if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+			if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 				raise LUTFError("Failed to initialize the liblnetconfig library")
 
 	def __del__(self):
@@ -158,7 +158,7 @@ class LNetHelpers(BaseTest):
 			if len(device_list) > 0:
 				devices_str += device_list[-1]
 			rc = lnetconfig.grumple_lnet_parse_interfaces(devices_str, nwd)
-			if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+			if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 				if self.exceptions:
 					raise LUTFError("Failed to parse interfaces %d" % rc)
 				return False, [rc, net, device_list, global_cpts, ip2nets]
@@ -177,7 +177,7 @@ class LNetHelpers(BaseTest):
 		#Freeing the g_cpts causes a segmentation fault
 		#if g_cpts:
 		self.cYAML_free(yaml_err)
-		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			if self.exceptions:
 				raise LUTFError("Failed to config ni %s:%s:%s:%s" %
 						(str(net), str(device_list),
@@ -195,13 +195,13 @@ class LNetHelpers(BaseTest):
 		if len(device_list) > 0:
 			devices_str += device_list[-1]
 		rc = lnetconfig.grumple_lnet_parse_interfaces(devices_str, nwd)
-		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			if self.exceptions:
 				raise LUTFError("Failed to parse interfaces")
 			return False, [rc, net, device_list]
 		rc, yaml_err = lnetconfig.grumple_lnet_del_ni(nwd, -1)
 		self.cYAML_free(yaml_err)
-		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			if self.exceptions:
 				raise LUTFError("Failed to del ni")
 			return False, [rc, net, device_list]
@@ -212,7 +212,7 @@ class LNetHelpers(BaseTest):
 		rc, yaml_show, yaml_err = lnetconfig.grumple_lnet_show_net(net, 0, -1, False)
 		err = lnetconfig.cYAML_dump(yaml_err)
 		self.cYAML_free(yaml_err)
-		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			self.cYAML_free(yaml_show)
 			if self.exceptions:
 				raise LUTFError("Failed to show NIs")
@@ -246,7 +246,7 @@ class LNetHelpers(BaseTest):
 	def api_configure_route(self, rnet=None, gw=None, hop=-1, prio=0, sen=1):
 		rc, yaml_err = lnetconfig.grumple_lnet_config_route(rnet, gw, hop, prio, sen, -1)
 		self.cYAML_free(yaml_err)
-		if rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR:
+		if rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR:
 			if self.exceptions:
 				raise LUTFError("failed to configure route. rc=%s, rnet=%s gw=%s hop=%s pio=%s sen=%s" % (str(rc), str(rnet), str(gw), str(hop), str(prio), str(sen)))
 			return False, [rnet, gw, hop, prio, sen]
@@ -290,7 +290,7 @@ class LNetHelpers(BaseTest):
 		# delete route but missing net
 		rc, yaml_err = lnetconfig.grumple_lnet_del_route(rnet, gw, -1)
 		self.cYAML_free(yaml_err)
-		if (rc == lnetconfig.LUSTRE_CFG_RC_MISSING_PARAM):
+		if (rc == lnetconfig.GRUMPLE_CFG_RC_MISSING_PARAM):
 			if self.exceptions:
 				raise LUTFError("Failed to delete route")
 			return False, [rc, rnet, gw]
@@ -301,7 +301,7 @@ class LNetHelpers(BaseTest):
 		rc, yaml_show, yaml_err = lnetconfig.grumple_lnet_show_route(network, gateway, hop, prio, 1, -1, False)
 		logging.debug("show_route: rc = %s" % (str(rc)))
 		self.cYAML_free(yaml_err)
-		if (rc == lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc == lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			if yaml_show is None:
 				count = 0
 			else:
@@ -326,7 +326,7 @@ class LNetHelpers(BaseTest):
 		rc, yaml_err = lnetconfig.grumple_lnet_config_buffers(tiny, small, large, -1)
 		err = lnetconfig.cYAML_dump(yaml_err)
 		self.cYAML_free(yaml_err)
-		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			if self.exceptions:
 				raise LUTFError("Failed to configure the buffers")
 			return False, [rc, err]
@@ -338,7 +338,7 @@ class LNetHelpers(BaseTest):
 		err = lnetconfig.cYAML_dump(yaml_err)
 		logging.debug(err)
 		self.cYAML_free(yaml_err)
-		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			if self.exceptions:
 				raise LUTFError("Failed to set routing")
 			return False, [rc, err]
@@ -350,7 +350,7 @@ class LNetHelpers(BaseTest):
 		show = lnetconfig.cYAML_dump(yaml_show)
 		self.cYAML_free(yaml_err)
 		self.cYAML_free(yaml_show)
-		if rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR:
+		if rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR:
 			if self.exceptions:
 				raise LUTFError("Couldn't configure router buffers: %d, %d, %d" % (tiny, small, large))
 			return False, [rc, err]
@@ -387,7 +387,7 @@ class LNetHelpers(BaseTest):
 			self.cYAML_free(yaml_show)
 		except:
 			show = ''
-		if rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR:
+		if rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR:
 			if self.exceptions:
 				raise LUTFError("Couldn't show peer %s" % (prim_nid))
 			pyerr = yaml.load(err, Loader=yaml.FullLoader)
@@ -412,7 +412,7 @@ class LNetHelpers(BaseTest):
 
 	def api_config_peer(self, prim_nid=None, nids=None, is_mr=True):
 		rc, yaml_err = lnetconfig.grumple_lnet_modify_peer(prim_nid, nids, is_mr, lnetconfig.LNETCTL_ADD_CMD, -1)
-		if rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR:
+		if rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR:
 			err = lnetconfig.cYAML_dump(yaml_err)
 			self.cYAML_free(yaml_err)
 			if self.exceptions:
@@ -442,7 +442,7 @@ class LNetHelpers(BaseTest):
 	def api_del_peer(self, prim_nid=None, nids=None, all=True):
 		rc, yaml_err = lnetconfig.grumple_lnet_modify_peer(prim_nid, nids, False,
 			lnetconfig.LNETCTL_DEL_CMD, -1)
-		if rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR:
+		if rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR:
 			err = lnetconfig.cYAML_dump(yaml_err)
 			if self.exceptions:
 				raise LUTFError("Couldn't del peer %s:%d" % (prim_nid, rc))
@@ -478,7 +478,7 @@ class LNetHelpers(BaseTest):
 		rc, yaml_err = lnetconfig.grumple_yaml_config(yaml_file)
 		err = lnetconfig.cYAML_dump(yaml_err)
 		self.cYAML_free(yaml_err)
-		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			logging.debug("config failed with: %d \n%s" % (rc, err))
 			if self.exceptions:
 				raise LUTFError("configuration failed")
@@ -486,7 +486,7 @@ class LNetHelpers(BaseTest):
 
 		rc, yaml_show, yaml_err = lnetconfig.grumple_yaml_show(yaml_file)
 		self.cYAML_free(yaml_err)
-		if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+		if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 			logging.debug(lnetconfig.cYAML_dump(yaml_show))
 			err = lnetconfig.cYAML_dump(yaml_err)
 			return False, [rc, err]
@@ -513,7 +513,7 @@ class LNetHelpers(BaseTest):
 			rc, yaml_err = lnetconfig.grumple_yaml_del(yaml_file)
 			err = lnetconfig.cYAML_dump(yaml_err)
 			self.cYAML_free(yaml_err)
-			if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+			if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 				if self.exceptions:
 					raise LUTFError("configuration failed")
 				return False, [rc, err]
@@ -522,7 +522,7 @@ class LNetHelpers(BaseTest):
 			rc, yaml_show, yaml_err = lnetconfig.grumple_yaml_show(yaml_file)
 			err = lnetconfig.cYAML_dump(yaml_err)
 			self.cYAML_free(yaml_err)
-			if (rc != lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+			if (rc != lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 				if self.exceptions:
 					raise LUTFError("configuration failed")
 				return False, [rc, err]

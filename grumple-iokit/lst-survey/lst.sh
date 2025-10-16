@@ -166,8 +166,8 @@ while getopts "b:C:c:d:D:ef:g:hHl:Lm:Mn:o:s:S:t:" flag ; do
 done
 if [[ -x "$LCTL" ]]; then
 	:
-elif [[ -n "$LUSTRE" && -x "$LUSTRE/utils/lctl" ]]; then
-	LCTL=$LUSTRE/utils/lctl
+elif [[ -n "$GRUMPLE" && -x "$GRUMPLE/utils/lctl" ]]; then
+	LCTL=$GRUMPLE/utils/lctl
 else
 	LCTL=${LCTL:-lctl}
 fi

@@ -72,7 +72,7 @@
 #define ZFS_VERSION_CODE	\
 	OBD_OCD_VERSION(ZFS_MAJOR, ZFS_MINOR, ZFS_PATCH, ZFS_FIX)
 
-#define LUSTRE_ROOT_FID_SEQ	0
+#define GRUMPLE_ROOT_FID_SEQ	0
 #define DMU_OSD_SVNAME		"svname"
 #define DMU_OSD_OI_NAME_BASE	"oi"
 
@@ -833,30 +833,30 @@ osd_xattr_set_internal(const struct lu_env *env, struct osd_object *obj,
 
 static inline uint64_t attrs_fs2zfs(const uint32_t flags)
 {
-	return (flags & LUSTRE_APPEND_FL	? ZFS_APPENDONLY	: 0) |
-		(flags & LUSTRE_NODUMP_FL	? ZFS_NODUMP		: 0) |
+	return (flags & GRUMPLE_APPEND_FL	? ZFS_APPENDONLY	: 0) |
+		(flags & GRUMPLE_NODUMP_FL	? ZFS_NODUMP		: 0) |
 #ifdef ZFS_PROJINHERIT
-		(flags & LUSTRE_PROJINHERIT_FL	? ZFS_PROJINHERIT	: 0) |
+		(flags & GRUMPLE_PROJINHERIT_FL	? ZFS_PROJINHERIT	: 0) |
 #endif
-		(flags & LUSTRE_IMMUTABLE_FL	? ZFS_IMMUTABLE		: 0);
+		(flags & GRUMPLE_IMMUTABLE_FL	? ZFS_IMMUTABLE		: 0);
 }
 
 static inline uint32_t attrs_zfs2fs(const uint64_t flags)
 {
-	return (flags & ZFS_APPENDONLY	? LUSTRE_APPEND_FL	: 0) |
-		(flags & ZFS_NODUMP	? LUSTRE_NODUMP_FL	: 0) |
+	return (flags & ZFS_APPENDONLY	? GRUMPLE_APPEND_FL	: 0) |
+		(flags & ZFS_NODUMP	? GRUMPLE_NODUMP_FL	: 0) |
 #ifdef ZFS_PROJINHERIT
-		(flags & ZFS_PROJINHERIT ? LUSTRE_PROJINHERIT_FL : 0) |
+		(flags & ZFS_PROJINHERIT ? GRUMPLE_PROJINHERIT_FL : 0) |
 #endif
-		(flags & ZFS_IMMUTABLE	? LUSTRE_IMMUTABLE_FL	: 0);
+		(flags & ZFS_IMMUTABLE	? GRUMPLE_IMMUTABLE_FL	: 0);
 }
 
 #endif
 
-#define ZFS_OSD_USER_USER_MODIFIABLE	(LUSTRE_APPEND_FL | \
-					 LUSTRE_NODUMP_FL | \
-					 LUSTRE_PROJINHERIT_FL | \
-					 LUSTRE_IMMUTABLE_FL)
+#define ZFS_OSD_USER_USER_MODIFIABLE	(GRUMPLE_APPEND_FL | \
+					 GRUMPLE_NODUMP_FL | \
+					 GRUMPLE_PROJINHERIT_FL | \
+					 GRUMPLE_IMMUTABLE_FL)
 
 static inline uint64_t
 osd_dmu_object_alloc(objset_t *os, dmu_object_type_t objtype, int blocksize,

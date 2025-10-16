@@ -149,7 +149,7 @@ static int qmt_connect_to_osd(const struct lu_env *env, struct qmt_device *qmt,
 	}
 
 	data->ocd_connect_flags = OBD_CONNECT_VERSION;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	
 	rc = obd_connect(NULL, &qmt->qmt_child_exp, obd, &obd->obd_uuid, data,
@@ -243,7 +243,7 @@ static int qmt_device_init0(const struct lu_env *env, struct qmt_device *qmt,
 
 	/* at the moment there is no linkage between lu_type and obd_type, so
 	 * we lookup obd_type this way */
-	type = class_search_type(LUSTRE_QMT_NAME);
+	type = class_search_type(GRUMPLE_QMT_NAME);
 	LASSERT(type != NULL);
 
 	
@@ -366,7 +366,7 @@ static const struct lu_device_type_operations qmt_device_type_ops = {
  */
 static struct lu_device_type qmt_device_type = {
 	.ldt_tags	= LU_DEVICE_DT,
-	.ldt_name	= LUSTRE_QMT_NAME,
+	.ldt_name	= GRUMPLE_QMT_NAME,
 	.ldt_ops	= &qmt_device_type_ops,
 	.ldt_ctx_tags	= LCT_MD_THREAD,
 };
@@ -477,12 +477,12 @@ int qmt_glb_init(void)
 	ENTRY;
 
 	rc = class_register_type(&qmt_obd_ops, NULL, true,
-				 LUSTRE_QMT_NAME, &qmt_device_type);
+				 GRUMPLE_QMT_NAME, &qmt_device_type);
 	RETURN(rc);
 }
 
 
 void qmt_glb_fini(void)
 {
-	class_unregister_type(LUSTRE_QMT_NAME);
+	class_unregister_type(GRUMPLE_QMT_NAME);
 }

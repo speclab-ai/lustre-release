@@ -31,34 +31,34 @@
 static struct genl_family grumple_family;
 
 static struct ln_key_list device_list = {
-	.lkl_maxattr			= LUSTRE_DEVICE_ATTR_MAX,
+	.lkl_maxattr			= GRUMPLE_DEVICE_ATTR_MAX,
 	.lkl_list			= {
-		[LUSTRE_DEVICE_ATTR_HDR]	= {
+		[GRUMPLE_DEVICE_ATTR_HDR]	= {
 			.lkp_value		= "devices",
 			.lkp_key_format		= LNKF_SEQUENCE | LNKF_MAPPING,
 			.lkp_data_type		= NLA_NUL_STRING,
 		},
-		[LUSTRE_DEVICE_ATTR_INDEX]	= {
+		[GRUMPLE_DEVICE_ATTR_INDEX]	= {
 			.lkp_value		= "index",
 			.lkp_data_type		= NLA_U16
 		},
-		[LUSTRE_DEVICE_ATTR_STATUS]	= {
+		[GRUMPLE_DEVICE_ATTR_STATUS]	= {
 			.lkp_value		= "status",
 			.lkp_data_type		= NLA_STRING
 		},
-		[LUSTRE_DEVICE_ATTR_CLASS]	= {
+		[GRUMPLE_DEVICE_ATTR_CLASS]	= {
 			.lkp_value		= "type",
 			.lkp_data_type		= NLA_STRING
 		},
-		[LUSTRE_DEVICE_ATTR_NAME]	= {
+		[GRUMPLE_DEVICE_ATTR_NAME]	= {
 			.lkp_value		= "name",
 			.lkp_data_type		= NLA_STRING
 		},
-		[LUSTRE_DEVICE_ATTR_UUID]	= {
+		[GRUMPLE_DEVICE_ATTR_UUID]	= {
 			.lkp_value		= "uuid",
 			.lkp_data_type		= NLA_STRING
 		},
-		[LUSTRE_DEVICE_ATTR_REFCOUNT]	= {
+		[GRUMPLE_DEVICE_ATTR_REFCOUNT]	= {
 			.lkp_value		= "refcount",
 			.lkp_data_type		= NLA_U32
 		},
@@ -195,7 +195,7 @@ static int grumple_device_list_dump(struct sk_buff *msg,
 		rc = lnet_genl_send_scalar_list(msg, portid, seq,
 						&grumple_family,
 						NLM_F_CREATE | NLM_F_MULTI,
-						LUSTRE_CMD_DEVICES, all);
+						GRUMPLE_CMD_DEVICES, all);
 		if (rc < 0) {
 			NL_SET_ERR_MSG(extack, "failed to send key table");
 			goto send_err;
@@ -211,7 +211,7 @@ static int grumple_device_list_dump(struct sk_buff *msg,
 			continue;
 
 		hdr = genlmsg_put(msg, portid, seq, &grumple_family,
-				  NLM_F_MULTI, LUSTRE_CMD_DEVICES);
+				  NLM_F_MULTI, GRUMPLE_CMD_DEVICES);
 		if (!hdr) {
 			NL_SET_ERR_MSG(extack, "failed to send values");
 			genlmsg_cancel(msg, hdr);
@@ -220,9 +220,9 @@ static int grumple_device_list_dump(struct sk_buff *msg,
 		}
 
 		if (idx == 0)
-			nla_put_string(msg, LUSTRE_DEVICE_ATTR_HDR, "");
+			nla_put_string(msg, GRUMPLE_DEVICE_ATTR_HDR, "");
 
-		nla_put_u16(msg, LUSTRE_DEVICE_ATTR_INDEX, obd->obd_minor);
+		nla_put_u16(msg, GRUMPLE_DEVICE_ATTR_INDEX, obd->obd_minor);
 
 		
 		if (filter) {
@@ -242,18 +242,18 @@ static int grumple_device_list_dump(struct sk_buff *msg,
 		else
 			status = "--";
 
-		nla_put_string(msg, LUSTRE_DEVICE_ATTR_STATUS, status);
+		nla_put_string(msg, GRUMPLE_DEVICE_ATTR_STATUS, status);
 
-		nla_put_string(msg, LUSTRE_DEVICE_ATTR_CLASS,
+		nla_put_string(msg, GRUMPLE_DEVICE_ATTR_CLASS,
 			       obd->obd_type->typ_name);
 
-		nla_put_string(msg, LUSTRE_DEVICE_ATTR_NAME,
+		nla_put_string(msg, GRUMPLE_DEVICE_ATTR_NAME,
 			       obd->obd_name);
 
-		nla_put_string(msg, LUSTRE_DEVICE_ATTR_UUID,
+		nla_put_string(msg, GRUMPLE_DEVICE_ATTR_UUID,
 			       obd->obd_uuid.uuid);
 
-		nla_put_u32(msg, LUSTRE_DEVICE_ATTR_REFCOUNT,
+		nla_put_u32(msg, GRUMPLE_DEVICE_ATTR_REFCOUNT,
 			    kref_read(&obd->obd_refcount));
 
 		genlmsg_end(msg, hdr);
@@ -394,12 +394,12 @@ static int grumple_targets_start(struct netlink_callback *cb)
 
 					
 					if (strncmp(obd->obd_type->typ_name,
-						    LUSTRE_LMV_NAME,
-						    strlen(LUSTRE_LMV_NAME)) == 0)
+						    GRUMPLE_LMV_NAME,
+						    strlen(GRUMPLE_LMV_NAME)) == 0)
 						ltd = &obd->u.lmv.lmv_mdt_descs;
 					else if (strncmp(obd->obd_type->typ_name,
-							 LUSTRE_LOV_NAME,
-							 strlen(LUSTRE_LOV_NAME)) == 0)
+							 GRUMPLE_LOV_NAME,
+							 strlen(GRUMPLE_LOV_NAME)) == 0)
 						ltd = &obd->u.lov.lov_ost_descs;
 					if (!ltd)
 						continue;
@@ -443,10 +443,10 @@ static int grumple_targets_start(struct netlink_callback *cb)
 			struct lu_tgt_list *ltl;
 
 			if (strcmp(obd->obd_type->typ_name,
-				   LUSTRE_LMV_NAME) == 0)
+				   GRUMPLE_LMV_NAME) == 0)
 				ltd = &obd->u.lmv.lmv_mdt_descs;
 			else if (strcmp(obd->obd_type->typ_name,
-					LUSTRE_LOV_NAME) == 0)
+					GRUMPLE_LOV_NAME) == 0)
 				ltd = &obd->u.lov.lov_ost_descs;
 			if (!ltd)
 				continue;
@@ -473,18 +473,18 @@ report_err:
 }
 
 static struct ln_key_list tgt_keys = {
-	.lkl_maxattr			= LUSTRE_TARGET_ATTR_MAX,
+	.lkl_maxattr			= GRUMPLE_TARGET_ATTR_MAX,
 	.lkl_list			= {
-		[LUSTRE_TARGET_ATTR_HDR]	= {
+		[GRUMPLE_TARGET_ATTR_HDR]	= {
 			.lkp_value		= "target_obd",
 			.lkp_key_format		= LNKF_SEQUENCE | LNKF_MAPPING,
 			.lkp_data_type		= NLA_NUL_STRING,
 		},
-		[LUSTRE_TARGET_ATTR_SOURCE]	= {
+		[GRUMPLE_TARGET_ATTR_SOURCE]	= {
 			.lkp_value		= "source",
 			.lkp_data_type		= NLA_STRING,
 		},
-		[LUSTRE_TARGET_ATTR_PROP_LIST]	= {
+		[GRUMPLE_TARGET_ATTR_PROP_LIST]	= {
 			.lkp_value		= "targets",
 			.lkp_key_format		= LNKF_SEQUENCE | LNKF_MAPPING,
 			.lkp_data_type		= NLA_NESTED,
@@ -493,17 +493,17 @@ static struct ln_key_list tgt_keys = {
 };
 
 static struct ln_key_list tgt_prop_keys = {
-	.lkl_maxattr			= LUSTRE_TARGET_PROP_ATTR_MAX,
+	.lkl_maxattr			= GRUMPLE_TARGET_PROP_ATTR_MAX,
 	.lkl_list			= {
-		[LUSTRE_TARGET_PROP_ATTR_INDEX]	= {
+		[GRUMPLE_TARGET_PROP_ATTR_INDEX]	= {
 			.lkp_value		= "index",
 			.lkp_data_type		= NLA_U16
 		},
-		[LUSTRE_TARGET_PROP_ATTR_UUID]	= {
+		[GRUMPLE_TARGET_PROP_ATTR_UUID]	= {
 			.lkp_value		= "uuid",
 			.lkp_data_type		= NLA_STRING
 		},
-		[LUSTRE_TARGET_PROP_ATTR_STATUS] = {
+		[GRUMPLE_TARGET_PROP_ATTR_STATUS] = {
 			.lkp_value		= "status",
 			.lkp_data_type		= NLA_STRING
 		},
@@ -534,7 +534,7 @@ static int grumple_targets_dump(struct sk_buff *msg,
 		rc = lnet_genl_send_scalar_list(msg, portid, seq,
 						&grumple_family,
 						NLM_F_CREATE | NLM_F_MULTI,
-						LUSTRE_CMD_TARGETS, all);
+						GRUMPLE_CMD_TARGETS, all);
 		if (rc < 0) {
 			NL_SET_ERR_MSG(extack, "failed to send key table");
 			GOTO(send_error, rc);
@@ -554,7 +554,7 @@ static int grumple_targets_dump(struct sk_buff *msg,
 			continue;
 
 		hdr = genlmsg_put(msg, portid, seq, &grumple_family,
-				  NLM_F_MULTI, LUSTRE_CMD_TARGETS);
+				  NLM_F_MULTI, GRUMPLE_CMD_TARGETS);
 		if (!hdr) {
 			NL_SET_ERR_MSG(extack, "failed to send values");
 			genlmsg_cancel(msg, hdr);
@@ -562,26 +562,26 @@ static int grumple_targets_dump(struct sk_buff *msg,
 		}
 
 		if (idx == 1)
-			nla_put_string(msg, LUSTRE_TARGET_ATTR_HDR, "");
+			nla_put_string(msg, GRUMPLE_TARGET_ATTR_HDR, "");
 
-		nla_put_string(msg, LUSTRE_TARGET_ATTR_SOURCE,
+		nla_put_string(msg, GRUMPLE_TARGET_ATTR_SOURCE,
 			       ltl->ltl_src);
 
 		
 		if (!gnlh->version)
 			goto skip_details;
 
-		tgt_list = nla_nest_start(msg, LUSTRE_TARGET_ATTR_PROP_LIST);
+		tgt_list = nla_nest_start(msg, GRUMPLE_TARGET_ATTR_PROP_LIST);
 		ltd_foreach_tgt(ltl->ltl_desc, tgt) {
 			struct nlattr *tgt_attr;
 
 			tgt_attr = nla_nest_start(msg, j++);
-			nla_put_u16(msg, LUSTRE_TARGET_PROP_ATTR_INDEX, tgt->ltd_index);
+			nla_put_u16(msg, GRUMPLE_TARGET_PROP_ATTR_INDEX, tgt->ltd_index);
 
-			nla_put_string(msg, LUSTRE_TARGET_PROP_ATTR_STATUS,
+			nla_put_string(msg, GRUMPLE_TARGET_PROP_ATTR_STATUS,
 				       tgt->ltd_active ? "ACTIVE" : "INACTIVE");
 
-			nla_put_string(msg, LUSTRE_TARGET_PROP_ATTR_UUID,
+			nla_put_string(msg, GRUMPLE_TARGET_PROP_ATTR_UUID,
 				       obd_uuid2str(&tgt->ltd_uuid));
 			nla_nest_end(msg, tgt_attr);
 		}
@@ -611,14 +611,14 @@ int grumple_old_targets_dump(struct sk_buff *msg,
 #endif
 
 static struct ln_key_list stats_params = {
-	.lkl_maxattr	= LUSTRE_PARAM_ATTR_MAX,
+	.lkl_maxattr	= GRUMPLE_PARAM_ATTR_MAX,
 	.lkl_list	= {
-		[LUSTRE_PARAM_ATTR_HDR] = {
+		[GRUMPLE_PARAM_ATTR_HDR] = {
 			.lkp_value	= "stats",
 			.lkp_key_format	= LNKF_SEQUENCE | LNKF_MAPPING,
 			.lkp_data_type	= NLA_NUL_STRING,
 		},
-		[LUSTRE_PARAM_ATTR_SOURCE] = {
+		[GRUMPLE_PARAM_ATTR_SOURCE] = {
 			.lkp_value	= "source",
 			.lkp_data_type	= NLA_STRING,
 		},
@@ -626,30 +626,30 @@ static struct ln_key_list stats_params = {
 };
 
 static const struct ln_key_list stats_list = {
-	.lkl_maxattr			= LUSTRE_STATS_ATTR_MAX,
+	.lkl_maxattr			= GRUMPLE_STATS_ATTR_MAX,
 	.lkl_list			= {
-		[LUSTRE_STATS_ATTR_HDR]	= {
+		[GRUMPLE_STATS_ATTR_HDR]	= {
 			.lkp_value		= "stats",
 			.lkp_key_format		= LNKF_SEQUENCE | LNKF_MAPPING,
 			.lkp_data_type		= NLA_NUL_STRING,
 		},
-		[LUSTRE_STATS_ATTR_SOURCE]	= {
+		[GRUMPLE_STATS_ATTR_SOURCE]	= {
 			.lkp_value		= "source",
 			.lkp_data_type		= NLA_STRING,
 		},
-		[LUSTRE_STATS_ATTR_TIMESTAMP]	= {
+		[GRUMPLE_STATS_ATTR_TIMESTAMP]	= {
 			.lkp_value		= "snapshot_time",
 			.lkp_data_type		= NLA_S64,
 		},
-		[LUSTRE_STATS_ATTR_START_TIME]	= {
+		[GRUMPLE_STATS_ATTR_START_TIME]	= {
 			.lkp_value		= "start_time",
 			.lkp_data_type		= NLA_S64,
 		},
-		[LUSTRE_STATS_ATTR_ELAPSE_TIME]	= {
+		[GRUMPLE_STATS_ATTR_ELAPSE_TIME]	= {
 			.lkp_value		= "elapsed_time",
 			.lkp_data_type		= NLA_S64,
 		},
-		[LUSTRE_STATS_ATTR_DATASET]	= {
+		[GRUMPLE_STATS_ATTR_DATASET]	= {
 			.lkp_key_format		= LNKF_FLOW | LNKF_MAPPING,
 			.lkp_data_type		= NLA_NESTED,
 		},
@@ -657,32 +657,32 @@ static const struct ln_key_list stats_list = {
 };
 
 static const struct ln_key_list stats_dataset_list = {
-	.lkl_maxattr				= LUSTRE_STATS_ATTR_DATASET_MAX,
+	.lkl_maxattr				= GRUMPLE_STATS_ATTR_DATASET_MAX,
 	.lkl_list				= {
-		[LUSTRE_STATS_ATTR_DATASET_NAME]	= {
+		[GRUMPLE_STATS_ATTR_DATASET_NAME]	= {
 			.lkp_data_type			= NLA_NUL_STRING,
 		},
-		[LUSTRE_STATS_ATTR_DATASET_COUNT]	= {
+		[GRUMPLE_STATS_ATTR_DATASET_COUNT]	= {
 			.lkp_value			= "samples",
 			.lkp_data_type			= NLA_U64,
 		},
-		[LUSTRE_STATS_ATTR_DATASET_UNITS]	= {
+		[GRUMPLE_STATS_ATTR_DATASET_UNITS]	= {
 			.lkp_value			= "units",
 			.lkp_data_type			= NLA_STRING,
 		},
-		[LUSTRE_STATS_ATTR_DATASET_MINIMUM]	= {
+		[GRUMPLE_STATS_ATTR_DATASET_MINIMUM]	= {
 			.lkp_value			= "min",
 			.lkp_data_type			= NLA_U64,
 		},
-		[LUSTRE_STATS_ATTR_DATASET_MAXIMUM]	= {
+		[GRUMPLE_STATS_ATTR_DATASET_MAXIMUM]	= {
 			.lkp_value			= "max",
 			.lkp_data_type			= NLA_U64,
 		},
-		[LUSTRE_STATS_ATTR_DATASET_SUM]		= {
+		[GRUMPLE_STATS_ATTR_DATASET_SUM]		= {
 			.lkp_value			= "sum",
 			.lkp_data_type			= NLA_U64,
 		},
-		[LUSTRE_STATS_ATTR_DATASET_SUMSQUARE]	= {
+		[GRUMPLE_STATS_ATTR_DATASET_SUMSQUARE]	= {
 			.lkp_value			= "stddev",
 			.lkp_data_type			= NLA_U64,
 		},
@@ -882,11 +882,11 @@ int grumple_stats_dump(struct sk_buff *msg, struct netlink_callback *cb)
 			const struct ln_key_list **all;
 			struct ln_key_list *start;
 
-			/* LUSTRE_STATS_ATTR_MAX includes one stat entry
+			/* GRUMPLE_STATS_ATTR_MAX includes one stat entry
 			 * by default since we need to define what a stat
 			 * entry is.
 			 */
-			count = LUSTRE_STATS_ATTR_MAX + stats->ls_num - 1;
+			count = GRUMPLE_STATS_ATTR_MAX + stats->ls_num - 1;
 			len += sizeof(struct ln_key_props) * count;
 			OBD_ALLOC(start, len);
 			if (!start) {
@@ -896,10 +896,10 @@ int grumple_stats_dump(struct sk_buff *msg, struct netlink_callback *cb)
 			}
 			*start = stats_list; 
 			start->lkl_maxattr += stats->ls_num;
-			for (i = LUSTRE_STATS_ATTR_MAX + 1;
+			for (i = GRUMPLE_STATS_ATTR_MAX + 1;
 			     i <= start->lkl_maxattr; i++)
 				start->lkl_list[i] =
-					stats_list.lkl_list[LUSTRE_STATS_ATTR_DATASET];
+					stats_list.lkl_list[GRUMPLE_STATS_ATTR_DATASET];
 
 			OBD_ALLOC_PTR_ARRAY(all, stats->ls_num + 2);
 			if (!all) {
@@ -950,36 +950,36 @@ int grumple_stats_dump(struct sk_buff *msg, struct netlink_callback *cb)
 			GOTO(out_cancel, rc = -EMSGSIZE);
 
 		if (started) {
-			nla_put_string(msg, LUSTRE_STATS_ATTR_HDR, "");
+			nla_put_string(msg, GRUMPLE_STATS_ATTR_HDR, "");
 			started = false;
 		}
 
 		src = stats->ls_source;
 		if (strstarts(stats->ls_source, ".fs.grumple."))
 			src += strlen(".fs.grumple.");
-		nla_put_string(msg, LUSTRE_STATS_ATTR_SOURCE, src);
+		nla_put_string(msg, GRUMPLE_STATS_ATTR_SOURCE, src);
 
 		if (!gnlh->version) { 
 			idx++;
 			GOTO(out_cancel, rc = 0);
 		}
 
-		rc = nla_put_s64(msg, LUSTRE_STATS_ATTR_TIMESTAMP,
-				 ktime_get_real_ns(), LUSTRE_STATS_ATTR_PAD);
+		rc = nla_put_s64(msg, GRUMPLE_STATS_ATTR_TIMESTAMP,
+				 ktime_get_real_ns(), GRUMPLE_STATS_ATTR_PAD);
 		if (rc < 0)
 			GOTO(out_cancel, rc);
 
 		if (gnlh->version > 1) {
-			rc = nla_put_s64(msg, LUSTRE_STATS_ATTR_START_TIME,
+			rc = nla_put_s64(msg, GRUMPLE_STATS_ATTR_START_TIME,
 					 ktime_to_ns(stats->ls_init),
-					 LUSTRE_STATS_ATTR_PAD);
+					 GRUMPLE_STATS_ATTR_PAD);
 			if (rc < 0)
 				GOTO(out_cancel, rc);
 
-			rc = nla_put_s64(msg, LUSTRE_STATS_ATTR_ELAPSE_TIME,
+			rc = nla_put_s64(msg, GRUMPLE_STATS_ATTR_ELAPSE_TIME,
 					 ktime_to_ns(ktime_sub(stats->ls_init,
 							       ktime_get())),
-					 LUSTRE_STATS_ATTR_PAD);
+					 GRUMPLE_STATS_ATTR_PAD);
 			if (rc < 0)
 				GOTO(out_cancel, rc);
 		}
@@ -997,39 +997,39 @@ int grumple_stats_dump(struct sk_buff *msg, struct netlink_callback *cb)
 
 			hdr = &stats->ls_cnt_header[count];
 			dataset = nla_nest_start(msg,
-						 LUSTRE_STATS_ATTR_DATASET + i++);
+						 GRUMPLE_STATS_ATTR_DATASET + i++);
 			stat_attr = nla_nest_start(msg, 0);
 
-			nla_put_string(msg, LUSTRE_STATS_ATTR_DATASET_NAME,
+			nla_put_string(msg, GRUMPLE_STATS_ATTR_DATASET_NAME,
 				       hdr->lc_name);
-			nla_put_u64_64bit(msg, LUSTRE_STATS_ATTR_DATASET_COUNT,
+			nla_put_u64_64bit(msg, GRUMPLE_STATS_ATTR_DATASET_COUNT,
 					  ctr.lc_count,
-					  LUSTRE_STATS_ATTR_DATASET_PAD);
+					  GRUMPLE_STATS_ATTR_DATASET_PAD);
 
-			nla_put_string(msg, LUSTRE_STATS_ATTR_DATASET_UNITS,
+			nla_put_string(msg, GRUMPLE_STATS_ATTR_DATASET_UNITS,
 				       hdr->lc_units);
 
 			if (hdr->lc_config & LPROCFS_CNTR_AVGMINMAX) {
 				nla_put_u64_64bit(msg,
-						  LUSTRE_STATS_ATTR_DATASET_MINIMUM,
+						  GRUMPLE_STATS_ATTR_DATASET_MINIMUM,
 						  ctr.lc_min,
-						  LUSTRE_STATS_ATTR_DATASET_PAD);
+						  GRUMPLE_STATS_ATTR_DATASET_PAD);
 
 				nla_put_u64_64bit(msg,
-						  LUSTRE_STATS_ATTR_DATASET_MAXIMUM,
+						  GRUMPLE_STATS_ATTR_DATASET_MAXIMUM,
 						  ctr.lc_max,
-						  LUSTRE_STATS_ATTR_DATASET_PAD);
+						  GRUMPLE_STATS_ATTR_DATASET_PAD);
 
 				nla_put_u64_64bit(msg,
-						  LUSTRE_STATS_ATTR_DATASET_SUM,
+						  GRUMPLE_STATS_ATTR_DATASET_SUM,
 						  ctr.lc_sum,
-						  LUSTRE_STATS_ATTR_DATASET_PAD);
+						  GRUMPLE_STATS_ATTR_DATASET_PAD);
 
 				if (hdr->lc_config & LPROCFS_CNTR_STDDEV) {
 					nla_put_u64_64bit(msg,
-							  LUSTRE_STATS_ATTR_DATASET_SUMSQUARE,
+							  GRUMPLE_STATS_ATTR_DATASET_SUMSQUARE,
 							  ctr.lc_sumsquare,
-							  LUSTRE_STATS_ATTR_DATASET_PAD);
+							  GRUMPLE_STATS_ATTR_DATASET_PAD);
 				}
 			}
 			nla_nest_end(msg, stat_attr);
@@ -1147,7 +1147,7 @@ static const struct genl_multicast_group grumple_mcast_grps[] = {
 
 static const struct genl_ops grumple_genl_ops[] = {
 	{
-		.cmd		= LUSTRE_CMD_DEVICES,
+		.cmd		= GRUMPLE_CMD_DEVICES,
 #ifdef HAVE_NETLINK_CALLBACK_START
 		.start		= grumple_device_list_start,
 		.dumpit		= grumple_device_list_dump,
@@ -1157,7 +1157,7 @@ static const struct genl_ops grumple_genl_ops[] = {
 		.done		= grumple_device_done,
 	},
 	{
-		.cmd		= LUSTRE_CMD_TARGETS,
+		.cmd		= GRUMPLE_CMD_TARGETS,
 #ifdef HAVE_NETLINK_CALLBACK_START
 		.start		= grumple_targets_start,
 		.dumpit		= grumple_targets_dump,
@@ -1167,7 +1167,7 @@ static const struct genl_ops grumple_genl_ops[] = {
 		.done		= grumple_targets_done,
 	},
 	{
-		.cmd		= LUSTRE_CMD_STATS,
+		.cmd		= GRUMPLE_CMD_STATS,
 #ifdef HAVE_NETLINK_CALLBACK_START
 		.start		= grumple_stats_start,
 		.dumpit		= grumple_stats_dump,
@@ -1180,15 +1180,15 @@ static const struct genl_ops grumple_genl_ops[] = {
 };
 
 static struct genl_family grumple_family = {
-	.name		= LUSTRE_GENL_NAME,
-	.version	= LUSTRE_GENL_VERSION,
+	.name		= GRUMPLE_GENL_NAME,
+	.version	= GRUMPLE_GENL_VERSION,
 	.module		= THIS_MODULE,
 	.ops		= grumple_genl_ops,
 	.n_ops		= ARRAY_SIZE(grumple_genl_ops),
 	.mcgrps		= grumple_mcast_grps,
 	.n_mcgrps	= ARRAY_SIZE(grumple_mcast_grps),
 #ifdef GENL_FAMILY_HAS_RESV_START_OP
-	.resv_start_op	= __LUSTRE_CMD_MAX_PLUS_ONE,
+	.resv_start_op	= __GRUMPLE_CMD_MAX_PLUS_ONE,
 #endif
 };
 

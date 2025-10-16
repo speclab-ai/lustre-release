@@ -41,24 +41,24 @@ static void import_set_state_nolock(struct obd_import *imp,
 				    enum grumple_imp_state state)
 {
 	switch (state) {
-	case LUSTRE_IMP_CLOSED:
-	case LUSTRE_IMP_NEW:
-	case LUSTRE_IMP_DISCON:
-	case LUSTRE_IMP_CONNECTING:
+	case GRUMPLE_IMP_CLOSED:
+	case GRUMPLE_IMP_NEW:
+	case GRUMPLE_IMP_DISCON:
+	case GRUMPLE_IMP_CONNECTING:
 		break;
-	case LUSTRE_IMP_REPLAY_WAIT:
-		imp->imp_replay_state = LUSTRE_IMP_REPLAY_LOCKS;
+	case GRUMPLE_IMP_REPLAY_WAIT:
+		imp->imp_replay_state = GRUMPLE_IMP_REPLAY_LOCKS;
 		break;
 	default:
-		imp->imp_replay_state = LUSTRE_IMP_REPLAY;
+		imp->imp_replay_state = GRUMPLE_IMP_REPLAY;
 		break;
 	}
 
 	
-	if (imp->imp_state == LUSTRE_IMP_CLOSED)
+	if (imp->imp_state == GRUMPLE_IMP_CLOSED)
 		return;
 
-	if (imp->imp_state != LUSTRE_IMP_NEW) {
+	if (imp->imp_state != GRUMPLE_IMP_NEW) {
 		CDEBUG(D_HA, "%p %s: changing import state from %s to %s\n",
 		       imp, obd2cli_tgt(imp->imp_obd),
 		       ptlrpc_import_state_name(imp->imp_state),
@@ -83,7 +83,7 @@ static void import_set_state(struct obd_import *imp,
 
 void ptlrpc_import_enter_resend(struct obd_import *imp)
 {
-	import_set_state(imp, LUSTRE_IMP_RECOVER);
+	import_set_state(imp, GRUMPLE_IMP_RECOVER);
 }
 EXPORT_SYMBOL(ptlrpc_import_enter_resend);
 
@@ -104,7 +104,7 @@ int ptlrpc_init_import(struct obd_import *imp)
 	spin_lock(&imp->imp_lock);
 
 	imp->imp_generation++;
-	imp->imp_state =  LUSTRE_IMP_NEW;
+	imp->imp_state =  GRUMPLE_IMP_NEW;
 
 	spin_unlock(&imp->imp_lock);
 
@@ -165,7 +165,7 @@ int ptlrpc_set_import_discon(struct obd_import *imp,
 
 	spin_lock(&imp->imp_lock);
 
-	if (imp->imp_state == LUSTRE_IMP_FULL &&
+	if (imp->imp_state == GRUMPLE_IMP_FULL &&
 	    (conn_cnt == 0 || conn_cnt == imp->imp_conn_cnt)) {
 		char *target_start;
 		int   target_len;
@@ -174,7 +174,7 @@ int ptlrpc_set_import_discon(struct obd_import *imp,
 		deuuidify(obd2cli_tgt(imp->imp_obd), NULL,
 			  &target_start, &target_len);
 
-		import_set_state_nolock(imp, LUSTRE_IMP_DISCON);
+		import_set_state_nolock(imp, GRUMPLE_IMP_DISCON);
 		if (imp->imp_replayable) {
 			LCONSOLE_WARN("%s: Connection to %.*s (at %s) was lost; in progress operations using this service will wait for recovery to complete\n",
 			       imp->imp_obd->obd_name, target_len, target_start,
@@ -207,7 +207,7 @@ int ptlrpc_set_import_discon(struct obd_import *imp,
 		spin_unlock(&imp->imp_lock);
 		CDEBUG(D_HA, "%s: import %p already %s (conn %u, was %u): %s\n",
 		       imp->imp_client->cli_name, imp,
-		       (imp->imp_state == LUSTRE_IMP_FULL &&
+		       (imp->imp_state == GRUMPLE_IMP_FULL &&
 			imp->imp_conn_cnt > conn_cnt) ?
 		       "reconnected" : "not connected", imp->imp_conn_cnt,
 		       conn_cnt, ptlrpc_import_state_name(imp->imp_state));
@@ -394,14 +394,14 @@ void ptlrpc_activate_import(struct obd_import *imp, bool set_state_full)
 
 	spin_lock(&imp->imp_lock);
 	if (imp->imp_deactive != 0) {
-		LASSERT(imp->imp_state != LUSTRE_IMP_FULL);
-		if (imp->imp_state != LUSTRE_IMP_DISCON)
-			import_set_state_nolock(imp, LUSTRE_IMP_DISCON);
+		LASSERT(imp->imp_state != GRUMPLE_IMP_FULL);
+		if (imp->imp_state != GRUMPLE_IMP_DISCON)
+			import_set_state_nolock(imp, GRUMPLE_IMP_DISCON);
 		spin_unlock(&imp->imp_lock);
 		return;
 	}
 	if (set_state_full)
-		import_set_state_nolock(imp, LUSTRE_IMP_FULL);
+		import_set_state_nolock(imp, GRUMPLE_IMP_FULL);
 
 	imp->imp_invalid = 0;
 
@@ -419,7 +419,7 @@ void ptlrpc_pinger_force(struct obd_import *imp)
 	imp->imp_force_verify = 1;
 	spin_unlock(&imp->imp_lock);
 
-	if (imp->imp_state != LUSTRE_IMP_CONNECTING)
+	if (imp->imp_state != GRUMPLE_IMP_CONNECTING)
 		ptlrpc_pinger_wake_up();
 }
 EXPORT_SYMBOL(ptlrpc_pinger_force);
@@ -701,23 +701,23 @@ int ptlrpc_connect_import_locked(struct obd_import *imp)
 
 	assert_spin_locked(&imp->imp_lock);
 
-	if (imp->imp_state == LUSTRE_IMP_CLOSED) {
+	if (imp->imp_state == GRUMPLE_IMP_CLOSED) {
 		spin_unlock(&imp->imp_lock);
 		CERROR("can't connect to a closed import\n");
 		RETURN(-EINVAL);
-	} else if (imp->imp_state == LUSTRE_IMP_FULL) {
+	} else if (imp->imp_state == GRUMPLE_IMP_FULL) {
 		spin_unlock(&imp->imp_lock);
 		CERROR("already connected\n");
 		RETURN(0);
-	} else if (imp->imp_state == LUSTRE_IMP_CONNECTING ||
-		   imp->imp_state == LUSTRE_IMP_EVICTED ||
+	} else if (imp->imp_state == GRUMPLE_IMP_CONNECTING ||
+		   imp->imp_state == GRUMPLE_IMP_EVICTED ||
 		   imp->imp_connected) {
 		spin_unlock(&imp->imp_lock);
 		CERROR("already connecting\n");
 		RETURN(-EALREADY);
 	}
 
-	import_set_state_nolock(imp, LUSTRE_IMP_CONNECTING);
+	import_set_state_nolock(imp, GRUMPLE_IMP_CONNECTING);
 
 	imp->imp_conn_cnt++;
 	imp->imp_resend_replay = 0;
@@ -746,7 +746,7 @@ int ptlrpc_connect_import_locked(struct obd_import *imp)
 	ocd.ocd_connect_flags = imp->imp_connect_flags_orig;
 	ocd.ocd_connect_flags2 = imp->imp_connect_flags2_orig;
 	
-	ocd.ocd_version = LUSTRE_VERSION_CODE;
+	ocd.ocd_version = GRUMPLE_VERSION_CODE;
 	imp->imp_msghdr_flags &= ~MSGHDR_AT_SUPPORT;
 	imp->imp_msghdr_flags &= ~MSGHDR_CKSUM_INCOMPAT18;
 
@@ -771,7 +771,7 @@ int ptlrpc_connect_import_locked(struct obd_import *imp)
 	req_capsule_set_size(&request->rq_pill, &RMF_SELINUX_POL, RCL_CLIENT,
 			     sptlrpc_sepol_size(sepol));
 
-	rc = ptlrpc_request_bufs_pack(request, LUSTRE_OBD_VERSION,
+	rc = ptlrpc_request_bufs_pack(request, GRUMPLE_OBD_VERSION,
 				      imp->imp_connect_op, bufs, NULL);
 
 	sptlrpc_sepol_put(sepol);
@@ -796,7 +796,7 @@ int ptlrpc_connect_import_locked(struct obd_import *imp)
 	grumple_msg_set_timeout(request->rq_reqmsg, request->rq_timeout);
 
 	request->rq_no_resend = request->rq_no_delay = 1;
-	request->rq_send_state = LUSTRE_IMP_CONNECTING;
+	request->rq_send_state = GRUMPLE_IMP_CONNECTING;
 	
 	req_capsule_set_size(&request->rq_pill, &RMF_CONNECT_DATA, RCL_SERVER,
 			     sizeof(struct obd_connect_data)+16*sizeof(__u64));
@@ -827,7 +827,7 @@ int ptlrpc_connect_import_locked(struct obd_import *imp)
 	rc = 0;
 out:
 	if (rc != 0)
-		import_set_state(imp, LUSTRE_IMP_DISCON);
+		import_set_state(imp, GRUMPLE_IMP_DISCON);
 
 	RETURN(rc);
 }
@@ -867,10 +867,10 @@ static int ptlrpc_connect_set_flags(struct obd_import *imp,
 	spin_unlock(&imp->imp_lock);
 
 	if (!warned && (ocd->ocd_connect_flags & OBD_CONNECT_VERSION) &&
-	    (ocd->ocd_version > LUSTRE_VERSION_CODE +
-				LUSTRE_VERSION_OFFSET_WARN ||
-	     ocd->ocd_version < LUSTRE_VERSION_CODE -
-				LUSTRE_VERSION_OFFSET_WARN)) {
+	    (ocd->ocd_version > GRUMPLE_VERSION_CODE +
+				GRUMPLE_VERSION_OFFSET_WARN ||
+	     ocd->ocd_version < GRUMPLE_VERSION_CODE -
+				GRUMPLE_VERSION_OFFSET_WARN)) {
 		
 		const char *older = "older than client. Consider upgrading server"
 				    ;
@@ -878,13 +878,13 @@ static int ptlrpc_connect_set_flags(struct obd_import *imp,
 				    ;
 
 		LCONSOLE_WARN("Client version (%s). Server %s version (%d.%d.%d.%d) is much %s\n",
-			      LUSTRE_VERSION_STRING,
+			      GRUMPLE_VERSION_STRING,
 			      obd2cli_tgt(imp->imp_obd),
 			      OBD_OCD_VERSION_MAJOR(ocd->ocd_version),
 			      OBD_OCD_VERSION_MINOR(ocd->ocd_version),
 			      OBD_OCD_VERSION_PATCH(ocd->ocd_version),
 			      OBD_OCD_VERSION_FIX(ocd->ocd_version),
-			      ocd->ocd_version > LUSTRE_VERSION_CODE ?
+			      ocd->ocd_version > GRUMPLE_VERSION_CODE ?
 			      newer : older);
 		warned = true;
 	}
@@ -998,7 +998,7 @@ static void ptlrpc_prepare_replay(struct obd_import *imp)
 {
 	struct ptlrpc_request *req;
 
-	if (imp->imp_state != LUSTRE_IMP_REPLAY ||
+	if (imp->imp_state != GRUMPLE_IMP_REPLAY ||
 	    imp->imp_resend_replay)
 		return;
 
@@ -1053,7 +1053,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 	ENTRY;
 
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state == LUSTRE_IMP_CLOSED) {
+	if (imp->imp_state == GRUMPLE_IMP_CLOSED) {
 		imp->imp_connect_tried = 1;
 		spin_unlock(&imp->imp_lock);
 		RETURN(0);
@@ -1160,12 +1160,12 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 		/* We do not support the MDT-MDT interoperations with
 		 * different version MDT because of protocol changes.
 		 */
-		if (unlikely(major != LUSTRE_MAJOR ||
-			     minor != LUSTRE_MINOR ||
-			     abs(patch - LUSTRE_PATCH) > 3)) {
+		if (unlikely(major != GRUMPLE_MAJOR ||
+			     minor != GRUMPLE_MINOR ||
+			     abs(patch - GRUMPLE_PATCH) > 3)) {
 			LCONSOLE_WARN("%s: import %p (%u.%u.%u.%u) tried the connection to different version MDT (%d.%d.%d.%d) %s\n",
-				      imp->imp_obd->obd_name, imp, LUSTRE_MAJOR,
-				      LUSTRE_MINOR, LUSTRE_PATCH, LUSTRE_FIX,
+				      imp->imp_obd->obd_name, imp, GRUMPLE_MAJOR,
+				      GRUMPLE_MINOR, GRUMPLE_PATCH, GRUMPLE_FIX,
 				      major, minor, patch,
 				      OBD_OCD_VERSION_FIX(ocd->ocd_version),
 				      libcfs_nidstr(&imp->imp_connection->c_peer.nid));
@@ -1222,7 +1222,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 		if (msg_flags & MSG_CONNECT_RECOVERING) {
 			CDEBUG(D_HA, "connect to %s during recovery\n",
 			       obd2cli_tgt(imp->imp_obd));
-			import_set_state_nolock(imp, LUSTRE_IMP_REPLAY_LOCKS);
+			import_set_state_nolock(imp, GRUMPLE_IMP_REPLAY_LOCKS);
 			spin_unlock(&imp->imp_lock);
 		} else {
 			spin_unlock(&imp->imp_lock);
@@ -1279,7 +1279,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 				*grumple_msg_get_handle(request->rq_repmsg);
 
 			if (!(MSG_CONNECT_RECOVERING & msg_flags)) {
-				import_set_state(imp, LUSTRE_IMP_EVICTED);
+				import_set_state(imp, GRUMPLE_IMP_EVICTED);
 				GOTO(finish, rc = 0);
 			}
 		} else {
@@ -1291,7 +1291,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 		if (imp->imp_invalid) {
 			CDEBUG(D_HA, "%s: reconnected but import is invalid; "
 			       "marking evicted\n", imp->imp_obd->obd_name);
-			import_set_state(imp, LUSTRE_IMP_EVICTED);
+			import_set_state(imp, GRUMPLE_IMP_EVICTED);
 		} else if (MSG_CONNECT_RECOVERING & msg_flags) {
 			CDEBUG(D_HA, "%s: reconnected to %s during replay\n",
 			       imp->imp_obd->obd_name,
@@ -1303,7 +1303,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 
 			import_set_state(imp, imp->imp_replay_state);
 		} else {
-			import_set_state(imp, LUSTRE_IMP_RECOVER);
+			import_set_state(imp, GRUMPLE_IMP_RECOVER);
 		}
 	} else if ((MSG_CONNECT_RECOVERING & msg_flags) && !imp->imp_invalid) {
 		LASSERT(imp->imp_replayable);
@@ -1311,7 +1311,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 			*grumple_msg_get_handle(request->rq_repmsg);
 		imp->imp_last_replay_transno = 0;
 		imp->imp_replay_cursor = &imp->imp_committed_list;
-		import_set_state(imp, LUSTRE_IMP_REPLAY);
+		import_set_state(imp, GRUMPLE_IMP_REPLAY);
 	} else if ((ocd->ocd_connect_flags & OBD_CONNECT_LIGHTWEIGHT) != 0 &&
 		   !imp->imp_invalid) {
 
@@ -1321,7 +1321,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 			  imp->imp_obd->obd_name);
 		imp->imp_remote_handle =
 			*grumple_msg_get_handle(request->rq_repmsg);
-		import_set_state(imp, LUSTRE_IMP_RECOVER);
+		import_set_state(imp, GRUMPLE_IMP_RECOVER);
 	} else {
 		imp->imp_remote_handle =
 			*grumple_msg_get_handle(request->rq_repmsg);
@@ -1329,7 +1329,7 @@ static int ptlrpc_connect_interpret(const struct lu_env *env,
 			DEBUG_REQ(D_HA, request,
 				  "%s: evicting (reconnect/recover flags not set: %x)",
 				  imp->imp_obd->obd_name, msg_flags);
-			import_set_state(imp, LUSTRE_IMP_EVICTED);
+			import_set_state(imp, GRUMPLE_IMP_EVICTED);
 		} else {
 			ptlrpc_activate_import(imp, true);
 		}
@@ -1383,7 +1383,7 @@ out:
 		time64_t now = ktime_get_seconds();
 		time64_t next_connect;
 
-		import_set_state_nolock(imp, LUSTRE_IMP_DISCON);
+		import_set_state_nolock(imp, GRUMPLE_IMP_DISCON);
 		if (rc == -EACCES || rc == -EROFS) {
 			/*
 			 * -EACCES means client has no permission for connection
@@ -1427,17 +1427,17 @@ out:
 			 */
 			if (ocd &&
 			    (ocd->ocd_connect_flags & OBD_CONNECT_VERSION) &&
-			    (ocd->ocd_version != LUSTRE_VERSION_CODE)) {
+			    (ocd->ocd_version != GRUMPLE_VERSION_CODE)) {
 				LCONSOLE_ERROR("Server %s version (%d.%d.%d.%d) refused connection from this client with an incompatible version (%s). Client must be recompiled\n",
 					       obd2cli_tgt(imp->imp_obd),
 					       OBD_OCD_VERSION_MAJOR(ocd->ocd_version),
 					       OBD_OCD_VERSION_MINOR(ocd->ocd_version),
 					       OBD_OCD_VERSION_PATCH(ocd->ocd_version),
 					       OBD_OCD_VERSION_FIX(ocd->ocd_version),
-					       LUSTRE_VERSION_STRING);
+					       GRUMPLE_VERSION_STRING);
 				imp->imp_deactive = 1;
 				ptlrpc_deactivate_import_nolock(imp);
-				import_set_state_nolock(imp, LUSTRE_IMP_CLOSED);
+				import_set_state_nolock(imp, GRUMPLE_IMP_CLOSED);
 				inact = true;
 			}
 		} else if (rc == -ENODEV || rc == -ETIMEDOUT) {
@@ -1472,7 +1472,7 @@ out:
 			obd_import_event(imp->imp_obd, imp, IMP_EVENT_INACTIVE);
 			
 			if (!aa->pcaa_initial_connect) {
-				import_set_state(imp, LUSTRE_IMP_EVICTED);
+				import_set_state(imp, GRUMPLE_IMP_EVICTED);
 				ptlrpc_import_recovery_state_machine(imp);
 			}
 		}
@@ -1549,7 +1549,7 @@ static int signal_completed_replay(struct obd_import *imp)
 	if (!atomic_add_unless(&imp->imp_replay_inflight, 1, 1))
 		RETURN(0);
 
-	req = ptlrpc_request_alloc_pack(imp, &RQF_OBD_PING, LUSTRE_OBD_VERSION,
+	req = ptlrpc_request_alloc_pack(imp, &RQF_OBD_PING, GRUMPLE_OBD_VERSION,
 					OBD_PING);
 	if (IS_ERR(req)) {
 		atomic_dec(&imp->imp_replay_inflight);
@@ -1557,7 +1557,7 @@ static int signal_completed_replay(struct obd_import *imp)
 	}
 
 	ptlrpc_request_set_replen(req);
-	req->rq_send_state = LUSTRE_IMP_REPLAY_WAIT;
+	req->rq_send_state = GRUMPLE_IMP_REPLAY_WAIT;
 	grumple_msg_add_flags(req->rq_reqmsg,
 			     MSG_LOCK_REPLAY_DONE | MSG_REQ_REPLAY_DONE);
 	if (obd_at_off(imp->imp_obd))
@@ -1589,7 +1589,7 @@ static int ptlrpc_invalidate_import_thread(void *data)
 	}
 
 	ptlrpc_invalidate_import(imp);
-	import_set_state(imp, LUSTRE_IMP_RECOVER);
+	import_set_state(imp, GRUMPLE_IMP_RECOVER);
 	ptlrpc_import_recovery_state_machine(imp);
 
 	class_import_put(imp);
@@ -1631,7 +1631,7 @@ int ptlrpc_import_recovery_state_machine(struct obd_import *imp)
 	int target_len;
 
 	ENTRY;
-	if (imp->imp_state == LUSTRE_IMP_EVICTED) {
+	if (imp->imp_state == GRUMPLE_IMP_EVICTED) {
 		struct task_struct *task;
 		u64 connect_flags;
 
@@ -1640,7 +1640,7 @@ int ptlrpc_import_recovery_state_machine(struct obd_import *imp)
 		connect_flags = imp->imp_connect_data.ocd_connect_flags;
 		
 		if (strcmp(imp->imp_obd->obd_type->typ_name,
-			   LUSTRE_MGC_NAME) != 0 &&
+			   GRUMPLE_MGC_NAME) != 0 &&
 		    (connect_flags & OBD_CONNECT_LIGHTWEIGHT) == 0) {
 			
 			LCONSOLE(D_ERROR, "%s: This client was evicted by %.*s; in progress operations using this service will fail.\n",
@@ -1674,13 +1674,13 @@ int ptlrpc_import_recovery_state_machine(struct obd_import *imp)
 		RETURN(rc);
 	}
 
-	if (imp->imp_state == LUSTRE_IMP_REPLAY) {
+	if (imp->imp_state == GRUMPLE_IMP_REPLAY) {
 		CDEBUG(D_HA, "replay requested by %s\n",
 		       obd2cli_tgt(imp->imp_obd));
 		rc = ptlrpc_replay_next(imp, &inflight);
 		if (inflight == 0 &&
 		    atomic_read(&imp->imp_replay_inflight) == 0) {
-			import_set_state(imp, LUSTRE_IMP_REPLAY_LOCKS);
+			import_set_state(imp, GRUMPLE_IMP_REPLAY_LOCKS);
 			rc = ldlm_replay_locks(imp);
 			if (rc)
 				GOTO(out, rc);
@@ -1688,21 +1688,21 @@ int ptlrpc_import_recovery_state_machine(struct obd_import *imp)
 		rc = 0;
 	}
 
-	if (imp->imp_state == LUSTRE_IMP_REPLAY_LOCKS) {
+	if (imp->imp_state == GRUMPLE_IMP_REPLAY_LOCKS) {
 		if (atomic_read(&imp->imp_replay_inflight) == 0) {
-			import_set_state(imp, LUSTRE_IMP_REPLAY_WAIT);
+			import_set_state(imp, GRUMPLE_IMP_REPLAY_WAIT);
 			rc = signal_completed_replay(imp);
 			if (rc)
 				GOTO(out, rc);
 		}
 	}
 
-	if (imp->imp_state == LUSTRE_IMP_REPLAY_WAIT) {
+	if (imp->imp_state == GRUMPLE_IMP_REPLAY_WAIT) {
 		if (atomic_read(&imp->imp_replay_inflight) == 0)
-			import_set_state(imp, LUSTRE_IMP_RECOVER);
+			import_set_state(imp, GRUMPLE_IMP_RECOVER);
 	}
 
-	if (imp->imp_state == LUSTRE_IMP_RECOVER) {
+	if (imp->imp_state == GRUMPLE_IMP_RECOVER) {
 		struct ptlrpc_connection *conn = imp->imp_connection;
 
 		rc = ptlrpc_resend(imp);
@@ -1725,7 +1725,7 @@ int ptlrpc_import_recovery_state_machine(struct obd_import *imp)
 		spin_unlock(&imp->imp_lock);
 	}
 
-	if (imp->imp_state == LUSTRE_IMP_FULL) {
+	if (imp->imp_state == GRUMPLE_IMP_FULL) {
 		wake_up(&imp->imp_recovery_waitq);
 		ptlrpc_wake_delayed(imp);
 	}
@@ -1760,7 +1760,7 @@ static struct ptlrpc_request *ptlrpc_disconnect_prep_req(struct obd_import *imp)
 	}
 
 	req = ptlrpc_request_alloc_pack(imp, &RQF_MDS_DISCONNECT,
-					LUSTRE_OBD_VERSION, rq_opc);
+					GRUMPLE_OBD_VERSION, rq_opc);
 	if (IS_ERR(req))
 		RETURN(ERR_CAST(req));
 
@@ -1774,7 +1774,7 @@ static struct ptlrpc_request *ptlrpc_disconnect_prep_req(struct obd_import *imp)
 	req->rq_timeout = min_t(timeout_t, req->rq_timeout,
 				INITIAL_CONNECT_TIMEOUT);
 
-	req->rq_send_state =  LUSTRE_IMP_CONNECTING;
+	req->rq_send_state =  GRUMPLE_IMP_CONNECTING;
 	ptlrpc_request_set_replen(req);
 
 	RETURN(req);
@@ -1794,9 +1794,9 @@ static void ptlrpc_disconnect_import_end(struct obd_import *imp, int noclose)
 	assert_spin_locked(&imp->imp_lock);
 
 	if (noclose)
-		import_set_state_nolock(imp, LUSTRE_IMP_DISCON);
+		import_set_state_nolock(imp, GRUMPLE_IMP_DISCON);
 	else
-		import_set_state_nolock(imp, LUSTRE_IMP_CLOSED);
+		import_set_state_nolock(imp, GRUMPLE_IMP_CLOSED);
 	memset(&imp->imp_remote_handle, 0, sizeof(imp->imp_remote_handle));
 	spin_unlock(&imp->imp_lock);
 
@@ -1851,7 +1851,7 @@ int ptlrpc_disconnect_import_async(struct obd_import *imp, int noclose,
 
 	spin_lock(&imp->imp_lock);
 	
-	if (imp->imp_state != LUSTRE_IMP_FULL || imp->imp_obd->obd_force) {
+	if (imp->imp_state != GRUMPLE_IMP_FULL || imp->imp_obd->obd_force) {
 
 		ptlrpc_disconnect_import_end(imp, noclose);
 
@@ -1867,7 +1867,7 @@ int ptlrpc_disconnect_import_async(struct obd_import *imp, int noclose,
 
 	spin_lock(&imp->imp_lock);
 
-	if (IS_ERR(req) || imp->imp_state != LUSTRE_IMP_FULL ||
+	if (IS_ERR(req) || imp->imp_state != GRUMPLE_IMP_FULL ||
 	    imp->imp_obd->obd_force) {
 
 		if (!IS_ERR(req))
@@ -1882,7 +1882,7 @@ int ptlrpc_disconnect_import_async(struct obd_import *imp, int noclose,
 
 		RETURN(rc);
 	}
-	import_set_state_nolock(imp, LUSTRE_IMP_CONNECTING);
+	import_set_state_nolock(imp, GRUMPLE_IMP_CONNECTING);
 	spin_unlock(&imp->imp_lock);
 
 	req->rq_interpret_reply = ptlrpc_disconnect_interpet;
@@ -1917,7 +1917,7 @@ int ptlrpc_disconnect_import(struct obd_import *imp, int noclose)
 
 	
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state == LUSTRE_IMP_IDLE || imp->imp_obd->obd_force) {
+	if (imp->imp_state == GRUMPLE_IMP_IDLE || imp->imp_obd->obd_force) {
 		ptlrpc_disconnect_import_end(imp, noclose);
 		RETURN(0);
 	}
@@ -1994,8 +1994,8 @@ static int ptlrpc_disconnect_idle_interpret(const struct lu_env *env,
 	 * be initiated. so we have to abort disconnection.
 	 */
 	if (req->rq_import_generation == imp->imp_generation &&
-	    imp->imp_state != LUSTRE_IMP_CLOSED) {
-		LASSERTF(imp->imp_state == LUSTRE_IMP_CONNECTING,
+	    imp->imp_state != GRUMPLE_IMP_CLOSED) {
+		LASSERTF(imp->imp_state == GRUMPLE_IMP_CONNECTING,
 			 "%s\n", ptlrpc_import_state_name(imp->imp_state));
 		memset(&imp->imp_remote_handle, 0,
 		       sizeof(imp->imp_remote_handle));
@@ -2003,12 +2003,12 @@ static int ptlrpc_disconnect_idle_interpret(const struct lu_env *env,
 		if (atomic_read(&imp->imp_reqs) > 1) {
 			imp->imp_generation++;
 			imp->imp_initiated_at = imp->imp_generation;
-			import_set_state_nolock(imp, LUSTRE_IMP_NEW);
+			import_set_state_nolock(imp, GRUMPLE_IMP_NEW);
 			ptlrpc_reset_reqs_generation(imp);
 			connect = 1;
 		} else {
 			
-			import_set_state_nolock(imp, LUSTRE_IMP_IDLE);
+			import_set_state_nolock(imp, GRUMPLE_IMP_IDLE);
 		}
 	}
 
@@ -2065,12 +2065,12 @@ int ptlrpc_disconnect_and_idle_import(struct obd_import *imp)
 	}
 
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state != LUSTRE_IMP_FULL || !ptlrpc_can_idle(imp)) {
+	if (imp->imp_state != GRUMPLE_IMP_FULL || !ptlrpc_can_idle(imp)) {
 		ptlrpc_req_put_with_imp_lock(req);
 		spin_unlock(&imp->imp_lock);
 		RETURN(0);
 	}
-	import_set_state_nolock(imp, LUSTRE_IMP_CONNECTING);
+	import_set_state_nolock(imp, GRUMPLE_IMP_CONNECTING);
 	
 	imp->imp_was_idle = 1;
 	spin_unlock(&imp->imp_lock);
@@ -2095,7 +2095,7 @@ void ptlrpc_cleanup_imp(struct obd_import *imp)
 
 	spin_lock(&imp->imp_lock);
 
-	import_set_state_nolock(imp, LUSTRE_IMP_CLOSED);
+	import_set_state_nolock(imp, GRUMPLE_IMP_CLOSED);
 	imp->imp_generation++;
 	ptlrpc_abort_inflight(imp);
 

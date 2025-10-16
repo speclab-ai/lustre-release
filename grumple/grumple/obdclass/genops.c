@@ -90,14 +90,14 @@ SERVER_ONLY struct obd_type *class_get_type(const char *name)
 
 #ifdef HAVE_SERVER_SUPPORT
 		if (strcmp(modname, "obdfilter") == 0 ||
-		    strcmp(modname, LUSTRE_OSS_NAME) == 0)
+		    strcmp(modname, GRUMPLE_OSS_NAME) == 0)
 			modname = "ofd";
 
-		if (strcmp(modname, LUSTRE_LWP_NAME) == 0)
-			modname = LUSTRE_OSP_NAME;
+		if (strcmp(modname, GRUMPLE_LWP_NAME) == 0)
+			modname = GRUMPLE_OSP_NAME;
 
-		if (!strncmp(modname, LUSTRE_MDS_NAME, strlen(LUSTRE_MDS_NAME)))
-			modname = LUSTRE_MDT_NAME;
+		if (!strncmp(modname, GRUMPLE_MDS_NAME, strlen(GRUMPLE_MDS_NAME)))
+			modname = GRUMPLE_MDT_NAME;
 #endif 
 
 		rcu_read_unlock();
@@ -745,12 +745,12 @@ int class_notify_sptlrpc_conf(const char *fsname, int namelen)
 		 * because only these have a -sptlrpc llog
 		 */
 		type = obd->obd_type->typ_name;
-		if (strcmp(type, LUSTRE_MDC_NAME) != 0 &&
-		    strcmp(type, LUSTRE_OSC_NAME) != 0 &&
-		    strcmp(type, LUSTRE_OSP_NAME) != 0 &&
-		    strcmp(type, LUSTRE_LWP_NAME) != 0 &&
-		    strcmp(type, LUSTRE_MDT_NAME) != 0 &&
-		    strcmp(type, LUSTRE_OST_NAME) != 0)
+		if (strcmp(type, GRUMPLE_MDC_NAME) != 0 &&
+		    strcmp(type, GRUMPLE_OSC_NAME) != 0 &&
+		    strcmp(type, GRUMPLE_OSP_NAME) != 0 &&
+		    strcmp(type, GRUMPLE_LWP_NAME) != 0 &&
+		    strcmp(type, GRUMPLE_MDT_NAME) != 0 &&
+		    strcmp(type, GRUMPLE_OST_NAME) != 0)
 			continue;
 
 		if (strncmp(obd->obd_name, fsname, namelen))
@@ -961,7 +961,7 @@ static struct obd_export *__class_new_export(struct obd_device *obd,
 	atomic_set(&export->exp_rpc_count, 0);
 	atomic_set(&export->exp_cb_count, 0);
 	atomic_set(&export->exp_locks_count, 0);
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 	INIT_LIST_HEAD(&export->exp_locks_list);
 	spin_lock_init(&export->exp_locks_list_guard);
 #endif
@@ -985,7 +985,7 @@ static struct obd_export *__class_new_export(struct obd_device *obd,
 	INIT_LIST_HEAD(&export->exp_timed_chain);
 	INIT_WORK(&export->exp_zombie_work, obd_zombie_exp_cull);
 
-	export->exp_sp_peer = LUSTRE_SP_ANY;
+	export->exp_sp_peer = GRUMPLE_SP_ANY;
 	export->exp_flvr.sf_rpc = SPTLRPC_FLVR_INVALID;
 	export->exp_client_uuid = *cluuid;
 	obd_init_export(export);
@@ -1292,7 +1292,7 @@ struct obd_import *class_new_import(struct obd_device *obd)
 	imp->imp_replay_cursor = &imp->imp_committed_list;
 	spin_lock_init(&imp->imp_lock);
 	imp->imp_last_success_conn = 0;
-	imp->imp_state = LUSTRE_IMP_NEW;
+	imp->imp_state = GRUMPLE_IMP_NEW;
 	imp->imp_obd = class_incref(obd, "import", imp);
 	rwlock_init(&imp->imp_sec_lock);
 	init_waitqueue_head(&imp->imp_recovery_waitq);
@@ -1317,7 +1317,7 @@ struct obd_import *class_new_import(struct obd_device *obd)
 	/* the default magic is V2, will be used in connect RPC, and
 	 * then adjusted according to the flags in request/reply.
 	 */
-	imp->imp_msg_magic = LUSTRE_MSG_MAGIC_V2;
+	imp->imp_msg_magic = GRUMPLE_MSG_MAGIC_V2;
 
 	return imp;
 }
@@ -1335,7 +1335,7 @@ void class_destroy_import(struct obd_import *import)
 }
 EXPORT_SYMBOL(class_destroy_import);
 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 
 void __class_export_add_lock_ref(struct obd_export *exp, struct ldlm_lock *lock)
 {
@@ -1803,7 +1803,7 @@ out_fini:
 }
 #endif 
 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 void (*class_export_dump_hook)(struct obd_export *) = NULL;
 EXPORT_SYMBOL(class_export_dump_hook);
 #endif
@@ -1834,7 +1834,7 @@ static void print_export_data(struct obd_export *exp, const char *status,
 	       exp->exp_disconnected, exp->exp_delayed, exp->exp_failed,
 	       nreplies, first_reply, nreplies > 3 ? "..." : "",
 	       exp->exp_last_committed, !list_empty(&exp->exp_stale_list));
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 	if (locks && class_export_dump_hook != NULL)
 		class_export_dump_hook(exp);
 #endif
@@ -2160,7 +2160,7 @@ int obd_set_max_rpcs_in_flight(struct client_obd *cli, __u32 max)
 	       cli->cl_max_mod_rpcs_in_flight, cli->cl_max_rpcs_in_flight);
 
 	if (strcmp(cli->cl_import->imp_obd->obd_type->typ_name,
-		   LUSTRE_MDC_NAME) == 0) {
+		   GRUMPLE_MDC_NAME) == 0) {
 		/* adjust max_mod_rpcs_in_flight to ensure it is always
 		 * strictly lower that max_rpcs_in_flight
 		 */

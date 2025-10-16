@@ -698,7 +698,7 @@ static int ldlm_handle_ast_error(struct ldlm_lock *lock,
 			rc = -ERESTART;
 		} else if (rc == -ENODEV || rc == -ESHUTDOWN ||
 			   (rc == -EIO &&
-			    req->rq_import->imp_state == LUSTRE_IMP_CLOSED)) {
+			    req->rq_import->imp_state == GRUMPLE_IMP_CLOSED)) {
 			/*
 			 * Upon umount process the AST fails because cannot be
 			 * sent. This shouldn't lead to the client eviction.
@@ -706,7 +706,7 @@ static int ldlm_handle_ast_error(struct ldlm_lock *lock,
 			 *  new request in such import.
 			 * -SHUTDOWN is returned by ptlrpc_import_delay_req()
 			 *  if imp_invalid is set or obd_no_recov.
-			 * Meanwhile there is also check for LUSTRE_IMP_CLOSED
+			 * Meanwhile there is also check for GRUMPLE_IMP_CLOSED
 			 * in ptlrpc_import_delay_req() as well with -EIO code.
 			 * In all such cases errors are ignored.
 			 */
@@ -917,7 +917,7 @@ int ldlm_server_blocking_ast(struct ldlm_lock *lock,
 
 	req = ptlrpc_request_alloc_pack(lock->l_export->exp_imp_reverse,
 					&RQF_LDLM_BL_CALLBACK,
-					LUSTRE_DLM_VERSION, LDLM_BL_CALLBACK);
+					GRUMPLE_DLM_VERSION, LDLM_BL_CALLBACK);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 
@@ -978,7 +978,7 @@ int ldlm_server_blocking_ast(struct ldlm_lock *lock,
 		req->rq_resend_cb = ldlm_update_resend;
 	}
 
-	req->rq_send_state = LUSTRE_IMP_FULL;
+	req->rq_send_state = GRUMPLE_IMP_FULL;
 	
 	if (obd_at_off(obd))
 		req->rq_timeout = ldlm_get_rq_timeout();
@@ -1039,7 +1039,7 @@ int ldlm_server_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data)
 		lvb_len = 0;
 
 	req_capsule_set_size(&req->rq_pill, &RMF_DLM_LVB, RCL_CLIENT, lvb_len);
-	rc = ptlrpc_request_pack(req, LUSTRE_DLM_VERSION, LDLM_CP_CALLBACK);
+	rc = ptlrpc_request_pack(req, GRUMPLE_DLM_VERSION, LDLM_CP_CALLBACK);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1082,7 +1082,7 @@ int ldlm_server_completion_ast(struct ldlm_lock *lock, __u64 flags, void *data)
 
 	ptlrpc_request_set_replen(req);
 
-	req->rq_send_state = LUSTRE_IMP_FULL;
+	req->rq_send_state = GRUMPLE_IMP_FULL;
 	
 	if (obd_at_off(obd))
 		req->rq_timeout = ldlm_get_rq_timeout();
@@ -1160,7 +1160,7 @@ int ldlm_server_glimpse_ast(struct ldlm_lock *lock, void *data)
 		req_fmt = &RQF_LDLM_GL_CALLBACK;
 
 	req = ptlrpc_request_alloc_pack(lock->l_export->exp_imp_reverse,
-					req_fmt, LUSTRE_DLM_VERSION,
+					req_fmt, GRUMPLE_DLM_VERSION,
 					LDLM_GL_CALLBACK);
 
 	if (IS_ERR(req))
@@ -1187,7 +1187,7 @@ int ldlm_server_glimpse_ast(struct ldlm_lock *lock, void *data)
 			     ldlm_lvbo_size(lock));
 	ptlrpc_request_set_replen(req);
 
-	req->rq_send_state = LUSTRE_IMP_FULL;
+	req->rq_send_state = GRUMPLE_IMP_FULL;
 	
 	if (obd_at_off(obd))
 		req->rq_timeout = ldlm_get_rq_timeout();
@@ -1841,7 +1841,7 @@ int ldlm_handle_cancel(struct ptlrpc_request *req)
 		RETURN(rc);
 
 	if (!ldlm_request_cancel(req, dlm_req, 0, LATF_STATS))
-		req->rq_status = LUSTRE_ESTALE;
+		req->rq_status = GRUMPLE_ESTALE;
 
 	RETURN(ptlrpc_reply(req));
 }
@@ -3222,7 +3222,7 @@ static ssize_t dump_granted_max_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(dump_granted_max);
+GRUMPLE_RW_ATTR(dump_granted_max);
 
 static ssize_t cancel_unused_locks_before_replay_show(struct kobject *kobj,
 						      struct attribute *attr,
@@ -3248,7 +3248,7 @@ static ssize_t cancel_unused_locks_before_replay_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(cancel_unused_locks_before_replay);
+GRUMPLE_RW_ATTR(cancel_unused_locks_before_replay);
 
 #ifdef HAVE_SERVER_SUPPORT
 static ssize_t lock_reclaim_threshold_mb_show(struct kobject *kobj,
@@ -3286,7 +3286,7 @@ static ssize_t lock_reclaim_threshold_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(lock_reclaim_threshold_mb);
+GRUMPLE_RW_ATTR(lock_reclaim_threshold_mb);
 
 static ssize_t lock_limit_mb_show(struct kobject *kobj,
 				  struct attribute *attr,
@@ -3333,7 +3333,7 @@ static ssize_t lock_limit_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(lock_limit_mb);
+GRUMPLE_RW_ATTR(lock_limit_mb);
 
 static ssize_t lock_granted_count_show(struct kobject *kobj,
 				       struct attribute *attr,
@@ -3343,7 +3343,7 @@ static ssize_t lock_granted_count_show(struct kobject *kobj,
 
 	return scnprintf(buf, PAGE_SIZE, "%llu\n", sum);
 }
-LUSTRE_RO_ATTR(lock_granted_count);
+GRUMPLE_RO_ATTR(lock_granted_count);
 #endif
 
 static ssize_t ldlm_enqueue_min_show(struct kobject *kobj,
@@ -3352,7 +3352,7 @@ static ssize_t ldlm_enqueue_min_show(struct kobject *kobj,
 {
 	return scnprintf(buf, PAGE_SIZE, "%u\n", ldlm_enqueue_min);
 }
-LUSTRE_RO_ATTR(ldlm_enqueue_min);
+GRUMPLE_RO_ATTR(ldlm_enqueue_min);
 
 static struct attribute *ldlm_attrs[] = {
 	&grumple_attr_dump_granted_max.attr,
@@ -3659,7 +3659,7 @@ int ldlm_init(void)
 		goto out_inodebits;
 #endif
 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 	class_export_dump_hook = ldlm_dump_export_locks;
 #endif
 	return 0;

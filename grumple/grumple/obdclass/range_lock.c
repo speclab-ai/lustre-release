@@ -60,7 +60,7 @@ EXPORT_SYMBOL(range_lock_tree_init);
 void range_lock_init(struct range_lock *lock, __u64 start, __u64 end)
 {
 	start >>= PAGE_SHIFT;
-	if (end != LUSTRE_EOF)
+	if (end != GRUMPLE_EOF)
 		end >>= PAGE_SHIFT;
 	lock->rl_start = start;
 	lock->rl_end = end;

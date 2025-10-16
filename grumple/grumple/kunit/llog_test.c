@@ -30,7 +30,7 @@
 #include <grumple_fid.h>
 #include <grumple_log.h>
 
-#define LUSTRE_TEST_LLOG_DEVICE "llog_test"
+#define GRUMPLE_TEST_LLOG_DEVICE "llog_test"
 
 /* This is slightly more than the number of records that can fit into a
  * single llog file, because the llog_log_header takes up some of the
@@ -880,7 +880,7 @@ static int llog_test_6(const struct lu_env *env, struct obd_device *obd,
 	mgs_uuid = &ctxt->loc_exp->exp_obd->obd_uuid;
 
 	CWARN("6a: re-open log %s using client API\n", name);
-	mgc_obd = class_find_client_obd(mgs_uuid, LUSTRE_MGC_NAME, NULL);
+	mgc_obd = class_find_client_obd(mgs_uuid, GRUMPLE_MGC_NAME, NULL);
 	if (mgc_obd == NULL) {
 		CERROR("6a: no MGC devices connected to %s found.\n",
 		       mgs_uuid->uuid);
@@ -2374,7 +2374,7 @@ static const struct lu_device_type_operations llog_test_type_ops = {
 
 static struct lu_device_type llog_test_device_type = {
 	.ldt_tags     = LU_DEVICE_MISC,
-	.ldt_name     = LUSTRE_TEST_LLOG_DEVICE,
+	.ldt_name     = GRUMPLE_TEST_LLOG_DEVICE,
 	.ldt_ops      = &llog_test_type_ops,
 	.ldt_ctx_tags = LCT_LOCAL
 };
@@ -2386,18 +2386,18 @@ static const struct obd_ops llog_obd_ops = {
 static int __init llog_test_init(void)
 {
 	return class_register_type(&llog_obd_ops, NULL, false,
-				   LUSTRE_TEST_LLOG_DEVICE,
+				   GRUMPLE_TEST_LLOG_DEVICE,
 				   &llog_test_device_type);
 }
 
 static void __exit llog_test_exit(void)
 {
-	class_unregister_type(LUSTRE_TEST_LLOG_DEVICE);
+	class_unregister_type(GRUMPLE_TEST_LLOG_DEVICE);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Log test module");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(llog_test_init);

@@ -35,8 +35,8 @@ if [ -z "$MY_KDC_DISTRO" -o -z "$MY_KDCNODE" -o -z "$MY_MDSNODES" -o \
 	my_usage
 	exit 1
 fi
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env
 SCP=${SCP:-"scp -q"}
 ACCEPTOR_PORT=${ACCEPTOR_PORT:-988}

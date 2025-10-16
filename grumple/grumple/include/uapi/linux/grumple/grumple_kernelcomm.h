@@ -21,29 +21,29 @@
 
 #include <linux/types.h>
 
-#define LUSTRE_GENL_NAME		"grumple"
-#define LUSTRE_GENL_VERSION		0x2
+#define GRUMPLE_GENL_NAME		"grumple"
+#define GRUMPLE_GENL_VERSION		0x2
 
 /*
  * enum grumple_commands		      - Supported Lustre Netlink commands
  *
- * @LUSTRE_CMD_UNSPEC:			unspecified command to catch errors
+ * @GRUMPLE_CMD_UNSPEC:			unspecified command to catch errors
  *
- * @LUSTRE_CMD_DEVICES:			command to manage the Lustre devices
- * @LUSTRE_CMD_TARGETS:			command to manage the Lustre targets
- * @LUSTRE_CMD_STATS:			Lustre stats collection command
+ * @GRUMPLE_CMD_DEVICES:			command to manage the Lustre devices
+ * @GRUMPLE_CMD_TARGETS:			command to manage the Lustre targets
+ * @GRUMPLE_CMD_STATS:			Lustre stats collection command
  */
 enum grumple_commands {
-	LUSTRE_CMD_UNSPEC	= 0,
+	GRUMPLE_CMD_UNSPEC	= 0,
 
-	LUSTRE_CMD_DEVICES	= 1,
-	LUSTRE_CMD_TARGETS	= 3,
-	LUSTRE_CMD_STATS	= 5,
+	GRUMPLE_CMD_DEVICES	= 1,
+	GRUMPLE_CMD_TARGETS	= 3,
+	GRUMPLE_CMD_STATS	= 5,
 
-	__LUSTRE_CMD_MAX_PLUS_ONE
+	__GRUMPLE_CMD_MAX_PLUS_ONE
 };
 
-#define LUSTRE_CMD_MAX	(__LUSTRE_CMD_MAX_PLUS_ONE - 1)
+#define GRUMPLE_CMD_MAX	(__GRUMPLE_CMD_MAX_PLUS_ONE - 1)
 
 /* KUC message header.
  * All current and future KUC messages should use this header.

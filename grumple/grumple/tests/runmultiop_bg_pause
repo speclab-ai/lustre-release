@@ -4,9 +4,9 @@
 # "PAUSING" to its stdout before returning from this function.
 
 PTLDEBUG=${PTLDEBUG:--1}
-LUSTRE=${LUSTRE:-`dirname $0`/..}
+GRUMPLE=${GRUMPLE:-`dirname $0`/..}
 MULTIOP=${MULTIOP:-multiop}
-. $LUSTRE/tests/test-framework.sh
+. $GRUMPLE/tests/test-framework.sh
 
 TMP=${TMP:-/tmp}
 MULTIOP_PID_FILE=${MULTIOP_PID_FILE:-$TMP/multiop_bg.pid}

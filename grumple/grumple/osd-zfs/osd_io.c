@@ -1293,12 +1293,12 @@ static int __osd_object_punch(struct osd_object *obj, objset_t *os,
 	 * corrupted content
 	 */
 	if (len != DMU_OBJECT_END)
-		len -= LUSTRE_ENCRYPTION_UNIT_SIZE -
-			(off & ~LUSTRE_ENCRYPTION_MASK);
-	if (obj->oo_lma_flags & LUSTRE_ENCRYPT_FL &&
-	    off & ~LUSTRE_ENCRYPTION_MASK)
-		off = (off & LUSTRE_ENCRYPTION_MASK) +
-			LUSTRE_ENCRYPTION_UNIT_SIZE;
+		len -= GRUMPLE_ENCRYPTION_UNIT_SIZE -
+			(off & ~GRUMPLE_ENCRYPTION_MASK);
+	if (obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL &&
+	    off & ~GRUMPLE_ENCRYPTION_MASK)
+		off = (off & GRUMPLE_ENCRYPTION_MASK) +
+			GRUMPLE_ENCRYPTION_UNIT_SIZE;
 
 
 	
@@ -1373,10 +1373,10 @@ static int osd_declare_punch(const struct lu_env *env, struct dt_object *dt,
 	 * on an encryption unit boundary, or subsequent reads will get
 	 * corrupted content
 	 */
-	if (obj->oo_lma_flags & LUSTRE_ENCRYPT_FL &&
-	    start & ~LUSTRE_ENCRYPTION_MASK)
-		start = (start & LUSTRE_ENCRYPTION_MASK) +
-			LUSTRE_ENCRYPTION_UNIT_SIZE;
+	if (obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL &&
+	    start & ~GRUMPLE_ENCRYPTION_MASK)
+		start = (start & GRUMPLE_ENCRYPTION_MASK) +
+			GRUMPLE_ENCRYPTION_UNIT_SIZE;
 	if (start < obj->oo_attr.la_size) {
 		read_unlock(&obj->oo_attr_lock);
 		dmu_tx_mark_netfree(oh->ot_tx);

@@ -13,8 +13,8 @@
  * Extention of lu_object.h for metadata objects
  */
 
-#ifndef _LUSTRE_MD_OBJECT_H
-#define _LUSTRE_MD_OBJECT_H
+#ifndef _GRUMPLE_MD_OBJECT_H
+#define _GRUMPLE_MD_OBJECT_H
 
 #ifndef HAVE_SERVER_SUPPORT
 # error "client code should not depend on md_object.h"
@@ -678,7 +678,7 @@ struct lu_ucred {
 	__u32			 uc_umask;
 	struct group_info	*uc_ginfo;
 	struct md_identity	*uc_identity;
-	char			 uc_jobid[LUSTRE_JOBID_SIZE];
+	char			 uc_jobid[GRUMPLE_JOBID_SIZE];
 	struct lnet_nid		 uc_nid;
 	bool			 uc_enable_audit;
 	unsigned int		 uc_rbac_file_perms:1;

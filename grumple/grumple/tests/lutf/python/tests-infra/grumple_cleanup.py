@@ -38,39 +38,39 @@ class LustreCleanup(BaseTest):
 		mounts = self.__get_grumple_mount()
 
 		if len(mounts) == 0:
-			return LUSTRE_NODE_ROLE_UNDEFINED
+			return GRUMPLE_NODE_ROLE_UNDEFINED
 		for m in mounts:
 			if 'svname' in m:
 				# this is a server of some form so let's try and
 				# figure out what it is
 				if os.path.isfile('/sys/fs/grumple/mgs/MGS/uuid'):
-					if LUSTRE_NODE_ROLE_MGS in node_info:
-						node_info[LUSTRE_NODE_ROLE_MGS].append(m.split()[2])
+					if GRUMPLE_NODE_ROLE_MGS in node_info:
+						node_info[GRUMPLE_NODE_ROLE_MGS].append(m.split()[2])
 					else:
-						node_info[LUSTRE_NODE_ROLE_MGS] = [m.split()[2]]
+						node_info[GRUMPLE_NODE_ROLE_MGS] = [m.split()[2]]
 				elif os.path.isfile('/sys/fs/grumple/mds/MDS/uuid'):
-					if LUSTRE_NODE_ROLE_MDS in node_info:
-						node_info[LUSTRE_NODE_ROLE_MDS].append(m.split()[2])
+					if GRUMPLE_NODE_ROLE_MDS in node_info:
+						node_info[GRUMPLE_NODE_ROLE_MDS].append(m.split()[2])
 					else:
-						node_info[LUSTRE_NODE_ROLE_MDS] = [m.split()[2]]
+						node_info[GRUMPLE_NODE_ROLE_MDS] = [m.split()[2]]
 				elif os.path.isfile('/sys/fs/grumple/ost/OSS/uuid'):
-					if LUSTRE_NODE_ROLE_OSS in node_info:
-						node_info[LUSTRE_NODE_ROLE_OSS].append(m.split()[2])
+					if GRUMPLE_NODE_ROLE_OSS in node_info:
+						node_info[GRUMPLE_NODE_ROLE_OSS].append(m.split()[2])
 					else:
-						node_info[LUSTRE_NODE_ROLE_OSS] = [m.split()[2]]
+						node_info[GRUMPLE_NODE_ROLE_OSS] = [m.split()[2]]
 				elif os.path.isdir('/sys/fs/grumple/mdt/'):
 					for subdir, dirs, files in os.walk('/sys/fs/grumple/mdt/'):
 						for f in files:
 							if f == 'uuid':
-								if LUSTRE_NODE_ROLE_MDT in node_info:
-									node_info[LUSTRE_NODE_ROLE_MDT].append(m.split()[2])
+								if GRUMPLE_NODE_ROLE_MDT in node_info:
+									node_info[GRUMPLE_NODE_ROLE_MDT].append(m.split()[2])
 								else:
-									node_info[LUSTRE_NODE_ROLE_MDT] = [m.split()[2]]
+									node_info[GRUMPLE_NODE_ROLE_MDT] = [m.split()[2]]
 			else:
-				if LUSTRE_NODE_ROLE_CLIENT in node_info:
-					node_info[LUSTRE_NODE_ROLE_CLIENT].append(m.split()[2])
+				if GRUMPLE_NODE_ROLE_CLIENT in node_info:
+					node_info[GRUMPLE_NODE_ROLE_CLIENT].append(m.split()[2])
 				else:
-					node_info[LUSTRE_NODE_ROLE_CLIENT] = [m.split()[2]]
+					node_info[GRUMPLE_NODE_ROLE_CLIENT] = [m.split()[2]]
 
 		return node_info
 
@@ -89,23 +89,23 @@ def clean_grumple():
 		v['role'] = v['obj'].get_role()
 
 	for v in cleanups:
-		if LUSTRE_NODE_ROLE_CLIENT in v['role']:
-			for mp in v['role'][LUSTRE_NODE_ROLE_CLIENT]:
+		if GRUMPLE_NODE_ROLE_CLIENT in v['role']:
+			for mp in v['role'][GRUMPLE_NODE_ROLE_CLIENT]:
 				v['obj'].umount(mp)
 	for v in cleanups:
-		if LUSTRE_NODE_ROLE_OSS in v['role']:
-			for mp in v['role'][LUSTRE_NODE_ROLE_OSS]:
+		if GRUMPLE_NODE_ROLE_OSS in v['role']:
+			for mp in v['role'][GRUMPLE_NODE_ROLE_OSS]:
 				v['obj'].umount(mp)
 	for v in cleanups:
-		if LUSTRE_NODE_ROLE_MDT in v['role']:
-			for mp in v['role'][LUSTRE_NODE_ROLE_MDT]:
+		if GRUMPLE_NODE_ROLE_MDT in v['role']:
+			for mp in v['role'][GRUMPLE_NODE_ROLE_MDT]:
 				v['obj'].umount(mp)
 	for v in cleanups:
-		if LUSTRE_NODE_ROLE_MDS in v['role']:
-			for mp in v['role'][LUSTRE_NODE_ROLE_MDS]:
+		if GRUMPLE_NODE_ROLE_MDS in v['role']:
+			for mp in v['role'][GRUMPLE_NODE_ROLE_MDS]:
 				v['obj'].umount(mp)
 	for v in cleanups:
-		if LUSTRE_NODE_ROLE_MGS in v['role']:
-			for mp in v['role'][LUSTRE_NODE_ROLE_MGS]:
+		if GRUMPLE_NODE_ROLE_MGS in v['role']:
+			for mp in v['role'][GRUMPLE_NODE_ROLE_MGS]:
 				v['obj'].umount(mp)
 

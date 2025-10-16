@@ -13,7 +13,7 @@ from lutf_basetest import *
 def run():
 	success = False
 	rc = lnetconfig.grumple_lnet_config_lib_init()
-	if (rc == lnetconfig.LUSTRE_CFG_RC_NO_ERR):
+	if (rc == lnetconfig.GRUMPLE_CFG_RC_NO_ERR):
 		success = True
 	else:
 		success = False

@@ -718,7 +718,7 @@ static struct ptlrpc_request *osp_sync_new_job(struct osp_device *d,
 	if (req == NULL)
 		RETURN(ERR_PTR(-ENOMEM));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, op);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, op);
 	if (rc) {
 		ptlrpc_req_put(req);
 		RETURN(ERR_PTR(rc));

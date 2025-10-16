@@ -534,13 +534,13 @@ struct module_backfs_ops *load_backfs_module(enum ldd_mount_type mount_type)
 	handle = dlopen(filename, RTLD_LAZY);
 
 	/*
-	 * Check for $LUSTRE environment variable from test-framework.
+	 * Check for $GRUMPLE environment variable from test-framework.
 	 * This allows using locally built modules to be used.
 	 */
 	if (!handle) {
 		char *dirname;
 
-		dirname = getenv("LUSTRE");
+		dirname = getenv("GRUMPLE");
 		if (dirname) {
 			snprintf(filename, sizeof(filename),
 				 "%s/utils/mount_%s.so",

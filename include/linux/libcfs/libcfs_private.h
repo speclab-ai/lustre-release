@@ -79,7 +79,7 @@ do {									\
 # define LASSERTF(cond, ...) ((void)sizeof!!(cond))
 #endif 
 
-#ifdef CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK
+#ifdef CONFIG_GRUMPLE_DEBUG_EXPENSIVE_CHECK
 /**
  * This is for more expensive checks that one doesn't want to be enabled all
  * the time. LINVRNT() has to be explicitly enabled by --enable-invariants

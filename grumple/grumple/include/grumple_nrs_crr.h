@@ -12,8 +12,8 @@
  * Network Request Scheduler (NRS) Client Round Robin over NIDs (CRR-N) policy
  */
 
-#ifndef _LUSTRE_NRS_CRR_H
-#define _LUSTRE_NRS_CRR_H
+#ifndef _GRUMPLE_NRS_CRR_H
+#define _GRUMPLE_NRS_CRR_H
 
 /**
  * \name CRR-N

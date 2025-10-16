@@ -242,7 +242,7 @@ static ssize_t uuid_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%s\n", obd->obd_uuid.uuid);
 }
-LUSTRE_RO_ATTR(uuid);
+GRUMPLE_RO_ATTR(uuid);
 
 static ssize_t blocksize_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -260,7 +260,7 @@ static ssize_t blocksize_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_RO_ATTR(blocksize);
+GRUMPLE_RO_ATTR(blocksize);
 
 static ssize_t kbytestotal_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -283,7 +283,7 @@ static ssize_t kbytestotal_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_RO_ATTR(kbytestotal);
+GRUMPLE_RO_ATTR(kbytestotal);
 
 static ssize_t kbytesfree_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -308,7 +308,7 @@ static ssize_t kbytesfree_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_RO_ATTR(kbytesfree);
+GRUMPLE_RO_ATTR(kbytesfree);
 
 static ssize_t kbytesavail_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -333,7 +333,7 @@ static ssize_t kbytesavail_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_RO_ATTR(kbytesavail);
+GRUMPLE_RO_ATTR(kbytesavail);
 
 static ssize_t filestotal_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -351,7 +351,7 @@ static ssize_t filestotal_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_RO_ATTR(filestotal);
+GRUMPLE_RO_ATTR(filestotal);
 
 static ssize_t filesfree_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -369,7 +369,7 @@ static ssize_t filesfree_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_RO_ATTR(filesfree);
+GRUMPLE_RO_ATTR(filesfree);
 
 static ssize_t maxbytes_show(struct kobject *kobj, struct attribute *attr,
 			     char *buf)
@@ -387,7 +387,7 @@ static ssize_t maxbytes_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_RO_ATTR(maxbytes);
+GRUMPLE_RO_ATTR(maxbytes);
 
 static ssize_t namelen_max_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -405,7 +405,7 @@ static ssize_t namelen_max_show(struct kobject *kobj, struct attribute *attr,
 
 	return rc;
 }
-LUSTRE_RO_ATTR(namelen_max);
+GRUMPLE_RO_ATTR(namelen_max);
 
 ssize_t lprocfs_statfs_state(char *buf, size_t buflen, __u32 state)
 {
@@ -453,7 +453,7 @@ static ssize_t statfs_state_show(struct kobject *kobj, struct attribute *attr,
 
 	return lprocfs_statfs_state(buf, PAGE_SIZE, osfs.os_state);
 }
-LUSTRE_RO_ATTR(statfs_state);
+GRUMPLE_RO_ATTR(statfs_state);
 
 ssize_t conn_uuid_show(struct kobject *kobj, struct attribute *attr, char *buf)
 {

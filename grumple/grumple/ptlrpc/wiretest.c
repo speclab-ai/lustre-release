@@ -13,7 +13,7 @@
 
 #define DEBUG_SUBSYSTEM S_RPC
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 # include <linux/fs.h>
 # include <linux/posix_acl_xattr.h>
 #endif 
@@ -328,11 +328,11 @@ void grumple_assert_wire_constants(void)
 	BUILD_BUG_ON(LDLM_FLOCK != 12);
 	BUILD_BUG_ON(LDLM_IBITS != 13);
 	BUILD_BUG_ON(LDLM_TYPE_END != 14);
-	BUILD_BUG_ON(LUSTRE_RES_ID_SEQ_OFF != 0);
-	BUILD_BUG_ON(LUSTRE_RES_ID_VER_OID_OFF != 1);
-	BUILD_BUG_ON(LUSTRE_RES_ID_QUOTA_SEQ_OFF != 2);
-	BUILD_BUG_ON(LUSTRE_RES_ID_QUOTA_VER_OID_OFF != 3);
-	BUILD_BUG_ON(LUSTRE_RES_ID_HSH_OFF != 3);
+	BUILD_BUG_ON(GRUMPLE_RES_ID_SEQ_OFF != 0);
+	BUILD_BUG_ON(GRUMPLE_RES_ID_VER_OID_OFF != 1);
+	BUILD_BUG_ON(GRUMPLE_RES_ID_QUOTA_SEQ_OFF != 2);
+	BUILD_BUG_ON(GRUMPLE_RES_ID_QUOTA_VER_OID_OFF != 3);
+	BUILD_BUG_ON(GRUMPLE_RES_ID_HSH_OFF != 3);
 #ifdef HAVE_SERVER_SUPPORT
 	LASSERTF(OUT_UPDATE == 1000, "found %lld\n",
 		 (long long)OUT_UPDATE);
@@ -591,8 +591,8 @@ void grumple_assert_wire_constants(void)
 		 (long long)(int)offsetof(struct ost_id, oi));
 	LASSERTF((int)sizeof(((struct ost_id *)0)->oi) == 16, "found %lld\n",
 		 (long long)(int)sizeof(((struct ost_id *)0)->oi));
-	LASSERTF(LUSTRE_FID_INIT_OID == 1, "found %lld\n",
-		 (long long)LUSTRE_FID_INIT_OID);
+	LASSERTF(GRUMPLE_FID_INIT_OID == 1, "found %lld\n",
+		 (long long)GRUMPLE_FID_INIT_OID);
 	LASSERTF(FID_SEQ_OST_MDT0 == 0, "found %lld\n",
 		 (long long)FID_SEQ_OST_MDT0);
 	LASSERTF(FID_SEQ_LLOG == 1, "found %lld\n",
@@ -619,8 +619,8 @@ void grumple_assert_wire_constants(void)
 			(long long)FID_SEQ_START);
 	LASSERTF(FID_SEQ_LOCAL_FILE == 0x0000000200000001ULL, "found 0x%.16llxULL\n",
 			(long long)FID_SEQ_LOCAL_FILE);
-	LASSERTF(FID_SEQ_DOT_LUSTRE == 0x0000000200000002ULL, "found 0x%.16llxULL\n",
-			(long long)FID_SEQ_DOT_LUSTRE);
+	LASSERTF(FID_SEQ_DOT_GRUMPLE == 0x0000000200000002ULL, "found 0x%.16llxULL\n",
+			(long long)FID_SEQ_DOT_GRUMPLE);
 	LASSERTF(FID_SEQ_LOCAL_NAME == 0x0000000200000003ULL, "found 0x%.16llxULL\n",
 			(long long)FID_SEQ_LOCAL_NAME);
 	LASSERTF(FID_SEQ_SPECIAL == 0x0000000200000004ULL, "found 0x%.16llxULL\n",
@@ -645,12 +645,12 @@ void grumple_assert_wire_constants(void)
 			(long long)FID_SEQ_LOV_DEFAULT);
 	LASSERTF(FID_OID_SPECIAL_BFL == 0x00000001UL, "found 0x%.8xUL\n",
 		(unsigned)FID_OID_SPECIAL_BFL);
-	LASSERTF(FID_OID_DOT_LUSTRE == 0x00000001UL, "found 0x%.8xUL\n",
-		(unsigned)FID_OID_DOT_LUSTRE);
-	LASSERTF(FID_OID_DOT_LUSTRE_OBF == 0x00000002UL, "found 0x%.8xUL\n",
-		(unsigned)FID_OID_DOT_LUSTRE_OBF);
-	LASSERTF(FID_OID_DOT_LUSTRE_LPF == 0x00000003UL, "found 0x%.8xUL\n",
-		(unsigned)FID_OID_DOT_LUSTRE_LPF);
+	LASSERTF(FID_OID_DOT_GRUMPLE == 0x00000001UL, "found 0x%.8xUL\n",
+		(unsigned)FID_OID_DOT_GRUMPLE);
+	LASSERTF(FID_OID_DOT_GRUMPLE_OBF == 0x00000002UL, "found 0x%.8xUL\n",
+		(unsigned)FID_OID_DOT_GRUMPLE_OBF);
+	LASSERTF(FID_OID_DOT_GRUMPLE_LPF == 0x00000003UL, "found 0x%.8xUL\n",
+		(unsigned)FID_OID_DOT_GRUMPLE_LPF);
 
 	
 	LASSERTF((int)sizeof(struct lu_dirent) == 32, "found %lld\n",
@@ -851,10 +851,10 @@ void grumple_assert_wire_constants(void)
 		 (long long)(int)offsetof(struct grumple_msg_v2, lm_buflens[0]));
 	LASSERTF((int)sizeof(((struct grumple_msg_v2 *)0)->lm_buflens[0]) == 4, "found %lld\n",
 		 (long long)(int)sizeof(((struct grumple_msg_v2 *)0)->lm_buflens[0]));
-	LASSERTF(LUSTRE_MSG_MAGIC_V2 == 0x0bd00bd3UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_MSG_MAGIC_V2);
-	LASSERTF(LUSTRE_MSG_MAGIC_V2_SWABBED == 0xd30bd00bUL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_MSG_MAGIC_V2_SWABBED);
+	LASSERTF(GRUMPLE_MSG_MAGIC_V2 == 0x0bd00bd3UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_MSG_MAGIC_V2);
+	LASSERTF(GRUMPLE_MSG_MAGIC_V2_SWABBED == 0xd30bd00bUL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_MSG_MAGIC_V2_SWABBED);
 
 	
 	LASSERTF((int)sizeof(struct ptlrpc_body_v3) == 184, "found %lld\n",
@@ -956,7 +956,7 @@ void grumple_assert_wire_constants(void)
 		 (long long)(int)offsetof(struct ptlrpc_body_v3, pb_gid));
 	LASSERTF((int)sizeof(((struct ptlrpc_body_v3 *)0)->pb_gid) == 4, "found %lld\n",
 		 (long long)(int)sizeof(((struct ptlrpc_body_v3 *)0)->pb_gid));
-	BUILD_BUG_ON(LUSTRE_JOBID_SIZE != 32);
+	BUILD_BUG_ON(GRUMPLE_JOBID_SIZE != 32);
 	LASSERTF((int)offsetof(struct ptlrpc_body_v3, pb_jobid) == 152, "found %lld\n",
 		 (long long)(int)offsetof(struct ptlrpc_body_v3, pb_jobid));
 	LASSERTF((int)sizeof(((struct ptlrpc_body_v3 *)0)->pb_jobid) == 32, "found %lld\n",
@@ -1079,20 +1079,20 @@ void grumple_assert_wire_constants(void)
 		 (long long)MSG_PTLRPC_HEADER_OFF);
 	LASSERTF(PTLRPC_MSG_VERSION == 0x00000003UL, "found 0x%.8xUL\n",
 		(unsigned)PTLRPC_MSG_VERSION);
-	LASSERTF(LUSTRE_VERSION_MASK == 0xffff0000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_VERSION_MASK);
-	LASSERTF(LUSTRE_OBD_VERSION == 0x00010000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_OBD_VERSION);
-	LASSERTF(LUSTRE_MDS_VERSION == 0x00020000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_MDS_VERSION);
-	LASSERTF(LUSTRE_OST_VERSION == 0x00030000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_OST_VERSION);
-	LASSERTF(LUSTRE_DLM_VERSION == 0x00040000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_DLM_VERSION);
-	LASSERTF(LUSTRE_LOG_VERSION == 0x00050000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_LOG_VERSION);
-	LASSERTF(LUSTRE_MGS_VERSION == 0x00060000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_MGS_VERSION);
+	LASSERTF(GRUMPLE_VERSION_MASK == 0xffff0000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_VERSION_MASK);
+	LASSERTF(GRUMPLE_OBD_VERSION == 0x00010000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_OBD_VERSION);
+	LASSERTF(GRUMPLE_MDS_VERSION == 0x00020000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_MDS_VERSION);
+	LASSERTF(GRUMPLE_OST_VERSION == 0x00030000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_OST_VERSION);
+	LASSERTF(GRUMPLE_DLM_VERSION == 0x00040000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_DLM_VERSION);
+	LASSERTF(GRUMPLE_LOG_VERSION == 0x00050000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_LOG_VERSION);
+	LASSERTF(GRUMPLE_MGS_VERSION == 0x00060000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_MGS_VERSION);
 	LASSERTF(MSGHDR_AT_SUPPORT == 1, "found %lld\n",
 		 (long long)MSGHDR_AT_SUPPORT);
 	LASSERTF(MSGHDR_CKSUM_INCOMPAT18 == 2, "found %lld\n",
@@ -2755,34 +2755,34 @@ void grumple_assert_wire_constants(void)
 		 "found 0%.22lloULL\n", (long long)MDS_OPEN_PCC);
 	LASSERTF(MDS_OPEN_DEFAULT_LMV == 00000000040000000000000ULL,
 		 "found 0%.22lloULL\n", (long long)MDS_OPEN_DEFAULT_LMV);
-	LASSERTF(LUSTRE_SYNC_FL == 0x00000008UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_SYNC_FL);
-	LASSERTF(LUSTRE_IMMUTABLE_FL == 0x00000010UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_IMMUTABLE_FL);
-	LASSERTF(LUSTRE_APPEND_FL == 0x00000020UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_APPEND_FL);
-	LASSERTF(LUSTRE_NODUMP_FL == 0x00000040UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_NODUMP_FL);
-	LASSERTF(LUSTRE_NOATIME_FL == 0x00000080UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_NOATIME_FL);
-	LASSERTF(LUSTRE_INDEX_FL == 0x00001000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_INDEX_FL);
+	LASSERTF(GRUMPLE_SYNC_FL == 0x00000008UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_SYNC_FL);
+	LASSERTF(GRUMPLE_IMMUTABLE_FL == 0x00000010UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_IMMUTABLE_FL);
+	LASSERTF(GRUMPLE_APPEND_FL == 0x00000020UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_APPEND_FL);
+	LASSERTF(GRUMPLE_NODUMP_FL == 0x00000040UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_NODUMP_FL);
+	LASSERTF(GRUMPLE_NOATIME_FL == 0x00000080UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_NOATIME_FL);
+	LASSERTF(GRUMPLE_INDEX_FL == 0x00001000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_INDEX_FL);
 #ifdef HAVE_SERVER_SUPPORT
-	LASSERTF(LUSTRE_ORPHAN_FL == 0x00002000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_ORPHAN_FL);
+	LASSERTF(GRUMPLE_ORPHAN_FL == 0x00002000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_ORPHAN_FL);
 #endif 
-	LASSERTF(LUSTRE_DIRSYNC_FL == 0x00010000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_DIRSYNC_FL);
-	LASSERTF(LUSTRE_TOPDIR_FL == 0x00020000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_TOPDIR_FL);
-	LASSERTF(LUSTRE_INLINE_DATA_FL == 0x10000000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_INLINE_DATA_FL);
+	LASSERTF(GRUMPLE_DIRSYNC_FL == 0x00010000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_DIRSYNC_FL);
+	LASSERTF(GRUMPLE_TOPDIR_FL == 0x00020000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_TOPDIR_FL);
+	LASSERTF(GRUMPLE_INLINE_DATA_FL == 0x10000000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_INLINE_DATA_FL);
 #ifdef HAVE_SERVER_SUPPORT
-	LASSERTF(LUSTRE_SET_SYNC_FL == 0x00040000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_SET_SYNC_FL);
+	LASSERTF(GRUMPLE_SET_SYNC_FL == 0x00040000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_SET_SYNC_FL);
 #endif 
-	LASSERTF(LUSTRE_ENCRYPT_FL == 0x00800000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_ENCRYPT_FL);
+	LASSERTF(GRUMPLE_ENCRYPT_FL == 0x00800000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_ENCRYPT_FL);
 	LASSERTF(MDS_INODELOCK_LOOKUP == 0x00000001UL, "found 0x%.8xUL\n",
 		(unsigned)MDS_INODELOCK_LOOKUP);
 	LASSERTF(MDS_INODELOCK_UPDATE == 0x00000002UL, "found 0x%.8xUL\n",
@@ -4423,7 +4423,7 @@ void grumple_assert_wire_constants(void)
 	
 	LASSERTF((int)sizeof(struct changelog_ext_jobid) == 32, "found %lld\n",
 		 (long long)(int)sizeof(struct changelog_ext_jobid));
-	BUILD_BUG_ON(LUSTRE_JOBID_SIZE != 32);
+	BUILD_BUG_ON(GRUMPLE_JOBID_SIZE != 32);
 	LASSERTF((int)offsetof(struct changelog_ext_jobid, cr_jobid) == 0, "found %lld\n",
 		 (long long)(int)offsetof(struct changelog_ext_jobid, cr_jobid));
 	LASSERTF((int)sizeof(((struct changelog_ext_jobid *)0)->cr_jobid) == 32, "found %lld\n",
@@ -6259,7 +6259,7 @@ void grumple_assert_wire_constants(void)
 	
 	LASSERTF((int)sizeof(struct nodemap_cluster_rec) == 32, "found %lld\n",
 		 (long long)(int)sizeof(struct nodemap_cluster_rec));
-	BUILD_BUG_ON(LUSTRE_NODEMAP_NAME_LENGTH != 16);
+	BUILD_BUG_ON(GRUMPLE_NODEMAP_NAME_LENGTH != 16);
 	LASSERTF((int)offsetof(struct nodemap_cluster_rec, ncr_name[16 + 1]) == 17, "found %lld\n",
 		 (long long)(int)offsetof(struct nodemap_cluster_rec, ncr_name[16 + 1]));
 	LASSERTF((int)sizeof(((struct nodemap_cluster_rec *)0)->ncr_name[16 + 1]) == 1, "found %lld\n",
@@ -6475,7 +6475,7 @@ void grumple_assert_wire_constants(void)
 	
 	LASSERTF((int)sizeof(struct nodemap_fileset_rec) == 32, "found %lld\n",
 		 (long long)(int)sizeof(struct nodemap_fileset_rec));
-	BUILD_BUG_ON(LUSTRE_NODEMAP_FILESET_FRAGMENT_SIZE != 28);
+	BUILD_BUG_ON(GRUMPLE_NODEMAP_FILESET_FRAGMENT_SIZE != 28);
 	LASSERTF((int)offsetof(struct nodemap_fileset_rec, nfr_path_fragment[28]) == 28, "found %lld\n",
 		 (long long)(int)offsetof(struct nodemap_fileset_rec, nfr_path_fragment[28]));
 	LASSERTF((int)sizeof(((struct nodemap_fileset_rec *)0)->nfr_path_fragment[28]) == 1, "found %lld\n",
@@ -6855,10 +6855,10 @@ void grumple_assert_wire_constants(void)
 	LASSERTF((int)sizeof(((struct ofd_access_entry_v1 *)0)->oae_reserved3) == 4, "found %lld\n",
 		 (long long)(int)sizeof(((struct ofd_access_entry_v1 *)0)->oae_reserved3));
 
-	LASSERTF(LUSTRE_ACCESS_LOG_VERSION_1 == 0x00010000UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_ACCESS_LOG_VERSION_1);
-	LASSERTF(LUSTRE_ACCESS_LOG_TYPE_OFD == 0x00000001UL, "found 0x%.8xUL\n",
-		(unsigned)LUSTRE_ACCESS_LOG_TYPE_OFD);
+	LASSERTF(GRUMPLE_ACCESS_LOG_VERSION_1 == 0x00010000UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_ACCESS_LOG_VERSION_1);
+	LASSERTF(GRUMPLE_ACCESS_LOG_TYPE_OFD == 0x00000001UL, "found 0x%.8xUL\n",
+		(unsigned)GRUMPLE_ACCESS_LOG_TYPE_OFD);
 	
 	LASSERTF((int)sizeof(struct grumple_access_log_info_v1) == 168, "found %lld\n",
 		 (long long)(int)sizeof(struct grumple_access_log_info_v1));
@@ -7269,8 +7269,8 @@ void grumple_assert_wire_constants(void)
 #endif 
 	LASSERTF(PORTALS_CFG_TYPE == 1, "found %lld\n",
 		 (long long)PORTALS_CFG_TYPE);
-	LASSERTF(LUSTRE_CFG_TYPE == 123, "found %lld\n",
-		 (long long)LUSTRE_CFG_TYPE);
+	LASSERTF(GRUMPLE_CFG_TYPE == 123, "found %lld\n",
+		 (long long)GRUMPLE_CFG_TYPE);
 
 	
 	LASSERTF((int)sizeof(struct lu_pcc_attach) == 8, "found %lld\n",

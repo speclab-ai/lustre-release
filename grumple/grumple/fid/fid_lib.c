@@ -41,25 +41,25 @@
  * FID_SEQ_START + 1 is for local file id generation.
  * FID_SEQ_START + 2 is for .grumple directory and its objects
  */
-const struct lu_seq_range LUSTRE_SEQ_SPACE_RANGE = {
+const struct lu_seq_range GRUMPLE_SEQ_SPACE_RANGE = {
 	.lsr_start	= FID_SEQ_NORMAL,
 	.lsr_end	= (__u64)~0ULL,
 };
 
 
-const struct lu_seq_range LUSTRE_SEQ_ZERO_RANGE = {
+const struct lu_seq_range GRUMPLE_SEQ_ZERO_RANGE = {
 	.lsr_start = 0,
 };
 
 
-const struct lu_fid LUSTRE_BFL_FID = { .f_seq = FID_SEQ_SPECIAL,
+const struct lu_fid GRUMPLE_BFL_FID = { .f_seq = FID_SEQ_SPECIAL,
 				       .f_oid = FID_OID_SPECIAL_BFL,
 				       .f_ver = 0x0000000000000000 };
-EXPORT_SYMBOL(LUSTRE_BFL_FID);
+EXPORT_SYMBOL(GRUMPLE_BFL_FID);
 
 
-const struct lu_fid LU_LPF_FID = { .f_seq = FID_SEQ_DOT_LUSTRE,
-				   .f_oid = FID_OID_DOT_LUSTRE_LPF,
+const struct lu_fid LU_LPF_FID = { .f_seq = FID_SEQ_DOT_GRUMPLE,
+				   .f_oid = FID_OID_DOT_GRUMPLE_LPF,
 				   .f_ver = 0x0000000000000000 };
 EXPORT_SYMBOL(LU_LPF_FID);
 
@@ -97,7 +97,7 @@ int seq_target_init(const struct lu_env *env,
 	if (!dt->dd_cl_seq)
 		return -ENOMEM;
 
-	seq_client_init(dt->dd_cl_seq, NULL, LUSTRE_SEQ_METADATA,
+	seq_client_init(dt->dd_cl_seq, NULL, GRUMPLE_SEQ_METADATA,
 			svname, ss->ss_server_seq);
 
 	/*

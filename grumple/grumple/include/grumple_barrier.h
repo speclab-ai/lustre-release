@@ -8,8 +8,8 @@
  * Author: Fan, Yong <fan.yong@intel.com>
  */
 
-#ifndef _LUSTRE_BARRIER_H
-# define _LUSTRE_BARRIER_H
+#ifndef _GRUMPLE_BARRIER_H
+# define _GRUMPLE_BARRIER_H
 
 #include <dt_object.h>
 #include <grumple_export.h>

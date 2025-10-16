@@ -23,7 +23,7 @@ void usage(const char *progname)
 		base++;
 
 	fprintf(stderr, "Usage:\n");
-	fprintf(stderr, "  %s LUSTRE_MOUNT_DIR\n", base);
+	fprintf(stderr, "  %s GRUMPLE_MOUNT_DIR\n", base);
 	fprintf(stderr, "\n");
 
 	msg =

@@ -8,10 +8,10 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _LUSTRE_CRYPTO_H_
-#define _LUSTRE_CRYPTO_H_
+#ifndef _GRUMPLE_CRYPTO_H_
+#define _GRUMPLE_CRYPTO_H_
 
-#if defined(HAVE_LUSTRE_CRYPTO) && !defined(CONFIG_LL_ENCRYPTION)
+#if defined(HAVE_GRUMPLE_CRYPTO) && !defined(CONFIG_LL_ENCRYPTION)
 #define __FS_HAS_ENCRYPTION 1
 #include <linux/fscrypt.h>
 
@@ -143,7 +143,7 @@ static inline bool llcrypt_is_nokey_name(const struct dentry *dentry)
 	fscrypt_is_nokey_name(dentry)
 #endif
 
-#if defined(HAVE_LUSTRE_CRYPTO) && !defined(HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED)
+#if defined(HAVE_GRUMPLE_CRYPTO) && !defined(HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED)
 #define llcrypt_show_test_dummy_encryption(seq, sep, sb)	\
 	fscrypt_show_test_dummy_encryption(seq, sep, sb)
 #define llcrypt_set_test_dummy_encryption(sb, arg, ctx)		\

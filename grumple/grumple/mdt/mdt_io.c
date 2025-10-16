@@ -1038,7 +1038,7 @@ int mdt_fallocate_hdl(struct tgt_session_info *tsi)
 	 */
 	if ((oa->o_valid & (OBD_MD_FLSIZE | OBD_MD_FLBLOCKS)) !=
 	    (OBD_MD_FLSIZE | OBD_MD_FLBLOCKS)
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 21, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 21, 53, 0)
 	    && !tsi->tsi_exp->exp_old_falloc
 #endif
 	    )
@@ -1049,7 +1049,7 @@ int mdt_fallocate_hdl(struct tgt_session_info *tsi)
 	CDEBUG(D_INFO, "%s: start: %llu end: %llu\n",
 	       mdt->mdt_child_exp->exp_obd->obd_name, start, end);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 21, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 21, 53, 0)
 	/*
 	 * For inter-op case with older clients (where exp_old_falloc is true)
 	 * fallocate() start and end are passed in as 0 (For interior case
@@ -1936,10 +1936,10 @@ int mdt_dom_read_on_open(struct mdt_thread_info *mti, struct mdt_device *mdt,
 	/* if DoM object holds encrypted content, we need to make sure we
 	 * send whole encryption units, or client will read corrupted content
 	 */
-	if (mbo->mbo_valid & LA_FLAGS && mbo->mbo_flags & LUSTRE_ENCRYPT_FL &&
-	    mbo->mbo_dom_size & ~LUSTRE_ENCRYPTION_MASK)
-		real_dom_size = (mbo->mbo_dom_size & LUSTRE_ENCRYPTION_MASK) +
-				LUSTRE_ENCRYPTION_UNIT_SIZE;
+	if (mbo->mbo_valid & LA_FLAGS && mbo->mbo_flags & GRUMPLE_ENCRYPT_FL &&
+	    mbo->mbo_dom_size & ~GRUMPLE_ENCRYPTION_MASK)
+		real_dom_size = (mbo->mbo_dom_size & GRUMPLE_ENCRYPTION_MASK) +
+				GRUMPLE_ENCRYPTION_UNIT_SIZE;
 	else
 		real_dom_size = mbo->mbo_dom_size;
 

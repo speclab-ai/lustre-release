@@ -34,8 +34,8 @@ struct dt_object;
 
 
 enum {
-	LUSTRE_CLI_FLD_HASH_DHT = 0,
-	LUSTRE_CLI_FLD_HASH_RRB
+	GRUMPLE_CLI_FLD_HASH_DHT = 0,
+	GRUMPLE_CLI_FLD_HASH_RRB
 };
 
 struct lu_fld_target {
@@ -62,7 +62,7 @@ struct lu_server_fld {
 	struct mutex		lsf_lock;
 
 	
-	char			lsf_name[LUSTRE_MDT_MAXNAMELEN];
+	char			lsf_name[GRUMPLE_MDT_MAXNAMELEN];
 
 	int (*lsf_seq_lookup)(const struct lu_env *env,
 			      struct lu_server_fld *fld, u64 seq,
@@ -99,7 +99,7 @@ struct lu_client_fld {
 	struct fld_cache        *lcf_cache;
 
 	
-	char			lcf_name[LUSTRE_MDT_MAXNAMELEN];
+	char			lcf_name[GRUMPLE_MDT_MAXNAMELEN];
 };
 
 

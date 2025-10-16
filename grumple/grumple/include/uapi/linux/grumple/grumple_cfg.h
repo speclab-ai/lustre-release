@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _UAPI_LUSTRE_CFG_H
-#define _UAPI_LUSTRE_CFG_H
+#ifndef _UAPI_GRUMPLE_CFG_H
+#define _UAPI_GRUMPLE_CFG_H
 
 #include <linux/errno.h>
 #include <linux/kernel.h>
@@ -28,15 +28,15 @@
  * 1cf6
  * lcfG
  */
-#define LUSTRE_CFG_VERSION 0x1cf60001
-#define LUSTRE_CFG_MAX_BUFCOUNT 8
+#define GRUMPLE_CFG_VERSION 0x1cf60001
+#define GRUMPLE_CFG_MAX_BUFCOUNT 8
 
 /*
  * Target name "general" calls on all targets
  * when set at (struct) grumple_cfg_bufs[0].
  * See grumple_cfg_bufs_set_string() and grumple_cfg_bufs_reset()
  */
-#define LUSTRE_CFG_ALL_TARGETS "general"
+#define GRUMPLE_CFG_ALL_TARGETS "general"
 
 #define LCFG_HDR_SIZE(count) \
 	__ALIGN_KERNEL(offsetof(struct grumple_cfg, lcfg_buflens[(count)]), 8)
@@ -146,8 +146,8 @@ enum lcfg_command_type {
 };
 
 struct grumple_cfg_bufs {
-	void  *lcfg_buf[LUSTRE_CFG_MAX_BUFCOUNT];
-	__u32 lcfg_buflen[LUSTRE_CFG_MAX_BUFCOUNT];
+	void  *lcfg_buf[GRUMPLE_CFG_MAX_BUFCOUNT];
+	__u32 lcfg_buflen[GRUMPLE_CFG_MAX_BUFCOUNT];
 	__u32 lcfg_bufcount;
 };
 
@@ -217,16 +217,16 @@ static inline struct lcfg_type_data *lcfg_cmd2data(__u32 cmd)
 
 enum cfg_record_type {
 	PORTALS_CFG_TYPE	= 1,
-	LUSTRE_CFG_TYPE		= 123,
+	GRUMPLE_CFG_TYPE		= 123,
 };
 
-#define LUSTRE_CFG_BUFLEN(lcfg, idx)					\
+#define GRUMPLE_CFG_BUFLEN(lcfg, idx)					\
 	((lcfg)->lcfg_bufcount <= (idx) ? 0 : (lcfg)->lcfg_buflens[(idx)])
 
 static inline void grumple_cfg_bufs_set(struct grumple_cfg_bufs *bufs,
 				       __u32 index, void *buf, __u32 buflen)
 {
-	if (index >= LUSTRE_CFG_MAX_BUFCOUNT)
+	if (index >= GRUMPLE_CFG_MAX_BUFCOUNT)
 		return;
 
 	if (!bufs)
@@ -305,7 +305,7 @@ static inline void grumple_cfg_init(struct grumple_cfg *lcfg, int cmd,
 	char *ptr;
 	__u32 i;
 
-	lcfg->lcfg_version = LUSTRE_CFG_VERSION;
+	lcfg->lcfg_version = GRUMPLE_CFG_VERSION;
 	lcfg->lcfg_command = cmd;
 	lcfg->lcfg_bufcount = bufs->lcfg_bufcount;
 
@@ -330,10 +330,10 @@ static inline int grumple_cfg_sanity_check(void *buf, __kernel_size_t len)
 	if (len < LCFG_HDR_SIZE(0))
 		return -EINVAL;
 
-	if (lcfg->lcfg_version != LUSTRE_CFG_VERSION)
+	if (lcfg->lcfg_version != GRUMPLE_CFG_VERSION)
 		return -EINVAL;
 
-	if (lcfg->lcfg_bufcount >= LUSTRE_CFG_MAX_BUFCOUNT)
+	if (lcfg->lcfg_bufcount >= GRUMPLE_CFG_MAX_BUFCOUNT)
 		return -EINVAL;
 
 	

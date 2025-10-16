@@ -2,8 +2,8 @@
 set -e
 set +o monitor
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$SANITY_HSM_EXCEPT "
@@ -4195,7 +4195,7 @@ test_606() {
 	[ $MDS1_VERSION -lt $(version_code 2.10.58) ] &&
 		skip "need MDS version at least 2.10.58"
 	local llog_reader=$(do_facet mgs "which llog_reader 2> /dev/null")
-	llog_reader=${llog_reader:-$LUSTRE/utils/llog_reader}
+	llog_reader=${llog_reader:-$GRUMPLE/utils/llog_reader}
 	[ -z $(do_facet mgs ls -d $llog_reader 2> /dev/null) ] &&
 			skip_env "missing llog_reader"
 	mkdir_on_mdt0 $DIR/$tdir

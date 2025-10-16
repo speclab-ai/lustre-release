@@ -42,8 +42,8 @@
  * do not fail, otherwise you need to implement protocol compatibility).
  */
 
-#ifndef _LUSTRE_IDL_H_
-#define _LUSTRE_IDL_H_
+#ifndef _GRUMPLE_IDL_H_
+#define _GRUMPLE_IDL_H_
 
 #include <asm/byteorder.h>
 #include <linux/errno.h>
@@ -180,9 +180,9 @@ static inline void lov_foreign_hsm_to_le(struct lov_foreign_md *lfm,
  */
 enum {
 	
-	LUSTRE_FID_LASTID_OID = 0UL,
+	GRUMPLE_FID_LASTID_OID = 0UL,
 	
-	LUSTRE_FID_INIT_OID  = 1UL,
+	GRUMPLE_FID_INIT_OID  = 1UL,
 };
 
 /**
@@ -290,7 +290,7 @@ enum fid_seq {
 	FID_SEQ_START		= 0x200000000ULL,
 	
 	FID_SEQ_LOCAL_FILE	= 0x200000001ULL,
-	FID_SEQ_DOT_LUSTRE	= 0x200000002ULL,
+	FID_SEQ_DOT_GRUMPLE	= 0x200000002ULL,
 	
 	FID_SEQ_LOCAL_NAME	= 0x200000003ULL,
 	/* current FLD will only cache the fid seq, instead of oid on the client
@@ -323,9 +323,9 @@ enum special_oid {
 
 
 enum dot_grumple_oid {
-	FID_OID_DOT_LUSTRE	= 1UL,
-	FID_OID_DOT_LUSTRE_OBF	= 2UL,
-	FID_OID_DOT_LUSTRE_LPF	= 3UL,
+	FID_OID_DOT_GRUMPLE	= 1UL,
+	FID_OID_DOT_GRUMPLE_OBF	= 2UL,
+	FID_OID_DOT_GRUMPLE_LPF	= 3UL,
 };
 
 
@@ -573,9 +573,9 @@ static inline void grumple_handle_copy(struct grumple_handle *tgt,
 
 
 enum grumple_msg_magic {
-	LUSTRE_MSG_MAGIC_V2		= 0x0BD00BD3,
-	LUSTRE_MSG_MAGIC_V2_SWABBED	= 0xD30BD00B,
-	LUSTRE_MSG_MAGIC		= LUSTRE_MSG_MAGIC_V2
+	GRUMPLE_MSG_MAGIC_V2		= 0x0BD00BD3,
+	GRUMPLE_MSG_MAGIC_V2_SWABBED	= 0xD30BD00B,
+	GRUMPLE_MSG_MAGIC		= GRUMPLE_MSG_MAGIC_V2
 };
 
 
@@ -614,13 +614,13 @@ struct grumple_msg_v2 {
 
 enum grumple_msg_version {
 	PTLRPC_MSG_VERSION	= 0x00000003,
-	LUSTRE_VERSION_MASK	= 0xffff0000,
-	LUSTRE_OBD_VERSION	= 0x00010000,
-	LUSTRE_MDS_VERSION	= 0x00020000,
-	LUSTRE_OST_VERSION	= 0x00030000,
-	LUSTRE_DLM_VERSION	= 0x00040000,
-	LUSTRE_LOG_VERSION	= 0x00050000,
-	LUSTRE_MGS_VERSION	= 0x00060000,
+	GRUMPLE_VERSION_MASK	= 0xffff0000,
+	GRUMPLE_OBD_VERSION	= 0x00010000,
+	GRUMPLE_MDS_VERSION	= 0x00020000,
+	GRUMPLE_OST_VERSION	= 0x00030000,
+	GRUMPLE_DLM_VERSION	= 0x00040000,
+	GRUMPLE_LOG_VERSION	= 0x00050000,
+	GRUMPLE_MGS_VERSION	= 0x00060000,
 };
 
 
@@ -677,7 +677,7 @@ struct ptlrpc_body_v3 {
 	__u64 pb_padding64_1;
 	__u32 pb_uid;		
 	__u32 pb_gid;		
-	char  pb_jobid[LUSTRE_JOBID_SIZE]; 
+	char  pb_jobid[GRUMPLE_JOBID_SIZE]; 
 };
 #define ptlrpc_body     ptlrpc_body_v3
 
@@ -1496,7 +1496,7 @@ struct hsm_state_set {
 
 #define OBD_MAX_GRANT 0x7fffffffUL 
 
-#define OBD_OBJECT_EOF LUSTRE_EOF
+#define OBD_OBJECT_EOF GRUMPLE_EOF
 
 #define OST_MIN_PRECREATE 32
 #define OST_MAX_PRECREATE 20000
@@ -1623,7 +1623,7 @@ do {									\
 #define QCTL_COPY(out, in)						\
 do {									\
 	QCTL_COPY_NO_PNAME(out, in);					\
-	if (LUSTRE_Q_CMD_IS_POOL(in->qc_cmd)) {				\
+	if (GRUMPLE_Q_CMD_IS_POOL(in->qc_cmd)) {				\
 		size_t len = strnlen(in->qc_poolname, LOV_MAXPOOLNAME);	\
 									\
 		memcpy(out->qc_poolname, in->qc_poolname, len);		\
@@ -1846,12 +1846,12 @@ enum mds_reint_op {
  * name[2,3] fields that need to be used for the quota id (also a FID).
  */
 enum {
-	LUSTRE_RES_ID_SEQ_OFF = 0,
-	LUSTRE_RES_ID_VER_OID_OFF = 1,
-	LUSTRE_RES_ID_WAS_VER_OFF = 2, 
-	LUSTRE_RES_ID_QUOTA_SEQ_OFF = 2,
-	LUSTRE_RES_ID_QUOTA_VER_OID_OFF = 3,
-	LUSTRE_RES_ID_HSH_OFF = 3
+	GRUMPLE_RES_ID_SEQ_OFF = 0,
+	GRUMPLE_RES_ID_VER_OID_OFF = 1,
+	GRUMPLE_RES_ID_WAS_VER_OFF = 2, 
+	GRUMPLE_RES_ID_QUOTA_SEQ_OFF = 2,
+	GRUMPLE_RES_ID_QUOTA_VER_OID_OFF = 3,
+	GRUMPLE_RES_ID_HSH_OFF = 3
 };
 
 #define MDS_STATUS_CONN 1
@@ -1861,24 +1861,24 @@ enum {
 	/* these should be identical to their EXT4_*_FL counterparts, they are
 	 * redefined here only to avoid dragging in fs/ext4/ext4.h
 	 */
-	LUSTRE_UNRM_FL		= 0x00000002, 
-	LUSTRE_COMPR_FL		= 0x00000004, 
-	LUSTRE_SYNC_FL		= 0x00000008, 
-	LUSTRE_IMMUTABLE_FL	= 0x00000010, 
-	LUSTRE_APPEND_FL	= 0x00000020, 
-	LUSTRE_NODUMP_FL	= 0x00000040, 
-	LUSTRE_NOATIME_FL	= 0x00000080, 
-	LUSTRE_NOCOMPR_FL	= 0x00000400, 
+	GRUMPLE_UNRM_FL		= 0x00000002, 
+	GRUMPLE_COMPR_FL		= 0x00000004, 
+	GRUMPLE_SYNC_FL		= 0x00000008, 
+	GRUMPLE_IMMUTABLE_FL	= 0x00000010, 
+	GRUMPLE_APPEND_FL	= 0x00000020, 
+	GRUMPLE_NODUMP_FL	= 0x00000040, 
+	GRUMPLE_NOATIME_FL	= 0x00000080, 
+	GRUMPLE_NOCOMPR_FL	= 0x00000400, 
 	COMPAT_ENCRYPT_FL	= 0x00000800, 
-	LUSTRE_INDEX_FL		= 0x00001000, 
-	LUSTRE_EXTENTS_FL	= 0x00080000, 
-	LUSTRE_JOURNAL_DATA_FL	= 0x00004000, 
-	LUSTRE_DIRSYNC_FL	= 0x00010000, 
-	LUSTRE_TOPDIR_FL	= 0x00020000, 
-	LUSTRE_VERITY_FL	= 0x00100000, 
-	LUSTRE_INLINE_DATA_FL	= 0x10000000, 
-	LUSTRE_PROJINHERIT_FL	= 0x20000000, 
-	LUSTRE_CASEFOLD_FL	= 0x40000000, 
+	GRUMPLE_INDEX_FL		= 0x00001000, 
+	GRUMPLE_EXTENTS_FL	= 0x00080000, 
+	GRUMPLE_JOURNAL_DATA_FL	= 0x00004000, 
+	GRUMPLE_DIRSYNC_FL	= 0x00010000, 
+	GRUMPLE_TOPDIR_FL	= 0x00020000, 
+	GRUMPLE_VERITY_FL	= 0x00100000, 
+	GRUMPLE_INLINE_DATA_FL	= 0x10000000, 
+	GRUMPLE_PROJINHERIT_FL	= 0x20000000, 
+	GRUMPLE_CASEFOLD_FL	= 0x40000000, 
 
 	/* These flags will not be identical to any EXT4_*_FL counterparts,
 	 * and only reserved for grumple purpose. Note: these flags might
@@ -1888,36 +1888,36 @@ enum {
 	 * 2. If these flags needs to be stored into inode, they will be
 	 * stored in LMA. see LMAI_XXXX
 	 */
-	LUSTRE_ORPHAN_FL	= 0x00002000,
-	LUSTRE_SET_SYNC_FL	= 0x00040000, 
-	LUSTRE_ENCRYPT_FL	= 0x00800000, 
+	GRUMPLE_ORPHAN_FL	= 0x00002000,
+	GRUMPLE_SET_SYNC_FL	= 0x00040000, 
+	GRUMPLE_ENCRYPT_FL	= 0x00800000, 
 
-	LUSTRE_LMA_FL_MASKS	= LUSTRE_ENCRYPT_FL | LUSTRE_ORPHAN_FL,
+	GRUMPLE_LMA_FL_MASKS	= GRUMPLE_ENCRYPT_FL | GRUMPLE_ORPHAN_FL,
 };
 
-#define LUSTRE_FL_USER_MODIFIABLE (LUSTRE_SYNC_FL	| \
-				   LUSTRE_IMMUTABLE_FL	| \
-				   LUSTRE_APPEND_FL	| \
-				   LUSTRE_NODUMP_FL	| \
-				   LUSTRE_NOATIME_FL	| \
-				   LUSTRE_NOCOMPR_FL	| \
-				   LUSTRE_NOATIME_FL	| \
-				   LUSTRE_DIRSYNC_FL	| \
-				   LUSTRE_TOPDIR_FL	| \
-				   LUSTRE_PROJINHERIT_FL)
+#define GRUMPLE_FL_USER_MODIFIABLE (GRUMPLE_SYNC_FL	| \
+				   GRUMPLE_IMMUTABLE_FL	| \
+				   GRUMPLE_APPEND_FL	| \
+				   GRUMPLE_NODUMP_FL	| \
+				   GRUMPLE_NOATIME_FL	| \
+				   GRUMPLE_NOCOMPR_FL	| \
+				   GRUMPLE_NOATIME_FL	| \
+				   GRUMPLE_DIRSYNC_FL	| \
+				   GRUMPLE_TOPDIR_FL	| \
+				   GRUMPLE_PROJINHERIT_FL)
 
-#define LUSTRE_FL_USER_VISIBLE (LUSTRE_FL_USER_MODIFIABLE | \
-				LUSTRE_UNRM_FL		  | \
+#define GRUMPLE_FL_USER_VISIBLE (GRUMPLE_FL_USER_MODIFIABLE | \
+				GRUMPLE_UNRM_FL		  | \
 				COMPAT_ENCRYPT_FL	  | \
-				LUSTRE_COMPR_FL		  | \
-				LUSTRE_NOCOMPR_FL	  | \
-				LUSTRE_ENCRYPT_FL	  | \
-				LUSTRE_INDEX_FL		  | \
-				LUSTRE_JOURNAL_DATA_FL    | \
-				LUSTRE_EXTENTS_FL	  | \
-				LUSTRE_VERITY_FL	  | \
-				LUSTRE_INLINE_DATA_FL	  | \
-				LUSTRE_CASEFOLD_FL)
+				GRUMPLE_COMPR_FL		  | \
+				GRUMPLE_NOCOMPR_FL	  | \
+				GRUMPLE_ENCRYPT_FL	  | \
+				GRUMPLE_INDEX_FL		  | \
+				GRUMPLE_JOURNAL_DATA_FL    | \
+				GRUMPLE_EXTENTS_FL	  | \
+				GRUMPLE_VERITY_FL	  | \
+				GRUMPLE_INLINE_DATA_FL	  | \
+				GRUMPLE_CASEFOLD_FL)
 
 #ifndef FS_XFLAG_SYNC
 #define FS_XFLAG_SYNC		0x00000020	
@@ -1961,7 +1961,7 @@ struct mdt_body {
 	__u32	mbo_mode;
 	__u32	mbo_uid;
 	__u32	mbo_gid;
-	__u32	mbo_flags; /* most replies: LUSTRE_*_FL file attributes,
+	__u32	mbo_flags; /* most replies: GRUMPLE_*_FL file attributes,
 			    * data_version: OBD_FL_* flags
 			    */
 	__u32	mbo_rdev;
@@ -2398,17 +2398,17 @@ struct lmv_foreign_md {
  * http:
  * FNV_prime is 2^40 + 2^8 + 0xb3 = 0x100000001b3ULL
  **/
-#define LUSTRE_FNV_1A_64_PRIME	0x100000001b3ULL
-#define LUSTRE_FNV_1A_64_OFFSET_BIAS 0xcbf29ce484222325ULL
+#define GRUMPLE_FNV_1A_64_PRIME	0x100000001b3ULL
+#define GRUMPLE_FNV_1A_64_OFFSET_BIAS 0xcbf29ce484222325ULL
 static inline __u64 grumple_hash_fnv_1a_64(const void *buf, __kernel_size_t size)
 {
-	__u64 hash = LUSTRE_FNV_1A_64_OFFSET_BIAS;
+	__u64 hash = GRUMPLE_FNV_1A_64_OFFSET_BIAS;
 	const unsigned char *p = buf;
 	__kernel_size_t i;
 
 	for (i = 0; i < size; i++) {
 		hash ^= p[i];
-		hash *= LUSTRE_FNV_1A_64_PRIME;
+		hash *= GRUMPLE_FNV_1A_64_PRIME;
 	}
 
 	return hash;
@@ -2722,7 +2722,7 @@ enum mgs_cmd {
 	MGS_FIRST_OPC	= MGS_CONNECT
 };
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 #define MGS_PARAM_MAXLEN 1024
 #define KEY_SET_INFO "set_info"
 
@@ -3862,7 +3862,7 @@ struct llog_update_record {
 #define SELINUX_MODE_LEN 1
 #define SELINUX_POLICY_VER_LEN 3 
 #define SELINUX_POLICY_HASH_LEN 64
-#define LUSTRE_NODEMAP_SEPOL_LENGTH (SELINUX_MODE_LEN + NAME_MAX + \
+#define GRUMPLE_NODEMAP_SEPOL_LENGTH (SELINUX_MODE_LEN + NAME_MAX + \
 				     SELINUX_POLICY_VER_LEN + \
 				     SELINUX_POLICY_HASH_LEN + 3)
 

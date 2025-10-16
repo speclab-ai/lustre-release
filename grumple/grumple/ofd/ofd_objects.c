@@ -956,10 +956,10 @@ int ofd_object_punch(const struct lu_env *env, struct ofd_object *fo,
 	if (IS_ERR(th))
 		GOTO(out, rc = PTR_ERR(th));
 
-	if (oa->o_valid & OBD_MD_FLFLAGS && oa->o_flags & LUSTRE_ENCRYPT_FL) {
+	if (oa->o_valid & OBD_MD_FLFLAGS && oa->o_flags & GRUMPLE_ENCRYPT_FL) {
 		
 		la->la_valid |= LA_FLAGS;
-		la->la_flags |= LUSTRE_ENCRYPT_FL;
+		la->la_flags |= GRUMPLE_ENCRYPT_FL;
 	}
 	rc = dt_declare_attr_set(env, dob, la, th);
 	if (rc)

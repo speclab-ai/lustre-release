@@ -1579,7 +1579,7 @@ static int mdt_rename_lock(struct mdt_thread_info *info,
 	mdt_lock_reg_init(lh, LCK_EX);
 	ibits = trylock ? MDS_INODELOCK_NONE : MDS_INODELOCK_UPDATE;
 	trybits = trylock ? MDS_INODELOCK_UPDATE : MDS_INODELOCK_NONE;
-	rc = mdt_object_lock_internal(info, obj, &LUSTRE_BFL_FID, lh,
+	rc = mdt_object_lock_internal(info, obj, &GRUMPLE_BFL_FID, lh,
 				      &ibits, trybits, false);
 	mdt_object_put(info->mti_env, obj);
 	if (trylock && (ibits & MDS_INODELOCK_UPDATE))

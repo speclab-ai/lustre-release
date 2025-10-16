@@ -124,11 +124,11 @@ int llapi_create_volatile_param(const char *directory, int mdt_idx,
 		rnumber = random();
 		if (mdt_idx == -1)
 			rc = snprintf(file_path, sizeof(file_path),
-				      "%s/" LUSTRE_VOLATILE_HDR "::%.4X",
+				      "%s/" GRUMPLE_VOLATILE_HDR "::%.4X",
 				      directory, rnumber);
 		else
 			rc = snprintf(file_path, sizeof(file_path),
-				      "%s/" LUSTRE_VOLATILE_HDR ":%.4X:%.4X",
+				      "%s/" GRUMPLE_VOLATILE_HDR ":%.4X:%.4X",
 				      directory, mdt_idx, rnumber);
 
 		if (rc < 0 || rc >= sizeof(file_path))
@@ -159,7 +159,7 @@ int llapi_create_volatile_param(const char *directory, int mdt_idx,
 		llapi_error(LLAPI_MSG_ERROR, rc,
 			    "Cannot create volatile file '%s' in '%s'",
 			    file_path + strlen(directory) + 1 +
-			    LUSTRE_VOLATILE_HDR_LEN,
+			    GRUMPLE_VOLATILE_HDR_LEN,
 			    directory);
 		return rc;
 	}

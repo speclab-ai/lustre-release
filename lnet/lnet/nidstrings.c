@@ -1835,7 +1835,7 @@ libcfs_strid(struct lnet_processid *id, const char *str)
 {
 	char *tmp = strchr(str, '-');
 
-	id->pid = LNET_PID_LUSTRE;
+	id->pid = LNET_PID_GRUMPLE;
 	if (tmp &&
 	    strncmp("LNET_PID_ANY-", str, tmp - str) != 0) {
 		char pid[LNET_NIDSTR_SIZE];

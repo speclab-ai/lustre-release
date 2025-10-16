@@ -852,7 +852,7 @@ int ptlrpc_request_bufs_pack(struct ptlrpc_request *request,
 		GOTO(out_ctx, rc);
 
 	grumple_msg_add_version(request->rq_reqmsg, version);
-	request->rq_send_state = LUSTRE_IMP_FULL;
+	request->rq_send_state = GRUMPLE_IMP_FULL;
 	request->rq_type = PTL_RPC_MSG_REQUEST;
 
 	request->rq_req_cbid.cbid_fn  = request_out_callback;
@@ -990,10 +990,10 @@ static int ptlrpc_reconnect_if_idle(struct obd_import *imp)
 	 * in ptlrpc_disconnect_idle_interpret()
 	 */
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state == LUSTRE_IMP_IDLE) {
+	if (imp->imp_state == GRUMPLE_IMP_IDLE) {
 		imp->imp_generation++;
 		imp->imp_initiated_at = imp->imp_generation;
-		imp->imp_state = LUSTRE_IMP_NEW;
+		imp->imp_state = GRUMPLE_IMP_NEW;
 
 		
 		rc = ptlrpc_connect_import_locked(imp);
@@ -1031,7 +1031,7 @@ ptlrpc_request_alloc_internal(struct obd_import *imp,
 
 	/* don't make expensive check for idling connection
 	 * if it's already connected */
-	if (unlikely(imp->imp_state != LUSTRE_IMP_FULL)) {
+	if (unlikely(imp->imp_state != GRUMPLE_IMP_FULL)) {
 		if (ptlrpc_reconnect_if_idle(imp) < 0) {
 			atomic_dec(&imp->imp_reqs);
 			ptlrpc_request_free(request);
@@ -1265,7 +1265,7 @@ void ptlrpc_set_add_req(struct ptlrpc_request_set *set,
 		return;
 	}
 
-	LASSERT(req->rq_import->imp_state != LUSTRE_IMP_IDLE);
+	LASSERT(req->rq_import->imp_state != GRUMPLE_IMP_IDLE);
 	LASSERT(list_empty(&req->rq_set_chain));
 
 	if (req->rq_allow_intr)
@@ -1356,10 +1356,10 @@ static int ptlrpc_import_delay_req(struct obd_import *imp,
 
 	if (req->rq_ctx_init || req->rq_ctx_fini) {
 		
-	} else if (imp->imp_state == LUSTRE_IMP_NEW) {
+	} else if (imp->imp_state == GRUMPLE_IMP_NEW) {
 		DEBUG_REQ(D_ERROR, req, "Uninitialized import");
 		*status = -EIO;
-	} else if (imp->imp_state == LUSTRE_IMP_CLOSED) {
+	} else if (imp->imp_state == GRUMPLE_IMP_CLOSED) {
 		unsigned int opc = grumple_msg_get_opc(req->rq_reqmsg);
 
 		/*
@@ -1373,8 +1373,8 @@ static int ptlrpc_import_delay_req(struct obd_import *imp,
 		
 		DEBUG_REQ(D_HA, req, "send limit expired");
 		*status = -ETIMEDOUT;
-	} else if (req->rq_send_state == LUSTRE_IMP_CONNECTING &&
-		   imp->imp_state == LUSTRE_IMP_CONNECTING) {
+	} else if (req->rq_send_state == GRUMPLE_IMP_CONNECTING &&
+		   imp->imp_state == GRUMPLE_IMP_CONNECTING) {
 		;
 		if (atomic_read(&imp->imp_inval_count) != 0) {
 			DEBUG_REQ(D_ERROR, req, "invalidate in flight");
@@ -1398,10 +1398,10 @@ static int ptlrpc_import_delay_req(struct obd_import *imp,
 			
 			*status = -EAGAIN;
 		} else if (req->rq_allow_replay &&
-			   (imp->imp_state == LUSTRE_IMP_REPLAY ||
-			    imp->imp_state == LUSTRE_IMP_REPLAY_LOCKS ||
-			    imp->imp_state == LUSTRE_IMP_REPLAY_WAIT ||
-			    imp->imp_state == LUSTRE_IMP_RECOVER)) {
+			   (imp->imp_state == GRUMPLE_IMP_REPLAY ||
+			    imp->imp_state == GRUMPLE_IMP_REPLAY_LOCKS ||
+			    imp->imp_state == GRUMPLE_IMP_REPLAY_WAIT ||
+			    imp->imp_state == GRUMPLE_IMP_RECOVER)) {
 			DEBUG_REQ(D_HA, req, "allow during recovery");
 		} else {
 			delay = 1;
@@ -1489,7 +1489,7 @@ static int ptlrpc_check_status(struct ptlrpc_request *req)
 
 			current_time = ktime_get_real_seconds();
 			if (current_time > last_ban_time + 6 * 3600) {
-				char fsname[LUSTRE_MAXFSNAME + 1];
+				char fsname[GRUMPLE_MAXFSNAME + 1];
 
 				if (server_name2fsname(imp->imp_obd->obd_name,
 						       fsname, NULL))
@@ -1680,7 +1680,7 @@ static int after_reply(struct ptlrpc_request *req)
 		 * the upcall.
 		 */
 		if (ptlrpc_recoverable_error(rc)) {
-			if (req->rq_send_state != LUSTRE_IMP_FULL ||
+			if (req->rq_send_state != GRUMPLE_IMP_FULL ||
 			    imp->imp_obd->obd_no_recov || imp->imp_dlm_fake) {
 				RETURN(rc);
 			}
@@ -2492,7 +2492,7 @@ int ptlrpc_expire_one_request(struct ptlrpc_request *req, int async_unlink)
 	 * then error it out here.
 	 */
 	if (req->rq_ctx_init || req->rq_ctx_fini ||
-	    req->rq_send_state != LUSTRE_IMP_FULL ||
+	    req->rq_send_state != GRUMPLE_IMP_FULL ||
 	    imp->imp_obd->obd_no_recov) {
 		DEBUG_REQ(D_RPCTRACE, req, "err -110, sent_state=%s (now=%s)",
 			  ptlrpc_import_state_name(req->rq_send_state),
@@ -2683,7 +2683,7 @@ int ptlrpc_set_wait(const struct lu_env *env, struct ptlrpc_request_set *set)
 		if ((timeout == 0 && !signal_pending(current)) ||
 		    set->set_allow_intr) {
 			state = TASK_INTERRUPTIBLE;
-			allow = LUSTRE_FATAL_SIGS;
+			allow = GRUMPLE_FATAL_SIGS;
 		}
 		
 		do {
@@ -3488,7 +3488,7 @@ int ptlrpc_replay_req(struct ptlrpc_request *req)
 
 	ENTRY;
 
-	LASSERT(req->rq_import->imp_state == LUSTRE_IMP_REPLAY);
+	LASSERT(req->rq_import->imp_state == GRUMPLE_IMP_REPLAY);
 
 	CFS_FAIL_TIMEOUT(OBD_FAIL_PTLRPC_REPLAY_PAUSE, cfs_fail_val);
 
@@ -3497,7 +3497,7 @@ int ptlrpc_replay_req(struct ptlrpc_request *req)
 
 	
 	aa->praa_old_state = req->rq_send_state;
-	req->rq_send_state = LUSTRE_IMP_REPLAY;
+	req->rq_send_state = GRUMPLE_IMP_REPLAY;
 	req->rq_phase = RQ_PHASE_NEW;
 	req->rq_next_phase = RQ_PHASE_UNDEFINED;
 	if (req->rq_repmsg)

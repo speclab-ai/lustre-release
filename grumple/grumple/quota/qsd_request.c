@@ -89,7 +89,7 @@ int qsd_send_dqacq(const struct lu_env *env, struct obd_export *exp,
 
 	req->rq_no_resend = req->rq_no_delay = 1;
 	req->rq_no_retry_einprogress = 1;
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, QUOTA_DQACQ);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, QUOTA_DQACQ);
 	if (rc) {
 		ptlrpc_request_free(req);
 		GOTO(out, rc);
@@ -349,7 +349,7 @@ int qsd_fetch_index(const struct lu_env *env, struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OBD_VERSION, OBD_IDX_READ);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OBD_VERSION, OBD_IDX_READ);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);

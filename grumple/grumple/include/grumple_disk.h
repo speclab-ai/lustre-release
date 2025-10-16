@@ -15,8 +15,8 @@
  * Author: Nathan Rutman <nathan@clusterfs.com>
  */
 
-#ifndef _LUSTRE_DISK_H
-#define _LUSTRE_DISK_H
+#ifndef _GRUMPLE_DISK_H
+#define _GRUMPLE_DISK_H
 
 /** \defgroup disk disk
  *
@@ -26,7 +26,7 @@
 #include <linux/types.h>
 #include <linux/backing-dev.h>
 #include <linux/list.h>
-#if !defined(CONFIG_LL_ENCRYPTION) && defined(HAVE_LUSTRE_CRYPTO)
+#if !defined(CONFIG_LL_ENCRYPTION) && defined(HAVE_GRUMPLE_CRYPTO)
 #include <grumple_crypto.h>
 #endif
 #include <uapi/linux/grumple/grumple_idl.h>
@@ -141,7 +141,7 @@ struct grumple_sb_info {
 #ifdef CONFIG_LL_ENCRYPTION
 	const struct llcrypt_operations	*lsi_cop;
 	struct key		 *lsi_master_keys; 
-#elif defined(HAVE_LUSTRE_CRYPTO) && \
+#elif defined(HAVE_GRUMPLE_CRYPTO) && \
 	!defined(HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED)
 	
 	struct llcrypt_dummy_policy	lsi_dummy_enc_policy;

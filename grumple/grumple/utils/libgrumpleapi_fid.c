@@ -289,7 +289,7 @@ int llapi_fd2fid(int fd, struct lu_fid *fid)
 		return -errno;
 	}
 
-	if (handle->handle_type != FILEID_LUSTRE)
+	if (handle->handle_type != FILEID_GRUMPLE)
 		
 		return fid_from_lma(NULL, fd, fid);
 	if (handle->handle_bytes < sizeof(*fid))
@@ -402,7 +402,7 @@ int llapi_fid_to_handle(struct file_handle **_handle, const struct lu_fid *fid)
 		return -errno;
 
 	handle->handle_bytes = sizeof(*lfh);
-	handle->handle_type = FILEID_LUSTRE;
+	handle->handle_type = FILEID_GRUMPLE;
 	lfh = (struct grumple_file_handle *)handle->f_handle;
 	
 	lfh->lfh_child = *fid;

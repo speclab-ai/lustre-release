@@ -551,13 +551,13 @@ static int qmt_quotactl(const struct lu_env *env, struct lu_device *ld,
 		
 		RETURN(-EINVAL);
 
-	poolname = LUSTRE_Q_CMD_IS_POOL(oqctl->qc_cmd) ?
+	poolname = GRUMPLE_Q_CMD_IS_POOL(oqctl->qc_cmd) ?
 			oqctl->qc_poolname : NULL;
 
 	switch (oqctl->qc_cmd) {
 
 	case Q_GETINFO:  
-	case LUSTRE_Q_GETINFOPOOL:
+	case GRUMPLE_Q_GETINFOPOOL:
 		
 		id->qid_uid = 0;
 
@@ -576,7 +576,7 @@ static int qmt_quotactl(const struct lu_env *env, struct lu_device *ld,
 		break;
 
 	case Q_SETINFO:  
-	case LUSTRE_Q_SETINFOPOOL:
+	case GRUMPLE_Q_SETINFOPOOL:
 		/* setinfo should be using dqi->dqi_valid, but lfs incorrectly
 		 * sets the valid flags in dqb->dqb_valid instead, try to live
 		 * with that ... */
@@ -602,7 +602,7 @@ static int qmt_quotactl(const struct lu_env *env, struct lu_device *ld,
 				     poolname);
 		break;
 
-	case LUSTRE_Q_ITERQUOTA:
+	case GRUMPLE_Q_ITERQUOTA:
 		if (oqctl->qc_iter_md_offset == 0 &&
 		    oqctl->qc_iter_dt_offset == 0)
 			is_first_iter = true;
@@ -652,13 +652,13 @@ static int qmt_quotactl(const struct lu_env *env, struct lu_device *ld,
 		}
 		break;
 
-	case LUSTRE_Q_GETDEFAULT:
-	case LUSTRE_Q_GETDEFAULT_POOL:
+	case GRUMPLE_Q_GETDEFAULT:
+	case GRUMPLE_Q_GETDEFAULT_POOL:
 		is_default = true;
 		fallthrough;
 
 	case Q_GETQUOTA: 
-	case LUSTRE_Q_GETQUOTAPOOL:
+	case GRUMPLE_Q_GETQUOTAPOOL:
 		
 		id->qid_uid = oqctl->qc_id;
 
@@ -687,13 +687,13 @@ static int qmt_quotactl(const struct lu_env *env, struct lu_device *ld,
 		dqb->dqb_curspace = 0;
 		break;
 
-	case LUSTRE_Q_SETDEFAULT:
-	case LUSTRE_Q_SETDEFAULT_POOL:
+	case GRUMPLE_Q_SETDEFAULT:
+	case GRUMPLE_Q_SETDEFAULT_POOL:
 		is_default = true;
 		fallthrough;
 
 	case Q_SETQUOTA: 
-	case LUSTRE_Q_SETQUOTAPOOL:
+	case GRUMPLE_Q_SETQUOTAPOOL:
 		
 		id->qid_uid = oqctl->qc_id;
 
@@ -717,7 +717,7 @@ static int qmt_quotactl(const struct lu_env *env, struct lu_device *ld,
 				     false, poolname);
 		break;
 
-	case LUSTRE_Q_DELETEQID:
+	case GRUMPLE_Q_DELETEQID:
 		rc = qmt_delete_qid(env, qmt, LQUOTA_RES_MD, oqctl->qc_type,
 				    oqctl->qc_id);
 		if (rc)
@@ -727,7 +727,7 @@ static int qmt_quotactl(const struct lu_env *env, struct lu_device *ld,
 				    oqctl->qc_id);
 		break;
 
-	case LUSTRE_Q_RESETQID:
+	case GRUMPLE_Q_RESETQID:
 		if (oqctl->qc_id == 0)
 			RETURN(-EINVAL);
 

@@ -1,4 +1,4 @@
-. $LUSTRE/tests/cfg/local.sh
+. $GRUMPLE/tests/cfg/local.sh
 RCLIENTS=${RCLIENTS:-""}
 init_clients_lists
 [ -n "$RCLIENTS" -a "$PDSH" = "no_dsh" ] &&
@@ -7,7 +7,7 @@ init_clients_lists
 export PATH=/opt/iozone/bin:$PATH
 LOADS=${LOADS:-"dd tar dbench iozone"}
 for i in $LOADS; do
-	[ -f $LUSTRE/tests/run_${i}.sh ] || error "incorrect load: $i"
+	[ -f $GRUMPLE/tests/run_${i}.sh ] || error "incorrect load: $i"
 done
 CLIENT_LOADS=($LOADS)
 SRUN=${SRUN:-$(which srun 2>/dev/null || true)}

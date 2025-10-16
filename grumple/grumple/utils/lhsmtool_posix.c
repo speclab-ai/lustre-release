@@ -561,7 +561,7 @@ static int ct_save_stripe(int src_fd, const char *src, const char *dst)
 	snprintf(lov_file, sizeof(lov_file), "%s.lov", dst);
 	CT_TRACE("saving stripe info of '%s' in %s", src, lov_file);
 
-	xattr_size = fgetxattr(src_fd, XATTR_LUSTRE_LOV, lov_buf,
+	xattr_size = fgetxattr(src_fd, XATTR_GRUMPLE_LOV, lov_buf,
 			       sizeof(lov_buf));
 	if (xattr_size < 0) {
 		rc = -errno;
@@ -643,7 +643,7 @@ static int ct_restore_stripe(const char *src, const char *dst, int dst_fd,
 {
 	int	rc;
 
-	rc = fsetxattr(dst_fd, XATTR_LUSTRE_LOV, lovea, lovea_size,
+	rc = fsetxattr(dst_fd, XATTR_GRUMPLE_LOV, lovea, lovea_size,
 		       XATTR_CREATE);
 	if (rc < 0) {
 		rc = -errno;

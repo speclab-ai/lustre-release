@@ -106,7 +106,7 @@ __out:	__ret;								\
 	long __ret = ret;				\
 	sigset_t __old_blocked, __new_blocked;				\
 									\
-	siginitset(&__new_blocked, LUSTRE_FATAL_SIGS);			\
+	siginitset(&__new_blocked, GRUMPLE_FATAL_SIGS);			\
 	sigprocmask(0, &__new_blocked, &__old_blocked);			\
 	init_wait(&__wq_entry);						\
 	if (exclusive)							\
@@ -372,7 +372,7 @@ do {									\
 	long __ret = ret;				\
 	sigset_t __old_blocked, __new_blocked;				\
 									\
-	siginitset(&__new_blocked, LUSTRE_FATAL_SIGS);			\
+	siginitset(&__new_blocked, GRUMPLE_FATAL_SIGS);			\
 	sigprocmask(0, &__new_blocked, &__old_blocked);			\
 	init_wait(&__wq_entry);						\
 	__wq_entry.flags = WQ_FLAG_EXCLUSIVE;				\
@@ -424,9 +424,9 @@ do {									\
 
 /* l_wait_event_abortable() is a bit like wait_event_killable()
  * except there is a fixed set of signals which will abort:
- * LUSTRE_FATAL_SIGS
+ * GRUMPLE_FATAL_SIGS
  */
-#define LUSTRE_FATAL_SIGS					 \
+#define GRUMPLE_FATAL_SIGS					 \
 	(sigmask(SIGKILL) | sigmask(SIGINT) | sigmask(SIGTERM) | \
 	 sigmask(SIGQUIT) | sigmask(SIGALRM))
 
@@ -434,7 +434,7 @@ do {									\
 ({									\
 	sigset_t __new_blocked, __old_blocked;				\
 	int __ret = 0;							\
-	siginitsetinv(&__new_blocked, LUSTRE_FATAL_SIGS);		\
+	siginitsetinv(&__new_blocked, GRUMPLE_FATAL_SIGS);		\
 	sigprocmask(SIG_BLOCK, &__new_blocked, &__old_blocked);		\
 	__ret = wait_event_interruptible(wq, condition);		\
 	sigprocmask(SIG_SETMASK, &__old_blocked, NULL);			\
@@ -445,7 +445,7 @@ do {									\
 ({									\
 	sigset_t __new_blocked, __old_blocked;				\
 	int __ret = 0;							\
-	siginitsetinv(&__new_blocked, LUSTRE_FATAL_SIGS);		\
+	siginitsetinv(&__new_blocked, GRUMPLE_FATAL_SIGS);		\
 	sigprocmask(SIG_BLOCK, &__new_blocked, &__old_blocked);		\
 	__ret = wait_event_interruptible_exclusive(wq, condition);	\
 	sigprocmask(SIG_SETMASK, &__old_blocked, NULL);			\

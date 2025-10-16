@@ -83,7 +83,7 @@ static ssize_t dom_stripesize_store(struct kobject *kobj,
 }
 
 
-LUSTRE_RW_ATTR(dom_stripesize);
+GRUMPLE_RW_ATTR(dom_stripesize);
 
 
 static ssize_t dom_stripesize_max_kb_show(struct kobject *kobj,
@@ -116,7 +116,7 @@ static ssize_t dom_stripesize_max_kb_store(struct kobject *kobj,
 		return rc;
 	return count;
 }
-LUSTRE_RW_ATTR(dom_stripesize_max_kb);
+GRUMPLE_RW_ATTR(dom_stripesize_max_kb);
 
 
 static ssize_t dom_stripesize_cur_kb_show(struct kobject *kobj,
@@ -130,7 +130,7 @@ static ssize_t dom_stripesize_cur_kb_show(struct kobject *kobj,
 			 lod->lod_dom_stripesize_cur_kb);
 }
 
-LUSTRE_RO_ATTR(dom_stripesize_cur_kb);
+GRUMPLE_RO_ATTR(dom_stripesize_cur_kb);
 
 
 static ssize_t dom_threshold_free_mb_show(struct kobject *kobj,
@@ -167,7 +167,7 @@ static ssize_t dom_threshold_free_mb_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(dom_threshold_free_mb);
+GRUMPLE_RW_ATTR(dom_threshold_free_mb);
 
 static ssize_t stripesize_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -199,7 +199,7 @@ static ssize_t stripesize_store(struct kobject *kobj, struct attribute *attr,
 	return count;
 }
 
-LUSTRE_RW_ATTR(stripesize);
+GRUMPLE_RW_ATTR(stripesize);
 
 
 static ssize_t stripeoffset_show(struct kobject *kobj, struct attribute *attr,
@@ -241,7 +241,7 @@ static ssize_t stripeoffset_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(stripeoffset);
+GRUMPLE_RW_ATTR(stripeoffset);
 
 static ssize_t max_stripecount_show(struct kobject *kobj,
 				    struct attribute *attr, char *buf)
@@ -273,7 +273,7 @@ static ssize_t max_stripecount_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(max_stripecount);
+GRUMPLE_RW_ATTR(max_stripecount);
 
 static ssize_t max_mdt_stripecount_show(struct kobject *kobj,
 					struct attribute *attr, char *buf)
@@ -305,7 +305,7 @@ static ssize_t max_mdt_stripecount_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(max_mdt_stripecount);
+GRUMPLE_RW_ATTR(max_mdt_stripecount);
 
 static ssize_t max_stripes_per_mdt_show(struct kobject *kobj,
 					struct attribute *attr, char *buf)
@@ -337,7 +337,7 @@ static ssize_t max_stripes_per_mdt_store(struct kobject *kobj,
 	return count;
 }
 
-LUSTRE_RW_ATTR(max_stripes_per_mdt);
+GRUMPLE_RW_ATTR(max_stripes_per_mdt);
 
 
 
@@ -405,8 +405,8 @@ static ssize_t stripetype_store(struct kobject *kobj,
 	return __stripetype_store(kobj, attr, buffer, count, false);
 }
 
-LUSTRE_RW_ATTR(mdt_stripetype);
-LUSTRE_RW_ATTR(stripetype);
+GRUMPLE_RW_ATTR(mdt_stripetype);
+GRUMPLE_RW_ATTR(stripetype);
 
 
 static ssize_t __stripecount_show(struct kobject *kobj, struct attribute *attr,
@@ -474,8 +474,8 @@ static ssize_t stripecount_store(struct kobject *kobj,
 	return __stripecount_store(kobj, attr, buffer, count, false);
 }
 
-LUSTRE_RW_ATTR(mdt_stripecount);
-LUSTRE_RW_ATTR(stripecount);
+GRUMPLE_RW_ATTR(mdt_stripecount);
+GRUMPLE_RW_ATTR(stripecount);
 
 
 static ssize_t __numobd_show(struct kobject *kobj, struct attribute *attr,
@@ -503,8 +503,8 @@ static ssize_t numobd_show(struct kobject *kobj, struct attribute *attr,
 	return __numobd_show(kobj, attr, buf, false);
 }
 
-LUSTRE_RO_ATTR(mdt_numobd);
-LUSTRE_RO_ATTR(numobd);
+GRUMPLE_RO_ATTR(mdt_numobd);
+GRUMPLE_RO_ATTR(numobd);
 
 
 static ssize_t __activeobd_show(struct kobject *kobj, struct attribute *attr,
@@ -532,8 +532,8 @@ static ssize_t activeobd_show(struct kobject *kobj, struct attribute *attr,
 	return __activeobd_show(kobj, attr, buf, false);
 }
 
-LUSTRE_RO_ATTR(mdt_activeobd);
-LUSTRE_RO_ATTR(activeobd);
+GRUMPLE_RO_ATTR(mdt_activeobd);
+GRUMPLE_RO_ATTR(activeobd);
 
 
 static ssize_t desc_uuid_show(struct kobject *kobj, struct attribute *attr,
@@ -546,7 +546,7 @@ static ssize_t desc_uuid_show(struct kobject *kobj, struct attribute *attr,
 	return scnprintf(buf, PAGE_SIZE, "%s\n",
 			 lod->lod_ost_descs.ltd_lov_desc.ld_uuid.uuid);
 }
-LUSTRE_RO_ATTR(desc_uuid);
+GRUMPLE_RO_ATTR(desc_uuid);
 
 /*
  * Show QoS priority parameter.
@@ -641,8 +641,8 @@ static ssize_t qos_prio_free_store(struct kobject *kobj, struct attribute *attr,
 	return __qos_prio_free_store(kobj, attr, buffer, count, false);
 }
 
-LUSTRE_RW_ATTR(mdt_qos_prio_free);
-LUSTRE_RW_ATTR(qos_prio_free);
+GRUMPLE_RW_ATTR(mdt_qos_prio_free);
+GRUMPLE_RW_ATTR(qos_prio_free);
 
 
 static ssize_t __qos_threshold_rr_show(struct kobject *kobj,
@@ -731,8 +731,8 @@ static ssize_t qos_threshold_rr_store(struct kobject *kobj,
 	return __qos_threshold_rr_store(kobj, attr, buffer, count, false);
 }
 
-LUSTRE_RW_ATTR(mdt_qos_threshold_rr);
-LUSTRE_RW_ATTR(qos_threshold_rr);
+GRUMPLE_RW_ATTR(mdt_qos_threshold_rr);
+GRUMPLE_RW_ATTR(qos_threshold_rr);
 
 /* Show expiration period used to refresh cached statfs data, which
  * is used to implement QoS/RR striping allocation algorithm.
@@ -826,8 +826,8 @@ static ssize_t qos_maxage_store(struct kobject *kobj, struct attribute *attr,
 	return __qos_maxage_store(kobj, attr, buffer, count, false);
 }
 
-LUSTRE_RW_ATTR(mdt_qos_maxage);
-LUSTRE_RW_ATTR(qos_maxage);
+GRUMPLE_RW_ATTR(mdt_qos_maxage);
+GRUMPLE_RW_ATTR(qos_maxage);
 
 static void *lod_tgts_seq_start(struct seq_file *p, loff_t *pos, bool is_mdt)
 {
@@ -1026,7 +1026,7 @@ static ssize_t lmv_failout_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(lmv_failout);
+GRUMPLE_RW_ATTR(lmv_failout);
 
 static ssize_t mdt_hash_show(struct kobject *kobj, struct attribute *attr,
 			     char *buf)
@@ -1070,7 +1070,7 @@ out:
 
 	return rc;
 }
-LUSTRE_RW_ATTR(mdt_hash);
+GRUMPLE_RW_ATTR(mdt_hash);
 
 static ssize_t dist_txn_check_space_show(struct kobject *kobj,
 					 struct attribute *attr,
@@ -1101,7 +1101,7 @@ static ssize_t dist_txn_check_space_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(dist_txn_check_space);
+GRUMPLE_RW_ATTR(dist_txn_check_space);
 
 static const struct proc_ops lod_proc_mdt_fops = {
 	PROC_OWNER(THIS_MODULE)

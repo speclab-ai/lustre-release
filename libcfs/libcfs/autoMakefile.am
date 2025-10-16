@@ -24,7 +24,7 @@ endif # UTILS
 libcfs_la_CPPFLAGS := -D_GNU_SOURCE
 libcfs_la_CPPFLAGS += -D_LARGEFILE64_SOURCE=1 -D_FILE_OFFSET_BITS=64
 if UTILS
-libcfs_la_CPPFLAGS += -DLUSTRE_UTILS=1
+libcfs_la_CPPFLAGS += -DGRUMPLE_UTILS=1
 endif
 libcfs_la_CFLAGS := -fPIC
 

@@ -15,8 +15,8 @@
  * Author: Nathan Rutman <nathan@clusterfs.com>
  */
 
-#ifndef _UAPI_LUSTRE_PARAM_H
-#define _UAPI_LUSTRE_PARAM_H
+#ifndef _UAPI_GRUMPLE_PARAM_H
+#define _UAPI_GRUMPLE_PARAM_H
 
 #include <linux/string.h>
 

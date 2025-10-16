@@ -61,7 +61,7 @@ static ssize_t active_store(struct kobject *kobj, struct attribute *attr,
 	class_import_put(imp);
 	return rc ?: count;
 }
-LUSTRE_RW_ATTR(active);
+GRUMPLE_RW_ATTR(active);
 
 static ssize_t max_rpcs_in_flight_show(struct kobject *kobj,
 				       struct attribute *attr,
@@ -98,7 +98,7 @@ static ssize_t max_rpcs_in_flight_store(struct kobject *kobj,
 
 	return rc ? rc : count;
 }
-LUSTRE_RW_ATTR(max_rpcs_in_flight);
+GRUMPLE_RW_ATTR(max_rpcs_in_flight);
 
 static ssize_t max_mod_rpcs_in_flight_show(struct kobject *kobj,
 					   struct attribute *attr,
@@ -132,9 +132,9 @@ static ssize_t max_mod_rpcs_in_flight_store(struct kobject *kobj,
 
 	return rc ? rc : count;
 }
-LUSTRE_RW_ATTR(max_mod_rpcs_in_flight);
+GRUMPLE_RW_ATTR(max_mod_rpcs_in_flight);
 
-LUSTRE_RW_ATTR(max_pages_per_rpc);
+GRUMPLE_RW_ATTR(max_pages_per_rpc);
 
 static ssize_t max_dirty_mb_show(struct kobject *kobj,
 				 struct attribute *attr,
@@ -175,7 +175,7 @@ static ssize_t max_dirty_mb_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_dirty_mb);
+GRUMPLE_RW_ATTR(max_dirty_mb);
 
 static ssize_t checksums_show(struct kobject *kobj,
 			      struct attribute *attr, char *buf)
@@ -204,9 +204,9 @@ static ssize_t checksums_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(checksums);
+GRUMPLE_RW_ATTR(checksums);
 
-LUSTRE_RW_ATTR(checksum_type);
+GRUMPLE_RW_ATTR(checksum_type);
 
 static ssize_t checksum_dump_show(struct kobject *kobj,
 				  struct attribute *attr, char *buf)
@@ -235,13 +235,13 @@ static ssize_t checksum_dump_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(checksum_dump);
+GRUMPLE_RW_ATTR(checksum_dump);
 
-LUSTRE_ATTR(mds_conn_uuid, 0444, conn_uuid_show, NULL);
-LUSTRE_RO_ATTR(conn_uuid);
+GRUMPLE_ATTR(mds_conn_uuid, 0444, conn_uuid_show, NULL);
+GRUMPLE_RO_ATTR(conn_uuid);
 
-LUSTRE_RW_ATTR(pinger_recov);
-LUSTRE_RW_ATTR(ping);
+GRUMPLE_RW_ATTR(pinger_recov);
+GRUMPLE_RW_ATTR(ping);
 
 static int mdc_cached_mb_seq_show(struct seq_file *m, void *v)
 {
@@ -332,7 +332,7 @@ static ssize_t dom_min_repsize_store(struct kobject *kobj,
 	obd->u.cli.cl_dom_min_inline_repsize = val;
 	return count;
 }
-LUSTRE_RW_ATTR(dom_min_repsize);
+GRUMPLE_RW_ATTR(dom_min_repsize);
 
 static ssize_t lsom_show(struct kobject *kobj, struct attribute *attr,
 			 char *buf)
@@ -359,7 +359,7 @@ static ssize_t lsom_store(struct kobject *kobj, struct attribute *attr,
 	obd->u.cli.cl_lsom_update = val;
 	return count;
 }
-LUSTRE_RW_ATTR(lsom);
+GRUMPLE_RW_ATTR(lsom);
 
 static int mdc_unstable_stats_seq_show(struct seq_file *m, void *v)
 {
@@ -603,7 +603,7 @@ static ssize_t cur_lost_grant_bytes_show(struct kobject *kobj,
 
 	return scnprintf(buf, PAGE_SIZE, "%lu\n", cli->cl_lost_grant);
 }
-LUSTRE_RO_ATTR(cur_lost_grant_bytes);
+GRUMPLE_RO_ATTR(cur_lost_grant_bytes);
 
 static ssize_t cur_dirty_grant_bytes_show(struct kobject *kobj,
 					  struct attribute *attr,
@@ -615,7 +615,7 @@ static ssize_t cur_dirty_grant_bytes_show(struct kobject *kobj,
 
 	return scnprintf(buf, PAGE_SIZE, "%lu\n", cli->cl_dirty_grant);
 }
-LUSTRE_RO_ATTR(cur_dirty_grant_bytes);
+GRUMPLE_RO_ATTR(cur_dirty_grant_bytes);
 
 static ssize_t cur_grant_bytes_show(struct kobject *kobj,
 				    struct attribute *attr,
@@ -651,7 +651,7 @@ static ssize_t cur_grant_bytes_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(cur_grant_bytes);
+GRUMPLE_RW_ATTR(cur_grant_bytes);
 
 static ssize_t grant_shrink_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
@@ -694,7 +694,7 @@ static ssize_t grant_shrink_store(struct kobject *kobj, struct attribute *attr,
 
 	return rc ?: count;
 }
-LUSTRE_RW_ATTR(grant_shrink);
+GRUMPLE_RW_ATTR(grant_shrink);
 
 static ssize_t grant_shrink_interval_show(struct kobject *kobj,
 					  struct attribute *attr,
@@ -729,12 +729,12 @@ static ssize_t grant_shrink_interval_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(grant_shrink_interval);
+GRUMPLE_RW_ATTR(grant_shrink_interval);
 
-LUSTRE_OBD_UINT_PARAM_ATTR(at_min);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_max);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_history);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_unhealthy_factor);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_min);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_max);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_history);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_unhealthy_factor);
 
 static struct attribute *mdc_attrs[] = {
 	&grumple_attr_active.attr,

@@ -475,8 +475,8 @@ static int lov_add_mdc_target(const struct lu_env *env, struct lu_device *d,
 		obd_device_for_each_uuid(dev_no, lmv_obd,
 					 &lov_obd->obd_uuid) {
 			if ((strncmp(lmv_obd->obd_type->typ_name,
-				     LUSTRE_LMV_NAME,
-				     strlen(LUSTRE_LMV_NAME)) == 0)) {
+				     GRUMPLE_LMV_NAME,
+				     strlen(GRUMPLE_LMV_NAME)) == 0)) {
 				spin_lock(&lmv_obd->obd_dev_lock);
 				class_incref(lmv_obd, "lov", ld);
 				spin_unlock(&lmv_obd->obd_dev_lock);
@@ -560,7 +560,7 @@ static int lov_process_config(const struct lu_env *env,
 		 * modify_mdc_tgts add 0:grumple-clilmv  1:grumple-MDT0000_UUID
 		 * 2:0  3:1  4:grumple-MDT0000-mdc_UUID
 		 */
-		if (LUSTRE_CFG_BUFLEN(cfg, 1) > sizeof(tgt_uuid.uuid))
+		if (GRUMPLE_CFG_BUFLEN(cfg, 1) > sizeof(tgt_uuid.uuid))
 			GOTO(out, rc = -EINVAL);
 
 		obd_str2uuid(&tgt_uuid, grumple_cfg_buf(cfg, 1));
@@ -569,7 +569,7 @@ static int lov_process_config(const struct lu_env *env,
 		if (rc)
 			GOTO(out, rc);
 
-		mdc = class_find_client_obd(&tgt_uuid, LUSTRE_MDC_NAME,
+		mdc = class_find_client_obd(&tgt_uuid, GRUMPLE_MDC_NAME,
 					    &obd->obd_uuid);
 		if (!mdc)
 			GOTO(out, rc = -ENODEV);
@@ -673,7 +673,7 @@ static const struct lu_device_type_operations lov_device_type_ops = {
 
 struct lu_device_type lov_device_type = {
 	.ldt_tags     = LU_DEVICE_CL,
-	.ldt_name     = LUSTRE_LOV_NAME,
+	.ldt_name     = GRUMPLE_LOV_NAME,
 	.ldt_ops      = &lov_device_type_ops,
 	.ldt_ctx_tags = LCT_CL_THREAD
 };

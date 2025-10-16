@@ -41,7 +41,7 @@ __u32 grumple_msg_hdr_size(__u32 magic, __u32 count)
 	LASSERT(count > 0);
 
 	switch (magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_msg_hdr_size_v2(count);
 	default:
 		LASSERTF(0, "incorrect message magic: %08x\n", magic);
@@ -54,24 +54,24 @@ static inline int grumple_msg_check_version_v2(struct grumple_msg_v2 *msg,
 {
 	enum grumple_msg_version ver = grumple_msg_get_version(msg);
 
-	return (ver & LUSTRE_VERSION_MASK) != version;
+	return (ver & GRUMPLE_VERSION_MASK) != version;
 }
 
 int grumple_msg_check_version(struct grumple_msg *msg,
 			     enum grumple_msg_version version)
 {
-#define LUSTRE_MSG_MAGIC_V1 0x0BD00BD0
+#define GRUMPLE_MSG_MAGIC_V1 0x0BD00BD0
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V1:
+	case GRUMPLE_MSG_MAGIC_V1:
 		CERROR("msg v1 not supported - please upgrade you system\n");
 		return -EINVAL;
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_msg_check_version_v2(msg, version);
 	default:
 		CERROR("incorrect message magic: %08x\n", msg->lm_magic);
 		return -EPROTO;
 	}
-#undef LUSTRE_MSG_MAGIC_V1
+#undef GRUMPLE_MSG_MAGIC_V1
 }
 
 __u32 grumple_msg_early_size;
@@ -82,7 +82,7 @@ void grumple_msg_early_size_init(void)
 {
 	__u32 pblen = sizeof(struct ptlrpc_body);
 
-	grumple_msg_early_size = grumple_msg_size(LUSTRE_MSG_MAGIC_V2, 1, &pblen);
+	grumple_msg_early_size = grumple_msg_size(GRUMPLE_MSG_MAGIC_V2, 1, &pblen);
 }
 
 __u32 grumple_msg_size_v2(int count, __u32 *lengths)
@@ -120,7 +120,7 @@ __u32 grumple_msg_size(__u32 magic, int count, __u32 *lens)
 	LASSERT(lens[MSG_PTLRPC_BODY_OFF] >= sizeof(struct ptlrpc_body_v2));
 
 	switch (magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_msg_size_v2(count, lens);
 	default:
 		LASSERTF(0, "incorrect message magic: %08x\n", magic);
@@ -135,7 +135,7 @@ __u32 grumple_msg_size(__u32 magic, int count, __u32 *lens)
 __u32 grumple_packed_msg_size(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_msg_size_v2(msg->lm_bufcount, msg->lm_buflens);
 	default:
 		CERROR("incorrect message magic: %08x\n", msg->lm_magic);
@@ -154,7 +154,7 @@ void grumple_init_msg_v2(struct grumple_msg_v2 *msg, int count, __u32 *lens,
 
 	msg->lm_bufcount = count;
 	
-	msg->lm_magic = LUSTRE_MSG_MAGIC_V2;
+	msg->lm_magic = GRUMPLE_MSG_MAGIC_V2;
 
 	for (i = 0; i < count; i++)
 		msg->lm_buflens[i] = lens[i];
@@ -205,10 +205,10 @@ int grumple_pack_request(struct ptlrpc_request *req, __u32 magic, int count,
 	LASSERT(lens[MSG_PTLRPC_BODY_OFF] == sizeof(struct ptlrpc_body));
 
 	
-	magic = LUSTRE_MSG_MAGIC_V2;
+	magic = GRUMPLE_MSG_MAGIC_V2;
 
 	switch (magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_pack_request_v2(req, count, lens, bufs);
 	default:
 		LASSERTF(0, "incorrect message magic: %08x\n", magic);
@@ -344,7 +344,7 @@ int grumple_pack_reply_flags(struct ptlrpc_request *req, int count, __u32 *lens,
 	LASSERT(lens[MSG_PTLRPC_BODY_OFF] == sizeof(struct ptlrpc_body));
 
 	switch (req->rq_reqmsg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		rc = grumple_pack_reply_v2(req, count, lens, bufs, flags);
 		break;
 	default:
@@ -397,7 +397,7 @@ void *grumple_msg_buf_v2(struct grumple_msg_v2 *m, __u32 n, __u32 min_size)
 void *grumple_msg_buf(struct grumple_msg *m, __u32 n, __u32 min_size)
 {
 	switch (m->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_msg_buf_v2(m, n, min_size);
 	default:
 		LASSERTF(0, "incorrect message magic: %08x (msg:%px)\n",
@@ -458,7 +458,7 @@ int grumple_shrink_msg(struct grumple_msg *msg, int segment,
 		      unsigned int newlen, int move_data)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_shrink_msg_v2(msg, segment, newlen, move_data);
 	default:
 		LASSERTF(0, "incorrect message magic: %08x\n", msg->lm_magic);
@@ -510,7 +510,7 @@ out:
 int grumple_grow_msg(struct grumple_msg *msg, int segment, unsigned int newlen)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_grow_msg_v2(msg, segment, newlen);
 	default:
 		LASSERTF(0, "incorrect message magic: %08x\n", msg->lm_magic);
@@ -549,7 +549,7 @@ static int grumple_unpack_msg_v2(struct grumple_msg_v2 *m, int len)
 		return -EINVAL;
 	}
 
-	swabbed = (m->lm_magic == LUSTRE_MSG_MAGIC_V2_SWABBED);
+	swabbed = (m->lm_magic == GRUMPLE_MSG_MAGIC_V2_SWABBED);
 
 	if (swabbed) {
 		__swab32s(&m->lm_magic);
@@ -666,7 +666,7 @@ grumple_unpack_ptlrpc_body_v2(struct ptlrpc_request *req,
 		req_capsule_set_swabbed(&req->rq_pill, loc, offset);
 	}
 
-	if ((pb->pb_version & ~LUSTRE_VERSION_MASK) != PTLRPC_MSG_VERSION) {
+	if ((pb->pb_version & ~GRUMPLE_VERSION_MASK) != PTLRPC_MSG_VERSION) {
 		CERROR("wrong grumple_msg version %08x\n", pb->pb_version);
 		return -EINVAL;
 	}
@@ -680,7 +680,7 @@ grumple_unpack_ptlrpc_body_v2(struct ptlrpc_request *req,
 int grumple_unpack_req_ptlrpc_body(struct ptlrpc_request *req, int offset)
 {
 	switch (req->rq_reqmsg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_unpack_ptlrpc_body_v2(req, RCL_CLIENT, offset);
 	default:
 		CERROR("bad grumple msg magic: %08x\n",
@@ -692,7 +692,7 @@ int grumple_unpack_req_ptlrpc_body(struct ptlrpc_request *req, int offset)
 int grumple_unpack_rep_ptlrpc_body(struct ptlrpc_request *req, int offset)
 {
 	switch (req->rq_repmsg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_unpack_ptlrpc_body_v2(req, RCL_SERVER, offset);
 	default:
 		CERROR("bad grumple msg magic: %08x\n",
@@ -719,7 +719,7 @@ static inline __u32 grumple_msg_buflen_v2(struct grumple_msg_v2 *m, __u32 n)
 __u32 grumple_msg_buflen(struct grumple_msg *m, __u32 n)
 {
 	switch (m->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return grumple_msg_buflen_v2(m, n);
 	default:
 		CERROR("incorrect message magic: %08x\n", m->lm_magic);
@@ -738,7 +738,7 @@ grumple_msg_set_buflen_v2(struct grumple_msg_v2 *m, __u32 n, __u32 len)
 void grumple_msg_set_buflen(struct grumple_msg *m, __u32 n, __u32 len)
 {
 	switch (m->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		grumple_msg_set_buflen_v2(m, n, len);
 		return;
 	default:
@@ -753,7 +753,7 @@ void grumple_msg_set_buflen(struct grumple_msg *m, __u32 n, __u32 len)
 __u32 grumple_msg_bufcount(struct grumple_msg *m)
 {
 	switch (m->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return m->lm_bufcount;
 	default:
 		CERROR("incorrect message magic: %08x\n", m->lm_magic);
@@ -770,7 +770,7 @@ char *grumple_msg_string(struct grumple_msg *m, __u32 index, __u32 max_len)
 	__u32 slen, blen;
 
 	switch (m->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		str = grumple_msg_buf_v2(m, index, 0);
 		blen = grumple_msg_buflen_v2(m, index);
 		break;
@@ -820,7 +820,7 @@ static inline struct ptlrpc_body *grumple_msg_ptlrpc_body(struct grumple_msg *ms
 enum grumple_msghdr grumple_msghdr_get_flags(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		
 		return msg->lm_flags;
 	default:
@@ -833,7 +833,7 @@ EXPORT_SYMBOL(grumple_msghdr_get_flags);
 void grumple_msghdr_set_flags(struct grumple_msg *msg, __u32 flags)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		msg->lm_flags = flags;
 		return;
 	default:
@@ -844,7 +844,7 @@ void grumple_msghdr_set_flags(struct grumple_msg *msg, __u32 flags)
 __u32 grumple_msg_get_flags(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb != NULL)
 			return pb->pb_flags;
@@ -865,7 +865,7 @@ EXPORT_SYMBOL(grumple_msg_get_flags);
 void grumple_msg_add_flags(struct grumple_msg *msg, __u32 flags)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_flags |= flags;
@@ -880,7 +880,7 @@ EXPORT_SYMBOL(grumple_msg_add_flags);
 void grumple_msg_set_flags(struct grumple_msg *msg, __u32 flags)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_flags = flags;
@@ -894,7 +894,7 @@ void grumple_msg_set_flags(struct grumple_msg *msg, __u32 flags)
 void grumple_msg_clear_flags(struct grumple_msg *msg, __u32 flags)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_flags &= ~flags;
@@ -910,7 +910,7 @@ EXPORT_SYMBOL(grumple_msg_clear_flags);
 __u32 grumple_msg_get_op_flags(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb != NULL)
 			return pb->pb_op_flags;
@@ -926,7 +926,7 @@ __u32 grumple_msg_get_op_flags(struct grumple_msg *msg)
 void grumple_msg_add_op_flags(struct grumple_msg *msg, __u32 flags)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_op_flags |= flags;
@@ -941,7 +941,7 @@ EXPORT_SYMBOL(grumple_msg_add_op_flags);
 struct grumple_handle *grumple_msg_get_handle(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -958,7 +958,7 @@ struct grumple_handle *grumple_msg_get_handle(struct grumple_msg *msg)
 __u32 grumple_msg_get_type(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -976,7 +976,7 @@ EXPORT_SYMBOL(grumple_msg_get_type);
 enum grumple_msg_version grumple_msg_get_version(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -993,7 +993,7 @@ enum grumple_msg_version grumple_msg_get_version(struct grumple_msg *msg)
 void grumple_msg_add_version(struct grumple_msg *msg, __u32 version)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_version |= version;
@@ -1007,7 +1007,7 @@ void grumple_msg_add_version(struct grumple_msg *msg, __u32 version)
 __u32 grumple_msg_get_opc(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1026,7 +1026,7 @@ EXPORT_SYMBOL(grumple_msg_get_opc);
 __u64 grumple_msg_get_last_xid(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1044,7 +1044,7 @@ EXPORT_SYMBOL(grumple_msg_get_last_xid);
 __u16 grumple_msg_get_tag(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (!pb) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1062,7 +1062,7 @@ EXPORT_SYMBOL(grumple_msg_get_tag);
 __u64 grumple_msg_get_last_committed(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1080,7 +1080,7 @@ EXPORT_SYMBOL(grumple_msg_get_last_committed);
 __u64 *grumple_msg_get_versions(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1098,7 +1098,7 @@ EXPORT_SYMBOL(grumple_msg_get_versions);
 __u64 grumple_msg_get_transno(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1116,7 +1116,7 @@ EXPORT_SYMBOL(grumple_msg_get_transno);
 int grumple_msg_get_status(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb != NULL)
 			return pb->pb_status;
@@ -1136,7 +1136,7 @@ EXPORT_SYMBOL(grumple_msg_get_status);
 __u64 grumple_msg_get_slv(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1154,7 +1154,7 @@ __u64 grumple_msg_get_slv(struct grumple_msg *msg)
 void grumple_msg_set_slv(struct grumple_msg *msg, __u64 slv)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1172,7 +1172,7 @@ void grumple_msg_set_slv(struct grumple_msg *msg, __u64 slv)
 __u32 grumple_msg_get_limit(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1190,7 +1190,7 @@ __u32 grumple_msg_get_limit(struct grumple_msg *msg)
 void grumple_msg_set_limit(struct grumple_msg *msg, __u64 limit)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1208,7 +1208,7 @@ void grumple_msg_set_limit(struct grumple_msg *msg, __u64 limit)
 __u32 grumple_msg_get_conn_cnt(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1226,7 +1226,7 @@ EXPORT_SYMBOL(grumple_msg_get_conn_cnt);
 __u32 grumple_msg_get_magic(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return msg->lm_magic;
 	default:
 		CERROR("incorrect message magic: %08x\n", msg->lm_magic);
@@ -1237,7 +1237,7 @@ __u32 grumple_msg_get_magic(struct grumple_msg *msg)
 timeout_t grumple_msg_get_timeout(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 
 		if (pb == NULL) {
@@ -1255,7 +1255,7 @@ timeout_t grumple_msg_get_timeout(struct grumple_msg *msg)
 timeout_t grumple_msg_get_service_timeout(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 
 		if (pb == NULL) {
@@ -1273,7 +1273,7 @@ timeout_t grumple_msg_get_service_timeout(struct grumple_msg *msg)
 int grumple_msg_get_projid(struct grumple_msg *msg, __u32 *projid)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb;
 
 		if (msg->lm_buflens[MSG_PTLRPC_BODY_OFF] <
@@ -1301,7 +1301,7 @@ EXPORT_SYMBOL(grumple_msg_get_projid);
 int grumple_msg_get_uid_gid(struct grumple_msg *msg, __u32 *uid, __u32 *gid)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb;
 
 		
@@ -1332,7 +1332,7 @@ EXPORT_SYMBOL(grumple_msg_get_uid_gid);
 char *grumple_msg_get_jobid(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb;
 
 		
@@ -1348,8 +1348,8 @@ char *grumple_msg_get_jobid(struct grumple_msg *msg)
 		/* If clients send unterminated jobids, terminate them here
 		 * so that there is no chance of string overflow later.
 		 */
-		if (unlikely(pb->pb_jobid[LUSTRE_JOBID_SIZE - 1] != '\0'))
-			pb->pb_jobid[LUSTRE_JOBID_SIZE - 1] = '\0';
+		if (unlikely(pb->pb_jobid[GRUMPLE_JOBID_SIZE - 1] != '\0'))
+			pb->pb_jobid[GRUMPLE_JOBID_SIZE - 1] = '\0';
 
 		return pb->pb_jobid;
 	}
@@ -1363,7 +1363,7 @@ EXPORT_SYMBOL(grumple_msg_get_jobid);
 __u32 grumple_msg_get_cksum(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return msg->lm_cksum;
 	default:
 		CERROR("incorrect message magic: %08x\n", msg->lm_magic);
@@ -1374,7 +1374,7 @@ __u32 grumple_msg_get_cksum(struct grumple_msg *msg)
 __u64 grumple_msg_get_mbits(struct grumple_msg *msg)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		if (pb == NULL) {
 			CERROR("invalid msg %p: no ptlrpc body!\n", msg);
@@ -1391,7 +1391,7 @@ __u64 grumple_msg_get_mbits(struct grumple_msg *msg)
 __u32 grumple_msg_calc_cksum(struct grumple_msg *msg, __u32 buf)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_buf_v2(msg, buf, 0);
 		__u32 len = grumple_msg_buflen(msg, buf);
 		__u32 crc;
@@ -1419,7 +1419,7 @@ __u32 grumple_msg_calc_cksum(struct grumple_msg *msg, __u32 buf)
 void grumple_msg_set_handle(struct grumple_msg *msg, struct grumple_handle *handle)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_handle = *handle;
@@ -1433,7 +1433,7 @@ void grumple_msg_set_handle(struct grumple_msg *msg, struct grumple_handle *hand
 void grumple_msg_set_type(struct grumple_msg *msg, __u32 type)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_type = type;
@@ -1447,7 +1447,7 @@ void grumple_msg_set_type(struct grumple_msg *msg, __u32 type)
 void grumple_msg_set_opc(struct grumple_msg *msg, __u32 opc)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_opc = opc;
@@ -1461,7 +1461,7 @@ void grumple_msg_set_opc(struct grumple_msg *msg, __u32 opc)
 void grumple_msg_set_last_xid(struct grumple_msg *msg, __u64 last_xid)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_last_xid = last_xid;
@@ -1476,7 +1476,7 @@ EXPORT_SYMBOL(grumple_msg_set_last_xid);
 void grumple_msg_set_tag(struct grumple_msg *msg, __u16 tag)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_tag = tag;
@@ -1491,7 +1491,7 @@ EXPORT_SYMBOL(grumple_msg_set_tag);
 void grumple_msg_set_last_committed(struct grumple_msg *msg, __u64 last_committed)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_last_committed = last_committed;
@@ -1505,7 +1505,7 @@ void grumple_msg_set_last_committed(struct grumple_msg *msg, __u64 last_committe
 void grumple_msg_set_versions(struct grumple_msg *msg, __u64 *versions)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_pre_versions[0] = versions[0];
@@ -1523,7 +1523,7 @@ EXPORT_SYMBOL(grumple_msg_set_versions);
 void grumple_msg_set_transno(struct grumple_msg *msg, __u64 transno)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_transno = transno;
@@ -1538,7 +1538,7 @@ EXPORT_SYMBOL(grumple_msg_set_transno);
 void grumple_msg_set_status(struct grumple_msg *msg, __u32 status)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_status = status;
@@ -1553,7 +1553,7 @@ EXPORT_SYMBOL(grumple_msg_set_status);
 void grumple_msg_set_conn_cnt(struct grumple_msg *msg, __u32 conn_cnt)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
 		pb->pb_conn_cnt = conn_cnt;
@@ -1567,7 +1567,7 @@ void grumple_msg_set_conn_cnt(struct grumple_msg *msg, __u32 conn_cnt)
 void grumple_msg_set_timeout(struct grumple_msg *msg, timeout_t timeout)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 
 		LASSERT(timeout >= 0);
@@ -1584,7 +1584,7 @@ void grumple_msg_set_service_timeout(struct grumple_msg *msg,
 				    timeout_t service_timeout)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 
 		LASSERT(service_timeout >= 0);
@@ -1600,7 +1600,7 @@ void grumple_msg_set_service_timeout(struct grumple_msg *msg,
 void grumple_msg_set_jobinfo(struct grumple_msg *msg, const struct job_info *ji)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		__u32 opc = grumple_msg_get_opc(msg);
 		struct ptlrpc_body *pb;
 
@@ -1642,7 +1642,7 @@ EXPORT_SYMBOL(grumple_msg_set_jobinfo);
 void grumple_msg_set_projid(struct grumple_msg *msg, __u32 projid)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		__u32 opc = grumple_msg_get_opc(msg);
 		struct ptlrpc_body *pb;
 
@@ -1669,7 +1669,7 @@ EXPORT_SYMBOL(grumple_msg_set_projid);
 void grumple_msg_set_cksum(struct grumple_msg *msg, __u32 cksum)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		msg->lm_cksum = cksum;
 		return;
 	default:
@@ -1680,7 +1680,7 @@ void grumple_msg_set_cksum(struct grumple_msg *msg, __u32 cksum)
 void grumple_msg_set_mbits(struct grumple_msg *msg, __u64 mbits)
 {
 	switch (msg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2: {
+	case GRUMPLE_MSG_MAGIC_V2: {
 		struct ptlrpc_body *pb = grumple_msg_ptlrpc_body(msg);
 
 		LASSERTF(pb != NULL, "invalid msg %px: no ptlrpc body!\n", msg);
@@ -1698,7 +1698,7 @@ void ptlrpc_request_set_replen(struct ptlrpc_request *req)
 
 	req->rq_replen = grumple_msg_size(req->rq_reqmsg->lm_magic, count,
 					 req->rq_pill.rc_area[RCL_SERVER]);
-	if (req->rq_reqmsg->lm_magic == LUSTRE_MSG_MAGIC_V2)
+	if (req->rq_reqmsg->lm_magic == GRUMPLE_MSG_MAGIC_V2)
 		req->rq_reqmsg->lm_repsize = req->rq_replen;
 }
 EXPORT_SYMBOL(ptlrpc_request_set_replen);
@@ -2868,7 +2868,7 @@ static inline int req_ptlrpc_body_swabbed(struct ptlrpc_request *req)
 	LASSERT(req->rq_reqmsg);
 
 	switch (req->rq_reqmsg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return req_capsule_req_swabbed(&req->rq_pill,
 					       MSG_PTLRPC_BODY_OFF);
 	default:
@@ -2884,7 +2884,7 @@ static inline int rep_ptlrpc_body_swabbed(struct ptlrpc_request *req)
 		return 0;
 
 	switch (req->rq_repmsg->lm_magic) {
-	case LUSTRE_MSG_MAGIC_V2:
+	case GRUMPLE_MSG_MAGIC_V2:
 		return req_capsule_rep_swabbed(&req->rq_pill,
 					       MSG_PTLRPC_BODY_OFF);
 	default:

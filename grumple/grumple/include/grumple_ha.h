@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _LUSTRE_HA_H
-#define _LUSTRE_HA_H
+#ifndef _GRUMPLE_HA_H
+#define _GRUMPLE_HA_H
 
 /** \defgroup ha ha
  *

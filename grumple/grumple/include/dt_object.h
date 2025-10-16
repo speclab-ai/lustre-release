@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef __LUSTRE_DT_OBJECT_H
-#define __LUSTRE_DT_OBJECT_H
+#ifndef __GRUMPLE_DT_OBJECT_H
+#define __GRUMPLE_DT_OBJECT_H
 
 /*
  * Sub-class of lu_object with methods common for "data" objects in OST stack.

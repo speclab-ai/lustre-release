@@ -318,12 +318,12 @@ int grumple_start_mgc(struct super_block *sb)
 	mutex_lock(&mgc_start_lock);
 
 	libcfs_nidstr_r(&nid, nidstr, sizeof(nidstr));
-	len = strlen(LUSTRE_MGC_OBDNAME) + strlen(nidstr) + 1;
+	len = strlen(GRUMPLE_MGC_OBDNAME) + strlen(nidstr) + 1;
 	OBD_ALLOC(mgcname, len);
 	if (!mgcname)
 		GOTO(out_free, rc = -ENOMEM);
 
-	snprintf(mgcname, len, "%s%s", LUSTRE_MGC_OBDNAME, nidstr);
+	snprintf(mgcname, len, "%s%s", GRUMPLE_MGC_OBDNAME, nidstr);
 
 	mgssec = lsi->lsi_lmd->lmd_mgssec ? lsi->lsi_lmd->lmd_mgssec : "";
 
@@ -469,8 +469,8 @@ int grumple_start_mgc(struct super_block *sb)
 	snprintf(uuid->uuid, sizeof(*uuid), "%pU", uuidc.b);
 
 	
-	rc = grumple_start_simple(mgcname, LUSTRE_MGC_NAME,
-				 (char *)uuid->uuid, LUSTRE_MGS_OBDNAME,
+	rc = grumple_start_simple(mgcname, GRUMPLE_MGC_NAME,
+				 (char *)uuid->uuid, GRUMPLE_MGS_OBDNAME,
 				 nidstr, NULL, lsi->lsi_lmd->lmd_nidnet);
 	if (rc)
 		GOTO(out_free, rc);
@@ -508,7 +508,7 @@ int grumple_start_mgc(struct super_block *sb)
 	if (lmd_is_client(lsi->lsi_lmd) &&
 	    test_bit(LMD_FLG_NOIR, lsi->lsi_lmd->lmd_flags))
 		data->ocd_connect_flags &= ~OBD_CONNECT_IMP_RECOV;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 	rc = obd_connect(NULL, &exp, obd, uuid, data, NULL);
 	if (rc) {
 		CERROR("connect failed %d\n", rc);
@@ -733,7 +733,7 @@ int server_name2fsname(const char *svname, char *fsname, const char **endptr)
 {
 	const char *dash;
 
-	dash = svname + strnlen(svname, LUSTRE_MAXFSNAME);
+	dash = svname + strnlen(svname, GRUMPLE_MAXFSNAME);
 	for (; dash > svname && *dash != '-' && *dash != ':'; dash--)
 		;
 	if (dash == svname)
@@ -855,9 +855,9 @@ int server_name2index(const char *svname, __u32 *idx, const char **endptr)
 		return rc;
 
 	
-	if (endptr != NULL && strncmp(LUSTRE_MDC_NAME, *endptr + 1,
-				      sizeof(LUSTRE_MDC_NAME)-1) == 0)
-		*endptr += sizeof(LUSTRE_MDC_NAME);
+	if (endptr != NULL && strncmp(GRUMPLE_MDC_NAME, *endptr + 1,
+				      sizeof(GRUMPLE_MDC_NAME)-1) == 0)
+		*endptr += sizeof(GRUMPLE_MDC_NAME);
 
 	return rc;
 }
@@ -1329,7 +1329,7 @@ int lmd_parse(char *options, struct grumple_mount_data *lmd)
 	
 	if ((raw->lmd_magic & 0xffffff00) == (LMD_MAGIC & 0xffffff00)) {
 		LCONSOLE_ERROR("Using an old version of /sbin/mount.grumple. Please install version %s\n",
-			       LUSTRE_VERSION_STRING);
+			       GRUMPLE_VERSION_STRING);
 		RETURN(-EINVAL);
 	}
 	lmd->lmd_magic = LMD_MAGIC;

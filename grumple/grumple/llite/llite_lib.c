@@ -422,7 +422,7 @@ static int client_common_fill_super(struct super_block *sb, char *md, char *dt)
 		data->ocd_connect_flags |= OBD_CONNECT_LIGHTWEIGHT;
 
 	data->ocd_ibits_known = MDS_INODELOCK_FULL;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	if (test_bit(LL_SBI_USER_XATTR, sbi->ll_flags))
 		data->ocd_connect_flags |= OBD_CONNECT_XATTR;
@@ -721,7 +721,7 @@ retry_connect:
 #if THREAD_SIZE >= 8192 
 	sb->s_export_op = &grumple_export_operations;
 #endif
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	llcrypt_set_ops(sb, &grumple_cryptops);
 #endif
 
@@ -1180,7 +1180,7 @@ static int ll_options(char *options, struct super_block *sb)
 				set_bit(token, sbi->ll_flags);
 			break;
 		case LL_SBI_TEST_DUMMY_ENCRYPTION: {
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 #ifdef HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED
 			set_bit(token, sbi->ll_flags);
 #else
@@ -1215,7 +1215,7 @@ static int ll_options(char *options, struct super_block *sb)
 			break;
 		}
 		case LL_SBI_ENCRYPT:
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 			if (turn_off)
 				clear_bit(token, sbi->ll_flags);
 			else
@@ -1377,7 +1377,7 @@ int ll_fill_super(struct super_block *sb)
 	char	*profilenm = get_profile_name(sb);
 	struct config_llog_instance *cfg;
 	
-	const int instlen = LUSTRE_MAXINSTANCE + 2;
+	const int instlen = GRUMPLE_MAXINSTANCE + 2;
 	unsigned long cfg_instance = ll_get_cfg_instance(sb);
 	char name[MAX_STRING_SIZE];
 	int md_len = 0;
@@ -1432,14 +1432,14 @@ int ll_fill_super(struct super_block *sb)
 	if (ptr && (strcmp(ptr, "-client") == 0))
 		len -= 7;
 
-	if (len > LUSTRE_MAXFSNAME) {
+	if (len > GRUMPLE_MAXFSNAME) {
 		if (unlikely(len >= MAX_STRING_SIZE))
 			len = MAX_STRING_SIZE - 1;
 		strncpy(name, profilenm, len);
 		name[len] = '\0';
 		err = -ENAMETOOLONG;
 		CERROR("%s: fsname longer than %u characters: rc = %d\n",
-		       name, LUSTRE_MAXFSNAME, err);
+		       name, GRUMPLE_MAXFSNAME, err);
 		GOTO(out_free_cfg, err);
 	}
 	strncpy(sbi->ll_fsname, profilenm, len);
@@ -2014,7 +2014,7 @@ static int ll_md_setattr(struct dentry *dentry, struct md_op_data *op_data)
 	ENTRY;
 
 	op_data = ll_prep_md_op_data(op_data, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
@@ -2248,7 +2248,7 @@ putenv:
  * @ref_file: pointer to struct file of reference file
  *
  * Volatile file name may look like:
- * <parent>/LUSTRE_VOLATILE_HDR:<mdt_index>:<random>:fd=<fd>
+ * <parent>/GRUMPLE_VOLATILE_HDR:<mdt_index>:<random>:fd=<fd>
  * where fd is opened descriptor of reference file.
  *
  * Return:
@@ -2429,7 +2429,7 @@ int ll_setattr_raw(struct dentry *dentry, struct iattr *attr,
 			 */
 			if (S_ISREG(inode->i_mode) && IS_ENCRYPTED(inode)) {
 				xvalid |= OP_XVALID_FLAGS;
-				flags = LUSTRE_ENCRYPT_FL;
+				flags = GRUMPLE_ENCRYPT_FL;
 				/* Call to ll_io_zero_page is not necessary if
 				 * truncating on PAGE_SIZE boundary, because
 				 * whole pages will be wiped.
@@ -2677,7 +2677,7 @@ static int ll_statfs_project(struct inode *inode, struct kstatfs *sfs)
 	struct ll_inode_info *lli = ll_i2info(inode);
 	struct ll_sb_info *sbi = ll_s2sbi(inode->i_sb);
 	struct if_quotactl qctl = {
-		.qc_cmd = LUSTRE_Q_GETQUOTA,
+		.qc_cmd = GRUMPLE_Q_GETQUOTA,
 		.qc_type = PRJQUOTA,
 		.qc_valid = QC_GENERAL,
 	};
@@ -2848,7 +2848,7 @@ u32 ll_inode2ext_flags(struct inode *inode)
 
 	
 	if (test_bit(LLIF_PROJECT_INHERIT, &ll_i2info(inode)->lli_flags))
-		ext_flags |= LUSTRE_PROJINHERIT_FL;
+		ext_flags |= GRUMPLE_PROJINHERIT_FL;
 
 	return ext_flags;
 }
@@ -2861,7 +2861,7 @@ u32 ll_xflags_to_ext_flags(u32 xflags)
 	inode_flags = ll_xflags_to_inode_flags(xflags);
 	ext_flags = ll_inode_to_ext_flags(inode_flags);
 	if (xflags & FS_XFLAG_PROJINHERIT)
-		ext_flags |= LUSTRE_PROJINHERIT_FL;
+		ext_flags |= GRUMPLE_PROJINHERIT_FL;
 
 	return ext_flags;
 }
@@ -2869,12 +2869,12 @@ u32 ll_xflags_to_ext_flags(u32 xflags)
 void ll_update_inode_flags(struct inode *inode, unsigned int ext_flags)
 {
 	
-	ext_flags |= ll_inode_to_ext_flags(inode->i_flags) & LUSTRE_ENCRYPT_FL;
+	ext_flags |= ll_inode_to_ext_flags(inode->i_flags) & GRUMPLE_ENCRYPT_FL;
 
 	inode->i_flags = ll_ext_to_inode_flags(ext_flags);
 
 	
-	if (ext_flags & LUSTRE_PROJINHERIT_FL)
+	if (ext_flags & GRUMPLE_PROJINHERIT_FL)
 		set_bit(LLIF_PROJECT_INHERIT, &ll_i2info(inode)->lli_flags);
 	else
 		clear_bit(LLIF_PROJECT_INHERIT, &ll_i2info(inode)->lli_flags);
@@ -3313,7 +3313,7 @@ static int fileattr_get(struct inode *inode, int *flags,
 
 	ENTRY;
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL,
-				     0, 0, LUSTRE_OPC_ANY,
+				     0, 0, GRUMPLE_OPC_ANY,
 				     NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
@@ -3331,10 +3331,10 @@ static int fileattr_get(struct inode *inode, int *flags,
 	body = req_capsule_server_get(&req->rq_pill, &RMF_MDT_BODY);
 
 	*flags = body->mbo_flags;
-	/* if Lustre specific LUSTRE_ENCRYPT_FL flag is set, also set
+	/* if Lustre specific GRUMPLE_ENCRYPT_FL flag is set, also set
 	 * ext4 equivalent to please lsattr and other e2fsprogs tools
 	 */
-	if (*flags & LUSTRE_ENCRYPT_FL)
+	if (*flags & GRUMPLE_ENCRYPT_FL)
 		*flags |= STATX_ATTR_ENCRYPTED;
 
 	ptlrpc_req_put(req);
@@ -3358,7 +3358,7 @@ static int fileattr_set(struct inode *inode, int flags)
 
 	ENTRY;
 	fa.fsx_projid = ll_i2info(inode)->lli_projid;
-	if (flags & LUSTRE_PROJINHERIT_FL)
+	if (flags & GRUMPLE_PROJINHERIT_FL)
 		fa.fsx_xflags = FS_XFLAG_PROJINHERIT;
 
 	rc = ll_ioctl_check_project(inode, fa.fsx_xflags,
@@ -3367,14 +3367,14 @@ static int fileattr_set(struct inode *inode, int flags)
 		RETURN(rc);
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, NULL);
+				     GRUMPLE_OPC_ANY, NULL);
 	if (IS_ERR(op_data))
 		RETURN(PTR_ERR(op_data));
 
 	/* Since chattr will get attr first, so we have to filter
 	 * out encrypt flag added in the fileattr_get.
 	 */
-	op_data->op_attr_flags = flags & ~LUSTRE_ENCRYPT_FL;
+	op_data->op_attr_flags = flags & ~GRUMPLE_ENCRYPT_FL;
 	op_data->op_xvalid |= OP_XVALID_FLAGS;
 	rc = md_setattr(sbi->ll_md_exp, op_data, NULL, 0, &req);
 	ll_finish_md_op_data(op_data);
@@ -3475,7 +3475,7 @@ int ll_iocontrol(struct inode *inode, struct file *file,
 	}
 	case LL_IOC_FLUSHCTX:
 		RETURN(ll_flush_ctx(inode));
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 	case LL_IOC_ADD_ENCRYPTION_KEY:
 		if (!ll_sbi_has_encrypt(ll_i2sbi(inode)))
 			return -EOPNOTSUPP;
@@ -3946,7 +3946,7 @@ struct md_op_data *ll_prep_md_op_data(struct md_op_data *op_data,
 			return ERR_PTR(-EINVAL);
 	} else {
 		if ((!IS_ENCRYPTED(i1) ||
-		     (opc != LUSTRE_OPC_LOOKUP && opc != LUSTRE_OPC_CREATE)) &&
+		     (opc != GRUMPLE_OPC_LOOKUP && opc != GRUMPLE_OPC_CREATE)) &&
 		    namelen > ll_i2sbi(i1)->ll_namelen)
 			return ERR_PTR(-ENAMETOOLONG);
 
@@ -4004,7 +4004,7 @@ struct md_op_data *ll_prep_md_op_data(struct md_op_data *op_data,
 		op_data->op_cli_flags |= CLI_API32;
 
 	if ((i2 && is_root_inode(i2)) ||
-	    opc == LUSTRE_OPC_LOOKUP || opc == LUSTRE_OPC_CREATE) {
+	    opc == GRUMPLE_OPC_LOOKUP || opc == GRUMPLE_OPC_CREATE) {
 		/* In case of lookup, ll_setup_filename() has already been
 		 * called in ll_lookup_it(), so just take provided name.
 		 * Also take provided name if we are dealing with root inode.
@@ -4024,9 +4024,9 @@ struct md_op_data *ll_prep_md_op_data(struct md_op_data *op_data,
 			lookup = 0;
 		} else {
 			dir = i1;
-			lookup = (int)(opc == LUSTRE_OPC_ANY);
+			lookup = (int)(opc == GRUMPLE_OPC_ANY);
 		}
-		if (opc == LUSTRE_OPC_ANY && lookup)
+		if (opc == GRUMPLE_OPC_ANY && lookup)
 			pfid = &fid;
 		rc = ll_setup_filename(dir, &dname, lookup, &fname, pfid);
 		if (rc) {
@@ -4048,11 +4048,11 @@ struct md_op_data *ll_prep_md_op_data(struct md_op_data *op_data,
 		}
 	}
 
-	/* In fact LUSTRE_OPC_LOOKUP, LUSTRE_OPC_OPEN
-	 * are LUSTRE_OPC_ANY
+	/* In fact GRUMPLE_OPC_LOOKUP, GRUMPLE_OPC_OPEN
+	 * are GRUMPLE_OPC_ANY
 	 */
-	if (opc == LUSTRE_OPC_LOOKUP || opc == LUSTRE_OPC_OPEN)
-		op_data->op_code = LUSTRE_OPC_ANY;
+	if (opc == GRUMPLE_OPC_LOOKUP || opc == GRUMPLE_OPC_OPEN)
+		op_data->op_code = GRUMPLE_OPC_ANY;
 	else
 		op_data->op_code = opc;
 	op_data->op_name = fname.disk_name.name;
@@ -4064,7 +4064,7 @@ struct md_op_data *ll_prep_md_op_data(struct md_op_data *op_data,
 	op_data->op_cap = current_cap();
 	op_data->op_mds = 0;
 	op_data->op_projid = ll_get_inode_projid(i1, i2);
-	if ((opc == LUSTRE_OPC_CREATE) && (name != NULL) &&
+	if ((opc == GRUMPLE_OPC_CREATE) && (name != NULL) &&
 	     filename_is_volatile(name, namelen, &op_data->op_mds)) {
 		op_data->op_bias |= MDS_CREATE_VOLATILE;
 	}

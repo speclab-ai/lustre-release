@@ -24,13 +24,13 @@ class SimpleLustreFS():
 		for agent in agent_list:
 			self.__grumple_nodes[agent] = SimpleLustreNode(target=agent)
 		for key, node in self.__grumple_nodes.items():
-			if node.get_grumple_role() == LUSTRE_NODE_ROLE_MGS:
+			if node.get_grumple_role() == GRUMPLE_NODE_ROLE_MGS:
 				self.__mgs_nodes.append(node)
 		for key, node in self.__grumple_nodes.items():
-			if node.get_grumple_role() == LUSTRE_NODE_ROLE_OST:
+			if node.get_grumple_role() == GRUMPLE_NODE_ROLE_OST:
 				self.__oss_nodes.append(node)
 		for key, node in self.__grumple_nodes.items():
-			if node.get_grumple_role() == LUSTRE_NODE_ROLE_CLIENT:
+			if node.get_grumple_role() == GRUMPLE_NODE_ROLE_CLIENT:
 				self.__client_nodes.append(node)
 		if len(self.__mgs_nodes) == 0 or \
 		   len(self.__oss_nodes) == 0 or \

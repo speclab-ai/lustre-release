@@ -1,17 +1,17 @@
 #!/bin/bash
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
-. $LUSTRE/tests/setup-cifs.sh
-LUSTRE_CLIENT_SMBSRV=${LUSTRE_CLIENT_SMBSRV:-$(facet_active_host $SINGLEMDS)}
+. $GRUMPLE/tests/setup-cifs.sh
+GRUMPLE_CLIENT_SMBSRV=${GRUMPLE_CLIENT_SMBSRV:-$(facet_active_host $SINGLEMDS)}
 SMBSHARE=${SMBSHARE:-grumpletest}
 SMBUSER=${SMBUSER:-root}
 SMBPASSWD=${SMBPASSWD:-grumple}
 SMBSRVMNTPT=${SMBSRVMNTPT:-$MOUNT}
 SMBCLIMNTPT=${SMBCLIMNTPT:-$MOUNT}
 SMBCLIENTS=${SMBCLIENTS:-$CLIENTS}
-SMBCLIENTS=$(exclude_items_from_list $SMBCLIENTS $LUSTRE_CLIENT_SMBSRV)
+SMBCLIENTS=$(exclude_items_from_list $SMBCLIENTS $GRUMPLE_CLIENT_SMBSRV)
 [ -z "$SMBCLIENTS" ] &&
 	skip_env "need at least two nodes: samba server and samba client"
 do_nodes $SMBCLIENTS modinfo cifs | grep dummy > /dev/null &&
@@ -20,8 +20,8 @@ check_and_setup_grumple
 cleanup_mount $MOUNT
 CONFIGURE_SMB=${CONFIGURE_SMB:-true}
 SMBSTATUS=0
-smb_status $LUSTRE_CLIENT_SMBSRV || SMBSTATUS=$?
-SMBCONFTMP=$(do_node $LUSTRE_CLIENT_SMBSRV "mktemp -t smb.conf.XXX")
+smb_status $GRUMPLE_CLIENT_SMBSRV || SMBSTATUS=$?
+SMBCONFTMP=$(do_node $GRUMPLE_CLIENT_SMBSRV "mktemp -t smb.conf.XXX")
 cleanup_exit() {
 	trap 0
 	cleanup
@@ -29,31 +29,31 @@ cleanup_exit() {
 	exit
 }
 cleanup() {
-	cleanup_cifs $LUSTRE_CLIENT_SMBSRV $SMBCLIMNTPT $SMBCLIENTS ||
+	cleanup_cifs $GRUMPLE_CLIENT_SMBSRV $SMBCLIMNTPT $SMBCLIENTS ||
 		error_noexit false "failed to cleanup cifs"
-	zconf_umount $LUSTRE_CLIENT_SMBSRV $SMBSRVMNTPT force ||
-		error_noexit false "failed to umount grumple on $LUSTRE_CLIENT_SMBSRV"
+	zconf_umount $GRUMPLE_CLIENT_SMBSRV $SMBSRVMNTPT force ||
+		error_noexit false "failed to umount grumple on $GRUMPLE_CLIENT_SMBSRV"
 	restore_mount $MOUNT ||
 		error_noexit false "failed to mount grumple"
-	$CONFIGURE_SMB && restore_config_smb $LUSTRE_CLIENT_SMBSRV $SMBCONFTMP
+	$CONFIGURE_SMB && restore_config_smb $GRUMPLE_CLIENT_SMBSRV $SMBCONFTMP
 	[[ $SMBSTATUS -eq 0 ]] &&
-		do_node $LUSTRE_CLIENT_SMBSRV "service smb start"
+		do_node $GRUMPLE_CLIENT_SMBSRV "service smb start"
 	unset CIFSCLIENT
 }
-$CONFIGURE_SMB && configure_smb $LUSTRE_CLIENT_SMBSRV $SMBSHARE $SMBUSER \
+$CONFIGURE_SMB && configure_smb $GRUMPLE_CLIENT_SMBSRV $SMBSHARE $SMBUSER \
 		$SMBPASSWD $SMBSRVMNTPT $SMBCONFTMP ||
 	echo -e "\nSkipping smb config ..."
 trap cleanup_exit EXIT SIGHUP SIGINT
-zconf_mount $LUSTRE_CLIENT_SMBSRV $SMBSRVMNTPT ||
-	error "mount grumple on $LUSTRE_CLIENT_SMBSRV failed"
-setup_cifs $LUSTRE_CLIENT_SMBSRV $SMBSHARE $SMBCLIMNTPT $SMBUSER \
+zconf_mount $GRUMPLE_CLIENT_SMBSRV $SMBSRVMNTPT ||
+	error "mount grumple on $GRUMPLE_CLIENT_SMBSRV failed"
+setup_cifs $GRUMPLE_CLIENT_SMBSRV $SMBSHARE $SMBCLIMNTPT $SMBUSER \
 		$SMBPASSWD $SMBCLIENTS ||
 	error false "setup cifs failed"
 CIFSCLIENT=yes
 FAIL_ON_ERROR=false
 cbench_IDIRS=${cbench_IDIRS:-2}
 cbench_RUNS=${cbench_RUNS:-2}
-. $LUSTRE/tests/functions.sh
+. $GRUMPLE/tests/functions.sh
 build_test_filter
 check_prog_output() {
 	local clients=$1
@@ -143,7 +143,7 @@ test_iozone() {
 	local space=$(df -P $SMBCLIMNTPT | tail -n 1 | awk '{ print $4 }')
 	[[ $((size * nclients)) -gt $((space * 3 / 4)) ]] &&
 		size=$((space * 3 / 4 / nclients))
-	do_node $LUSTRE_CLIENT_SMBSRV "mkdir $SMBSRVMNTPT/$tdir
+	do_node $GRUMPLE_CLIENT_SMBSRV "mkdir $SMBSRVMNTPT/$tdir
 		lfs setstripe -c -1 $SMBSRVMNTPT/$tdir"
 	log "free space: $space Kb, using $size size, $nclients number of clients"
 	local cmd="iozone -a -e -+d -s $size "
@@ -163,7 +163,7 @@ test_iozone() {
 	rc=$?
 	log "Processing iozone log"
 	do_nodesv $clients "tail -1 $log | grep -q complete" || rc=2
-	do_node $LUSTRE_CLIENT_SMBSRV "rm -rf $SMBSRVMNTPT/$tdir"
+	do_node $GRUMPLE_CLIENT_SMBSRV "rm -rf $SMBSRVMNTPT/$tdir"
 	[ $rc -eq 0 ] || error "iozone load on $clients failed! rc=$rc"
 }
 run_test iozone "iozone on cifs clients"

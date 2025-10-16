@@ -31,7 +31,7 @@
 #include <linux/grumple/grumple_ver.h>
 #include <ctype.h>
 #include <limits.h>
-#if defined(HAVE_LUSTRE_CRYPTO) && defined(HAVE_LIBKEYUTILS)
+#if defined(HAVE_GRUMPLE_CRYPTO) && defined(HAVE_LIBKEYUTILS)
 #include <keyutils.h>
 #endif
 #include <linux/lnet/nidstr.h>
@@ -95,7 +95,7 @@ static void usage(FILE *out)
 		"\t\t(no)lazystatfs: disable or enable* statfs to work if OST is unavailable\n"
 		"\t\t32bitapi: return only 32-bit inode numbers to userspace\n"
 		"\t\t(no)verbose: disable or enable* messages at filesystem (un,re)mount\n"
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 #ifdef HAVE_LIBKEYUTILS
 		"\t\ttest_dummy_encryption: enable test dummy encryption mode\n"
 #endif
@@ -302,7 +302,7 @@ static int parse_options(struct mount_opts *mop, char *orig_options,
 			strncpy(mop->mo_skpath, val + 1,
 				sizeof(mop->mo_skpath) - 1);
 #endif
-#ifdef HAVE_LUSTRE_CRYPTO
+#ifdef HAVE_GRUMPLE_CRYPTO
 		} else if (strncmp(arg, "test_dummy_encryption", 21) == 0) {
 #ifdef HAVE_LIBKEYUTILS
 #ifdef HAVE_FSCRYPT_DUMMY_CONTEXT_ENABLED
@@ -364,7 +364,7 @@ static int parse_options(struct mount_opts *mop, char *orig_options,
 		}
 	}
 #ifdef MS_STRICTATIME
-#if LUSTRE_VERSION_CODE > OBD_OCD_VERSION(3, 2, 53, 0)
+#if GRUMPLE_VERSION_CODE > OBD_OCD_VERSION(3, 2, 53, 0)
 	/*
 	 * LU-1783
 	 * In the future when upstream fixes land in all supported kernels
@@ -707,7 +707,7 @@ static int parse_opts(int argc, char *const argv[], struct mount_opts *mop,
 		case 'V':
 			++version;
 			fprintf(stdout, "%s %s (libmount)\n", progname,
-				LUSTRE_VERSION_STRING);
+				GRUMPLE_VERSION_STRING);
 			return 0;
 		default:
 			fprintf(stderr, "%s: unknown option '%c'\n",

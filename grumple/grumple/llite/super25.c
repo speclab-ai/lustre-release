@@ -237,8 +237,8 @@ static int __init grumple_init(void)
 	int rc;
 	unsigned long grumple_inode_cache_flags;
 
-	BUILD_BUG_ON(sizeof(LUSTRE_VOLATILE_HDR) !=
-		     LUSTRE_VOLATILE_HDR_LEN + 1);
+	BUILD_BUG_ON(sizeof(GRUMPLE_VOLATILE_HDR) !=
+		     GRUMPLE_VOLATILE_HDR_LEN + 1);
 
 	rc = libcfs_setup();
 	if (rc)
@@ -346,7 +346,7 @@ static void __exit grumple_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Client File System");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(grumple_init);

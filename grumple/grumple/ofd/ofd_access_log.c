@@ -363,10 +363,10 @@ static long oal_ioctl_info(struct oal_circ_buf *ocb, void __user *uarg)
 	lali = uarg;
 	BUILD_BUG_ON(sizeof(lali->lali_name) != sizeof(oal->oal_name));
 
-	if (put_user(LUSTRE_ACCESS_LOG_VERSION_1, &lali->lali_version))
+	if (put_user(GRUMPLE_ACCESS_LOG_VERSION_1, &lali->lali_version))
 		return -EFAULT;
 
-	if (put_user(LUSTRE_ACCESS_LOG_TYPE_OFD, &lali->lali_type))
+	if (put_user(GRUMPLE_ACCESS_LOG_TYPE_OFD, &lali->lali_type))
 		return -EFAULT;
 
 	if (copy_to_user(lali->lali_name, oal->oal_name, sizeof(oal->oal_name)))
@@ -405,11 +405,11 @@ static long oal_file_ioctl(struct file *filp, unsigned int cmd,
 	struct oal_circ_buf *ocb = filp->private_data;
 
 	switch (cmd) {
-	case LUSTRE_ACCESS_LOG_IOCTL_VERSION:
-		return LUSTRE_ACCESS_LOG_VERSION_1;
-	case LUSTRE_ACCESS_LOG_IOCTL_INFO:
+	case GRUMPLE_ACCESS_LOG_IOCTL_VERSION:
+		return GRUMPLE_ACCESS_LOG_VERSION_1;
+	case GRUMPLE_ACCESS_LOG_IOCTL_INFO:
 		return oal_ioctl_info(ocb, (void __user *)arg);
-	case LUSTRE_ACCESS_LOG_IOCTL_FILTER:
+	case GRUMPLE_ACCESS_LOG_IOCTL_FILTER:
 		ocb->ocb_filter = arg;
 		return 0;
 	default:
@@ -491,7 +491,7 @@ struct ofd_access_log *ofd_access_log_create(const char *ofd_name, size_t size)
 	oal->oal_device.release = &oal_device_release;
 	dev_set_drvdata(&oal->oal_device, oal);
 	rc = dev_set_name(&oal->oal_device,
-			"%s!%s", LUSTRE_ACCESS_LOG_DIR_NAME, oal->oal_name);
+			"%s!%s", GRUMPLE_ACCESS_LOG_DIR_NAME, oal->oal_name);
 	if (rc < 0)
 		goto out_minor;
 
@@ -597,7 +597,7 @@ struct oal_control_file {
  * Open /dev/grumple-access-log/control.
  * while (1)
  *   Poll for readable on control FD.
- *   Call ioctl(FD, LUSTRE_ACCESS_LOG_IOCTL_PRESCAN) to fetch event count.
+ *   Call ioctl(FD, GRUMPLE_ACCESS_LOG_IOCTL_PRESCAN) to fetch event count.
  *   Scan /dev/ or /sys/class/... for new devices.
  */
 static int oal_control_file_open(struct inode *inode, struct file *filp)
@@ -644,11 +644,11 @@ static long oal_control_file_ioctl(struct file *filp, unsigned int cmd,
 	struct oal_control_file *ccf = filp->private_data;
 
 	switch (cmd) {
-	case LUSTRE_ACCESS_LOG_IOCTL_VERSION:
-		return LUSTRE_ACCESS_LOG_VERSION_1;
-	case LUSTRE_ACCESS_LOG_IOCTL_MAJOR:
+	case GRUMPLE_ACCESS_LOG_IOCTL_VERSION:
+		return GRUMPLE_ACCESS_LOG_VERSION_1;
+	case GRUMPLE_ACCESS_LOG_IOCTL_MAJOR:
 		return oal_log_major;
-	case LUSTRE_ACCESS_LOG_IOCTL_PRESCAN:
+	case GRUMPLE_ACCESS_LOG_IOCTL_PRESCAN:
 		ccf->ccf_event_count = atomic_read(&oal_control_event_count);
 		return 0;
 	default:
@@ -667,7 +667,7 @@ static const struct file_operations oal_control_fops = {
 
 static struct miscdevice oal_control_misc = {
 	.minor = MISC_DYNAMIC_MINOR,
-	.name = LUSTRE_ACCESS_LOG_DIR_NAME"!control",
+	.name = GRUMPLE_ACCESS_LOG_DIR_NAME"!control",
 	.fops = &oal_control_fops,
 };
 
@@ -683,13 +683,13 @@ int ofd_access_log_module_init(void)
 		return rc;
 
 	rc = alloc_chrdev_region(&dev, 0, OAL_DEV_COUNT,
-				LUSTRE_ACCESS_LOG_DIR_NAME);
+				GRUMPLE_ACCESS_LOG_DIR_NAME);
 	if (rc)
 		goto out_oal_control_misc;
 
 	oal_log_major = MAJOR(dev);
 
-	oal_log_class = ll_class_create(LUSTRE_ACCESS_LOG_DIR_NAME);
+	oal_log_class = ll_class_create(GRUMPLE_ACCESS_LOG_DIR_NAME);
 	if (IS_ERR(oal_log_class)) {
 		rc = PTR_ERR(oal_log_class);
 		goto out_dev;

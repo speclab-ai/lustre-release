@@ -81,7 +81,7 @@ struct fld_cache {
 	struct fld_stats	fci_stat;
 
 	
-	char			fci_name[LUSTRE_MDT_MAXNAMELEN];
+	char			fci_name[GRUMPLE_MDT_MAXNAMELEN];
 };
 
 enum {

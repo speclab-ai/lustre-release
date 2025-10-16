@@ -14,8 +14,8 @@
  * See also grumple_idl.h for wire formats of requests.
  */
 
-#ifndef _LUSTRE_MDS_H
-#define _LUSTRE_MDS_H
+#ifndef _GRUMPLE_MDS_H
+#define _GRUMPLE_MDS_H
 
 /** \defgroup mds mds
  *

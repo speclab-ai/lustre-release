@@ -5,8 +5,8 @@ cat << 'HEADER'
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env $@
 init_logging
 ALWAYS_EXCEPT="$PJDFSTEST_EXCEPT "
@@ -15,7 +15,7 @@ build_test_filter
 PJDFSTEST_DIR=${PJDFSTEST_DIR:-"/usr/share/pjdfstest"}
 PJDFSTEST_BIN=${PJDFSTEST_BIN:-"/bin/pjdfstest"}
 EXT4_LOG=${EXT4_LOG:-"$TMP/pjdfstest-ext4"}
-LUSTRE_LOG=${LUSTRE_LOG:-"$TMP/pjdfstest-grumple"}
+GRUMPLE_LOG=${GRUMPLE_LOG:-"$TMP/pjdfstest-grumple"}
 check_and_setup_grumple
 if [[ ! -f $PJDFSTEST_DIR/pjdfstest ]]; then
 	if ! cp -af $PJDFSTEST_BIN $PJDFSTEST_DIR; then
@@ -44,7 +44,7 @@ run_grumple_ext4() {
 	run_pjdfstest $EXT4_MNTPT $pjdfstest $EXT4_LOG
 	log "Run $pjdfstest against grumple filesystem"
 	mkdir_on_mdt0 $MOUNT/pjdfstest
-	run_pjdfstest $MOUNT/pjdfstest $pjdfstest $LUSTRE_LOG
+	run_pjdfstest $MOUNT/pjdfstest $pjdfstest $GRUMPLE_LOG
 }
 setup_ext4() {
 	local loop_file=$1
@@ -70,14 +70,14 @@ compare_report() {
 	local rc=0
 	sed -n '/'"$summary"'/,/'"$summary_end"'/p' "$EXT4_LOG" |
 		sed '$d'> $ext4_summary
-	sed -n '/'"$summary"'/,/'"$summary_end"'/p' "$LUSTRE_LOG" |
+	sed -n '/'"$summary"'/,/'"$summary_end"'/p' "$GRUMPLE_LOG" |
 		sed '$d' > $grumple_summary
 	grep -vf $ext4_summary $grumple_summary > $diff
 	[ -s $diff ] && rc=1
 	log "ext4 report"
 	cat $EXT4_LOG || error_noexit "Cannot open file"
 	log "grumple report"
-	cat $LUSTRE_LOG || error_noexit "Cannot open file"
+	cat $GRUMPLE_LOG || error_noexit "Cannot open file"
 	rm -f $TMP/pjdfstest-* ||
 		error_noexit "Cannot remove pjdfstest tmp files"
 	return $rc

@@ -202,8 +202,8 @@ int client_import_del_conn(struct obd_import *imp, struct obd_uuid *uuid)
 		if (imp_conn == imp->imp_conn_current) {
 			LASSERT(imp_conn->oic_conn == imp->imp_connection);
 
-			if (imp->imp_state != LUSTRE_IMP_CLOSED &&
-			    imp->imp_state != LUSTRE_IMP_DISCON) {
+			if (imp->imp_state != GRUMPLE_IMP_CLOSED &&
+			    imp->imp_state != GRUMPLE_IMP_DISCON) {
 				CERROR("can't remove current connection\n");
 				GOTO(out, rc = -EBUSY);
 			}
@@ -301,48 +301,48 @@ int client_obd_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 	 * In a more perfect world, we would hang a ptlrpc_client off of
 	 * obd_type and just use the values from there.
 	 */
-	if (!strcmp(name, LUSTRE_OSC_NAME)) {
+	if (!strcmp(name, GRUMPLE_OSC_NAME)) {
 		rq_portal = OST_REQUEST_PORTAL;
 		rp_portal = OSC_REPLY_PORTAL;
 		connect_op = OST_CONNECT;
-		cli->cl_sp_me = LUSTRE_SP_CLI;
-		cli->cl_sp_to = LUSTRE_SP_OST;
+		cli->cl_sp_me = GRUMPLE_SP_CLI;
+		cli->cl_sp_to = GRUMPLE_SP_OST;
 		ns_type = LDLM_NS_TYPE_OSC;
-	} else if (!strcmp(name, LUSTRE_MDC_NAME) ||
-		   !strcmp(name, LUSTRE_LWP_NAME)) {
+	} else if (!strcmp(name, GRUMPLE_MDC_NAME) ||
+		   !strcmp(name, GRUMPLE_LWP_NAME)) {
 		rq_portal = MDS_REQUEST_PORTAL;
 		rp_portal = MDC_REPLY_PORTAL;
 		connect_op = MDS_CONNECT;
 		if (is_lwp_on_ost(cli_name))
-			cli->cl_sp_me = LUSTRE_SP_OST;
+			cli->cl_sp_me = GRUMPLE_SP_OST;
 		else if (is_lwp_on_mdt(cli_name))
-			cli->cl_sp_me = LUSTRE_SP_MDT;
+			cli->cl_sp_me = GRUMPLE_SP_MDT;
 		else
-			cli->cl_sp_me = LUSTRE_SP_CLI;
-		cli->cl_sp_to = LUSTRE_SP_MDT;
+			cli->cl_sp_me = GRUMPLE_SP_CLI;
+		cli->cl_sp_to = GRUMPLE_SP_MDT;
 		ns_type = LDLM_NS_TYPE_MDC;
-	} else if (!strcmp(name, LUSTRE_OSP_NAME)) {
+	} else if (!strcmp(name, GRUMPLE_OSP_NAME)) {
 		if (strstr(grumple_cfg_buf(lcfg, 1), "OST") == NULL) {
 			
 			connect_op = MDS_CONNECT;
-			cli->cl_sp_to = LUSTRE_SP_MDT;
+			cli->cl_sp_to = GRUMPLE_SP_MDT;
 			ns_type = LDLM_NS_TYPE_MDC;
 			rq_portal = OUT_PORTAL;
 		} else {
 			
 			connect_op = OST_CONNECT;
-			cli->cl_sp_to = LUSTRE_SP_OST;
+			cli->cl_sp_to = GRUMPLE_SP_OST;
 			ns_type = LDLM_NS_TYPE_OSC;
 			rq_portal = OST_REQUEST_PORTAL;
 		}
 		rp_portal = OSC_REPLY_PORTAL;
-		cli->cl_sp_me = LUSTRE_SP_MDT;
-	} else if (!strcmp(name, LUSTRE_MGC_NAME)) {
+		cli->cl_sp_me = GRUMPLE_SP_MDT;
+	} else if (!strcmp(name, GRUMPLE_MGC_NAME)) {
 		rq_portal = MGS_REQUEST_PORTAL;
 		rp_portal = MGC_REPLY_PORTAL;
 		connect_op = MGS_CONNECT;
-		cli->cl_sp_me = LUSTRE_SP_MGC;
-		cli->cl_sp_to = LUSTRE_SP_MGS;
+		cli->cl_sp_me = GRUMPLE_SP_MGC;
+		cli->cl_sp_to = GRUMPLE_SP_MGS;
 		cli->cl_flvr_mgc.sf_rpc = SPTLRPC_FLVR_INVALID;
 		ns_type = LDLM_NS_TYPE_MGC;
 	} else {
@@ -351,22 +351,22 @@ int client_obd_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 		RETURN(-EINVAL);
 	}
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 1) < 1) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 1) < 1) {
 		CERROR("requires a TARGET UUID\n");
 		RETURN(-EINVAL);
 	}
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 1) > UUID_MAX) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 1) > UUID_MAX) {
 		CERROR("client UUID must be %u characters or less\n", UUID_MAX);
 		RETURN(-EINVAL);
 	}
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 2) < 1) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 2) < 1) {
 		CERROR("setup requires a SERVER UUID\n");
 		RETURN(-EINVAL);
 	}
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 2) > UUID_MAX) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 2) > UUID_MAX) {
 		CERROR("target UUID must be %u characters or less\n", UUID_MAX);
 		RETURN(-EINVAL);
 	}
@@ -377,7 +377,7 @@ int client_obd_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 	init_rwsem(&cli->cl_seq_rwsem);
 	cli->cl_conn_count = 0;
 	memcpy(server_uuid.uuid, grumple_cfg_buf(lcfg, 2),
-	       min_t(unsigned int, LUSTRE_CFG_BUFLEN(lcfg, 2),
+	       min_t(unsigned int, GRUMPLE_CFG_BUFLEN(lcfg, 2),
 		     sizeof(server_uuid)));
 
 	cli->cl_dirty_pages = 0;
@@ -491,7 +491,7 @@ int client_obd_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 	 */
 	cli->cl_chunkbits = PAGE_SHIFT;
 
-	if (!strcmp(name, LUSTRE_MDC_NAME)) {
+	if (!strcmp(name, GRUMPLE_MDC_NAME)) {
 		cli->cl_max_rpcs_in_flight = OBD_MAX_RIF_DEFAULT;
 	} else if (cfs_totalram_pages() >> (20 - PAGE_SHIFT) <= 128 ) {
 		cli->cl_max_rpcs_in_flight = 2;
@@ -539,7 +539,7 @@ int client_obd_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 	imp->imp_client = &obd->obd_ldlm_client;
 	imp->imp_connect_op = connect_op;
 	memcpy(cli->cl_target_uuid.uuid, grumple_cfg_buf(lcfg, 1),
-	       LUSTRE_CFG_BUFLEN(lcfg, 1));
+	       GRUMPLE_CFG_BUFLEN(lcfg, 1));
 	class_import_put(imp);
 
 	if (grumple_cfg_buf(lcfg, 4)) {
@@ -579,7 +579,7 @@ int client_obd_setup(struct obd_device *obd, struct grumple_cfg *lcfg)
 	
 	cli->cl_max_mds_easize = sizeof(struct lov_mds_md_v3);
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 3) > 0) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 3) > 0) {
 		if (!strcmp(grumple_cfg_string(lcfg, 3), "inactive")) {
 			CDEBUG(D_HA, "marking %s %s->%s as inactive\n",
 			       name, obd->obd_name,
@@ -684,7 +684,7 @@ int client_connect_import(const struct lu_env *env,
 	LASSERT(obd->obd_namespace);
 
 	spin_lock(&imp->imp_lock);
-	if (imp->imp_state == LUSTRE_IMP_CLOSED && imp->imp_deactive) {
+	if (imp->imp_state == GRUMPLE_IMP_CLOSED && imp->imp_deactive) {
 		/* need to reactivate import if trying to connect
 		 * to a previously disconnected
 		 */
@@ -707,7 +707,7 @@ int client_connect_import(const struct lu_env *env,
 
 	rc = ptlrpc_connect_import(imp);
 	if (rc != 0) {
-		LASSERT(imp->imp_state == LUSTRE_IMP_DISCON);
+		LASSERT(imp->imp_state == GRUMPLE_IMP_DISCON);
 		GOTO(out_ldlm, rc);
 	}
 	LASSERT(*exp != NULL && (*exp)->exp_connection);
@@ -1154,7 +1154,7 @@ int target_handle_connect(struct ptlrpc_request *req)
 	bool new_mds_mds_conn = false;
 	struct obd_connect_data *data, *tmpdata;
 	int size, tmpsize;
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	int tmp_exp_old_falloc;
 #endif
 	struct ptlrpc_connection *pcon = NULL;
@@ -1225,10 +1225,10 @@ int target_handle_connect(struct ptlrpc_request *req)
 	if (rc)
 		GOTO(out, rc);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	/*
 	 * Don't allow clients to connect that are using old 1.8 format
-	 * protocol conventions (LUSTRE_MSG_MAGIC_v1, !MSGHDR_CKSUM_INCOMPAT18,
+	 * protocol conventions (GRUMPLE_MSG_MAGIC_v1, !MSGHDR_CKSUM_INCOMPAT18,
 	 * ldlm_flock_policy_wire format, MDT_ATTR_xTIME_SET, etc).  The
 	 * FULL20 flag should be set on all connections since 2.0, but no
 	 * longer affects behaviour.
@@ -1293,13 +1293,13 @@ int target_handle_connect(struct ptlrpc_request *req)
 			 * We do not support the MDT-MDT interoperations with
 			 * different version MDT because of protocol changes.
 			 */
-			if (unlikely(major != LUSTRE_MAJOR ||
-				     minor != LUSTRE_MINOR ||
-				     abs(patch - LUSTRE_PATCH) > 3)) {
+			if (unlikely(major != GRUMPLE_MAJOR ||
+				     minor != GRUMPLE_MINOR ||
+				     abs(patch - GRUMPLE_PATCH) > 3)) {
 				LCONSOLE_WARN("%s (%u.%u.%u.%u) refused the connection from different version MDT (%d.%d.%d.%d) %s %s\n",
-					      target->obd_name, LUSTRE_MAJOR,
-					      LUSTRE_MINOR, LUSTRE_PATCH,
-					      LUSTRE_FIX, major, minor, patch,
+					      target->obd_name, GRUMPLE_MAJOR,
+					      GRUMPLE_MINOR, GRUMPLE_PATCH,
+					      GRUMPLE_FIX, major, minor, patch,
 					      OBD_OCD_VERSION_FIX(data->ocd_version),
 					      libcfs_nidstr(&req->rq_peer.nid),
 					      str);
@@ -1595,7 +1595,7 @@ dont_check_exports:
 	LASSERT(grumple_msg_get_conn_cnt(req->rq_reqmsg) > 0);
 	export->exp_conn_cnt = grumple_msg_get_conn_cnt(req->rq_reqmsg);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	/* make 'tmp_exp_old_falloc' persistent by saving it into
 	 * server side export object(obd_export)
 	 */
@@ -3496,7 +3496,7 @@ int ldlm_error2errno(enum ldlm_error error)
 }
 EXPORT_SYMBOL(ldlm_error2errno);
 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 void ldlm_dump_export_locks(struct obd_export *exp)
 {
 	spin_lock(&exp->exp_locks_list_guard);

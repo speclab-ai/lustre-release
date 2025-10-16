@@ -48,7 +48,7 @@ int osc_object_init(const struct lu_env *env, struct lu_object *obj,
         const struct cl_object_conf *cconf = lu2cl_conf(conf);
 
 	osc->oo_oinfo = cconf->u.coc_oinfo;
-#ifdef CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK
+#ifdef CONFIG_GRUMPLE_DEBUG_EXPENSIVE_CHECK
 	mutex_init(&osc->oo_debug_mutex);
 #endif
 	INIT_LIST_HEAD(&osc->oo_ready_item);
@@ -292,7 +292,7 @@ skip_locking:
 	req_capsule_set_size(&req->rq_pill, &RMF_FIEMAP_VAL, RCL_SERVER,
 			     *buflen);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_GET_INFO);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_GET_INFO);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		GOTO(drop_lock, rc);

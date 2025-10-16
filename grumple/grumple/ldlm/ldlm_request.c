@@ -913,7 +913,7 @@ EXPORT_SYMBOL(ldlm_prep_elc_req);
 int ldlm_prep_enqueue_req(struct obd_export *exp, struct ptlrpc_request *req,
 			  struct list_head *cancels, int count)
 {
-	return ldlm_prep_elc_req(exp, req, LUSTRE_DLM_VERSION, LDLM_ENQUEUE,
+	return ldlm_prep_elc_req(exp, req, GRUMPLE_DLM_VERSION, LDLM_ENQUEUE,
 				 LDLM_ENQUEUE_CANCEL_OFF, cancels, count);
 }
 EXPORT_SYMBOL(ldlm_prep_enqueue_req);
@@ -1230,7 +1230,7 @@ int ldlm_cli_convert_req(struct ldlm_lock *lock, __u32 *flags, __u64 new_bits)
 	LDLM_DEBUG(lock, "client-side convert");
 
 	req = ptlrpc_request_alloc_pack(class_exp2cliimp(exp),
-					&RQF_LDLM_CONVERT, LUSTRE_DLM_VERSION,
+					&RQF_LDLM_CONVERT, GRUMPLE_DLM_VERSION,
 					LDLM_CONVERT);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
@@ -1425,7 +1425,7 @@ int ldlm_cli_cancel_req(struct obd_export *exp, struct ldlm_lock *lock,
 		req_capsule_set_size(&req->rq_pill, &RMF_DLM_REQ, RCL_CLIENT,
 				     ldlm_request_bufsize(count, LDLM_CANCEL));
 
-		rc = ptlrpc_request_pack(req, LUSTRE_DLM_VERSION, LDLM_CANCEL);
+		rc = ptlrpc_request_pack(req, GRUMPLE_DLM_VERSION, LDLM_CANCEL);
 		if (rc) {
 			ptlrpc_request_free(req);
 			GOTO(out, rc);
@@ -1465,7 +1465,7 @@ int ldlm_cli_cancel_req(struct obd_export *exp, struct ldlm_lock *lock,
 		}
 
 		rc = ptlrpc_queue_wait(req);
-		if (rc == LUSTRE_ESTALE) {
+		if (rc == GRUMPLE_ESTALE) {
 			CDEBUG(D_DLMTRACE,
 			       "client/server (nid %s) out of sync -- not fatal\n",
 			       libcfs_nidstr(&req->rq_import->imp_connection->c_peer.nid));
@@ -2576,12 +2576,12 @@ static int replay_one_lock(struct obd_import *imp, struct ldlm_lock *lock)
 		flags = LDLM_FL_REPLAY;
 
 	req = ptlrpc_request_alloc_pack(imp, &RQF_LDLM_ENQUEUE,
-					LUSTRE_DLM_VERSION, LDLM_ENQUEUE);
+					GRUMPLE_DLM_VERSION, LDLM_ENQUEUE);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 
 	
-	req->rq_send_state = LUSTRE_IMP_REPLAY_LOCKS;
+	req->rq_send_state = GRUMPLE_IMP_REPLAY_LOCKS;
 	
 	req->rq_no_delay = 1;
 
@@ -2685,7 +2685,7 @@ static int __ldlm_replay_locks(struct obd_import *imp, bool rate_limit)
 		list_del_init(&lock->l_pending_chain);
 		/* If we disconnected in the middle - cleanup and let
 		 * reconnection to happen again. LU-14027 */
-		if (rc || (imp->imp_state != LUSTRE_IMP_REPLAY_LOCKS)) {
+		if (rc || (imp->imp_state != GRUMPLE_IMP_REPLAY_LOCKS)) {
 			ldlm_lock_put(lock);
 			continue;
 		}

@@ -96,7 +96,7 @@ static int mdc_get_root(struct obd_export *exp, const char *fileset,
 	if (fileset != NULL)
 		req_capsule_set_size(&req->rq_pill, &RMF_NAME, RCL_CLIENT,
 				     strlen(fileset) + 1);
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_GET_ROOT);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_GET_ROOT);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -107,8 +107,8 @@ static int mdc_get_root(struct obd_export *exp, const char *fileset,
 
 		memcpy(name, fileset, strlen(fileset));
 	}
-	grumple_msg_add_flags(req->rq_reqmsg, LUSTRE_IMP_FULL);
-	req->rq_send_state = LUSTRE_IMP_FULL;
+	grumple_msg_add_flags(req->rq_reqmsg, GRUMPLE_IMP_FULL);
+	req->rq_send_state = GRUMPLE_IMP_FULL;
 
 	ptlrpc_request_set_replen(req);
 
@@ -211,7 +211,7 @@ static int mdc_getattr(struct obd_export *exp, struct md_op_data *op_data,
 	struct ptlrpc_request *req;
 	struct obd_device *obd = class_exp2obd(exp);
 	struct obd_import *imp = class_exp2cliimp(exp);
-	__u32 acl_bufsize = LUSTRE_POSIX_ACL_MAX_SIZE_OLD;
+	__u32 acl_bufsize = GRUMPLE_POSIX_ACL_MAX_SIZE_OLD;
 	int rc;
 
 	ENTRY;
@@ -226,7 +226,7 @@ static int mdc_getattr(struct obd_export *exp, struct md_op_data *op_data,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_GETATTR);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_GETATTR);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -273,7 +273,7 @@ static int mdc_getattr_name(struct obd_export *exp, struct md_op_data *op_data,
 {
 	struct ptlrpc_request *req;
 	struct obd_import *imp = class_exp2cliimp(exp);
-	__u32 acl_bufsize = LUSTRE_POSIX_ACL_MAX_SIZE_OLD;
+	__u32 acl_bufsize = GRUMPLE_POSIX_ACL_MAX_SIZE_OLD;
 	int rc;
 
 	ENTRY;
@@ -285,7 +285,7 @@ static int mdc_getattr_name(struct obd_export *exp, struct md_op_data *op_data,
 	req_capsule_set_size(&req->rq_pill, &RMF_NAME, RCL_CLIENT,
 			     op_data->op_namelen + 1);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_GETATTR_NAME);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_GETATTR_NAME);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -393,7 +393,7 @@ int mdc_xattr_common(struct obd_export *exp, const struct req_format *fmt,
 		if (rc)
 			GOTO(err_put_sepol, rc);
 	} else {
-		rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, opcode);
+		rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, opcode);
 		if (rc)
 			GOTO(err_put_sepol, rc);
 	}
@@ -923,7 +923,7 @@ static int mdc_close(struct obd_export *exp, struct md_op_data *op_data,
 		req_capsule_set_size(&req->rq_pill, &RMF_U32, RCL_CLIENT,
 				     u32_count * sizeof(__u32));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_CLOSE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_CLOSE);
 	if (rc) {
 		ptlrpc_request_free(req);
 		req = NULL;
@@ -1039,7 +1039,7 @@ restart_bulk:
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_READPAGE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_READPAGE);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1608,7 +1608,7 @@ static int mdc_statfs_async(struct obd_export *exp,
 	struct obd_info *aa;
 
 	req = ptlrpc_request_alloc_pack(class_exp2cliimp(exp), &RQF_MDS_STATFS,
-					LUSTRE_MDS_VERSION, MDS_STATFS);
+					GRUMPLE_MDS_VERSION, MDS_STATFS);
 	if (IS_ERR(req))
 		return PTR_ERR(req);
 
@@ -1648,7 +1648,7 @@ static int mdc_statfs(const struct lu_env *env,
 	if ((exp_connect_flags2(exp) & OBD_CONNECT2_SUM_STATFS) &&
 	    (flags & OBD_STATFS_SUM))
 		fmt = &RQF_MDS_STATFS_NEW;
-	req = ptlrpc_request_alloc_pack(imp, fmt, LUSTRE_MDS_VERSION,
+	req = ptlrpc_request_alloc_pack(imp, fmt, GRUMPLE_MDS_VERSION,
 					MDS_STATFS);
 	if (IS_ERR(req))
 		GOTO(output, rc = PTR_ERR(req));
@@ -1751,7 +1751,7 @@ static int mdc_ioc_hsm_progress(struct obd_export *exp,
 
 	ENTRY;
 	req = ptlrpc_request_alloc_pack(imp, &RQF_MDS_HSM_PROGRESS,
-					LUSTRE_MDS_VERSION, MDS_HSM_PROGRESS);
+					GRUMPLE_MDS_VERSION, MDS_HSM_PROGRESS);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 
@@ -1807,7 +1807,7 @@ static int mdc_ioc_hsm_ct_register(struct obd_import *imp, __u32 archive_count,
 	req_capsule_set_size(&req->rq_pill, &RMF_MDS_HSM_ARCHIVE,
 			     RCL_CLIENT, archives_size);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_HSM_CT_REGISTER);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_HSM_CT_REGISTER);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(-ENOMEM);
@@ -1848,7 +1848,7 @@ static int mdc_ioc_hsm_current_action(struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_HSM_ACTION);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_HSM_ACTION);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1883,7 +1883,7 @@ static int mdc_ioc_hsm_ct_unregister(struct obd_import *imp)
 
 	ENTRY;
 	req = ptlrpc_request_alloc_pack(imp, &RQF_MDS_HSM_CT_UNREGISTER,
-					LUSTRE_MDS_VERSION,
+					GRUMPLE_MDS_VERSION,
 					MDS_HSM_CT_UNREGISTER);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
@@ -1913,7 +1913,7 @@ static int mdc_ioc_hsm_state_get(struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_HSM_STATE_GET);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_HSM_STATE_GET);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1954,7 +1954,7 @@ static int mdc_ioc_hsm_state_set(struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_HSM_STATE_SET);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_HSM_STATE_SET);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -2030,7 +2030,7 @@ static int mdc_ioc_hsm_request(struct obd_export *exp,
 	req_capsule_set_size(&req->rq_pill, &RMF_GENERIC_DATA, RCL_CLIENT,
 			     hur->hur_request.hr_data_len);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_HSM_REQUEST);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_HSM_REQUEST);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -2086,7 +2086,7 @@ static int mdc_ioc_hsm_data_version(struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_HSM_DATA_VERSION);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_HSM_DATA_VERSION);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -2126,21 +2126,21 @@ static int mdc_quotactl(struct obd_device *unused, struct obd_export *exp,
 		RETURN(-ENOMEM);
 
 
-	if (LUSTRE_Q_CMD_IS_POOL(oqctl->qc_cmd))
+	if (GRUMPLE_Q_CMD_IS_POOL(oqctl->qc_cmd))
 		req_capsule_set_size(&req->rq_pill,
 				     &RMF_OBD_QUOTACTL,
 				     RCL_CLIENT,
 				     sizeof(*oqc) + LOV_MAXPOOLNAME + 1);
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITERQUOTA ||
-	    oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA)
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITERQUOTA ||
+	    oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA)
 		req_capsule_set_size(&req->rq_pill, &RMF_OBD_QUOTA_ITER,
 				     RCL_SERVER, LQUOTA_ITER_BUFLEN);
 	else
 		req_capsule_set_size(&req->rq_pill, &RMF_OBD_QUOTA_ITER,
 				     RCL_SERVER, 0);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION,
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION,
 				 MDS_QUOTACTL);
 	if (rc) {
 		ptlrpc_request_free(req);
@@ -2167,8 +2167,8 @@ static int mdc_quotactl(struct obd_device *unused, struct obd_export *exp,
 
 		QCTL_COPY(oqctl, oqc);
 
-		if (oqctl->qc_cmd == LUSTRE_Q_ITERQUOTA ||
-		    oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA) {
+		if (oqctl->qc_cmd == GRUMPLE_Q_ITERQUOTA ||
+		    oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA) {
 			void *buffer;
 			struct lquota_iter *iter;
 
@@ -2193,7 +2193,7 @@ static int mdc_quotactl(struct obd_device *unused, struct obd_export *exp,
 
 			memcpy(iter->li_buffer, buffer, LQUOTA_ITER_BUFLEN);
 			iter->li_md_size = oqctl->qc_iter_md_buflen;
-			if (oqctl->qc_cmd == LUSTRE_Q_ITERQUOTA)
+			if (oqctl->qc_cmd == GRUMPLE_Q_ITERQUOTA)
 				iter->li_dt_size = oqctl->qc_iter_dt_buflen;
 
 			oqctl->qc_iter_md_buflen = 0;
@@ -2418,7 +2418,7 @@ static int mdc_get_info_rpc(struct obd_export *exp,
 	req_capsule_set_size(&req->rq_pill, &RMF_GETINFO_VALLEN,
 			     RCL_CLIENT, sizeof(vallen));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_GET_INFO);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_GET_INFO);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -2657,12 +2657,12 @@ static int mdc_set_info_async(const struct lu_env *env,
 		}
 		spin_unlock(&imp->imp_lock);
 
-		rc = do_set_info_async(imp, MDS_SET_INFO, LUSTRE_MDS_VERSION,
+		rc = do_set_info_async(imp, MDS_SET_INFO, GRUMPLE_MDS_VERSION,
 				       keylen, key, vallen, val, set);
 		RETURN(rc);
 	}
 	if (KEY_IS(KEY_CHANGELOG_CLEAR)) {
-		rc = do_set_info_async(imp, MDS_SET_INFO, LUSTRE_MDS_VERSION,
+		rc = do_set_info_async(imp, MDS_SET_INFO, GRUMPLE_MDS_VERSION,
 				       keylen, key, vallen, val, set);
 		RETURN(rc);
 	}
@@ -2738,7 +2738,7 @@ static int mdc_fsync(struct obd_export *exp, const struct lu_fid *fid,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_SYNC);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_SYNC);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -2806,7 +2806,7 @@ static int mdc_rmfid(struct obd_export *exp, struct fid_array *fa,
 			     RCL_SERVER, flen);
 	req_capsule_set_size(&req->rq_pill, &RMF_RCS,
 			     RCL_SERVER, fa->fa_nr * sizeof(__u32));
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_RMFID);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_RMFID);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -3152,7 +3152,7 @@ static int __init mdc_init(void)
 	}
 
 	rc = class_register_type(&mdc_obd_ops, &mdc_md_ops, true,
-				 LUSTRE_MDC_NAME, &mdc_device_type);
+				 GRUMPLE_MDC_NAME, &mdc_device_type);
 	if (rc)
 		goto out_class;
 
@@ -3167,7 +3167,7 @@ out_dev:
 
 static void __exit mdc_exit(void)
 {
-	class_unregister_type(LUSTRE_MDC_NAME);
+	class_unregister_type(GRUMPLE_MDC_NAME);
 	class_destroy(mdc_changelog_class);
 	unregister_chrdev_region(mdc_changelog_dev, MDC_CHANGELOG_DEV_COUNT);
 	idr_destroy(&mdc_changelog_minor_idr);
@@ -3175,7 +3175,7 @@ static void __exit mdc_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Metadata Client");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(mdc_init);

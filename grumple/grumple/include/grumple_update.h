@@ -10,8 +10,8 @@
  * Author: Di Wang <di.wang@intel.com>
  */
 
-#ifndef _LUSTRE_UPDATE_H
-#define _LUSTRE_UPDATE_H
+#ifndef _GRUMPLE_UPDATE_H
+#define _GRUMPLE_UPDATE_H
 #include <dt_object.h>
 #include <grumple_net.h>
 #include <obj_update.h>

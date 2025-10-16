@@ -844,10 +844,10 @@ int local_oid_storage_init(const struct lu_env *env, struct dt_device *dev,
 	list_add(&(*los)->los_list, &ls->ls_los_list);
 
 	/* Use {seq, 0, 0} to create the LAST_ID file for every
-	 * sequence.  OIDs start at LUSTRE_FID_INIT_OID.
+	 * sequence.  OIDs start at GRUMPLE_FID_INIT_OID.
 	 */
 	dti->dti_fid.f_seq = fid_seq(first_fid);
-	dti->dti_fid.f_oid = LUSTRE_FID_LASTID_OID;
+	dti->dti_fid.f_oid = GRUMPLE_FID_LASTID_OID;
 	dti->dti_fid.f_ver = 0;
 	o = ls_locate(env, ls, &dti->dti_fid, NULL);
 	if (IS_ERR(o))

@@ -1,5 +1,5 @@
-#ifndef _LINUX_GENERIC_RADIX_TREE_LUSTRE_H
-#define _LINUX_GENERIC_RADIX_TREE_LUSTRE_H
+#ifndef _LINUX_GENERIC_RADIX_TREE_GRUMPLE_H
+#define _LINUX_GENERIC_RADIX_TREE_GRUMPLE_H
 
 /**
  * DOC: Generic radix trees/sparse arrays

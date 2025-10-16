@@ -41,7 +41,7 @@ do {                                                                    \
 	((void)sizeof(env), (void)sizeof(page), (void)sizeof !!(exp))
 #endif 
 
-#ifdef CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK
+#ifdef CONFIG_GRUMPLE_DEBUG_EXPENSIVE_CHECK
 # define PINVRNT(env, page, expr)                                       \
 do {                                                                    \
 	if (unlikely(!(expr))) {                                        \

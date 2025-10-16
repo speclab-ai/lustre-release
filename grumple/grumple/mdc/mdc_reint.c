@@ -128,7 +128,7 @@ int mdc_setattr(struct obd_export *exp, struct md_op_data *op_data,
 
 	ptlrpc_request_set_replen(req);
 
-	rc = mdc_reint(req, LUSTRE_IMP_FULL);
+	rc = mdc_reint(req, GRUMPLE_IMP_FULL);
 	if (rc == -ERESTARTSYS)
 		rc = 0;
 
@@ -228,13 +228,13 @@ rebuild:
 		req->rq_import_generation = generation;
 		req->rq_sent = ktime_get_real_seconds() + resends;
 	}
-	level = LUSTRE_IMP_FULL;
+	level = GRUMPLE_IMP_FULL;
  resend:
 	rc = mdc_reint(req, level);
 
 	
 	if (rc == -ERESTARTSYS) {
-		level = LUSTRE_IMP_RECOVER;
+		level = GRUMPLE_IMP_RECOVER;
 		goto resend;
 	} else if (rc == -EINPROGRESS) {
 		/* Retry create infinitely until succeed or get other
@@ -360,7 +360,7 @@ int mdc_unlink(struct obd_export *exp, struct md_op_data *op_data,
 
 	*request = req;
 
-	rc = mdc_reint(req, LUSTRE_IMP_FULL);
+	rc = mdc_reint(req, GRUMPLE_IMP_FULL);
 	if (rc == -ERESTARTSYS)
 		rc = 0;
 
@@ -420,7 +420,7 @@ int mdc_link(struct obd_export *exp, struct md_op_data *op_data,
 
 	ptlrpc_request_set_replen(req);
 
-	rc = mdc_reint(req, LUSTRE_IMP_FULL);
+	rc = mdc_reint(req, GRUMPLE_IMP_FULL);
 	*request = req;
 	if (rc == -ERESTARTSYS)
 		rc = 0;
@@ -502,7 +502,7 @@ int mdc_rename(struct obd_export *exp, struct md_op_data *op_data,
 	sptlrpc_sepol_put(sepol);
 
 	
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 20, 53, 0)
 	
 	if ((exp_connect_flags(exp) &
 	     (OBD_CONNECT_GRANT | OBD_CONNECT_SRVLOCK)) ==
@@ -513,7 +513,7 @@ int mdc_rename(struct obd_export *exp, struct md_op_data *op_data,
 			     obd->u.cli.cl_default_mds_easize);
 	ptlrpc_request_set_replen(req);
 
-	rc = mdc_reint(req, LUSTRE_IMP_FULL);
+	rc = mdc_reint(req, GRUMPLE_IMP_FULL);
 	*request = req;
 	if (rc == -ERESTARTSYS)
 		rc = 0;
@@ -577,7 +577,7 @@ int mdc_file_resync(struct obd_export *exp, struct md_op_data *op_data)
 
 	ptlrpc_request_set_replen(req);
 
-	rc = mdc_reint(req, LUSTRE_IMP_FULL);
+	rc = mdc_reint(req, GRUMPLE_IMP_FULL);
 	if (rc == -ERESTARTSYS)
 		rc = 0;
 

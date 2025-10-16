@@ -166,7 +166,7 @@ void lfsck_lmv_put(const struct lu_env *env, struct lfsck_lmv *llmv)
 }
 
 /**
- * Mark the specified directory as read-only by set LUSTRE_IMMUTABLE_FL.
+ * Mark the specified directory as read-only by set GRUMPLE_IMMUTABLE_FL.
  *
  * The caller has taken the ldlm lock on the @obj already.
  *
@@ -224,9 +224,9 @@ static int lfsck_disable_master_lmv(const struct lu_env *env,
 	}
 
 	rc = dt_attr_get(env, obj, la);
-	if (rc == 0 && !(la->la_flags & LUSTRE_IMMUTABLE_FL)) {
+	if (rc == 0 && !(la->la_flags & GRUMPLE_IMMUTABLE_FL)) {
 		la->la_valid = LA_FLAGS;
-		la->la_flags |= LUSTRE_IMMUTABLE_FL;
+		la->la_flags |= GRUMPLE_IMMUTABLE_FL;
 		rc = dt_attr_set(env, obj, la, th);
 	}
 
@@ -1275,7 +1275,7 @@ static int lfsck_namespace_notify_lmv_remote(const struct lu_env *env,
 	if (req == NULL)
 		GOTO(out, rc = -ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OBD_VERSION, LFSCK_NOTIFY);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OBD_VERSION, LFSCK_NOTIFY);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 

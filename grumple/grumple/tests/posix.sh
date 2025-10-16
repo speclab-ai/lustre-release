@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$POSIX_EXCEPT"
 build_test_filter
-POSIX_DIR=${POSIX_DIR:-"$LUSTRE/tests/posix"}
+POSIX_DIR=${POSIX_DIR:-"$GRUMPLE/tests/posix"}
 POSIX_SRC=${POSIX_SRC:-"/usr/src/posix"}
 BASELINE_FS=${BASELINE_FS:-"ext4"}
 [[ -e /etc/SuSE-release ]] && BASELINE_FS=ext3

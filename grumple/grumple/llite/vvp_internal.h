@@ -231,7 +231,7 @@ static inline struct inode *vvp_object_inode(const struct cl_object *obj)
 int vvp_object_invariant(const struct cl_object *obj);
 struct vvp_object *cl_inode2vvp(struct inode *inode);
 
-#ifdef CONFIG_LUSTRE_DEBUG_EXPENSIVE_CHECK
+#ifdef CONFIG_GRUMPLE_DEBUG_EXPENSIVE_CHECK
 # define CLOBINVRNT(env, clob, expr)					\
 	do {								\
 		if (unlikely(!(expr))) {				\

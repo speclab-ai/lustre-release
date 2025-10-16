@@ -599,18 +599,18 @@ int class_attach(struct grumple_cfg *lcfg)
 
 	ENTRY;
 
-	if (!LUSTRE_CFG_BUFLEN(lcfg, 1)) {
+	if (!GRUMPLE_CFG_BUFLEN(lcfg, 1)) {
 		CERROR("No type passed!\n");
 		RETURN(-EINVAL);
 	}
 	typename = grumple_cfg_string(lcfg, 1);
 
-	if (!LUSTRE_CFG_BUFLEN(lcfg, 0)) {
+	if (!GRUMPLE_CFG_BUFLEN(lcfg, 0)) {
 		CERROR("No name passed!\n");
 		RETURN(-EINVAL);
 	}
 	name = grumple_cfg_string(lcfg, 0);
-	if (!LUSTRE_CFG_BUFLEN(lcfg, 2)) {
+	if (!GRUMPLE_CFG_BUFLEN(lcfg, 2)) {
 		CERROR("No UUID passed!\n");
 		RETURN(-EINVAL);
 	}
@@ -852,7 +852,7 @@ int class_cleanup(struct obd_device *obd, struct grumple_cfg *lcfg)
 		       atomic_read(&obd->obd_conn_inprogress) == 0);
 	smp_rmb();
 
-	if (lcfg->lcfg_bufcount >= 2 && LUSTRE_CFG_BUFLEN(lcfg, 1) > 0) {
+	if (lcfg->lcfg_bufcount >= 2 && GRUMPLE_CFG_BUFLEN(lcfg, 1) > 0) {
 		for (flag = grumple_cfg_string(lcfg, 1); *flag != 0; flag++)
 			switch (*flag) {
 			case 'F':
@@ -970,16 +970,16 @@ int class_add_conn(struct obd_device *obd, struct grumple_cfg *lcfg)
 
 	ENTRY;
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 1) < 1 ||
-	    LUSTRE_CFG_BUFLEN(lcfg, 1) > sizeof(struct obd_uuid)) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 1) < 1 ||
+	    GRUMPLE_CFG_BUFLEN(lcfg, 1) > sizeof(struct obd_uuid)) {
 		CERROR("invalid conn_uuid\n");
 		RETURN(-EINVAL);
 	}
-	if (strcmp(obd->obd_type->typ_name, LUSTRE_MDC_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_OSC_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_OSP_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_LWP_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_MGC_NAME)) {
+	if (strcmp(obd->obd_type->typ_name, GRUMPLE_MDC_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_OSC_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_OSP_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_LWP_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_MGC_NAME)) {
 		CERROR("can't add connection on non-client dev\n");
 		RETURN(-EINVAL);
 	}
@@ -1006,13 +1006,13 @@ static int class_del_conn(struct obd_device *obd, struct grumple_cfg *lcfg)
 
 	ENTRY;
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 1) < 1 ||
-	    LUSTRE_CFG_BUFLEN(lcfg, 1) > sizeof(struct obd_uuid)) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 1) < 1 ||
+	    GRUMPLE_CFG_BUFLEN(lcfg, 1) > sizeof(struct obd_uuid)) {
 		CERROR("invalid conn_uuid\n");
 		RETURN(-EINVAL);
 	}
-	if (strcmp(obd->obd_type->typ_name, LUSTRE_MDC_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_OSC_NAME)) {
+	if (strcmp(obd->obd_type->typ_name, GRUMPLE_MDC_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_OSC_NAME)) {
 		CERROR("can't del connection on non-client dev\n");
 		RETURN(-EINVAL);
 	}
@@ -1231,7 +1231,7 @@ struct grumple_cfg *grumple_cfg_rename(struct grumple_cfg *cfg,
 	else
 		name_len = strlen(param);
 
-	new_len = LUSTRE_CFG_BUFLEN(cfg, 1) + strlen(new_name) - name_len;
+	new_len = GRUMPLE_CFG_BUFLEN(cfg, 1) + strlen(new_name) - name_len;
 
 	OBD_ALLOC(new_param, new_len);
 	if (!new_param)
@@ -1417,7 +1417,7 @@ int class_process_config(struct grumple_cfg *lcfg, struct kobject *kobj)
 	}
 	case LCFG_DEL_UUID: {
 		CDEBUG(D_IOCTL, "removing mappings for uuid %s\n",
-		       (lcfg->lcfg_bufcount < 2 || LUSTRE_CFG_BUFLEN(lcfg, 1) ==
+		       (lcfg->lcfg_bufcount < 2 || GRUMPLE_CFG_BUFLEN(lcfg, 1) ==
 			0) ? "<all uuids>" : grumple_cfg_string(lcfg, 1));
 
 		err = class_del_uuid(grumple_cfg_string(lcfg, 1));
@@ -1432,11 +1432,11 @@ int class_process_config(struct grumple_cfg *lcfg, struct kobject *kobj)
 		 * set these mount options somewhere, so ll_fill_super
 		 * can find them.
 		 */
-		err = class_add_profile(LUSTRE_CFG_BUFLEN(lcfg, 1),
+		err = class_add_profile(GRUMPLE_CFG_BUFLEN(lcfg, 1),
 					grumple_cfg_string(lcfg, 1),
-					LUSTRE_CFG_BUFLEN(lcfg, 2),
+					GRUMPLE_CFG_BUFLEN(lcfg, 2),
 					grumple_cfg_string(lcfg, 2),
-					LUSTRE_CFG_BUFLEN(lcfg, 3),
+					GRUMPLE_CFG_BUFLEN(lcfg, 3),
 					grumple_cfg_string(lcfg, 3));
 		GOTO(out, err);
 	}
@@ -1520,7 +1520,7 @@ int class_process_config(struct grumple_cfg *lcfg, struct kobject *kobj)
 	
 	obd = class_name2obd(grumple_cfg_string(lcfg, 0));
 	if (!obd) {
-		if (!LUSTRE_CFG_BUFLEN(lcfg, 0))
+		if (!GRUMPLE_CFG_BUFLEN(lcfg, 0))
 			CERROR("this lcfg command requires a device name\n");
 		else
 			CERROR("no device for: %s\n",
@@ -1770,7 +1770,7 @@ int class_config_llog_handler(const struct lu_env *env,
 		int inst_len = 0;
 		int swab = 0;
 
-		if (lcfg->lcfg_version == __swab32(LUSTRE_CFG_VERSION)) {
+		if (lcfg->lcfg_version == __swab32(GRUMPLE_CFG_VERSION)) {
 			grumple_swab_grumple_cfg(lcfg);
 			swab = 1;
 		}
@@ -1783,7 +1783,7 @@ int class_config_llog_handler(const struct lu_env *env,
 		if (lcfg->lcfg_command == LCFG_MARKER) {
 			struct cfg_marker *marker = grumple_cfg_buf(lcfg, 1);
 			grumple_swab_cfg_marker(marker, swab,
-					       LUSTRE_CFG_BUFLEN(lcfg, 1));
+					       GRUMPLE_CFG_BUFLEN(lcfg, 1));
 			CDEBUG(D_CONFIG, "Marker, inst_flg=%#x mark_flg=%#x\n",
 			       cfg->cfg_flags, marker->cm_flags);
 			if (marker->cm_flags & CM_START) {
@@ -1858,20 +1858,20 @@ int class_config_llog_handler(const struct lu_env *env,
 			char *typename = grumple_cfg_string(lcfg, 1);
 
 			if (typename &&
-			    strcmp(typename, LUSTRE_LOV_NAME) == 0) {
+			    strcmp(typename, GRUMPLE_LOV_NAME) == 0) {
 				CDEBUG(D_CONFIG,
 				       "For 2.x interoperability, rename obd "
 				       "type from lov to lod (%s)\n",
 				       s2lsi(cfg->cfg_sb)->lsi_svname);
-				strcpy(typename, LUSTRE_LOD_NAME);
+				strcpy(typename, GRUMPLE_LOD_NAME);
 			}
 			if (typename &&
-			    strcmp(typename, LUSTRE_OSC_NAME) == 0) {
+			    strcmp(typename, GRUMPLE_OSC_NAME) == 0) {
 				CDEBUG(D_CONFIG,
 				       "For 2.x interoperability, rename obd "
 				       "type from osc to osp (%s)\n",
 				       s2lsi(cfg->cfg_sb)->lsi_svname);
-				strcpy(typename, LUSTRE_OSP_NAME);
+				strcpy(typename, GRUMPLE_OSP_NAME);
 			}
 		}
 #endif 
@@ -1889,9 +1889,9 @@ int class_config_llog_handler(const struct lu_env *env,
 
 		if (cfg->cfg_instance &&
 		    lcfg->lcfg_command != LCFG_SPTLRPC_CONF &&
-		    LUSTRE_CFG_BUFLEN(lcfg, 0) > 0) {
-			inst_len = LUSTRE_CFG_BUFLEN(lcfg, 0) +
-				LUSTRE_MAXINSTANCE + 4;
+		    GRUMPLE_CFG_BUFLEN(lcfg, 0) > 0) {
+			inst_len = GRUMPLE_CFG_BUFLEN(lcfg, 0) +
+				GRUMPLE_MAXINSTANCE + 4;
 			OBD_ALLOC(inst_name, inst_len);
 			if (!inst_name)
 				GOTO(out, rc = -ENOMEM);
@@ -2093,7 +2093,7 @@ int class_config_yaml_output(struct llog_rec_hdr *rec, char *buf, int size,
 	if (ptr >= end)
 		goto out_overflow;
 
-	if (lcfg->lcfg_version == __swab32(LUSTRE_CFG_VERSION))
+	if (lcfg->lcfg_version == __swab32(GRUMPLE_CFG_VERSION))
 		grumple_swab_grumple_cfg(lcfg);
 
 	rc = grumple_cfg_sanity_check(lcfg, REC_DATA_LEN(rec));
@@ -2142,7 +2142,7 @@ int class_config_yaml_output(struct llog_rec_hdr *rec, char *buf, int size,
 			goto out_overflow;
 	}
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 0) > 0) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 0) > 0) {
 		ptr += snprintf(ptr, end - ptr, ", device: %s",
 				grumple_cfg_string(lcfg, 0));
 		if (ptr >= end)
@@ -2209,7 +2209,7 @@ int class_config_yaml_output(struct llog_rec_hdr *rec, char *buf, int size,
 	}
 
 	for (i = 1; i < lcfg->lcfg_bufcount; i++) {
-		if (LUSTRE_CFG_BUFLEN(lcfg, i) > 0) {
+		if (GRUMPLE_CFG_BUFLEN(lcfg, i) > 0) {
 			ptr += snprintf(ptr, end - ptr, ", %s: %s",
 					ldata->ltd_bufs[i - 1],
 					grumple_cfg_string(lcfg, i));

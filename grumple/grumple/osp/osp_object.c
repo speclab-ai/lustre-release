@@ -751,11 +751,11 @@ static int osp_attr_set(const struct lu_env *env, struct dt_object *dt,
 	 */
 	if (!(attr->la_valid & LA_REMOTE_ATTR_SET) &&
 	    !(attr->la_valid == LA_FLAGS &&
-	      attr->la_flags == LUSTRE_ENCRYPT_FL))
+	      attr->la_flags == GRUMPLE_ENCRYPT_FL))
 		RETURN(0);
 
 	if (!is_only_remote_trans(th)) {
-		if (attr->la_flags & LUSTRE_SET_SYNC_FL) {
+		if (attr->la_flags & GRUMPLE_SET_SYNC_FL) {
 			struct ptlrpc_request *req = NULL;
 			struct osp_update_request *update = NULL;
 			struct osp_device *osp = lu2osp_dev(dt->do_lu.lo_dev);
@@ -1831,7 +1831,7 @@ static int osp_it_fetch(const struct lu_env *env, struct osp_it *it)
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OBD_VERSION, OBD_IDX_READ);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OBD_VERSION, OBD_IDX_READ);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -2377,7 +2377,7 @@ static int osp_object_print(const struct lu_env *env, void *cookie,
 {
 	const struct osp_object *o = lu2osp_obj((struct lu_object *)l);
 
-	return (*p)(env, cookie, LUSTRE_OSP_NAME"-object@%p", o);
+	return (*p)(env, cookie, GRUMPLE_OSP_NAME"-object@%p", o);
 }
 
 static int osp_object_invariant(const struct lu_object *o)

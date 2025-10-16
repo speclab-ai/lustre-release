@@ -472,7 +472,7 @@ static int osp_disconnect(struct osp_device *d)
 
 	
 	spin_lock(&imp->imp_lock);
-	imp->imp_obd->obd_force |= imp->imp_state != LUSTRE_IMP_FULL;
+	imp->imp_obd->obd_force |= imp->imp_state != GRUMPLE_IMP_FULL;
 	spin_unlock(&imp->imp_lock);
 
 	init_completion(&d->opd_disconnect_cmplt);
@@ -795,7 +795,7 @@ static int osp_statfs(const struct lu_env *env, struct dt_device *dev,
 
 	ENTRY;
 
-	if (imp->imp_state == LUSTRE_IMP_CLOSED)
+	if (imp->imp_state == GRUMPLE_IMP_CLOSED)
 		RETURN(-ESHUTDOWN);
 
 	if (unlikely(d->opd_imp_active == 0))
@@ -1211,7 +1211,7 @@ static int osp_init0(const struct lu_env *env, struct osp_device *osp,
 	}
 
 	rc = client_fid_init(osp->opd_obd, NULL, osp->opd_connect_mdt ?
-			     LUSTRE_SEQ_METADATA : LUSTRE_SEQ_DATA);
+			     GRUMPLE_SEQ_METADATA : GRUMPLE_SEQ_DATA);
 	if (rc) {
 		CERROR("%s: fid init error: rc = %d\n",
 		       osp->opd_obd->obd_name, rc);
@@ -1539,7 +1539,7 @@ static int osp_obd_statfs(const struct lu_env *env, struct obd_export *exp,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_STATFS);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_STATFS);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1792,9 +1792,9 @@ static int osp_obd_set_info_async(const struct lu_env *env,
 	req_capsule_set_size(&req->rq_pill, &RMF_SETINFO_VAL,
 			     RCL_CLIENT, vallen);
 	if (osp->opd_connect_mdt)
-		rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, MDS_SET_INFO);
+		rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, MDS_SET_INFO);
 	else
-		rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_SET_INFO);
+		rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_SET_INFO);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1847,7 +1847,7 @@ static const struct lu_device_type_operations osp_device_type_ops = {
 
 static struct lu_device_type osp_device_type = {
 	.ldt_tags     = LU_DEVICE_DT,
-	.ldt_name     = LUSTRE_OSP_NAME,
+	.ldt_name     = GRUMPLE_OSP_NAME,
 	.ldt_ops      = &osp_device_type_ops,
 	.ldt_ctx_tags = LCT_MD_THREAD | LCT_DT_THREAD,
 };
@@ -1893,22 +1893,22 @@ static int __init osp_init(void)
 		return rc;
 
 	rc = class_register_type(&osp_obd_device_ops, NULL, false,
-				 LUSTRE_OSP_NAME, &osp_device_type);
+				 GRUMPLE_OSP_NAME, &osp_device_type);
 	if (rc != 0) {
 		lu_kmem_fini(osp_caches);
 		return rc;
 	}
 
 	rc = class_register_type(&lwp_obd_device_ops, NULL, false,
-				 LUSTRE_LWP_NAME, &lwp_device_type);
+				 GRUMPLE_LWP_NAME, &lwp_device_type);
 	if (rc != 0) {
-		class_unregister_type(LUSTRE_OSP_NAME);
+		class_unregister_type(GRUMPLE_OSP_NAME);
 		lu_kmem_fini(osp_caches);
 		return rc;
 	}
 
 	
-	sym = class_add_symlinks(LUSTRE_OSC_NAME, true);
+	sym = class_add_symlinks(GRUMPLE_OSC_NAME, true);
 	if (IS_ERR(sym)) {
 		rc = PTR_ERR(sym);
 		
@@ -1927,7 +1927,7 @@ static int __init osp_init(void)
  */
 static void __exit osp_exit(void)
 {
-	struct obd_type *sym = class_search_type(LUSTRE_OSC_NAME);
+	struct obd_type *sym = class_search_type(GRUMPLE_OSC_NAME);
 
 	/* if this was never fully initialized by the osc layer
 	 * then we are responsible for freeing this obd_type
@@ -1940,14 +1940,14 @@ static void __exit osp_exit(void)
 		kobject_put(&sym->typ_kobj);
 	}
 
-	class_unregister_type(LUSTRE_LWP_NAME);
-	class_unregister_type(LUSTRE_OSP_NAME);
+	class_unregister_type(GRUMPLE_LWP_NAME);
+	class_unregister_type(GRUMPLE_OSP_NAME);
 	lu_kmem_fini(osp_caches);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
-MODULE_DESCRIPTION("Lustre OSD Storage Proxy ("LUSTRE_OSP_NAME")");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_DESCRIPTION("Lustre OSD Storage Proxy ("GRUMPLE_OSP_NAME")");
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(osp_init);

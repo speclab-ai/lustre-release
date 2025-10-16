@@ -105,7 +105,7 @@ static int lmv_set_mdc_active(struct lmv_obd *lmv,
 	CDEBUG(D_INFO, "Found OBD %s=%s device %d (%p) type %s at LMV idx %d\n",
 	       obd->obd_name, obd->obd_uuid.uuid, obd->obd_minor, obd,
 	       obd->obd_type->typ_name, tgt->ltd_index);
-	LASSERT(strcmp(obd->obd_type->typ_name, LUSTRE_MDC_NAME) == 0);
+	LASSERT(strcmp(obd->obd_type->typ_name, GRUMPLE_MDC_NAME) == 0);
 
 	if (tgt->ltd_active == activate) {
 		CDEBUG(D_INFO, "OBD %p already %sactive!\n", obd,
@@ -188,7 +188,7 @@ static int lmv_notify(struct obd_device *obd, struct obd_device *watched,
 
 	ENTRY;
 
-	if (strcmp(watched->obd_type->typ_name, LUSTRE_MDC_NAME)) {
+	if (strcmp(watched->obd_type->typ_name, GRUMPLE_MDC_NAME)) {
 		CERROR("unexpected notification of %s %s!\n",
 		       watched->obd_type->typ_name,
 		       watched->obd_name);
@@ -326,7 +326,7 @@ static int lmv_connect_mdc(struct obd_device *obd, struct lmv_tgt_desc *tgt)
 
 	ENTRY;
 
-	mdc_obd = class_find_client_obd(&tgt->ltd_uuid, LUSTRE_MDC_NAME,
+	mdc_obd = class_find_client_obd(&tgt->ltd_uuid, GRUMPLE_MDC_NAME,
 					&obd->obd_uuid);
 	if (!mdc_obd) {
 		CERROR("target %s not attached\n", tgt->ltd_uuid.uuid);
@@ -350,7 +350,7 @@ static int lmv_connect_mdc(struct obd_device *obd, struct lmv_tgt_desc *tgt)
 	}
 
 	
-	rc = client_fid_init(mdc_obd, mdc_exp, LUSTRE_SEQ_METADATA);
+	rc = client_fid_init(mdc_obd, mdc_exp, GRUMPLE_SEQ_METADATA);
 	if (rc)
 		RETURN(rc);
 
@@ -423,7 +423,7 @@ static int lmv_add_target(struct obd_device *obd, struct obd_uuid *uuidp,
 	ENTRY;
 
 	CDEBUG(D_CONFIG, "Target uuid: %s. index %d\n", uuidp->uuid, index);
-	mdc_obd = class_find_client_obd(uuidp, LUSTRE_MDC_NAME,
+	mdc_obd = class_find_client_obd(uuidp, GRUMPLE_MDC_NAME,
 					&obd->obd_uuid);
 	if (!mdc_obd) {
 		CERROR("%s: Target %s not attached: rc = %d\n",
@@ -992,7 +992,7 @@ static int lmv_iocontrol(unsigned int cmd, struct obd_export *exp,
 			RETURN(-EINVAL);
 
 		imp = class_exp2cliimp(tgt->ltd_exp);
-		if (!tgt->ltd_active && imp->imp_state != LUSTRE_IMP_IDLE) {
+		if (!tgt->ltd_active && imp->imp_state != GRUMPLE_IMP_IDLE) {
 			qctl->qc_valid = QC_MDTIDX;
 			qctl->obd_uuid = tgt->ltd_uuid;
 			RETURN(-ENODATA);
@@ -1226,15 +1226,15 @@ static struct lu_device *lmv_device_alloc(const struct lu_env *env,
 	LASSERT(obd);
 	lmv = &obd->u.lmv;
 
-	if (LUSTRE_CFG_BUFLEN(lcfg, 1) < 1) {
+	if (GRUMPLE_CFG_BUFLEN(lcfg, 1) < 1) {
 		CERROR("LMV setup requires a descriptor\n");
 		GOTO(out_free, rc = -EINVAL);
 	}
 
 	desc = (struct lmv_desc *)grumple_cfg_buf(lcfg, 1);
-	if (sizeof(*desc) > LUSTRE_CFG_BUFLEN(lcfg, 1)) {
+	if (sizeof(*desc) > GRUMPLE_CFG_BUFLEN(lcfg, 1)) {
 		CERROR("Lmv descriptor size wrong: %d > %d\n",
-		       (int)sizeof(*desc), LUSTRE_CFG_BUFLEN(lcfg, 1));
+		       (int)sizeof(*desc), GRUMPLE_CFG_BUFLEN(lcfg, 1));
 		GOTO(out_free, rc = -EINVAL);
 	}
 
@@ -1267,7 +1267,7 @@ static struct lu_device *lmv_device_alloc(const struct lu_env *env,
 		      obd->obd_name, rc);
 
 	rc = fld_client_init(&lmv->lmv_fld, obd->obd_name,
-			     LUSTRE_CLI_FLD_HASH_DHT);
+			     GRUMPLE_CLI_FLD_HASH_DHT);
 	if (rc)
 		CERROR("Can't init FLD, err %d\n", rc);
 
@@ -1349,7 +1349,7 @@ static int lmv_process_config(const struct lu_env *env, struct lu_device *lu,
 		/* modify_mdc_tgts add 0:grumple-clilmv  1:grumple-MDT0000_UUID
 		 * 2:0  3:1  4:grumple-MDT0000-mdc_UUID
 		 */
-		if (LUSTRE_CFG_BUFLEN(lcfg, 1) > sizeof(obd_uuid.uuid))
+		if (GRUMPLE_CFG_BUFLEN(lcfg, 1) > sizeof(obd_uuid.uuid))
 			GOTO(out, rc = -EINVAL);
 
 		obd_str2uuid(&obd_uuid,  grumple_cfg_buf(lcfg, 1));
@@ -2018,7 +2018,7 @@ static inline bool lmv_op_user_qos_mkdir(const struct md_op_data *op_data)
 {
 	const struct lmv_user_md *lum = op_data->op_data;
 
-	if (op_data->op_code != LUSTRE_OPC_MKDIR)
+	if (op_data->op_code != GRUMPLE_OPC_MKDIR)
 		return false;
 
 	if (lmv_dir_striped(op_data->op_lso1))
@@ -2034,7 +2034,7 @@ static inline bool lmv_op_default_qos_mkdir(const struct md_op_data *op_data)
 {
 	const struct lmv_stripe_object *lso = op_data->op_default_lso1;
 
-	if (op_data->op_code != LUSTRE_OPC_MKDIR)
+	if (op_data->op_code != GRUMPLE_OPC_MKDIR)
 		return false;
 
 	if (lmv_dir_striped(op_data->op_lso1))
@@ -2066,7 +2066,7 @@ static inline bool lmv_op_user_specific_mkdir(const struct md_op_data *op_data)
 {
 	const struct lmv_user_md *lum = op_data->op_data;
 
-	return op_data->op_code == LUSTRE_OPC_MKDIR &&
+	return op_data->op_code == GRUMPLE_OPC_MKDIR &&
 	       op_data->op_cli_flags & CLI_SET_MEA && lum &&
 	       (le32_to_cpu(lum->lum_magic) == LMV_USER_MAGIC ||
 		le32_to_cpu(lum->lum_magic) == LMV_USER_MAGIC_SPECIFIC) &&
@@ -2077,7 +2077,7 @@ static inline bool lmv_op_user_specific_mkdir(const struct md_op_data *op_data)
 static inline bool
 lmv_op_default_specific_mkdir(const struct md_op_data *op_data)
 {
-	return op_data->op_code == LUSTRE_OPC_MKDIR &&
+	return op_data->op_code == GRUMPLE_OPC_MKDIR &&
 	       op_data->op_default_lso1 &&
 	       op_data->op_default_lso1->lso_lsm.lsm_md_master_mdt_index !=
 			LMV_OFFSET_DEFAULT;
@@ -4150,13 +4150,13 @@ static int lmv_quotactl(struct obd_device *unused, struct obd_export *exp,
 		RETURN(-EIO);
 	}
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITERQUOTA ||
-	    oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA) {
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITERQUOTA ||
+	    oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA) {
 		struct list_head *lst =
 			(struct list_head *)(uintptr_t)(oqctl->qc_iter_list);
 		int err;
 
-		if (oqctl->qc_cmd == LUSTRE_Q_ITERQUOTA)
+		if (oqctl->qc_cmd == GRUMPLE_Q_ITERQUOTA)
 			RETURN(obd_quota_iter(tgt->ltd_exp, oqctl, lst));
 
 		lmv_foreach_connected_tgt(lmv, tgt) {
@@ -4546,7 +4546,7 @@ static const struct lu_device_type_operations lmv_type_ops = {
 
 static struct lu_device_type lmv_device_type = {
 	.ldt_tags     = LU_DEVICE_MISC,
-	.ldt_name     = LUSTRE_LMV_NAME,
+	.ldt_name     = GRUMPLE_LMV_NAME,
 	.ldt_ops      = &lmv_type_ops,
 	.ldt_ctx_tags = LCT_LOCAL
 };
@@ -4560,17 +4560,17 @@ static int __init lmv_init(void)
 		return rc;
 
 	return class_register_type(&lmv_obd_ops, &lmv_md_ops, true,
-				   LUSTRE_LMV_NAME, &lmv_device_type);
+				   GRUMPLE_LMV_NAME, &lmv_device_type);
 }
 
 static void __exit lmv_exit(void)
 {
-	class_unregister_type(LUSTRE_LMV_NAME);
+	class_unregister_type(GRUMPLE_LMV_NAME);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Logical Metadata Volume");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(lmv_init);

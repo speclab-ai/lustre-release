@@ -439,7 +439,7 @@ command_t cmdlist[] = {
 	{"recover", jt_obd_recover, 0,
 	 "try to restore a lost connection immediately\n"
 	 "usage: recover [MDC/OSC device]"},
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	{"conf_param", jt_lcfg_confparam, 0,
 	 "set a permanent config parameter.\n"
 	 "This command must be run on the MGS node\n"

@@ -28,7 +28,7 @@ static ssize_t numobd_show(struct kobject *kobj, struct attribute *attr,
 
 	return scnprintf(buf, PAGE_SIZE, "%u\n", obd->u.lmv.lmv_mdt_count);
 }
-LUSTRE_RO_ATTR(numobd);
+GRUMPLE_RO_ATTR(numobd);
 
 static ssize_t activeobd_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -39,7 +39,7 @@ static ssize_t activeobd_show(struct kobject *kobj, struct attribute *attr,
 	return scnprintf(buf, PAGE_SIZE, "%u\n",
 		obd->u.lmv.lmv_mdt_descs.ltd_lmv_desc.ld_active_tgt_count);
 }
-LUSTRE_RO_ATTR(activeobd);
+GRUMPLE_RO_ATTR(activeobd);
 
 static ssize_t desc_uuid_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -50,7 +50,7 @@ static ssize_t desc_uuid_show(struct kobject *kobj, struct attribute *attr,
 	return scnprintf(buf, PAGE_SIZE, "%s\n",
 			obd->u.lmv.lmv_mdt_descs.ltd_lmv_desc.ld_uuid.uuid);
 }
-LUSTRE_RO_ATTR(desc_uuid);
+GRUMPLE_RO_ATTR(desc_uuid);
 
 static ssize_t qos_maxage_show(struct kobject *kobj,
 			       struct attribute *attr,
@@ -81,7 +81,7 @@ static ssize_t qos_maxage_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(qos_maxage);
+GRUMPLE_RW_ATTR(qos_maxage);
 
 static ssize_t qos_prio_free_show(struct kobject *kobj,
 				  struct attribute *attr,
@@ -129,7 +129,7 @@ static ssize_t qos_prio_free_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(qos_prio_free);
+GRUMPLE_RW_ATTR(qos_prio_free);
 
 static ssize_t qos_threshold_rr_show(struct kobject *kobj,
 				     struct attribute *attr,
@@ -177,7 +177,7 @@ static ssize_t qos_threshold_rr_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(qos_threshold_rr);
+GRUMPLE_RW_ATTR(qos_threshold_rr);
 
 static int qos_exclude_seq_show_internal(struct seq_file *m, void *v,
 						bool is_prefix)

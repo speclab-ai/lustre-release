@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef LUSTRE_INTENT_H
-#define LUSTRE_INTENT_H
+#ifndef GRUMPLE_INTENT_H
+#define GRUMPLE_INTENT_H
 
 
 

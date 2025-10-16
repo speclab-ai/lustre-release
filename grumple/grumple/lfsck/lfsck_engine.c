@@ -123,7 +123,7 @@ static int lfsck_needs_scan_dir(const struct lu_env *env,
 	*fid = *lfsck_dto2fid(obj);
 	rc = dt_attr_get(env, obj, la);
 	if (unlikely(rc || (la->la_valid & LA_FLAGS &&
-			    la->la_flags & LUSTRE_ORPHAN_FL))) {
+			    la->la_flags & GRUMPLE_ORPHAN_FL))) {
 		
 		CDEBUG(D_INFO,
 		       "%s: skip orphan dir "DFID", %llx/%x: rc = %d\n",

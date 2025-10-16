@@ -676,9 +676,9 @@ static int osd_iit_iget(struct osd_thread_info *info, struct osd_device *dev,
 		dev->od_scrub.os_scrub.os_has_ml_file = 1;
 
 	if (is_scrub &&
-	    ldiskfs_test_inode_state(inode, LDISKFS_STATE_LUSTRE_NOSCRUB)) {
+	    ldiskfs_test_inode_state(inode, LDISKFS_STATE_GRUMPLE_NOSCRUB)) {
 		
-		ldiskfs_clear_inode_state(inode, LDISKFS_STATE_LUSTRE_NOSCRUB);
+		ldiskfs_clear_inode_state(inode, LDISKFS_STATE_GRUMPLE_NOSCRUB);
 		GOTO(put, rc = SCRUB_NEXT_NOSCRUB);
 	}
 
@@ -1645,7 +1645,7 @@ static const struct osd_lf_map osd_lf_maps[] = {
 
 	
 	{
-		.olm_name	= LUSTRE_NODEMAP_NAME,
+		.olm_name	= GRUMPLE_NODEMAP_NAME,
 	},
 
 	
@@ -1672,8 +1672,8 @@ static const struct osd_lf_map osd_dl_maps[] = {
 	{
 		.olm_name	= "fid",
 		.olm_fid	= {
-			.f_seq	= FID_SEQ_DOT_LUSTRE,
-			.f_oid	= FID_OID_DOT_LUSTRE_OBF,
+			.f_seq	= FID_SEQ_DOT_GRUMPLE,
+			.f_oid	= FID_OID_DOT_GRUMPLE_OBF,
 		},
 		.olm_namelen	= sizeof("fid") - 1,
 	},
@@ -1682,8 +1682,8 @@ static const struct osd_lf_map osd_dl_maps[] = {
 	{
 		.olm_name	= "lost+found",
 		.olm_fid	= {
-			.f_seq	= FID_SEQ_DOT_LUSTRE,
-			.f_oid	= FID_OID_DOT_LUSTRE_LPF,
+			.f_seq	= FID_SEQ_DOT_GRUMPLE,
+			.f_oid	= FID_OID_DOT_GRUMPLE_LPF,
 		},
 		.olm_namelen	= sizeof("lost+found") - 1,
 	},
@@ -2311,7 +2311,7 @@ osd_ios_ROOT_scan(struct osd_thread_info *info, struct osd_device *dev,
 	 *    ".grumple" with cached IGIF. But it will cause others
 	 *    on the MDT failed to check "fid_is_dot_grumple()".
 	 *
-	 * 2) Use fixed FID {FID_SEQ_DOT_LUSTRE, FID_OID_DOT_LUSTRE, 0}
+	 * 2) Use fixed FID {FID_SEQ_DOT_GRUMPLE, FID_OID_DOT_GRUMPLE, 0}
 	 *    for ".grumple" in spite of whether there are some clients
 	 *    cached the ".grumple" IGIF or not. It enables the check
 	 *    "fid_is_dot_grumple()" on the MDT, although it will cause
@@ -2324,7 +2324,7 @@ osd_ios_ROOT_scan(struct osd_thread_info *info, struct osd_device *dev,
 	 */
 	inode_lock(dentry->d_inode);
 	rc = osd_ios_scan_one(info, dev, dentry->d_inode,
-			      child->d_inode, &LU_DOT_LUSTRE_FID,
+			      child->d_inode, &LU_DOT_GRUMPLE_FID,
 			      dot_grumple_name,
 			      strlen(dot_grumple_name), 0);
 	inode_unlock(dentry->d_inode);

@@ -898,19 +898,19 @@ struct ptlrpc_cli_ctx * gss_sec_lookup_ctx_kr(struct ptlrpc_sec *sec,
 		sec2gsec(sec)->gs_rvs_hdl = gss_get_next_ctx_index();
 
 		switch (sec->ps_part) {
-		case LUSTRE_SP_MDT:
+		case GRUMPLE_SP_MDT:
 			sec_part_flags = "m";
 			break;
-		case LUSTRE_SP_OST:
+		case GRUMPLE_SP_OST:
 			sec_part_flags = "o";
 			break;
-		case LUSTRE_SP_MGC:
+		case GRUMPLE_SP_MGC:
 			sec_part_flags = "rmo";
 			break;
-		case LUSTRE_SP_CLI:
+		case GRUMPLE_SP_CLI:
 			sec_part_flags = "r";
 			break;
-		case LUSTRE_SP_MGS:
+		case GRUMPLE_SP_MGS:
 		default:
 			LBUG();
 		}
@@ -944,11 +944,11 @@ struct ptlrpc_cli_ctx * gss_sec_lookup_ctx_kr(struct ptlrpc_sec *sec,
 	 */
 
 	
-	if (strcmp(imp->imp_obd->obd_type->typ_name, LUSTRE_MDC_NAME) &&
-	    strcmp(imp->imp_obd->obd_type->typ_name, LUSTRE_OSC_NAME) &&
-	    strcmp(imp->imp_obd->obd_type->typ_name, LUSTRE_MGC_NAME) &&
-	    strcmp(imp->imp_obd->obd_type->typ_name, LUSTRE_LWP_NAME) &&
-	    strcmp(imp->imp_obd->obd_type->typ_name, LUSTRE_OSP_NAME)) {
+	if (strcmp(imp->imp_obd->obd_type->typ_name, GRUMPLE_MDC_NAME) &&
+	    strcmp(imp->imp_obd->obd_type->typ_name, GRUMPLE_OSC_NAME) &&
+	    strcmp(imp->imp_obd->obd_type->typ_name, GRUMPLE_MGC_NAME) &&
+	    strcmp(imp->imp_obd->obd_type->typ_name, GRUMPLE_LWP_NAME) &&
+	    strcmp(imp->imp_obd->obd_type->typ_name, GRUMPLE_OSP_NAME)) {
 		CERROR("obd %s is not a supported device\n",
 		       imp->imp_obd->obd_name);
 		GOTO(out, ctx = NULL);

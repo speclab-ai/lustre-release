@@ -114,12 +114,12 @@ Reviewed-by: Oleg Drokin <green@whamcloud.com>
 +}
 +
 +#define fscrypt_get_encryption_info(inode) \
-+	(unlikely(!IS_LUSTRE_MOUNT(inode->i_sb)) ? 0 : -EOPNOTSUPP)
++	(unlikely(!IS_GRUMPLE_MOUNT(inode->i_sb)) ? 0 : -EOPNOTSUPP)
 +
 +static inline int ext4_has_permitted_context(struct inode *parent,
 +					struct inode *child)
 +{
-+	if (unlikely(!IS_LUSTRE_MOUNT(parent->i_sb)))
++	if (unlikely(!IS_GRUMPLE_MOUNT(parent->i_sb)))
 +		return 1;
 +	return fscrypt_has_permitted_context(parent, child);
 +}
@@ -128,7 +128,7 @@ Reviewed-by: Oleg Drokin <green@whamcloud.com>
 +
 +static inline int ext4_prepare_readdir(struct inode *dir)
 +{
-+	if (unlikely(!IS_LUSTRE_MOUNT(dir->i_sb)))
++	if (unlikely(!IS_GRUMPLE_MOUNT(dir->i_sb)))
 +		return 0;
 +	return fscrypt_prepare_readdir(dir);
 +}
@@ -182,7 +182,7 @@ Reviewed-by: Oleg Drokin <green@whamcloud.com>
 +	fname->usr_fname = iname;
 +
 +	if (lookup && IS_ENCRYPTED(dir) &&
-+	    unlikely(!IS_LUSTRE_MOUNT(dir->i_sb) &&
++	    unlikely(!IS_GRUMPLE_MOUNT(dir->i_sb) &&
 +		     strnchr(iname->name, iname->len, '='))) {
 +		/* Only proceed to critical decode if
 +		 * iname contains escape char '='.
@@ -387,7 +387,7 @@ Index: linux-stage/fs/ext4/namei.c
 +	/* fname is probably truncated if it is the decoded representation of
 +	 * an encrypted filename not aligned on a 32-byte boundary
 +	 */
-+	probablytrunc = !IS_LUSTRE_MOUNT(dir->i_sb) && IS_ENCRYPTED(dir) &&
++	probablytrunc = !IS_GRUMPLE_MOUNT(dir->i_sb) && IS_ENCRYPTED(dir) &&
 +		fname->disk_name.len & 31;
  	while ((char *) de < dlimit - EXT4_BASE_DIR_LEN) {
  		/* this code is executed quadratically often */

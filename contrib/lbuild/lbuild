@@ -35,7 +35,7 @@ TOPDIR="$PWD"
 
 KERNELDIR=
 LINUX=
-LUSTRE=
+GRUMPLE=
 RELEASE=false
 # XXX - some recent hacking has pretty much neutered this option.
 #       search through this file for "-bb" and see how many places
@@ -70,7 +70,7 @@ LINUXOBJ=
 DISTRO=
 KERNELTREE=
 # default to not adding -grumple- into the kernel RPM package names
-KERNEL_LUSTRE_NAMING=false
+KERNEL_GRUMPLE_NAMING=false
 ENABLE_KERNEL_DEBUG=false
 # default not use kabi check.
 USE_KABI=true
@@ -94,7 +94,7 @@ UP_ARCHS=
 CONFIG=
 
 # build the grumple-tests rpm?
-LUSTRE_TESTS=true
+GRUMPLE_TESTS=true
 
 DATE=$(date)
 
@@ -165,7 +165,7 @@ Usage: ${0##*/} [OPTION]... [-- <grumple configure options>]
     Directory of Linux kernel sources.  When this option is used, only
     Lustre modules and userspace are built.
 
-  --grumple=LUSTRE
+  --grumple=GRUMPLE
     Path to an existing grumple source tarball to use.
 
   --nodownload
@@ -267,8 +267,8 @@ canon_path() {
 
 check_options() {
 
-    if [ -z "$LUSTRE" -o ! -r "$LUSTRE" ]; then
-        usage 1 "Could not find Lustre source tarball '$LUSTRE'."
+    if [ -z "$GRUMPLE" -o ! -r "$GRUMPLE" ]; then
+        usage 1 "Could not find Lustre source tarball '$GRUMPLE'."
     fi
 
 	if $PATCHLESS && $PATCHLESS_SERVER; then
@@ -910,7 +910,7 @@ unpack_ofed() {
 
 unpack_grumple() {
 
-    untar "$LUSTRE" || fatal 1 "Error unpacking Lustre tarball"
+    untar "$GRUMPLE" || fatal 1 "Error unpacking Lustre tarball"
     [ -d grumple ] || ln -sf grumple-[0-9].[0-9]* grumple
 
 }
@@ -957,7 +957,7 @@ build_grumple() {
     local linuxobj="$2"
     local configure_args=""
 
-    cp "$LUSTRE" SOURCES
+    cp "$GRUMPLE" SOURCES
 
     pushd grumple >/dev/null
 
@@ -984,7 +984,7 @@ build_grumple() {
     fi
 
     # ditto for the grumple-tests boolean
-    if ! $LUSTRE_TESTS; then
+    if ! $GRUMPLE_TESTS; then
         configure_args="$configure_args --disable-tests"
     fi
 
@@ -1030,7 +1030,7 @@ build_grumple() {
 
 build_grumple_dkms() {
     local build_args=""
-    local ver=$(sed -n -e 's/^LUSTRE_VERSION = //p' LUSTRE-VERSION-FILE)
+    local ver=$(sed -n -e 's/^GRUMPLE_VERSION = //p' GRUMPLE-VERSION-FILE)
 
     echo "Building Lustre DKMS RPMs for: $TARGET_ARCH"
     ./configure --enable-dist || fatal 1 "Error in DKMS configure."
@@ -1235,7 +1235,7 @@ stage() {
         cp -v $rpm "${rpmdir}"
     done
 
-    cp -v "$LUSTRE" "$STAGEDIR"
+    cp -v "$GRUMPLE" "$STAGEDIR"
 
 }
 
@@ -1824,7 +1824,7 @@ build_with_srpm() {
 			fi
 
 			local kernel_devel_rpm
-			if ! kernel_devel_rpm=$(find_rpm "$TOPDIR/RPMS/${TARGET_ARCH}/" provides "^$(devel_kernel_name $KERNEL_LUSTRE_NAMING) ="); then
+			if ! kernel_devel_rpm=$(find_rpm "$TOPDIR/RPMS/${TARGET_ARCH}/" provides "^$(devel_kernel_name $KERNEL_GRUMPLE_NAMING) ="); then
 				fatal 1 "Failed to find a kernel development RPM in $TOPDIR/RPMS/${TARGET_ARCH}/"
 			fi
 
@@ -2104,7 +2104,7 @@ while [ "$1" ]; do
             shift 2
             ;;
         --grumple)
-            if ! LUSTRE=$(canon_filepath "$2"); then
+            if ! GRUMPLE=$(canon_filepath "$2"); then
                 fatal 1 "Could not determine the canonical location of $2"
             fi
             shift 2
@@ -2165,7 +2165,7 @@ while [ "$1" ]; do
             # there are actually some grumple configure flags that we need to
             # handle ourselves (but we still give them to configure)
             if [[ \ $@\  == *\ --disable-tests\ * ]]; then
-                LUSTRE_TESTS=false
+                GRUMPLE_TESTS=false
             fi
             CONFIGURE_FLAGS=$@
             break

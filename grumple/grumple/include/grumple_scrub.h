@@ -12,8 +12,8 @@
  * Author: Fan Yong <fan.yong@intel.com>
  */
 
-#ifndef _LUSTRE_SCRUB_H
-# define _LUSTRE_SCRUB_H
+#ifndef _GRUMPLE_SCRUB_H
+# define _GRUMPLE_SCRUB_H
 
 #include <linux/uuid.h>
 #include <dt_object.h>

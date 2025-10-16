@@ -226,7 +226,7 @@ static const struct lu_device_type_operations osc_device_type_ops = {
 
 struct lu_device_type osc_device_type = {
         .ldt_tags     = LU_DEVICE_CL,
-        .ldt_name     = LUSTRE_OSC_NAME,
+        .ldt_name     = GRUMPLE_OSC_NAME,
         .ldt_ops      = &osc_device_type_ops,
         .ldt_ctx_tags = LCT_CL_THREAD
 };

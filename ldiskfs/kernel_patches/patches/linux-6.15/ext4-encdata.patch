@@ -58,7 +58,7 @@ index 00000000..aa83832f
 +#define _ENCDATA_H
 +
 +/* Define a fixed 4096-byte encryption unit size */
-+/* Must be identical to LUSTRE_ENCRYPTION_UNIT_SIZE */
++/* Must be identical to GRUMPLE_ENCRYPTION_UNIT_SIZE */
 +#define EXT4_ENCRYPTION_BLOCKBITS 12
 +#define EXT4_ENCRYPTION_UNIT_SIZE ((size_t)1 << EXT4_ENCRYPTION_BLOCKBITS)
 +#define EXT4_ENCRYPTION_MASK      (~(EXT4_ENCRYPTION_UNIT_SIZE - 1))
@@ -193,7 +193,7 @@ index 380cb534..ceb87e69 100644
  				  STATX_ATTR_VERITY);
  
 +	if (flags & EXT4_ENCRYPT_FL &&
-+	    unlikely(!IS_LUSTRE_MOUNT(inode->i_sb)))
++	    unlikely(!IS_GRUMPLE_MOUNT(inode->i_sb)))
 +		stat->size = round_up(stat->size,
 +				      EXT4_ENCRYPTION_UNIT_SIZE);
 +
@@ -449,7 +449,7 @@ index 776cf11d..80cad6e0 100644
 +	}
 +	name_len = retval;
 +
-+	retval = ext4_xattr_set(inode, EXT4_XATTR_INDEX_LUSTRE,
++	retval = ext4_xattr_set(inode, EXT4_XATTR_INDEX_GRUMPLE,
 +				EXT4_XATTR_NAME_RAWENCNAME,
 +				name, name_len, XATTR_CREATE);
 +

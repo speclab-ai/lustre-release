@@ -161,7 +161,7 @@ static int osd_object_print(const struct lu_env *env, void *cookie,
 	struct osd_object *o = osd_obj(l);
 
 	return (*p)(env, cookie,
-		    LUSTRE_OSD_WBCFS_NAME"-object@%p(i:%p:%lu/%u)",
+		    GRUMPLE_OSD_WBCFS_NAME"-object@%p(i:%p:%lu/%u)",
 		    o, o->oo_inode,
 		    o->oo_inode ? o->oo_inode->i_ino : 0UL,
 		    o->oo_inode ? o->oo_inode->i_generation : 0);
@@ -195,8 +195,8 @@ static void osd_inode_getattr(const struct lu_env *env,
 	 * to inode flags, and MemFS internally test raw inode
 	 * @i_flags directly. Instead of patching ext4, we do it here.
 	 */
-	if (memfs_get_flags(inode) & LUSTRE_PROJINHERIT_FL)
-		attr->la_flags |= LUSTRE_PROJINHERIT_FL;
+	if (memfs_get_flags(inode) & GRUMPLE_PROJINHERIT_FL)
+		attr->la_flags |= GRUMPLE_PROJINHERIT_FL;
 }
 
 static int osd_attr_get(const struct lu_env *env, struct dt_object *dt,
@@ -213,13 +213,13 @@ static int osd_attr_get(const struct lu_env *env, struct dt_object *dt,
 
 	down_read(&obj->oo_guard);
 	osd_inode_getattr(env, obj->oo_inode, attr);
-	if (obj->oo_lma_flags & LUSTRE_ORPHAN_FL) {
+	if (obj->oo_lma_flags & GRUMPLE_ORPHAN_FL) {
 		attr->la_valid |= LA_FLAGS;
-		attr->la_flags |= LUSTRE_ORPHAN_FL;
+		attr->la_flags |= GRUMPLE_ORPHAN_FL;
 	}
-	if (obj->oo_lma_flags & LUSTRE_ENCRYPT_FL) {
+	if (obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL) {
 		attr->la_valid |= LA_FLAGS;
-		attr->la_flags |= LUSTRE_ENCRYPT_FL;
+		attr->la_flags |= GRUMPLE_ENCRYPT_FL;
 	}
 	up_read(&obj->oo_guard);
 
@@ -291,10 +291,10 @@ static int osd_inode_setattr(const struct lu_env *env,
 		 * @inode->i_flags to raw inode i_flags when writing
 		 * flags, we do it explictly here.
 		 */
-		if (attr->la_flags & LUSTRE_PROJINHERIT_FL)
-			MEMFS_I(inode)->mei_flags |= LUSTRE_PROJINHERIT_FL;
+		if (attr->la_flags & GRUMPLE_PROJINHERIT_FL)
+			MEMFS_I(inode)->mei_flags |= GRUMPLE_PROJINHERIT_FL;
 		else
-			MEMFS_I(inode)->mei_flags &= ~LUSTRE_PROJINHERIT_FL;
+			MEMFS_I(inode)->mei_flags &= ~GRUMPLE_PROJINHERIT_FL;
 	}
 	return 0;
 }

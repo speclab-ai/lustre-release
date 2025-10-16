@@ -247,7 +247,7 @@ kefalnd_find_remote_peer_ni(struct kefa_dev *efa_dev, struct lnet_nid *efa_nid)
 		      libcfs_nidstr(&tcp_nid));
 
 	id.nid = tcp_nid;
-	id.pid = LNET_PID_LUSTRE;
+	id.pid = LNET_PID_GRUMPLE;
 	rc = lnet_discover_nid_metadata(&id, EFALND_TCP_PING_TIMEOUT, mapping);
 	if (rc) {
 		EFA_DEV_DEBUG(efa_dev, "Failed to ping TCP peer NI[%s]\n",

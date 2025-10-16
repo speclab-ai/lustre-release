@@ -32,7 +32,7 @@ static ssize_t uuid_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%s\n", obd->obd_uuid.uuid);
 }
-LUSTRE_RO_ATTR(uuid);
+GRUMPLE_RO_ATTR(uuid);
 
 static ssize_t atime_diff_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -59,7 +59,7 @@ static ssize_t atime_diff_store(struct kobject *kobj,
         mdd->mdd_atime_diff = diff;
         return count;
 }
-LUSTRE_RW_ATTR(atime_diff);
+GRUMPLE_RW_ATTR(atime_diff);
 
 
 static int mdd_changelog_current_mask_seq_show(struct seq_file *m, void *data)
@@ -285,7 +285,7 @@ static ssize_t changelog_size_show(struct kobject *kobj,
 	lu_env_fini(&env);
 	return rc;
 }
-LUSTRE_RO_ATTR(changelog_size);
+GRUMPLE_RO_ATTR(changelog_size);
 
 static ssize_t changelog_gc_show(struct kobject *kobj,
 				 struct attribute *attr,
@@ -314,7 +314,7 @@ static ssize_t changelog_gc_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(changelog_gc);
+GRUMPLE_RW_ATTR(changelog_gc);
 
 static ssize_t changelog_free_space_gc_show(struct kobject *kobj,
 					    struct attribute *attr, char *buf)
@@ -342,7 +342,7 @@ static ssize_t changelog_free_space_gc_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(changelog_free_space_gc);
+GRUMPLE_RW_ATTR(changelog_free_space_gc);
 
 static ssize_t changelog_max_idle_time_show(struct kobject *kobj,
 					    struct attribute *attr,
@@ -378,7 +378,7 @@ static ssize_t changelog_max_idle_time_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(changelog_max_idle_time);
+GRUMPLE_RW_ATTR(changelog_max_idle_time);
 
 static ssize_t changelog_max_idle_indexes_show(struct kobject *kobj,
 					       struct attribute *attr,
@@ -412,7 +412,7 @@ static ssize_t changelog_max_idle_indexes_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(changelog_max_idle_indexes);
+GRUMPLE_RW_ATTR(changelog_max_idle_indexes);
 
 static ssize_t changelog_min_gc_interval_show(struct kobject *kobj,
 					      struct attribute *attr,
@@ -446,7 +446,7 @@ static ssize_t changelog_min_gc_interval_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(changelog_min_gc_interval);
+GRUMPLE_RW_ATTR(changelog_min_gc_interval);
 
 static ssize_t changelog_min_free_cat_entries_show(struct kobject *kobj,
 						   struct attribute *attr,
@@ -480,7 +480,7 @@ static ssize_t changelog_min_free_cat_entries_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(changelog_min_free_cat_entries);
+GRUMPLE_RW_ATTR(changelog_min_free_cat_entries);
 
 static ssize_t changelog_deniednext_show(struct kobject *kobj,
 					 struct attribute *attr,
@@ -509,7 +509,7 @@ static ssize_t changelog_deniednext_store(struct kobject *kobj,
 	mdd->mdd_cl.mc_deniednext = time;
 	return count;
 }
-LUSTRE_RW_ATTR(changelog_deniednext);
+GRUMPLE_RW_ATTR(changelog_deniednext);
 
 static ssize_t enable_shard_pfid_show(struct kobject *kobj,
 				      struct attribute *attr, char *buf)
@@ -537,7 +537,7 @@ static ssize_t enable_shard_pfid_store(struct kobject *kobj,
 	mdd->mdd_cl.mc_enable_shard_pfid = !!val;
 	return count;
 }
-LUSTRE_RW_ATTR(enable_shard_pfid);
+GRUMPLE_RW_ATTR(enable_shard_pfid);
 
 static ssize_t sync_permission_show(struct kobject *kobj,
 				    struct attribute *attr, char *buf)
@@ -565,7 +565,7 @@ static ssize_t sync_permission_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(sync_permission);
+GRUMPLE_RW_ATTR(sync_permission);
 
 static ssize_t lfsck_speed_limit_show(struct kobject *kobj,
 				      struct attribute *attr, char *buf)
@@ -592,7 +592,7 @@ static ssize_t lfsck_speed_limit_store(struct kobject *kobj,
 	rc = lfsck_set_speed(mdd->mdd_bottom, val);
 	return rc != 0 ? rc : count;
 }
-LUSTRE_RW_ATTR(lfsck_speed_limit);
+GRUMPLE_RW_ATTR(lfsck_speed_limit);
 
 static ssize_t lfsck_async_windows_show(struct kobject *kobj,
 					struct attribute *attr, char *buf)
@@ -620,7 +620,7 @@ static ssize_t lfsck_async_windows_store(struct kobject *kobj,
 
 	return rc != 0 ? rc : count;
 }
-LUSTRE_RW_ATTR(lfsck_async_windows);
+GRUMPLE_RW_ATTR(lfsck_async_windows);
 
 static int mdd_lfsck_namespace_seq_show(struct seq_file *m, void *data)
 {
@@ -692,7 +692,7 @@ static ssize_t append_stripe_count_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(append_stripe_count);
+GRUMPLE_RW_ATTR(append_stripe_count);
 
 /**
  * Show default OST pool for O_APPEND files.
@@ -743,7 +743,7 @@ static ssize_t append_pool_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(append_pool);
+GRUMPLE_RW_ATTR(append_pool);
 
 static struct ldebugfs_vars ldebugfs_mdd_obd_vars[] = {
 	{ .name =	"changelog_mask",
@@ -803,7 +803,7 @@ int mdd_procfs_init(struct mdd_device *mdd, const char *name)
 	/* at the moment there is no linkage between lu_type
 	 * and obd_type, so we lookup obd_type this way
 	 */
-	type = class_search_type(LUSTRE_MDD_NAME);
+	type = class_search_type(GRUMPLE_MDD_NAME);
 
 	LASSERT(name != NULL);
 	LASSERT(type != NULL);

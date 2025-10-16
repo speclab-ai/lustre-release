@@ -38,7 +38,7 @@ int osd_procfs_init(struct osd_device *osd, const char *name)
 	/* at the moment there is no linkage between lu_type
 	 * and obd_type, so we lookup obd_type this way
 	 */
-	type = class_search_type(LUSTRE_OSD_WBCFS_NAME);
+	type = class_search_type(GRUMPLE_OSD_WBCFS_NAME);
 
 	LASSERT(type);
 	LASSERT(name);

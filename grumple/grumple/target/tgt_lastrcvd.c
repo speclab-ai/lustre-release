@@ -2153,7 +2153,7 @@ int tgt_reply_data_init(const struct lu_env *env, struct lu_target *tgt)
 		}
 
 		switch (lrh->lrh_magic) {
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 5, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 5, 53, 0)
 		/* The old reply_data is replaced on the first mount after
 		 * an upgrade, so no need to keep this interop code forever.
 		 */

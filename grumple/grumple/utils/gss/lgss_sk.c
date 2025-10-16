@@ -350,11 +350,11 @@ int main(int argc, char **argv)
 			break;
 		case 'n':
 			nodemap = optarg;
-			if (strlen(nodemap) > LUSTRE_NODEMAP_NAME_LENGTH) {
+			if (strlen(nodemap) > GRUMPLE_NODEMAP_NAME_LENGTH) {
 				fprintf(stderr,
 					"error: nodemap name longer than "
 					"%u characters\n",
-					LUSTRE_NODEMAP_NAME_LENGTH);
+					GRUMPLE_NODEMAP_NAME_LENGTH);
 				return EXIT_FAILURE;
 			}
 			break;

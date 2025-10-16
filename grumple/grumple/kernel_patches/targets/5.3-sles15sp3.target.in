@@ -14,7 +14,7 @@ KERNEL_SRPM=kernel-source-${lnxmaj}${lnxmin}-${lnxrel}${rpmfix}.src.rpm
 SERIES=""
 VERSION=$lnxmaj
 EXTRA_VERSION="${lnxmin#.}-${lnxrel}_grumple.@VERSION@"
-LUSTRE_VERSION=@VERSION@
+GRUMPLE_VERSION=@VERSION@
 
 OFED_VERSION=inkernel
 MOFED_FLAVOR=default

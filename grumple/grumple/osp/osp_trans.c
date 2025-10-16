@@ -279,7 +279,7 @@ static int osp_prep_inline_update_req(const struct lu_env *env,
 	req_capsule_set_size(&req->rq_pill, &RMF_OUT_UPDATE_HEADER, RCL_CLIENT,
 			     update_req_size + sizeof(*ouh));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, OUT_UPDATE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, OUT_UPDATE);
 	if (rc != 0)
 		RETURN(rc);
 
@@ -386,7 +386,7 @@ int osp_prep_update_req(const struct lu_env *env, struct obd_import *imp,
 	req_capsule_set_size(&req->rq_pill, &RMF_OUT_UPDATE_BUF, RCL_CLIENT,
 			     buf_count * sizeof(*oub));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_MDS_VERSION, OUT_UPDATE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_MDS_VERSION, OUT_UPDATE);
 	if (rc != 0)
 		GOTO(out_req, rc);
 

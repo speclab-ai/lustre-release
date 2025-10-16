@@ -1,13 +1,13 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$RACER_EXCEPT "
 build_test_filter
-racer=$LUSTRE/tests/racer/racer.sh
+racer=$GRUMPLE/tests/racer/racer.sh
 echo racer: $racer with $MDSCOUNT MDTs
 if [ "$SLOW" = "no" ]; then
 	DURATION=${DURATION:-300}
@@ -141,10 +141,10 @@ test_1() {
 	local lss_pids=""
 	if $RACER_ENABLE_SNAPSHOT; then
 		lss_gen_conf
-		$LUSTRE/tests/racer/lss_create.sh &
+		$GRUMPLE/tests/racer/lss_create.sh &
 		pid=$!
 		lss_pids="$lss_pids $pid"
-		$LUSTRE/tests/racer/lss_destroy.sh &
+		$GRUMPLE/tests/racer/lss_destroy.sh &
 		pid=$!
 		lss_pids="$lss_pids $pid"
 	fi

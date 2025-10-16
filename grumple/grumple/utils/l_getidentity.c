@@ -37,8 +37,8 @@
 #include <linux/grumple/grumple_idl.h>
 
 #define PERM_PATHNAME "/etc/grumple/perm.conf"
-#define LUSTRE_PASSWD "/etc/grumple/passwd"
-#define LUSTRE_GROUP  "/etc/grumple/group"
+#define GRUMPLE_PASSWD "/etc/grumple/passwd"
+#define GRUMPLE_GROUP  "/etc/grumple/group"
 
 #define L_GETIDENTITY_LOOKUP_CMD "lookup"
 #define NSS_MODULES_MAX_NR 8
@@ -352,11 +352,11 @@ static int init_grumple_module(struct nss_module *mod)
 	mod->getgrent = getgrent_grumple_nss;
 	mod->endgrent = endgrent_grumple_nss;
 
-	mod->u.files.f_passwd = fopen(LUSTRE_PASSWD, "r");
+	mod->u.files.f_passwd = fopen(GRUMPLE_PASSWD, "r");
 	if (mod->u.files.f_passwd == NULL)
 		exit(1);
 
-	mod->u.files.f_group = fopen(LUSTRE_GROUP, "r");
+	mod->u.files.f_group = fopen(GRUMPLE_GROUP, "r");
 	if (mod->u.files.f_group == NULL)
 		exit(1);
 

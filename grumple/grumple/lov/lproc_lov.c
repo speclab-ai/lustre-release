@@ -48,7 +48,7 @@ static ssize_t stripesize_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(stripesize);
+GRUMPLE_RW_ATTR(stripesize);
 
 static ssize_t stripeoffset_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
@@ -79,7 +79,7 @@ static ssize_t stripeoffset_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(stripeoffset);
+GRUMPLE_RW_ATTR(stripeoffset);
 
 static ssize_t stripetype_show(struct kobject *kobj, struct attribute *attr,
 			       char *buf)
@@ -109,7 +109,7 @@ static ssize_t stripetype_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(stripetype);
+GRUMPLE_RW_ATTR(stripetype);
 
 static ssize_t stripecount_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
@@ -143,7 +143,7 @@ static ssize_t stripecount_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(stripecount);
+GRUMPLE_RW_ATTR(stripecount);
 
 static ssize_t numobd_show(struct kobject *kobj, struct attribute *attr,
 			   char *buf)
@@ -154,7 +154,7 @@ static ssize_t numobd_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%u\n", desc->ld_tgt_count);
 }
-LUSTRE_RO_ATTR(numobd);
+GRUMPLE_RO_ATTR(numobd);
 
 static ssize_t activeobd_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -165,7 +165,7 @@ static ssize_t activeobd_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%u\n", desc->ld_active_tgt_count);
 }
-LUSTRE_RO_ATTR(activeobd);
+GRUMPLE_RO_ATTR(activeobd);
 
 static ssize_t desc_uuid_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -176,7 +176,7 @@ static ssize_t desc_uuid_show(struct kobject *kobj, struct attribute *attr,
 
 	return sprintf(buf, "%s\n", desc->ld_uuid.uuid);
 }
-LUSTRE_RO_ATTR(desc_uuid);
+GRUMPLE_RO_ATTR(desc_uuid);
 
 static void *lov_tgt_seq_start(struct seq_file *p, loff_t *pos)
 {

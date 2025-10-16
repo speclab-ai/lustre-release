@@ -873,7 +873,7 @@ int lnet_get_peer_list(u32 *countp, u32 *sizep, struct lnet_process_id __user *i
 	 */
 	rc = -EFAULT;
 	memset(&id, 0, sizeof(id));
-	id.pid = LNET_PID_LUSTRE;
+	id.pid = LNET_PID_GRUMPLE;
 	i = 0;
 	for (cpt = 0; cpt < lncpt; cpt++) {
 		ptable = the_lnet.ln_peer_tables[cpt];
@@ -3942,7 +3942,7 @@ __must_hold(&lp->lp_lock)
 	cpt = lnet_net_lock_current();
 	
 	lnet_peer_addref_locked(lp);
-	id.pid = LNET_PID_LUSTRE;
+	id.pid = LNET_PID_GRUMPLE;
 	if (!LNET_NID_IS_ANY(&lp->lp_disc_dst_nid))
 		id.nid = lp->lp_disc_dst_nid;
 	else

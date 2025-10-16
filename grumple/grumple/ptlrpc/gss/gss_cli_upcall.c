@@ -76,7 +76,7 @@ int ctx_init_pack_request(struct obd_import *imp,
 
 	
 	if (req->rq_pack_udesc) {
-		ghdr->gh_flags |= LUSTRE_GSS_PACK_USER;
+		ghdr->gh_flags |= GRUMPLE_GSS_PACK_USER;
 
 		pud = grumple_msg_buf(msg, offset, sizeof(*pud));
 		LASSERT(pud);
@@ -88,7 +88,7 @@ int ctx_init_pack_request(struct obd_import *imp,
 	}
 
 	
-	ghdr->gh_flags |= LUSTRE_GSS_PACK_KCSUM;
+	ghdr->gh_flags |= GRUMPLE_GSS_PACK_KCSUM;
 
 	
 	p = grumple_msg_buf(msg, offset, 0);
@@ -264,11 +264,11 @@ int gss_do_ctx_init_rpc(char *buffer, unsigned long count)
 		RETURN(rc);
 	}
 
-	if (strcmp(obd->obd_type->typ_name, LUSTRE_MDC_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_OSC_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_MGC_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_LWP_NAME) &&
-	    strcmp(obd->obd_type->typ_name, LUSTRE_OSP_NAME)) {
+	if (strcmp(obd->obd_type->typ_name, GRUMPLE_MDC_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_OSC_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_MGC_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_LWP_NAME) &&
+	    strcmp(obd->obd_type->typ_name, GRUMPLE_OSP_NAME)) {
 		rc = -EINVAL;
 		CERROR("%s: obd is not a client device: rc = %d\n",
 		       obdname, rc);
@@ -297,7 +297,7 @@ int gss_do_ctx_init_rpc(char *buffer, unsigned long count)
 		RETURN(rc);
 	}
 
-	req = ptlrpc_request_alloc_pack(imp, &RQF_SEC_CTX, LUSTRE_OBD_VERSION,
+	req = ptlrpc_request_alloc_pack(imp, &RQF_SEC_CTX, GRUMPLE_OBD_VERSION,
 					SEC_CTX_INIT);
 	if (IS_ERR(req)) {
 		status = PTR_ERR(req);
@@ -410,7 +410,7 @@ int gss_do_ctx_fini_rpc(struct gss_cli_ctx *gctx)
                 GOTO(out, rc = -ENOMEM);
         }
 
-        rc = ptlrpc_request_bufs_pack(req, LUSTRE_OBD_VERSION, SEC_CTX_FINI,
+        rc = ptlrpc_request_bufs_pack(req, GRUMPLE_OBD_VERSION, SEC_CTX_FINI,
                                       NULL, ctx);
 	if (rc)
 		GOTO(out_ref, rc);

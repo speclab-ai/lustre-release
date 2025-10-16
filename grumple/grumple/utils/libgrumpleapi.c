@@ -662,7 +662,7 @@ int llapi_file_is_encrypted(int fd)
 	if (rc == -1)
 		return -errno;
 
-	return !!(flags & LUSTRE_ENCRYPT_FL);
+	return !!(flags & GRUMPLE_ENCRYPT_FL);
 }
 
 int llapi_file_open_pool(const char *name, int flags, int mode,
@@ -3352,7 +3352,7 @@ static void lov_dump_comp_v1_entry(struct find_param *param,
 		if (verbose & ~VERBOSE_COMP_END)
 			llapi_printf(LLAPI_MSG_NORMAL,
 				     "%4slcme_extent.e_end:   ", " ");
-		if (entry->lcme_extent.e_end == LUSTRE_EOF)
+		if (entry->lcme_extent.e_end == GRUMPLE_EOF)
 			llapi_printf(LLAPI_MSG_NORMAL, "%s", "EOF");
 		else
 			llapi_printf(LLAPI_MSG_NORMAL, "%llu",
@@ -3467,11 +3467,11 @@ static int find_comp_end_cmp(unsigned long long end, struct find_param *param)
 {
 	int match;
 
-	if (param->fp_comp_end == LUSTRE_EOF) {
+	if (param->fp_comp_end == GRUMPLE_EOF) {
 		if (param->fp_comp_end_sign == 0) 
-			match = end == LUSTRE_EOF ? 1 : -1;
+			match = end == GRUMPLE_EOF ? 1 : -1;
 		else if (param->fp_comp_end_sign > 0) 
-			match = end == LUSTRE_EOF ? -1 : 1;
+			match = end == GRUMPLE_EOF ? -1 : 1;
 		else 
 			match = -1;
 		if (param->fp_exclude_comp_end)
@@ -3479,7 +3479,7 @@ static int find_comp_end_cmp(unsigned long long end, struct find_param *param)
 	} else {
 		unsigned long long margin;
 
-		margin = end == LUSTRE_EOF ? 0 : param->fp_comp_end_units;
+		margin = end == GRUMPLE_EOF ? 0 : param->fp_comp_end_units;
 		match = find_value_cmp(end, param->fp_comp_end,
 				       param->fp_comp_end_sign,
 				       param->fp_exclude_comp_end, margin, 0);
@@ -3780,7 +3780,7 @@ lov_forge_comp_v1(struct lov_user_mds_data *orig, bool is_dir)
 	ent->lcme_id = 0;
 	ent->lcme_flags = is_dir ? 0 : LCME_FL_INIT;
 	ent->lcme_extent.e_start = 0;
-	ent->lcme_extent.e_end = LUSTRE_EOF;
+	ent->lcme_extent.e_end = GRUMPLE_EOF;
 	ent->lcme_offset = lum_off;
 	ent->lcme_size = lum_size;
 	
@@ -4545,7 +4545,7 @@ static int find_check_comp_options(struct find_param *param)
 		entry->lcme_flags = S_ISDIR(lmd->lmd_stx.stx_mode) ?
 				    0 : LCME_FL_INIT;
 		entry->lcme_extent.e_start = 0;
-		entry->lcme_extent.e_end = LUSTRE_EOF;
+		entry->lcme_extent.e_end = GRUMPLE_EOF;
 	}
 
 	
@@ -6478,7 +6478,7 @@ int llapi_migrate_mdt(char *path, struct find_param *param)
 
 int llapi_mv(char *path, struct find_param *param)
 {
-#if LUSTRE_VERSION_CODE > OBD_OCD_VERSION(2, 9, 59, 0)
+#if GRUMPLE_VERSION_CODE > OBD_OCD_VERSION(2, 9, 59, 0)
 	static bool printed;
 
 	if (!printed) {
@@ -7140,7 +7140,7 @@ int llapi_quotactl(char *mnt, struct if_quotactl *qctl)
 	rc = ioctl(root, OBD_IOC_QUOTACTL, qctl);
 	if (rc < 0)
 		rc = -errno;
-	if (rc == -ENOENT && LUSTRE_Q_CMD_IS_POOL(qctl->qc_cmd))
+	if (rc == -ENOENT && GRUMPLE_Q_CMD_IS_POOL(qctl->qc_cmd))
 		llapi_error(LLAPI_MSG_ERROR | LLAPI_MSG_NO_ERRNO, rc,
 			    "Cannot find pool '%s'", qctl->qc_poolname);
 

@@ -219,7 +219,7 @@ static inline int lfs_mirror_delete(int argc, char **argv)
 	SSM_CMD_COMMON("migrate  ")					\
 	"\t\t[--bandwidth|-W BANDWIDTH_MB[MG]]\n"			\
 	"\t\t[--block|-b] [--non-block|-n]\n"				\
-	"\t\t[--grumple-dir=LUSTRE_MOUNT_POINT --fid]\n"			\
+	"\t\t[--grumple-dir=GRUMPLE_MOUNT_POINT --fid]\n"			\
 	"\t\t[--non-direct|-D] [--verbose|-v] FILENAME\n"		\
 	"\t\t[--stats-interval SECONDS]\n"				\
 	"\t\t-0|--null|--files-from=LIST_FILE|FILENAME ...\n"
@@ -283,7 +283,7 @@ command_t mirror_cmdlist[] = {
 		"\t\t[--bandwidth|-W BANDWIDTH_MB[MG]]\n"
 		"\t\t[--file|-f VICTIM_FILE]\n"
 		"\t\t" SSM_SETSTRIPE_OPT "]\n"
-		"\t\t[--fid [--grumple-dir=LUSTRE_MOUNT_POINT]]\n"
+		"\t\t[--fid [--grumple-dir=GRUMPLE_MOUNT_POINT]]\n"
 		"\t\t-0|--null|--files-from=LIST_FILE|FILENAME ...\n" },
 	{ .pc_name = "split", .pc_func = lfs_mirror_split,
 	  .pc_help = "Split a mirrored file.\n"
@@ -788,7 +788,7 @@ source_open:
 		random_value = random();
 		rc = snprintf(volatile_file, sizeof(volatile_file),
 			      "%s/%s:%.4X:%.4X:fd=%.2d", parent,
-			      LUSTRE_VOLATILE_HDR, mdt_index,
+			      GRUMPLE_VOLATILE_HDR, mdt_index,
 			      random_value, fd_src);
 		if (rc >= sizeof(volatile_file)) {
 			rc = -ENAMETOOLONG;
@@ -2537,7 +2537,7 @@ again:
 					rnumber = random();
 					rc = snprintf(file_path,
 						      sizeof(file_path),
-						      "%s/" LUSTRE_VOLATILE_HDR ":%.4X:%.4X:fd=%.2d",
+						      "%s/" GRUMPLE_VOLATILE_HDR ":%.4X:%.4X:fd=%.2d",
 						      parent, mdt_index,
 						      rnumber, fd);
 					if (rc < 0 ||
@@ -3249,7 +3249,7 @@ static int build_layout_from_yaml_node(struct cYAML *node,
 				if (!strcmp(string, "lcme_extent.e_end")) {
 					if (!strcmp(node->cy_valuestring, "EOF") ||
 					    !strcmp(node->cy_valuestring, "eof"))
-						lsa->lsa_comp_end = LUSTRE_EOF;
+						lsa->lsa_comp_end = GRUMPLE_EOF;
 				} else if (!strcmp(string, "pool")) {
 					lsa->lsa_pool_name = node->cy_valuestring;
 				} else if (!strcmp(string, "pattern")) {
@@ -3279,7 +3279,7 @@ static int build_layout_from_yaml_node(struct cYAML *node,
 						lsa->lsa_first_comp = true;
 				} else if (!strcmp(string, "lcme_extent.e_end")) {
 					if (node->cy_valueint == -1)
-						lsa->lsa_comp_end = LUSTRE_EOF;
+						lsa->lsa_comp_end = GRUMPLE_EOF;
 					else
 						lsa->lsa_comp_end = node->cy_valueint;
 				} else if (!strcmp(string, "stripe_count")) {
@@ -3654,7 +3654,7 @@ enum {
 	LFS_QUOTA_IGRACE_OPT,
 	LFS_FILES_FROM,
 	LFS_THREAD_OPT,
-	LFS_LUSTRE_DIR,
+	LFS_GRUMPLE_DIR,
 };
 
 #ifndef LCME_USER_MIRROR_FLAGS
@@ -3788,7 +3788,7 @@ static int lfs_setstripe_internal(int argc, char **argv,
 						.has_arg = required_argument},
 	{ .val = LFS_FILES_FROM,
 		.name = "files-from",		.has_arg = required_argument},
-	{ .val = LFS_LUSTRE_DIR,
+	{ .val = LFS_GRUMPLE_DIR,
 		.name = "grumple-dir",		.has_arg = required_argument},
 	{ .val = '0',	.name = "null",		.has_arg = no_argument },
 	
@@ -3830,7 +3830,7 @@ static int lfs_setstripe_internal(int argc, char **argv,
 	{ .val = 'n',	.name = "non-block",	.has_arg = no_argument },
 	{ .val = 'N',	.name = "mirror-count",	.has_arg = optional_argument},
 	{ .val = 'o',	.name = "ost",		.has_arg = required_argument },
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	{ .val = 'o',	.name = "ost-list",	.has_arg = required_argument },
 	{ .val = 'o',	.name = "ost_list",	.has_arg = required_argument },
 #endif
@@ -4041,7 +4041,7 @@ static int lfs_setstripe_internal(int argc, char **argv,
 		case LFS_FILES_FROM:
 			files_from = optarg;
 			break;
-		case LFS_LUSTRE_DIR:
+		case LFS_GRUMPLE_DIR:
 			grumple_dir = optarg;
 			break;
 		case '0':
@@ -4128,7 +4128,7 @@ static int lfs_setstripe_internal(int argc, char **argv,
 			}
 
 			if (arg_is_eof(optarg)) {
-				lsa.lsa_comp_end = LUSTRE_EOF;
+				lsa.lsa_comp_end = GRUMPLE_EOF;
 			} else {
 				result = llapi_parse_size(optarg,
 							  &lsa.lsa_comp_end,
@@ -4285,7 +4285,7 @@ create_mirror:
 				mirror_count = strtoul(optarg, &end, 0);
 				if (errno != 0 || *end != '\0' ||
 				    mirror_count == 0 ||
-				    mirror_count > LUSTRE_MIRROR_COUNT_MAX) {
+				    mirror_count > GRUMPLE_MIRROR_COUNT_MAX) {
 					fprintf(stderr,
 						"error: %s: bad mirror count: %s\n",
 						progname, optarg);
@@ -4334,7 +4334,7 @@ create_mirror:
 				if (!setstripe_args_specified(&lsa))
 					last_mirror->m_inherit = true;
 				if (lsa.lsa_comp_end == 0)
-					lsa.lsa_comp_end = LUSTRE_EOF;
+					lsa.lsa_comp_end = GRUMPLE_EOF;
 
 				result = comp_args_to_layout(lpp, &lsa, true);
 				if (result) {
@@ -4351,7 +4351,7 @@ create_mirror:
 			lpp = &last_mirror->m_layout;
 			break;
 		case 'o':
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 			if (strcmp(argv[optind - 1], "--ost-list") == 0)
 				fprintf(stderr,
 					"warning: '--ost-list' is deprecated, use '--ost' instead\n");
@@ -4576,7 +4576,7 @@ create_mirror:
 		if (!setstripe_args_specified(&lsa))
 			last_mirror->m_inherit = true;
 		if (lsa.lsa_comp_end == 0)
-			lsa.lsa_comp_end = LUSTRE_EOF;
+			lsa.lsa_comp_end = GRUMPLE_EOF;
 	}
 
 	if (lsa.lsa_comp_end != 0) {
@@ -6176,7 +6176,7 @@ static int lfs_find(int argc, char **argv)
 			}
 
 			if (arg_is_eof(optarg)) {
-				param.fp_comp_end = LUSTRE_EOF;
+				param.fp_comp_end = GRUMPLE_EOF;
 				param.fp_comp_end_units = 1;
 				rc = 0;
 			} else {
@@ -6467,7 +6467,7 @@ static int lfs_find(int argc, char **argv)
 			errno = 0;
 			param.fp_mirror_count = strtoul(optarg, &endptr, 0);
 			if (errno != 0 || *endptr != '\0' ||
-			    param.fp_mirror_count > LUSTRE_MIRROR_COUNT_MAX) {
+			    param.fp_mirror_count > GRUMPLE_MIRROR_COUNT_MAX) {
 				fprintf(stderr,
 					"error: bad mirror count '%s'\n",
 					optarg);
@@ -6571,7 +6571,7 @@ static int lfs_find(int argc, char **argv)
 			regfree(&reg);
 			break;
 		}
-#if LUSTRE_VERSION_CODE >= OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE >= OBD_OCD_VERSION(2, 18, 53, 0)
 		case 'p':
 #endif
 		case LFS_POOL_OPT:
@@ -7061,7 +7061,7 @@ static int lfs_getstripe_internal(int argc, char **argv,
 				}
 
 				if (arg_is_eof(tmp)) {
-					param->fp_comp_end = LUSTRE_EOF;
+					param->fp_comp_end = GRUMPLE_EOF;
 					param->fp_comp_end_units = 1;
 					rc = 0;
 				} else {
@@ -7124,7 +7124,7 @@ static int lfs_getstripe_internal(int argc, char **argv,
 				param->fp_max_depth = 0;
 			}
 			break;
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 		case 'M':
 			fprintf(stderr,
 				"warning: '-M' deprecated, use '--mdt-index' or '-m' instead\n");
@@ -7315,7 +7315,7 @@ static int lfs_getdirstripe(int argc, char **argv)
 		case 'F':
 			param.fp_verbose |= VERBOSE_DFID;
 			break;
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 		case 't':
 			fprintf(stderr,
 				"warning: '-t' deprecated, use '--mdt-hash' or '-H' instead\n");
@@ -7909,7 +7909,7 @@ static int lfs_setdirstripe(int argc, char **argv)
 			.name = "foreign",	.has_arg = optional_argument},
 	{ .val = 'h',	.name = "help",		.has_arg = no_argument },
 	{ .val = 'H',	.name = "mdt-hash",	.has_arg = required_argument },
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 17, 53, 0)
 	{ .val = 'i',	.name = "mdt-index",	.has_arg = required_argument },
 	{ .val = 'i',	.name = "mdt",		.has_arg = required_argument },
 #else
@@ -7917,11 +7917,11 @@ static int lfs_setdirstripe(int argc, char **argv)
 	{ .val = 'm',	.name = "mdt-index",	.has_arg = required_argument },
 	{ .val = 'm',	.name = "mdt",		.has_arg = required_argument },
 #endif
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	{ .val = 'i',	.name = "index",	.has_arg = required_argument },
 #endif
 	{ .val = 'o',	.name = "mode",		.has_arg = required_argument },
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 	{ .val = 't',	.name = "hash-type",	.has_arg = required_argument },
 #endif
 	{ .val = 'T',	.name = "mdt-count",	.has_arg = required_argument },
@@ -8010,7 +8010,7 @@ static int lfs_setdirstripe(int argc, char **argv)
 				return CMD_HELP;
 			}
 			break;
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 		case 't':
 			fprintf(stderr,
 				"warning: '--hash-type' and '-t' deprecated, use '--mdt-hash' or '-H' instead\n");
@@ -8026,10 +8026,10 @@ static int lfs_setdirstripe(int argc, char **argv)
 			}
 			break;
 		case 'i':
-#if LUSTRE_VERSION_CODE >= OBD_OCD_VERSION(2, 17, 53, 0)
+#if GRUMPLE_VERSION_CODE >= OBD_OCD_VERSION(2, 17, 53, 0)
 		case 'm':
 #endif
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 			if (strcmp(argv[optind - 1], "--index") == 0)
 				fprintf(stderr,
 					"%s %s: warning: '--index' deprecated, use '--mdt-index' instead\n",
@@ -8397,7 +8397,7 @@ static int lfs_mv(int argc, char **argv)
 
 	while ((c = getopt_long(argc, argv, "m:M:v", long_opts, NULL)) != -1) {
 		switch (c) {
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(3, 0, 53, 0)
 		case 'M':
 			fprintf(stderr,
 				"warning: '-M' deprecated, use '--mdt-index' or '-m' instead\n");
@@ -8977,7 +8977,7 @@ static int lfs_setquota_times(int argc, char **argv, struct if_quotactl *qctl)
 	{ .name = NULL } };
 	int qtype;
 
-	qctl->qc_cmd  = LUSTRE_Q_SETINFO;
+	qctl->qc_cmd  = GRUMPLE_Q_SETINFO;
 	qctl->qc_type = ALLQUOTA;
 
 	while ((c = getopt_long(argc, argv, "b:ghi:ptu",
@@ -9024,7 +9024,7 @@ static int lfs_setquota_times(int argc, char **argv, struct if_quotactl *qctl)
 				return -1;
 			snprintf(qctl->qc_poolname, LOV_MAXPOOLNAME + 1, "%s",
 				 optarg);
-			qctl->qc_cmd  = LUSTRE_Q_SETINFOPOOL;
+			qctl->qc_cmd  = GRUMPLE_Q_SETINFOPOOL;
 			break;
 		case 't': 
 			break;
@@ -9108,7 +9108,7 @@ static int lfs_reset_quota(char *mnt, struct if_quotactl *qctl)
 	memset(&tmp_qctl, 0, sizeof(tmp_qctl));
 	tmp_qctl.qc_type = qctl->qc_type;
 	tmp_qctl.qc_id = qctl->qc_id;
-	tmp_qctl.qc_cmd = LUSTRE_Q_GETQUOTA;
+	tmp_qctl.qc_cmd = GRUMPLE_Q_GETQUOTA;
 
 retry:
 	if (wait_phase == 0) {
@@ -9189,7 +9189,7 @@ out:
 		return rc;
 
 	memcpy(&tmp_qctl, qctl, sizeof(tmp_qctl));
-	tmp_qctl.qc_cmd = LUSTRE_Q_SETQUOTA;
+	tmp_qctl.qc_cmd = GRUMPLE_Q_SETQUOTA;
 	rc2 = llapi_quotactl(mnt, &tmp_qctl);
 	if (!rc2)
 		return rc;
@@ -9273,7 +9273,7 @@ int lfs_setquota(int argc, char **argv)
 		goto out;
 	}
 
-	qctl->qc_cmd  = LUSTRE_Q_SETQUOTA;
+	qctl->qc_cmd  = GRUMPLE_Q_SETQUOTA;
 	qctl->qc_type = ALLQUOTA; /* ALLQUOTA makes no sense for setquota,
 				   * so it can be used as a marker that qc_type
 				   * isn't reinitialized from command line
@@ -9282,7 +9282,7 @@ int lfs_setquota(int argc, char **argv)
 		long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'U':
-			qctl->qc_cmd = LUSTRE_Q_SETDEFAULT;
+			qctl->qc_cmd = GRUMPLE_Q_SETDEFAULT;
 			qtype = USRQUOTA;
 			qctl->qc_id = 0;
 			goto quota_type_def;
@@ -9291,7 +9291,7 @@ int lfs_setquota(int argc, char **argv)
 			rc = name2uid(&qctl->qc_id, optarg);
 			goto quota_type;
 		case 'G':
-			qctl->qc_cmd = LUSTRE_Q_SETDEFAULT;
+			qctl->qc_cmd = GRUMPLE_Q_SETDEFAULT;
 			qtype = GRPQUOTA;
 			qctl->qc_id = 0;
 			goto quota_type_def;
@@ -9300,7 +9300,7 @@ int lfs_setquota(int argc, char **argv)
 			rc = name2gid(&qctl->qc_id, optarg);
 			goto quota_type;
 		case 'P':
-			qctl->qc_cmd = LUSTRE_Q_SETDEFAULT;
+			qctl->qc_cmd = GRUMPLE_Q_SETDEFAULT;
 			qtype = PRJQUOTA;
 			qctl->qc_id = 0;
 			goto quota_type_def;
@@ -9338,7 +9338,7 @@ quota_type_def:
 			}
 			qctl->qc_type = qtype;
 			break;
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 22, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 22, 53, 0)
 		case 'd':
 			fprintf(stderr,
 				"%s setquota: '-d' deprecated, use '-D' or '--default'\n",
@@ -9347,10 +9347,10 @@ quota_type_def:
 #endif
 		case 'D':
 			use_default = true;
-			qctl->qc_cmd = LUSTRE_Q_SETDEFAULT;
+			qctl->qc_cmd = GRUMPLE_Q_SETDEFAULT;
 			break;
 		case LFS_SETQUOTA_DELETE:
-			qctl->qc_cmd = LUSTRE_Q_DELETEQID;
+			qctl->qc_cmd = GRUMPLE_Q_DELETEQID;
 			break;
 		case 'b':
 			ARG2ULL(dqb->dqb_bsoftlimit, optarg, 1024);
@@ -9406,12 +9406,12 @@ quota_type_def:
 			}
 			snprintf(qctl->qc_poolname, LOV_MAXPOOLNAME + 1, "%s",
 				 optarg);
-			qctl->qc_cmd = qctl->qc_cmd == LUSTRE_Q_SETDEFAULT ?
-						LUSTRE_Q_SETDEFAULT_POOL :
-						LUSTRE_Q_SETQUOTAPOOL;
+			qctl->qc_cmd = qctl->qc_cmd == GRUMPLE_Q_SETDEFAULT ?
+						GRUMPLE_Q_SETDEFAULT_POOL :
+						GRUMPLE_Q_SETQUOTAPOOL;
 			break;
 		case 'r':
-			qctl->qc_cmd = LUSTRE_Q_RESETQID;
+			qctl->qc_cmd = GRUMPLE_Q_RESETQID;
 			break;
 		default:
 			fprintf(stderr,
@@ -9424,7 +9424,7 @@ quota_type_def:
 		}
 	}
 
-	if (LUSTRE_Q_CMD_IS_POOL(qctl->qc_cmd) &&
+	if (GRUMPLE_Q_CMD_IS_POOL(qctl->qc_cmd) &&
 	    limit_mask & (IHLIMIT | ISLIMIT)) {
 		fprintf(stderr,
 			"%s setquota: inode limits are not supported with Pool Quotas\n",
@@ -9441,8 +9441,8 @@ quota_type_def:
 		goto out;
 	}
 
-	if (!use_default && qctl->qc_cmd != LUSTRE_Q_DELETEQID &&
-	    qctl->qc_cmd != LUSTRE_Q_RESETQID && limit_mask == 0) {
+	if (!use_default && qctl->qc_cmd != GRUMPLE_Q_DELETEQID &&
+	    qctl->qc_cmd != GRUMPLE_Q_RESETQID && limit_mask == 0) {
 		fprintf(stderr,
 			"%s setquota: at least one limit must be specified\n",
 			progname);
@@ -9450,8 +9450,8 @@ quota_type_def:
 		goto out;
 	}
 
-	if ((use_default || qctl->qc_cmd == LUSTRE_Q_DELETEQID ||
-	     qctl->qc_cmd == LUSTRE_Q_RESETQID) && limit_mask != 0) {
+	if ((use_default || qctl->qc_cmd == GRUMPLE_Q_DELETEQID ||
+	     qctl->qc_cmd == GRUMPLE_Q_RESETQID) && limit_mask != 0) {
 		fprintf(stderr,
 			"%s setquota: limits should not be specified when using default quota, deleting or resetting quota ID\n",
 			progname);
@@ -9467,8 +9467,8 @@ quota_type_def:
 		goto out;
 	}
 
-	if ((qctl->qc_cmd == LUSTRE_Q_DELETEQID ||
-	     qctl->qc_cmd == LUSTRE_Q_RESETQID)  && qctl->qc_id == 0) {
+	if ((qctl->qc_cmd == GRUMPLE_Q_DELETEQID ||
+	     qctl->qc_cmd == GRUMPLE_Q_RESETQID)  && qctl->qc_id == 0) {
 		fprintf(stderr,
 			"%s setquota: can not delete or reset root user/group/project\n",
 			progname);
@@ -9495,7 +9495,7 @@ quota_type_def:
 		dqb->dqb_btime = 0;
 		dqb->dqb_valid |= QIF_LIMITS | QIF_TIMES;
 		
-		if (qctl->qc_cmd  == LUSTRE_Q_SETDEFAULT_POOL)
+		if (qctl->qc_cmd  == GRUMPLE_Q_SETDEFAULT_POOL)
 			dqb->dqb_valid ^= QIF_ILIMITS | QIF_ITIME;
 	} else if ((!(limit_mask & BHLIMIT) ^ !(limit_mask & BSLIMIT)) ||
 		   (!(limit_mask & IHLIMIT) ^ !(limit_mask & ISLIMIT))) {
@@ -9506,12 +9506,12 @@ quota_type_def:
 		if (!tmp_qctl)
 			goto out;
 
-		if (qctl->qc_cmd == LUSTRE_Q_SETQUOTAPOOL) {
-			tmp_qctl->qc_cmd = LUSTRE_Q_GETQUOTAPOOL;
+		if (qctl->qc_cmd == GRUMPLE_Q_SETQUOTAPOOL) {
+			tmp_qctl->qc_cmd = GRUMPLE_Q_GETQUOTAPOOL;
 			snprintf(tmp_qctl->qc_poolname, LOV_MAXPOOLNAME + 1,
 				 "%s", qctl->qc_poolname);
 		} else {
-			tmp_qctl->qc_cmd  = LUSTRE_Q_GETQUOTA;
+			tmp_qctl->qc_cmd  = GRUMPLE_Q_GETQUOTA;
 		}
 		tmp_qctl->qc_type = qctl->qc_type;
 		tmp_qctl->qc_id = qctl->qc_id;
@@ -9547,7 +9547,7 @@ quota_type_def:
 	dqb->dqb_valid |= (limit_mask & (BHLIMIT | BSLIMIT)) ? QIF_BLIMITS : 0;
 	dqb->dqb_valid |= (limit_mask & (IHLIMIT | ISLIMIT)) ? QIF_ILIMITS : 0;
 
-	if (qctl->qc_cmd == LUSTRE_Q_RESETQID)
+	if (qctl->qc_cmd == GRUMPLE_Q_RESETQID)
 		rc = lfs_reset_quota(mnt, qctl);
 	else
 		rc = llapi_quotactl(mnt, qctl);
@@ -9644,8 +9644,8 @@ static void print_quota_title(char *name, struct if_quotactl *qctl,
 			      struct quota_param *param)
 {
 	if (param->qp_quiet ||
-	    qctl->qc_cmd == LUSTRE_Q_GETINFO ||
-	    qctl->qc_cmd == LUSTRE_Q_GETINFOPOOL ||
+	    qctl->qc_cmd == GRUMPLE_Q_GETINFO ||
+	    qctl->qc_cmd == GRUMPLE_Q_GETINFOPOOL ||
 	    qctl->qc_cmd == Q_GETOINFO)
 		return;
 
@@ -9728,10 +9728,10 @@ static void print_quota(const char *mnt, struct if_quotactl *qctl, int type,
 
 	time(&now);
 
-	if (qctl->qc_cmd == LUSTRE_Q_GETQUOTA || qctl->qc_cmd == Q_GETOQUOTA ||
-	    qctl->qc_cmd == LUSTRE_Q_GETQUOTAPOOL ||
-	    qctl->qc_cmd == LUSTRE_Q_GETDEFAULT ||
-	    qctl->qc_cmd == LUSTRE_Q_GETDEFAULT_POOL) {
+	if (qctl->qc_cmd == GRUMPLE_Q_GETQUOTA || qctl->qc_cmd == Q_GETOQUOTA ||
+	    qctl->qc_cmd == GRUMPLE_Q_GETQUOTAPOOL ||
+	    qctl->qc_cmd == GRUMPLE_Q_GETDEFAULT ||
+	    qctl->qc_cmd == GRUMPLE_Q_GETDEFAULT_POOL) {
 		int bover = 0, iover = 0;
 		struct obd_dqblk *dqb = &qctl->qc_dqblk;
 		char numbuf[3][STRBUF_LEN + 2]; 
@@ -9869,8 +9869,8 @@ static void print_quota(const char *mnt, struct if_quotactl *qctl, int type,
 			print_quota_val(timebuf, 8, false, param);
 
 		printf("\n");
-	} else if (qctl->qc_cmd == LUSTRE_Q_GETINFO ||
-		   qctl->qc_cmd == LUSTRE_Q_GETINFOPOOL ||
+	} else if (qctl->qc_cmd == GRUMPLE_Q_GETINFO ||
+		   qctl->qc_cmd == GRUMPLE_Q_GETINFOPOOL ||
 		   qctl->qc_cmd == Q_GETOINFO) {
 		char bgtimebuf[40];
 		char igtimebuf[40];
@@ -9894,7 +9894,7 @@ static int tgt_name2index(const char *tgtname, unsigned int *idx)
 	char *dash, *endp;
 
 	
-	dash = memchr(tgtname, '-', LUSTRE_MAXFSNAME + 1);
+	dash = memchr(tgtname, '-', GRUMPLE_MAXFSNAME + 1);
 	if (!dash) {
 		fprintf(stderr, "wrong tgtname format '%s'\n", tgtname);
 		return -EINVAL;
@@ -9917,7 +9917,7 @@ static int print_obd_quota(char *mnt, struct if_quotactl *qctl, int is_mdt,
 	char **list = NULL, *buffer = NULL;
 	__u32 valid = qctl->qc_valid;
 
-	if (qctl->qc_cmd == LUSTRE_Q_GETQUOTAPOOL && is_mdt)
+	if (qctl->qc_cmd == GRUMPLE_Q_GETQUOTAPOOL && is_mdt)
 		return 0;
 
 	/* Is it correct for the case OST0000, OST0002, OST0003 -
@@ -9929,9 +9929,9 @@ static int print_obd_quota(char *mnt, struct if_quotactl *qctl, int is_mdt,
 		return rc;
 	}
 
-	if (qctl->qc_cmd == LUSTRE_Q_GETQUOTAPOOL) {
+	if (qctl->qc_cmd == GRUMPLE_Q_GETQUOTAPOOL) {
 		char fname[PATH_MAX];
-		char fsname[LUSTRE_MAXFSNAME + 1];
+		char fsname[GRUMPLE_MAXFSNAME + 1];
 		int bufsize = sizeof(struct obd_uuid) * count;
 
 		rc = llapi_search_fsname(mnt, fsname);
@@ -9952,7 +9952,7 @@ static int print_obd_quota(char *mnt, struct if_quotactl *qctl, int is_mdt,
 	}
 
 	for (i = 0; i < count; i++) {
-		if (qctl->qc_cmd == LUSTRE_Q_GETQUOTAPOOL) {
+		if (qctl->qc_cmd == GRUMPLE_Q_GETQUOTAPOOL) {
 			unsigned int index;
 
 			if (tgt_name2index(list[i], &index))
@@ -10035,8 +10035,8 @@ static int print_one_quota(char *mnt, char *name, struct if_quotactl *qctl,
 	if (qctl->qc_valid != QC_GENERAL)
 		mnt = "";
 
-	inacc = (qctl->qc_cmd == LUSTRE_Q_GETQUOTA ||
-		 qctl->qc_cmd == LUSTRE_Q_GETQUOTAPOOL) &&
+	inacc = (qctl->qc_cmd == GRUMPLE_Q_GETQUOTA ||
+		 qctl->qc_cmd == GRUMPLE_Q_GETQUOTAPOOL) &&
 		((qctl->qc_dqblk.dqb_valid & (QIF_LIMITS|QIF_USAGE)) !=
 		 (QIF_LIMITS|QIF_USAGE));
 
@@ -10044,8 +10044,8 @@ static int print_one_quota(char *mnt, char *name, struct if_quotactl *qctl,
 
 	if (!param->qp_show_qid && !param->qp_show_default &&
 	    param->qp_verbose && qctl->qc_valid == QC_GENERAL &&
-	    qctl->qc_cmd != LUSTRE_Q_GETINFO &&
-	    qctl->qc_cmd != LUSTRE_Q_GETINFOPOOL) {
+	    qctl->qc_cmd != GRUMPLE_Q_GETINFO &&
+	    qctl->qc_cmd != GRUMPLE_Q_GETINFOPOOL) {
 		char strbuf[STRBUF_LEN];
 
 		rc1 = print_obd_quota(mnt, qctl, 1, param,
@@ -10083,7 +10083,7 @@ static int iter_all_quota(char *mnt, struct if_quotactl *qctl,
 	int rc = 0;
 
 	memcpy(&qctl_tmp, qctl, sizeof(struct if_quotactl));
-	qctl_tmp.qc_cmd = LUSTRE_Q_ITERQUOTA;
+	qctl_tmp.qc_cmd = GRUMPLE_Q_ITERQUOTA;
 	rc = llapi_quotactl(mnt, &qctl_tmp);
 	if (rc)
 		goto out;
@@ -10097,7 +10097,7 @@ static int iter_all_quota(char *mnt, struct if_quotactl *qctl,
 
 	mark = qctl_tmp.qc_allquota_mark;
 	memcpy(&qctl_tmp, qctl, sizeof(struct if_quotactl));
-	qctl_tmp.qc_cmd = LUSTRE_Q_GETALLQUOTA;
+	qctl_tmp.qc_cmd = GRUMPLE_Q_GETALLQUOTA;
 	qctl_tmp.qc_allquota_buffer = (__u64)buffer;
 	qctl_tmp.qc_allquota_buflen = buflen;
 	qctl_tmp.qc_allquota_mark = mark;
@@ -10113,7 +10113,7 @@ static int iter_all_quota(char *mnt, struct if_quotactl *qctl,
 		}
 
 		qctl_iter = buffer + cur;
-		qctl_iter->qc_cmd = LUSTRE_Q_GETQUOTA;
+		qctl_iter->qc_cmd = GRUMPLE_Q_GETQUOTA;
 		cur += sizeof(struct if_quotactl);
 
 		
@@ -10347,7 +10347,7 @@ static int do_quota_op(char *mnt, struct if_quotactl *qctl,
 	qctl_tmp = malloc(sizeof(*qctl_tmp) + LOV_MAXPOOLNAME + 1);
 	memcpy(qctl_tmp, qctl, sizeof(*qctl_tmp) + LOV_MAXPOOLNAME + 1);
 
-	if (qctl_tmp->qc_cmd == LUSTRE_Q_ITERQUOTA) {
+	if (qctl_tmp->qc_cmd == GRUMPLE_Q_ITERQUOTA) {
 		rc = iter_all_quota(mnt, qctl_tmp, param);
 		goto out;
 	}
@@ -10487,7 +10487,7 @@ static int lfs_quota(int argc, char **argv)
 		name_max = sizeof(namebuf);
 	}
 
-	qctl->qc_cmd = LUSTRE_Q_GETQUOTA;
+	qctl->qc_cmd = GRUMPLE_Q_GETQUOTA;
 	qctl->qc_type = ALLQUOTA;
 	obd_uuid = (char *)qctl->obd_uuid.uuid;
 
@@ -10496,7 +10496,7 @@ static int lfs_quota(int argc, char **argv)
 		switch (c) {
 		case 'a':
 			param.qp_show_qid = 1;
-			qctl->qc_cmd = LUSTRE_Q_ITERQUOTA;
+			qctl->qc_cmd = GRUMPLE_Q_ITERQUOTA;
 			break;
 		case 'd':
 			if (optarg == NULL || *optarg == '\0') {
@@ -10533,7 +10533,7 @@ static int lfs_quota(int argc, char **argv)
 		case 'h':
 			param.qp_human_readable = 1;
 			break;
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 22, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 22, 53, 0)
 		case 'i':
 			fprintf(stderr,
 				"'-i' deprecated, use '--ost' or '--mdt'\n");
@@ -10553,7 +10553,7 @@ static int lfs_quota(int argc, char **argv)
 			param.qp_valid = qctl->qc_valid = QC_MDTIDX;
 			qctl->qc_idx = idx;
 			break;
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 22, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 22, 53, 0)
 		case 'I':
 			fprintf(stderr, "'-I' deprecated, use '--ost'\n");
 			
@@ -10597,16 +10597,16 @@ static int lfs_quota(int argc, char **argv)
 				}
 				snprintf(qctl->qc_poolname,
 					 LOV_MAXPOOLNAME + 1, "%s", optarg);
-				if (qctl->qc_cmd == LUSTRE_Q_GETINFO)
-					qctl->qc_cmd = LUSTRE_Q_GETINFOPOOL;
+				if (qctl->qc_cmd == GRUMPLE_Q_GETINFO)
+					qctl->qc_cmd = GRUMPLE_Q_GETINFOPOOL;
 				else
-					qctl->qc_cmd = LUSTRE_Q_GETQUOTAPOOL;
+					qctl->qc_cmd = GRUMPLE_Q_GETQUOTAPOOL;
 				break;
 			}
 
 			
 			param.qp_show_pools = 1;
-			qctl->qc_cmd = LUSTRE_Q_GETQUOTAPOOL;
+			qctl->qc_cmd = GRUMPLE_Q_GETQUOTAPOOL;
 			break;
 		case 'q':
 			param.qp_quiet = 1;
@@ -10622,7 +10622,7 @@ static int lfs_quota(int argc, char **argv)
 			start_qid = strtoul(optarg, NULL, 0);
 			break;
 		case 't':
-			qctl->qc_cmd = LUSTRE_Q_GETINFO;
+			qctl->qc_cmd = GRUMPLE_Q_GETINFO;
 			break;
 		case 'U':
 			param.qp_show_default = 1;
@@ -10678,7 +10678,7 @@ quota_type:
 	if (!param.qp_detail)
 		param.qp_detail = QIF_ALL_DETAIL;
 
-	if (qctl->qc_cmd == LUSTRE_Q_ITERQUOTA) {
+	if (qctl->qc_cmd == GRUMPLE_Q_ITERQUOTA) {
 		if (qctl->qc_type == ALLQUOTA) {
 			fprintf(stderr, "%s quota: no quota type to iterate\n",
 				progname);
@@ -10697,8 +10697,8 @@ quota_type:
 		qctl->qc_allquota_qid_start = start_qid;
 		qctl->qc_allquota_qid_end = end_qid;
 	} else if (qctl->qc_type != ALLQUOTA &&
-		   (qctl->qc_cmd == LUSTRE_Q_GETQUOTA ||
-		    qctl->qc_cmd == LUSTRE_Q_GETQUOTAPOOL)) {
+		   (qctl->qc_cmd == GRUMPLE_Q_GETQUOTA ||
+		    qctl->qc_cmd == GRUMPLE_Q_GETQUOTAPOOL)) {
 		char *argname = "<unknown>";
 
 		if (!param.qp_show_default) {
@@ -10727,9 +10727,9 @@ quota_type:
 			}
 		} else {
 			qctl->qc_valid = QC_GENERAL;
-			qctl->qc_cmd = qctl->qc_cmd == LUSTRE_Q_GETQUOTAPOOL ?
-					LUSTRE_Q_GETDEFAULT_POOL :
-					LUSTRE_Q_GETDEFAULT;
+			qctl->qc_cmd = qctl->qc_cmd == GRUMPLE_Q_GETQUOTAPOOL ?
+					GRUMPLE_Q_GETDEFAULT_POOL :
+					GRUMPLE_Q_GETDEFAULT;
 			qctl->qc_id = 0;
 		}
 
@@ -11954,7 +11954,7 @@ static int lfs_hsm_action(int argc, char **argv)
 		    (hua == HUA_ARCHIVE || hua == HUA_RESTORE))
 			printf("(%llu bytes moved)\n",
 			       (unsigned long long)he.length);
-		else if ((he.offset + he.length) == LUSTRE_EOF)
+		else if ((he.offset + he.length) == GRUMPLE_EOF)
 			printf("(from %llu to EOF)\n",
 			       (unsigned long long)he.offset);
 		else
@@ -12348,7 +12348,7 @@ static int lfs_ladvise(int argc, char **argv)
 	struct llapi_lu_ladvise advice;
 	enum lu_ladvise_type advice_type = LU_LADVISE_INVALID;
 	unsigned long long start = 0;
-	unsigned long long end = LUSTRE_EOF;
+	unsigned long long end = GRUMPLE_EOF;
 	unsigned long long length = 0;
 	unsigned long long size_units;
 	unsigned long long flags = 0;
@@ -12462,13 +12462,13 @@ static int lfs_ladvise(int argc, char **argv)
 		return CMD_HELP;
 	}
 
-	if (end != LUSTRE_EOF && length != 0 && end != start + length) {
+	if (end != GRUMPLE_EOF && length != 0 && end != start + length) {
 		fprintf(stderr, "%s: conflicting arguments of -l and -e\n",
 			argv[0]);
 		return CMD_HELP;
 	}
 
-	if (end == LUSTRE_EOF && length != 0)
+	if (end == GRUMPLE_EOF && length != 0)
 		end = start + length;
 
 	if (end <= start) {
@@ -14018,7 +14018,7 @@ close_fd:
 struct verify_chunk {
 	struct lu_extent chunk;
 	unsigned int mirror_count;
-	__u16 mirror_id[LUSTRE_MIRROR_COUNT_MAX];
+	__u16 mirror_id[GRUMPLE_MIRROR_COUNT_MAX];
 };
 
 /**
@@ -14099,7 +14099,7 @@ void filter_mirror_id(struct verify_chunk *chunks, int chunk_count,
 	int i;
 	int j;
 	int k;
-	__u16 valid_id[LUSTRE_MIRROR_COUNT_MAX] = { 0 };
+	__u16 valid_id[GRUMPLE_MIRROR_COUNT_MAX] = { 0 };
 	unsigned int valid_count = 0;
 
 	for (i = 0; i < chunk_count; i++) {
@@ -14129,7 +14129,7 @@ void filter_mirror_id(struct verify_chunk *chunks, int chunk_count,
  * @chunks:      Array of chunks.
  * @chunks_size: Array size of @chunks.
  *
- * This function scans the components in @layout from offset 0 to LUSTRE_EOF
+ * This function scans the components in @layout from offset 0 to GRUMPLE_EOF
  * to find out chunk segments and store them in @chunks array.
  *
  * The @mirror_id array in each element of @chunks will store the valid
@@ -14189,7 +14189,7 @@ int lfs_mirror_prepare_chunk(struct llapi_layout *layout,
 
 		i = 0;
 		rc = 0;
-		chunks[idx].chunk.e_end = LUSTRE_EOF;
+		chunks[idx].chunk.e_end = GRUMPLE_EOF;
 		while (rc == 0) {
 			rc = llapi_layout_comp_extent_get(layout, &start, &end);
 			if (rc < 0) {
@@ -14248,7 +14248,7 @@ next:
 
 		chunks[idx].mirror_count = i;
 
-		if (chunks[idx].chunk.e_end == LUSTRE_EOF)
+		if (chunks[idx].chunk.e_end == GRUMPLE_EOF)
 			break;
 
 		idx++;
@@ -14294,7 +14294,7 @@ int lfs_mirror_verify_chunk(int fd, size_t file_size,
 	size_t count;
 	off_t pos;
 	unsigned long crc;
-	unsigned long crc_array[LUSTRE_MIRROR_COUNT_MAX] = { 0 };
+	unsigned long crc_array[GRUMPLE_MIRROR_COUNT_MAX] = { 0 };
 	int i;
 	int rc = 0;
 
@@ -14577,7 +14577,7 @@ error:
  */
 static inline int lfs_mirror_verify(int argc, char **argv)
 {
-	__u16 mirror_ids[LUSTRE_MIRROR_COUNT_MAX] = { 0 };
+	__u16 mirror_ids[GRUMPLE_MIRROR_COUNT_MAX] = { 0 };
 	int ids_nr = 0;
 	int c;
 	int verbose = 0;

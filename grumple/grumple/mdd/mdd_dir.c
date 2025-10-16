@@ -42,7 +42,7 @@ mdd_name_check(const struct lu_env *env, struct mdd_device *m,
 {
 	struct mdd_thread_info *info = mdd_env_info(env);
 	bool enc = info->mdi_pattr.la_valid & LA_FLAGS &&
-		info->mdi_pattr.la_flags & LUSTRE_ENCRYPT_FL;
+		info->mdi_pattr.la_flags & GRUMPLE_ENCRYPT_FL;
 
 	if (!lu_name_is_valid(ln))
 		return -EINVAL;
@@ -502,7 +502,7 @@ static int mdd_may_delete_entry(const struct lu_env *env,
 			RETURN(rc);
 	}
 
-	if (pattr->la_flags & LUSTRE_APPEND_FL)
+	if (pattr->la_flags & GRUMPLE_APPEND_FL)
 		RETURN(-EPERM);
 
 	RETURN(0);
@@ -540,7 +540,7 @@ int mdd_may_delete(const struct lu_env *env, struct mdd_object *tpobj,
 	if (mdd_is_sticky(env, tpobj, tpattr, tobj, tattr))
 		RETURN(-EPERM);
 
-	if (tattr->la_flags & (LUSTRE_APPEND_FL | LUSTRE_IMMUTABLE_FL))
+	if (tattr->la_flags & (GRUMPLE_APPEND_FL | GRUMPLE_IMMUTABLE_FL))
 		RETURN(-EPERM);
 
 	
@@ -600,7 +600,7 @@ static int mdd_link_sanity_check(const struct lu_env *env,
 	if (rc < 0)
 		RETURN(rc);
 
-	if (cattr->la_flags & (LUSTRE_IMMUTABLE_FL | LUSTRE_APPEND_FL))
+	if (cattr->la_flags & (GRUMPLE_IMMUTABLE_FL | GRUMPLE_APPEND_FL))
 		RETURN(-EPERM);
 
 	if (S_ISDIR(mdd_object_type(src_obj)))
@@ -1364,11 +1364,11 @@ int mdd_changelog_ns_store(const struct lu_env *env,
 
 		if (sname) {
 			enc = info->mdi_tpattr.la_valid & LA_FLAGS &&
-				info->mdi_tpattr.la_flags & LUSTRE_ENCRYPT_FL;
+				info->mdi_tpattr.la_flags & GRUMPLE_ENCRYPT_FL;
 			tfid = (struct lu_fid *)sfid;
 		} else {
 			enc = info->mdi_pattr.la_valid & LA_FLAGS &&
-				info->mdi_pattr.la_flags & LUSTRE_ENCRYPT_FL;
+				info->mdi_pattr.la_flags & GRUMPLE_ENCRYPT_FL;
 			tfid = (struct lu_fid *)mdd_object_fid(target);
 		}
 		rc = changelog_name2digest(tname->ln_name, tname->ln_namelen,
@@ -1382,7 +1382,7 @@ int mdd_changelog_ns_store(const struct lu_env *env,
 			GOTO(out_ltname, rc = -ENOMEM);
 
 		enc = info->mdi_pattr.la_valid & LA_FLAGS &&
-			info->mdi_pattr.la_flags & LUSTRE_ENCRYPT_FL;
+			info->mdi_pattr.la_flags & GRUMPLE_ENCRYPT_FL;
 		rc = changelog_name2digest(sname->ln_name, sname->ln_namelen,
 					   tfid, enc, lsname);
 		if (rc)
@@ -1524,7 +1524,7 @@ static int __mdd_links_add(const struct lu_env *env,
 	 */
 	return linkea_add_buf(ldata, lname, pfid,
 			      cattr->la_valid & LA_FLAGS &&
-			      cattr->la_flags & LUSTRE_ENCRYPT_FL);
+			      cattr->la_flags & GRUMPLE_ENCRYPT_FL);
 }
 
 static int __mdd_links_del(const struct lu_env *env,
@@ -1549,7 +1549,7 @@ static int __mdd_links_del(const struct lu_env *env,
 
 	linkea_del_buf(ldata, lname,
 		       cattr->la_valid & LA_FLAGS &&
-		       cattr->la_flags & LUSTRE_ENCRYPT_FL);
+		       cattr->la_flags & GRUMPLE_ENCRYPT_FL);
 	return 0;
 }
 
@@ -1822,7 +1822,7 @@ static int mdd_link(const struct lu_env *env, struct md_object *tgt_obj,
 	 * creation in our tree when the project IDs are the same;
 	 * otherwise the tree quota mechanism could be circumvented.
 	 */
-	if ((tattr->la_flags & LUSTRE_PROJINHERIT_FL) &&
+	if ((tattr->la_flags & GRUMPLE_PROJINHERIT_FL) &&
 	    (tattr->la_projid != cattr->la_projid))
 		RETURN(-EXDEV);
 
@@ -1914,7 +1914,7 @@ static int mdd_mark_orphan_object(const struct lu_env *env,
 	int rc;
 
 	attr->la_valid = LA_FLAGS;
-	attr->la_flags = LUSTRE_ORPHAN_FL;
+	attr->la_flags = GRUMPLE_ORPHAN_FL;
 
 	if (declare)
 		rc = mdo_declare_attr_set(env, obj, attr, handle);
@@ -2536,10 +2536,10 @@ static int mdd_create_sanity_check(const struct lu_env *env,
 	}
 
 	
-	if (pattr->la_flags & LUSTRE_PROJINHERIT_FL) {
+	if (pattr->la_flags & GRUMPLE_PROJINHERIT_FL) {
 		cattr->la_projid = pattr->la_projid;
 		if (S_ISDIR(cattr->la_mode)) {
-			cattr->la_flags |= LUSTRE_PROJINHERIT_FL;
+			cattr->la_flags |= GRUMPLE_PROJINHERIT_FL;
 			cattr->la_valid |= LA_FLAGS;
 		}
 		cattr->la_valid |= LA_PROJID;
@@ -2587,7 +2587,7 @@ static int mdd_declare_create_object(const struct lu_env *env,
 	const struct lu_buf *buf;
 	int rc;
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	
 	if (def_acl_buf)
 		hint->dah_acl_len = def_acl_buf->lb_len;
@@ -2597,7 +2597,7 @@ static int mdd_declare_create_object(const struct lu_env *env,
 	if (rc)
 		GOTO(out, rc);
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if (def_acl_buf && def_acl_buf->lb_len > 0 && S_ISDIR(attr->la_mode)) {
 		
 		rc = mdo_declare_xattr_set(env, c, def_acl_buf,
@@ -2862,7 +2862,7 @@ static int mdd_create_object(const struct lu_env *env, struct mdd_object *pobj,
 			GOTO(err_destroy, rc);
 	}
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if (def_acl_buf != NULL && def_acl_buf->lb_len > 0 &&
 	    S_ISDIR(attr->la_mode)) {
 		
@@ -2920,7 +2920,7 @@ static int mdd_create_object(const struct lu_env *env, struct mdd_object *pobj,
 	if (initial_create && spec->sp_cr_job_xattr[0] != '\0' &&
 	    jobid[0] != '\0' &&
 	    (S_ISREG(attr->la_mode) || S_ISDIR(attr->la_mode))) {
-		jobid_len = strnlen(jobid, LUSTRE_JOBID_SIZE);
+		jobid_len = strnlen(jobid, GRUMPLE_JOBID_SIZE);
 		if (jobid[0] == '"' && jobid[jobid_len - 1] == '"' &&
 		    jobid_len >= 2) {
 			jobid++;
@@ -3069,7 +3069,7 @@ int mdd_create(const struct lu_env *env, struct md_object *pobj,
 	struct linkea_data *ldata = &info->mdi_link_data;
 	const char *name = lname->ln_name;
 	struct dt_allocation_hint *hint = &mdd_env_info(env)->mdi_hint;
-	int acl_size = LUSTRE_POSIX_ACL_MAX_SIZE_OLD;
+	int acl_size = GRUMPLE_POSIX_ACL_MAX_SIZE_OLD;
 	bool name_inserted = false;
 	int rc, rc2;
 
@@ -3109,7 +3109,7 @@ use_bigger_buffer:
 
 	rc = mdd_acl_init(env, mdd_pobj, attr, &def_acl_buf, &acl_buf);
 	if (unlikely(rc == -ERANGE &&
-		     acl_size == LUSTRE_POSIX_ACL_MAX_SIZE_OLD)) {
+		     acl_size == GRUMPLE_POSIX_ACL_MAX_SIZE_OLD)) {
 		
 		acl_size = min_t(unsigned int, mdd->mdd_dt_conf.ddp_max_ea_size,
 				 XATTR_SIZE_MAX);
@@ -3301,7 +3301,7 @@ static int mdd_rename_sanity_check(const struct lu_env *env,
 	 * into our tree when the project IDs are the same; otherwise
 	 * tree quota mechanism would be circumvented.
 	 */
-	if ((tpattr->la_flags & LUSTRE_PROJINHERIT_FL) &&
+	if ((tpattr->la_flags & GRUMPLE_PROJINHERIT_FL) &&
 	     tpattr->la_projid != sattr->la_projid && S_ISDIR(sattr->la_mode))
 		RETURN(-EXDEV);
 
@@ -3309,9 +3309,9 @@ static int mdd_rename_sanity_check(const struct lu_env *env,
 	 * into an unencrypted dir
 	 */
 	if ((spattr->la_valid & LA_FLAGS &&
-	     spattr->la_flags & LUSTRE_ENCRYPT_FL) &&
+	     spattr->la_flags & GRUMPLE_ENCRYPT_FL) &&
 	    !(tpattr->la_valid & LA_FLAGS &&
-	      tpattr->la_flags & LUSTRE_ENCRYPT_FL))
+	      tpattr->la_flags & GRUMPLE_ENCRYPT_FL))
 		RETURN(-EXDEV);
 
 	rc = mdd_may_delete(env, src_pobj, spattr, sobj, sattr, NULL, 1, 0);
@@ -3571,7 +3571,7 @@ static int mdd_rename(const struct lu_env *env,  struct md_object *src_pobj,
 		GOTO(stop, rc);
 
 	if (tpattr->la_projid != sattr->la_projid &&
-	    tpattr->la_flags & LUSTRE_PROJINHERIT_FL)
+	    tpattr->la_flags & GRUMPLE_PROJINHERIT_FL)
 		change_projid = true;
 
 	rc = mdd_declare_rename(env, mdd, mdd_spobj, mdd_tpobj, mdd_sobj,
@@ -3916,7 +3916,7 @@ static int mdd_xattrs_migrate_prep(const struct lu_env *env,
 		RETURN(list_xsize);
 
 	if (attr->la_valid & LA_FLAGS &&
-	    attr->la_flags & LUSTRE_ENCRYPT_FL) {
+	    attr->la_flags & GRUMPLE_ENCRYPT_FL) {
 		needencxattr = true;
 		list_xsize +=
 			strlen(LL_XATTR_NAME_ENCRYPTION_CONTEXT) + 1;

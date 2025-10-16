@@ -355,7 +355,7 @@ int ptlrpc_register_bulk(struct ptlrpc_request *req)
 	LASSERT(ptlrpc_is_bulk_op_passive(desc->bd_type));
 
 	
-	if (req->rq_resend || req->rq_send_state == LUSTRE_IMP_REPLAY)
+	if (req->rq_resend || req->rq_send_state == GRUMPLE_IMP_REPLAY)
 		desc->bd_nob_transferred = 0;
 	else if (desc->bd_nob_transferred != 0)
 		/* If network failed after RPC was sent, this condition could
@@ -378,7 +378,7 @@ int ptlrpc_register_bulk(struct ptlrpc_request *req)
 		 "first mbits = x%llu, last mbits = x%llu\n",
 		 mbits, req->rq_mbits);
 	LASSERTF(!(desc->bd_registered &&
-		   req->rq_send_state != LUSTRE_IMP_REPLAY) ||
+		   req->rq_send_state != GRUMPLE_IMP_REPLAY) ||
 		 mbits != desc->bd_last_mbits,
 		 "registered: %d  rq_mbits: %llu bd_last_mbits: %llu\n",
 		 desc->bd_registered, mbits, desc->bd_last_mbits);
@@ -872,7 +872,7 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
 
 	if (unlikely(CFS_FAIL_CHECK(OBD_FAIL_PTLRPC_DELAY_RECOV) &&
 		     grumple_msg_get_opc(request->rq_reqmsg) == MDS_CONNECT &&
-		     strcmp(obd->obd_type->typ_name, LUSTRE_OSP_NAME) == 0)) {
+		     strcmp(obd->obd_type->typ_name, GRUMPLE_OSP_NAME) == 0)) {
 		RETURN(0);
 	}
 
@@ -889,7 +889,7 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
 	
 	LASSERT(!request->rq_receiving_reply);
 	LASSERT(!((grumple_msg_get_flags(request->rq_reqmsg) & MSG_REPLAY) &&
-		  (imp->imp_state == LUSTRE_IMP_FULL)));
+		  (imp->imp_state == GRUMPLE_IMP_FULL)));
 
 	if (unlikely(obd != NULL && obd->obd_fail)) {
 		CDEBUG(D_HA, "muting rpc for failed imp obd %s\n",
@@ -908,7 +908,7 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
 	 */
 	spin_lock(&imp->imp_lock);
 	if (imp->imp_conn_current && imp->imp_conn_current->oic_uptodate <= 0 &&
-	    imp->imp_state == LUSTRE_IMP_CONNECTING) {
+	    imp->imp_state == GRUMPLE_IMP_CONNECTING) {
 		spin_unlock(&imp->imp_lock);
 		request->rq_sent = ktime_get_real_seconds();
 		request->rq_timeout = 1;
@@ -972,11 +972,11 @@ int ptl_send_rpc(struct ptlrpc_request *request, int noreply)
 	 * This check has a race with ptlrpc_connect_import_locked()
 	 * with low chance, don't panic, only report.
 	 */
-	if (!(obd_at_off(obd) || imp->imp_state != LUSTRE_IMP_FULL ||
+	if (!(obd_at_off(obd) || imp->imp_state != GRUMPLE_IMP_FULL ||
 	    (imp->imp_msghdr_flags & MSGHDR_AT_SUPPORT) ||
 	    !(imp->imp_connect_data.ocd_connect_flags & OBD_CONNECT_AT))) {
 		DEBUG_REQ(D_HA, request, "Wrong state of import detected, AT=%d, imp=%d, msghdr=%d, conn=%d\n",
-			  obd_at_off(obd), imp->imp_state != LUSTRE_IMP_FULL,
+			  obd_at_off(obd), imp->imp_state != GRUMPLE_IMP_FULL,
 			  (imp->imp_msghdr_flags & MSGHDR_AT_SUPPORT),
 			  !(imp->imp_connect_data.ocd_connect_flags &
 			    OBD_CONNECT_AT));

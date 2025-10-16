@@ -1579,7 +1579,7 @@ int sptlrpc_import_sec_adapt(struct obd_import *imp,
 		 * normal import, determine flavor from rule set, except
 		 * for mgc the flavor is predetermined.
 		 */
-		if (cliobd->cl_sp_me == LUSTRE_SP_MGC)
+		if (cliobd->cl_sp_me == GRUMPLE_SP_MGC)
 			sf = cliobd->cl_flvr_mgc;
 		else
 			sptlrpc_conf_choose_flavor(cliobd->cl_sp_me,
@@ -1775,7 +1775,7 @@ void _sptlrpc_enlarge_msg_inplace(struct grumple_msg *msg,
 	msg->lm_buflens[segment] = oldsize;
 
 	
-	LASSERT(msg->lm_magic == LUSTRE_MSG_MAGIC_V2);
+	LASSERT(msg->lm_magic == GRUMPLE_MSG_MAGIC_V2);
 	oldmsg_size = grumple_msg_size_v2(msg->lm_bufcount, msg->lm_buflens);
 	movesize = oldmsg_size - ((unsigned long) src - (unsigned long) msg);
 	LASSERT(movesize >= 0);
@@ -2350,28 +2350,28 @@ static int sptlrpc_svc_check_from(struct ptlrpc_request *req, int svc_rc)
 		return svc_rc;
 
 	switch (req->rq_sp_from) {
-	case LUSTRE_SP_CLI:
+	case GRUMPLE_SP_CLI:
 		if (req->rq_auth_usr_mdt || req->rq_auth_usr_ost) {
 			
 			DEBUG_REQ(D_ERROR, req, "faked source CLI");
 			svc_rc = SECSVC_DROP;
 		}
 		break;
-	case LUSTRE_SP_MDT:
+	case GRUMPLE_SP_MDT:
 		if (!req->rq_auth_usr_mdt) {
 			
 			DEBUG_REQ(D_ERROR, req, "faked source MDT");
 			svc_rc = SECSVC_DROP;
 		}
 		break;
-	case LUSTRE_SP_OST:
+	case GRUMPLE_SP_OST:
 		if (!req->rq_auth_usr_ost) {
 			
 			DEBUG_REQ(D_ERROR, req, "faked source OST");
 			svc_rc = SECSVC_DROP;
 		}
 		break;
-	case LUSTRE_SP_MGS:
+	case GRUMPLE_SP_MGS:
 		if (!req->rq_auth_usr_root && !req->rq_auth_usr_mdt &&
 		    !req->rq_auth_usr_ost) {
 			
@@ -2379,7 +2379,7 @@ static int sptlrpc_svc_check_from(struct ptlrpc_request *req, int svc_rc)
 			svc_rc = SECSVC_DROP;
 		}
 		break;
-	case LUSTRE_SP_MGC: {
+	case GRUMPLE_SP_MGC: {
 		bool faked = false;
 
 		/* For krb, at most one of rq_auth_usr_root, rq_auth_usr_mdt,
@@ -2411,7 +2411,7 @@ static int sptlrpc_svc_check_from(struct ptlrpc_request *req, int svc_rc)
 		}
 		break;
 	}
-	case LUSTRE_SP_ANY:
+	case GRUMPLE_SP_ANY:
 	default:
 		DEBUG_REQ(D_ERROR, req, "invalid source %u", req->rq_sp_from);
 		svc_rc = SECSVC_DROP;
@@ -2465,7 +2465,7 @@ int sptlrpc_svc_unwrap_request(struct ptlrpc_request *req)
 	}
 
 	req->rq_flvr.sf_rpc = WIRE_FLVR(msg->lm_secflvr);
-	req->rq_sp_from = LUSTRE_SP_ANY;
+	req->rq_sp_from = GRUMPLE_SP_ANY;
 	req->rq_auth_uid = -1; 
 	req->rq_auth_mapped_uid = -1;
 
@@ -2864,8 +2864,8 @@ int sptlrpc_current_user_desc_size(void)
 
 	ngroups = current_cred()->group_info->ngroups;
 
-	if (ngroups > LUSTRE_MAX_GROUPS)
-		ngroups = LUSTRE_MAX_GROUPS;
+	if (ngroups > GRUMPLE_MAX_GROUPS)
+		ngroups = GRUMPLE_MAX_GROUPS;
 	return sptlrpc_user_desc_size(ngroups);
 }
 EXPORT_SYMBOL(sptlrpc_current_user_desc_size);
@@ -2919,7 +2919,7 @@ int sptlrpc_unpack_user_desc(struct grumple_msg *msg, int offset, int swabbed)
 		__swab32s(&pud->pud_ngroups);
 	}
 
-	if (pud->pud_ngroups > LUSTRE_MAX_GROUPS) {
+	if (pud->pud_ngroups > GRUMPLE_MAX_GROUPS) {
 		CERROR("%u groups is too large\n", pud->pud_ngroups);
 		return -EINVAL;
 	}

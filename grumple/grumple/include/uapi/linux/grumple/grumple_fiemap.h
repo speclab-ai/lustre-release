@@ -17,8 +17,8 @@
  * Author: Andreas Dilger <adilger@sun.com>
  */
 
-#ifndef _LUSTRE_FIEMAP_H
-#define _LUSTRE_FIEMAP_H
+#ifndef _GRUMPLE_FIEMAP_H
+#define _GRUMPLE_FIEMAP_H
 
 #ifdef __KERNEL__
 # include <linux/stddef.h>

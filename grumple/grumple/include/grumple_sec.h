@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _LUSTRE_SEC_H_
-#define _LUSTRE_SEC_H_
+#ifndef _GRUMPLE_SEC_H_
+#define _GRUMPLE_SEC_H_
 
 #include <linux/module.h>
 #include <linux/libcfs/libcfs_debug.h>
@@ -310,12 +310,12 @@ struct sptlrpc_flavor {
  * RPC requests and to be checked by ptlrpc service.
  */
 enum grumple_sec_part {
-	LUSTRE_SP_CLI           = 0,
-	LUSTRE_SP_MDT,
-	LUSTRE_SP_OST,
-	LUSTRE_SP_MGC,
-	LUSTRE_SP_MGS,
-	LUSTRE_SP_ANY           = 0xFF
+	GRUMPLE_SP_CLI           = 0,
+	GRUMPLE_SP_MDT,
+	GRUMPLE_SP_OST,
+	GRUMPLE_SP_MGC,
+	GRUMPLE_SP_MGS,
+	GRUMPLE_SP_ANY           = 0xFF
 };
 
 const char *sptlrpc_part2name(enum grumple_sec_part sp);
@@ -893,7 +893,7 @@ struct ptlrpc_svc_ctx {
 /*
  * user identity descriptor
  */
-#define LUSTRE_MAX_GROUPS               (128)
+#define GRUMPLE_MAX_GROUPS               (128)
 
 struct ptlrpc_user_desc {
 	__u32           pud_uid;

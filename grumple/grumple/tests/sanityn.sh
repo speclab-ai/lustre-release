@@ -8,8 +8,8 @@ export TMP=${TMP:-/tmp}
 MOUNT_2=${MOUNT_2:-"yes"}
 CHECK_GRANT=${CHECK_GRANT:-"yes"}
 GRANT_CHECK_LIST=${GRANT_CHECK_LIST:-""}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env $@
 init_logging
 ALWAYS_EXCEPT="$SANITYN_EXCEPT "
@@ -692,7 +692,7 @@ test_18() {
                 excepts="$excepts -e $(($(printf %d \'$idx)-96))"
         done
 	excepts="$excepts -e 7 -e 8 -e 9"
-	$LUSTRE/tests/mmap_sanity -d $MOUNT1 -m $MOUNT2 $excepts ||
+	$GRUMPLE/tests/mmap_sanity -d $MOUNT1 -m $MOUNT2 $excepts ||
 		error "mmap_sanity test failed"
 	sync; sleep 1; sync
 }
@@ -5261,7 +5261,7 @@ test_109() {
 		umount_client $MOUNT2 & pid2=$!
 		wait $pid1 || error "Umount $MOUNT fails with $?"
 		wait $pid2 || error "Umount $MOUNT2 fails with $?"
-		$LUSTRE_RMMOD || error "Fail to remove grumple modules"
+		$GRUMPLE_RMMOD || error "Fail to remove grumple modules"
 		load_modules
 		echo
 	done

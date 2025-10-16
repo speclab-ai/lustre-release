@@ -112,7 +112,7 @@ EOF
 		param_path=$($LCTL list_param -p ${NAME//.-/.*})
 		printf -v FILES "\n.SH FILES\nThis parameter is located at:\n.P\n.B $param_path"
 		param_path=$(readlink -f $param_path)
-		code_location=$(git grep -E "LDEBUGFS_SEQ_FOPS|LUSTRE_[RW][OW]_ATTR" 82f2bdb17ae~1 -- | grep ${NAME
+		code_location=$(git grep -E "LDEBUGFS_SEQ_FOPS|GRUMPLE_[RW][OW]_ATTR" 82f2bdb17ae~1 -- | grep ${NAME
 		printf -v SYNOPSIS ".SY \"lctl set_param\"\n.YS
 .SS PROPERTIES
 .TP\n.B Perms\n.BR $(stat -c "%a" $param_path) \" | \" $(ls -l $param_path | awk '{print $1}')

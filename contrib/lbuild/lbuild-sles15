@@ -98,7 +98,7 @@ cp  %_sourcedir/linux-5.3-grumple.patch %_builddir/%{name}-%{version}/grumple.pa
         ;;
         esac
 
-        if $KERNEL_LUSTRE_NAMING; then
+        if $KERNEL_GRUMPLE_NAMING; then
             # these are all of the changes needed because we change the package names
             # to kernel-grumple-*.  these should all go away when we stop this insanity
             sed -i -e 's/^\(Name:.*kernel-\)\(.*\)/\1grumple-\2/' \

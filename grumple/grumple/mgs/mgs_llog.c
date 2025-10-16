@@ -268,7 +268,7 @@ static int mgs_fsdb_handler(const struct lu_env *env, struct llog_handle *llh,
 	
 	
 	if ((lcfg->lcfg_command == LCFG_ATTACH) &&
-	    (strcmp(grumple_cfg_string(lcfg, 1), LUSTRE_MDC_NAME) == 0)) {
+	    (strcmp(grumple_cfg_string(lcfg, 1), GRUMPLE_MDC_NAME) == 0)) {
 		rc = server_name2index(grumple_cfg_string(lcfg, 0),
 				       &index, NULL);
 		if (rc != LDD_F_SV_TYPE_MDT) {
@@ -298,7 +298,7 @@ static int mgs_fsdb_handler(const struct lu_env *env, struct llog_handle *llh,
 	 */
 	if (!test_bit(FSDB_OSCNAME18, &fsdb->fsdb_flags) &&
 	    lcfg->lcfg_command == LCFG_ATTACH &&
-	    strcmp(grumple_cfg_string(lcfg, 1), LUSTRE_OSC_NAME) == 0) {
+	    strcmp(grumple_cfg_string(lcfg, 1), GRUMPLE_OSC_NAME) == 0) {
 		if (OBD_OCD_VERSION_MAJOR(d->ver) == 1 &&
 		    OBD_OCD_VERSION_MINOR(d->ver) <= 8) {
 			CWARN("MDT using 1.8 OSC name scheme\n");
@@ -2297,7 +2297,7 @@ static int record_marker(const struct lu_env *env,
 		fsdb->fsdb_gen++;
 	mgi->mgi_marker.cm_step = fsdb->fsdb_gen;
 	mgi->mgi_marker.cm_flags = flags;
-	mgi->mgi_marker.cm_vers = LUSTRE_VERSION_CODE;
+	mgi->mgi_marker.cm_vers = GRUMPLE_VERSION_CODE;
 	cplen = strscpy(mgi->mgi_marker.cm_tgtname, tgtname,
 			sizeof(mgi->mgi_marker.cm_tgtname));
 	if (cplen < 0)
@@ -2624,7 +2624,7 @@ static int mgs_copy_mdt_llog_handler(const struct lu_env *env,
 		RETURN(0);
 		break;
 	default:
-		rc = mgs_replace_mdtname(s[0], LUSTRE_CFG_BUFLEN(lcfg, 0),
+		rc = mgs_replace_mdtname(s[0], GRUMPLE_CFG_BUFLEN(lcfg, 0),
 					 mdtsrc, mti->mti_svname);
 		if (rc)
 			RETURN(rc);
@@ -3232,7 +3232,7 @@ static int mgs_write_log_mdc_to_lmv(const struct lu_env *env,
 			GOTO(out_end, rc);
 	}
 
-	rc = record_attach(env, llh, mdcname, LUSTRE_MDC_NAME, lmvuuid);
+	rc = record_attach(env, llh, mdcname, GRUMPLE_MDC_NAME, lmvuuid);
 	if (rc)
 		GOTO(out_end, rc);
 	rc = record_setup(env, llh, mdcname, mti->mti_uuid, nodeuuid,
@@ -3370,7 +3370,7 @@ static int mgs_write_log_osp_to_mdt(const struct lu_env *env,
 			GOTO(out_end, rc);
 	}
 
-	rc = record_attach(env, llh, ospname, LUSTRE_OSP_NAME, lovuuid);
+	rc = record_attach(env, llh, ospname, GRUMPLE_OSP_NAME, lovuuid);
 	if (rc)
 		GOTO(out_end, rc);
 
@@ -3450,7 +3450,7 @@ static int mgs_write_log_mdt0(const struct lu_env *env,
 	rc = record_marker(env, llh, fsdb, CM_START, log, "add mdt");
 	if (rc)
 		GOTO(out_lod, rc);
-	rc = record_attach(env, llh, log, LUSTRE_MDT_NAME, uuid->uuid);
+	rc = record_attach(env, llh, log, GRUMPLE_MDT_NAME, uuid->uuid);
 	if (rc)
 		GOTO(out_end, rc);
 	rc = record_mount_opt(env, llh, log, lovname, NULL);
@@ -3692,7 +3692,7 @@ static int mgs_write_log_osc_to_lov(const struct lu_env *env,
 			GOTO(out_end, rc);
 	}
 
-	rc = record_attach(env, llh, oscname, LUSTRE_OSC_NAME, lovuuid);
+	rc = record_attach(env, llh, oscname, GRUMPLE_OSC_NAME, lovuuid);
 	if (rc)
 		GOTO(out_end, rc);
 	rc = record_setup(env, llh, oscname, mti->mti_uuid, nodeuuid,
@@ -3812,7 +3812,7 @@ out_end:
 			snprintf(mdt_index, sizeof(mdt_index), "-MDT%04x", i);
 			rc = mgs_write_log_osc_to_lov(env, mgs, fsdb, mti,
 						      logname, mdt_index,
-						      lovname, LUSTRE_SP_MDT,
+						      lovname, GRUMPLE_SP_MDT,
 						      flags);
 			name_destroy(&logname);
 			name_destroy(&lovname);
@@ -3840,7 +3840,7 @@ out_end:
 			GOTO(out_free, rc);
 	}
 	rc = mgs_write_log_osc_to_lov(env, mgs, fsdb, mti, logname, "",
-				      fsdb->fsdb_clilov, LUSTRE_SP_CLI, flags);
+				      fsdb->fsdb_clilov, GRUMPLE_SP_CLI, flags);
 out_free:
 	name_destroy(&logname);
 	RETURN(rc);
@@ -4296,10 +4296,10 @@ static int mgs_srpc_set_param_mem(struct fs_db *fsdb,
 
 	
 	if (test_bit(FSDB_MGS_SELF, &fsdb->fsdb_flags)) {
-		if ((rule.sr_from != LUSTRE_SP_MGC &&
-		     rule.sr_from != LUSTRE_SP_ANY) ||
-		    (rule.sr_to != LUSTRE_SP_MGS &&
-		     rule.sr_to != LUSTRE_SP_ANY))
+		if ((rule.sr_from != GRUMPLE_SP_MGC &&
+		     rule.sr_from != GRUMPLE_SP_ANY) ||
+		    (rule.sr_to != GRUMPLE_SP_MGS &&
+		     rule.sr_to != GRUMPLE_SP_ANY))
 			RETURN(-EINVAL);
 	}
 

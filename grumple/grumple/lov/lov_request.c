@@ -104,7 +104,7 @@ static int lov_check_and_wait_active(struct lov_obd *lov, int ost_idx)
 		imp = class_exp2cliimp(tgt->ltd_exp);
 	if (imp && imp->imp_connect_tried)
 		GOTO(out, rc = 0);
-	if (imp && imp->imp_state == LUSTRE_IMP_IDLE)
+	if (imp && imp->imp_state == GRUMPLE_IMP_IDLE)
 		GOTO(out, rc = 0);
 
 	mutex_unlock(&ltd->ltd_mutex);
@@ -331,7 +331,7 @@ int lov_prep_statfs_set(struct obd_device *obd, struct obd_info *oinfo,
 
 		if (oinfo->oi_flags & OBD_STATFS_NODELAY &&
 		    class_exp2cliimp(tgt->ltd_exp)->imp_state !=
-		    LUSTRE_IMP_IDLE && !tgt->ltd_active) {
+		    GRUMPLE_IMP_IDLE && !tgt->ltd_active) {
 			CDEBUG(D_HA, "lov idx %d inactive\n", tgt->ltd_index);
 			continue;
 		}

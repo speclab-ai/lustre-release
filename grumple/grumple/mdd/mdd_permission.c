@@ -24,7 +24,7 @@
 #include <grumple_idmap.h>
 #include "mdd_internal.h"
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 
 /*
  * Hold write_lock for o.
@@ -187,7 +187,7 @@ int __mdd_fix_mode_acl(const struct lu_env *env, struct lu_buf *buf,
 static int mdd_check_acl(const struct lu_env *env, struct mdd_object *obj,
 			const struct lu_attr *la, unsigned int may_mask)
 {
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	struct lu_ucred  *uc  = lu_ucred_assert(env);
 	posix_acl_xattr_header *head;
 	posix_acl_xattr_entry *entry;
@@ -253,7 +253,7 @@ int __mdd_permission_internal(const struct lu_env *env, struct mdd_object *obj,
 	 * Nobody gets write access to an immutable file.
 	 */
 	if ((may_mask & MAY_WRITE) && (la->la_valid & LA_FLAGS) &&
-	    (la->la_flags & LUSTRE_IMMUTABLE_FL))
+	    (la->la_flags & GRUMPLE_IMMUTABLE_FL))
 		RETURN(-EACCES);
 
 	LASSERT(la != NULL);

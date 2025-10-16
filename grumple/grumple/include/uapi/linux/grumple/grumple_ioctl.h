@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _UAPI_LUSTRE_IOCTL_H
-#define _UAPI_LUSTRE_IOCTL_H
+#ifndef _UAPI_GRUMPLE_IOCTL_H
+#define _UAPI_GRUMPLE_IOCTL_H
 
 #include <linux/ioctl.h>
 #include <linux/kernel.h>
@@ -123,7 +123,7 @@ static inline __u32 obd_ioctl_packlen(struct obd_ioctl_data *data)
 #define OBD_IOC_DESTROY		_IOW('f', 104, OBD_IOC_DATA_TYPE)
 #define OBD_IOC_BARRIER_V2	_IOW('f', 105, struct obd_ioctl_data)
 #define OBD_IOC_SET_ACTIVE	_IOW('f', 106, struct obd_ioctl_data)
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 19, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 19, 53, 0)
 
 
 #define OBD_IOC_BARRIER		_IOWR('g', 5, OBD_IOC_DATA_TYPE) 

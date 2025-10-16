@@ -23,7 +23,7 @@
 #include <md_object.h>
 #include "mdd_internal.h"
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 
 static inline void grumple_posix_acl_le_to_cpu(posix_acl_xattr_entry *d,
 					      posix_acl_xattr_entry *s)

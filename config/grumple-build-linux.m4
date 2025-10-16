@@ -7,25 +7,25 @@ AC_CACHE_CHECK([for external module build target], lb_cv_module_target,
 	MODULE_TARGET="M"
 	makerule="$PWD/kconftest.dir"
 	LB_LINUX_TRY_MAKE([], [],
-		[$makerule LUSTRE_KERNEL_TEST=conftest.i],
+		[$makerule GRUMPLE_KERNEL_TEST=conftest.i],
 		[test -s kconftest.dir/conftest.i],
 		[lb_cv_module_target="M54"], [
 	MODULE_TARGET="M"
 	makerule="_module_$PWDkconftest.dir"
 	LB_LINUX_TRY_MAKE([], [],
-		[$makerule LUSTRE_KERNEL_TEST=conftest.i],
+		[$makerule GRUMPLE_KERNEL_TEST=conftest.i],
 		[test -skconftest.dir/conftest.i],
 		[lb_cv_module_target="M"], [
 	MODULE_TARGET="M"
 	makerule=""
 	LB_LINUX_TRY_MAKE([], [],
-		[$makerule LUSTRE_KERNEL_TEST=conftest.i],
+		[$makerule GRUMPLE_KERNEL_TEST=conftest.i],
 		[test -s kconftest.dir/conftest.i],
 		[lb_cv_module_target="M58"], [
 	makerule=""
 	lb_cv_dequote_CC_VERSION_TEXT=yes
 	LB_LINUX_TRY_MAKE([], [],
-		[$makerule LUSTRE_KERNEL_TEST=conftest.i],
+		[$makerule GRUMPLE_KERNEL_TEST=conftest.i],
 		[test -s kconftest.dir/conftest.i],
 		[lb_cv_module_target="M517"], [
 			AC_MSG_ERROR([kernel module make failed; check config.log for details])
@@ -342,7 +342,7 @@ LB_LINUX_TRY_MAKE([
 	int myretval=ENOSYS ;
 	return myretval;
 ], [
-	$makerule LUSTRE_KERNEL_TEST=conftest.i
+	$makerule GRUMPLE_KERNEL_TEST=conftest.i
 ], [
 	grep request_module kconftest.dir/conftest.i |
 		grep -v `grep "int myretval=" kconftest.dir/conftest.i |
@@ -439,7 +439,7 @@ AC_DEFUN([LB_LINUX_COMPILE_IFELSE],
 mkdir -p kconftest.dir/
 rm -f kconftest.dir/conftest.o kconftest.dir/conftest.mod.c kconftest.dir/conftest.ko
 cp config/Kbuild kconftest.dir/
-AS_IF([AC_TRY_COMMAND(cp conftest.c kconftest.dir && make -d [$2] DEQUOTE_CC_VERSION_TEXT=$lb_cv_dequote_CC_VERSION_TEXT LDFLAGS= ${LD:+LD="$LD"} CC="$CC" -f $PWD/kconftest.dir/Kbuild LUSTRE_LINUX_CONFIG=$LINUX_CONFIG LINUXINCLUDE="$EXTRA_CHECK_INCLUDE -I$LINUX/arch/$SUBARCH/include -Iinclude -Iarch/$SUBARCH/include/generated -I$LINUX/include -Iinclude2 -I$LINUX/include/uapi -Iinclude/generated -I$LINUX/arch/$SUBARCH/include/uapi -Iarch/$SUBARCH/include/generated/uapi -I$LINUX/include/uapi -Iinclude/generated/uapi -I$LINUX/arch/$SUBARCH/include/generated -I$LINUX/arch/$SUBARCH/include/generated/uapi -I$LINUX/include/generated -I$LINUX/include/generated/uapi ${SPL_OBJ:+-include $SPL_OBJ/spl_config.h} ${ZFS_OBJ:+-include $ZFS_OBJ/zfs_config.h} ${SPL:+-I$SPL/include } ${ZFS:+-I$ZFS -I$ZFS/include -I$ZFS/include/os/linux/kernel -I$ZFS/include/os/linux/spl -I$ZFS/include/os/linux/zfs -I${SPL:-$ZFS/include/spl}} -include $CONFIG_INCLUDE" KBUILD_EXTRA_SYMBOLS="${ZFS_OBJ:+$ZFS_OBJ/Module.symvers} $KBUILD_EXTRA_SYMBOLS" -o tmp_include_depends -o scripts -o include/config/MARKER -C $LINUX_OBJ EXTRA_CFLAGS="-Werror-implicit-function-declaration $EXTRA_KCFLAGS" $MODULE_TARGET=$PWD/kconftest.dir) >/dev/null && AC_TRY_COMMAND([$3])],
+AS_IF([AC_TRY_COMMAND(cp conftest.c kconftest.dir && make -d [$2] DEQUOTE_CC_VERSION_TEXT=$lb_cv_dequote_CC_VERSION_TEXT LDFLAGS= ${LD:+LD="$LD"} CC="$CC" -f $PWD/kconftest.dir/Kbuild GRUMPLE_LINUX_CONFIG=$LINUX_CONFIG LINUXINCLUDE="$EXTRA_CHECK_INCLUDE -I$LINUX/arch/$SUBARCH/include -Iinclude -Iarch/$SUBARCH/include/generated -I$LINUX/include -Iinclude2 -I$LINUX/include/uapi -Iinclude/generated -I$LINUX/arch/$SUBARCH/include/uapi -Iarch/$SUBARCH/include/generated/uapi -I$LINUX/include/uapi -Iinclude/generated/uapi -I$LINUX/arch/$SUBARCH/include/generated -I$LINUX/arch/$SUBARCH/include/generated/uapi -I$LINUX/include/generated -I$LINUX/include/generated/uapi ${SPL_OBJ:+-include $SPL_OBJ/spl_config.h} ${ZFS_OBJ:+-include $ZFS_OBJ/zfs_config.h} ${SPL:+-I$SPL/include } ${ZFS:+-I$ZFS -I$ZFS/include -I$ZFS/include/os/linux/kernel -I$ZFS/include/os/linux/spl -I$ZFS/include/os/linux/zfs -I${SPL:-$ZFS/include/spl}} -include $CONFIG_INCLUDE" KBUILD_EXTRA_SYMBOLS="${ZFS_OBJ:+$ZFS_OBJ/Module.symvers} $KBUILD_EXTRA_SYMBOLS" -o tmp_include_depends -o scripts -o include/config/MARKER -C $LINUX_OBJ EXTRA_CFLAGS="-Werror-implicit-function-declaration $EXTRA_KCFLAGS" $MODULE_TARGET=$PWD/kconftest.dir) >/dev/null && AC_TRY_COMMAND([$3])],
 	[$4],
 	[_AC_MSG_LOG_CONFTEST
 m4_ifvaln([$5],[$5])

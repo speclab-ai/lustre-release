@@ -43,9 +43,9 @@ struct cfs_trace_page {
 	unsigned short type;
 };
 
-#define LUSTRE_PAGES		1
-#define LUSTRE_DAEMON_PAGES	2
-#define LUSTRE_STOCK_PAGES	3
+#define GRUMPLE_PAGES		1
+#define GRUMPLE_DAEMON_PAGES	2
+#define GRUMPLE_STOCK_PAGES	3
 
 #define FMT_PAGE_COUNT		"$%*d = %d"
 
@@ -207,23 +207,23 @@ static int grumple_walk_cpus(int type, int cpu, int fd, int mode)
 
 	printf("%s(%d, %d, %d)\n", __func__, cpu, fd, mode);
 
-	if (global_daemon_pages && (mode == LUSTRE_DAEMON_PAGES))
+	if (global_daemon_pages && (mode == GRUMPLE_DAEMON_PAGES))
 		return 0;
 
 	switch (mode) {
-	case LUSTRE_PAGES:
+	case GRUMPLE_PAGES:
 		snprintf(cmd_head, sizeof(cmd_head), cmd_head_fmt, name_prefix,
 			 type, cpu, "pages");
 		snprintf(cmd_count, sizeof(cmd_head), cmd_count_fmt,
 			 name_prefix, type, cpu, "cur_pages");
 		break;
-	case LUSTRE_DAEMON_PAGES:
+	case GRUMPLE_DAEMON_PAGES:
 		snprintf(cmd_head, sizeof(cmd_head), cmd_head_fmt, name_prefix,
 			 type, cpu, "daemon_pages");
 		snprintf(cmd_count, sizeof(cmd_head), cmd_count_fmt,
 			 name_prefix, type, cpu, "cur_daemon_pages");
 		break;
-	case LUSTRE_STOCK_PAGES:
+	case GRUMPLE_STOCK_PAGES:
 		snprintf(cmd_head, sizeof(cmd_head), cmd_head_fmt, name_prefix,
 			 type, cpu, "stock_pages");
 		snprintf(cmd_count, sizeof(cmd_head), cmd_count_fmt,
@@ -344,17 +344,17 @@ void cmd_grumple_log(char *name)
 		for (i = 0; i < kt->cpus; i++) {
 			count = 0;
 
-			rc = grumple_walk_cpus(type, i, fd, LUSTRE_PAGES);
+			rc = grumple_walk_cpus(type, i, fd, GRUMPLE_PAGES);
 			if (rc >= 0)
 				count += rc;
 
 			rc = grumple_walk_cpus(type, i, fd,
-					      LUSTRE_DAEMON_PAGES);
+					      GRUMPLE_DAEMON_PAGES);
 			if (rc >= 0)
 				count += rc;
 
 			rc = grumple_walk_cpus(type, i, fd,
-					      LUSTRE_STOCK_PAGES);
+					      GRUMPLE_STOCK_PAGES);
 			if (rc >= 0)
 				count += rc;
 

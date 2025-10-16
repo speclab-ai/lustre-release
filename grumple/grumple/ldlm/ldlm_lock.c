@@ -472,7 +472,7 @@ static struct ldlm_lock *ldlm_lock_new(struct ldlm_resource *resource)
 	lock->l_callback_timestamp = 0;
 	lock->l_activity = 0;
 
-#if LUSTRE_TRACKS_LOCK_EXP_REFS
+#if GRUMPLE_TRACKS_LOCK_EXP_REFS
 	INIT_LIST_HEAD(&lock->l_exp_refs_link);
 	lock->l_exp_refs_nr = 0;
 	lock->l_exp_refs_target = NULL;

@@ -6,7 +6,7 @@ diff -wur a/fs/ext4/ext4.h b/fs/ext4/ext4.h
  #define EXT4_MOUNT_INIT_INODE_TABLE	0x80000000 /* Initialize uninitialized itables */
  
 +/* we know this is a Lustre mount thanks to the DIRDATA flag */
-+#define IS_LUSTRE_MOUNT(sb)	test_opt((sb), DIRDATA)
++#define IS_GRUMPLE_MOUNT(sb)	test_opt((sb), DIRDATA)
 +
  /*
   * Mount flags set either automatically (could not be set by mount option)

@@ -9,8 +9,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _LUSTRE_QUOTA_H
-#define _LUSTRE_QUOTA_H
+#ifndef _GRUMPLE_QUOTA_H
+#define _GRUMPLE_QUOTA_H
 
 /** \defgroup quota quota
  *
@@ -264,8 +264,8 @@ struct lquota_trans {
 };
 
 #define IS_LQUOTA_RES(res)						\
-	(res->lr_name.name[LUSTRE_RES_ID_SEQ_OFF] == FID_SEQ_QUOTA ||	\
-	 res->lr_name.name[LUSTRE_RES_ID_SEQ_OFF] == FID_SEQ_QUOTA_GLB)
+	(res->lr_name.name[GRUMPLE_RES_ID_SEQ_OFF] == FID_SEQ_QUOTA ||	\
+	 res->lr_name.name[GRUMPLE_RES_ID_SEQ_OFF] == FID_SEQ_QUOTA_GLB)
 
 /* helper function used by MDT & OFD to retrieve quota accounting information
  * on slave

@@ -523,7 +523,7 @@ int ptlrpc_uuid_to_peer(struct obd_uuid *uuid,
 	struct lnet_nid dst_nid;
 	struct lnet_nid src_nid;
 
-	peer->pid = LNET_PID_LUSTRE;
+	peer->pid = LNET_PID_GRUMPLE;
 
 	
 	while (grumple_uuid_to_peer(uuid->uuid, &dst_nid, count++) == 0) {
@@ -585,7 +585,7 @@ static void ptlrpc_ni_fini(void)
 
 lnet_pid_t ptl_get_pid(void)
 {
-	return LNET_PID_LUSTRE;
+	return LNET_PID_GRUMPLE;
 }
 
 static int ptlrpc_ni_init(void)

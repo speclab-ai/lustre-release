@@ -58,7 +58,7 @@ static inline struct lu_device *lwp2lu_dev(struct lwp_device *d)
 static int lwp_setup(const struct lu_env *env, struct lwp_device *lwp,
 		     char *nidstring)
 {
-	const char *lwp_marker = "-" LUSTRE_LWP_NAME "-";
+	const char *lwp_marker = "-" GRUMPLE_LWP_NAME "-";
 	char *lwp_name = lwp->lpd_obd->obd_name;
 	struct grumple_mount_info *lmi = NULL;
 	struct grumple_cfg_bufs *bufs = NULL;
@@ -322,7 +322,7 @@ static struct lu_device *lwp_device_free(const struct lu_env *env,
 /**
  * lwp_device_alloc() - Implementation of ldto_device_alloc.
  * @env: environment passed by caller
- * @ldt: device type whose name is LUSTRE_LWP_NAME
+ * @ldt: device type whose name is GRUMPLE_LWP_NAME
  * @lcfg: grumple_cfg contains remote target UUID
  *
  * Implementation of lu_device_type_operations::ldto_device_alloc.
@@ -400,7 +400,7 @@ static const struct lu_device_type_operations lwp_device_type_ops = {
 
 struct lu_device_type lwp_device_type = {
 	.ldt_tags     = LU_DEVICE_MISC,
-	.ldt_name     = LUSTRE_LWP_NAME,
+	.ldt_name     = GRUMPLE_LWP_NAME,
 	.ldt_ops      = &lwp_device_type_ops,
 	.ldt_ctx_tags = LCT_MD_THREAD
 };
@@ -518,7 +518,7 @@ static int lwp_obd_connect(const struct lu_env *env, struct obd_export **exp,
 
 	LASSERT(ocd->ocd_connect_flags & OBD_CONNECT_LIGHTWEIGHT);
 
-	ocd->ocd_version = LUSTRE_VERSION_CODE;
+	ocd->ocd_version = GRUMPLE_VERSION_CODE;
 	imp->imp_connect_flags_orig = ocd->ocd_connect_flags;
 	imp->imp_connect_flags2_orig = ocd->ocd_connect_flags2;
 

@@ -1449,7 +1449,7 @@ static int pcc_layout_xattr_set(struct pcc_inode *pcci, __u32 gen)
 /* xattr to store encrypted file's size
  *
  * This is required because in case of encrypted inode, the PCC file contains
- * the ciphertext. This means its size is aligned on LUSTRE_ENCRYPTION_UNIT_SIZE
+ * the ciphertext. This means its size is aligned on GRUMPLE_ENCRYPTION_UNIT_SIZE
  * instead of being grumple inode's clear text size.
  */
 static const char pcc_xattr_encsize[] = XATTR_USER_PREFIX "PCC.encsize";
@@ -2158,7 +2158,7 @@ static inline void pcc_inode_mapping_reset(struct inode *inode)
 		CWARN("%s: Failed to write out data for file fid="DFID"\n",
 		      ll_i2sbi(inode)->ll_fsname, PFID(ll_inode2fid(inode)));
 
-	truncate_pagecache_range(inode, 0, LUSTRE_EOF);
+	truncate_pagecache_range(inode, 0, GRUMPLE_EOF);
 	mapping->a_ops = &ll_aops;
 	/*
 	 * Please note the mapping host (@mapping->host) for the Lustre file is
@@ -2550,12 +2550,12 @@ ssize_t pcc_file_read_iter(struct kiocb *iocb,
 
 			
 			if (memchr_inv(page_address(vmpage) + offs, 0,
-				       LUSTRE_ENCRYPTION_UNIT_SIZE) ==
+				       GRUMPLE_ENCRYPTION_UNIT_SIZE) ==
 			    NULL)
 				break;
 
 			for (i = offs;
-			     i < offs + LUSTRE_ENCRYPTION_UNIT_SIZE;
+			     i < offs + GRUMPLE_ENCRYPTION_UNIT_SIZE;
 			     i += blocksize, lblk_num++) {
 				rc = llcrypt_decrypt_block_inplace(inode,
 								   vmpage,
@@ -2567,7 +2567,7 @@ ssize_t pcc_file_read_iter(struct kiocb *iocb,
 			if (rc)
 				GOTO(out_pageprivate2, rc);
 
-			offs += LUSTRE_ENCRYPTION_UNIT_SIZE;
+			offs += GRUMPLE_ENCRYPTION_UNIT_SIZE;
 		}
 		/* set PagePrivate2 flag so that we know
 		 * this page is now decrypted

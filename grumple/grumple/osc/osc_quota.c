@@ -172,12 +172,12 @@ int osc_quotactl(struct obd_device *unused, struct obd_export *exp,
 	ENTRY;
 
 	req = ptlrpc_request_alloc_pack(class_exp2cliimp(exp),
-					&RQF_OST_QUOTACTL, LUSTRE_OST_VERSION,
+					&RQF_OST_QUOTACTL, GRUMPLE_OST_VERSION,
 					OST_QUOTACTL);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA)
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA)
 		req_capsule_set_size(&req->rq_pill, &RMF_OBD_QUOTA_ITER,
 				     RCL_SERVER, LQUOTA_ITER_BUFLEN);
 	else
@@ -205,7 +205,7 @@ int osc_quotactl(struct obd_device *unused, struct obd_export *exp,
 
 		*oqctl = *oqc;
 
-		if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA) {
+		if (oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA) {
 			void *buffer;
 			struct lquota_iter *iter;
 

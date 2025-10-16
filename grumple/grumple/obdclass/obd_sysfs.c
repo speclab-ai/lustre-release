@@ -92,27 +92,27 @@ static ssize_t static_uintvalue_store(struct kobject *kobj,
 	return count;
 }
 
-#define LUSTRE_STATIC_UINT_ATTR(name, value)				\
+#define GRUMPLE_STATIC_UINT_ATTR(name, value)				\
 static struct static_grumple_uintvalue_attr grumple_sattr_##name =	\
 	{ __ATTR(name, 0644, static_uintvalue_show,			\
 		 static_uintvalue_store), value }
 
-LUSTRE_STATIC_UINT_ATTR(debug_peer_on_timeout, &obd_debug_peer_on_timeout);
-LUSTRE_STATIC_UINT_ATTR(dump_on_timeout, &obd_dump_on_timeout);
-LUSTRE_STATIC_UINT_ATTR(dump_on_eviction, &obd_dump_on_eviction);
-LUSTRE_STATIC_UINT_ATTR(at_min, &at_min);
-LUSTRE_STATIC_UINT_ATTR(at_max, &at_max);
-LUSTRE_STATIC_UINT_ATTR(at_extra, &at_extra);
-LUSTRE_STATIC_UINT_ATTR(at_early_margin, &at_early_margin);
-LUSTRE_STATIC_UINT_ATTR(at_history, &at_history);
-LUSTRE_STATIC_UINT_ATTR(at_unhealthy_factor, &at_unhealthy_factor);
-LUSTRE_STATIC_UINT_ATTR(enable_stats_header, &obd_enable_stats_header);
-LUSTRE_STATIC_UINT_ATTR(lbug_on_eviction, &obd_lbug_on_eviction);
-LUSTRE_STATIC_UINT_ATTR(ping_interval, &ping_interval);
+GRUMPLE_STATIC_UINT_ATTR(debug_peer_on_timeout, &obd_debug_peer_on_timeout);
+GRUMPLE_STATIC_UINT_ATTR(dump_on_timeout, &obd_dump_on_timeout);
+GRUMPLE_STATIC_UINT_ATTR(dump_on_eviction, &obd_dump_on_eviction);
+GRUMPLE_STATIC_UINT_ATTR(at_min, &at_min);
+GRUMPLE_STATIC_UINT_ATTR(at_max, &at_max);
+GRUMPLE_STATIC_UINT_ATTR(at_extra, &at_extra);
+GRUMPLE_STATIC_UINT_ATTR(at_early_margin, &at_early_margin);
+GRUMPLE_STATIC_UINT_ATTR(at_history, &at_history);
+GRUMPLE_STATIC_UINT_ATTR(at_unhealthy_factor, &at_unhealthy_factor);
+GRUMPLE_STATIC_UINT_ATTR(enable_stats_header, &obd_enable_stats_header);
+GRUMPLE_STATIC_UINT_ATTR(lbug_on_eviction, &obd_lbug_on_eviction);
+GRUMPLE_STATIC_UINT_ATTR(ping_interval, &ping_interval);
 
 #ifdef HAVE_SERVER_SUPPORT
-LUSTRE_STATIC_UINT_ATTR(ldlm_timeout, &ldlm_timeout);
-LUSTRE_STATIC_UINT_ATTR(bulk_timeout, &bulk_timeout);
+GRUMPLE_STATIC_UINT_ATTR(ldlm_timeout, &ldlm_timeout);
+GRUMPLE_STATIC_UINT_ATTR(bulk_timeout, &bulk_timeout);
 #endif
 
 static ssize_t memused_show(struct kobject *kobj, struct attribute *attr,
@@ -120,14 +120,14 @@ static ssize_t memused_show(struct kobject *kobj, struct attribute *attr,
 {
 	return sprintf(buf, "%llu\n", obd_memory_sum());
 }
-LUSTRE_RO_ATTR(memused);
+GRUMPLE_RO_ATTR(memused);
 
 static ssize_t memused_max_show(struct kobject *kobj, struct attribute *attr,
 				char *buf)
 {
 	return sprintf(buf, "%llu\n", obd_memory_max());
 }
-LUSTRE_RO_ATTR(memused_max);
+GRUMPLE_RO_ATTR(memused_max);
 
 static ssize_t max_dirty_mb_show(struct kobject *kobj, struct attribute *attr,
 				 char *buf)
@@ -162,7 +162,7 @@ static ssize_t max_dirty_mb_store(struct kobject *kobj, struct attribute *attr,
 
 	return count;
 }
-LUSTRE_RW_ATTR(max_dirty_mb);
+GRUMPLE_RW_ATTR(max_dirty_mb);
 
 #ifdef HAVE_SERVER_SUPPORT
 static ssize_t no_transno_store(struct kobject *kobj,
@@ -189,19 +189,19 @@ static ssize_t no_transno_store(struct kobject *kobj,
 	spin_unlock(&obd->obd_dev_lock);
 	return count;
 }
-LUSTRE_WO_ATTR(no_transno);
+GRUMPLE_WO_ATTR(no_transno);
 #endif 
 
 static ssize_t version_show(struct kobject *kobj, struct attribute *attr,
 			    char *buf)
 {
-	return sprintf(buf, "%s\n", LUSTRE_VERSION_STRING);
+	return sprintf(buf, "%s\n", GRUMPLE_VERSION_STRING);
 }
 
 static ssize_t pinger_show(struct kobject *kobj, struct attribute *attr,
 			   char *buf)
 {
-#ifdef CONFIG_LUSTRE_FS_PINGER
+#ifdef CONFIG_GRUMPLE_FS_PINGER
 	const char *state = "on";
 #else
 	const char *state = "off";
@@ -279,7 +279,7 @@ static ssize_t enable_health_write_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(enable_health_write);
+GRUMPLE_RW_ATTR(enable_health_write);
 #endif 
 
 static ssize_t enable_fname_encoding_show(struct kobject *kobj,
@@ -302,7 +302,7 @@ static ssize_t enable_fname_encoding_store(struct kobject *kobj,
 
 	return count;
 }
-LUSTRE_RW_ATTR(enable_fname_encoding);
+GRUMPLE_RW_ATTR(enable_fname_encoding);
 
 static ssize_t jobid_var_show(struct kobject *kobj, struct attribute *attr,
 			      char *buf)
@@ -344,7 +344,7 @@ static ssize_t jobid_name_show(struct kobject *kobj, struct attribute *attr,
 static ssize_t jobid_name_store(struct kobject *kobj, struct attribute *attr,
 				const char *buffer, size_t count)
 {
-	if (!count || count > LUSTRE_JOBID_SIZE)
+	if (!count || count > GRUMPLE_JOBID_SIZE)
 		return -EINVAL;
 
 	if (strcmp(obd_jobid_var, JOBSTATS_NODELOCAL) != 0 &&
@@ -354,7 +354,7 @@ static ssize_t jobid_name_store(struct kobject *kobj, struct attribute *attr,
 	}
 
 	
-	memset(obd_jobid_name, 0, LUSTRE_JOBID_SIZE);
+	memset(obd_jobid_name, 0, GRUMPLE_JOBID_SIZE);
 
 	memcpy(obd_jobid_name, buffer, count);
 
@@ -393,7 +393,7 @@ static ssize_t jobid_this_session_store(struct kobject *kobj,
 	int len;
 	int ret;
 
-	if (!count || count > LUSTRE_JOBID_SIZE)
+	if (!count || count > GRUMPLE_JOBID_SIZE)
 		return -EINVAL;
 
 	jobid = kstrndup(buffer, count, GFP_KERNEL);
@@ -478,14 +478,14 @@ EXPORT_SYMBOL(proc_grumple_root);
 #define lprocfs_base NULL
 #endif 
 
-LUSTRE_RO_ATTR(version);
-LUSTRE_RO_ATTR(pinger);
-LUSTRE_RO_ATTR(health_check);
-LUSTRE_RW_ATTR(jobid_var);
-LUSTRE_RW_ATTR(jobid_name);
-LUSTRE_RW_ATTR(jobid_this_session);
-LUSTRE_RW_ATTR(timeout);
-LUSTRE_RW_ATTR(debug_raw_pointers);
+GRUMPLE_RO_ATTR(version);
+GRUMPLE_RO_ATTR(pinger);
+GRUMPLE_RO_ATTR(health_check);
+GRUMPLE_RW_ATTR(jobid_var);
+GRUMPLE_RW_ATTR(jobid_name);
+GRUMPLE_RW_ATTR(jobid_this_session);
+GRUMPLE_RW_ATTR(timeout);
+GRUMPLE_RW_ATTR(debug_raw_pointers);
 
 static struct attribute *grumple_attrs[] = {
 	&grumple_attr_version.attr,

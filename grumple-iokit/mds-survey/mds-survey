@@ -206,8 +206,8 @@ if [[ -x "$LCTL" ]]; then	# full pathname specified
 	: # echo "LCTL=$LCTL"
 elif [[ -n "$grumple_root" && -x "$grumple_root/utils/lctl" ]]; then
 	LCTL=${grumple_root}/utils/lctl
-elif [[ -n "$LUSTRE" && -x "$LUSTRE/utils/lctl" ]]; then
-	LCTL=$LUSTRE/utils/lctl
+elif [[ -n "$GRUMPLE" && -x "$GRUMPLE/utils/lctl" ]]; then
+	LCTL=$GRUMPLE/utils/lctl
 else				# hope that it is in the PATH
 	LCTL=${LCTL:-lctl}
 fi

@@ -1,9 +1,9 @@
 #!/bin/bash
 trap 'kill $(jobs -p)' EXIT
-LUSTRE=${LUSTRE:-$(cd $(dirname $0)/../..; echo $PWD)}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(cd $(dirname $0)/../..; echo $PWD)}
+. $GRUMPLE/tests/test-framework.sh
 trap - ERR
-. ${CONFIG:=$LUSTRE/tests/cfg/$NAME.sh}
+. ${CONFIG:=$GRUMPLE/tests/cfg/$NAME.sh}
 while /bin/true; do
 	lsnapshot_create -n lss_$RANDOM || true
 	sleep $((RANDOM % 9 + 11))

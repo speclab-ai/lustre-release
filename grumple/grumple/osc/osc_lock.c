@@ -553,7 +553,7 @@ int osc_ldlm_glimpse_ast(struct ldlm_lock *dlmlock, void *data)
 		GOTO(out, result = PTR_ERR(env));
 
 	policy.l_extent.start = 0;
-	policy.l_extent.end = LUSTRE_EOF;
+	policy.l_extent.end = GRUMPLE_EOF;
 
 	matchdata.lmd_mode = &mode;
 	matchdata.lmd_policy = &policy;

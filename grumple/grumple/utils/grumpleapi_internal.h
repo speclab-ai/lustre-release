@@ -14,8 +14,8 @@
  * Author: Thomas Leibovici <thomas.leibovici@cea.fr>
  */
 
-#ifndef _LUSTREAPI_INTERNAL_H_
-#define _LUSTREAPI_INTERNAL_H_
+#ifndef _GRUMPLEAPI_INTERNAL_H_
+#define _GRUMPLEAPI_INTERNAL_H_
 
 #include <dirent.h>
 #include <limits.h>
@@ -41,9 +41,9 @@
 #define WANT_NID    0x40
 
 
-#define LUSTRE_ENCRYPTION_BLOCKBITS   12
-#define LUSTRE_ENCRYPTION_UNIT_SIZE   ((size_t)1 << LUSTRE_ENCRYPTION_BLOCKBITS)
-#define LUSTRE_ENCRYPTION_MASK        (~(LUSTRE_ENCRYPTION_UNIT_SIZE - 1))
+#define GRUMPLE_ENCRYPTION_BLOCKBITS   12
+#define GRUMPLE_ENCRYPTION_UNIT_SIZE   ((size_t)1 << GRUMPLE_ENCRYPTION_BLOCKBITS)
+#define GRUMPLE_ENCRYPTION_MASK        (~(GRUMPLE_ENCRYPTION_UNIT_SIZE - 1))
 
 #define OBD_NOT_FOUND	(-1)
 

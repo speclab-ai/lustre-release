@@ -54,7 +54,7 @@ AS_IF([test "x${!lb_pathvar}" != x -a "x${!lb_pathvar}" != xno], [
 	AC_MSG_RESULT([${!lb_libvar}])
 ])
 ]) 
-AC_DEFUN([LB_PATH_LUSTREIOKIT], [
+AC_DEFUN([LB_PATH_GRUMPLEIOKIT], [
 AC_MSG_CHECKING([whether to build iokit])
 AC_ARG_ENABLE([iokit],
 	AS_HELP_STRING([--disable-iokit],
@@ -62,10 +62,10 @@ AC_ARG_ENABLE([iokit],
 	[], [enable_iokit="yes"])
 AC_MSG_RESULT([$enable_iokit])
 AS_IF([test "x$enable_iokit" = xyes],
-	[LUSTREIOKIT_SUBDIR="grumple-iokit"],
-	[LUSTREIOKIT_SUBDIR=""])
-AC_SUBST(LUSTREIOKIT_SUBDIR)
-AM_CONDITIONAL([BUILD_LUSTREIOKIT], [test "x$enable_iokit" = xyes])
+	[GRUMPLEIOKIT_SUBDIR="grumple-iokit"],
+	[GRUMPLEIOKIT_SUBDIR=""])
+AC_SUBST(GRUMPLEIOKIT_SUBDIR)
+AM_CONDITIONAL([BUILD_GRUMPLEIOKIT], [test "x$enable_iokit" = xyes])
 ]) 
 AC_DEFUN([LB_LIBMOUNT], [
 AC_CHECK_HEADER([libmount/libmount.h], [
@@ -493,7 +493,7 @@ LC_QUOTA
 AS_IF([test "x$enable_dist" != xno], [
 	AS_IF([test -z $LINUXRELEASE], [LINUXRELEASE="%{nil}"])
 	AC_SUBST(LINUXRELEASE)],[LB_LIBMOUNT])
-LB_PATH_LUSTREIOKIT
+LB_PATH_GRUMPLEIOKIT
 LB_DEFINE_E2FSPROGS_NAMES
 LIBCFS_CONFIGURE
 LN_CONFIGURE

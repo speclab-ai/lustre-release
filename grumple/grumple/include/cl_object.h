@@ -11,8 +11,8 @@
  * This file is part of Lustre, http:
  */
 
-#ifndef _LUSTRE_CL_OBJECT_H
-#define _LUSTRE_CL_OBJECT_H
+#ifndef _GRUMPLE_CL_OBJECT_H
+#define _GRUMPLE_CL_OBJECT_H
 
 /** \defgroup clio clio
  *

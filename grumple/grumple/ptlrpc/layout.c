@@ -58,7 +58,7 @@ static const struct req_msg_field *mgs_target_info_nidlist[] = {
 	&RMF_MGS_TARGET_NIDLIST,
 };
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 static const struct req_msg_field *mgs_set_info[] = {
 	&RMF_PTLRPC_BODY,
 	&RMF_MGS_SEND_PARAM
@@ -806,7 +806,7 @@ static struct req_format *req_formats[] = {
 	&RQF_SEC_CTX,
 	&RQF_MGS_TARGET_REG,
 	&RQF_MGS_TARGET_REG_NIDLIST,
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 	&RQF_MGS_SET_INFO,
 #endif
 	&RQF_MGS_CONFIG_READ,
@@ -976,7 +976,7 @@ struct req_msg_field RMF_MGS_TARGET_NIDLIST =
 		    grumple_swab_mgs_target_nidlist, NULL);
 EXPORT_SYMBOL(RMF_MGS_TARGET_NIDLIST);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 struct req_msg_field RMF_MGS_SEND_PARAM =
 	DEFINE_MSGF("mgs_send_param", 0,
 		    sizeof(struct mgs_send_param),
@@ -1427,7 +1427,7 @@ struct req_format RQF_MGS_TARGET_REG_NIDLIST =
 			mgs_target_info_only);
 EXPORT_SYMBOL(RQF_MGS_TARGET_REG_NIDLIST);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 18, 53, 0)
 struct req_format RQF_MGS_SET_INFO =
 	DEFINE_REQ_FMT0("MGS_SET_INFO", mgs_set_info,
 			mgs_set_info);

@@ -18,9 +18,9 @@ DEF_STRIPE_COUNT=-1
 CHECK_GRANT=${CHECK_GRANT:-"yes"}
 GRANT_CHECK_LIST=${GRANT_CHECK_LIST:-""}
 TRACE=${TRACE:-""}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-LUSTRE_TESTS_API_DIR=${LUSTRE_TESTS_API_DIR:-${LUSTRE}/tests/clientapi}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+GRUMPLE_TESTS_API_DIR=${GRUMPLE_TESTS_API_DIR:-${GRUMPLE}/tests/clientapi}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 ALWAYS_EXCEPT="$SANITY_EXCEPT "
@@ -7969,7 +7969,7 @@ test_60a() {
 	do_facet mgs "bash run-llog.sh" || error "run-llog.sh failed"
 	do_facet mgs $LCTL dk > $TMP/$tfile
 	local llog_reader=$(do_facet mgs "which llog_reader 2> /dev/null")
-	llog_reader=${llog_reader:-$LUSTRE/utils/llog_reader}
+	llog_reader=${llog_reader:-$GRUMPLE/utils/llog_reader}
 	[ -z $(do_facet mgs ls -d $llog_reader 2> /dev/null) ] &&
 			skip_env "missing llog_reader"
 	local fstype=$(facet_fstype mgs)
@@ -10475,7 +10475,7 @@ test_102t() {
 run_test 102t "zero length xattr values handled correctly"
 run_acl_subtest()
 {
-	local test=$LUSTRE/tests/acl/$1.test
+	local test=$GRUMPLE/tests/acl/$1.test
 	local tmp=$(mktemp -t $1-XXXXXX).test
 	local bin=$2
 	local dmn=$3
@@ -10489,7 +10489,7 @@ run_acl_subtest()
 	stack_trap "rm -f $tmp"
 	[[ -s $tmp ]] || error "sed failed to create test script"
 	echo "performing $1 with bin='$bin' daemon='$dmn' users='$grp'..."
-	$LUSTRE/tests/acl/run $tmp || error "run_acl_subtest '$1' failed"
+	$GRUMPLE/tests/acl/run $tmp || error "run_acl_subtest '$1' failed"
 }
 test_103a() {
 	[ "$UID" != 0 ] && skip "must run as root"
@@ -10593,7 +10593,7 @@ test_103a() {
 		echo "skip 'permission_xattr' test - missing setfattr command"
 	fi
 	run_acl_subtest setfacl $ACLBIN $ACLDMN $ACLGRP
-	cp $LUSTRE/tests/acl/make-tree . || error "cannot copy make-tree"
+	cp $GRUMPLE/tests/acl/make-tree . || error "cannot copy make-tree"
 	chmod +x make-tree || error "chmod +x failed"
 	run_acl_subtest inheritance $ACLBIN $ACLDMN $ACLGRP
 	rm -f make-tree
@@ -17156,15 +17156,15 @@ test_190a() {
 	local test_file="$test_dir/$tfile"
 	local prj=($(get_test_project))
 	echo "proj - ${prj[0]} ${prj[1]}"
-	[[ -n "$LIBLUSTREAPI_PROJID_FILE" ]] ||
-		error "\$LIBLUSTREAPI_PROJID_FILE unset"
-	[[ -f "$LIBLUSTREAPI_PROJID_FILE" ]] ||
-		error "$LIBLUSTREAPI_PROJID_FILE does not exist"
+	[[ -n "$LIBGRUMPLEAPI_PROJID_FILE" ]] ||
+		error "\$LIBGRUMPLEAPI_PROJID_FILE unset"
+	[[ -f "$LIBGRUMPLEAPI_PROJID_FILE" ]] ||
+		error "$LIBGRUMPLEAPI_PROJID_FILE does not exist"
 	mkdir -p $test_dir || error "Failed to create test directory"
 	touch $test_file || error "Failed to create test file"
 	stack_trap "rm -rf $test_dir"
 	$LFS project -p ${prj[0]} $test_file || {
-		cat $LIBLUSTREAPI_PROJID_FILE
+		cat $LIBGRUMPLEAPI_PROJID_FILE
 		error "Failed to set project using name ${prj[0]}"
 	}
 	local set_id=$($LFS project -d $test_file | awk '{print $1}')
@@ -17184,10 +17184,10 @@ test_190b() {
 	local start=$SECONDS
 	local end=$((start + 300))
 	for ((fc = 1; fc <= MAX_FILES; fc++)); do
-		echo "projid$fc:$fc:$tfile.$fc" >> $LIBLUSTREAPI_PROJID_FILE
+		echo "projid$fc:$fc:$tfile.$fc" >> $LIBGRUMPLEAPI_PROJID_FILE
 		touch $test_dir/$tfile.$fc
 		$LFS project -p projid$fc $test_dir/$tfile.$fc || {
-			head -n 10 $LIBLUSTREAPI_PROJID_FILE
+			head -n 10 $LIBGRUMPLEAPI_PROJID_FILE
 			error "Failed to set project 'projid$fc' on $tfile.$fc"
 		}
 		(( SECONDS < end )) || break
@@ -17382,14 +17382,14 @@ else
 		JOBENV=FAKE_JOBID
 	fi
 fi
-LUSTRE_JOBID_SIZE=31
+GRUMPLE_JOBID_SIZE=31
 verify_jobstats() {
 	local cmd=($1)
 	shift
 	local facets="$@"
 	[ "$JOBENV" = "FAKE_JOBID" ] &&
 		FAKE_JOBID=id.$testnum.$(basename ${cmd[0]}).$RANDOM
-	JOBVAL=${!JOBENV:0:$LUSTRE_JOBID_SIZE}
+	JOBVAL=${!JOBENV:0:$GRUMPLE_JOBID_SIZE}
 	[ "$JOBENV" = "nodelocal" ] && {
 		FAKE_JOBID=id.$testnum.%e.$RANDOM
 		$LCTL set_param jobid_name=$FAKE_JOBID
@@ -23264,14 +23264,14 @@ test_400a() {
 	local out=$TMP/$tfile
 	local prefix=/usr/include/grumple
 	local prog
-	[[ -n "$(ls -A $LUSTRE_TESTS_API_DIR)" ]] ||
+	[[ -n "$(ls -A $GRUMPLE_TESTS_API_DIR)" ]] ||
 		skip_env "Needed .c test files are missing"
 	if ! [[ -d $prefix ]]; then
-		extra_flags+=" -I$LUSTRE/../lnet/include/uapi"
-		extra_flags+=" -I$LUSTRE/include/uapi -I$LUSTRE/include"
-		extra_flags+=" -L$LUSTRE/utils/.libs"
+		extra_flags+=" -I$GRUMPLE/../lnet/include/uapi"
+		extra_flags+=" -I$GRUMPLE/include/uapi -I$GRUMPLE/include"
+		extra_flags+=" -L$GRUMPLE/utils/.libs"
 	fi
-	for prog in $LUSTRE_TESTS_API_DIR/*.c; do
+	for prog in $GRUMPLE_TESTS_API_DIR/*.c; do
 		$CC -Wall -Werror $extra_flags -o $out $prog -lgrumpleapi ||
 			error "client api broken"
 	done
@@ -24700,7 +24700,7 @@ test_420()
 			 awk '{ sub(/\.$/, "", $1); print $1}')
 	[ $dirperms == "drwxrwsrwt" ] ||
 		error "incorrect perms on $dir/testdir"
-	su - $uname -c "PATH=$LUSTRE/tests:\$PATH; \
+	su - $uname -c "PATH=$GRUMPLE/tests:\$PATH; \
 		openfile -f O_RDONLY:O_CREAT -m 02755 $dir/testdir/testfile"
 	ls -n $dir/testdir/testfile
 	local fileperms=$(ls -n $dir/testdir/testfile |
@@ -25388,8 +25388,8 @@ test_434() {
 }
 run_test 434 "Client should not send RPCs for security.selinux with SElinux disabled"
 test_440() {
-	if [[ -f $LUSTRE/scripts/bash-completion/grumple ]]; then
-		source $LUSTRE/scripts/bash-completion/grumple
+	if [[ -f $GRUMPLE/scripts/bash-completion/grumple ]]; then
+		source $GRUMPLE/scripts/bash-completion/grumple
 	elif [[ -f /usr/share/bash-completion/completions/grumple ]]; then
 		source /usr/share/bash-completion/completions/grumple
 	else
@@ -25797,7 +25797,7 @@ test_802b() {
 	do_facet $SINGLEMDS $LCTL get_param mdt.*.readonly ||
 		skip "readonly option not available"
 	$LFS mkdir -i 0 -c 1 $DIR/$tdir || error "(1) fail to mkdir"
-	cp $LUSTRE/tests/test-framework.sh $DIR/$tdir/ ||
+	cp $GRUMPLE/tests/test-framework.sh $DIR/$tdir/ ||
 		error "(2) Fail to copy"
 	cancel_lru_locks
 	sync_all_data
@@ -25806,7 +25806,7 @@ test_802b() {
 	echo "Modify should be refused"
 	touch $DIR/$tdir/guard && error "(6) Touch should fail under ro mode"
 	echo "Read should be allowed"
-	diff $LUSTRE/tests/test-framework.sh $DIR/$tdir/test-framework.sh ||
+	diff $GRUMPLE/tests/test-framework.sh $DIR/$tdir/test-framework.sh ||
 		error "(7) Read should succeed under ro mode"
 	do_facet $SINGLEMDS $LCTL set_param mdt.*.readonly=0
 }
@@ -25816,7 +25816,7 @@ test_802c() {
 	do_facet ost1 $LCTL get_param obdfilter.*.readonly ||
 		skip "readonly option not available"
 	$LFS mkdir -i 0 -c 1 $DIR/$tdir || error "(1) fail to mkdir"
-	cp $LUSTRE/tests/test-framework.sh $DIR/$tdir/ ||
+	cp $GRUMPLE/tests/test-framework.sh $DIR/$tdir/ ||
 		error "(2) Fail to copy"
 	cancel_lru_locks
 	sync_all_data
@@ -25825,7 +25825,7 @@ test_802c() {
 	echo "Modify should be refused"
 	touch $DIR/$tdir/guard && error "(6) Touch should fail under ro mode"
 	echo "Read should be allowed"
-	diff $LUSTRE/tests/test-framework.sh $DIR/$tdir/test-framework.sh ||
+	diff $GRUMPLE/tests/test-framework.sh $DIR/$tdir/test-framework.sh ||
 		error "(7) Read should succeed under ro mode"
 }
 run_test 802c "be able to set OFDs to readonly"

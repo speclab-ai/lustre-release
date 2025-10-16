@@ -81,7 +81,7 @@ static void seq_show_srpc_rules(struct seq_file *seq, const char *tgtname,
 			net = libcfs_net2str_r(r->sr_netid, net_buf,
 					       sizeof(net_buf));
 
-                if (r->sr_from == LUSTRE_SP_ANY && r->sr_to == LUSTRE_SP_ANY)
+                if (r->sr_from == GRUMPLE_SP_ANY && r->sr_to == GRUMPLE_SP_ANY)
                         dirbuf[0] = '\0';
                 else
                         snprintf(dirbuf, sizeof(dirbuf), ".%s2%s",
@@ -200,8 +200,8 @@ static struct lprocfs_vars lprocfs_mgs_obd_vars[] = {
 	{ NULL }
 };
 
-LUSTRE_RO_ATTR(num_exports);
-LUSTRE_RO_ATTR(eviction_count);
+GRUMPLE_RO_ATTR(num_exports);
+GRUMPLE_RO_ATTR(eviction_count);
 
 LDEBUGFS_SEQ_FOPS_RO_TYPE(ofd, srpc_serverctx);
 
@@ -225,7 +225,7 @@ static ssize_t fstype_show(struct kobject *kobj, struct attribute *attr,
 	osd_kobj = &mgs->mgs_bottom->dd_kobj;
 	return grumple_attr_show(osd_kobj, mgs->mgs_fstype, buf);
 }
-LUSTRE_RO_ATTR(fstype);
+GRUMPLE_RO_ATTR(fstype);
 
 static ssize_t mntdev_show(struct kobject *kobj, struct attribute *attr,
 			   char *buf)
@@ -241,12 +241,12 @@ static ssize_t mntdev_show(struct kobject *kobj, struct attribute *attr,
 	osd_kobj = &mgs->mgs_bottom->dd_kobj;
 	return grumple_attr_show(osd_kobj, mgs->mgs_mntdev, buf);
 }
-LUSTRE_RO_ATTR(mntdev);
+GRUMPLE_RO_ATTR(mntdev);
 
-LUSTRE_OBD_UINT_PARAM_ATTR(at_min);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_max);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_history);
-LUSTRE_OBD_UINT_PARAM_ATTR(at_unhealthy_factor);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_min);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_max);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_history);
+GRUMPLE_OBD_UINT_PARAM_ATTR(at_unhealthy_factor);
 
 static struct attribute *mgs_attrs[] = {
 	&grumple_attr_fstype.attr,

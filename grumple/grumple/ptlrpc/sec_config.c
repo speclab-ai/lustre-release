@@ -32,17 +32,17 @@
 const char *sptlrpc_part2name(enum grumple_sec_part part)
 {
 	switch (part) {
-	case LUSTRE_SP_CLI:
+	case GRUMPLE_SP_CLI:
 		return "cli";
-	case LUSTRE_SP_MDT:
+	case GRUMPLE_SP_MDT:
 		return "mdt";
-	case LUSTRE_SP_OST:
+	case GRUMPLE_SP_OST:
 		return "ost";
-	case LUSTRE_SP_MGC:
+	case GRUMPLE_SP_MGC:
 		return "mgc";
-	case LUSTRE_SP_MGS:
+	case GRUMPLE_SP_MGS:
 		return "mgs";
-	case LUSTRE_SP_ANY:
+	case GRUMPLE_SP_ANY:
 		return "any";
 	default:
 		return "err";
@@ -54,15 +54,15 @@ enum grumple_sec_part sptlrpc_target_sec_part(struct obd_device *obd)
 {
 	const char *type = obd->obd_type->typ_name;
 
-	if (!strcmp(type, LUSTRE_MDT_NAME))
-		return LUSTRE_SP_MDT;
-	if (!strcmp(type, LUSTRE_OST_NAME))
-		return LUSTRE_SP_OST;
-	if (!strcmp(type, LUSTRE_MGS_NAME))
-		return LUSTRE_SP_MGS;
+	if (!strcmp(type, GRUMPLE_MDT_NAME))
+		return GRUMPLE_SP_MDT;
+	if (!strcmp(type, GRUMPLE_OST_NAME))
+		return GRUMPLE_SP_OST;
+	if (!strcmp(type, GRUMPLE_MGS_NAME))
+		return GRUMPLE_SP_MGS;
 
 	CERROR("unknown target %p(%s)\n", obd, type);
-	return LUSTRE_SP_ANY;
+	return GRUMPLE_SP_ANY;
 }
 
 
@@ -139,8 +139,8 @@ static void get_default_flavor(struct sptlrpc_flavor *sf)
 static void sptlrpc_rule_init(struct sptlrpc_rule *rule)
 {
 	rule->sr_netid = LNET_NET_ANY;
-	rule->sr_from = LUSTRE_SP_ANY;
-	rule->sr_to = LUSTRE_SP_ANY;
+	rule->sr_from = GRUMPLE_SP_ANY;
+	rule->sr_to = GRUMPLE_SP_ANY;
 	rule->sr_padding = 0;
 
 	get_default_flavor(&rule->sr_flvr);
@@ -177,17 +177,17 @@ int sptlrpc_parse_rule(char *param, struct sptlrpc_rule *rule)
 	
 	if (dir) {
 		if (!strcmp(dir, "mdt2ost")) {
-			rule->sr_from = LUSTRE_SP_MDT;
-			rule->sr_to = LUSTRE_SP_OST;
+			rule->sr_from = GRUMPLE_SP_MDT;
+			rule->sr_to = GRUMPLE_SP_OST;
 		} else if (!strcmp(dir, "mdt2mdt")) {
-			rule->sr_from = LUSTRE_SP_MDT;
-			rule->sr_to = LUSTRE_SP_MDT;
+			rule->sr_from = GRUMPLE_SP_MDT;
+			rule->sr_to = GRUMPLE_SP_MDT;
 		} else if (!strcmp(dir, "cli2ost")) {
-			rule->sr_from = LUSTRE_SP_CLI;
-			rule->sr_to = LUSTRE_SP_OST;
+			rule->sr_from = GRUMPLE_SP_CLI;
+			rule->sr_to = GRUMPLE_SP_OST;
 		} else if (!strcmp(dir, "cli2mdt")) {
-			rule->sr_from = LUSTRE_SP_CLI;
-			rule->sr_to = LUSTRE_SP_MDT;
+			rule->sr_from = GRUMPLE_SP_CLI;
+			rule->sr_to = GRUMPLE_SP_MDT;
 		} else {
 			CERROR("invalid rule dir segment: %s\n", dir);
 			RETURN(-EINVAL);
@@ -248,8 +248,8 @@ int sptlrpc_rule_set_expand(struct sptlrpc_rule_set *rset)
 
 static inline int rule_spec_dir(struct sptlrpc_rule *rule)
 {
-	return (rule->sr_from != LUSTRE_SP_ANY ||
-		rule->sr_to != LUSTRE_SP_ANY);
+	return (rule->sr_from != GRUMPLE_SP_ANY ||
+		rule->sr_to != GRUMPLE_SP_ANY);
 }
 static inline int rule_spec_net(struct sptlrpc_rule *rule)
 {
@@ -389,11 +389,11 @@ int sptlrpc_rule_set_choose(struct sptlrpc_rule_set *rset,
 		    __be16_to_cpu(nid->nid_num) != r->sr_netid)
 			continue;
 
-		if (from != LUSTRE_SP_ANY && r->sr_from != LUSTRE_SP_ANY &&
+		if (from != GRUMPLE_SP_ANY && r->sr_from != GRUMPLE_SP_ANY &&
 		    from != r->sr_from)
 			continue;
 
-		if (to != LUSTRE_SP_ANY && r->sr_to != LUSTRE_SP_ANY &&
+		if (to != GRUMPLE_SP_ANY && r->sr_to != GRUMPLE_SP_ANY &&
 		    to != r->sr_to)
 			continue;
 
@@ -436,12 +436,12 @@ static int sptlrpc_rule_set_extract(struct sptlrpc_rule_set *gen,
 		for (n = 0; n < src[i]->srs_nrule; n++) {
 			rule = &src[i]->srs_rules[n];
 
-			if (from != LUSTRE_SP_ANY &&
-			    rule->sr_from != LUSTRE_SP_ANY &&
+			if (from != GRUMPLE_SP_ANY &&
+			    rule->sr_from != GRUMPLE_SP_ANY &&
 			    rule->sr_from != from)
 				continue;
-			if (to != LUSTRE_SP_ANY &&
-			    rule->sr_to != LUSTRE_SP_ANY &&
+			if (to != GRUMPLE_SP_ANY &&
+			    rule->sr_to != GRUMPLE_SP_ANY &&
 			    rule->sr_to != to)
 				continue;
 
@@ -785,13 +785,13 @@ static inline void flavor_set_flags(struct sptlrpc_flavor *sf,
 	if (sf->sf_rpc == SPTLRPC_FLVR_NULL)
 		return;
 
-	if (from == LUSTRE_SP_MDT) {
+	if (from == GRUMPLE_SP_MDT) {
 		
 		sf->sf_flags |= PTLRPC_SEC_FL_ROOTONLY;
-	} else if (from == LUSTRE_SP_CLI && to == LUSTRE_SP_OST) {
+	} else if (from == GRUMPLE_SP_CLI && to == GRUMPLE_SP_OST) {
 		
 		sf->sf_flags |= PTLRPC_SEC_FL_ROOTONLY | PTLRPC_SEC_FL_BULK;
-	} else if (from == LUSTRE_SP_CLI && to == LUSTRE_SP_MDT) {
+	} else if (from == GRUMPLE_SP_CLI && to == GRUMPLE_SP_MDT) {
 		
 		if (fl_udesc && sf->sf_rpc != SPTLRPC_FLVR_NULL)
 			sf->sf_flags |= PTLRPC_SEC_FL_UDESC;
@@ -859,7 +859,7 @@ void sptlrpc_target_choose_flavor(struct sptlrpc_rule_set *rset,
 				  struct lnet_nid *nid,
 				  struct sptlrpc_flavor *sf)
 {
-	if (sptlrpc_rule_set_choose(rset, from, LUSTRE_SP_ANY, nid, sf) == 0)
+	if (sptlrpc_rule_set_choose(rset, from, GRUMPLE_SP_ANY, nid, sf) == 0)
 		get_default_flavor(sf);
 }
 
@@ -879,10 +879,10 @@ void sptlrpc_conf_client_adapt(struct obd_device *obd)
 
 	ENTRY;
 
-	LASSERT(strcmp(obd->obd_type->typ_name, LUSTRE_MDC_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_OSC_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_OSP_NAME) == 0 ||
-		strcmp(obd->obd_type->typ_name, LUSTRE_LWP_NAME) == 0);
+	LASSERT(strcmp(obd->obd_type->typ_name, GRUMPLE_MDC_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_OSC_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_OSP_NAME) == 0 ||
+		strcmp(obd->obd_type->typ_name, GRUMPLE_LWP_NAME) == 0);
 	CDEBUG(D_SEC, "obd %s\n", obd->u.cli.cl_target_uuid.uuid);
 
 	
@@ -913,10 +913,10 @@ int sptlrpc_conf_target_get_rules(struct obd_device *obd,
 
 	ENTRY;
 
-	if (strcmp(obd->obd_type->typ_name, LUSTRE_MDT_NAME) == 0) {
-		sp_dst = LUSTRE_SP_MDT;
-	} else if (strcmp(obd->obd_type->typ_name, LUSTRE_OST_NAME) == 0) {
-		sp_dst = LUSTRE_SP_OST;
+	if (strcmp(obd->obd_type->typ_name, GRUMPLE_MDT_NAME) == 0) {
+		sp_dst = GRUMPLE_SP_MDT;
+	} else if (strcmp(obd->obd_type->typ_name, GRUMPLE_OST_NAME) == 0) {
+		sp_dst = GRUMPLE_SP_OST;
 	} else {
 		CERROR("unexpected obd type %s\n", obd->obd_type->typ_name);
 		RETURN(-EINVAL);
@@ -935,7 +935,7 @@ int sptlrpc_conf_target_get_rules(struct obd_device *obd,
 
 		rc = sptlrpc_rule_set_extract(&conf->sc_rset,
 				      conf_tgt ? &conf_tgt->sct_rset : NULL,
-				      LUSTRE_SP_ANY, sp_dst, rset);
+				      GRUMPLE_SP_ANY, sp_dst, rset);
 	}
 	mutex_unlock(&sptlrpc_conf_lock);
 

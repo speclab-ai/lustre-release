@@ -318,7 +318,7 @@ again:
 	switch (fld_op) {
 	case FLD_QUERY:
 		req = ptlrpc_request_alloc_pack(imp, &RQF_FLD_QUERY,
-						LUSTRE_MDS_VERSION, FLD_QUERY);
+						GRUMPLE_MDS_VERSION, FLD_QUERY);
 		if (IS_ERR(req))
 			RETURN(PTR_ERR(req));
 
@@ -342,7 +342,7 @@ again:
 		break;
 	case FLD_READ:
 		req = ptlrpc_request_alloc_pack(imp, &RQF_FLD_READ,
-						LUSTRE_MDS_VERSION, FLD_READ);
+						GRUMPLE_MDS_VERSION, FLD_READ);
 		if (IS_ERR(req))
 			RETURN(PTR_ERR(req));
 
@@ -378,7 +378,7 @@ again:
 	}
 
 	if (rc != 0) {
-		if (imp->imp_state != LUSTRE_IMP_CLOSED &&
+		if (imp->imp_state != GRUMPLE_IMP_CLOSED &&
 		    !imp->imp_deactive &&
 		    imp->imp_connect_flags_orig & OBD_CONNECT_MDS_MDS &&
 		    OCD_HAS_FLAG(&imp->imp_connect_data, LIGHTWEIGHT) &&
@@ -505,7 +505,7 @@ static int __init fld_init(void)
 		return rc;
 #endif 
 
-	fld_debugfs_dir = debugfs_create_dir(LUSTRE_FLD_NAME,
+	fld_debugfs_dir = debugfs_create_dir(GRUMPLE_FLD_NAME,
 					     debugfs_grumple_root);
 	return PTR_ERR_OR_ZERO(fld_debugfs_dir);
 }
@@ -521,7 +521,7 @@ static void __exit fld_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre FID Location Database");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(fld_init);

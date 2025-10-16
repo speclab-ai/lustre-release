@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 ONLY=${ONLY:-"$*"}
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
-. $LUSTRE/tests/recovery-scale-lib.sh
+. $GRUMPLE/tests/recovery-scale-lib.sh
 ALWAYS_EXCEPT="$RECOVERY_RANDOM_SCALE_EXCEPT "
 build_test_filter
 remote_mds_nodsh && skip_env "remote MDS with nodsh"

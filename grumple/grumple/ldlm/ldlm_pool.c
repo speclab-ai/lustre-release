@@ -684,33 +684,33 @@ static ssize_t grant_speed_show(struct kobject *kobj, struct attribute *attr,
 	spin_unlock(&pl->pl_lock);
 	return sprintf(buf, "%d\n", grant_speed);
 }
-LUSTRE_RO_ATTR(grant_speed);
+GRUMPLE_RO_ATTR(grant_speed);
 
 LDLM_POOL_SYSFS_READER_SHOW(grant_plan, int);
-LUSTRE_RO_ATTR(grant_plan);
+GRUMPLE_RO_ATTR(grant_plan);
 
 LDLM_POOL_SYSFS_READER_SHOW(recalc_period, int);
 LDLM_POOL_SYSFS_WRITER_STORE(recalc_period, int);
-LUSTRE_RW_ATTR(recalc_period);
+GRUMPLE_RW_ATTR(recalc_period);
 
 LDLM_POOL_SYSFS_READER_NOLOCK_SHOW(server_lock_volume, u64);
-LUSTRE_RO_ATTR(server_lock_volume);
+GRUMPLE_RO_ATTR(server_lock_volume);
 
 LDLM_POOL_SYSFS_READER_NOLOCK_SHOW(client_lock_volume, u64);
-LUSTRE_RO_ATTR(client_lock_volume);
+GRUMPLE_RO_ATTR(client_lock_volume);
 
 LDLM_POOL_SYSFS_READER_NOLOCK_SHOW(limit, atomic);
 LDLM_POOL_SYSFS_WRITER_NOLOCK_STORE(limit, atomic);
-LUSTRE_RW_ATTR(limit);
+GRUMPLE_RW_ATTR(limit);
 
 LDLM_POOL_SYSFS_READER_NOLOCK_SHOW(granted, atomic);
-LUSTRE_RO_ATTR(granted);
+GRUMPLE_RO_ATTR(granted);
 
 LDLM_POOL_SYSFS_READER_NOLOCK_SHOW(cancel_rate, atomic);
-LUSTRE_RO_ATTR(cancel_rate);
+GRUMPLE_RO_ATTR(cancel_rate);
 
 LDLM_POOL_SYSFS_READER_NOLOCK_SHOW(grant_rate, atomic);
-LUSTRE_RO_ATTR(grant_rate);
+GRUMPLE_RO_ATTR(grant_rate);
 
 static ssize_t lock_volume_factor_show(struct kobject *kobj,
 				       struct attribute *attr,
@@ -742,7 +742,7 @@ static ssize_t lock_volume_factor_store(struct kobject *kobj,
 	return count;
 
 }
-LUSTRE_RW_ATTR(lock_volume_factor);
+GRUMPLE_RW_ATTR(lock_volume_factor);
 
 static ssize_t recalc_time_show(struct kobject *kobj,
 				struct attribute *attr,
@@ -753,7 +753,7 @@ static ssize_t recalc_time_show(struct kobject *kobj,
 	return snprintf(buf, PAGE_SIZE, "%llu\n",
 			ktime_get_seconds() - pl->pl_recalc_time);
 }
-LUSTRE_RO_ATTR(recalc_time);
+GRUMPLE_RO_ATTR(recalc_time);
 
 
 static struct attribute *ldlm_pl_attrs[] = {

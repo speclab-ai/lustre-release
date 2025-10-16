@@ -213,7 +213,7 @@ static int get_opts(int argc, char *const argv[])
 	char *p; \
 	\
 	size = offsetof(struct type_t, \
-			sdd_sepol[LUSTRE_NODEMAP_SEPOL_LENGTH + 1]); \
+			sdd_sepol[GRUMPLE_NODEMAP_SEPOL_LENGTH + 1]); \
 	data = malloc(size); \
 	if (!data) { \
 		errlog("malloc sepol downcall data(%d) failed!\n", size); \
@@ -225,15 +225,15 @@ static int get_opts(int argc, char *const argv[])
 	/* Put all info together and generate string \
 	 * to represent SELinux policy information \
 	 */ \
-	rc = snprintf(data->sdd_sepol, LUSTRE_NODEMAP_SEPOL_LENGTH + 1, \
+	rc = snprintf(data->sdd_sepol, GRUMPLE_NODEMAP_SEPOL_LENGTH + 1, \
 		      "%.1d:%s:%u:", enforce, policy_type, policyver); \
-	if (rc >= LUSTRE_NODEMAP_SEPOL_LENGTH + 1) { \
+	if (rc >= GRUMPLE_NODEMAP_SEPOL_LENGTH + 1) { \
 		rc = -EMSGSIZE; \
 		goto out_data_ ## type_t ; \
 	} \
 	\
 	p = data->sdd_sepol + strlen(data->sdd_sepol); \
-	size = LUSTRE_NODEMAP_SEPOL_LENGTH + 1 - strlen(data->sdd_sepol); \
+	size = GRUMPLE_NODEMAP_SEPOL_LENGTH + 1 - strlen(data->sdd_sepol); \
 	for (idx = 0; idx < mdsize; idx++) { \
 		rc = snprintf(p, size, "%02x", \
 			      (unsigned char)(mdval[idx])); \
@@ -394,7 +394,7 @@ int main(int argc, char **argv)
 		goto out_poltyp;
 
 	sepol_downcall(sepol_downcall_data, SEPOL_DOWNCALL_MAGIC);
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 16, 53, 0)
 	if (rc == -EINVAL)
 		
 		sepol_downcall(sepol_downcall_data_old,

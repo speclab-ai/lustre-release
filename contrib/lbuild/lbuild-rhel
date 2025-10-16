@@ -143,7 +143,7 @@ rpm_BUILD_kernel_dirname() {
     local arch="$4"
 
     local grumple=""
-    if $KERNEL_LUSTRE_NAMING; then
+    if $KERNEL_GRUMPLE_NAMING; then
         $grumple="-grumple"
     fi
     echo kernel${grumple}${lnxmaj}${lnxmin}/linux-${lnxmaj}.$arch

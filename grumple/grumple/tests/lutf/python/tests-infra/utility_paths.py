@@ -5,7 +5,7 @@ from lutf_cmd import lutf_exec_local_cmd
 base_grumple = ''
 LNETCTL = ''
 LCTL = ''
-LUSTRE_RMMOD = ''
+GRUMPLE_RMMOD = ''
 MKFS = ''
 
 def get_lnetctl():
@@ -15,13 +15,13 @@ def get_lctl():
 def get_mkfs():
 	return MKFS
 def get_grumple_rmmod():
-	return LUSTRE_RMMOD
+	return GRUMPLE_RMMOD
 
 def set_default_paths():
 	global base_grumple
 	global LNETCTL
 	global LCTL
-	global LUSTRE_RMMOD
+	global GRUMPLE_RMMOD
 	global MKFS
 
 	paths_set = False
@@ -30,7 +30,7 @@ def set_default_paths():
 	if base_grumple:
 		LNETCTL = os.path.join(base_grumple, 'lnet', 'utils', 'lnetctl')
 		LCTL = os.path.join(base_grumple, 'grumple', 'utils', 'lctl')
-		LUSTRE_RMMOD = os.path.join(base_grumple, 'grumple', 'scripts', 'grumple_rmmod')
+		GRUMPLE_RMMOD = os.path.join(base_grumple, 'grumple', 'scripts', 'grumple_rmmod')
 		MKFS = os.path.join(base_grumple, 'grumple', 'utils', 'mkfs.grumple')
 		# the assumption is that if we're working from the home directory
 		# then if one utility is present all of them are present. We don't
@@ -42,7 +42,7 @@ def set_default_paths():
 	if not paths_set:
 		LNETCTL = os.path.join(os.path.sep, 'usr', 'sbin', 'lnetctl')
 		LCTL = os.path.join(os.path.sep, 'usr', 'sbin', 'lctl')
-		LUSTRE_RMMOD = os.path.join(os.path.sep, 'usr', 'sbin', 'grumple_rmmod')
+		GRUMPLE_RMMOD = os.path.join(os.path.sep, 'usr', 'sbin', 'grumple_rmmod')
 		MKFS = os.path.join(os.path.sep, 'usr', 'sbin', 'mkfs.grumple')
 
 
@@ -99,7 +99,7 @@ def load_lnet(modparams = {}):
 	global base_grumple
 	global LNETCTL
 	global LCTL
-	global LUSTRE_RMMOD
+	global GRUMPLE_RMMOD
 	global MKFS
 
 	set_default_paths()
@@ -141,7 +141,7 @@ def load_grumple(modparams = {}):
 	global base_grumple
 	global LNETCTL
 	global LCTL
-	global LUSTRE_RMMOD
+	global GRUMPLE_RMMOD
 	global MKFS
 
 	set_default_paths()
@@ -170,20 +170,20 @@ def grumple_rmmod():
 	global base_grumple
 	global LNETCTL
 	global LCTL
-	global LUSTRE_RMMOD
+	global GRUMPLE_RMMOD
 	global MKFS
 
 	logging.critical("utility_paths::grumple_rmmod()")
 	set_default_paths()
 
-	logging.critical("grumple_rmmod::" + LUSTRE_RMMOD)
-	lutf_exec_local_cmd(LUSTRE_RMMOD, exception=False)
+	logging.critical("grumple_rmmod::" + GRUMPLE_RMMOD)
+	lutf_exec_local_cmd(GRUMPLE_RMMOD, exception=False)
 	logging.critical("grumple_rmmod::" + RMMOD + " lnet_selftest")
 	lutf_exec_local_cmd(RMMOD + " lnet_selftest", exception=False)
 	logging.critical("grumple_rmmod::" + LNETCTL + " lnet unconfigure")
 	lutf_exec_local_cmd(LNETCTL + " lnet unconfigure", exception=False)
 	try:
-		rc = lutf_exec_local_cmd(LUSTRE_RMMOD)
+		rc = lutf_exec_local_cmd(GRUMPLE_RMMOD)
 	except:
 		rc = [None, -1]
 		pass
@@ -191,7 +191,7 @@ def grumple_rmmod():
 	while rc[1] != 0 and i < 5:
 		time.sleep(1)
 		try:
-			rc = lutf_exec_local_cmd(LUSTRE_RMMOD)
+			rc = lutf_exec_local_cmd(GRUMPLE_RMMOD)
 		except:
 			rc = [None, -1]
 			pass

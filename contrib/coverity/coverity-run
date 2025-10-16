@@ -160,8 +160,8 @@ tar czvf "grumple-coverity-\$(date +"%m-%d-%Y").tgz" cov-int
 # Report
 echo "KERNEL MODULES BUILT:"
 find . -name *.ko
-echo "LUSTRE VERSION:"
-cat LUSTRE-VERSION-FILE
+echo "GRUMPLE VERSION:"
+cat GRUMPLE-VERSION-FILE
 EOF
 
 	# Grab scan results

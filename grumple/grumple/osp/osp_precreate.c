@@ -205,7 +205,7 @@ static int osp_statfs_update(const struct lu_env *env, struct osp_device *d)
 		RETURN(-ENOMEM);
 
 	rc = ptlrpc_request_pack(req,
-			 d->opd_pre ? LUSTRE_OST_VERSION : LUSTRE_MDS_VERSION,
+			 d->opd_pre ? GRUMPLE_OST_VERSION : GRUMPLE_MDS_VERSION,
 			 d->opd_pre ? OST_STATFS : MDS_STATFS);
 	if (rc) {
 		ptlrpc_request_free(req);
@@ -439,7 +439,7 @@ static void osp_update_fldb_cache(const struct lu_env *env,
  * written to it, but after MDT failover nobody refers those objects and OSP
  * has no idea that the sequence need cleanup to be done.
  * While this is very expensive operation, it's supposed to happen infrequently
- * because sequence has LUSTRE_DATA_SEQ_MAX_WIDTH=32M objects by default.
+ * because sequence has GRUMPLE_DATA_SEQ_MAX_WIDTH=32M objects by default.
  *
  * Return:
  * * %0 on success
@@ -609,7 +609,7 @@ static int osp_precreate_send(const struct lu_env *env, struct osp_device *d)
 	 * in this case.
 	 */
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_CREATE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_CREATE);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -746,7 +746,7 @@ static int osp_get_lastfid_from_ost(const struct lu_env *env,
 	req_capsule_set_size(&req->rq_pill, &RMF_GETINFO_KEY, RCL_CLIENT,
 			     sizeof(KEY_LAST_FID));
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_GET_INFO);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_GET_INFO);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -791,7 +791,7 @@ static int osp_get_lastfid_from_ost(const struct lu_env *env,
 	if (fid_seq(last_fid) == fid_seq(&d->opd_last_used_fid)) {
 		if (fid_oid(last_fid) == 0 ||
 		    (fid_seq_is_norm(fid_seq(last_fid)) &&
-		     fid_oid(last_fid) == LUSTRE_FID_INIT_OID)) {
+		     fid_oid(last_fid) == GRUMPLE_FID_INIT_OID)) {
 			/* reformatted OST, it requires creation request
 			 * to recreate objects
 			 */
@@ -895,7 +895,7 @@ static int osp_precreate_cleanup_orphans(struct lu_env *env,
 	if (req == NULL)
 		GOTO(out, rc = -ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_CREATE);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_CREATE);
 	if (rc) {
 		ptlrpc_request_free(req);
 		req = NULL;
@@ -1672,7 +1672,7 @@ int osp_object_truncate(const struct lu_env *env, struct dt_object *dt,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OST_VERSION, OST_PUNCH);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OST_VERSION, OST_PUNCH);
 	if (rc) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -1766,7 +1766,7 @@ int osp_init_precreate(struct osp_device *d)
 	d->opd_pre_last_created_fid.f_oid = 1;
 	d->opd_last_id = 0;
 	d->opd_pre_reserved = 0;
-	d->opd_pre_seq_width = LUSTRE_DATA_SEQ_MAX_WIDTH;
+	d->opd_pre_seq_width = GRUMPLE_DATA_SEQ_MAX_WIDTH;
 	d->opd_got_disconnected = 1;
 	d->opd_pre_create_slow = 0;
 	d->opd_pre_create_count = OST_MIN_PRECREATE;

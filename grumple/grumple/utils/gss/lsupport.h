@@ -38,13 +38,13 @@ void gssd_exit_unique(int type);
  * copied from grumple source
  */
 
-#define LUSTRE_GSS_SVC_MGS      0
-#define LUSTRE_GSS_SVC_MDS      1
-#define LUSTRE_GSS_SVC_OSS      2
+#define GRUMPLE_GSS_SVC_MGS      0
+#define GRUMPLE_GSS_SVC_MDS      1
+#define GRUMPLE_GSS_SVC_OSS      2
 
-#define LUSTRE_GSS_SVC_MASK	0x0000FFFF
-#define LUSTRE_GSS_MECH_MASK	0xFFFF0000
-#define LUSTRE_GSS_MECH_SHIFT	16
+#define GRUMPLE_GSS_SVC_MASK	0x0000FFFF
+#define GRUMPLE_GSS_MECH_MASK	0xFFFF0000
+#define GRUMPLE_GSS_MECH_SHIFT	16
 
 extern const char * grumple_svc_name[];
 extern char *krb5_this_realm;

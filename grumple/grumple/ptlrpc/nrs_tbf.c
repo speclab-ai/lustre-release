@@ -699,7 +699,7 @@ nrs_tbf_jobid_cli_init(struct nrs_tbf_client *cli,
 
 	if (jobid == NULL)
 		jobid = NRS_TBF_JOBID_NULL;
-	LASSERT(strlen(jobid) < LUSTRE_JOBID_SIZE);
+	LASSERT(strlen(jobid) < GRUMPLE_JOBID_SIZE);
 	INIT_LIST_HEAD(&cli->tc_lru);
 	memcpy(cli->tc_jobid, jobid, strlen(jobid));
 }
@@ -2261,7 +2261,7 @@ nrs_tbf_opcode_list_parse(char *orig, unsigned long **bitmaptr)
 	orig = kstrdup(orig, GFP_KERNEL);
 	if (!orig)
 		return -ENOMEM;
-	opcodes = bitmap_zalloc(LUSTRE_MAX_OPCODES, GFP_KERNEL);
+	opcodes = bitmap_zalloc(GRUMPLE_MAX_OPCODES, GFP_KERNEL);
 	if (!opcodes) {
 		kfree(orig);
 		return -ENOMEM;

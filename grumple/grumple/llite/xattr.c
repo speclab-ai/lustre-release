@@ -121,7 +121,7 @@ static int ll_xattr_set_common(const struct xattr_handler *handler,
 	
 	if (!strcmp(name, "hsm") ||
 	    ((handler->flags == XATTR_TRUSTED_T && !strcmp(name, "lov")) ||
-	     (handler->flags == XATTR_LUSTRE_T && !strcmp(name, "lov"))))
+	     (handler->flags == XATTR_GRUMPLE_T && !strcmp(name, "lov"))))
 		GOTO(out, rc = 0);
 
 	rc = ll_security_secctx_name_filter(sbi, handler->flags, name);
@@ -217,7 +217,7 @@ static int get_hsm_state(struct inode *inode, u32 *hus_states)
 		return -ENOMEM;
 
 	op_data = ll_prep_md_op_data(NULL, inode, NULL, NULL, 0, 0,
-				     LUSTRE_OPC_ANY, hus);
+				     GRUMPLE_OPC_ANY, hus);
 	if (!IS_ERR(op_data)) {
 		rc = obd_iocontrol(LL_IOC_HSM_STATE_GET, ll_i2mdexp(inode),
 				   sizeof(*op_data), op_data, NULL);
@@ -493,7 +493,7 @@ int ll_xattr_list(struct inode *inode, const char *name, int type, void *buffer,
 	if (sbi->ll_xattr_cache_enabled && type != XATTR_ACL_ACCESS_T &&
 	    (type != XATTR_SECURITY_T || !ll_xattr_is_seclabel(name)) &&
 	    (type != XATTR_TRUSTED_T || strcmp(name, XATTR_NAME_SOM)) &&
-	    (type != XATTR_LUSTRE_T || strcmp(name, XATTR_LUSTRE_PIN))) {
+	    (type != XATTR_GRUMPLE_T || strcmp(name, XATTR_GRUMPLE_PIN))) {
 		rc = ll_xattr_cache_get(inode, name, buffer, size, valid);
 		if (rc == -EAGAIN)
 			goto getxattr_nocache;
@@ -568,7 +568,7 @@ static int ll_xattr_get_common(const struct xattr_handler *handler,
 	if (rc)
 		RETURN(rc);
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	/* posix acl is under protection of LOOKUP lock. when calling to this,
 	 * we just have path resolution to the target inode, so we have great
 	 * chance that cached ACL is uptodate.
@@ -826,16 +826,16 @@ ssize_t ll_listxattr(struct dentry *dentry, char *buffer, size_t size)
 	if (rc2 < 0)
 		RETURN(rc2);
 
-	if (size < rc + sizeof(XATTR_LUSTRE_LOV))
+	if (size < rc + sizeof(XATTR_GRUMPLE_LOV))
 		RETURN(-ERANGE);
 
-	memcpy(buffer + rc, XATTR_LUSTRE_LOV, sizeof(XATTR_LUSTRE_LOV));
+	memcpy(buffer + rc, XATTR_GRUMPLE_LOV, sizeof(XATTR_GRUMPLE_LOV));
 
 out:
 	ll_stats_ops_tally(ll_i2sbi(inode), LPROC_LL_LISTXATTR,
 			   ktime_us_delta(ktime_get(), kstart));
 
-	RETURN(rc + sizeof(XATTR_LUSTRE_LOV));
+	RETURN(rc + sizeof(XATTR_GRUMPLE_LOV));
 }
 
 #ifdef HAVE_XATTR_HANDLER_SIMPLIFIED
@@ -1025,8 +1025,8 @@ static const struct xattr_handler ll_acl_default_xattr_handler = {
 };
 
 static const struct xattr_handler ll_grumple_xattr_handler = {
-	.prefix = XATTR_LUSTRE_PREFIX,
-	.flags = XATTR_LUSTRE_T,
+	.prefix = XATTR_GRUMPLE_PREFIX,
+	.flags = XATTR_GRUMPLE_T,
 #if defined(HAVE_XATTR_HANDLER_SIMPLIFIED)
 	.get = ll_xattr_get_4_3,
 	.set = ll_xattr_set_4_3,
@@ -1044,7 +1044,7 @@ const struct xattr_handler *ll_xattr_handlers[] = {
 	&ll_user_xattr_handler,
 	&ll_trusted_xattr_handler,
 	&ll_security_xattr_handler,
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	&ll_acl_access_xattr_handler,
 	&ll_acl_default_xattr_handler,
 #endif

@@ -48,7 +48,7 @@ diff -wur /dev/null b/fs/ext4/encdata.h
 +#define _ENCDATA_H
 +
 +/* Define a fixed 4096-byte encryption unit size */
-+/* Must be identical to LUSTRE_ENCRYPTION_UNIT_SIZE */
++/* Must be identical to GRUMPLE_ENCRYPTION_UNIT_SIZE */
 +#define EXT4_ENCRYPTION_BLOCKBITS 12
 +#define EXT4_ENCRYPTION_UNIT_SIZE ((size_t)1 << EXT4_ENCRYPTION_BLOCKBITS)
 +#define EXT4_ENCRYPTION_MASK      (~(EXT4_ENCRYPTION_UNIT_SIZE - 1))
@@ -183,7 +183,7 @@ diff -wur a/fs/ext4/inode.c b/fs/ext4/inode.c
  	generic_fillattr(inode, stat);
 +
 +	if (flags & EXT4_ENCRYPT_FL &&
-+	    unlikely(!IS_LUSTRE_MOUNT(inode->i_sb)))
++	    unlikely(!IS_GRUMPLE_MOUNT(inode->i_sb)))
 +		stat->size = round_up(stat->size,
 +				      EXT4_ENCRYPTION_UNIT_SIZE);
 +
@@ -402,7 +402,7 @@ diff -wur a/fs/ext4/xattr_security.c b/fs/ext4/xattr_security.c
 +	}
 +	name_len = retval;
 +
-+	retval = ext4_xattr_set(inode, EXT4_XATTR_INDEX_LUSTRE,
++	retval = ext4_xattr_set(inode, EXT4_XATTR_INDEX_GRUMPLE,
 +				EXT4_XATTR_NAME_RAWENCNAME,
 +				name, name_len, XATTR_CREATE);
 +

@@ -2,7 +2,7 @@ import clutf_global
 from lutf_exception import LUTFError, LutfDumper
 import logging, os, yaml, shutil
 
-LUSTRE_BASE_PATH = ''
+GRUMPLE_BASE_PATH = ''
 LUTF_STATUS_STRING = 'LUTF STATUS: '
 LUTF_STATUS_SUCCESS = 'Success'
 LUTF_STATUS_FAILURE = 'Failure'
@@ -130,12 +130,12 @@ def get_rpc_timeout():
 	return global_pref['RPC timeout']
 
 def set_grumple_base_path(path):
-	global LUSTRE_BASE_PATH
-	LUSTRE_BASE_PATH = path
+	global GRUMPLE_BASE_PATH
+	GRUMPLE_BASE_PATH = path
 
 def get_grumple_base_path():
-	global LUSTRE_BASE_PATH
-	return LUSTRE_BASE_PATH
+	global GRUMPLE_BASE_PATH
+	return GRUMPLE_BASE_PATH
 
 def set_script_remote_cp(enable):
 	'''

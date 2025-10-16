@@ -156,7 +156,7 @@ enum sk_ctx_init_buffers {
 };
 
 
-#define SK_DESCRIPTION_SIZE (9 + MTI_NAME_MAXLEN + LUSTRE_NODEMAP_NAME_LENGTH)
+#define SK_DESCRIPTION_SIZE (9 + MTI_NAME_MAXLEN + GRUMPLE_NODEMAP_NAME_LENGTH)
 
 enum sk_key_type {
 	SK_TYPE_INVALID	= 0x0,
@@ -191,7 +191,7 @@ struct sk_keyfile_config {
 	char		skc_fsname[MTI_NAME_MAXLEN + 1];
 	/* Nodemap name for this key.  Used by the server side to verify the
 	 * client is in the correct nodemap */
-	char		skc_nodemap[LUSTRE_NODEMAP_NAME_LENGTH + 1];
+	char		skc_nodemap[GRUMPLE_NODEMAP_NAME_LENGTH + 1];
 	
 	unsigned char	skc_shared_key[SK_MAX_KEYLEN_BYTES];
 	

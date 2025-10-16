@@ -487,7 +487,7 @@ static int osd_memfs_filldir(void *ctx,
 		*fid = obj->oo_dt.do_lu.lo_header->loh_fid;
 	}
 
-	if (obj == NULL || !(obj->oo_lma_flags & LUSTRE_ENCRYPT_FL)) {
+	if (obj == NULL || !(obj->oo_lma_flags & GRUMPLE_ENCRYPT_FL)) {
 		ent->oitd_namelen = namelen;
 		memcpy(ent->oitd_name, name, namelen);
 	} else {

@@ -151,8 +151,8 @@ fi
 
 STARTTIME=`date +%s`
 
-: ${LUSTRE:=$(cd $(dirname $0)/..; echo $PWD)}
-. $LUSTRE/tests/test-framework.sh
+: ${GRUMPLE:=$(cd $(dirname $0)/..; echo $PWD)}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env
 
 # Set CLIENTONLY, while trying to discover some common
@@ -170,7 +170,7 @@ fi
 export STOP_NOW_RC=111
 
 if [ $upload_logs = true ] ; then
-    upload_script=$(find_script_in_path maloo_upload.sh $PATH:$LUSTRE/tests)
+    upload_script=$(find_script_in_path maloo_upload.sh $PATH:$GRUMPLE/tests)
     if [[ -z $upload_script ]]; then
         echo "Can't find maloo_upload.sh script"
         exit 1
@@ -184,7 +184,7 @@ if [ $upload_logs = true ] ; then
 fi
 
 export NAME MOUNT START CLEAN
-. ${CONFIG:-$LUSTRE/tests/cfg/$NAME.sh}
+. ${CONFIG:-$GRUMPLE/tests/cfg/$NAME.sh}
 
 # Only need to know where (MOUNT) and how (mgs_HOST) to
 # mount Lustre for client-side only tests

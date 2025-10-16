@@ -475,43 +475,43 @@ struct tgt_thread_big_cache {
 	struct niobuf_local	local[PTLRPC_MAX_BRW_PAGES];
 };
 
-#define LUSTRE_FLD_NAME		"fld"
-#define LUSTRE_SEQ_NAME		"seq"
+#define GRUMPLE_FLD_NAME		"fld"
+#define GRUMPLE_SEQ_NAME		"seq"
 
-#define LUSTRE_MDD_NAME		"mdd"
-#define LUSTRE_OSD_LDISKFS_NAME	"osd-ldiskfs"
-#define LUSTRE_OSD_ZFS_NAME	"osd-zfs"
-#define LUSTRE_OSD_WBCFS_NAME	"osd-wbcfs"
-#define LUSTRE_VVP_NAME		"vvp"
-#define LUSTRE_LMV_NAME		"lmv"
-#define LUSTRE_SLP_NAME		"slp"
-#define LUSTRE_LOD_NAME		"lod"
-#define LUSTRE_OSP_NAME		"osp"
-#define LUSTRE_LWP_NAME		"lwp"
+#define GRUMPLE_MDD_NAME		"mdd"
+#define GRUMPLE_OSD_LDISKFS_NAME	"osd-ldiskfs"
+#define GRUMPLE_OSD_ZFS_NAME	"osd-zfs"
+#define GRUMPLE_OSD_WBCFS_NAME	"osd-wbcfs"
+#define GRUMPLE_VVP_NAME		"vvp"
+#define GRUMPLE_LMV_NAME		"lmv"
+#define GRUMPLE_SLP_NAME		"slp"
+#define GRUMPLE_LOD_NAME		"lod"
+#define GRUMPLE_OSP_NAME		"osp"
+#define GRUMPLE_LWP_NAME		"lwp"
 
 
  
-#define LUSTRE_MDS_NAME		"mds"
-#define LUSTRE_MDT_NAME		"mdt"
-#define LUSTRE_MDC_NAME		"mdc"
-#define LUSTRE_OSS_NAME		"ost"       
-#define LUSTRE_OST_NAME		"obdfilter" 
-#define LUSTRE_OSC_NAME		"osc"
-#define LUSTRE_LOV_NAME		"lov"
-#define LUSTRE_MGS_NAME		"mgs"
-#define LUSTRE_MGC_NAME		"mgc"
+#define GRUMPLE_MDS_NAME		"mds"
+#define GRUMPLE_MDT_NAME		"mdt"
+#define GRUMPLE_MDC_NAME		"mdc"
+#define GRUMPLE_OSS_NAME		"ost"       
+#define GRUMPLE_OST_NAME		"obdfilter" 
+#define GRUMPLE_OSC_NAME		"osc"
+#define GRUMPLE_LOV_NAME		"lov"
+#define GRUMPLE_MGS_NAME		"mgs"
+#define GRUMPLE_MGC_NAME		"mgc"
 
-#define LUSTRE_ECHO_NAME	"obdecho"
-#define LUSTRE_ECHO_CLIENT_NAME	"echo_client"
-#define LUSTRE_QMT_NAME		"qmt"
+#define GRUMPLE_ECHO_NAME	"obdecho"
+#define GRUMPLE_ECHO_CLIENT_NAME	"echo_client"
+#define GRUMPLE_QMT_NAME		"qmt"
 
 
-#define LUSTRE_MDS_OBDNAME "MDS"
-#define LUSTRE_OSS_OBDNAME "OSS"
-#define LUSTRE_MGS_OBDNAME "MGS"
-#define LUSTRE_MGC_OBDNAME "MGC"
+#define GRUMPLE_MDS_OBDNAME "MDS"
+#define GRUMPLE_OSS_OBDNAME "OSS"
+#define GRUMPLE_MGS_OBDNAME "MGS"
+#define GRUMPLE_MGC_OBDNAME "MGC"
 
-#define LUSTRE_ECHO_UUID "ECHO_UUID"
+#define GRUMPLE_ECHO_UUID "ECHO_UUID"
 
 static inline int is_lwp_on_mdt(char *name)
 {
@@ -534,7 +534,7 @@ static inline int is_lwp_on_mdt(char *name)
 	if (ptr == name)
 		return 0;
 
-	if (strncmp(ptr + 1, LUSTRE_LWP_NAME, strlen(LUSTRE_LWP_NAME)) != 0)
+	if (strncmp(ptr + 1, GRUMPLE_LWP_NAME, strlen(GRUMPLE_LWP_NAME)) != 0)
 		return 0;
 
 	return 1;
@@ -561,7 +561,7 @@ static inline int is_lwp_on_ost(char *name)
 	if (ptr == name)
 		return 0;
 
-	if (strncmp(ptr + 1, LUSTRE_LWP_NAME, strlen(LUSTRE_LWP_NAME)) != 0)
+	if (strncmp(ptr + 1, GRUMPLE_LWP_NAME, strlen(GRUMPLE_LWP_NAME)) != 0)
 		return 0;
 
 	return 1;
@@ -924,13 +924,13 @@ enum md_cli_flags {
 };
 
 enum md_op_code {
-	LUSTRE_OPC_MKDIR = 1,
-	LUSTRE_OPC_SYMLINK,
-	LUSTRE_OPC_MKNOD,
-	LUSTRE_OPC_CREATE,
-	LUSTRE_OPC_ANY,
-	LUSTRE_OPC_LOOKUP,
-	LUSTRE_OPC_OPEN,
+	GRUMPLE_OPC_MKDIR = 1,
+	GRUMPLE_OPC_SYMLINK,
+	GRUMPLE_OPC_MKNOD,
+	GRUMPLE_OPC_CREATE,
+	GRUMPLE_OPC_ANY,
+	GRUMPLE_OPC_LOOKUP,
+	GRUMPLE_OPC_OPEN,
 };
 
 /*
@@ -1212,12 +1212,12 @@ struct grumple_md {
 	struct lu_buf			layout;
 	struct lmv_stripe_object	*lsm_obj;
 	struct lmv_stripe_object	*def_lsm_obj;
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	struct posix_acl		*posix_acl;
 #endif
 };
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 static inline void lmd_clear_acl(struct grumple_md *md)
 {
 	if (md->posix_acl) {
@@ -1445,7 +1445,7 @@ static inline bool filename_is_volatile(const char *name, size_t namelen,
 	const char *start;
 	int rnd, fd, rc;
 
-	if (strncmp(name, LUSTRE_VOLATILE_HDR, LUSTRE_VOLATILE_HDR_LEN) != 0)
+	if (strncmp(name, GRUMPLE_VOLATILE_HDR, GRUMPLE_VOLATILE_HDR_LEN) != 0)
 		return false;
 
 	
@@ -1455,16 +1455,16 @@ static inline bool filename_is_volatile(const char *name, size_t namelen,
 	
 	
 	
-	if (namelen < LUSTRE_VOLATILE_HDR_LEN + 2)
+	if (namelen < GRUMPLE_VOLATILE_HDR_LEN + 2)
 		goto bad_format;
 	
-	if ((*(name + LUSTRE_VOLATILE_HDR_LEN) == ':') &&
-	    (*(name + LUSTRE_VOLATILE_HDR_LEN + 1) == ':')) {
+	if ((*(name + GRUMPLE_VOLATILE_HDR_LEN) == ':') &&
+	    (*(name + GRUMPLE_VOLATILE_HDR_LEN + 1) == ':')) {
 		*idx = -1;
 		return true;
 	}
 	
-	start = name + LUSTRE_VOLATILE_HDR_LEN + 1;
+	start = name + GRUMPLE_VOLATILE_HDR_LEN + 1;
 	rc = sscanf(start, "%4x:%4x:fd=%2d", idx, &rnd, &fd);
 	/* error cases: no digit or negative value
 	 * rc will never be larger then 3
@@ -1478,7 +1478,7 @@ bad_format:
 	 * to caller so we use hash algo
 	 */
 	CERROR("Bad volatile file name format: %s\n",
-	       name + LUSTRE_VOLATILE_HDR_LEN);
+	       name + GRUMPLE_VOLATILE_HDR_LEN);
 	return false;
 }
 
@@ -1536,7 +1536,7 @@ static inline struct inode *page2inode(struct page *page)
 
 static inline bool obd_is_osd_wbcfs(const struct obd_device *obd)
 {
-	return !strstr(obd->obd_name, LUSTRE_OSD_WBCFS_NAME);
+	return !strstr(obd->obd_name, GRUMPLE_OSD_WBCFS_NAME);
 }
 
 #endif 

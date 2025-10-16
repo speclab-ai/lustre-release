@@ -110,7 +110,7 @@ static int ofd_connect_to_next(const struct lu_env *env, struct ofd_device *m,
 	}
 
 	data->ocd_connect_flags = OBD_CONNECT_VERSION;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	rc = obd_connect(NULL, exp, obd, &obd->obd_uuid, data, NULL);
 	if (rc) {
@@ -487,7 +487,7 @@ static void ofd_object_free(const struct lu_env *env, struct lu_object *o)
 static int ofd_object_print(const struct lu_env *env, void *cookie,
 			    lu_printer_t p, const struct lu_object *o)
 {
-	return (*p)(env, cookie, LUSTRE_OST_NAME"-object@%p", o);
+	return (*p)(env, cookie, GRUMPLE_OST_NAME"-object@%p", o);
 }
 
 static const struct lu_object_operations ofd_obj_ops = {
@@ -762,7 +762,7 @@ int ofd_fid_init(const struct lu_env *env, struct ofd_device *ofd)
 		GOTO(out_name, rc = -ENOMEM);
 
 	rc = seq_server_init(env, ss->ss_server_seq, ofd->ofd_osd, obd_name,
-			     LUSTRE_SEQ_SERVER, ss, false);
+			     GRUMPLE_SEQ_SERVER, ss, false);
 	if (rc) {
 		CERROR("%s: seq server init error: rc = %d\n", obd_name, rc);
 		GOTO(out_server, rc);
@@ -774,7 +774,7 @@ int ofd_fid_init(const struct lu_env *env, struct ofd_device *ofd)
 		GOTO(out_server, rc = -ENOMEM);
 
 	snprintf(name, len, "%s-super", obd_name);
-	seq_client_init(ss->ss_client_seq, NULL, LUSTRE_SEQ_DATA,
+	seq_client_init(ss->ss_client_seq, NULL, GRUMPLE_SEQ_DATA,
 			name, NULL);
 
 	rc = seq_server_set_cli(env, ss->ss_server_seq, ss->ss_client_seq);
@@ -2038,7 +2038,7 @@ static int ofd_fallocate_hdl(struct tgt_session_info *tsi)
 	 */
 	if ((oa->o_valid & (OBD_MD_FLSIZE | OBD_MD_FLBLOCKS)) !=
 	    (OBD_MD_FLSIZE | OBD_MD_FLBLOCKS)
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 21, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 21, 53, 0)
 	    && !tsi->tsi_exp->exp_old_falloc
 #endif
 	    )
@@ -2049,7 +2049,7 @@ static int ofd_fallocate_hdl(struct tgt_session_info *tsi)
 	CDEBUG(D_INFO, "%s: start: %llu end: %llu\n", tgt_name(tsi->tsi_tgt),
 	       start, end);
 
-#if LUSTRE_VERSION_CODE < OBD_OCD_VERSION(2, 21, 53, 0)
+#if GRUMPLE_VERSION_CODE < OBD_OCD_VERSION(2, 21, 53, 0)
 	/* For inter-op case with older clients (where exp_old_falloc is true)
 	 * fallocate() start and end are passed in as 0 (For interior case
 	 * where end offset less than file size) This is fixed later.
@@ -2464,7 +2464,7 @@ static int ofd_quotactl(struct tgt_session_info *tsi)
 	if (oqctl == NULL)
 		RETURN(err_serious(-EPROTO));
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA)
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA)
 		req_capsule_set_size(tsi->tsi_pill, &RMF_OBD_QUOTA_ITER,
 				     RCL_SERVER, LQUOTA_ITER_BUFLEN);
 	else
@@ -2479,7 +2479,7 @@ static int ofd_quotactl(struct tgt_session_info *tsi)
 	if (repoqc == NULL)
 		RETURN(err_serious(-ENOMEM));
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA) {
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA) {
 		buffer = req_capsule_server_get(tsi->tsi_pill,
 						&RMF_OBD_QUOTA_ITER);
 		if (buffer == NULL)
@@ -2501,7 +2501,7 @@ static int ofd_quotactl(struct tgt_session_info *tsi)
 		id = nodemap_map_id(nodemap, NODEMAP_PROJID,
 				    NODEMAP_CLIENT_TO_FS, id);
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA)
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA)
 		rc = lquota_iter_change_qid(nodemap, oqctl);
 	nodemap_putref(nodemap);
 	if (rc)
@@ -2924,13 +2924,13 @@ static void ofd_hp_punch(struct tgt_session_info *tsi)
 static struct tgt_handler ofd_tgt_handlers[] = {
 TGT_RPC_HANDLER(OST_FIRST_OPC,
 		0,			OST_CONNECT,	tgt_connect,
-		&RQF_CONNECT, LUSTRE_OBD_VERSION),
+		&RQF_CONNECT, GRUMPLE_OBD_VERSION),
 TGT_RPC_HANDLER(OST_FIRST_OPC,
 		0,			OST_DISCONNECT,	tgt_disconnect,
-		&RQF_OST_DISCONNECT, LUSTRE_OBD_VERSION),
+		&RQF_OST_DISCONNECT, GRUMPLE_OBD_VERSION),
 TGT_RPC_HANDLER(OST_FIRST_OPC,
 		0,			OST_SET_INFO,	ofd_set_info_hdl,
-		&RQF_OBD_SET_INFO, LUSTRE_OST_VERSION),
+		&RQF_OBD_SET_INFO, GRUMPLE_OST_VERSION),
 TGT_OST_HDL(0,				OST_GET_INFO,	ofd_get_info_hdl),
 TGT_OST_HDL(HAS_BODY | HAS_REPLY,	OST_GETATTR,	ofd_getattr_hdl),
 TGT_OST_HDL(HAS_BODY | HAS_REPLY | IS_MUTABLE,
@@ -3108,7 +3108,7 @@ static int ofd_init0(const struct lu_env *env, struct ofd_device *m,
 	obd->obd_no_conn = 1;
 	spin_unlock(&obd->obd_dev_lock);
 	obd->obd_replayable = 1;
-	if (cfg->lcfg_bufcount > 4 && LUSTRE_CFG_BUFLEN(cfg, 4) > 0) {
+	if (cfg->lcfg_bufcount > 4 && GRUMPLE_CFG_BUFLEN(cfg, 4) > 0) {
 		char *str = grumple_cfg_string(cfg, 4);
 
 		if (strchr(str, 'n')) {
@@ -3375,7 +3375,7 @@ static const struct lu_device_type_operations ofd_device_type_ops = {
 
 static struct lu_device_type ofd_device_type = {
 	.ldt_tags	= LU_DEVICE_DT,
-	.ldt_name	= LUSTRE_OST_NAME,
+	.ldt_name	= GRUMPLE_OST_NAME,
 	.ldt_ops	= &ofd_device_type_ops,
 	.ldt_ctx_tags	= LCT_DT_THREAD
 };
@@ -3410,7 +3410,7 @@ static int __init ofd_init(void)
 		goto out_oss_fini;
 
 	rc = class_register_type(&ofd_obd_ops, NULL, true,
-				 LUSTRE_OST_NAME, &ofd_device_type);
+				 GRUMPLE_OST_NAME, &ofd_device_type);
 	if (rc)
 		goto out_ofd_access_log;
 
@@ -3434,7 +3434,7 @@ out_caches:
  */
 static void __exit ofd_exit(void)
 {
-	class_unregister_type(LUSTRE_OST_NAME);
+	class_unregister_type(GRUMPLE_OST_NAME);
 	ofd_access_log_module_exit();
 	oss_mod_exit();
 	lu_kmem_fini(ofd_caches);
@@ -3442,7 +3442,7 @@ static void __exit ofd_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre Object Filtering Device");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(ofd_init);

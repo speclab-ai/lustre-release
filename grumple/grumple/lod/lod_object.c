@@ -1093,19 +1093,19 @@ void lod_adjust_stripe_size(struct lod_layout_component *comp,
 	 *    that value as stripe size
 	 */
 	if (!comp->llc_stripe_size) {
-		if (comp_end == LUSTRE_EOF || !(comp_end % def_stripe_size))
+		if (comp_end == GRUMPLE_EOF || !(comp_end % def_stripe_size))
 			comp->llc_stripe_size = def_stripe_size;
 		else
 			comp->llc_stripe_size = comp_end & ~(comp_end - 1);
 	} else {
-		if (comp_end != LUSTRE_EOF &&
+		if (comp_end != GRUMPLE_EOF &&
 		    comp_end & (LOV_MIN_STRIPE_SIZE - 1)) {
 			CWARN("Component end %llu is not a multiple of min size %u\n",
 			      comp_end, LOV_MIN_STRIPE_SIZE);
 			comp_end = round_up(comp_end, LOV_MIN_STRIPE_SIZE);
 		}
 		
-		if (comp_end != LUSTRE_EOF &&
+		if (comp_end != GRUMPLE_EOF &&
 		    comp_end != comp->llc_extent.e_start &&
 		    comp_end % comp->llc_stripe_size) {
 			/* fix that even for defined stripe size but warn
@@ -2771,7 +2771,7 @@ static int lod_comp_md_size(struct lod_object *lo, bool is_dir)
  * @buf: buffer contains components to be added
  * @th: thandle
  *
- * Declare component add. The xattr name is XATTR_LUSTRE_LOV.add, and
+ * Declare component add. The xattr name is XATTR_GRUMPLE_LOV.add, and
  * the xattr value is binary lov_comp_md_v1 which contains component(s)
  * to be added.
  *
@@ -2966,7 +2966,7 @@ bool lod_last_non_stale_mirror(__u16 mirror_id, struct lod_object *lo)
  * @buf: buffer contains components to be set
  * @th: thandle
  *
- * Declare component set. The xattr is name XATTR_LUSTRE_LOV.set.$field,
+ * Declare component set. The xattr is name XATTR_GRUMPLE_LOV.set.$field,
  * the '$field' can only be 'flags' now. The xattr value is binary
  * lov_comp_md_v1 which contains the component ID(s) and the value of
  * the field to be modified. Please update allowed_grumple_lov macro if $field
@@ -3084,7 +3084,7 @@ static int lod_declare_layout_set(const struct lu_env *env,
 
 /**
  * lod_declare_layout_del() - Declare component deletion. The xattr name is
- * XATTR_LUSTRE_LOV.del, and the xattr value is a unique component ID or a
+ * XATTR_GRUMPLE_LOV.del, and the xattr value is a unique component ID or a
  * special lcme_id.
  * @env: execution environment
  * @dt: dt_object to be operated on
@@ -3235,9 +3235,9 @@ static int lod_declare_layout_del(const struct lu_env *env,
  * @th: transaction handle
  *
  * operations issued by special xattr names:
- * XATTR_LUSTRE_LOV.add		add component(s) to existing file
- * XATTR_LUSTRE_LOV.del		delete component(s) from existing file
- * XATTR_LUSTRE_LOV.set.$field	set specified field of certain component(s)
+ * XATTR_GRUMPLE_LOV.add		add component(s) to existing file
+ * XATTR_GRUMPLE_LOV.del		delete component(s) from existing file
+ * XATTR_GRUMPLE_LOV.set.$field	set specified field of certain component(s)
  *
  * Return:
  * * %0 on success
@@ -3252,7 +3252,7 @@ static int lod_declare_modify_layout(const struct lu_env *env,
 	struct lod_device *d = lu2lod_dev(dt->do_lu.lo_dev);
 	struct lod_object *lo = lod_dt_obj(dt);
 	char *op;
-	int rc, len = strlen(XATTR_LUSTRE_LOV);
+	int rc, len = strlen(XATTR_GRUMPLE_LOV);
 	ENTRY;
 
 	LASSERT(dt_object_exists(dt));
@@ -3421,7 +3421,7 @@ static int lod_declare_layout_merge(const struct lu_env *env,
 
 	
 	mirror_count = le16_to_cpu(cur_lcm->lcm_mirror_count) + 1;
-	if (mirror_count + 1 > LUSTRE_MIRROR_COUNT_MAX)
+	if (mirror_count + 1 > GRUMPLE_MIRROR_COUNT_MAX)
 		RETURN(-ERANGE);
 
 	
@@ -3761,7 +3761,7 @@ static int lod_declare_xattr_set(const struct lu_env *env,
 	    !(fl & (LU_XATTR_REPLACE | LU_XATTR_MERGE | LU_XATTR_SPLIT |
 		    LU_XATTR_PURGE)) &&
 	    (strcmp(name, XATTR_NAME_LOV) == 0 ||
-	     strcmp(name, XATTR_LUSTRE_LOV) == 0)) {
+	     strcmp(name, XATTR_GRUMPLE_LOV) == 0)) {
 		struct lu_attr	 *lattr = &lod_env_info(env)->lti_attr;
 
 		/*
@@ -3785,18 +3785,18 @@ static int lod_declare_xattr_set(const struct lu_env *env,
 		rc = lod_declare_striped_create(env, dt, lattr, buf, th);
 	} else if (fl & LU_XATTR_MERGE) {
 		LASSERT(strcmp(name, XATTR_NAME_LOV) == 0 ||
-			strcmp(name, XATTR_LUSTRE_LOV) == 0);
+			strcmp(name, XATTR_GRUMPLE_LOV) == 0);
 		rc = lod_declare_layout_merge(env, dt, buf, th);
 	} else if (fl & LU_XATTR_SPLIT) {
 		LASSERT(strcmp(name, XATTR_NAME_LOV) == 0 ||
-			strcmp(name, XATTR_LUSTRE_LOV) == 0);
+			strcmp(name, XATTR_GRUMPLE_LOV) == 0);
 		rc = lod_declare_layout_split(env, dt, buf, th);
 	} else if (fl & LU_XATTR_PURGE) {
 		LASSERT(strcmp(name, XATTR_NAME_LOV) == 0 ||
-			strcmp(name, XATTR_LUSTRE_LOV) == 0);
+			strcmp(name, XATTR_GRUMPLE_LOV) == 0);
 		rc = lod_declare_layout_purge(env, dt, buf, th);
 	} else if (S_ISREG(mode) &&
-		   strlen(name) >= sizeof(XATTR_LUSTRE_LOV) + 3 &&
+		   strlen(name) >= sizeof(XATTR_GRUMPLE_LOV) + 3 &&
 		   allowed_grumple_lov(name)) {
 		/*
 		 * this is a request to modify object's striping.
@@ -3816,7 +3816,7 @@ static int lod_declare_xattr_set(const struct lu_env *env,
 
 	if (rc == 0 &&
 	    (strcmp(name, XATTR_NAME_LOV) == 0 ||
-	     strcmp(name, XATTR_LUSTRE_LOV) == 0 || allowed_grumple_lov(name)))
+	     strcmp(name, XATTR_GRUMPLE_LOV) == 0 || allowed_grumple_lov(name)))
 		rc = lod_save_layout_gen_intrans(info, lo);
 
 	RETURN(rc);
@@ -5102,7 +5102,7 @@ static int lod_xattr_set(const struct lu_env *env,
 		RETURN(rc);
 	} else if (S_ISREG(dt->do_lu.lo_header->loh_attr) &&
 		   (strcmp(name, XATTR_NAME_LOV) == 0 ||
-		    strcmp(name, XATTR_LUSTRE_LOV) == 0 ||
+		    strcmp(name, XATTR_GRUMPLE_LOV) == 0 ||
 		    allowed_grumple_lov(name))) {
 		
 		rc = lod_check_layout_gen_intrans(info, lo);
@@ -5142,13 +5142,13 @@ static int lod_xattr_set(const struct lu_env *env,
 			 * and does not need creating each stripes. */
 			rc = lod_sub_xattr_set(env, next, buf, name,
 						      fl, th);
-		} else if (strcmp(name, XATTR_LUSTRE_LOV".del") == 0) {
+		} else if (strcmp(name, XATTR_GRUMPLE_LOV".del") == 0) {
 			
 			LASSERT(lod_dt_obj(dt)->ldo_comp_cached);
 			rc = lod_layout_del(env, dt, th);
 		} else {
 			/*
-			 * When 'name' is XATTR_LUSTRE_LOV or XATTR_NAME_LOV,
+			 * When 'name' is XATTR_GRUMPLE_LOV or XATTR_NAME_LOV,
 			 * it's going to create file with specified
 			 * component(s), the striping must have not being
 			 * cached in this case;
@@ -5158,7 +5158,7 @@ static int lod_xattr_set(const struct lu_env *env,
 			 * in this case.
 			 */
 			if (!(fl & LU_XATTR_MERGE))
-				LASSERT(equi(!strcmp(name, XATTR_LUSTRE_LOV) ||
+				LASSERT(equi(!strcmp(name, XATTR_GRUMPLE_LOV) ||
 					     !strcmp(name, XATTR_NAME_LOV),
 					!lod_dt_obj(dt)->ldo_comp_cached));
 
@@ -8036,7 +8036,7 @@ lod_locate_comp_hsm(struct lod_object *lo, int *hsm_mirror_id)
 			lod_comp = &lo->ldo_comp_entries[start_idx];
 			LASSERT(lo->ldo_is_composite && lod_is_hsm(lod_comp) &&
 				lod_comp->llc_extent.e_start == 0 &&
-				lod_comp->llc_extent.e_end == LUSTRE_EOF);
+				lod_comp->llc_extent.e_end == GRUMPLE_EOF);
 			break;
 		}
 	}
@@ -8138,7 +8138,7 @@ static int lod_declare_pccro_set(const struct lu_env *env,
 
 		if (!lo->ldo_is_composite) {
 			lod_comp->llc_extent.e_start = 0;
-			lod_comp->llc_extent.e_end = LUSTRE_EOF;
+			lod_comp->llc_extent.e_end = GRUMPLE_EOF;
 			lod_comp_set_init(lod_comp);
 		}
 	}
@@ -8149,7 +8149,7 @@ static int lod_declare_pccro_set(const struct lu_env *env,
 	lod_comp = &comp_array[new_cnt - 1];
 	lod_comp->llc_magic = LOV_MAGIC_FOREIGN;
 	lod_comp->llc_extent.e_start = 0;
-	lod_comp->llc_extent.e_end = LUSTRE_EOF;
+	lod_comp->llc_extent.e_end = GRUMPLE_EOF;
 	lod_comp->llc_length = sizeof(struct lov_hsm_base);
 	lod_comp->llc_type = LU_FOREIGN_TYPE_PCCRO;
 	lod_comp->llc_foreign_flags = HS_EXISTS | HS_ARCHIVED | HS_PCCRO;
@@ -9688,7 +9688,7 @@ static int lod_object_print(const struct lu_env *env, void *cookie,
 {
 	struct lod_object *o = lu2lod_obj((struct lu_object *) l);
 
-	return (*p)(env, cookie, LUSTRE_LOD_NAME"-object@%p", o);
+	return (*p)(env, cookie, GRUMPLE_LOD_NAME"-object@%p", o);
 }
 
 const struct lu_object_operations lod_lu_obj_ops = {

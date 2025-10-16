@@ -23,8 +23,8 @@
  * - MDS replication logs
  */
 
-#ifndef _LUSTRE_LOG_H
-#define _LUSTRE_LOG_H
+#ifndef _GRUMPLE_LOG_H
+#define _GRUMPLE_LOG_H
 
 /** \defgroup log log
  *

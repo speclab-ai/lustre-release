@@ -47,7 +47,7 @@
 
 #include "mdt_internal.h"
 
-#if OBD_OCD_VERSION(3, 0, 53, 0) > LUSTRE_VERSION_CODE
+#if OBD_OCD_VERSION(3, 0, 53, 0) > GRUMPLE_VERSION_CODE
 static int mdt_max_mod_rpcs_per_client_set(const char *val,
 				cfs_kernel_param_arg_t *kp)
 {
@@ -672,7 +672,7 @@ int mdt_pack_size2body(struct mdt_thread_info *info,
 	RETURN(0);
 }
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 /*
  * Pack ACL data into the reply. UIDs/GIDs are mapped and filtered by nodemap.
  *
@@ -1347,7 +1347,7 @@ int mdt_attr_get_complex(struct mdt_thread_info *info,
 			GOTO(out, rc = rc2);
 	}
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if (need & MA_ACL_DEF && S_ISDIR(mode)) {
 		buf->lb_buf = ma->ma_acl;
 		buf->lb_len = ma->ma_acl_size;
@@ -1507,7 +1507,7 @@ static int mdt_getattr_internal(struct mdt_thread_info *info,
 	 */
 	if (o->mot_obj.lo_header->loh_attr & LOHA_FSCRYPT_MD &&
 	    !mdt_ucred(info)->uc_rbac_fscrypt_admin)
-		la->la_flags |= LUSTRE_IMMUTABLE_FL;
+		la->la_flags |= GRUMPLE_IMMUTABLE_FL;
 
 	
 	if (ma->ma_valid & MA_HSM) {
@@ -1636,7 +1636,7 @@ static int mdt_getattr_internal(struct mdt_thread_info *info,
 		       repbody->mbo_max_mdsize);
 	}
 
-#ifdef CONFIG_LUSTRE_FS_POSIX_ACL
+#ifdef CONFIG_GRUMPLE_FS_POSIX_ACL
 	if ((exp_connect_flags(req->rq_export) & OBD_CONNECT_ACL) &&
 		 (reqbody->mbo_valid & OBD_MD_FLACL)) {
 		struct lu_nodemap *nodemap = nodemap_get_from_exp(exp);
@@ -1713,12 +1713,12 @@ static int mdt_getattr(struct tgt_session_info *tsi)
 
 	req_capsule_set_size(pill, &RMF_MDT_MD, RCL_SERVER, rc);
 
-	/* Set ACL reply buffer size as LUSTRE_POSIX_ACL_MAX_SIZE_OLD
+	/* Set ACL reply buffer size as GRUMPLE_POSIX_ACL_MAX_SIZE_OLD
 	 * by default. If the target object has more ACL entries, then
 	 * enlarge the buffer when necessary.
 	 */
 	req_capsule_set_size(pill, &RMF_ACL, RCL_SERVER,
-			     LUSTRE_POSIX_ACL_MAX_SIZE_OLD);
+			     GRUMPLE_POSIX_ACL_MAX_SIZE_OLD);
 	mdt_preset_encctx_size(info);
 
 	rc = req_capsule_server_pack(pill);
@@ -2677,7 +2677,7 @@ static int mdt_rmfid_check_permission(struct mdt_thread_info *info,
 	if (rc)
 		GOTO(out, rc);
 
-	if (la->la_flags & LUSTRE_IMMUTABLE_FL)
+	if (la->la_flags & GRUMPLE_IMMUTABLE_FL)
 		rc = -EACCES;
 
 	/* we want rbac roles to have precedence over any other
@@ -3227,13 +3227,13 @@ static int mdt_reint_internal(struct mdt_thread_info *info,
 	if (req_capsule_has_field(pill, &RMF_LOGCOOKIES, RCL_SERVER))
 		req_capsule_set_size(pill, &RMF_LOGCOOKIES, RCL_SERVER, 0);
 
-	/* Set ACL reply buffer size as LUSTRE_POSIX_ACL_MAX_SIZE_OLD
+	/* Set ACL reply buffer size as GRUMPLE_POSIX_ACL_MAX_SIZE_OLD
 	 * by default. If the target object has more ACL entries, then
 	 * enlarge the buffer when necessary.
 	 */
 	if (req_capsule_has_field(pill, &RMF_ACL, RCL_SERVER))
 		req_capsule_set_size(pill, &RMF_ACL, RCL_SERVER,
-				     LUSTRE_POSIX_ACL_MAX_SIZE_OLD);
+				     GRUMPLE_POSIX_ACL_MAX_SIZE_OLD);
 
 	mdt_preset_secctx_size(info);
 	mdt_preset_encctx_size(info);
@@ -3498,7 +3498,7 @@ put:
  */
 static inline bool qmt_need_swap(__u32 cmd)
 {
-	if (cmd == LUSTRE_Q_GETDEFAULT || cmd == LUSTRE_Q_GETDEFAULT_POOL)
+	if (cmd == GRUMPLE_Q_GETDEFAULT || cmd == GRUMPLE_Q_GETDEFAULT_POOL)
 		return false;
 
 	return true;
@@ -3525,8 +3525,8 @@ static int mdt_quotactl(struct tgt_session_info *tsi)
 	if (!oqctl)
 		RETURN(err_serious(-EPROTO));
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITERQUOTA ||
-	    oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA)
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITERQUOTA ||
+	    oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA)
 		req_capsule_set_size(pill, &RMF_OBD_QUOTA_ITER, RCL_SERVER,
 				     LQUOTA_ITER_BUFLEN);
 	else
@@ -3544,30 +3544,30 @@ static int mdt_quotactl(struct tgt_session_info *tsi)
 		
 	case Q_SETINFO:
 	case Q_SETQUOTA:
-	case LUSTRE_Q_SETDEFAULT:
-	case LUSTRE_Q_SETQUOTAPOOL:
-	case LUSTRE_Q_SETINFOPOOL:
-	case LUSTRE_Q_SETDEFAULT_POOL:
-	case LUSTRE_Q_DELETEQID:
-	case LUSTRE_Q_RESETQID:
+	case GRUMPLE_Q_SETDEFAULT:
+	case GRUMPLE_Q_SETQUOTAPOOL:
+	case GRUMPLE_Q_SETINFOPOOL:
+	case GRUMPLE_Q_SETDEFAULT_POOL:
+	case GRUMPLE_Q_DELETEQID:
+	case GRUMPLE_Q_RESETQID:
 		if (!nodemap_can_setquota(nodemap, oqctl->qc_cmd,
 					  oqctl->qc_type, oqctl->qc_id))
 			GOTO(out_nodemap, rc = -EPERM);
 		fallthrough;
 	case Q_GETINFO:
 	case Q_GETQUOTA:
-	case LUSTRE_Q_GETDEFAULT:
-	case LUSTRE_Q_GETQUOTAPOOL:
-	case LUSTRE_Q_GETINFOPOOL:
-	case LUSTRE_Q_GETDEFAULT_POOL:
-	case LUSTRE_Q_ITERQUOTA:
+	case GRUMPLE_Q_GETDEFAULT:
+	case GRUMPLE_Q_GETQUOTAPOOL:
+	case GRUMPLE_Q_GETINFOPOOL:
+	case GRUMPLE_Q_GETDEFAULT_POOL:
+	case GRUMPLE_Q_ITERQUOTA:
 		if (qmt == NULL)
 			GOTO(out_nodemap, rc = -EOPNOTSUPP);
 		
 		fallthrough;
 	case Q_GETOINFO:
 	case Q_GETOQUOTA:
-	case LUSTRE_Q_ITEROQUOTA:
+	case GRUMPLE_Q_ITEROQUOTA:
 		break;
 	default:
 		rc = -EFAULT;
@@ -3597,8 +3597,8 @@ static int mdt_quotactl(struct tgt_session_info *tsi)
 	if (repoqc == NULL)
 		GOTO(out_nodemap, rc = err_serious(-EFAULT));
 
-	if (oqctl->qc_cmd == LUSTRE_Q_ITERQUOTA ||
-	    oqctl->qc_cmd == LUSTRE_Q_ITEROQUOTA) {
+	if (oqctl->qc_cmd == GRUMPLE_Q_ITERQUOTA ||
+	    oqctl->qc_cmd == GRUMPLE_Q_ITEROQUOTA) {
 		buffer = req_capsule_server_get(pill, &RMF_OBD_QUOTA_ITER);
 		if (buffer == NULL)
 			GOTO(out_nodemap, rc = err_serious(-EFAULT));
@@ -3617,7 +3617,7 @@ static int mdt_quotactl(struct tgt_session_info *tsi)
 
 	switch (oqctl->qc_cmd) {
 
-	case LUSTRE_Q_ITERQUOTA:
+	case GRUMPLE_Q_ITERQUOTA:
 		rc = lquota_iter_change_qid(nodemap, oqctl);
 		if (rc)
 			GOTO(out_nodemap, rc);
@@ -3626,22 +3626,22 @@ static int mdt_quotactl(struct tgt_session_info *tsi)
 	case Q_SETINFO:
 	case Q_SETQUOTA:
 	case Q_GETQUOTA:
-	case LUSTRE_Q_SETDEFAULT:
-	case LUSTRE_Q_GETDEFAULT:
-	case LUSTRE_Q_SETQUOTAPOOL:
-	case LUSTRE_Q_GETQUOTAPOOL:
-	case LUSTRE_Q_SETINFOPOOL:
-	case LUSTRE_Q_GETINFOPOOL:
-	case LUSTRE_Q_SETDEFAULT_POOL:
-	case LUSTRE_Q_GETDEFAULT_POOL:
-	case LUSTRE_Q_DELETEQID:
-	case LUSTRE_Q_RESETQID:
+	case GRUMPLE_Q_SETDEFAULT:
+	case GRUMPLE_Q_GETDEFAULT:
+	case GRUMPLE_Q_SETQUOTAPOOL:
+	case GRUMPLE_Q_GETQUOTAPOOL:
+	case GRUMPLE_Q_SETINFOPOOL:
+	case GRUMPLE_Q_GETINFOPOOL:
+	case GRUMPLE_Q_SETDEFAULT_POOL:
+	case GRUMPLE_Q_GETDEFAULT_POOL:
+	case GRUMPLE_Q_DELETEQID:
+	case GRUMPLE_Q_RESETQID:
 		
 		rc = qmt_hdls.qmth_quotactl(tsi->tsi_env, qmt, nodemap, oqctl,
 					    buffer);
 		break;
 
-	case LUSTRE_Q_ITEROQUOTA:
+	case GRUMPLE_Q_ITEROQUOTA:
 		rc = lquota_iter_change_qid(nodemap, oqctl);
 		if (rc)
 			GOTO(out_nodemap, rc);
@@ -4125,7 +4125,7 @@ int mdt_object_pdo_lock(struct mdt_thread_info *info, struct mdt_object *obj,
 				return rc;
 			}
 		}
-		res_id->name[LUSTRE_RES_ID_HSH_OFF] = lh->mlh_pdo_hash;
+		res_id->name[GRUMPLE_RES_ID_HSH_OFF] = lh->mlh_pdo_hash;
 	}
 
 	if (mdt_object_remote(obj))
@@ -4669,13 +4669,13 @@ static int mdt_unpack_req_pack_rep(struct mdt_thread_info *info,
 			req_capsule_set_size(pill, &RMF_LOGCOOKIES,
 					     RCL_SERVER, 0);
 
-		/* Set ACL reply buffer size as LUSTRE_POSIX_ACL_MAX_SIZE_OLD
+		/* Set ACL reply buffer size as GRUMPLE_POSIX_ACL_MAX_SIZE_OLD
 		 * by default. If the target object has more ACL entries, then
 		 * enlarge the buffer when necessary.
 		 */
 		if (req_capsule_has_field(pill, &RMF_ACL, RCL_SERVER))
 			req_capsule_set_size(pill, &RMF_ACL, RCL_SERVER,
-					     LUSTRE_POSIX_ACL_MAX_SIZE_OLD);
+					     GRUMPLE_POSIX_ACL_MAX_SIZE_OLD);
 
 		mdt_preset_secctx_size(info);
 		mdt_preset_encctx_size(info);
@@ -4983,7 +4983,7 @@ static int mdt_intent_getxattr(enum ldlm_intent_flags it_opc,
 	ldlm_rep->lock_policy_res2 = clear_serious(rc);
 
 	
-#if LUSTRE_VERSION_CODE > OBD_OCD_VERSION(3, 0, 0, 0)
+#if GRUMPLE_VERSION_CODE > OBD_OCD_VERSION(3, 0, 0, 0)
 	if (ldlm_rep->lock_policy_res2) {
 		mdt_object_unlock(info, info->mti_object, lhc, 1);
 		RETURN(ELDLM_LOCK_ABORTED);
@@ -5696,7 +5696,7 @@ static int mdt_seq_init_cli(const struct lu_env *env, struct mdt_device *mdt)
 
 	
 	snprintf(prefix, MAX_OBD_NAME + 5, "ctl-%s", mdt_obd_name(mdt));
-	seq_client_init(ss->ss_client_seq, NULL, LUSTRE_SEQ_METADATA,
+	seq_client_init(ss->ss_client_seq, NULL, GRUMPLE_SEQ_METADATA,
 			prefix, ss->ss_node_id == 0 ?  ss->ss_control_seq :
 							    NULL);
 	OBD_FREE(prefix, MAX_OBD_NAME + 5);
@@ -5719,7 +5719,7 @@ static int mdt_seq_init(const struct lu_env *env, struct mdt_device *mdt)
 			RETURN(-ENOMEM);
 
 		rc = seq_server_init(env, ss->ss_control_seq, mdt->mdt_bottom,
-				     mdt_obd_name(mdt), LUSTRE_SEQ_CONTROLLER,
+				     mdt_obd_name(mdt), GRUMPLE_SEQ_CONTROLLER,
 				     ss, true);
 		if (rc)
 			GOTO(out_seq_fini, rc);
@@ -5731,7 +5731,7 @@ static int mdt_seq_init(const struct lu_env *env, struct mdt_device *mdt)
 		GOTO(out_seq_fini, rc = -ENOMEM);
 
 	rc = seq_server_init(env, ss->ss_server_seq, mdt->mdt_bottom,
-			     mdt_obd_name(mdt), LUSTRE_SEQ_SERVER, ss, true);
+			     mdt_obd_name(mdt), GRUMPLE_SEQ_SERVER, ss, true);
 	if (rc)
 		GOTO(out_seq_fini, rc);
 
@@ -5903,7 +5903,7 @@ static int mdt_connect_to_next(const struct lu_env *env, struct mdt_device *m,
 	}
 
 	data->ocd_connect_flags = OBD_CONNECT_VERSION;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	rc = obd_connect(NULL, exp, obd, &obd->obd_uuid, data, NULL);
 	if (rc) {
@@ -5986,7 +5986,7 @@ static int mdt_stack_init(const struct lu_env *env, struct mdt_device *mdt,
 	}
 
 	grumple_cfg_bufs_reset(bufs, name);
-	grumple_cfg_bufs_set_string(bufs, 1, LUSTRE_MDD_NAME);
+	grumple_cfg_bufs_set_string(bufs, 1, GRUMPLE_MDD_NAME);
 	grumple_cfg_bufs_set_string(bufs, 2, uuid);
 	grumple_cfg_bufs_set_string(bufs, 3, lprof->lp_dt);
 
@@ -6120,7 +6120,7 @@ static int mdt_quota_init(const struct lu_env *env, struct mdt_device *mdt,
 	}
 
 	grumple_cfg_bufs_reset(bufs, qmtname);
-	grumple_cfg_bufs_set_string(bufs, 1, LUSTRE_QMT_NAME);
+	grumple_cfg_bufs_set_string(bufs, 1, GRUMPLE_QMT_NAME);
 	grumple_cfg_bufs_set_string(bufs, 2, uuid);
 	grumple_cfg_bufs_set_string(bufs, 3, lprof->lp_dt);
 
@@ -6173,7 +6173,7 @@ static int mdt_quota_init(const struct lu_env *env, struct mdt_device *mdt,
 
 	
 	data->ocd_connect_flags = OBD_CONNECT_VERSION;
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 	rc = obd_connect(NULL, &mdt->mdt_qmt_exp, obd, &obd->obd_uuid,
 			 data, NULL);
 	if (rc) {
@@ -6256,13 +6256,13 @@ static int mdt_llog_open(struct tgt_session_info *tsi)
 static struct tgt_handler mdt_tgt_handlers[] = {
 TGT_RPC_HANDLER(MDS_FIRST_OPC,
 		0,			MDS_CONNECT,	mdt_tgt_connect,
-		&RQF_CONNECT, LUSTRE_OBD_VERSION),
+		&RQF_CONNECT, GRUMPLE_OBD_VERSION),
 TGT_RPC_HANDLER(MDS_FIRST_OPC,
 		0,			MDS_DISCONNECT,	tgt_disconnect,
-		&RQF_MDS_DISCONNECT, LUSTRE_OBD_VERSION),
+		&RQF_MDS_DISCONNECT, GRUMPLE_OBD_VERSION),
 TGT_RPC_HANDLER(MDS_FIRST_OPC,
 		HAS_REPLY,		MDS_SET_INFO,	mdt_set_info,
-		&RQF_MDT_SET_INFO, LUSTRE_MDS_VERSION),
+		&RQF_MDT_SET_INFO, GRUMPLE_MDS_VERSION),
 TGT_MDT_HDL(0,				MDS_GET_INFO,	mdt_get_info),
 TGT_MDT_HDL(HAS_REPLY,		MDS_GET_ROOT,	mdt_get_root),
 TGT_MDT_HDL(HAS_BODY,		MDS_GETATTR,	mdt_getattr),
@@ -6311,7 +6311,7 @@ TGT_OST_HDL(HAS_BODY | HAS_REPLY | IS_MUTABLE, OST_FALLOCATE,
 TGT_OST_HDL(HAS_BODY | HAS_REPLY, OST_SEEK, tgt_lseek),
 TGT_RPC_HANDLER(OST_FIRST_OPC,
 		0,			OST_SET_INFO,	mdt_io_set_info,
-		&RQF_OBD_SET_INFO, LUSTRE_OST_VERSION),
+		&RQF_OBD_SET_INFO, GRUMPLE_OST_VERSION),
 };
 
 static struct tgt_handler mdt_sec_ctx_ops[] = {
@@ -6603,7 +6603,7 @@ static int mdt_init0(const struct lu_env *env, struct mdt_device *m,
 	
 	obd->obd_no_conn = 1;
 
-	if (cfg->lcfg_bufcount > 4 && LUSTRE_CFG_BUFLEN(cfg, 4) > 0) {
+	if (cfg->lcfg_bufcount > 4 && GRUMPLE_CFG_BUFLEN(cfg, 4) > 0) {
 		char *str = grumple_cfg_string(cfg, 4);
 
 		if (strchr(str, 'n')) {
@@ -6621,7 +6621,7 @@ static int mdt_init0(const struct lu_env *env, struct mdt_device *m,
 		GOTO(err_fini_fld, rc);
 
 	snprintf(info->mti_u.ns_name, sizeof(info->mti_u.ns_name), "%s-%s",
-		 LUSTRE_MDT_NAME, obd->obd_uuid.uuid);
+		 GRUMPLE_MDT_NAME, obd->obd_uuid.uuid);
 	m->mdt_namespace = ldlm_namespace_new(obd, info->mti_u.ns_name,
 					      LDLM_NAMESPACE_SERVER,
 					      LDLM_NAMESPACE_GREEDY,
@@ -6988,7 +6988,7 @@ static int mdt_object_print(const struct lu_env *env, void *cookie,
 	struct mdt_object *mdto = mdt_obj((struct lu_object *)o);
 
 	return (*p)(env, cookie,
-		    LUSTRE_MDT_NAME"-object@%p(%s %s, writecount=%d)",
+		    GRUMPLE_MDT_NAME"-object@%p(%s %s, writecount=%d)",
 		    mdto, mdto->mot_lov_created ? "lov_created" : "",
 		    mdto->mot_cache_attr ? "cache_attr" : "",
 		    mdto->mot_write_count);
@@ -7169,7 +7169,7 @@ static int mdt_connect_internal(const struct lu_env *env,
 
 	/* Save connect_data we have so far because tgt_grant_connect()
 	 * uses it to calculate grant, and we want to save the client
-	 * version before it is overwritten by LUSTRE_VERSION_CODE.
+	 * version before it is overwritten by GRUMPLE_VERSION_CODE.
 	 */
 	exp->exp_connect_data = *data;
 	if (OCD_HAS_FLAG(data, GRANT))
@@ -7190,7 +7190,7 @@ static int mdt_connect_internal(const struct lu_env *env,
 		spin_unlock(&exp->exp_lock);
 	}
 
-	data->ocd_version = LUSTRE_VERSION_CODE;
+	data->ocd_version = GRUMPLE_VERSION_CODE;
 
 	if ((data->ocd_connect_flags & OBD_CONNECT_FID) == 0) {
 		CWARN("%s: MDS requires FID support, but client not\n",
@@ -7721,7 +7721,7 @@ static int mdt_path_current(struct mdt_thread_info *info,
 			if (dt && dt->do_ops && dt->do_ops->do_attr_get)
 				dt_attr_get(info->mti_env, dt, &la);
 			if (la.la_valid & LA_FLAGS &&
-			    la.la_flags & LUSTRE_ENCRYPT_FL) {
+			    la.la_flags & GRUMPLE_ENCRYPT_FL) {
 				if (!supported && mdt_info_req(info) &&
 				    !exp_connect_encrypt_fid2path(
 					    mdt_info_req(info)->rq_export)) {
@@ -8402,7 +8402,7 @@ static const struct lu_device_type_operations mdt_device_type_ops = {
 
 static struct lu_device_type mdt_device_type = {
 	.ldt_tags     = LU_DEVICE_MD,
-	.ldt_name     = LUSTRE_MDT_NAME,
+	.ldt_name     = GRUMPLE_MDT_NAME,
 	.ldt_ops      = &mdt_device_type_ops,
 	.ldt_ctx_tags = LCT_MD_THREAD
 };
@@ -8429,7 +8429,7 @@ static int __init mdt_init(void)
 		GOTO(lu_fini, rc);
 
 	rc = class_register_type(&mdt_obd_device_ops, NULL, true,
-				 LUSTRE_MDT_NAME, &mdt_device_type);
+				 GRUMPLE_MDT_NAME, &mdt_device_type);
 	if (rc)
 		GOTO(mds_fini, rc);
 lu_fini:
@@ -8443,14 +8443,14 @@ mds_fini:
 
 static void __exit mdt_exit(void)
 {
-	class_unregister_type(LUSTRE_MDT_NAME);
+	class_unregister_type(GRUMPLE_MDT_NAME);
 	mds_mod_exit();
 	lu_kmem_fini(mdt_caches);
 }
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
-MODULE_DESCRIPTION("Lustre Metadata Target ("LUSTRE_MDT_NAME")");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_DESCRIPTION("Lustre Metadata Target ("GRUMPLE_MDT_NAME")");
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(mdt_init);

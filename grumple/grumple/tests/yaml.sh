@@ -35,7 +35,7 @@ yml_test_group() {
 	TEST_GROUP=${TEST_GROUP:-"acc-sm-$(hostname -s)"}
 	TEST_HOST=${TEST_HOST:-$(hostname -s)}
 	TEST_USER=${TEST_USER:-$USER}
-	TEST_PROJECT=${TEST_PROJECT:-"LUSTRE"}
+	TEST_PROJECT=${TEST_PROJECT:-"GRUMPLE"}
 	cat <<EOF
 TestGroup:
     test_group: $TEST_GROUP
@@ -67,8 +67,8 @@ release() {
 }
 yml_build_info() {
 	local TEST_DISTRO=$(release)
-	local LUSTRE_VERSION=$(grumple_build_version)
-	local LUSTRE_BUILD=${LUSTRE_BUILD_SOURCE:-$LUSTRE_VERSION}
+	local GRUMPLE_VERSION=$(grumple_build_version)
+	local GRUMPLE_BUILD=${GRUMPLE_BUILD_SOURCE:-$GRUMPLE_VERSION}
 	local FILE_SYSTEM=$(node_fstypes $(hostname -s))
 	cat <<EOF
     lbats_build_id: $LBATS_ID
@@ -76,10 +76,10 @@ yml_build_info() {
     architecture: $(uname -m)
     os: $(uname -o)
     os_distribution: $TEST_DISTRO
-    version: $LUSTRE_VERSION
-    build: $LUSTRE_BUILD
-    branch: $LUSTRE_BRANCH
-    revision: $LUSTRE_REVISION
+    version: $GRUMPLE_VERSION
+    build: $GRUMPLE_BUILD
+    branch: $GRUMPLE_BRANCH
+    revision: $GRUMPLE_REVISION
     kernel_version: $(uname -r)
     file_system: ${FILE_SYSTEM:-"NA"}
 EOF

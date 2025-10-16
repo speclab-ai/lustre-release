@@ -482,7 +482,7 @@ static int lgssc_init_nego_data(struct lgss_nego_data *lnd,
 
 	lnd->lnd_secid = kup->kup_secid;
 	lnd->lnd_uid = kup->kup_uid;
-	lnd->lnd_lsvc = kup->kup_svc | mech << LUSTRE_GSS_MECH_SHIFT;
+	lnd->lnd_lsvc = kup->kup_svc | mech << GRUMPLE_GSS_MECH_SHIFT;
 	lnd->lnd_uuid = kup->kup_tgt;
 
         lnd->lnd_established = 0;

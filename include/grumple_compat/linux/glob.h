@@ -1,7 +1,7 @@
 
 
-#ifndef _LINUX_GLOB_LUSTRE_H
-#define _LINUX_GLOB_LUSTRE_H
+#ifndef _LINUX_GLOB_GRUMPLE_H
+#define _LINUX_GLOB_GRUMPLE_H
 
 #ifndef HAVE_GLOB
 

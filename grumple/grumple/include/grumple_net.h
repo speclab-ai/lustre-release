@@ -19,8 +19,8 @@
  * PortalRPC utilizes LNet as its transport layer.
  */
 
-#ifndef _LUSTRE_NET_H
-#define _LUSTRE_NET_H
+#ifndef _GRUMPLE_NET_H
+#define _GRUMPLE_NET_H
 
 /** \defgroup net net
  *
@@ -2356,7 +2356,7 @@ void grumple_msg_set_service_timeout(struct grumple_msg *msg,
 
 
 struct job_info {
-	char ji_jobid[LUSTRE_JOBID_SIZE];
+	char ji_jobid[GRUMPLE_JOBID_SIZE];
 	__u32 ji_uid;
 	__u32 ji_gid;
 };
@@ -2376,12 +2376,12 @@ grumple_shrink_reply(struct ptlrpc_request *req, int segment,
 					   newlen, move_data);
 }
 
-#ifdef LUSTRE_TRANSLATE_ERRNOS
+#ifdef GRUMPLE_TRANSLATE_ERRNOS
 
 static inline int ptlrpc_status_hton(int h)
 {
 	/*
-	 * Positive errnos must be network errnos, such as LUSTRE_EDEADLK,
+	 * Positive errnos must be network errnos, such as GRUMPLE_EDEADLK,
 	 * ELDLM_LOCK_ABORTED, etc.
 	 */
 	if (h < 0)

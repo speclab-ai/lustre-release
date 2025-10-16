@@ -681,9 +681,9 @@ static int osd_sync(const struct lu_env *env, struct dt_device *d)
 	if (!d->dd_rdonly) {
 		struct osd_device  *osd = osd_dt_dev(d);
 
-		CDEBUG(D_CACHE, "syncing OSD %s\n", LUSTRE_OSD_ZFS_NAME);
+		CDEBUG(D_CACHE, "syncing OSD %s\n", GRUMPLE_OSD_ZFS_NAME);
 		txg_wait_synced(dmu_objset_pool(osd->od_os), 0ULL);
-		CDEBUG(D_CACHE, "synced OSD %s\n", LUSTRE_OSD_ZFS_NAME);
+		CDEBUG(D_CACHE, "synced OSD %s\n", GRUMPLE_OSD_ZFS_NAME);
 	}
 
 	wait_event(osd->od_commit_cb_waitq,
@@ -717,7 +717,7 @@ static int osd_ro(const struct lu_env *env, struct dt_device *d)
 
 	ENTRY;
 	CERROR("%s: *** setting device %s read-only ***\n",
-	       osd->od_svname, LUSTRE_OSD_ZFS_NAME);
+	       osd->od_svname, GRUMPLE_OSD_ZFS_NAME);
 	osd->od_dev_set_rdonly = 1;
 	spa_freeze(dmu_objset_spa(osd->od_os));
 
@@ -1612,7 +1612,7 @@ static const struct lu_device_type_operations osd_device_type_ops = {
 
 static struct lu_device_type osd_device_type = {
 	.ldt_tags     = LU_DEVICE_DT,
-	.ldt_name     = LUSTRE_OSD_ZFS_NAME,
+	.ldt_name     = GRUMPLE_OSD_ZFS_NAME,
 	.ldt_ops      = &osd_device_type_ops,
 	.ldt_ctx_tags = LCT_LOCAL
 };
@@ -1641,7 +1641,7 @@ static int __init osd_init(void)
 		return rc;
 
 	rc = class_register_type(&osd_obd_device_ops, NULL, true,
-				 LUSTRE_OSD_ZFS_NAME, &osd_device_type);
+				 GRUMPLE_OSD_ZFS_NAME, &osd_device_type);
 	if (rc)
 		lu_kmem_fini(osd_caches);
 	return rc;
@@ -1649,7 +1649,7 @@ static int __init osd_init(void)
 
 static void __exit osd_exit(void)
 {
-	class_unregister_type(LUSTRE_OSD_ZFS_NAME);
+	class_unregister_type(GRUMPLE_OSD_ZFS_NAME);
 	lu_kmem_fini(osd_caches);
 }
 
@@ -1661,8 +1661,8 @@ MODULE_PARM_DESC(osd_txg_sync_delay_us,
 		 "When zero or larger delay N usec instead of doing TXG sync");
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
-MODULE_DESCRIPTION("Lustre Object Storage Device ("LUSTRE_OSD_ZFS_NAME")");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_DESCRIPTION("Lustre Object Storage Device ("GRUMPLE_OSD_ZFS_NAME")");
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(osd_init);

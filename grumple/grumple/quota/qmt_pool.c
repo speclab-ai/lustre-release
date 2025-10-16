@@ -1234,7 +1234,7 @@ out:
 	return 0;
 }
 
-#define MDT_DEV_NAME_LEN (LUSTRE_MAXFSNAME + sizeof("-MDT0000"))
+#define MDT_DEV_NAME_LEN (GRUMPLE_MAXFSNAME + sizeof("-MDT0000"))
 static struct obd_device *qmt_get_mgc(struct qmt_device *qmt)
 {
 	char mdt_name[MDT_DEV_NAME_LEN];

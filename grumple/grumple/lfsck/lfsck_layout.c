@@ -364,7 +364,7 @@ static int lfsck_layout_verify_header_v1v3(struct dt_object *obj,
 	}
 
 	size = le32_to_cpu(lmm->lmm_stripe_size);
-	if (!ext && end != LUSTRE_EOF && start != end &&
+	if (!ext && end != GRUMPLE_EOF && start != end &&
 	    !lfsck_comp_extent_aligned(end, size)) {
 		CDEBUG(D_LFSCK,
 		       "not aligned border in PFL extent range [%llu - %llu) stripesize %u for the file "DFID" at idx %d\n",
@@ -495,7 +495,7 @@ static int lfsck_layout_verify_header(struct dt_object *obj,
 						(struct lov_foreign_md *)lmm,
 						len);
 	} else {
-		rc = lfsck_layout_verify_header_v1v3(obj, lmm, 0, LUSTRE_EOF,
+		rc = lfsck_layout_verify_header_v1v3(obj, lmm, 0, GRUMPLE_EOF,
 						     0, false, &p_dom);
 	}
 
@@ -2591,7 +2591,7 @@ static int lfsck_layout_master_conditional_destroy(const struct lu_env *env,
 	if (req == NULL)
 		GOTO(put, rc = -ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OBD_VERSION, LFSCK_NOTIFY);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OBD_VERSION, LFSCK_NOTIFY);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 
@@ -4384,7 +4384,7 @@ out:
 }
 
 /*
- * If the MDT-object has the LUSTRE_ENCRYPT_FL flag, it needs to be set
+ * If the MDT-object has the GRUMPLE_ENCRYPT_FL flag, it needs to be set
  * on the OST-object as well.
  */
 static int lfsck_layout_repair_encflag(const struct lu_env *env,
@@ -4402,7 +4402,7 @@ static int lfsck_layout_repair_encflag(const struct lu_env *env,
 	ENTRY;
 
 	tla->la_valid = LA_FLAGS;
-	tla->la_flags = LUSTRE_ENCRYPT_FL;
+	tla->la_flags = GRUMPLE_ENCRYPT_FL;
 	handle = lfsck_trans_create(env, dev, com->lc_lfsck);
 	if (IS_ERR(handle))
 		GOTO(log, rc = PTR_ERR(handle));
@@ -4484,7 +4484,7 @@ static int lfsck_layout_assistant_handler_p1(const struct lu_env *env,
 		GOTO(out, rc);
 
 	if (!(bk->lb_param & LPF_DRYRUN) &&
-	    pla->la_valid & LA_FLAGS && pla->la_flags & LUSTRE_ENCRYPT_FL) {
+	    pla->la_valid & LA_FLAGS && pla->la_flags & GRUMPLE_ENCRYPT_FL) {
 		
 		struct lu_buf lb = { .lb_buf = NULL, .lb_len = 0 };
 
@@ -4900,7 +4900,7 @@ static int lfsck_layout_async_query(const struct lu_env *env,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OBD_VERSION, LFSCK_QUERY);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OBD_VERSION, LFSCK_QUERY);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -4936,7 +4936,7 @@ static int lfsck_layout_async_notify(const struct lu_env *env,
 	if (req == NULL)
 		RETURN(-ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OBD_VERSION, LFSCK_NOTIFY);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OBD_VERSION, LFSCK_NOTIFY);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 		RETURN(rc);
@@ -5239,7 +5239,7 @@ static int lfsck_layout_slave_check_pairs(const struct lu_env *env,
 	if (req == NULL)
 		GOTO(out, rc = -ENOMEM);
 
-	rc = ptlrpc_request_pack(req, LUSTRE_OBD_VERSION, LFSCK_NOTIFY);
+	rc = ptlrpc_request_pack(req, GRUMPLE_OBD_VERSION, LFSCK_NOTIFY);
 	if (rc != 0) {
 		ptlrpc_request_free(req);
 

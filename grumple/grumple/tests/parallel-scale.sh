@@ -1,6 +1,6 @@
 #!/bin/bash
-LUSTRE=${LUSTRE:-$(dirname $0)/..}
-. $LUSTRE/tests/test-framework.sh
+GRUMPLE=${GRUMPLE:-$(dirname $0)/..}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 init_stripe_dir_params RECOVERY_SCALE_ENABLE_REMOTE_DIRS \
@@ -36,7 +36,7 @@ if [ "$SLOW" = "no" ]; then
 	fs_test_nobj=${fs_test_nobj:-2}
 fi
 [ "$SLOW" = "no" ] && xdd_passes=${xdd_passes:-15}
-. $LUSTRE/tests/functions.sh
+. $GRUMPLE/tests/functions.sh
 check_and_setup_grumple
 ost_set_temp_seq_width_all $DATA_SEQ_MAX_WIDTH
 MPI_RUNAS=${MPI_RUNAS:-"runas -u $MPI_USER_UID -g $MPI_USER_GID"}

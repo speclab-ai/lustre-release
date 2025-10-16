@@ -571,7 +571,7 @@ static const struct lu_device_type_operations osd_device_type_ops = {
 
 static struct lu_device_type osd_device_type = {
 	.ldt_tags	= LU_DEVICE_DT,
-	.ldt_name	= LUSTRE_OSD_WBCFS_NAME,
+	.ldt_name	= GRUMPLE_OSD_WBCFS_NAME,
 	.ldt_ops	= &osd_device_type_ops,
 	.ldt_ctx_tags	= LCT_LOCAL
 };
@@ -653,7 +653,7 @@ static int __init osd_init(void)
 		GOTO(out_kmem, rc);
 
 	rc = class_register_type(&osd_obd_device_ops, NULL, true,
-				 LUSTRE_OSD_WBCFS_NAME, &osd_device_type);
+				 GRUMPLE_OSD_WBCFS_NAME, &osd_device_type);
 	if (rc)
 		GOTO(out_memfs, rc);
 
@@ -677,14 +677,14 @@ out_kmem:
 static void __exit osd_exit(void)
 {
 	cancel_work_sync(&flush_fput);
-	class_unregister_type(LUSTRE_OSD_WBCFS_NAME);
+	class_unregister_type(GRUMPLE_OSD_WBCFS_NAME);
 	memfs_fini();
 	lu_kmem_fini(wbcfs_caches);
 }
 
 MODULE_AUTHOR("Yingjin Qian <qian@ddn.com>");
-MODULE_DESCRIPTION("Lustre Object Storage Device ("LUSTRE_OSD_WBCFS_NAME")");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_DESCRIPTION("Lustre Object Storage Device ("GRUMPLE_OSD_WBCFS_NAME")");
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(osd_init);

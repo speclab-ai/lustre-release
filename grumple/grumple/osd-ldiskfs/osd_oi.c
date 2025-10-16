@@ -111,7 +111,7 @@ static int osd_oi_index_create_one(struct osd_thread_info *info,
 		return PTR_ERR(inode);
 	}
 
-	ldiskfs_set_inode_state(inode, LDISKFS_STATE_LUSTRE_NOSCRUB);
+	ldiskfs_set_inode_state(inode, LDISKFS_STATE_GRUMPLE_NOSCRUB);
 	unlock_new_inode(inode);
 
 	if (feat->dif_flags & DT_IND_VARKEY)

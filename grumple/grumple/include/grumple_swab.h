@@ -31,8 +31,8 @@
  * Author: Ben Evans.
  */
 
-#ifndef _LUSTRE_SWAB_H_
-#define _LUSTRE_SWAB_H_
+#ifndef _GRUMPLE_SWAB_H_
+#define _GRUMPLE_SWAB_H_
 
 #include <uapi/linux/grumple/grumple_idl.h>
 

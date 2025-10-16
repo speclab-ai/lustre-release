@@ -2,9 +2,9 @@
 set -e
 PTLDEBUG=${PTLDEBUG:--1}
 MOUNT_2=${MOUNT_2:-"yes"}
-LR_READER=${LR_READER:-"$LUSTRE/utils/lr_reader"}
-LUSTRE=${LUSTRE:-$(cd $(dirname $0)/..; echo $PWD)}
-. $LUSTRE/tests/test-framework.sh
+LR_READER=${LR_READER:-"$GRUMPLE/utils/lr_reader"}
+GRUMPLE=${GRUMPLE:-$(cd $(dirname $0)/..; echo $PWD)}
+. $GRUMPLE/tests/test-framework.sh
 init_test_env "$@"
 init_logging
 remote_mds_nodsh && skip "remote MDS with nodsh" && exit 0

@@ -454,7 +454,7 @@ int grumple_lnet_add_udsp(char *src, char *dst, char *rte,
 {
 	struct lnet_udsp *udsp = NULL;
 	struct lnet_ioctl_udsp *udsp_bulk;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	void *bulk = NULL;
 	__u32 bulk_size;
 	char err_str[LNET_MAX_STR_LEN];
@@ -466,14 +466,14 @@ int grumple_lnet_add_udsp(char *src, char *dst, char *rte,
 	if (action_type == EN_LNET_UDSP_ACTION_NONE) {
 		snprintf(err_str, sizeof(err_str),
 			 "\"bad action type specified: %s\"", type);
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
 	if (!(src || rte || dst)) {
 		snprintf(err_str, sizeof(err_str),
 			 "\"Missing required argument(s)\"");
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
@@ -484,14 +484,14 @@ int grumple_lnet_add_udsp(char *src, char *dst, char *rte,
 	if (src && rte && dst) {
 		snprintf(err_str, sizeof(err_str),
 		  "\"The combination of src, dst and rte is not supported\"");
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
 	if (src && rte) {
 		snprintf(err_str, sizeof(err_str),
 			 "\"src and rte cannot be combined\"");
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
@@ -554,7 +554,7 @@ int grumple_lnet_add_udsp(char *src, char *dst, char *rte,
 	bulk_size = lnet_get_udsp_size(udsp);
 	bulk = calloc(1, bulk_size);
 	if (!bulk) {
-		rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+		rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 		snprintf(err_str, sizeof(err_str), "\"out of memory\"");
 		goto out;
 	}
@@ -565,8 +565,8 @@ int grumple_lnet_add_udsp(char *src, char *dst, char *rte,
 	udsp_bulk->iou_bulk_size = bulk_size - sizeof(*udsp_bulk);
 
 	rc = lnet_udsp_marshal(udsp, bulk, bulk_size);
-	if (rc != LUSTRE_CFG_RC_NO_ERR) {
-		rc = LUSTRE_CFG_RC_MARSHAL_FAIL;
+	if (rc != GRUMPLE_CFG_RC_NO_ERR) {
+		rc = GRUMPLE_CFG_RC_MARSHAL_FAIL;
 		snprintf(err_str,
 			 sizeof(err_str),
 			 "\"failed to marshal udsp\"");
@@ -583,7 +583,7 @@ int grumple_lnet_add_udsp(char *src, char *dst, char *rte,
 		goto out;
 	}
 
-	rc = LUSTRE_CFG_RC_NO_ERR;
+	rc = GRUMPLE_CFG_RC_NO_ERR;
 
 out:
 	if (bulk)
@@ -684,7 +684,7 @@ int grumple_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 	struct lnet_ioctl_udsp *data = NULL;
 	char *ioctl_buf = NULL;
 	struct lnet_ioctl_udsp get_size;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM, i;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM, i;
 	int l_errno = 0;
 	int use_idx = 0;
 	struct cYAML *root = NULL, *udsp_node = NULL,
@@ -818,7 +818,7 @@ int grumple_lnet_show_udsp(int idx, int seq_no, struct cYAML **show_rc,
 		rc = -l_errno;
 		goto out;
 	} else {
-		rc = LUSTRE_CFG_RC_NO_ERR;
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 	}
 
 	snprintf(err_str, sizeof(err_str), "\"success\"");
@@ -828,7 +828,7 @@ out:
 	if (udsp)
 		lnet_udsp_free(udsp, true);
 
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR || !exist) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR || !exist) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		struct cYAML *show_node;

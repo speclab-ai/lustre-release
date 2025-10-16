@@ -200,7 +200,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 	ENTRY;
 
 	conf = (typeof(conf)) {
-		.psc_name		= LUSTRE_MDT_NAME,
+		.psc_name		= GRUMPLE_MDT_NAME,
 		.psc_watchdog_factor	= MDT_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= MDS_NBUFS,
@@ -215,7 +215,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 		 * basis, but alas...
 		 */
 		.psc_thr		= {
-			.tc_thr_name		= LUSTRE_MDT_NAME,
+			.tc_thr_name		= GRUMPLE_MDT_NAME,
 			.tc_thr_factor		= MDS_THR_FACTOR,
 			.tc_nthrs_init		= MDS_NTHRS_INIT,
 			.tc_nthrs_base		= MDS_NTHRS_BASE,
@@ -253,7 +253,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 	 */
 	memset(&conf, 0, sizeof(conf));
 	conf = (typeof(conf)) {
-		.psc_name		= LUSTRE_MDT_NAME "_readpage",
+		.psc_name		= GRUMPLE_MDT_NAME "_readpage",
 		.psc_watchdog_factor	= MDT_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= MDS_NBUFS,
@@ -264,7 +264,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 			.bc_rep_portal		= MDC_REPLY_PORTAL,
 		},
 		.psc_thr		= {
-			.tc_thr_name		= LUSTRE_MDT_NAME "_rdpg",
+			.tc_thr_name		= GRUMPLE_MDT_NAME "_rdpg",
 			.tc_thr_factor		= MDS_RDPG_THR_FACTOR,
 			.tc_nthrs_init		= MDS_RDPG_NTHRS_INIT,
 			.tc_nthrs_base		= MDS_RDPG_NTHRS_BASE,
@@ -294,7 +294,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 
 	
 	conf = (typeof(conf)) {
-		.psc_name		= LUSTRE_MDT_NAME "_out",
+		.psc_name		= GRUMPLE_MDT_NAME "_out",
 		.psc_watchdog_factor	= MDT_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= MDS_NBUFS,
@@ -309,7 +309,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 		 * basis, but alas...
 		 */
 		.psc_thr		= {
-			.tc_thr_name		= LUSTRE_MDT_NAME "_out",
+			.tc_thr_name		= GRUMPLE_MDT_NAME "_out",
 			.tc_thr_factor		= MDS_THR_FACTOR,
 			.tc_nthrs_init		= MDS_NTHRS_INIT,
 			.tc_nthrs_base		= MDS_NTHRS_BASE,
@@ -343,7 +343,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 	 */
 	memset(&conf, 0, sizeof(conf));
 	conf = (typeof(conf)) {
-		.psc_name		= LUSTRE_MDT_NAME "_seqs",
+		.psc_name		= GRUMPLE_MDT_NAME "_seqs",
 		.psc_watchdog_factor	= MDT_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= MDS_NBUFS,
@@ -354,7 +354,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 			.bc_rep_portal		= MDC_REPLY_PORTAL,
 		},
 		.psc_thr		= {
-			.tc_thr_name		= LUSTRE_MDT_NAME "_seqs",
+			.tc_thr_name		= GRUMPLE_MDT_NAME "_seqs",
 			.tc_nthrs_init		= MDS_OTHR_NTHRS_INIT,
 			.tc_nthrs_max		= MDS_OTHR_NTHRS_MAX,
 			.tc_ctx_tags		= LCT_MD_THREAD,
@@ -380,7 +380,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 	 */
 	memset(&conf, 0, sizeof(conf));
 	conf = (typeof(conf)) {
-		.psc_name		= LUSTRE_MDT_NAME "_seqm",
+		.psc_name		= GRUMPLE_MDT_NAME "_seqm",
 		.psc_watchdog_factor	= MDT_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= MDS_NBUFS,
@@ -391,7 +391,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 			.bc_rep_portal		= MDC_REPLY_PORTAL,
 		},
 		.psc_thr		= {
-			.tc_thr_name		= LUSTRE_MDT_NAME "_seqm",
+			.tc_thr_name		= GRUMPLE_MDT_NAME "_seqm",
 			.tc_nthrs_init		= MDS_OTHR_NTHRS_INIT,
 			.tc_nthrs_max		= MDS_OTHR_NTHRS_MAX,
 			.tc_ctx_tags		= LCT_MD_THREAD | LCT_DT_THREAD
@@ -415,7 +415,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 	
 	memset(&conf, 0, sizeof(conf));
 	conf = (typeof(conf)) {
-		.psc_name	     = LUSTRE_MDT_NAME "_fld",
+		.psc_name	     = GRUMPLE_MDT_NAME "_fld",
 		.psc_watchdog_factor = MDT_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= MDS_NBUFS,
@@ -426,7 +426,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 			.bc_rep_portal		= MDC_REPLY_PORTAL,
 		},
 		.psc_thr		= {
-			.tc_thr_name		= LUSTRE_MDT_NAME "_fld",
+			.tc_thr_name		= GRUMPLE_MDT_NAME "_fld",
 			.tc_nthrs_init		= MDS_OTHR_NTHRS_INIT,
 			.tc_nthrs_max		= MDS_OTHR_NTHRS_MAX,
 			.tc_ctx_tags		= LCT_DT_THREAD | LCT_MD_THREAD,
@@ -475,7 +475,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 
 	memset(&conf, 0, sizeof(conf));
 	conf = (typeof(conf)) {
-		.psc_name		= LUSTRE_MDT_NAME "_io",
+		.psc_name		= GRUMPLE_MDT_NAME "_io",
 		.psc_watchdog_factor	= MDT_SERVICE_WATCHDOG_FACTOR,
 		.psc_buf		= {
 			.bc_nbufs		= OST_NBUFS,
@@ -486,7 +486,7 @@ static int mds_start_ptlrpc_service(struct mds_device *m)
 			.bc_rep_portal		= MDC_REPLY_PORTAL,
 		},
 		.psc_thr		= {
-			.tc_thr_name		= LUSTRE_MDT_NAME "_io",
+			.tc_thr_name		= GRUMPLE_MDT_NAME "_io",
 			.tc_thr_factor		= OSS_THR_FACTOR,
 			.tc_nthrs_init		= OSS_NTHRS_INIT,
 			.tc_nthrs_base		= OSS_NTHRS_BASE,
@@ -613,7 +613,7 @@ static const struct lu_device_type_operations mds_device_type_ops = {
 
 static struct lu_device_type mds_device_type = {
 	.ldt_tags     = LU_DEVICE_MD,
-	.ldt_name     = LUSTRE_MDS_NAME,
+	.ldt_name     = GRUMPLE_MDS_NAME,
 	.ldt_ops      = &mds_device_type_ops,
 	.ldt_ctx_tags = LCT_MD_THREAD
 };
@@ -673,10 +673,10 @@ static const struct obd_ops mds_obd_device_ops = {
 int mds_mod_init(void)
 {
 	return class_register_type(&mds_obd_device_ops, NULL, false,
-				   LUSTRE_MDS_NAME, &mds_device_type);
+				   GRUMPLE_MDS_NAME, &mds_device_type);
 }
 
 void mds_mod_exit(void)
 {
-	class_unregister_type(LUSTRE_MDS_NAME);
+	class_unregister_type(GRUMPLE_MDS_NAME);
 }

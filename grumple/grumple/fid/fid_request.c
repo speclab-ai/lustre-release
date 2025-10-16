@@ -44,7 +44,7 @@ static int seq_client_rpc(struct lu_client_seq *seq,
 
 	LASSERT(exp != NULL && !IS_ERR(exp));
 	req = ptlrpc_request_alloc_pack(class_exp2cliimp(exp), &RQF_SEQ_QUERY,
-					LUSTRE_MDS_VERSION, SEQ_QUERY);
+					GRUMPLE_MDS_VERSION, SEQ_QUERY);
 	if (IS_ERR(req))
 		RETURN(PTR_ERR(req));
 
@@ -59,7 +59,7 @@ static int seq_client_rpc(struct lu_client_seq *seq,
 	ptlrpc_request_set_replen(req);
 
 	in->lsr_index = seq->lcs_space.lsr_index;
-	if (seq->lcs_type == LUSTRE_SEQ_METADATA)
+	if (seq->lcs_type == GRUMPLE_SEQ_METADATA)
 		fld_range_set_mdt(in);
 	else
 		fld_range_set_ost(in);
@@ -75,13 +75,13 @@ static int seq_client_rpc(struct lu_client_seq *seq,
 		 * request here, otherwise if MDT0 is failed(umounted),
 		 * it can not release the export of MDT0
 		 */
-		if (seq->lcs_type == LUSTRE_SEQ_DATA) {
+		if (seq->lcs_type == GRUMPLE_SEQ_DATA) {
 			req->rq_no_resend = 1;
 			req->rq_no_delay = 1;
 		}
 		debug_mask = D_CONSOLE;
 	} else {
-		if (seq->lcs_type == LUSTRE_SEQ_METADATA) {
+		if (seq->lcs_type == GRUMPLE_SEQ_METADATA) {
 			req->rq_reply_portal = MDC_REPLY_PORTAL;
 			req->rq_request_portal = SEQ_METADATA_PORTAL;
 		} else {
@@ -262,11 +262,11 @@ int seq_client_get_seq(const struct lu_env *env,
 		 *  The caller require the whole seq,
 		 * so marked this seq to be used
 		 */
-		if (seq->lcs_type == LUSTRE_SEQ_METADATA)
+		if (seq->lcs_type == GRUMPLE_SEQ_METADATA)
 			seq->lcs_fid.f_oid =
-				LUSTRE_METADATA_SEQ_MAX_WIDTH;
+				GRUMPLE_METADATA_SEQ_MAX_WIDTH;
 		else
-			seq->lcs_fid.f_oid = LUSTRE_DATA_SEQ_MAX_WIDTH;
+			seq->lcs_fid.f_oid = GRUMPLE_DATA_SEQ_MAX_WIDTH;
 	}
 	mutex_unlock(&seq->lcs_mutex);
 
@@ -319,7 +319,7 @@ int seq_client_alloc_fid(const struct lu_env *env,
 			       seq->lcs_name, seqnr);
 
 			seq->lcs_fid.f_seq = seqnr;
-			seq->lcs_fid.f_oid = LUSTRE_FID_INIT_OID;
+			seq->lcs_fid.f_oid = GRUMPLE_FID_INIT_OID;
 			seq->lcs_fid.f_ver = 0;
 			rc = 1;
 		}
@@ -402,10 +402,10 @@ void seq_client_init(struct lu_client_seq *seq,
 	seq->lcs_type = type;
 
 	mutex_init(&seq->lcs_mutex);
-	if (type == LUSTRE_SEQ_METADATA)
-		seq->lcs_width = LUSTRE_METADATA_SEQ_MAX_WIDTH;
+	if (type == GRUMPLE_SEQ_METADATA)
+		seq->lcs_width = GRUMPLE_METADATA_SEQ_MAX_WIDTH;
 	else
-		seq->lcs_width = LUSTRE_DATA_SEQ_MAX_WIDTH;
+		seq->lcs_width = GRUMPLE_DATA_SEQ_MAX_WIDTH;
 
 	
 	seq_client_flush(seq);
@@ -485,7 +485,7 @@ static int __init fid_init(void)
 	if (rc)
 		return rc;
 #endif
-	de = debugfs_create_dir(LUSTRE_SEQ_NAME,
+	de = debugfs_create_dir(GRUMPLE_SEQ_NAME,
 				debugfs_grumple_root);
 	if (!IS_ERR(de))
 		seq_debugfs_dir = de;
@@ -502,7 +502,7 @@ static void __exit fid_exit(void)
 
 MODULE_AUTHOR("OpenSFS, Inc. <http:
 MODULE_DESCRIPTION("Lustre File IDentifier");
-MODULE_VERSION(LUSTRE_VERSION_STRING);
+MODULE_VERSION(GRUMPLE_VERSION_STRING);
 MODULE_LICENSE("GPL");
 
 module_init(fid_init);

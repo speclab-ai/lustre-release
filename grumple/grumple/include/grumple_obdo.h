@@ -18,8 +18,8 @@
  * Author: Ben Evans.
  */
 
-#ifndef _LUSTRE_OBDO_H_
-#define _LUSTRE_OBDO_H_
+#ifndef _GRUMPLE_OBDO_H_
+#define _GRUMPLE_OBDO_H_
 
 #include <uapi/linux/grumple/grumple_idl.h>
 

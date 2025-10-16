@@ -261,18 +261,18 @@ static int alr_log_add(int epoll_fd, const char *path)
 
 	memset(&lali, 0, sizeof(lali));
 
-	rc = ioctl(fd, LUSTRE_ACCESS_LOG_IOCTL_INFO, &lali);
+	rc = ioctl(fd, GRUMPLE_ACCESS_LOG_IOCTL_INFO, &lali);
 	if (rc < 0) {
 		ERROR("cannot get info for device '%s': %s\n",
 			path, strerror(errno));
 		goto out;
 	}
 
-	if (lali.lali_type != LUSTRE_ACCESS_LOG_TYPE_OFD) {
+	if (lali.lali_type != GRUMPLE_ACCESS_LOG_TYPE_OFD) {
 		rc = 0;
 		goto out;
 	}
-	rc = ioctl(fd, LUSTRE_ACCESS_LOG_IOCTL_FILTER, alr_filter);
+	rc = ioctl(fd, GRUMPLE_ACCESS_LOG_IOCTL_FILTER, alr_filter);
 	if (rc < 0) {
 		ERROR("cannot set filter '%s': %s\n",
 			path, strerror(errno));
@@ -347,14 +347,14 @@ out:
 	return rc;
 }
 
-/* Call LUSTRE_ACCESS_LOG_IOCTL_INFO to get access log info and print
+/* Call GRUMPLE_ACCESS_LOG_IOCTL_INFO to get access log info and print
  * YAML formatted info to stdout. */
 static int alr_log_info(struct alr_log *al)
 {
 	struct grumple_access_log_info_v1 lali;
 	int rc;
 
-	rc = ioctl(al->alr_dev.alr_fd, LUSTRE_ACCESS_LOG_IOCTL_INFO, &lali);
+	rc = ioctl(al->alr_dev.alr_fd, GRUMPLE_ACCESS_LOG_IOCTL_INFO, &lali);
 	if (rc < 0) {
 		ERROR("cannot get info for device '%s': %s\n",
 			al->alr_dev.alr_name, strerror(errno));
@@ -380,7 +380,7 @@ static int alr_log_stats(FILE *file, struct alr_log *al)
 	struct grumple_access_log_info_v1 lali;
 	int rc;
 
-	rc = ioctl(al->alr_dev.alr_fd, LUSTRE_ACCESS_LOG_IOCTL_INFO, &lali);
+	rc = ioctl(al->alr_dev.alr_fd, GRUMPLE_ACCESS_LOG_IOCTL_INFO, &lali);
 	if (rc < 0) {
 		ERROR("cannot get info for device '%s': %s\n",
 			al->alr_dev.alr_name, strerror(errno));
@@ -439,7 +439,7 @@ static void alr_log_stats_all(void)
  * epoll set. */
 static int alr_scan(int epoll_fd)
 {
-	const char dir_path[] = "/dev/"LUSTRE_ACCESS_LOG_DIR_NAME;
+	const char dir_path[] = "/dev/"GRUMPLE_ACCESS_LOG_DIR_NAME;
 	DIR *dir;
 	int dir_fd;
 	struct dirent *d;
@@ -512,7 +512,7 @@ static int alr_ctl_io(int epoll_fd, struct alr_dev *cd, unsigned int mask)
 	if (mask & EPOLLHUP)
 		return ALR_EXIT_SUCCESS;
 
-	rc = ioctl(cd->alr_fd, LUSTRE_ACCESS_LOG_IOCTL_PRESCAN);
+	rc = ioctl(cd->alr_fd, GRUMPLE_ACCESS_LOG_IOCTL_PRESCAN);
 	if (rc < 0) {
 		ERROR("cannot start scanning: %s\n", strerror(errno));
 		return ALR_EXIT_FAILURE;
@@ -664,7 +664,7 @@ static void usage(void)
 
 int main(int argc, char *argv[])
 {
-	const char ctl_path[] = "/dev/"LUSTRE_ACCESS_LOG_DIR_NAME"/control";
+	const char ctl_path[] = "/dev/"GRUMPLE_ACCESS_LOG_DIR_NAME"/control";
 	struct alr_dev *alr_signal = NULL;
 	struct alr_dev *alr_batch_timer = NULL;
 	struct alr_dev *alr_batch_file_hup = NULL;
@@ -878,14 +878,14 @@ int main(int argc, char *argv[])
 	}
 
 	
-	oal_version = ioctl(ctl_fd, LUSTRE_ACCESS_LOG_IOCTL_VERSION);
+	oal_version = ioctl(ctl_fd, GRUMPLE_ACCESS_LOG_IOCTL_VERSION);
 	if (oal_version < 0)
 		FATAL("cannot get ofd access log interface version: %s\n", strerror(errno));
 
 	DEBUG_D(oal_version);
 
 	
-	oal_log_major = ioctl(ctl_fd, LUSTRE_ACCESS_LOG_IOCTL_MAJOR);
+	oal_log_major = ioctl(ctl_fd, GRUMPLE_ACCESS_LOG_IOCTL_MAJOR);
 	if (oal_log_major < 0)
 		FATAL("cannot get ofd access log major: %s\n", strerror(errno));
 

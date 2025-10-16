@@ -42,7 +42,7 @@ ptlrpc_prep_ping(struct obd_import *imp)
 	struct ptlrpc_request *req;
 
 	req = ptlrpc_request_alloc_pack(imp, &RQF_OBD_PING,
-					LUSTRE_OBD_VERSION, OBD_PING);
+					GRUMPLE_OBD_VERSION, OBD_PING);
 	if (IS_ERR(req))
 		return ERR_CAST(req);
 
@@ -66,7 +66,7 @@ int ptlrpc_obd_ping(struct obd_device *obd)
 			rc = PTR_ERR(req);
 			continue;
 		}
-		req->rq_send_state = LUSTRE_IMP_FULL;
+		req->rq_send_state = GRUMPLE_IMP_FULL;
 		rc = ptlrpc_queue_wait(req);
 		ptlrpc_req_put(req);
 	}
@@ -98,10 +98,10 @@ static bool ptlrpc_check_import_is_idle(struct obd_import *imp)
 
 static void ptlrpc_update_next_ping(struct obd_import *imp, int soon)
 {
-#ifdef CONFIG_LUSTRE_FS_PINGER
+#ifdef CONFIG_GRUMPLE_FS_PINGER
 	time64_t time = soon ? PING_INTERVAL_SHORT : PING_INTERVAL;
 
-	if (imp->imp_state == LUSTRE_IMP_DISCON) {
+	if (imp->imp_state == GRUMPLE_IMP_DISCON) {
 		time64_t dtime = max_t(time64_t, CONNECTION_SWITCH_MIN,
 				       obd_at_off(imp->imp_obd) ? 0 :
 				       obd_at_get(imp->imp_obd,
@@ -221,14 +221,14 @@ static void ptlrpc_pinger_process_import(struct obd_import *imp,
 
 	imp->imp_force_next_verify = 0;
 
-	CDEBUG((level == LUSTRE_IMP_FULL || level == LUSTRE_IMP_IDLE) ?
+	CDEBUG((level == GRUMPLE_IMP_FULL || level == GRUMPLE_IMP_IDLE) ?
 		D_INFO : D_HA,
 	       "%s->%s: level %s/%u force %u force_next %u deactive %u pingable %u suppress %u\n",
 	       imp->imp_obd->obd_uuid.uuid, obd2cli_tgt(imp->imp_obd),
 	       ptlrpc_import_state_name(level), level, force, force_next,
 	       imp->imp_deactive, imp->imp_pingable, suppress);
 
-	if (level == LUSTRE_IMP_DISCON && !imp_is_deactive(imp)) {
+	if (level == GRUMPLE_IMP_DISCON && !imp_is_deactive(imp)) {
 		
 		imp->imp_next_ping = ptlrpc_next_reconnect(imp);
 		if (!imp->imp_no_pinger_recover ||
@@ -239,9 +239,9 @@ static void ptlrpc_pinger_process_import(struct obd_import *imp,
 		} else {
 			spin_unlock(&imp->imp_lock);
 		}
-	} else if (level != LUSTRE_IMP_FULL || imp->imp_obd->obd_no_recov ||
+	} else if (level != GRUMPLE_IMP_FULL || imp->imp_obd->obd_no_recov ||
 		   imp_is_deactive(imp)) {
-		CDEBUG(level == LUSTRE_IMP_IDLE ? D_INFO : D_HA,
+		CDEBUG(level == GRUMPLE_IMP_IDLE ? D_INFO : D_HA,
 		       "%s->%s: not pinging (in recovery or recovery disabled: %s)\n",
 		       imp->imp_obd->obd_uuid.uuid, obd2cli_tgt(imp->imp_obd),
 		       ptlrpc_import_state_name(level));
@@ -308,7 +308,7 @@ static void ptlrpc_pinger_main(struct work_struct *ws)
 
 int ptlrpc_start_pinger(void)
 {
-#ifdef CONFIG_LUSTRE_FS_PINGER
+#ifdef CONFIG_GRUMPLE_FS_PINGER
 	if (pinger_wq)
 		return -EALREADY;
 
@@ -329,7 +329,7 @@ int ptlrpc_start_pinger(void)
 
 int ptlrpc_stop_pinger(void)
 {
-#ifdef CONFIG_LUSTRE_FS_PINGER
+#ifdef CONFIG_GRUMPLE_FS_PINGER
 	if (!pinger_wq)
 		return -EALREADY;
 
@@ -355,7 +355,7 @@ void ptlrpc_pinger_commit_expected(struct obd_import *imp)
 	 * one anyway to guarantee the chance of updating
 	 * imp_peer_committed_transno.
 	 */
-	if (imp->imp_state != LUSTRE_IMP_FULL ||
+	if (imp->imp_state != GRUMPLE_IMP_FULL ||
 	    OCD_HAS_FLAG(&imp->imp_connect_data, PINGLESS))
 		imp->imp_force_next_verify = 1;
 }
@@ -404,7 +404,7 @@ EXPORT_SYMBOL(ptlrpc_pinger_del_import);
 
 void ptlrpc_pinger_wake_up(void)
 {
-#ifdef CONFIG_LUSTRE_FS_PINGER
+#ifdef CONFIG_GRUMPLE_FS_PINGER
 	mod_delayed_work(pinger_wq, &ping_work, 0);
 #endif
 }
@@ -489,7 +489,7 @@ static int ping_evictor_main(void *arg)
 				       obd_evict_list);
 		spin_unlock(&pet_lock);
 
-		if (!strcmp(obd->obd_type->typ_name, LUSTRE_OSP_NAME))
+		if (!strcmp(obd->obd_type->typ_name, GRUMPLE_OSP_NAME))
 			CFS_FAIL_TIMEOUT(OBD_FAIL_OBD_PAUSE_EVICTOR,
 					 PING_INTERVAL + PING_EVICT_TIMEOUT);
 

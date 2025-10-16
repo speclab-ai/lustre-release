@@ -69,16 +69,16 @@ static int read_sysfs_file(const char *path, const char *attr,
 			   void *val, const size_t size, const int nelem)
 {
 	int fd;
-	int rc = LUSTRE_CFG_RC_GENERIC_ERR;
+	int rc = GRUMPLE_CFG_RC_GENERIC_ERR;
 
 	fd = open_sysfs_file(path, attr, O_RDONLY);
 	if (fd == -1)
-		return LUSTRE_CFG_RC_NO_MATCH;
+		return GRUMPLE_CFG_RC_NO_MATCH;
 
 	if (read(fd, val, size * nelem) == -1)
 		goto close_fd;
 
-	rc = LUSTRE_CFG_RC_NO_ERR;
+	rc = GRUMPLE_CFG_RC_NO_ERR;
 
 close_fd:
 	close(fd);
@@ -89,16 +89,16 @@ static int write_sysfs_file(const char *path, const char *attr,
 			    void *val, const size_t size, const int nelem)
 {
 	int fd;
-	int rc = LUSTRE_CFG_RC_GENERIC_ERR;
+	int rc = GRUMPLE_CFG_RC_GENERIC_ERR;
 
 	fd = open_sysfs_file(path, attr, O_WRONLY | O_TRUNC);
 	if (fd == -1)
-		return LUSTRE_CFG_RC_NO_MATCH;
+		return GRUMPLE_CFG_RC_NO_MATCH;
 
 	if (write(fd, val, size * nelem) == -1)
 		goto close_fd;
 
-	rc = LUSTRE_CFG_RC_NO_ERR;
+	rc = GRUMPLE_CFG_RC_NO_ERR;
 
 close_fd:
 	close(fd);
@@ -138,7 +138,7 @@ int grumple_lnet_add_ip_range(struct list_head *list, char *str_ip_range)
 
 	ip_range = calloc(1, sizeof(*ip_range));
 	if (ip_range == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	INIT_LIST_HEAD(&ip_range->ipr_entry);
 	INIT_LIST_HEAD(&ip_range->ipr_expr);
@@ -146,11 +146,11 @@ int grumple_lnet_add_ip_range(struct list_head *list, char *str_ip_range)
 	rc = cfs_ip_addr_parse(str_ip_range, strlen(str_ip_range),
 			       &ip_range->ipr_expr);
 	if (rc != 0)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	list_add_tail(&ip_range->ipr_entry, list);
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 int grumple_lnet_add_intf_descr(struct list_head *list, char *intf,
@@ -163,14 +163,14 @@ int grumple_lnet_add_intf_descr(struct list_head *list, char *intf,
 	char intf_string[LNET_MAX_STR_LEN];
 
 	if (len >= LNET_MAX_STR_LEN)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	strncpy(intf_string, intf, len);
 	intf_string[len] = '\0';
 
 	intf_descr = calloc(1, sizeof(*intf_descr));
 	if (intf_descr == NULL)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	INIT_LIST_HEAD(&intf_descr->intf_on_network);
 
@@ -180,19 +180,19 @@ int grumple_lnet_add_intf_descr(struct list_head *list, char *intf,
 		close_sq_bracket = strchr(intf_string, ']');
 		if (close_sq_bracket == NULL) {
 			free(intf_descr);
-			return LUSTRE_CFG_RC_BAD_PARAM;
+			return GRUMPLE_CFG_RC_BAD_PARAM;
 		}
 		rc = cfs_expr_list_parse(open_sq_bracket,
 					 strlen(open_sq_bracket), 0, UINT_MAX,
 					 &intf_descr->cpt_expr);
 		if (rc < 0) {
 			free(intf_descr);
-			return LUSTRE_CFG_RC_BAD_PARAM;
+			return GRUMPLE_CFG_RC_BAD_PARAM;
 		}
 		if ((open_sq_bracket - intf_name) >=
 			sizeof(intf_descr->intf_name)) {
 			free(intf_descr);
-			return LUSTRE_CFG_RC_BAD_PARAM;
+			return GRUMPLE_CFG_RC_BAD_PARAM;
 		}
 		strncpy(intf_descr->intf_name, intf_name,
 			open_sq_bracket - intf_name);
@@ -200,7 +200,7 @@ int grumple_lnet_add_intf_descr(struct list_head *list, char *intf,
 	} else {
 		if (strlen(intf_name) >= sizeof(intf_descr->intf_name)) {
 			free(intf_descr);
-			return LUSTRE_CFG_RC_BAD_PARAM;
+			return GRUMPLE_CFG_RC_BAD_PARAM;
 		}
 		strcpy(intf_descr->intf_name, intf_name);
 		intf_descr->cpt_expr = NULL;
@@ -208,7 +208,7 @@ int grumple_lnet_add_intf_descr(struct list_head *list, char *intf,
 
 	list_add_tail(&intf_descr->intf_on_network, list);
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 void grumple_lnet_init_nw_descr(struct lnet_dlc_network_descr *nw_descr)
@@ -269,7 +269,7 @@ failed:
 	cfs_free_nidlist(&nidlist);
 	if (buf)
 		free(buf);
-	return LUSTRE_CFG_RC_BAD_PARAM;
+	return GRUMPLE_CFG_RC_BAD_PARAM;
 }
 
 int grumple_lnet_parse_nidstr(char *nidstr, lnet_nid_t *lnet_nidlist,
@@ -280,20 +280,20 @@ int grumple_lnet_parse_nidstr(char *nidstr, lnet_nid_t *lnet_nidlist,
 
 	if (!nidstr) {
 		snprintf(err_str, LNET_MAX_STR_LEN, "supplied nidstr is NULL");
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 	}
 
 	if (strchr(nidstr, '*')) {
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "asterisk not allowed in nidstring '%s'", nidstr);
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 	}
 
 	INIT_LIST_HEAD(&nidlist);
 	if (!cfs_parse_nidlist(nidstr, strlen(nidstr), &nidlist)) {
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "\"Unable to parse nidlist from: %s\"", nidstr);
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 	}
 
 	num_nids = cfs_expand_nidlist(&nidlist, lnet_nidlist, max_nids);
@@ -303,19 +303,19 @@ int grumple_lnet_parse_nidstr(char *nidstr, lnet_nid_t *lnet_nidlist,
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "\"'%s' specifies more than the %d NIDs allowed by this operation\"",
 			 nidstr, max_nids);
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 	}
 
 	if (num_nids < 0) {
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "\"Failed to expand nidstr: %s\"", strerror(num_nids));
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 	}
 
 	if (num_nids == 0) {
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "\"'%s' did not expand to any nids\"", nidstr);
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 	}
 
 	return num_nids;
@@ -337,7 +337,7 @@ int grumple_lnet_parse_interfaces(char *intf_str,
 	struct lnet_dlc_intf_descr *intf_descr, *tmp;
 
 	if (nw_descr == NULL)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	while (cur < end) {
 		char *net;
@@ -346,7 +346,7 @@ int grumple_lnet_parse_interfaces(char *intf_str,
 		if (open_square != NULL) {
 			close_square = strchr(cur, ']');
 			if (close_square == NULL) {
-				rc = LUSTRE_CFG_RC_BAD_PARAM;
+				rc = GRUMPLE_CFG_RC_BAD_PARAM;
 				goto failed;
 			}
 
@@ -374,13 +374,13 @@ int grumple_lnet_parse_interfaces(char *intf_str,
 		if (net)
 			nw_descr->nw_id = libcfs_str2net(net + 1);
 		rc = grumple_lnet_add_intf_descr(&nw_descr->nw_intflist, cur, len);
-		if (rc != LUSTRE_CFG_RC_NO_ERR)
+		if (rc != GRUMPLE_CFG_RC_NO_ERR)
 			goto failed;
 
 		cur = next;
 	}
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 
 failed:
 	list_for_each_entry_safe(intf_descr, tmp, &nw_descr->nw_intflist,
@@ -874,7 +874,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 	char *sep, *token, *end;
 	char buf[6];
 	size_t len;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	int i;
 	bool flag = false;
 	lnet_nid_t src;
@@ -900,7 +900,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 			snprintf(err_str, sizeof(err_str),
 				 "\"cannot parse source NID '%s'\"",
 				 src_nidstr);
-			rc = LUSTRE_CFG_RC_BAD_PARAM;
+			rc = GRUMPLE_CFG_RC_BAD_PARAM;
 			cYAML_build_error(rc, seq_no, MANAGE_CMD,
 					  oper, err_str, err_rc);
 			goto out;
@@ -940,7 +940,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 				snprintf(err_str, sizeof(err_str),
 					 "\"cannot parse NID '%s'\"",
 					 token ? token : "NULL");
-				rc = LUSTRE_CFG_RC_BAD_PARAM;
+				rc = GRUMPLE_CFG_RC_BAD_PARAM;
 				cYAML_build_error(rc, seq_no, MANAGE_CMD,
 						  oper, err_str, err_rc);
 				continue;
@@ -960,7 +960,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 					snprintf(err_str, sizeof(err_str),
 						 "\"cannot parse NID '%s'\"",
 						 token);
-					rc = LUSTRE_CFG_RC_BAD_PARAM;
+					rc = GRUMPLE_CFG_RC_BAD_PARAM;
 					cYAML_build_error(rc, seq_no, MANAGE_CMD,
 							  oper, err_str,
 							  err_rc);
@@ -972,7 +972,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 					snprintf(err_str, sizeof(err_str),
 						 "\"cannot parse NID '%s'\"",
 						 token);
-					rc = LUSTRE_CFG_RC_BAD_PARAM;
+					rc = GRUMPLE_CFG_RC_BAD_PARAM;
 					cYAML_build_error(rc, seq_no, MANAGE_CMD,
 							  oper, err_str,
 							  err_rc);
@@ -997,7 +997,7 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 				 id.pid == LNET_PID_ANY ?
 				 libcfs_nid2str(id.nid) :
 				 libcfs_id2str(id), strerror(errno));
-			rc = LUSTRE_CFG_RC_BAD_PARAM;
+			rc = GRUMPLE_CFG_RC_BAD_PARAM;
 			cYAML_build_error(rc, seq_no, MANAGE_CMD,
 					  oper, err_str, err_rc);
 			continue;
@@ -1033,12 +1033,12 @@ static int infra_ping_nid(char *ping_nids, char *src_nidstr, char *oper,
 	} while ((token = strtok(NULL, ",")) != NULL);
 
 	if (flag)
-		rc = LUSTRE_CFG_RC_NO_ERR;
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 
 out:
 	if (data)
 		free(data);
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		struct cYAML *show_node;
@@ -1143,7 +1143,7 @@ grumple_lnet_mod_peer_nidlist(lnet_nid_t pnid, lnet_nid_t *lnet_nidlist,
 			     int cmd, int num_nids, bool is_mr, int option,
 			     int seq_no, struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN];
 	lnet_nid_t *lnet_nidlist2 = NULL;
 	int ioc_cmd = (cmd == LNETCTL_ADD_CMD) ? IOC_LIBCFS_ADD_PEER_NI :
@@ -1154,7 +1154,7 @@ grumple_lnet_mod_peer_nidlist(lnet_nid_t pnid, lnet_nid_t *lnet_nidlist,
 	lnet_nidlist2 = calloc(sizeof(*lnet_nidlist2), num_nids);
 	if (!lnet_nidlist2) {
 		snprintf(err_str, LNET_MAX_STR_LEN, "out of memory");
-		rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+		rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 		goto out;
 	}
 	lnet_nidlist2[0] = pnid;
@@ -1199,7 +1199,7 @@ int grumple_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
 	lnet_nid_t pnid = LNET_NID_ANY;
 
 	if (!prim_nid) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "--prim_nid must be specified");
 		goto out;
@@ -1207,7 +1207,7 @@ int grumple_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
 
 	pnid = libcfs_str2nid(prim_nid);
 	if (pnid == LNET_NID_ANY) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			"\"badly formatted primary NID: %s\"", prim_nid);
 		goto out;
@@ -1232,7 +1232,7 @@ int grumple_lnet_modify_peer(char *prim_nid, char *nids, bool is_mr, int cmd,
 					  option, -1, err_rc);
 
 out:
-	if (rc != LUSTRE_CFG_RC_NO_ERR)
+	if (rc != GRUMPLE_CFG_RC_NO_ERR)
 		cYAML_build_error(rc, -1, "peer",
 				cmd == LNETCTL_ADD_CMD ? "add" : "del",
 				err_str, err_rc);
@@ -1255,7 +1255,7 @@ static int grumple_lnet_route_common(char *nw, char *nidstr, int hops, int prio,
 			 "\"missing mandatory parameter:'%s'\"",
 			 (nw == NULL && nidstr == NULL) ? "network, gateway" :
 			 (nw == NULL) ? "network" : "gateway");
-		rc = LUSTRE_CFG_RC_MISSING_PARAM;
+		rc = GRUMPLE_CFG_RC_MISSING_PARAM;
 		goto out;
 	}
 
@@ -1263,7 +1263,7 @@ static int grumple_lnet_route_common(char *nw, char *nidstr, int hops, int prio,
 	if (rnet == LNET_NET_ANY) {
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "\"cannot parse remote net %s\"", nw);
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
@@ -1332,7 +1332,7 @@ int grumple_lnet_config_route(char *nw, char *nidstr, int hops, int prio,
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "invalid hop count %d, must be between 1 and 255",
 			 hops);
-		rc = LUSTRE_CFG_RC_OUT_OF_RANGE_PARAM;
+		rc = GRUMPLE_CFG_RC_OUT_OF_RANGE_PARAM;
 		goto out;
 	}
 
@@ -1342,7 +1342,7 @@ int grumple_lnet_config_route(char *nw, char *nidstr, int hops, int prio,
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "invalid priority %d, must be greater than 0",
 			 prio);
-		rc = LUSTRE_CFG_RC_OUT_OF_RANGE_PARAM;
+		rc = GRUMPLE_CFG_RC_OUT_OF_RANGE_PARAM;
 		goto out;
 	}
 
@@ -1368,7 +1368,7 @@ int grumple_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 {
 	struct lnet_ioctl_config_data data;
 	lnet_nid_t gateway_nid;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	int l_errno = 0;
 	__u32 net = LNET_NET_ANY;
 	int i;
@@ -1383,7 +1383,7 @@ int grumple_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 			snprintf(err_str,
 				 sizeof(err_str),
 				 "\"cannot parse net '%s'\"", nw);
-			rc = LUSTRE_CFG_RC_BAD_PARAM;
+			rc = GRUMPLE_CFG_RC_BAD_PARAM;
 			goto out;
 		}
 
@@ -1398,7 +1398,7 @@ int grumple_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 			snprintf(err_str,
 				 sizeof(err_str),
 				 "\"cannot parse gateway NID '%s'\"", gw);
-			rc = LUSTRE_CFG_RC_BAD_PARAM;
+			rc = GRUMPLE_CFG_RC_BAD_PARAM;
 			goto out;
 		}
 	} else
@@ -1410,7 +1410,7 @@ int grumple_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 			 sizeof(err_str),
 			 "\"invalid hop count %d, must be between 0 and 256\"",
 			 hops);
-		rc = LUSTRE_CFG_RC_OUT_OF_RANGE_PARAM;
+		rc = GRUMPLE_CFG_RC_OUT_OF_RANGE_PARAM;
 		goto out;
 	}
 
@@ -1515,11 +1515,11 @@ int grumple_lnet_show_route(char *nw, char *gw, int hops, int prio, int detail,
 		rc = -l_errno;
 		goto out;
 	} else
-		rc = LUSTRE_CFG_RC_NO_ERR;
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 
 	snprintf(err_str, sizeof(err_str), "success");
 out:
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR || !exist) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR || !exist) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		struct cYAML *show_node;
@@ -1554,16 +1554,16 @@ static int socket_intf_query(int request, char *intf,
 	int sockfd;
 
 	if (strlen(intf) >= IFNAMSIZ || ifr == NULL)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 	if (sockfd < 0)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	strcpy(ifr->ifr_name, intf);
 	rc = ioctl(sockfd, request, ifr);
 	if (rc != 0)
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 
 	close(sockfd);
 
@@ -1578,20 +1578,20 @@ static int grumple_lnet_queryip(struct lnet_dlc_intf_descr *intf, __u32 *ip)
 	memset(&ifr, 0, sizeof(ifr));
 	rc = socket_intf_query(SIOCGIFFLAGS, intf->intf_name, &ifr);
 	if (rc != 0)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	if ((ifr.ifr_flags & IFF_UP) == 0)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	memset(&ifr, 0, sizeof(ifr));
 	rc = socket_intf_query(SIOCGIFADDR, intf->intf_name, &ifr);
 	if (rc != 0)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	*ip = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr.s_addr;
 	*ip = bswap_32(*ip);
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 static int grumple_lnet_kfi_intf2nid(struct lnet_dlc_intf_descr *intf,
@@ -1606,26 +1606,26 @@ static int grumple_lnet_kfi_intf2nid(struct lnet_dlc_intf_descr *intf,
 
 	rc = sscanf(intf->intf_name, "cxi%u", &nic_index);
 	if (rc != 1)
-		return LUSTRE_CFG_RC_NO_MATCH;
+		return GRUMPLE_CFG_RC_NO_MATCH;
 
 	size = snprintf(NULL, 0, cxi_nic_addr_path, nic_index) + 1;
 	nic_addr_path = malloc(size);
 	if (!nic_addr_path)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 	sprintf(nic_addr_path, cxi_nic_addr_path, nic_index);
 
 	rc = read_sysfs_file(nic_addr_path, "nic_addr", val, 1, sizeof(val));
 	free(nic_addr_path);
 	if (rc)
-		return LUSTRE_CFG_RC_NO_MATCH;
+		return GRUMPLE_CFG_RC_NO_MATCH;
 
 	addr = strtol(val, NULL, 16);
 	if (addr == LONG_MIN || addr == LONG_MAX)
-		return LUSTRE_CFG_RC_NO_MATCH;
+		return GRUMPLE_CFG_RC_NO_MATCH;
 
 	*nid_addr = addr;
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 /*
@@ -1650,7 +1650,7 @@ static int grumple_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 	if (nw == NULL || nids == NULL) {
 		snprintf(err_str, str_len,
 			 "\"unexpected parameters to grumple_lnet_intf2nids()\"");
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 	}
 
 	if (LNET_NETTYP(nw->nw_id) == GNILND) {
@@ -1664,7 +1664,7 @@ static int grumple_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 	if (*nids == NULL) {
 		snprintf(err_str, str_len,
 			 "\"out of memory\"");
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 	}
 	/*
 	 * special case the GNI interface since it doesn't have an IP
@@ -1687,7 +1687,7 @@ static int grumple_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 	} else if (LNET_NETTYP(nw->nw_id) == KFILND) {
 		list_for_each_entry(intf, &nw->nw_intflist, intf_on_network) {
 			rc = grumple_lnet_kfi_intf2nid(intf, &nic_addr);
-			if (rc != LUSTRE_CFG_RC_NO_ERR) {
+			if (rc != GRUMPLE_CFG_RC_NO_ERR) {
 				snprintf(err_str, str_len,
 					"\"couldn't query kfi intf %s\"",
 					intf->intf_name);
@@ -1710,7 +1710,7 @@ static int grumple_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 			
 			num = strtoul(intf->intf_name, &endp, 0);
 			if (endp == intf->intf_name || *endp != '\0') {
-				rc = LUSTRE_CFG_RC_BAD_PARAM;
+				rc = GRUMPLE_CFG_RC_BAD_PARAM;
 				snprintf(err_str, str_len,
 					 "\"couldn't query intf %s\"",
 					 intf->intf_name);
@@ -1721,7 +1721,7 @@ static int grumple_lnet_intf2nids(struct lnet_dlc_network_descr *nw,
 		} else {
 			
 			rc = grumple_lnet_queryip(intf, &ip);
-			if (rc != LUSTRE_CFG_RC_NO_ERR) {
+			if (rc != GRUMPLE_CFG_RC_NO_ERR) {
 				snprintf(err_str, str_len,
 					 "\"couldn't query intf %s\"",
 					 intf->intf_name);
@@ -1797,13 +1797,13 @@ static int grumple_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 					(intf_list, ifaddr->ifa_name,
 					strlen(ifaddr->ifa_name));
 
-				if (rc != LUSTRE_CFG_RC_NO_ERR)
+				if (rc != GRUMPLE_CFG_RC_NO_ERR)
 					return rc;
 
-				return LUSTRE_CFG_RC_MATCH;
+				return GRUMPLE_CFG_RC_MATCH;
 			}
 		}
-		return LUSTRE_CFG_RC_NO_MATCH;
+		return GRUMPLE_CFG_RC_NO_MATCH;
 	}
 
 	/*
@@ -1838,16 +1838,16 @@ static int grumple_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 					  (intf_list, ifaddr->ifa_name,
 					   strlen(ifaddr->ifa_name));
 
-					if (rc != LUSTRE_CFG_RC_NO_ERR)
+					if (rc != GRUMPLE_CFG_RC_NO_ERR)
 						return rc;
 				}
 			}
 		}
 
 		if (!list_empty(intf_list))
-			return LUSTRE_CFG_RC_MATCH;
+			return GRUMPLE_CFG_RC_MATCH;
 
-		return LUSTRE_CFG_RC_NO_MATCH;
+		return GRUMPLE_CFG_RC_NO_MATCH;
 	}
 
 	/*
@@ -1898,7 +1898,7 @@ static int grumple_lnet_match_ip_to_intf(struct ifaddrs *ifa,
 		}
 	}
 
-	return LUSTRE_CFG_RC_MATCH;
+	return GRUMPLE_CFG_RC_MATCH;
 }
 
 int grumple_lnet_resolve_ip2nets_rule(struct grumple_lnet_ip2nets *ip2nets,
@@ -1906,7 +1906,7 @@ int grumple_lnet_resolve_ip2nets_rule(struct grumple_lnet_ip2nets *ip2nets,
 					    char *err_str, size_t str_len)
 {
 	struct ifaddrs *ifa;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 
 	rc = getifaddrs(&ifa);
 	if (rc < 0) {
@@ -1918,7 +1918,7 @@ int grumple_lnet_resolve_ip2nets_rule(struct grumple_lnet_ip2nets *ip2nets,
 	rc = grumple_lnet_match_ip_to_intf(ifa,
 					  &ip2nets->ip2nets_net.nw_intflist,
 					  &ip2nets->ip2nets_ip_ranges);
-	if (rc != LUSTRE_CFG_RC_MATCH) {
+	if (rc != GRUMPLE_CFG_RC_MATCH) {
 		snprintf(err_str, str_len,
 			 "\"couldn't match ip to existing interfaces\"");
 		freeifaddrs(ifa);
@@ -1927,7 +1927,7 @@ int grumple_lnet_resolve_ip2nets_rule(struct grumple_lnet_ip2nets *ip2nets,
 
 	rc = grumple_lnet_intf2nids(&ip2nets->ip2nets_net, nids, nnids,
 				   err_str, str_len);
-	if (rc != LUSTRE_CFG_RC_NO_ERR) {
+	if (rc != GRUMPLE_CFG_RC_NO_ERR) {
 		*nids = NULL;
 		*nnids = 0;
 	}
@@ -2242,7 +2242,7 @@ grumple_lnet_ioctl_config_ni(struct list_head *intf_list,
 	char *data;
 	struct lnet_ioctl_config_ni *conf;
 	struct lnet_ioctl_config_lnd_tunables *tun = NULL;
-	int rc = LUSTRE_CFG_RC_NO_ERR, i = 0;
+	int rc = GRUMPLE_CFG_RC_NO_ERR, i = 0;
 	size_t len;
 	int count;
 	struct lnet_dlc_intf_descr *intf_descr;
@@ -2259,7 +2259,7 @@ grumple_lnet_ioctl_config_ni(struct list_head *intf_list,
 
 		data = calloc(1, len);
 		if (!data)
-			return LUSTRE_CFG_RC_OUT_OF_MEM;
+			return GRUMPLE_CFG_RC_OUT_OF_MEM;
 		conf = (struct lnet_ioctl_config_ni*) data;
 		if (tunables != NULL)
 			tun = (struct lnet_ioctl_config_lnd_tunables*)
@@ -2311,7 +2311,7 @@ grumple_lnet_ioctl_config_ni(struct list_head *intf_list,
 		i++;
 	}
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 int
@@ -2329,7 +2329,7 @@ grumple_lnet_config_ip2nets(struct grumple_lnet_ip2nets *ip2nets,
 		snprintf(err_str,
 			 sizeof(err_str),
 			 "\"incomplete ip2nets information\"");
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
@@ -2340,7 +2340,7 @@ grumple_lnet_config_ip2nets(struct grumple_lnet_ip2nets *ip2nets,
 	 */
 	rc = grumple_lnet_resolve_ip2nets_rule(ip2nets, &nids, &nnids, err_str,
 					      sizeof(err_str));
-	if (rc != LUSTRE_CFG_RC_NO_ERR && rc != LUSTRE_CFG_RC_MATCH)
+	if (rc != GRUMPLE_CFG_RC_NO_ERR && rc != GRUMPLE_CFG_RC_MATCH)
 		goto out;
 
 	if (list_empty(&ip2nets->ip2nets_net.nw_intflist)) {
@@ -2371,7 +2371,7 @@ int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 	struct lnet_ioctl_config_ni *conf;
 	struct lnet_ioctl_config_lnd_tunables *tun = NULL;
 	char buf[LNET_MAX_STR_LEN];
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN * 2] = "\"success\"";
 	lnet_nid_t *nids = NULL;
 	__u32 nnids = 0;
@@ -2388,7 +2388,7 @@ int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 			 "\"missing mandatory parameters in NI config: '%s'\"",
 			 (nw_descr == NULL) ? "network , interface" :
 			 (nw_descr->nw_id == 0) ? "network" : "interface");
-		rc = LUSTRE_CFG_RC_MISSING_PARAM;
+		rc = GRUMPLE_CFG_RC_MISSING_PARAM;
 		goto out;
 	}
 
@@ -2397,7 +2397,7 @@ int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 			 sizeof(err_str),
 			 "\"ip2net string too long %d\"",
 				(int)strlen(ip2net));
-		rc = LUSTRE_CFG_RC_OUT_OF_RANGE_PARAM;
+		rc = GRUMPLE_CFG_RC_OUT_OF_RANGE_PARAM;
 		goto out;
 	}
 
@@ -2409,7 +2409,7 @@ int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 			len = sizeof(struct lnet_ioctl_config_ni);
 		data = calloc(1, len);
 		if (!data) {
-			rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+			rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 			goto out;
 		}
 		conf = (struct lnet_ioctl_config_ni*) data;
@@ -2455,7 +2455,7 @@ int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 	}
 
 	if (LNET_NETTYP(nw_descr->nw_id) == LOLND) {
-		rc = LUSTRE_CFG_RC_NO_ERR;
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 		goto out;
 	}
 
@@ -2464,7 +2464,7 @@ int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 			sizeof(err_str),
 			"\"cannot parse net '%s'\"",
 			libcfs_net2str(nw_descr->nw_id));
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
@@ -2476,14 +2476,14 @@ int grumple_lnet_config_ni(struct lnet_dlc_network_descr *nw_descr,
 		snprintf(err_str,
 			sizeof(err_str),
 			"\"no interface name provided\"");
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
 	rc = grumple_lnet_intf2nids(nw_descr, &nids, &nnids,
 				   err_str, sizeof(err_str));
 	if (rc != 0) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
@@ -2517,7 +2517,7 @@ int grumple_lnet_del_ni(struct lnet_dlc_network_descr *nw_descr,
 {
 	struct lnet_ioctl_config_ni data;
 	struct lnet_dlc_intf_descr *intf;
-	int rc = LUSTRE_CFG_RC_NO_ERR, i;
+	int rc = GRUMPLE_CFG_RC_NO_ERR, i;
 	char err_str[LNET_MAX_STR_LEN * 2] = "\"success\"";
 	lnet_nid_t *nids = NULL;
 	__u32 nnids = 0;
@@ -2529,26 +2529,26 @@ int grumple_lnet_del_ni(struct lnet_dlc_network_descr *nw_descr,
 			 "\"missing mandatory parameter in deleting NI: '%s'\"",
 			 (nw_descr == NULL) ? "network , interface" :
 			 (nw_descr->nw_id == 0) ? "network" : "interface");
-		rc = LUSTRE_CFG_RC_MISSING_PARAM;
+		rc = GRUMPLE_CFG_RC_MISSING_PARAM;
 		goto out;
 	}
 
 	if (LNET_NETTYP(nw_descr->nw_id) == LOLND)
-		return LUSTRE_CFG_RC_NO_ERR;
+		return GRUMPLE_CFG_RC_NO_ERR;
 
 	if (nw_descr->nw_id == LNET_NET_ANY) {
 		snprintf(err_str,
 			 sizeof(err_str),
 			 "\"cannot parse net '%s'\"",
 			 libcfs_net2str(nw_descr->nw_id));
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
 	rc = grumple_lnet_intf2nids(nw_descr, &nids, &nnids,
 				   err_str, sizeof(err_str));
 	if (rc != 0) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		goto out;
 	}
 
@@ -2560,7 +2560,7 @@ int grumple_lnet_del_ni(struct lnet_dlc_network_descr *nw_descr,
 		if (nids == NULL) {
 			snprintf(err_str, sizeof(err_str),
 				"\"out of memory\"");
-			rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+			rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 			goto out;
 		}
 		nids[0] = LNET_MKNID(nw_descr->nw_id, 0);
@@ -2623,7 +2623,7 @@ grumple_lnet_config_healthv(int value, bool all, lnet_nid_t nid,
 			   int seq_no, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_reset_health_cfg data;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 
 	LIBCFS_IOC_INIT_V2(data, rh_hdr);
@@ -2650,7 +2650,7 @@ grumple_lnet_config_peer(int state, lnet_nid_t nid, char *name,
 			int seq_no, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_peer_cfg data;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 
 	LIBCFS_IOC_INIT_V2(data, prcfg_hdr);
@@ -2677,7 +2677,7 @@ grumple_lnet_config_conns_per_peer(int value, bool all, lnet_nid_t nid,
 				  struct cYAML **err_rc)
 {
 	struct lnet_ioctl_reset_conns_per_peer_cfg data;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 
 	LIBCFS_IOC_INIT_V2(data, rcpp_hdr);
@@ -2686,7 +2686,7 @@ grumple_lnet_config_conns_per_peer(int value, bool all, lnet_nid_t nid,
 	data.rcpp_nid = nid;
 
 	if (value < 0 || value > 127) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, sizeof(err_str),
 			 "\"Valid values are: 0-127\"");
 	} else {
@@ -2813,15 +2813,15 @@ create_local_udsp_info(struct lnet_ioctl_construct_udsp_info *udsp_info,
 	
 	udsp_net = cYAML_create_object(net_node, "udsp info");
 	if (!udsp_net)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (!cYAML_create_number(udsp_net, "net priority",
 				 (int) udsp_info->cud_net_priority))
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (!cYAML_create_number(udsp_net, "nid priority",
 				 (int)udsp_info->cud_nid_priority))
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	pref = udsp_net;
 
@@ -2833,16 +2833,16 @@ create_local_udsp_info(struct lnet_ioctl_construct_udsp_info *udsp_info,
 			pref = cYAML_create_object(udsp_net,
 					"Preferred gateway NIDs");
 			if (!pref)
-				return LUSTRE_CFG_RC_OUT_OF_MEM;
+				return GRUMPLE_CFG_RC_OUT_OF_MEM;
 			created = true;
 		}
 		snprintf(tmp, sizeof(tmp), "NID-%d", i);
 		if (!cYAML_create_string(pref, tmp,
 			libcfs_nid2str(udsp_info->cud_pref_rtr_nid[i])))
-			return LUSTRE_CFG_RC_OUT_OF_MEM;
+			return GRUMPLE_CFG_RC_OUT_OF_MEM;
 	}
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 static int
@@ -2858,15 +2858,15 @@ create_remote_udsp_info(struct lnet_ioctl_construct_udsp_info *udsp_info,
 	
 	udsp_nid = cYAML_create_object(nid_node, "udsp info");
 	if (!udsp_nid)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (!cYAML_create_number(udsp_nid, "net priority",
 				 (int) udsp_info->cud_net_priority))
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	if (!cYAML_create_number(udsp_nid, "nid priority",
 				 (int) udsp_info->cud_nid_priority))
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	pref = udsp_nid;
 	for (i = 0; i < LNET_MAX_SHOW_NUM_NID; i++) {
@@ -2877,13 +2877,13 @@ create_remote_udsp_info(struct lnet_ioctl_construct_udsp_info *udsp_info,
 			pref = cYAML_create_object(udsp_nid,
 					"Preferred gateway NIDs");
 			if (!pref)
-				return LUSTRE_CFG_RC_OUT_OF_MEM;
+				return GRUMPLE_CFG_RC_OUT_OF_MEM;
 			created = true;
 		}
 		snprintf(tmp, sizeof(tmp), "NID-%d", i);
 		if (!cYAML_create_string(pref, tmp,
 			libcfs_nid2str(udsp_info->cud_pref_rtr_nid[i])))
-			return LUSTRE_CFG_RC_OUT_OF_MEM;
+			return GRUMPLE_CFG_RC_OUT_OF_MEM;
 	}
 
 	pref = udsp_nid;
@@ -2896,16 +2896,16 @@ create_remote_udsp_info(struct lnet_ioctl_construct_udsp_info *udsp_info,
 			pref = cYAML_create_object(udsp_nid,
 					"Preferred source NIDs");
 			if (!pref)
-				return LUSTRE_CFG_RC_OUT_OF_MEM;
+				return GRUMPLE_CFG_RC_OUT_OF_MEM;
 			created = true;
 		}
 		snprintf(tmp, sizeof(tmp), "NID-%d", i);
 		if (!cYAML_create_string(pref, tmp,
 			libcfs_nid2str(udsp_info->cud_pref_nid[i])))
-			return LUSTRE_CFG_RC_OUT_OF_MEM;
+			return GRUMPLE_CFG_RC_OUT_OF_MEM;
 	}
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 int grumple_lnet_show_net(char *nw, int detail, int seq_no,
@@ -2921,7 +2921,7 @@ int grumple_lnet_show_net(char *nw, int detail, int seq_no,
 	struct lnet_ioctl_construct_udsp_info udsp_info;
 	__u32 net = LNET_NET_ANY;
 	__u32 prev_net = LNET_NET_ANY;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM, i, j;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM, i, j;
 	int l_errno = 0;
 	struct cYAML *root = NULL, *tunables = NULL,
 		*net_node = NULL, *interfaces = NULL,
@@ -2948,7 +2948,7 @@ int grumple_lnet_show_net(char *nw, int detail, int seq_no,
 			snprintf(err_str,
 				 sizeof(err_str),
 				 "\"cannot parse net '%s'\"", nw);
-			rc = LUSTRE_CFG_RC_BAD_PARAM;
+			rc = GRUMPLE_CFG_RC_BAD_PARAM;
 			goto out;
 		}
 	}
@@ -3190,10 +3190,10 @@ continue_without_msg_stats:
 				goto out;
 
 			rc = grumple_net_show_tunables(tunables, &lnd->lt_cmn);
-			if (rc != LUSTRE_CFG_RC_NO_ERR)
+			if (rc != GRUMPLE_CFG_RC_NO_ERR)
 				goto out;
 
-			if (rc != LUSTRE_CFG_RC_NO_MATCH) {
+			if (rc != GRUMPLE_CFG_RC_NO_MATCH) {
 				tunables = cYAML_create_object(item,
 							       "lnd tunables");
 				if (tunables == NULL)
@@ -3203,8 +3203,8 @@ continue_without_msg_stats:
 			rc = grumple_ni_show_tunables(tunables,
 						     LNET_NETTYP(rc_net),
 						     &lnd->lt_tun, backup);
-			if (rc != LUSTRE_CFG_RC_NO_ERR &&
-			    rc != LUSTRE_CFG_RC_NO_MATCH)
+			if (rc != GRUMPLE_CFG_RC_NO_ERR &&
+			    rc != GRUMPLE_CFG_RC_NO_MATCH)
 				goto out;
 
 			if (!backup &&
@@ -3245,11 +3245,11 @@ continue_without_msg_stats:
 		rc = -l_errno;
 		goto out;
 	} else
-		rc = LUSTRE_CFG_RC_NO_ERR;
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 
 	snprintf(err_str, sizeof(err_str), "\"success\"");
 out:
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR || !exist) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR || !exist) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		struct cYAML *show_node;
@@ -3280,7 +3280,7 @@ out:
 int grumple_lnet_config_routing(int enable, int seq_no, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_config_data data;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 
 	LIBCFS_IOC_INIT_V2(data, cfg_hdr);
@@ -3308,7 +3308,7 @@ static int ioctl_set_value(__u32 val, int ioc, char *name,
 			   int seq_no, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_set_value data;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 
 	LIBCFS_IOC_INIT_V2(data, sv_hdr);
@@ -3330,7 +3330,7 @@ static int ioctl_set_value(__u32 val, int ioc, char *name,
 
 int grumple_lnet_config_recov_intrv(int intrv, int seq_no, struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char val[LNET_MAX_STR_LEN];
 
@@ -3350,7 +3350,7 @@ int grumple_lnet_config_recov_intrv(int intrv, int seq_no, struct cYAML **err_rc
 
 int grumple_lnet_config_rtr_sensitivity(int sen, int seq_no, struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char val[LNET_MAX_STR_LEN];
 
@@ -3370,7 +3370,7 @@ int grumple_lnet_config_rtr_sensitivity(int sen, int seq_no, struct cYAML **err_
 
 int grumple_lnet_config_hsensitivity(int sen, int seq_no, struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char val[LNET_MAX_STR_LEN];
 
@@ -3391,7 +3391,7 @@ int grumple_lnet_config_hsensitivity(int sen, int seq_no, struct cYAML **err_rc)
 int grumple_lnet_config_lnd_timeout(int timeout, __u32 net, int seq_no,
 				   struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "";
 	char val[INT_STRING_LEN];
 	__u32 lnd = LNET_NETTYP(net);
@@ -3434,7 +3434,7 @@ int grumple_lnet_config_lnd_timeout(int timeout, __u32 net, int seq_no,
 
 int grumple_lnet_config_transaction_to(int timeout, int seq_no, struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char val[LNET_MAX_STR_LEN];
 
@@ -3454,7 +3454,7 @@ int grumple_lnet_config_transaction_to(int timeout, int seq_no, struct cYAML **e
 
 int grumple_lnet_config_retry_count(int count, int seq_no, struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char val[LNET_MAX_STR_LEN];
 
@@ -3475,12 +3475,12 @@ int grumple_lnet_config_retry_count(int count, int seq_no, struct cYAML **err_rc
 int grumple_lnet_config_response_tracking(int val, int seq_no,
 					 struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN];
 	char val_str[LNET_MAX_STR_LEN];
 
 	if (val < 0 || val > 3) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, sizeof(err_str),
 			 "\"Valid values are: 0, 1, 2, or 3\"");
 	} else {
@@ -3505,12 +3505,12 @@ int grumple_lnet_config_response_tracking(int val, int seq_no,
 int grumple_lnet_config_recovery_limit(int val, int seq_no,
 				      struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN];
 	char val_str[LNET_MAX_STR_LEN];
 
 	if (val < 0) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, sizeof(err_str),
 			 "\"Must be greater than or equal to 0\"");
 	} else {
@@ -3534,7 +3534,7 @@ int grumple_lnet_config_recovery_limit(int val, int seq_no,
 
 int grumple_lnet_config_max_intf(int max, int seq_no, struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char val[LNET_MAX_STR_LEN];
 
@@ -3554,7 +3554,7 @@ int grumple_lnet_config_max_intf(int max, int seq_no, struct cYAML **err_rc)
 
 int grumple_lnet_config_discovery(int enable, int seq_no, struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char val[LNET_MAX_STR_LEN];
 
@@ -3576,7 +3576,7 @@ int grumple_lnet_config_discovery(int enable, int seq_no, struct cYAML **err_rc)
 int grumple_lnet_config_drop_asym_route(int drop, int seq_no,
 				       struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char val[LNET_MAX_STR_LEN];
 
@@ -3606,7 +3606,7 @@ int grumple_lnet_config_buffers(int tiny, int small, int large, int seq_no,
 			       struct cYAML **err_rc)
 {
 	struct lnet_ioctl_config_data data;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 
 	
@@ -3614,7 +3614,7 @@ int grumple_lnet_config_buffers(int tiny, int small, int large, int seq_no,
 		snprintf(err_str,
 			 sizeof(err_str),
 			 "\"tiny, small and large must be >= 0\"");
-		rc = LUSTRE_CFG_RC_OUT_OF_RANGE_PARAM;
+		rc = GRUMPLE_CFG_RC_OUT_OF_RANGE_PARAM;
 		goto out;
 	}
 
@@ -3641,12 +3641,12 @@ out:
 int grumple_lnet_config_max_recovery_ping_interval(int interval, int seq_no,
 						  struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char interval_str[LNET_MAX_STR_LEN];
 
 	if (interval <= 0) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, sizeof(err_str),
 			 "\"must be strictly positive\"");
 
@@ -3675,7 +3675,7 @@ int grumple_lnet_show_routing(int seq_no, struct cYAML **show_rc,
 {
 	struct lnet_ioctl_config_data *data;
 	struct lnet_ioctl_pool_cfg *pool_cfg = NULL;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	int l_errno = 0;
 	char *buf;
 	char *pools[LNET_NRBPOOLS] = {"tiny", "small", "large"};
@@ -3813,14 +3813,14 @@ add_buffer_section:
 		rc = -l_errno;
 		goto out;
 	} else
-		rc = LUSTRE_CFG_RC_NO_ERR;
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 
 	snprintf(err_str, sizeof(err_str), "\"success\"");
-	rc = LUSTRE_CFG_RC_NO_ERR;
+	rc = GRUMPLE_CFG_RC_NO_ERR;
 
 out:
 	free(buf);
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR || !exist) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR || !exist) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		struct cYAML *routing_node;
@@ -3859,7 +3859,7 @@ int grumple_lnet_show_peer(char *knid, int detail, int seq_no,
 	struct lnet_ioctl_peer_ni_hstats *hstats;
 	struct lnet_ioctl_construct_udsp_info udsp_info;
 	lnet_nid_t *nidp;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	int i, j, k;
 	int l_errno = 0;
 	__u32 count;
@@ -4162,12 +4162,12 @@ continue_without_udsp_info:
 		cYAML_print_tree(root);
 
 	snprintf(err_str, sizeof(err_str), "\"success\"");
-	rc = LUSTRE_CFG_RC_NO_ERR;
+	rc = GRUMPLE_CFG_RC_NO_ERR;
 
 out:
 	free(list);
 	free(data);
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR || !exist) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR || !exist) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		struct cYAML *show_node;
@@ -4201,7 +4201,7 @@ int grumple_lnet_list_peer(int seq_no,
 			  struct cYAML **show_rc, struct cYAML **err_rc)
 {
 	struct lnet_ioctl_peer_cfg peer_info;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	__u32 count;
 	__u32 size;
 	int i = 0;
@@ -4270,12 +4270,12 @@ int grumple_lnet_list_peer(int seq_no,
 		cYAML_print_tree(root);
 
 	snprintf(err_str, sizeof(err_str), "\"success\"");
-	rc = LUSTRE_CFG_RC_NO_ERR;
+	rc = GRUMPLE_CFG_RC_NO_ERR;
 
 out:
 	if (list != NULL)
 		free(list);
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		struct cYAML *show_node;
@@ -4325,7 +4325,7 @@ static int build_global_yaml_entry(char *err_str, int err_len, int seq_no,
 				   struct cYAML **show_rc,
 				   struct cYAML **err_rc, int err)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	struct cYAML *root = NULL, *global = NULL;
 
 	if (err) {
@@ -4350,10 +4350,10 @@ static int build_global_yaml_entry(char *err_str, int err_len, int seq_no,
 
 	snprintf(err_str, err_len, "\"success\"");
 
-	rc = LUSTRE_CFG_RC_NO_ERR;
+	rc = GRUMPLE_CFG_RC_NO_ERR;
 
 out:
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		add_to_global(*show_rc, global, root);
@@ -4393,7 +4393,7 @@ static int ioctl_show_global_values(int ioc, int seq_no, char *name,
 int grumple_lnet_show_recov_intrv(int seq_no, struct cYAML **show_rc,
 				 struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int intrv = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
@@ -4416,7 +4416,7 @@ int grumple_lnet_show_recov_intrv(int seq_no, struct cYAML **show_rc,
 int grumple_lnet_show_hsensitivity(int seq_no, struct cYAML **show_rc,
 				  struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int sen = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
@@ -4439,7 +4439,7 @@ int grumple_lnet_show_hsensitivity(int seq_no, struct cYAML **show_rc,
 int grumple_lnet_show_rtr_sensitivity(int seq_no, struct cYAML **show_rc,
 				     struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int sen = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
@@ -4513,7 +4513,7 @@ failed:
 int grumple_lnet_show_transaction_to(int seq_no, struct cYAML **show_rc,
 				    struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int tto = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
@@ -4536,7 +4536,7 @@ int grumple_lnet_show_transaction_to(int seq_no, struct cYAML **show_rc,
 int grumple_lnet_show_retry_count(int seq_no, struct cYAML **show_rc,
 				 struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int retry_count = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
@@ -4558,7 +4558,7 @@ int grumple_lnet_show_retry_count(int seq_no, struct cYAML **show_rc,
 
 int grumple_lnet_calc_service_id(__u64 *service_id)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int service_port = -1, l_errno = 0;
 
@@ -4575,13 +4575,13 @@ int grumple_lnet_calc_service_id(__u64 *service_id)
 
 	*service_id = htobe64(((__u64)RDMA_PS_TCP << 16) + service_port);
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 int grumple_lnet_setup_mrrouting(struct cYAML **err_rc)
 {
 	char *buf;
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM, i;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM, i;
 	int l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
 	struct lnet_ioctl_config_ni *ni_data;
@@ -4647,7 +4647,7 @@ int grumple_lnet_setup_mrrouting(struct cYAML **err_rc)
 		rc = -l_errno;
 		goto out;
 	} else {
-		rc = LUSTRE_CFG_RC_NO_ERR;
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 	}
 
 	snprintf(err_str, sizeof(err_str), "\"success\"");
@@ -4716,7 +4716,7 @@ out:
 
 int grumple_lnet_setup_sysctl(struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char err_str[LNET_MAX_STR_LEN] = "\"success\"";
 	char *env_ptr, *tmp_ptr, *syscmd = "/usr/sbin/lnet-sysctl-config";
 
@@ -4787,7 +4787,7 @@ static int show_recovery_queue(enum lnet_health_type type, char *name,
 	rc = 0;
 
 out:
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		struct cYAML *show_node;
@@ -4824,7 +4824,7 @@ int grumple_lnet_show_peer_debug_info(char *peer_nid, int seq_no,
 	lnet_nid_t pnid = LNET_NID_ANY;
 
 	if (!peer_nid) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "--nid must be specified");
 		goto out;
@@ -4832,7 +4832,7 @@ int grumple_lnet_show_peer_debug_info(char *peer_nid, int seq_no,
 
 	pnid = libcfs_str2nid(peer_nid);
 	if (pnid == LNET_NID_ANY) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			"\"badly formatted primary NID: %s\"", peer_nid);
 		goto out;
@@ -4869,7 +4869,7 @@ int grumple_lnet_show_peer_ni_recovq(int seq_no, struct cYAML **show_rc,
 int grumple_lnet_show_response_tracking(int seq_no, struct cYAML **show_rc,
 				       struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int rsp_tracking = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
@@ -4892,7 +4892,7 @@ int grumple_lnet_show_response_tracking(int seq_no, struct cYAML **show_rc,
 int grumple_lnet_show_recovery_limit(int seq_no, struct cYAML **show_rc,
 				    struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int recov_limit = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN];
@@ -4918,7 +4918,7 @@ int grumple_lnet_show_max_recovery_ping_interval(int seq_no,
 						struct cYAML **show_rc,
 						struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int interval = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN];
@@ -4945,7 +4945,7 @@ int grumple_lnet_show_max_recovery_ping_interval(int seq_no,
 int grumple_lnet_show_max_intf(int seq_no, struct cYAML **show_rc,
 			      struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int max_intf = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
@@ -4968,7 +4968,7 @@ int grumple_lnet_show_max_intf(int seq_no, struct cYAML **show_rc,
 int grumple_lnet_show_discovery(int seq_no, struct cYAML **show_rc,
 			       struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int discovery = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN]  = "\"out of memory\"";
@@ -4996,7 +4996,7 @@ int grumple_lnet_show_discovery(int seq_no, struct cYAML **show_rc,
 int grumple_lnet_show_drop_asym_route(int seq_no, struct cYAML **show_rc,
 				     struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	int rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 	char val[LNET_MAX_STR_LEN];
 	int drop_asym_route = -1, l_errno = 0;
 	char err_str[LNET_MAX_STR_LEN] = "\"out of memory\"";
@@ -5043,7 +5043,7 @@ int grumple_lnet_show_stats(int seq_no, struct cYAML **show_rc,
 		goto out;
 	}
 
-	rc = LUSTRE_CFG_RC_OUT_OF_MEM;
+	rc = GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	cntrs = &data.st_cntrs;
 
@@ -5163,9 +5163,9 @@ int grumple_lnet_show_stats(int seq_no, struct cYAML **show_rc,
 		cYAML_print_tree(root);
 
 	snprintf(err_str, sizeof(err_str), "success");
-	rc = LUSTRE_CFG_RC_NO_ERR;
+	rc = GRUMPLE_CFG_RC_NO_ERR;
 out:
-	if (show_rc == NULL || rc != LUSTRE_CFG_RC_NO_ERR) {
+	if (show_rc == NULL || rc != GRUMPLE_CFG_RC_NO_ERR) {
 		cYAML_free_tree(root);
 	} else if (show_rc != NULL && *show_rc != NULL) {
 		cYAML_insert_sibling((*show_rc)->cy_child,
@@ -5183,7 +5183,7 @@ out:
 int grumple_lnet_reset_stats(int seq_no, struct cYAML **err_rc)
 {
 	struct libcfs_ioctl_data data;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	int l_errno;
 	char err_str[LNET_MAX_STR_LEN];
 
@@ -5199,7 +5199,7 @@ int grumple_lnet_reset_stats(int seq_no, struct cYAML **err_rc)
 		rc = -l_errno;
 	} else {
 		snprintf(err_str, sizeof(err_str), "success");
-		rc = LUSTRE_CFG_RC_NO_ERR;
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 	}
 
 	cYAML_build_error(rc, seq_no, SHOW_CMD, "statistics", err_str, err_rc);
@@ -5238,11 +5238,11 @@ static int yaml_copy_intf_info(struct cYAML *intf_tree,
 			       struct lnet_dlc_network_descr *nw_descr)
 {
 	struct cYAML *child = NULL;
-	int intf_num = 0, rc = LUSTRE_CFG_RC_NO_ERR;
+	int intf_num = 0, rc = GRUMPLE_CFG_RC_NO_ERR;
 	struct lnet_dlc_intf_descr *intf_descr, *tmp;
 
 	if (intf_tree == NULL || nw_descr == NULL)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	
 	child = intf_tree->cy_child;
@@ -5258,7 +5258,7 @@ static int yaml_copy_intf_info(struct cYAML *intf_tree,
 		rc = grumple_lnet_add_intf_descr(&nw_descr->nw_intflist,
 						child->cy_valuestring,
 						strlen(child->cy_valuestring));
-		if (rc != LUSTRE_CFG_RC_NO_ERR)
+		if (rc != GRUMPLE_CFG_RC_NO_ERR)
 			goto failed;
 
 		intf_num++;
@@ -5266,7 +5266,7 @@ static int yaml_copy_intf_info(struct cYAML *intf_tree,
 	}
 
 	if (intf_num == 0)
-		return LUSTRE_CFG_RC_MISSING_PARAM;
+		return GRUMPLE_CFG_RC_MISSING_PARAM;
 
 	return intf_num;
 
@@ -5397,14 +5397,14 @@ static int handle_yaml_config_ni(struct cYAML *tree, struct cYAML **show_rc,
 	 * configure the network.
 	 */
 	if (!net && !ip2net)
-		return LUSTRE_CFG_RC_MISSING_PARAM;
+		return GRUMPLE_CFG_RC_MISSING_PARAM;
 
 	local_nis = cYAML_get_object_item(tree, "local NI(s)");
 	if (local_nis == NULL)
-		return LUSTRE_CFG_RC_MISSING_PARAM;
+		return GRUMPLE_CFG_RC_MISSING_PARAM;
 
 	if (!cYAML_is_sequence(local_nis))
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	while (cYAML_get_next_seq_item(local_nis, &item) != NULL) {
 		intf = cYAML_get_object_item(item, "interfaces");
@@ -5415,7 +5415,7 @@ static int handle_yaml_config_ni(struct cYAML *tree, struct cYAML **show_rc,
 			cYAML_build_error(num_entries, -1, "ni", "add",
 					"bad interface list",
 					err_rc);
-			return LUSTRE_CFG_RC_BAD_PARAM;
+			return GRUMPLE_CFG_RC_BAD_PARAM;
 		}
 	}
 
@@ -5464,7 +5464,7 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 	struct grumple_lnet_ip2nets ip2nets;
 	struct grumple_lnet_ip_range_descr *ip_range_descr = NULL,
 					  *tmp = NULL;
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	struct cfs_expr_list *global_cpts = NULL;
 	struct cfs_expr_list *el, *el_tmp;
 	struct lnet_ioctl_config_lnd_tunables tunables;
@@ -5480,15 +5480,15 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 
 	net = cYAML_get_object_item(tree, "net-spec");
 	if (net == NULL)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	if (net != NULL && net->cy_valuestring == NULL)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	
 	ip2nets.ip2nets_net.nw_id = libcfs_str2net(net->cy_valuestring);
 	if (ip2nets.ip2nets_net.nw_id == LNET_NET_ANY)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
 
@@ -5496,7 +5496,7 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 	if (intf != NULL) {
 		rc = yaml_copy_intf_info(intf, &ip2nets.ip2nets_net);
 		if (rc <= 0)
-			return LUSTRE_CFG_RC_BAD_PARAM;
+			return GRUMPLE_CFG_RC_BAD_PARAM;
 	}
 
 	ip_range = cYAML_get_object_item(tree, "ip-range");
@@ -5511,7 +5511,7 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 			rc = grumple_lnet_add_ip_range(&ip2nets.ip2nets_ip_ranges,
 						      item->cy_valuestring);
 
-			if (rc != LUSTRE_CFG_RC_NO_ERR)
+			if (rc != GRUMPLE_CFG_RC_NO_ERR)
 				goto out;
 
 			item = item->cy_next;
@@ -5535,8 +5535,8 @@ static int handle_yaml_config_ip2nets(struct cYAML *tree,
 	 * don't stop because there was no match. Continue processing the
 	 * rest of the rules. If non-match then nothing is configured
 	 */
-	if (rc == LUSTRE_CFG_RC_NO_MATCH)
-		rc = LUSTRE_CFG_RC_NO_ERR;
+	if (rc == GRUMPLE_CFG_RC_NO_MATCH)
+		rc = GRUMPLE_CFG_RC_NO_ERR;
 out:
 	list_for_each_entry_safe(intf_descr, intf_tmp,
 				 &ip2nets.ip2nets_net.nw_intflist,
@@ -5577,10 +5577,10 @@ static int handle_yaml_del_ni(struct cYAML *tree, struct cYAML **show_rc,
 
 	local_nis = cYAML_get_object_item(tree, "local NI(s)");
 	if (local_nis == NULL)
-		return LUSTRE_CFG_RC_MISSING_PARAM;
+		return GRUMPLE_CFG_RC_MISSING_PARAM;
 
 	if (!cYAML_is_sequence(local_nis))
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	while (cYAML_get_next_seq_item(local_nis, &item) != NULL) {
 		intf = cYAML_get_object_item(item, "interfaces");
@@ -5591,7 +5591,7 @@ static int handle_yaml_del_ni(struct cYAML *tree, struct cYAML **show_rc,
 			cYAML_build_error(num_entries, -1, "ni", "add",
 					"bad interface list",
 					err_rc);
-			return LUSTRE_CFG_RC_BAD_PARAM;
+			return GRUMPLE_CFG_RC_BAD_PARAM;
 		}
 	}
 
@@ -5632,7 +5632,7 @@ static int yaml_nids2nidstr(struct cYAML *nids_entry, char **nidstr,
 					 * the entire peer, so no need to go
 					 * further. Just delete the entire peer.
 					 */
-					return LUSTRE_CFG_RC_NO_ERR;
+					return GRUMPLE_CFG_RC_NO_ERR;
 				} else {
 					continue;
 				}
@@ -5648,13 +5648,13 @@ static int yaml_nids2nidstr(struct cYAML *nids_entry, char **nidstr,
 	}
 
 	if (num_strs == 0 && !prim_nid)
-		return LUSTRE_CFG_RC_MISSING_PARAM;
+		return GRUMPLE_CFG_RC_MISSING_PARAM;
 	else if (num_strs == 0) 
-		return LUSTRE_CFG_RC_NO_ERR;
+		return GRUMPLE_CFG_RC_NO_ERR;
 
 	buffer = malloc(nidstr_len);
 	if (!buffer)
-		return LUSTRE_CFG_RC_OUT_OF_MEM;
+		return GRUMPLE_CFG_RC_OUT_OF_MEM;
 
 	
 	rc = 0;
@@ -5684,7 +5684,7 @@ static int yaml_nids2nidstr(struct cYAML *nids_entry, char **nidstr,
 
 	*nidstr = buffer;
 
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 static int handle_yaml_peer_common(struct cYAML *tree, struct cYAML **show_rc,
@@ -5705,7 +5705,7 @@ static int handle_yaml_peer_common(struct cYAML *tree, struct cYAML **show_rc,
 	prim_nid = cYAML_get_object_item(tree, "primary nid");
 	peer_nis = cYAML_get_object_item(tree, "peer ni");
 	if (!prim_nid) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "the 'primary nid' must be specified");
 		goto failed;
@@ -5716,21 +5716,21 @@ static int handle_yaml_peer_common(struct cYAML *tree, struct cYAML **show_rc,
 	
 	pnid = libcfs_str2nid(prim_nidstr);
 	if (pnid == LNET_NID_ANY) {
-		rc = LUSTRE_CFG_RC_BAD_PARAM;
+		rc = GRUMPLE_CFG_RC_BAD_PARAM;
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			"\"badly formatted primary NID: %s\"", prim_nidstr);
 		goto failed;
 	}
 
 	rc = yaml_nids2nidstr(peer_nis, &nidstr, prim_nidstr, cmd);
-	if (rc == LUSTRE_CFG_RC_MISSING_PARAM) {
+	if (rc == GRUMPLE_CFG_RC_MISSING_PARAM) {
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "No nids defined in YAML block");
 		goto failed;
-	} else if (rc == LUSTRE_CFG_RC_OUT_OF_MEM) {
+	} else if (rc == GRUMPLE_CFG_RC_OUT_OF_MEM) {
 		snprintf(err_str, LNET_MAX_STR_LEN, "out of memory");
 		goto failed;
-	} else if (rc != LUSTRE_CFG_RC_NO_ERR) {
+	} else if (rc != GRUMPLE_CFG_RC_NO_ERR) {
 		snprintf(err_str, LNET_MAX_STR_LEN,
 			 "Unrecognized error %d", rc);
 		goto failed;
@@ -5754,7 +5754,7 @@ static int handle_yaml_peer_common(struct cYAML *tree, struct cYAML **show_rc,
 			if (strcmp(mr->cy_valuestring, "False") == 0)
 				mr_value = false;
 			else if (strcmp(mr->cy_valuestring, "True") != 0) {
-				rc = LUSTRE_CFG_RC_BAD_PARAM;
+				rc = GRUMPLE_CFG_RC_BAD_PARAM;
 				snprintf(err_str, LNET_MAX_STR_LEN,
 					 "Multi-Rail must be set to 'True' or 'False' found '%s'",
 					 mr->cy_valuestring);
@@ -5771,7 +5771,7 @@ failed:
 	if (nidstr)
 		free(nidstr);
 
-	if (rc != LUSTRE_CFG_RC_NO_ERR)
+	if (rc != GRUMPLE_CFG_RC_NO_ERR)
 		cYAML_build_error(rc, seqn, "peer",
 				  cmd == LNETCTL_ADD_CMD ? ADD_CMD : DEL_CMD,
 				  err_str, err_rc);
@@ -5816,7 +5816,7 @@ static int handle_yaml_config_routing(struct cYAML *tree,
 				      struct cYAML **show_rc,
 				      struct cYAML **err_rc)
 {
-	int rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR;
 	struct cYAML *seq_no, *enable;
 
 	seq_no = cYAML_get_object_item(tree, "seq_no");
@@ -6277,7 +6277,7 @@ static int handle_yaml_discover(struct cYAML *tree, struct cYAML **show_rc,
 static int handle_yaml_no_op(struct cYAML *tree, struct cYAML **show_rc,
 			     struct cYAML **err_rc)
 {
-	return LUSTRE_CFG_RC_NO_ERR;
+	return GRUMPLE_CFG_RC_NO_ERR;
 }
 
 struct lookup_cmd_hdlr_tbl {
@@ -6366,11 +6366,11 @@ static int grumple_yaml_cb_helper(char *f, int len,
 	struct cYAML *tree, *item = NULL, *head, *child;
 	cmd_handler_t cb;
 	char err_str[LNET_MAX_STR_LEN];
-	int rc = LUSTRE_CFG_RC_NO_ERR, return_rc = LUSTRE_CFG_RC_NO_ERR;
+	int rc = GRUMPLE_CFG_RC_NO_ERR, return_rc = GRUMPLE_CFG_RC_NO_ERR;
 
 	tree = cYAML_build_tree(NULL, f, len, err_rc, false);
 	if (tree == NULL)
-		return LUSTRE_CFG_RC_BAD_PARAM;
+		return GRUMPLE_CFG_RC_BAD_PARAM;
 
 	child = tree->cy_child;
 	while (child != NULL) {
@@ -6379,7 +6379,7 @@ static int grumple_yaml_cb_helper(char *f, int len,
 			snprintf(err_str, sizeof(err_str),
 				"call back for '%s' not found",
 				child->cy_string);
-			cYAML_build_error(LUSTRE_CFG_RC_BAD_PARAM, -1,
+			cYAML_build_error(GRUMPLE_CFG_RC_BAD_PARAM, -1,
 					"yaml", "helper", err_str, err_rc);
 			goto out;
 		}
@@ -6388,12 +6388,12 @@ static int grumple_yaml_cb_helper(char *f, int len,
 			while ((head = cYAML_get_next_seq_item(child, &item))
 			       != NULL) {
 				rc = cb(head, show_rc, err_rc);
-				if (rc != LUSTRE_CFG_RC_NO_ERR)
+				if (rc != GRUMPLE_CFG_RC_NO_ERR)
 					return_rc = rc;
 			}
 		} else {
 			rc = cb(child, show_rc, err_rc);
-			if (rc != LUSTRE_CFG_RC_NO_ERR)
+			if (rc != GRUMPLE_CFG_RC_NO_ERR)
 				return_rc = rc;
 		}
 		item = NULL;
