@@ -93,14 +93,28 @@ This document analyzes discrepancies between the simulator implementation and re
 - Client calculates which OST holds which byte range
 - Client sends `OST_READ`/`OST_WRITE` directly to OSS
 - Locking handled by LDLM (lock distributed lock manager)
+- Write validates OST capacity before accepting data
+- Read handles sparse files correctly (returns zeros for unwritten regions)
+- Read handles EOF correctly (returns 0 bytes beyond file size)
 
 **Current Simulator:**
-- Client specifies OSS ID manually
-- No layout calculation
-- No lock management
-- Simplified stripe mapping
+- ✅ Write validates OST availability
+- ✅ Write checks OST capacity before writes
+- ✅ Write returns "No space left on device" when full
+- ✅ Read handles sparse files (zeros for unwritten regions)
+- ✅ Read handles EOF correctly
+- ⚠️ Client specifies OSS ID manually (acceptable for simulation)
+- ⚠️ No layout calculation (acceptable for simulation)
+- ⚠️ No lock management (acceptable for simulation)
+- ⚠️ Simplified stripe mapping (acceptable for simulation)
 
-**Assessment:** This is acceptable for simulation - full layout calculation would add complexity
+**Fixes Completed:**
+1. ✅ OST capacity validation for writes
+2. ✅ Sparse file handling for reads
+3. ⏸️ Full layout calculation - deferred (low simulation value)
+4. ⏸️ LDLM implementation - deferred (low simulation value)
+
+**Assessment:** Core data operations now match real Lustre behavior for capacity and sparse files
 
 #### D. Stat vs GETATTR
 **Real Lustre:**
@@ -314,6 +328,9 @@ This document analyzes discrepancies between the simulator implementation and re
 25. ✅ **Setattr special mode bits** - Validate setuid/setgid/sticky bits [FIXED: mds.py:1096-1145]
 26. ✅ **Setattr size changes** - Handle truncate with mtime update and logging [FIXED: mds.py:1154-1189]
 27. ✅ **Open validation** - Check file exists, prevent directory open, update atime [FIXED: mds.py:752-826]
+28. ✅ **Close validation** - Handle deleted files, always succeed like POSIX [FIXED: mds.py:828-883]
+29. ✅ **OSS Write capacity checks** - Validate OST space before writes [FIXED: oss.py:138-222]
+30. ✅ **OSS Read sparse file handling** - Handle sparse regions and EOF [FIXED: oss.py:252-317]
 
 ### Low Priority (Nice to Have)
 11. ⏸️ **Layout calculation** - Proper stripe to OST mapping
