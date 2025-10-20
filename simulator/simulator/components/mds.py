@@ -693,6 +693,31 @@ class MDS(BaseService):
         # Check if old path exists
         if req.old_path in self.path_to_fid:
             fid = self.path_to_fid[req.old_path]
+
+            # Check if FID exists in files (defensive check for race conditions)
+            if fid not in self.files:
+                del self.path_to_fid[req.old_path]  # Clean up stale mapping
+                logger.info(f"{log_prefix}: Path {req.old_path} has stale FID mapping")
+                response = RenameResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    old_path=req.old_path,
+                    new_path=req.new_path,
+                    success=False,
+                    message="File not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
             file_meta = self.files[fid]
 
             # Update path mappings
@@ -739,6 +764,30 @@ class MDS(BaseService):
         # Check if file exists
         if req.path in self.path_to_fid:
             fid = self.path_to_fid[req.path]
+
+            # Check if FID exists in files (defensive check for race conditions)
+            if fid not in self.files:
+                del self.path_to_fid[req.path]  # Clean up stale mapping
+                logger.info(f"{log_prefix}: File {req.path} has stale FID mapping")
+                response = SetattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=False,
+                    message="File not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
             file_meta = self.files[fid]
 
             # Update attributes
@@ -795,6 +844,30 @@ class MDS(BaseService):
         # Check if file exists
         if req.path in self.path_to_fid:
             fid = self.path_to_fid[req.path]
+
+            # Check if FID exists in files (defensive check for race conditions)
+            if fid not in self.files:
+                del self.path_to_fid[req.path]  # Clean up stale mapping
+                logger.info(f"{log_prefix}: File {req.path} has stale FID mapping")
+                response = GetattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=False,
+                    message="File not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
             file_meta = self.files[fid]
 
             logger.info(f"{log_prefix}: Get attributes for {req.path}")
@@ -842,6 +915,31 @@ class MDS(BaseService):
         # Check if existing file exists
         if req.existing_path in self.path_to_fid:
             fid = self.path_to_fid[req.existing_path]
+
+            # Check if FID exists in files (defensive check for race conditions)
+            if fid not in self.files:
+                del self.path_to_fid[req.existing_path]  # Clean up stale mapping
+                logger.info(f"{log_prefix}: File {req.existing_path} has stale FID mapping")
+                response = LinkResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    existing_path=req.existing_path,
+                    link_path=req.link_path,
+                    success=False,
+                    message="File not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
             file_meta = self.files[fid]
 
             # Create hard link by adding new path pointing to same FID
@@ -932,6 +1030,30 @@ class MDS(BaseService):
         # Check if symlink exists
         if req.link_path in self.path_to_fid:
             fid = self.path_to_fid[req.link_path]
+
+            # Check if FID exists in files (defensive check for race conditions)
+            if fid not in self.files:
+                del self.path_to_fid[req.link_path]  # Clean up stale mapping
+                logger.info(f"{log_prefix}: Symlink {req.link_path} has stale FID mapping")
+                response = ReadlinkResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    link_path=req.link_path,
+                    success=False,
+                    message="Symlink not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
             file_meta = self.files[fid]
 
             if file_meta.is_symlink:

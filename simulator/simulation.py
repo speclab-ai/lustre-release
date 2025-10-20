@@ -16,6 +16,10 @@ from simulator.components.lustre_client import LustreClient
 from simulator.infra.availability_zone import AvailabilityZone
 from simulator.infra.machine import Machine
 from simulator.infra.network import Network
+from simulator.workloads.file_ops import FileOpsWorkload
+from simulator.workloads.dir_ops import DirOpsWorkload
+from simulator.workloads.metadata_ops import MetadataOpsWorkload
+from simulator.workloads.link_ops import LinkOpsWorkload
 
 # Configure logging
 log_file_path = Path("simulator_log.log")
@@ -149,9 +153,48 @@ class LustreSimulation:
         """Run the simulation scenario."""
         logger.info(f"\n{'='*30}\nStarting Lustre Simulation for {duration} seconds\n{'='*30}")
 
-        # Start a workload process for each client
+        # Start workload processes for each client
+        # Each client runs all workload types concurrently
         for client_id in self.clients.keys():
-            self.env.process(self._client_workload(client_id))
+            # File operations workload
+            file_workload = FileOpsWorkload(
+                env=self.env,
+                client_id=client_id,
+                clients=self.clients,
+                oss_servers=self.oss_servers,
+                request_interval=self.args.request_interval * 4  # Less frequent since we have 4 workloads
+            )
+            self.env.process(file_workload.run())
+
+            # Directory operations workload
+            dir_workload = DirOpsWorkload(
+                env=self.env,
+                client_id=client_id,
+                clients=self.clients,
+                oss_servers=self.oss_servers,
+                request_interval=self.args.request_interval * 4
+            )
+            self.env.process(dir_workload.run())
+
+            # Metadata operations workload
+            metadata_workload = MetadataOpsWorkload(
+                env=self.env,
+                client_id=client_id,
+                clients=self.clients,
+                oss_servers=self.oss_servers,
+                request_interval=self.args.request_interval * 4
+            )
+            self.env.process(metadata_workload.run())
+
+            # Link operations workload
+            link_workload = LinkOpsWorkload(
+                env=self.env,
+                client_id=client_id,
+                clients=self.clients,
+                oss_servers=self.oss_servers,
+                request_interval=self.args.request_interval * 4
+            )
+            self.env.process(link_workload.run())
 
         self.env.process(self._failure_scenario())
 
@@ -161,65 +204,6 @@ class LustreSimulation:
         self.env.run(until=duration)
         logger.info(f"\n{'='*30}\nSimulation Finished at {self.env.now:.4f}\n{'='*30}")
         self._report_metrics()
-
-    def _client_workload(self, client_id: str):
-        """Generate client file system operations for a specific client."""
-        oss_ids = list(self.oss_servers.keys())
-
-        if not oss_ids:
-            logger.warning("No OSS servers available for workload")
-            return
-
-        client = self.clients[client_id]
-        file_count = 0
-
-        while True:
-            # Random delay around the configured interval (±20%)
-            delay = self.args.request_interval * random.uniform(0.8, 1.2)
-            yield self.env.timeout(delay)
-
-
-            operation = random.choice(['create', 'write', 'read', 'stat', 'delete', 'mkdir', 'list'])
-
-            if operation == 'create':
-                file_path = f"/testfile_{file_count}"
-                stripe_count = random.choice([1, 2, 4])
-                logger.info(f"[{self.env.now:.4f}] Client {client_id}: Creating file {file_path} "
-                           f"with stripe_count={stripe_count}")
-                client.create_file(file_path, stripe_count=stripe_count)
-                file_count += 1
-
-            elif operation == 'write' and file_count > 0:
-                fid = f"0x200000000:0x{random.randint(1, file_count)}:0x0"
-                data = f"data_{uuid.uuid4()}"
-                oss_id = random.choice(oss_ids)
-                logger.info(f"[{self.env.now:.4f}] Client {client_id}: Writing {len(data)} bytes to FID {fid}")
-                client.write_file(fid, offset=0, data=data, oss_id=oss_id)
-
-            elif operation == 'read' and file_count > 0:
-                fid = f"0x200000000:0x{random.randint(1, file_count)}:0x0"
-                oss_id = random.choice(oss_ids)
-                logger.info(f"[{self.env.now:.4f}] Client {client_id}: Reading from FID {fid}")
-                client.read_file(fid, offset=0, size=100, oss_id=oss_id)
-
-            elif operation == 'stat' and file_count > 0:
-                file_path = f"/testfile_{random.randint(0, file_count-1)}"
-                logger.info(f"[{self.env.now:.4f}] Client {client_id}: Stat {file_path}")
-                client.stat_file(file_path)
-
-            elif operation == 'mkdir':
-                dir_path = f"/testdir_{uuid.uuid4().hex[:8]}"
-                logger.info(f"[{self.env.now:.4f}] Client {client_id}: Creating directory {dir_path}")
-                client.mkdir(dir_path)
-
-            elif operation == 'delete' and file_count > 0:
-                file_path = f"/testfile_{random.randint(0, file_count-1)}"
-                logger.info(f"[{self.env.now:.4f}] Client {client_id}: Deleting {file_path}")
-                client.delete_file(file_path)
-
-            elif operation == 'list':
-                logger.info(f"[{self.env.now:.4f}] Client {client_id}: Listing directory /")
-                client.list_dir("/")
 
     def _failure_scenario(self):
         """Simulate basic failures."""
