@@ -286,10 +286,15 @@ This document analyzes discrepancies between the simulator implementation and re
 6. ✅ **Prevent directory hard links** - No hard links to directories [FIXED: simulator/components/mds.py:1034-1131]
 
 ### Medium Priority (Functionality Improvements)
-7. ⚠️ **File handle tracking** - Track open files on MDS
-8. ⚠️ **Stat response completeness** - Add blocks, blksize, flags
-9. ⚠️ **Setattr size changes** - Notify OST of truncate operations
-10. ⚠️ **Xattr namespace validation** - Validate xattr prefixes
+7. ⚠️ **File handle tracking** - Track open files on MDS [NOT IMPLEMENTED: Low simulation value]
+8. ✅ **Stat response completeness** - Add blocks, blksize, flags [FIXED: api.py:52-79, mds.py:303-369]
+9. ⚠️ **Setattr size changes** - Notify OST of truncate operations [NOT IMPLEMENTED: Requires OST communication]
+10. ✅ **Xattr namespace validation** - Validate xattr prefixes [FIXED: mds.py:1688-1711, xattr handlers]
+
+### Additional Improvements Completed
+11. ✅ **Mkdir proper initialization** - Set proper attributes like CreateFile [FIXED: mds.py:436-517]
+12. ✅ **Symlink proper initialization** - Validate parent, set complete attributes [FIXED: mds.py:1191-1293]
+13. ✅ **Getattr response completeness** - Include nlink field [FIXED: api.py:258-269, mds.py:1015-1030]
 
 ### Low Priority (Nice to Have)
 11. ⏸️ **Layout calculation** - Proper stripe to OST mapping

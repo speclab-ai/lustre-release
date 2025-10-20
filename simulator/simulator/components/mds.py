@@ -1189,11 +1189,64 @@ class MDS(BaseService):
         )
 
     def _handle_symlink(self, msg: NetworkMessage):
-        """Handle symbolic link creation request."""
+        """Handle symbolic link creation request.
+
+        Implements proper validation like real Lustre:
+        - Validates parent directory exists
+        - Sets complete attributes (mode, uid, gid, timestamps, parent_fid)
+        """
         req = cast(SymlinkRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
 
-        # Create symlink metadata
+        # Validate parent directory exists (like CreateFile and Mkdir)
+        parent_path = req.link_path.rsplit("/", 1)[0] or "/"
+        if parent_path not in self.path_to_fid:
+            logger.info(f"{log_prefix}: Parent directory {parent_path} does not exist")
+            response = SymlinkResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                target_path=req.target_path,
+                link_path=req.link_path,
+                success=False,
+                message="Parent directory does not exist"
+            )
+            self.network.send_message(
+                NetworkMessage(
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    payload=response,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    request_context=msg.request_context
+                )
+            )
+            return
+
+        parent_fid = self.path_to_fid[parent_path]
+        # Verify parent FID exists and is a directory
+        if parent_fid not in self.files or not self.files[parent_fid].is_directory:
+            logger.info(f"{log_prefix}: Parent {parent_path} is not a directory")
+            response = SymlinkResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                target_path=req.target_path,
+                link_path=req.link_path,
+                success=False,
+                message="Parent is not a directory"
+            )
+            self.network.send_message(
+                NetworkMessage(
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    payload=response,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    request_context=msg.request_context
+                )
+            )
+            return
+
+        # Create symlink metadata with complete attributes
         fid = self._generate_fid()
         current_time = self.machine.get_current_time(self.env.now)
 
@@ -1204,10 +1257,16 @@ class MDS(BaseService):
             is_symlink=True,
             symlink_target=req.target_path,
             size_bytes=0,
+            # Complete POSIX attributes
             mode=0o777,  # Symlinks typically have 777 permissions
-            mtime=current_time,
+            uid=0,
+            gid=0,
+            nlink=1,
+            # Initialize all timestamps
             atime=current_time,
-            ctime=current_time
+            mtime=current_time,
+            ctime=current_time,
+            parent_fid=parent_fid
         )
 
         self.files[fid] = file_meta
