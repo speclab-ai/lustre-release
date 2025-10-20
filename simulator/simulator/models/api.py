@@ -50,13 +50,33 @@ class StatRequest(Request):
 
 
 class StatResponse(Response):
-    """Response with file metadata."""
+    """Response with file metadata.
+
+    Includes all fields from real Lustre mdt_body structure.
+    """
     path: str
     fid: Optional[str] = None
     size: int = 0
     stripe_count: int = 1
     stripe_size: int = 1048576
-    mtime: float = 0.0  # Last modification time
+
+    # POSIX attributes
+    mode: int = 0o644
+    nlink: int = 1
+    uid: int = 0
+    gid: int = 0
+
+    # Timestamps
+    atime: float = 0.0  # Access time
+    mtime: float = 0.0  # Modification time
+    ctime: float = 0.0  # Change time
+
+    # Block information
+    blocks: int = 0  # Number of 512-byte blocks allocated
+    blksize: int = 4096  # Optimal block size for I/O
+
+    # File flags (encrypted, compressed, etc.)
+    flags: int = 0
 
 
 class DeleteFileRequest(Request):
@@ -240,6 +260,7 @@ class GetattrResponse(Response):
     path: str
     fid: Optional[str] = None
     mode: int = 0o644
+    nlink: int = 1  # Number of hard links
     uid: int = 0
     gid: int = 0
     size: int = 0

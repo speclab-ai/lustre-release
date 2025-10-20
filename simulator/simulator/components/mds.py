@@ -301,7 +301,10 @@ class MDS(BaseService):
         )
 
     def _handle_stat(self, msg: NetworkMessage):
-        """Handle stat request for file metadata."""
+        """Handle stat request for file metadata.
+
+        Returns complete metadata like real Lustre MDS_GETATTR.
+        """
         req = cast(StatRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
 
@@ -319,6 +322,8 @@ class MDS(BaseService):
                 logger.info(f"{log_prefix}: Stat request for {req.path} -> File was deleted")
             else:
                 file_meta = self.files[fid]
+                # Calculate blocks (number of 512-byte blocks)
+                blocks = (file_meta.size_bytes + 511) // 512
                 response = StatResponse(
                     request_id=req.request_id,
                     timestamp=self.machine.get_current_time(self.env.now),
@@ -327,7 +332,19 @@ class MDS(BaseService):
                     size=file_meta.size_bytes,
                     stripe_count=file_meta.stripe_count,
                     stripe_size=file_meta.stripe_size,
+                    # POSIX attributes
+                    mode=file_meta.mode,
+                    nlink=file_meta.nlink,
+                    uid=file_meta.uid,
+                    gid=file_meta.gid,
+                    # Timestamps
+                    atime=file_meta.atime,
                     mtime=file_meta.mtime,
+                    ctime=file_meta.ctime,
+                    # Block information
+                    blocks=blocks,
+                    blksize=4096,  # Standard block size
+                    flags=0,  # No special flags in simulator
                     success=True
                 )
                 logger.info(f"{log_prefix}: Stat request for {req.path} -> FID {fid}")
@@ -417,7 +434,13 @@ class MDS(BaseService):
         )
 
     def _handle_mkdir(self, msg: NetworkMessage):
-        """Handle directory creation request."""
+        """Handle directory creation request.
+
+        Implements proper validation like real Lustre:
+        - Validates parent directory exists
+        - Sets proper initial attributes (mode, uid, gid, timestamps)
+        - Initializes nlink=2 (. and ..)
+        """
         req = cast(MkdirRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
 
@@ -430,24 +453,58 @@ class MDS(BaseService):
                 message="Directory already exists"
             )
         else:
-            fid = self._generate_fid()
-            dir_meta = FileMetadata(
-                fid=fid,
-                path=req.path,
-                is_directory=True,
-                mtime=self.env.now
-            )
+            # Validate parent directory exists (like real Lustre)
+            parent_path = req.path.rsplit("/", 1)[0] or "/"
+            if parent_path not in self.path_to_fid:
+                logger.info(f"{log_prefix}: Parent directory {parent_path} does not exist")
+                response = MkdirResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=False,
+                    message="Parent directory does not exist"
+                )
+            else:
+                parent_fid = self.path_to_fid[parent_path]
+                # Verify parent FID exists and is a directory
+                if parent_fid not in self.files or not self.files[parent_fid].is_directory:
+                    logger.info(f"{log_prefix}: Parent {parent_path} is not a directory")
+                    response = MkdirResponse(
+                        request_id=req.request_id,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        path=req.path,
+                        success=False,
+                        message="Parent is not a directory"
+                    )
+                else:
+                    fid = self._generate_fid()
+                    current_time = self.machine.get_current_time(self.env.now)
+                    dir_meta = FileMetadata(
+                        fid=fid,
+                        path=req.path,
+                        is_directory=True,
+                        # Initialize POSIX attributes
+                        mode=0o755,  # Default directory permissions
+                        uid=0,
+                        gid=0,
+                        nlink=2,  # Directories start with nlink=2 (. and ..)
+                        # Initialize all timestamps
+                        atime=current_time,
+                        mtime=current_time,
+                        ctime=current_time,
+                        parent_fid=parent_fid
+                    )
 
-            self.files[fid] = dir_meta
-            self.path_to_fid[req.path] = fid
+                    self.files[fid] = dir_meta
+                    self.path_to_fid[req.path] = fid
 
-            logger.info(f"{log_prefix}: Created directory {req.path}")
-            response = MkdirResponse(
-                request_id=req.request_id,
-                timestamp=self.machine.get_current_time(self.env.now),
-                path=req.path,
-                success=True
-            )
+                    logger.info(f"{log_prefix}: Created directory {req.path}")
+                    response = MkdirResponse(
+                        request_id=req.request_id,
+                        timestamp=current_time,
+                        path=req.path,
+                        success=True
+                    )
 
         self.network.send_message(
             NetworkMessage(
@@ -1002,6 +1059,7 @@ class MDS(BaseService):
                 path=req.path,
                 fid=fid,
                 mode=file_meta.mode,
+                nlink=file_meta.nlink,
                 uid=file_meta.uid,
                 gid=file_meta.gid,
                 size=file_meta.size_bytes,
@@ -1253,9 +1311,36 @@ class MDS(BaseService):
     # Extended Attributes Handlers
 
     def _handle_setxattr(self, msg: NetworkMessage):
-        """Handle set extended attribute request."""
+        """Handle set extended attribute request.
+
+        Validates xattr namespace like real Lustre (user.*, trusted.*, etc.)
+        """
         req = cast(SetxattrRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Validate xattr namespace (like real Lustre)
+        is_valid, error_msg = self._validate_xattr_name(req.name)
+        if not is_valid:
+            logger.info(f"{log_prefix}: {error_msg}")
+            response = SetxattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                name=req.name,
+                success=False,
+                message=error_msg
+            )
+            self.network.send_message(
+                NetworkMessage(
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    payload=response,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    request_context=msg.request_context
+                )
+            )
+            return
 
         # Check if file exists
         if req.path in self.path_to_fid:
@@ -1324,9 +1409,36 @@ class MDS(BaseService):
         )
 
     def _handle_getxattr(self, msg: NetworkMessage):
-        """Handle get extended attribute request."""
+        """Handle get extended attribute request.
+
+        Validates xattr namespace like real Lustre.
+        """
         req = cast(GetxattrRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Validate xattr namespace
+        is_valid, error_msg = self._validate_xattr_name(req.name)
+        if not is_valid:
+            logger.info(f"{log_prefix}: {error_msg}")
+            response = GetxattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                name=req.name,
+                success=False,
+                message=error_msg
+            )
+            self.network.send_message(
+                NetworkMessage(
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    payload=response,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    request_context=msg.request_context
+                )
+            )
+            return
 
         # Check if file exists
         if req.path in self.path_to_fid:
@@ -1471,9 +1583,36 @@ class MDS(BaseService):
         )
 
     def _handle_removexattr(self, msg: NetworkMessage):
-        """Handle remove extended attribute request."""
+        """Handle remove extended attribute request.
+
+        Validates xattr namespace like real Lustre.
+        """
         req = cast(RemovexattrRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Validate xattr namespace
+        is_valid, error_msg = self._validate_xattr_name(req.name)
+        if not is_valid:
+            logger.info(f"{log_prefix}: {error_msg}")
+            response = RemovexattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                name=req.name,
+                success=False,
+                message=error_msg
+            )
+            self.network.send_message(
+                NetworkMessage(
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    payload=response,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    request_context=msg.request_context
+                )
+            )
+            return
 
         # Check if file exists
         if req.path in self.path_to_fid:
@@ -1626,6 +1765,31 @@ class MDS(BaseService):
         oid = len(self.files) + 1
         ver = 0
         return f"0x{seq:x}:0x{oid:x}:0x{ver:x}"
+
+    def _validate_xattr_name(self, name: str) -> tuple[bool, str]:
+        """Validate extended attribute name against allowed namespaces.
+
+        Real Lustre validates namespaces: user.*, trusted.*, security.*, system.*
+        Reserved names: trusted.lov, trusted.lmv, trusted.fid, etc.
+
+        Returns: (is_valid, error_message)
+        """
+        # Check valid namespaces
+        valid_prefixes = ("user.", "trusted.", "security.", "system.")
+        if not any(name.startswith(prefix) for prefix in valid_prefixes):
+            return False, f"Invalid xattr namespace. Must start with {', '.join(valid_prefixes)}"
+
+        # Check for reserved Lustre xattr names
+        reserved_names = {
+            "trusted.lov",  # Layout information
+            "trusted.lmv",  # Directory layout
+            "trusted.fid",  # File identifier
+            "trusted.link", # Hard link info
+        }
+        if name in reserved_names:
+            return False, f"Reserved xattr name: {name}"
+
+        return True, ""
 
     def _on_machine_fail(self, machine_id: str):
         """Handle machine failure."""
