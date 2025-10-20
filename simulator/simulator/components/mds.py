@@ -213,20 +213,30 @@ class MDS(BaseService):
 
         if req.path in self.path_to_fid:
             fid = self.path_to_fid[req.path]
-            file_meta = self.files[fid]
-
-            response = StatResponse(
-                request_id=req.request_id,
-                timestamp=self.machine.get_current_time(self.env.now),
-                path=req.path,
-                fid=fid,
-                size=file_meta.size_bytes,
-                stripe_count=file_meta.stripe_count,
-                stripe_size=file_meta.stripe_size,
-                mtime=file_meta.mtime,
-                success=True
-            )
-            logger.info(f"{log_prefix}: Stat request for {req.path} -> FID {fid}")
+            # Check if file still exists (might have been deleted)
+            if fid not in self.files:
+                response = StatResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=False,
+                    message="File was deleted"
+                )
+                logger.info(f"{log_prefix}: Stat request for {req.path} -> File was deleted")
+            else:
+                file_meta = self.files[fid]
+                response = StatResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    fid=fid,
+                    size=file_meta.size_bytes,
+                    stripe_count=file_meta.stripe_count,
+                    stripe_size=file_meta.stripe_size,
+                    mtime=file_meta.mtime,
+                    success=True
+                )
+                logger.info(f"{log_prefix}: Stat request for {req.path} -> FID {fid}")
         else:
             response = StatResponse(
                 request_id=req.request_id,
@@ -254,16 +264,28 @@ class MDS(BaseService):
 
         if req.path in self.path_to_fid:
             fid = self.path_to_fid[req.path]
-            del self.files[fid]
-            del self.path_to_fid[req.path]
-
-            logger.info(f"{log_prefix}: Deleted file {req.path}")
-            response = DeleteFileResponse(
-                request_id=req.request_id,
-                timestamp=self.machine.get_current_time(self.env.now),
-                path=req.path,
-                success=True
-            )
+            # Check if file still exists (might have been deleted already)
+            if fid in self.files:
+                del self.files[fid]
+                del self.path_to_fid[req.path]
+                logger.info(f"{log_prefix}: Deleted file {req.path}")
+                response = DeleteFileResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=True
+                )
+            else:
+                # File was already deleted
+                del self.path_to_fid[req.path]  # Clean up stale mapping
+                logger.info(f"{log_prefix}: File {req.path} was already deleted")
+                response = DeleteFileResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=False,
+                    message="File already deleted"
+                )
         else:
             response = DeleteFileResponse(
                 request_id=req.request_id,

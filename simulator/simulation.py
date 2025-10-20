@@ -179,7 +179,7 @@ class LustreSimulation:
             yield self.env.timeout(delay)
 
 
-            operation = random.choice(['create', 'write', 'read', 'stat', 'mkdir', 'list'])
+            operation = random.choice(['create', 'write', 'read', 'stat', 'delete', 'mkdir', 'list'])
 
             if operation == 'create':
                 file_path = f"/testfile_{file_count}"
@@ -211,6 +211,11 @@ class LustreSimulation:
                 dir_path = f"/testdir_{uuid.uuid4().hex[:8]}"
                 logger.info(f"[{self.env.now:.4f}] Client {client_id}: Creating directory {dir_path}")
                 client.mkdir(dir_path)
+
+            elif operation == 'delete' and file_count > 0:
+                file_path = f"/testfile_{random.randint(0, file_count-1)}"
+                logger.info(f"[{self.env.now:.4f}] Client {client_id}: Deleting {file_path}")
+                client.delete_file(file_path)
 
             elif operation == 'list':
                 logger.info(f"[{self.env.now:.4f}] Client {client_id}: Listing directory /")
