@@ -1,60 +1,138 @@
-from typing import Optional, List
+from typing import Optional, List, Dict
 from pydantic import BaseModel
-from .base import Request, Response, ReadConsistency
+from .base import Request, Response
 
 
-class PutRequest(Request):
-    key: str
-    value: str
-    metadata: Optional[List[str]] = None
-    ttl: Optional[int] = None
+class CreateFileRequest(Request):
+    """Client request to create a file in Lustre."""
+    path: str
+    stripe_count: int = 1  # Number of OSTs to stripe across
+    stripe_size: int = 1048576  # Stripe size in bytes (default 1MB)
 
 
-class PutResponse(Response):
-    key: str
+class CreateFileResponse(Response):
+    """Response to file creation."""
+    path: str
+    fid: Optional[str] = None  # File Identifier assigned by MDS
 
 
-class GetRequest(Request):
-    key: str
-    consistency: ReadConsistency = ReadConsistency.LINEARIZABLE
+class WriteRequest(Request):
+    """Client request to write data to a file."""
+    fid: str  # File Identifier
+    offset: int  # Offset in bytes
+    data: str  # Data to write
+    size: int  # Size of data in bytes
 
 
-class GetResponse(Response):
-    key: str
-    value: Optional[str] = None
-    metadata: Optional[List[str]] = None
+class WriteResponse(Response):
+    """Response to write request."""
+    fid: str
+    bytes_written: int = 0
 
 
-class DeleteRequest(Request):
-    key: str
+class ReadRequest(Request):
+    """Client request to read data from a file."""
+    fid: str  # File Identifier
+    offset: int  # Offset in bytes
+    size: int  # Number of bytes to read
 
 
-class DeleteResponse(Response):
-    key: str
+class ReadResponse(Response):
+    """Response to read request."""
+    fid: str
+    data: Optional[str] = None
+    bytes_read: int = 0
 
 
-class AppendMetadataRequest(Request):
-    key: str
-    metadata_entry: str
-
-
-class AppendMetadataResponse(Response):
-    key: str
-
-
-class ListRequest(Request):
+class StatRequest(Request):
+    """Client request to get file metadata/stats."""
     path: str
 
 
-class ListResponse(Response):
+class StatResponse(Response):
+    """Response with file metadata."""
     path: str
-    keys: List[str] = []
+    fid: Optional[str] = None
+    size: int = 0
+    stripe_count: int = 1
+    stripe_size: int = 1048576
+    mtime: float = 0.0  # Last modification time
 
 
-class SnapshotRequest(Request):
-    snapshot_id: str
+class DeleteFileRequest(Request):
+    """Client request to delete a file."""
+    path: str
 
 
-class SnapshotResponse(Response):
-    snapshot_id: str
-    status: str # e.g., 'INITIATED', 'COMPLETED', 'FAILED'
+class DeleteFileResponse(Response):
+    """Response to file deletion."""
+    path: str
+
+
+class MkdirRequest(Request):
+    """Client request to create a directory."""
+    path: str
+
+
+class MkdirResponse(Response):
+    """Response to directory creation."""
+    path: str
+
+
+class ListDirRequest(Request):
+    """Client request to list directory contents."""
+    path: str
+
+
+class ListDirResponse(Response):
+    """Response with directory contents."""
+    path: str
+    entries: List[str] = []  # List of file/directory names
+
+
+class LockRequest(Request):
+    """Request to acquire a distributed lock (LDLM)."""
+    fid: str  # File Identifier
+    lock_type: str  # "READ" or "WRITE"
+    extent_start: int = 0  # Start of byte range
+    extent_end: int = -1  # End of byte range (-1 for EOF)
+
+
+class LockResponse(Response):
+    """Response to lock request."""
+    fid: str
+    lock_id: Optional[str] = None  # Lock identifier if granted
+
+
+class UnlockRequest(Request):
+    """Request to release a distributed lock."""
+    lock_id: str
+
+
+class UnlockResponse(Response):
+    """Response to unlock request."""
+    lock_id: str
+
+
+class GetLayoutRequest(Request):
+    """MDS request to get file layout (stripe information)."""
+    fid: str
+
+
+class GetLayoutResponse(Response):
+    """Response with file layout information."""
+    fid: str
+    layout: Optional['FileLayout'] = None
+
+
+# Forward reference resolved
+class FileLayout(BaseModel):
+    """File layout describing how file is striped across OSTs."""
+    fid: str
+    stripe_count: int
+    stripe_size: int
+    ost_indices: List[int]  # List of OST indices where stripes are stored
+
+
+# Update forward reference
+GetLayoutResponse.model_rebuild()

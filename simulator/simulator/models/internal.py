@@ -6,49 +6,103 @@ from simulator.infra.request_context import RequestContext
 from simulator.infra.network import Message, NetworkMessage
 
 
-class ShardInfo(BaseModel):
-    shard_id: str
-    leader_node_id: str
-    replica_node_ids: List[str]
+class OSTInfo(BaseModel):
+    """Information about an Object Storage Target."""
+    ost_id: str
+    ost_index: int  # Unique index for striping
+    oss_id: str  # Parent Object Storage Server
+    capacity_bytes: int = 1_000_000_000  # 1GB default
+    used_bytes: int = 0
+    is_available: bool = True
+    availability_zone: str
 
 
-class NodeInfo(BaseModel):
-    node_id: str
-    address: str  # e.g., IP address or hostname
+class MDTInfo(BaseModel):
+    """Information about a Metadata Target."""
+    mdt_id: str
+    mdt_index: int  # For DNE (Distributed Namespace)
+    mds_id: str  # Parent Metadata Server
+    is_available: bool = True
+    availability_zone: str
+
+
+class ServerInfo(BaseModel):
+    """Information about a Lustre server (MDS or OSS)."""
+    server_id: str
+    server_type: str  # "MDS" or "OSS"
+    address: str
     availability_zone: str
     is_up: bool = True
 
 
-class RoutingTable(BaseModel):
-    version: int
-    shard_to_leader: Dict[str, str]  # Shard ID to Leader Node ID
-    shard_to_replicas: Dict[str, List[str]]  # Shard ID to all Replica Node IDs
-    node_to_shards: Dict[str, List[str]]  # Node ID to Shard IDs it hosts
+class FileMetadata(BaseModel):
+    """File metadata stored on MDS."""
+    fid: str  # File Identifier
+    path: str
+    is_directory: bool = False
+    stripe_count: int = 1
+    stripe_size: int = 1048576  # 1MB default
+    ost_indices: List[int] = []  # OST indices for striping
+    size_bytes: int = 0
+    mtime: float = 0.0  # Last modification time
+    parent_fid: Optional[str] = None  # Parent directory FID
 
 
-class WALEntry(BaseModel):
-    entry_id: str
-    key: str
-    value: Optional[str] = None  # For Put/Delete
-    metadata: Optional[List[str]] = None  # For Put/AppendMetadata
-    operation_type: str  # e.g., 'PUT', 'DELETE', 'APPEND_METADATA'
-    timestamp: float
-    ttl: Optional[float] = None # Added ttl to WALEntry
+class FileStripe(BaseModel):
+    """Information about a file stripe stored on an OST."""
+    fid: str  # File Identifier
+    stripe_index: int  # Which stripe this is (0, 1, 2, ...)
+    ost_index: int  # Which OST stores this stripe
+    data: Dict[int, str] = {}  # offset -> data mapping
+    size_bytes: int = 0
 
 
-class KVEntry(BaseModel):
-    value: str
-    metadata: List[str]
-    ttl: Optional[float] = None  # Unix timestamp for expiration
-    last_modified: float
+class LockInfo(BaseModel):
+    """Distributed lock information (LDLM)."""
+    lock_id: str
+    fid: str  # File Identifier
+    lock_type: str  # "READ" or "WRITE"
+    extent_start: int = 0
+    extent_end: int = -1  # -1 for EOF
+    client_id: str
+    granted_time: float = 0.0
 
 
-class NodeStatusMessage(BaseModel):
-    node_info: NodeInfo
+class ServerStatusMessage(BaseModel):
+    """Message for server registration/status updates."""
+    server_info: ServerInfo
     status: str  # 'REGISTER', 'UNREGISTER', 'HEARTBEAT'
 
 
-class ShardRoleUpdateMessage(BaseModel):
-    node_id: str
-    is_leader_for_shards: List[str]
-    is_replica_for_shards: List[str]
+class OSTStatusMessage(BaseModel):
+    """Message for OST status updates."""
+    ost_info: OSTInfo
+    status: str  # 'ACTIVE', 'DEGRADED', 'OFFLINE'
+
+
+class MDTStatusMessage(BaseModel):
+    """Message for MDT status updates."""
+    mdt_info: MDTInfo
+    status: str  # 'ACTIVE', 'DEGRADED', 'OFFLINE'
+
+
+class ConfigUpdateMessage(BaseModel):
+    """Configuration update from MGS to other servers."""
+    config_version: int
+    ost_list: List[OSTInfo] = []
+    mdt_list: List[MDTInfo] = []
+    server_list: List[ServerInfo] = []
+
+
+class StripeAllocationRequest(BaseModel):
+    """Internal request from MDS to allocate stripes for a file."""
+    fid: str
+    stripe_count: int
+    stripe_size: int
+
+
+class StripeAllocationResponse(BaseModel):
+    """Response with allocated OST indices."""
+    fid: str
+    ost_indices: List[int]
+    success: bool = True
