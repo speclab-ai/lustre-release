@@ -74,15 +74,18 @@ This document analyzes discrepancies between the simulator implementation and re
 - May trigger layout release for HSM files
 
 **Current Simulator:**
-- Open/Close are separate operations
-- Do not manage file handles
-- Do not track open file descriptors on MDS
+- ✅ Open validates file exists with defensive checks
+- ✅ Open prevents opening directories (returns "Is a directory" error)
+- ✅ Open updates atime on file access
+- ✅ Open returns simulated file descriptor
+- ✅ Close acknowledges without tracking (acceptable for simulation)
+- ⚠️ Do not track actual file handles on MDS (low simulation value)
+- ⚠️ Do not track which clients have files open (low simulation value)
 
-**Fix Needed:**
-1. Add file handle tracking in MDS
-2. Open should return a handle ID
-3. Close should validate and release handle
-4. Track which clients have files open
+**Fixes Completed:**
+1. ✅ Open validation - file existence, directory check, atime update
+2. ⏸️ File handle tracking - deferred (low simulation value)
+3. ⏸️ Track client file handles - deferred (low simulation value)
 
 #### C. Read/Write
 **Real Lustre:**
@@ -213,15 +216,17 @@ This document analyzes discrepancies between the simulator implementation and re
 - Getattr uses `MDS_GETATTR`
 
 **Current Simulator:**
-- Basic implementation
-- Does not validate permissions
-- Does not handle size changes to OST
-- Updates ctime correctly
+- ✅ Validates special mode bits (setuid, setgid, sticky)
+- ✅ Handles size changes with mtime update and logging
+- ✅ Validates size can only be set on regular files
+- ✅ Updates ctime correctly on any metadata change
+- ⚠️ Does not validate permissions (low priority for simulation)
+- ⚠️ Logs truncate operations but doesn't send OST notification (acceptable for simulation)
 
-**Fix Needed:**
-1. Add permission validation
-2. Handle size changes (truncate) with OST notification
-3. Validate special mode bits
+**Fixes Completed:**
+1. ✅ Validate special mode bits - setuid on files only, sticky on dirs only
+2. ✅ Handle size changes (truncate) with mtime update and logging
+3. ⏸️ Permission validation - deferred (low simulation value)
 
 #### J. Extended Attributes
 **Real Lustre:**
@@ -306,6 +311,9 @@ This document analyzes discrepancies between the simulator implementation and re
 22. ✅ **Mode bits validation** - Validate 0-0o7777 range in setattr (previous session)
 23. ✅ **Root directory initialization** - Proper attributes for root (previous session)
 24. ✅ **Symlink/Link duplicate checks** - Prevent duplicate paths (previous session)
+25. ✅ **Setattr special mode bits** - Validate setuid/setgid/sticky bits [FIXED: mds.py:1096-1145]
+26. ✅ **Setattr size changes** - Handle truncate with mtime update and logging [FIXED: mds.py:1154-1189]
+27. ✅ **Open validation** - Check file exists, prevent directory open, update atime [FIXED: mds.py:752-826]
 
 ### Low Priority (Nice to Have)
 11. ⏸️ **Layout calculation** - Proper stripe to OST mapping
