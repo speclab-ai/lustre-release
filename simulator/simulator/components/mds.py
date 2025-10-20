@@ -280,6 +280,9 @@ class MDS(BaseService):
                         self.files[fid] = file_meta
                         self.path_to_fid[req.path] = fid
 
+                        # Update parent directory timestamps (like real Lustre)
+                        self._update_parent_timestamps(parent_fid)
+
                         logger.info(f"{log_prefix}: Created file {req.path} with FID {fid}, stripes on OSTs {ost_indices}")
                         response = CreateFileResponse(
                             request_id=req.request_id,
@@ -384,6 +387,9 @@ class MDS(BaseService):
             if fid in self.files:
                 file_meta = self.files[fid]
 
+                # Get parent_fid before removing path, for timestamp update
+                parent_fid = file_meta.parent_fid
+
                 # Remove the directory entry (this path)
                 del self.path_to_fid[req.path]
 
@@ -396,6 +402,10 @@ class MDS(BaseService):
                     logger.info(f"{log_prefix}: Deleted file {req.path} (nlink reached 0, inode removed)")
                 else:
                     logger.info(f"{log_prefix}: Unlinked {req.path} (nlink now {file_meta.nlink}, inode kept)")
+
+                # Update parent directory timestamps (like real Lustre)
+                if parent_fid:
+                    self._update_parent_timestamps(parent_fid)
 
                 response = DeleteFileResponse(
                     request_id=req.request_id,
@@ -497,6 +507,9 @@ class MDS(BaseService):
 
                     self.files[fid] = dir_meta
                     self.path_to_fid[req.path] = fid
+
+                    # Update parent directory timestamps (like real Lustre)
+                    self._update_parent_timestamps(parent_fid)
 
                     logger.info(f"{log_prefix}: Created directory {req.path}")
                     response = MkdirResponse(
@@ -803,9 +816,17 @@ class MDS(BaseService):
                         message="Directory not empty"
                     )
                 else:
+                    # Get parent_fid before removing directory
+                    parent_fid = file_meta.parent_fid
+
                     # Remove directory
                     del self.files[fid]
                     del self.path_to_fid[req.path]
+
+                    # Update parent directory timestamps (like real Lustre)
+                    if parent_fid:
+                        self._update_parent_timestamps(parent_fid)
+
                     logger.info(f"{log_prefix}: Removed directory {req.path}")
                     response = RmdirResponse(
                         client_id=req.client_id,
@@ -886,6 +907,11 @@ class MDS(BaseService):
 
             file_meta = self.files[fid]
 
+            # Get old and new parent directories for timestamp updates
+            old_parent_fid = file_meta.parent_fid
+            new_parent_path = req.new_path.rsplit("/", 1)[0] or "/"
+            new_parent_fid = self.path_to_fid.get(new_parent_path)
+
             # Handle atomic replacement if target exists (like real Lustre REINT_RENAME)
             if req.new_path in self.path_to_fid:
                 target_fid = self.path_to_fid[req.new_path]
@@ -905,6 +931,15 @@ class MDS(BaseService):
             del self.path_to_fid[req.old_path]
             self.path_to_fid[req.new_path] = fid
             file_meta.path = req.new_path
+            # Update parent_fid if moving to different directory
+            if new_parent_fid:
+                file_meta.parent_fid = new_parent_fid
+
+            # Update both old and new parent directory timestamps (like real Lustre)
+            if old_parent_fid:
+                self._update_parent_timestamps(old_parent_fid)
+            if new_parent_fid and new_parent_fid != old_parent_fid:
+                self._update_parent_timestamps(new_parent_fid)
 
             logger.info(f"{log_prefix}: Renamed {req.old_path} to {req.new_path}")
             response = RenameResponse(
@@ -1153,6 +1188,29 @@ class MDS(BaseService):
                 )
                 return
 
+            # Check if link path already exists
+            if req.link_path in self.path_to_fid:
+                logger.info(f"{log_prefix}: Link path {req.link_path} already exists")
+                response = LinkResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    existing_path=req.existing_path,
+                    link_path=req.link_path,
+                    success=False,
+                    message="File already exists"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
             # Create hard link by adding new path pointing to same FID
             self.path_to_fid[req.link_path] = fid
             file_meta.nlink += 1
@@ -1271,6 +1329,9 @@ class MDS(BaseService):
 
         self.files[fid] = file_meta
         self.path_to_fid[req.link_path] = fid
+
+        # Update parent directory timestamps (like real Lustre)
+        self._update_parent_timestamps(parent_fid)
 
         logger.info(f"{log_prefix}: Created symlink from {req.link_path} to {req.target_path}")
         response = SymlinkResponse(
@@ -1849,6 +1910,18 @@ class MDS(BaseService):
             return False, f"Reserved xattr name: {name}"
 
         return True, ""
+
+    def _update_parent_timestamps(self, parent_fid: str) -> None:
+        """Update parent directory mtime and ctime.
+
+        In real Lustre, modifying directory contents (create/delete/rename)
+        updates the parent directory's mtime and ctime.
+        """
+        if parent_fid in self.files:
+            parent_meta = self.files[parent_fid]
+            current_time = self.machine.get_current_time(self.env.now)
+            parent_meta.mtime = current_time
+            parent_meta.ctime = current_time
 
     def _on_machine_fail(self, machine_id: str):
         """Handle machine failure."""
