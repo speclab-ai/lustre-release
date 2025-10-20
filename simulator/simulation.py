@@ -174,7 +174,9 @@ class LustreSimulation:
         file_count = 0
 
         while True:
-            yield self.env.timeout(random.uniform(0.1, 0.3))
+            # Random delay around the configured interval (±20%)
+            delay = self.args.request_interval * random.uniform(0.8, 1.2)
+            yield self.env.timeout(delay)
 
 
             operation = random.choice(['create', 'write', 'read', 'stat', 'mkdir', 'list'])
@@ -346,6 +348,8 @@ if __name__ == "__main__":
     general_group.add_argument("--osts_per_oss", type=int, default=2, help="Number of OSTs per OSS")
     general_group.add_argument("--num_clients", type=int, default=3, help="Number of clients")
     general_group.add_argument("--duration", type=int, default=60, help="Simulation duration in seconds")
+    general_group.add_argument("--request_interval", type=float, default=0.01,
+                              help="Average interval between requests per client in seconds (default: 10ms)")
 
     # Failure Injection
     failure_group = parser.add_argument_group("Failure Injection")
@@ -363,6 +367,7 @@ if __name__ == "__main__":
     print(f"  OSS Servers: {args.num_oss}")
     print(f"  OSTs per OSS: {args.osts_per_oss}")
     print(f"  Clients: {args.num_clients}")
+    print(f"  Request Interval: {args.request_interval*1000:.1f}ms per client")
     print(f"  Duration: {args.duration}s")
     print(f"  Machine Failures Enabled: {args.enable_machine_failures}")
     print("---------------------------------------\n")
