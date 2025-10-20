@@ -288,16 +288,30 @@ class LustreSimulation:
         successful_requests = 0
         total_latency = 0.0
         latencies = []
+        failure_reasons: Dict[str, int] = {}
+        operation_stats: Dict[str, Dict[str, int]] = {}  # op_type -> {success: count, fail: count}
 
         for client_id, client in self.clients.items():
             for req_id, success in client.request_results.items():
                 total_requests += 1
+
+                # Track operation type
+                op_type = client.request_types.get(req_id, "Unknown")
+                if op_type not in operation_stats:
+                    operation_stats[op_type] = {"success": 0, "fail": 0}
+
                 if success:
                     successful_requests += 1
+                    operation_stats[op_type]["success"] += 1
                     latency = client.request_latencies.get(req_id)
                     if latency is not None:
                         total_latency += latency
                         latencies.append(latency)
+                else:
+                    operation_stats[op_type]["fail"] += 1
+                    # Track failure reason
+                    reason = client.request_failures.get(req_id, "Unknown error")
+                    failure_reasons[reason] = failure_reasons.get(reason, 0) + 1
 
         if total_requests > 0:
             success_rate = (successful_requests / total_requests) * 100
@@ -323,6 +337,24 @@ class LustreSimulation:
                     print(f"P99 Latency: {p99_latency:.4f}s")
         else:
             print("No requests processed.")
+
+        # Operation-specific statistics
+        if operation_stats:
+            print("\n--- Operation Statistics ---")
+            for op_type in sorted(operation_stats.keys()):
+                stats = operation_stats[op_type]
+                total_ops = stats["success"] + stats["fail"]
+                success_rate = (stats["success"] / total_ops * 100) if total_ops > 0 else 0
+                print(f"  {op_type:12s}: {stats['success']:4d} success, {stats['fail']:4d} failed "
+                      f"({success_rate:5.1f}% success rate)")
+
+        # Failure reasons
+        if failure_reasons:
+            print("\n--- Failure Reasons ---")
+            sorted_failures = sorted(failure_reasons.items(), key=lambda x: x[1], reverse=True)
+            for reason, count in sorted_failures:
+                percentage = (count / total_requests * 100) if total_requests > 0 else 0
+                print(f"  {reason:40s}: {count:4d} ({percentage:5.1f}%)")
 
         # OST statistics
         print("\n--- OST Statistics ---")

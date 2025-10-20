@@ -36,6 +36,8 @@ class LustreClient(BaseModel):
     file_layouts: Dict[str, FileLayout] = {}  # fid -> FileLayout cache
     request_results: Dict[str, bool] = {}  # request_id -> success
     request_latencies: Dict[str, float] = {}  # request_id -> latency
+    request_failures: Dict[str, str] = {}  # request_id -> failure reason
+    request_types: Dict[str, str] = {}  # request_id -> operation type
     _pending_requests: Dict[str, float] = {}  # request_id -> start_time
 
     class Config:
@@ -78,6 +80,14 @@ class LustreClient(BaseModel):
             self.request_latencies[request_id] = latency
             success = getattr(payload, 'success', True)
             self.request_results[request_id] = success
+
+            # Track failure reason if request failed
+            if not success:
+                failure_reason = getattr(payload, 'message', 'Unknown error')
+                self.request_failures[request_id] = failure_reason
+                logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                           f"Request {request_id} failed: {failure_reason}")
+
             del self._pending_requests[request_id]
 
             logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
@@ -90,12 +100,16 @@ class LustreClient(BaseModel):
 
     def create_file(self, path: str, stripe_count: int = 1, stripe_size: int = 1048576):
         """Create a new file."""
+        request_id = str(uuid.uuid4())
+
         if self.is_crashed:
             logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                           "Cannot create file - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "CreateFile"
             return
 
-        request_id = str(uuid.uuid4())
         req = CreateFileRequest(
             client_id=self.id,
             request_id=request_id,
@@ -106,6 +120,7 @@ class LustreClient(BaseModel):
         )
 
         self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "CreateFile"
 
         self.network.send_message(
             NetworkMessage(
@@ -122,12 +137,16 @@ class LustreClient(BaseModel):
 
     def write_file(self, fid: str, offset: int, data: str, oss_id: str):
         """Write data to a file."""
+        request_id = str(uuid.uuid4())
+
         if self.is_crashed:
             logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                           "Cannot write - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Write"
             return
 
-        request_id = str(uuid.uuid4())
         req = WriteRequest(
             client_id=self.id,
             request_id=request_id,
@@ -139,6 +158,7 @@ class LustreClient(BaseModel):
         )
 
         self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Write"
 
         # In real Lustre, client would determine which OSS based on layout
         # For now, we pass the OSS ID directly
@@ -157,12 +177,16 @@ class LustreClient(BaseModel):
 
     def read_file(self, fid: str, offset: int, size: int, oss_id: str):
         """Read data from a file."""
+        request_id = str(uuid.uuid4())
+
         if self.is_crashed:
             logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                           "Cannot read - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Read"
             return
 
-        request_id = str(uuid.uuid4())
         req = ReadRequest(
             client_id=self.id,
             request_id=request_id,
@@ -173,6 +197,7 @@ class LustreClient(BaseModel):
         )
 
         self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Read"
 
         self.network.send_message(
             NetworkMessage(
@@ -189,12 +214,16 @@ class LustreClient(BaseModel):
 
     def stat_file(self, path: str):
         """Get file metadata."""
+        request_id = str(uuid.uuid4())
+
         if self.is_crashed:
             logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                           "Cannot stat - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Stat"
             return
 
-        request_id = str(uuid.uuid4())
         req = StatRequest(
             client_id=self.id,
             request_id=request_id,
@@ -203,6 +232,7 @@ class LustreClient(BaseModel):
         )
 
         self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Stat"
 
         self.network.send_message(
             NetworkMessage(
@@ -219,12 +249,16 @@ class LustreClient(BaseModel):
 
     def delete_file(self, path: str):
         """Delete a file."""
+        request_id = str(uuid.uuid4())
+
         if self.is_crashed:
             logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                           "Cannot delete - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Delete"
             return
 
-        request_id = str(uuid.uuid4())
         req = DeleteFileRequest(
             client_id=self.id,
             request_id=request_id,
@@ -233,6 +267,7 @@ class LustreClient(BaseModel):
         )
 
         self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Delete"
 
         self.network.send_message(
             NetworkMessage(
@@ -249,12 +284,16 @@ class LustreClient(BaseModel):
 
     def mkdir(self, path: str):
         """Create a directory."""
+        request_id = str(uuid.uuid4())
+
         if self.is_crashed:
             logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                           "Cannot mkdir - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Mkdir"
             return
 
-        request_id = str(uuid.uuid4())
         req = MkdirRequest(
             client_id=self.id,
             request_id=request_id,
@@ -263,6 +302,7 @@ class LustreClient(BaseModel):
         )
 
         self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Mkdir"
 
         self.network.send_message(
             NetworkMessage(
@@ -279,12 +319,16 @@ class LustreClient(BaseModel):
 
     def list_dir(self, path: str):
         """List directory contents."""
+        request_id = str(uuid.uuid4())
+
         if self.is_crashed:
             logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                           "Cannot list - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "ListDir"
             return
 
-        request_id = str(uuid.uuid4())
         req = ListDirRequest(
             client_id=self.id,
             request_id=request_id,
@@ -293,6 +337,7 @@ class LustreClient(BaseModel):
         )
 
         self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "ListDir"
 
         self.network.send_message(
             NetworkMessage(
