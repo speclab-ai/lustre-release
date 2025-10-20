@@ -9,7 +9,8 @@ from simulator.models.internal import (
 from simulator.models.api import (
     WriteRequest, WriteResponse,
     ReadRequest, ReadResponse,
-    FileLayout
+    FileLayout,
+    FsyncRequest, FsyncResponse
 )
 from simulator.infra.network import Network
 from simulator.infra.machine import Machine
@@ -121,6 +122,8 @@ class OSS(BaseService):
             self._handle_write(msg)
         elif isinstance(payload, ReadRequest):
             self._handle_read(msg)
+        elif isinstance(payload, FsyncRequest):
+            self._handle_fsync(msg)
         elif isinstance(payload, ConfigUpdateMessage):
             self._handle_config_update(msg)
 
@@ -212,6 +215,32 @@ class OSS(BaseService):
                 success=False,
                 message="Stripe not found"
             )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_fsync(self, msg: NetworkMessage):
+        """Handle fsync request to sync file to disk."""
+        req = cast(FsyncRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] OSS {self.id}"
+
+        # For simulation, just acknowledge the fsync
+        # In real Lustre, this would flush buffers to disk
+        logger.info(f"{log_prefix}: Fsync for FID {req.fid}")
+        response = FsyncResponse(
+            client_id=req.client_id,
+            request_id=req.request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            fid=req.fid,
+            success=True
+        )
 
         self.network.send_message(
             NetworkMessage(

@@ -15,7 +15,18 @@ from simulator.models.api import (
     ListDirRequest, ListDirResponse,
     LockRequest, LockResponse,
     UnlockRequest, UnlockResponse,
-    GetLayoutRequest, GetLayoutResponse, FileLayout
+    GetLayoutRequest, GetLayoutResponse, FileLayout,
+    # High priority APIs
+    OpenRequest, OpenResponse,
+    CloseRequest, CloseResponse,
+    SeekRequest, SeekResponse,
+    RmdirRequest, RmdirResponse,
+    RenameRequest, RenameResponse,
+    SetattrRequest, SetattrResponse,
+    GetattrRequest, GetattrResponse,
+    LinkRequest, LinkResponse,
+    SymlinkRequest, SymlinkResponse,
+    ReadlinkRequest, ReadlinkResponse,
 )
 from simulator.infra.network import Network
 from simulator.infra.machine import Machine
@@ -138,6 +149,27 @@ class MDS(BaseService):
             self._handle_get_layout(msg)
         elif isinstance(payload, ConfigUpdateMessage):
             self._handle_config_update(msg)
+        # High priority APIs
+        elif isinstance(payload, OpenRequest):
+            self._handle_open(msg)
+        elif isinstance(payload, CloseRequest):
+            self._handle_close(msg)
+        elif isinstance(payload, SeekRequest):
+            self._handle_seek(msg)
+        elif isinstance(payload, RmdirRequest):
+            self._handle_rmdir(msg)
+        elif isinstance(payload, RenameRequest):
+            self._handle_rename(msg)
+        elif isinstance(payload, SetattrRequest):
+            self._handle_setattr(msg)
+        elif isinstance(payload, GetattrRequest):
+            self._handle_getattr(msg)
+        elif isinstance(payload, LinkRequest):
+            self._handle_link(msg)
+        elif isinstance(payload, SymlinkRequest):
+            self._handle_symlink(msg)
+        elif isinstance(payload, ReadlinkRequest):
+            self._handle_readlink(msg)
 
     def _handle_create_file(self, msg: NetworkMessage):
         """Handle file creation request."""
@@ -504,6 +536,444 @@ class MDS(BaseService):
         self.ost_list = config.ost_list
         logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}: "
                    f"Updated configuration to v{config.config_version}, {len(self.ost_list)} OSTs")
+
+    # HIGH PRIORITY API Handlers
+
+    def _handle_open(self, msg: NetworkMessage):
+        """Handle file open request."""
+        req = cast(OpenRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if file exists
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+            # For simulation, we don't track actual file descriptors, just acknowledge
+            logger.info(f"{log_prefix}: Opened file {req.path} (FID: {fid})")
+            response = OpenResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                fid=fid,
+                fd=hash(req.path) % 10000,  # Simulated FD
+                success=True
+            )
+        else:
+            logger.info(f"{log_prefix}: File {req.path} not found for open")
+            response = OpenResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_close(self, msg: NetworkMessage):
+        """Handle file close request."""
+        req = cast(CloseRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # For simulation, just acknowledge the close
+        logger.info(f"{log_prefix}: Closed file {req.path}")
+        response = CloseResponse(
+            client_id=req.client_id,
+            request_id=req.request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=req.path,
+            fd=req.fd,
+            success=True
+        )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_seek(self, msg: NetworkMessage):
+        """Handle file seek request."""
+        req = cast(SeekRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # For simulation, just acknowledge the seek
+        # In real Lustre, this would be handled client-side
+        logger.info(f"{log_prefix}: Seek on FID {req.fid} to offset {req.offset}")
+        response = SeekResponse(
+            client_id=req.client_id,
+            request_id=req.request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            fid=req.fid,
+            new_offset=req.offset,
+            success=True
+        )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_rmdir(self, msg: NetworkMessage):
+        """Handle directory removal request."""
+        req = cast(RmdirRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if directory exists
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+            file_meta = self.files.get(fid)
+
+            if file_meta and file_meta.is_directory:
+                # Remove directory
+                del self.files[fid]
+                del self.path_to_fid[req.path]
+                logger.info(f"{log_prefix}: Removed directory {req.path}")
+                response = RmdirResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=True
+                )
+            else:
+                logger.info(f"{log_prefix}: Path {req.path} is not a directory")
+                response = RmdirResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=False,
+                    message="Not a directory"
+                )
+        else:
+            logger.info(f"{log_prefix}: Directory {req.path} not found")
+            response = RmdirResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                success=False,
+                message="Directory not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_rename(self, msg: NetworkMessage):
+        """Handle file/directory rename request."""
+        req = cast(RenameRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if old path exists
+        if req.old_path in self.path_to_fid:
+            fid = self.path_to_fid[req.old_path]
+            file_meta = self.files[fid]
+
+            # Update path mappings
+            del self.path_to_fid[req.old_path]
+            self.path_to_fid[req.new_path] = fid
+            file_meta.path = req.new_path
+
+            logger.info(f"{log_prefix}: Renamed {req.old_path} to {req.new_path}")
+            response = RenameResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                old_path=req.old_path,
+                new_path=req.new_path,
+                success=True
+            )
+        else:
+            logger.info(f"{log_prefix}: Path {req.old_path} not found for rename")
+            response = RenameResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                old_path=req.old_path,
+                new_path=req.new_path,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_setattr(self, msg: NetworkMessage):
+        """Handle setattr request."""
+        req = cast(SetattrRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if file exists
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+            file_meta = self.files[fid]
+
+            # Update attributes
+            if req.mode is not None:
+                file_meta.mode = req.mode
+            if req.uid is not None:
+                file_meta.uid = req.uid
+            if req.gid is not None:
+                file_meta.gid = req.gid
+            if req.size is not None:
+                file_meta.size_bytes = req.size
+            if req.atime is not None:
+                file_meta.atime = req.atime
+            if req.mtime is not None:
+                file_meta.mtime = req.mtime
+
+            # Update ctime
+            file_meta.ctime = self.machine.get_current_time(self.env.now)
+
+            logger.info(f"{log_prefix}: Set attributes for {req.path}")
+            response = SetattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                success=True
+            )
+        else:
+            logger.info(f"{log_prefix}: File {req.path} not found for setattr")
+            response = SetattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_getattr(self, msg: NetworkMessage):
+        """Handle getattr request."""
+        req = cast(GetattrRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if file exists
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+            file_meta = self.files[fid]
+
+            logger.info(f"{log_prefix}: Get attributes for {req.path}")
+            response = GetattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                fid=fid,
+                mode=file_meta.mode,
+                uid=file_meta.uid,
+                gid=file_meta.gid,
+                size=file_meta.size_bytes,
+                atime=file_meta.atime,
+                mtime=file_meta.mtime,
+                ctime=file_meta.ctime,
+                success=True
+            )
+        else:
+            logger.info(f"{log_prefix}: File {req.path} not found for getattr")
+            response = GetattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_link(self, msg: NetworkMessage):
+        """Handle hard link creation request."""
+        req = cast(LinkRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if existing file exists
+        if req.existing_path in self.path_to_fid:
+            fid = self.path_to_fid[req.existing_path]
+            file_meta = self.files[fid]
+
+            # Create hard link by adding new path pointing to same FID
+            self.path_to_fid[req.link_path] = fid
+            file_meta.nlink += 1
+
+            logger.info(f"{log_prefix}: Created hard link from {req.existing_path} to {req.link_path}")
+            response = LinkResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                existing_path=req.existing_path,
+                link_path=req.link_path,
+                success=True
+            )
+        else:
+            logger.info(f"{log_prefix}: File {req.existing_path} not found for link")
+            response = LinkResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                existing_path=req.existing_path,
+                link_path=req.link_path,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_symlink(self, msg: NetworkMessage):
+        """Handle symbolic link creation request."""
+        req = cast(SymlinkRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Create symlink metadata
+        fid = self._generate_fid()
+        current_time = self.machine.get_current_time(self.env.now)
+
+        file_meta = FileMetadata(
+            fid=fid,
+            path=req.link_path,
+            is_directory=False,
+            is_symlink=True,
+            symlink_target=req.target_path,
+            size_bytes=0,
+            mode=0o777,  # Symlinks typically have 777 permissions
+            mtime=current_time,
+            atime=current_time,
+            ctime=current_time
+        )
+
+        self.files[fid] = file_meta
+        self.path_to_fid[req.link_path] = fid
+
+        logger.info(f"{log_prefix}: Created symlink from {req.link_path} to {req.target_path}")
+        response = SymlinkResponse(
+            client_id=req.client_id,
+            request_id=req.request_id,
+            timestamp=current_time,
+            target_path=req.target_path,
+            link_path=req.link_path,
+            success=True
+        )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=current_time,
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_readlink(self, msg: NetworkMessage):
+        """Handle readlink request."""
+        req = cast(ReadlinkRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if symlink exists
+        if req.link_path in self.path_to_fid:
+            fid = self.path_to_fid[req.link_path]
+            file_meta = self.files[fid]
+
+            if file_meta.is_symlink:
+                logger.info(f"{log_prefix}: Read symlink {req.link_path} -> {file_meta.symlink_target}")
+                response = ReadlinkResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    link_path=req.link_path,
+                    target_path=file_meta.symlink_target,
+                    success=True
+                )
+            else:
+                logger.info(f"{log_prefix}: Path {req.link_path} is not a symlink")
+                response = ReadlinkResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    link_path=req.link_path,
+                    success=False,
+                    message="Not a symbolic link"
+                )
+        else:
+            logger.info(f"{log_prefix}: Symlink {req.link_path} not found")
+            response = ReadlinkResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                link_path=req.link_path,
+                success=False,
+                message="Symlink not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
 
     def _generate_fid(self) -> str:
         """Generate a Lustre-style FID (File Identifier)."""

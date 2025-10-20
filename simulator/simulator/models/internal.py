@@ -40,11 +40,24 @@ class FileMetadata(BaseModel):
     fid: str  # File Identifier
     path: str
     is_directory: bool = False
+    is_symlink: bool = False
+    symlink_target: Optional[str] = None  # Target path for symlinks
     stripe_count: int = 1
     stripe_size: int = 1048576  # 1MB default
     ost_indices: List[int] = []  # OST indices for striping
     size_bytes: int = 0
-    mtime: float = 0.0  # Last modification time
+
+    # Extended attributes
+    mode: int = 0o644  # File permissions (default: rw-r--r--)
+    uid: int = 0  # User ID
+    gid: int = 0  # Group ID
+    nlink: int = 1  # Number of hard links
+
+    # Timestamps
+    atime: float = 0.0  # Access time
+    mtime: float = 0.0  # Modification time
+    ctime: float = 0.0  # Change time (metadata)
+
     parent_fid: Optional[str] = None  # Parent directory FID
 
 

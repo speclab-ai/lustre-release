@@ -11,7 +11,19 @@ from simulator.models.api import (
     DeleteFileRequest, DeleteFileResponse,
     MkdirRequest, MkdirResponse,
     ListDirRequest, ListDirResponse,
-    GetLayoutRequest, GetLayoutResponse, FileLayout
+    GetLayoutRequest, GetLayoutResponse, FileLayout,
+    # High priority APIs
+    OpenRequest, OpenResponse,
+    CloseRequest, CloseResponse,
+    SeekRequest, SeekResponse,
+    FsyncRequest, FsyncResponse,
+    RmdirRequest, RmdirResponse,
+    RenameRequest, RenameResponse,
+    SetattrRequest, SetattrResponse,
+    GetattrRequest, GetattrResponse,
+    LinkRequest, LinkResponse,
+    SymlinkRequest, SymlinkResponse,
+    ReadlinkRequest, ReadlinkResponse,
 )
 from simulator.models.internal import NetworkMessage, RequestContext
 from simulator.infra.network import Network
@@ -351,6 +363,414 @@ class LustreClient(BaseModel):
 
         logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                    f"Sent ListDir request for {path}")
+
+    # HIGH PRIORITY APIs - Basic File Operations
+
+    def open_file(self, path: str, flags: str = "r"):
+        """Open a file."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot open - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Open"
+            return
+
+        req = OpenRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path,
+            flags=flags
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Open"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Open request for {path} with flags {flags}")
+
+    def close_file(self, path: str, fd: Optional[int] = None):
+        """Close a file."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot close - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Close"
+            return
+
+        req = CloseRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path,
+            fd=fd
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Close"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Close request for {path}")
+
+    def seek_file(self, fid: str, offset: int, whence: str = "SET"):
+        """Seek within a file."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot seek - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Seek"
+            return
+
+        req = SeekRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            fid=fid,
+            offset=offset,
+            whence=whence
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Seek"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Seek request for FID {fid}")
+
+    def fsync_file(self, fid: str, oss_id: str):
+        """Sync file to disk."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot fsync - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Fsync"
+            return
+
+        req = FsyncRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            fid=fid
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Fsync"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=oss_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Fsync request for FID {fid}")
+
+    # HIGH PRIORITY APIs - Directory Operations
+
+    def rmdir(self, path: str):
+        """Remove a directory."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot rmdir - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Rmdir"
+            return
+
+        req = RmdirRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Rmdir"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Rmdir request for {path}")
+
+    def rename(self, old_path: str, new_path: str):
+        """Rename a file or directory."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot rename - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Rename"
+            return
+
+        req = RenameRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            old_path=old_path,
+            new_path=new_path
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Rename"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Rename request from {old_path} to {new_path}")
+
+    # HIGH PRIORITY APIs - Metadata Operations
+
+    def setattr(self, path: str, mode: Optional[int] = None, uid: Optional[int] = None,
+                gid: Optional[int] = None, size: Optional[int] = None,
+                atime: Optional[float] = None, mtime: Optional[float] = None):
+        """Set file attributes."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot setattr - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Setattr"
+            return
+
+        req = SetattrRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path,
+            mode=mode,
+            uid=uid,
+            gid=gid,
+            size=size,
+            atime=atime,
+            mtime=mtime
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Setattr"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Setattr request for {path}")
+
+    def getattr(self, path: str):
+        """Get file attributes."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot getattr - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Getattr"
+            return
+
+        req = GetattrRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Getattr"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Getattr request for {path}")
+
+    # HIGH PRIORITY APIs - Link Operations
+
+    def link(self, existing_path: str, link_path: str):
+        """Create a hard link."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot link - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Link"
+            return
+
+        req = LinkRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            existing_path=existing_path,
+            link_path=link_path
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Link"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Link request from {existing_path} to {link_path}")
+
+    def symlink(self, target_path: str, link_path: str):
+        """Create a symbolic link."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot symlink - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Symlink"
+            return
+
+        req = SymlinkRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            target_path=target_path,
+            link_path=link_path
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Symlink"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Symlink request from {target_path} to {link_path}")
+
+    def readlink(self, link_path: str):
+        """Read a symbolic link."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot readlink - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Readlink"
+            return
+
+        req = ReadlinkRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            link_path=link_path
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Readlink"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Readlink request for {link_path}")
 
     def crash(self):
         """Simulate client crash."""

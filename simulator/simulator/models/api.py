@@ -136,3 +136,150 @@ class FileLayout(BaseModel):
 
 # Update forward reference
 GetLayoutResponse.model_rebuild()
+
+
+# HIGH PRIORITY APIs - Basic File Operations
+
+class OpenRequest(Request):
+    """Client request to open a file."""
+    path: str
+    flags: str = "r"  # "r", "w", "a", "r+", "w+", "a+"
+
+
+class OpenResponse(Response):
+    """Response to file open."""
+    path: str
+    fid: Optional[str] = None
+    fd: Optional[int] = None  # File descriptor
+
+
+class CloseRequest(Request):
+    """Client request to close a file."""
+    path: str
+    fd: Optional[int] = None  # File descriptor
+
+
+class CloseResponse(Response):
+    """Response to file close."""
+    path: str
+    fd: Optional[int] = None
+
+
+class SeekRequest(Request):
+    """Client request to seek within a file."""
+    fid: str
+    offset: int
+    whence: str = "SET"  # "SET", "CUR", "END"
+
+
+class SeekResponse(Response):
+    """Response to seek request."""
+    fid: str
+    new_offset: int = 0
+
+
+class FsyncRequest(Request):
+    """Client request to sync file to disk."""
+    fid: str
+
+
+class FsyncResponse(Response):
+    """Response to fsync request."""
+    fid: str
+
+
+# HIGH PRIORITY APIs - Directory Operations
+
+class RmdirRequest(Request):
+    """Client request to remove a directory."""
+    path: str
+
+
+class RmdirResponse(Response):
+    """Response to directory removal."""
+    path: str
+
+
+class RenameRequest(Request):
+    """Client request to rename a file or directory."""
+    old_path: str
+    new_path: str
+
+
+class RenameResponse(Response):
+    """Response to rename request."""
+    old_path: str
+    new_path: str
+
+
+# HIGH PRIORITY APIs - Metadata Operations
+
+class SetattrRequest(Request):
+    """Client request to set file attributes."""
+    path: str
+    mode: Optional[int] = None  # File permissions
+    uid: Optional[int] = None  # User ID
+    gid: Optional[int] = None  # Group ID
+    size: Optional[int] = None  # Truncate to size
+    atime: Optional[float] = None  # Access time
+    mtime: Optional[float] = None  # Modification time
+
+
+class SetattrResponse(Response):
+    """Response to setattr request."""
+    path: str
+
+
+class GetattrRequest(Request):
+    """Client request to get file attributes."""
+    path: str
+
+
+class GetattrResponse(Response):
+    """Response with file attributes."""
+    path: str
+    fid: Optional[str] = None
+    mode: int = 0o644
+    uid: int = 0
+    gid: int = 0
+    size: int = 0
+    atime: float = 0.0
+    mtime: float = 0.0
+    ctime: float = 0.0
+
+
+# HIGH PRIORITY APIs - Link Operations
+
+class LinkRequest(Request):
+    """Client request to create a hard link."""
+    existing_path: str
+    link_path: str
+
+
+class LinkResponse(Response):
+    """Response to link creation."""
+    existing_path: str
+    link_path: str
+
+
+class SymlinkRequest(Request):
+    """Client request to create a symbolic link."""
+    target_path: str  # What the symlink points to
+    link_path: str  # Path of the symlink itself
+
+
+class SymlinkResponse(Response):
+    """Response to symlink creation."""
+    target_path: str
+    link_path: str
+
+
+class ReadlinkRequest(Request):
+    """Client request to read a symbolic link."""
+    link_path: str
+
+
+class ReadlinkResponse(Response):
+    """Response with symlink target."""
+    link_path: str
+    target_path: Optional[str] = None
