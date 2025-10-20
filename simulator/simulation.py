@@ -149,7 +149,10 @@ class LustreSimulation:
         """Run the simulation scenario."""
         logger.info(f"\n{'='*30}\nStarting Lustre Simulation for {duration} seconds\n{'='*30}")
 
-        self.env.process(self._client_workload())
+        # Start a workload process for each client
+        for client_id in self.clients.keys():
+            self.env.process(self._client_workload(client_id))
+
         self.env.process(self._failure_scenario())
 
         if self.args.enable_machine_failures:
@@ -159,22 +162,20 @@ class LustreSimulation:
         logger.info(f"\n{'='*30}\nSimulation Finished at {self.env.now:.4f}\n{'='*30}")
         self._report_metrics()
 
-    def _client_workload(self):
-        """Generate client file system operations."""
-        client_ids = list(self.clients.keys())
+    def _client_workload(self, client_id: str):
+        """Generate client file system operations for a specific client."""
         oss_ids = list(self.oss_servers.keys())
 
-        if not client_ids or not oss_ids:
-            logger.warning("No clients or OSS servers available for workload")
+        if not oss_ids:
+            logger.warning("No OSS servers available for workload")
             return
 
+        client = self.clients[client_id]
         file_count = 0
 
         while True:
-            yield self.env.timeout(random.uniform(0.5, 1.5))
+            yield self.env.timeout(random.uniform(0.1, 0.3))
 
-            client_id = random.choice(client_ids)
-            client = self.clients[client_id]
 
             operation = random.choice(['create', 'write', 'read', 'stat', 'mkdir', 'list'])
 
