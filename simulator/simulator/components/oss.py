@@ -135,15 +135,57 @@ class OSS(BaseService):
         # For simplicity, we assume the client has already determined which OST to write to
         # In real Lustre, client gets layout from MDS and calculates stripe placement
 
-        # Extract stripe info from the request (we'll use a simple scheme)
-        # Assuming the offset determines which stripe
-        # For now, just store the write
+        # Check if we have any OSTs available
+        if not self.osts:
+            logger.info(f"{log_prefix}: No OSTs available for write")
+            response = WriteResponse(
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                fid=req.fid,
+                bytes_written=0,
+                success=False,
+                message="No OSTs available"
+            )
+            self.network.send_message(
+                NetworkMessage(
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    payload=response,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    request_context=msg.request_context
+                )
+            )
+            return
 
         stripe_key = f"{req.fid}:0"  # Simplified - always use stripe 0
         if stripe_key not in self.stripes:
             # Create new stripe
-            # We'd need to know which OST index this is - for now, use first OST
-            ost_index = list(self.osts.keys())[0] if self.osts else 0
+            ost_index = list(self.osts.keys())[0]
+
+            # Check OST capacity before creating stripe (like real Lustre)
+            ost = self.osts[ost_index]
+            available = ost.capacity_bytes - ost.used_bytes
+            if req.size > available:
+                logger.info(f"{log_prefix}: OST {ost_index} out of space ({available} bytes available, {req.size} requested)")
+                response = WriteResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    fid=req.fid,
+                    bytes_written=0,
+                    success=False,
+                    message="No space left on device"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
             self.stripes[stripe_key] = FileStripe(
                 fid=req.fid,
                 stripe_index=0,
@@ -153,6 +195,31 @@ class OSS(BaseService):
             )
 
         stripe = self.stripes[stripe_key]
+
+        # Check OST capacity for existing stripe
+        if stripe.ost_index in self.osts:
+            ost = self.osts[stripe.ost_index]
+            available = ost.capacity_bytes - ost.used_bytes
+            if req.size > available:
+                logger.info(f"{log_prefix}: OST {stripe.ost_index} out of space ({available} bytes available, {req.size} requested)")
+                response = WriteResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    fid=req.fid,
+                    bytes_written=0,
+                    success=False,
+                    message="No space left on device"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
 
         # Store data at offset
         stripe.data[req.offset] = req.data
@@ -183,7 +250,10 @@ class OSS(BaseService):
         )
 
     def _handle_read(self, msg: NetworkMessage):
-        """Handle read request for file data."""
+        """Handle read request for file data.
+
+        Handles sparse files by returning empty data for unwritten regions.
+        """
         req = cast(ReadRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] OSS {self.id}"
 
@@ -191,20 +261,50 @@ class OSS(BaseService):
         stripe_key = f"{req.fid}:0"  # Simplified
         if stripe_key in self.stripes:
             stripe = self.stripes[stripe_key]
-            # Get data at offset
-            data = stripe.data.get(req.offset, "")
-            bytes_read = min(len(data), req.size)
 
-            logger.info(f"{log_prefix}: Read {bytes_read} bytes from FID {req.fid} at offset {req.offset}")
-            response = ReadResponse(
-                request_id=req.request_id,
-                timestamp=self.machine.get_current_time(self.env.now),
-                fid=req.fid,
-                data=data[:bytes_read],
-                bytes_read=bytes_read,
-                success=True
-            )
+            # Get data at offset
+            # For sparse files: if offset has no data, return empty string (zeros)
+            data = stripe.data.get(req.offset, "")
+
+            if data:
+                # Data exists at this offset
+                bytes_read = min(len(data), req.size)
+                logger.info(f"{log_prefix}: Read {bytes_read} bytes from FID {req.fid} at offset {req.offset}")
+                response = ReadResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    fid=req.fid,
+                    data=data[:bytes_read],
+                    bytes_read=bytes_read,
+                    success=True
+                )
+            else:
+                # Sparse file region - check if offset is within file bounds
+                if req.offset < stripe.size_bytes:
+                    # Reading unwritten region within file - return zeros (empty data)
+                    bytes_to_read = min(req.size, stripe.size_bytes - req.offset)
+                    logger.info(f"{log_prefix}: Read {bytes_to_read} bytes (sparse region) from FID {req.fid} at offset {req.offset}")
+                    response = ReadResponse(
+                        request_id=req.request_id,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        fid=req.fid,
+                        data="",  # Empty data represents zeros in sparse file
+                        bytes_read=bytes_to_read,
+                        success=True
+                    )
+                else:
+                    # Reading beyond EOF
+                    logger.info(f"{log_prefix}: Read beyond EOF for FID {req.fid} at offset {req.offset} (file size: {stripe.size_bytes})")
+                    response = ReadResponse(
+                        request_id=req.request_id,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        fid=req.fid,
+                        data="",
+                        bytes_read=0,
+                        success=True
+                    )
         else:
+            # Stripe doesn't exist - file was never written to
             logger.info(f"{log_prefix}: Stripe not found for FID {req.fid}")
             response = ReadResponse(
                 request_id=req.request_id,

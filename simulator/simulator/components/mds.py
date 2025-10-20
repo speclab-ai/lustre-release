@@ -826,20 +826,51 @@ class MDS(BaseService):
         )
 
     def _handle_close(self, msg: NetworkMessage):
-        """Handle file close request."""
+        """Handle file close request.
+
+        In real Lustre, close releases file handles and reports async errors.
+        For simulation, we validate the file exists and acknowledge.
+        """
         req = cast(CloseRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
 
-        # For simulation, just acknowledge the close
-        logger.info(f"{log_prefix}: Closed file {req.path}")
-        response = CloseResponse(
-            client_id=req.client_id,
-            request_id=req.request_id,
-            timestamp=self.machine.get_current_time(self.env.now),
-            path=req.path,
-            fd=req.fd,
-            success=True
-        )
+        # Validate file exists (defensive check)
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+            if fid in self.files:
+                # For simulation, just acknowledge the close
+                # Real Lustre would release file handle and check for async errors
+                logger.info(f"{log_prefix}: Closed file {req.path}")
+                response = CloseResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    fd=req.fd,
+                    success=True
+                )
+            else:
+                # File was deleted after open
+                logger.info(f"{log_prefix}: Close on deleted file {req.path}")
+                response = CloseResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    fd=req.fd,
+                    success=True  # Close succeeds even if file deleted
+                )
+        else:
+            # File path no longer exists
+            logger.info(f"{log_prefix}: Close on non-existent path {req.path}")
+            response = CloseResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                fd=req.fd,
+                success=True  # Close succeeds even if path doesn't exist
+            )
 
         self.network.send_message(
             NetworkMessage(
