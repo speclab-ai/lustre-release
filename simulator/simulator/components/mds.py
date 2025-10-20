@@ -27,6 +27,14 @@ from simulator.models.api import (
     LinkRequest, LinkResponse,
     SymlinkRequest, SymlinkResponse,
     ReadlinkRequest, ReadlinkResponse,
+    # Extended attributes
+    SetxattrRequest, SetxattrResponse,
+    GetxattrRequest, GetxattrResponse,
+    ListxattrRequest, ListxattrResponse,
+    RemovexattrRequest, RemovexattrResponse,
+    # Additional operations
+    FlushRequest, FlushResponse,
+    StatfsRequest, StatfsResponse,
 )
 from simulator.infra.network import Network
 from simulator.infra.machine import Machine
@@ -170,6 +178,20 @@ class MDS(BaseService):
             self._handle_symlink(msg)
         elif isinstance(payload, ReadlinkRequest):
             self._handle_readlink(msg)
+        # Extended attributes
+        elif isinstance(payload, SetxattrRequest):
+            self._handle_setxattr(msg)
+        elif isinstance(payload, GetxattrRequest):
+            self._handle_getxattr(msg)
+        elif isinstance(payload, ListxattrRequest):
+            self._handle_listxattr(msg)
+        elif isinstance(payload, RemovexattrRequest):
+            self._handle_removexattr(msg)
+        # Additional operations
+        elif isinstance(payload, FlushRequest):
+            self._handle_flush(msg)
+        elif isinstance(payload, StatfsRequest):
+            self._handle_statfs(msg)
 
     def _handle_create_file(self, msg: NetworkMessage):
         """Handle file creation request."""
@@ -1086,6 +1108,375 @@ class MDS(BaseService):
                 success=False,
                 message="Symlink not found"
             )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    # Extended Attributes Handlers
+
+    def _handle_setxattr(self, msg: NetworkMessage):
+        """Handle set extended attribute request."""
+        req = cast(SetxattrRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if file exists
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+
+            # Defensive check for race conditions
+            if fid not in self.files:
+                del self.path_to_fid[req.path]
+                logger.info(f"{log_prefix}: File {req.path} has stale FID mapping")
+                response = SetxattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=False,
+                    message="File not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
+            file_meta = self.files[fid]
+
+            # Set the extended attribute
+            file_meta.xattrs[req.name] = req.value
+            # Update ctime after xattr change (like real Lustre)
+            file_meta.ctime = self.machine.get_current_time(self.env.now)
+
+            logger.info(f"{log_prefix}: Set xattr '{req.name}' on {req.path}")
+            response = SetxattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                name=req.name,
+                success=True
+            )
+        else:
+            logger.info(f"{log_prefix}: File {req.path} not found for setxattr")
+            response = SetxattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                name=req.name,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_getxattr(self, msg: NetworkMessage):
+        """Handle get extended attribute request."""
+        req = cast(GetxattrRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if file exists
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+
+            # Defensive check
+            if fid not in self.files:
+                del self.path_to_fid[req.path]
+                logger.info(f"{log_prefix}: File {req.path} has stale FID mapping")
+                response = GetxattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=False,
+                    message="File not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
+            file_meta = self.files[fid]
+
+            # Get the extended attribute
+            value = file_meta.xattrs.get(req.name)
+            if value is not None:
+                logger.info(f"{log_prefix}: Get xattr '{req.name}' from {req.path}")
+                response = GetxattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    value=value,
+                    success=True
+                )
+            else:
+                logger.info(f"{log_prefix}: Xattr '{req.name}' not found on {req.path}")
+                response = GetxattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=False,
+                    message="Attribute not found"
+                )
+        else:
+            logger.info(f"{log_prefix}: File {req.path} not found for getxattr")
+            response = GetxattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                name=req.name,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_listxattr(self, msg: NetworkMessage):
+        """Handle list extended attributes request."""
+        req = cast(ListxattrRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if file exists
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+
+            # Defensive check
+            if fid not in self.files:
+                del self.path_to_fid[req.path]
+                logger.info(f"{log_prefix}: File {req.path} has stale FID mapping")
+                response = ListxattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=False,
+                    message="File not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
+            file_meta = self.files[fid]
+
+            # List all extended attribute names
+            names = list(file_meta.xattrs.keys())
+            logger.info(f"{log_prefix}: List xattrs from {req.path}: {len(names)} attributes")
+            response = ListxattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                names=names,
+                success=True
+            )
+        else:
+            logger.info(f"{log_prefix}: File {req.path} not found for listxattr")
+            response = ListxattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_removexattr(self, msg: NetworkMessage):
+        """Handle remove extended attribute request."""
+        req = cast(RemovexattrRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if file exists
+        if req.path in self.path_to_fid:
+            fid = self.path_to_fid[req.path]
+
+            # Defensive check
+            if fid not in self.files:
+                del self.path_to_fid[req.path]
+                logger.info(f"{log_prefix}: File {req.path} has stale FID mapping")
+                response = RemovexattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=False,
+                    message="File not found"
+                )
+                self.network.send_message(
+                    NetworkMessage(
+                        sender_id=self.id,
+                        receiver_id=msg.sender_id,
+                        payload=response,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        request_context=msg.request_context
+                    )
+                )
+                return
+
+            file_meta = self.files[fid]
+
+            # Remove the extended attribute
+            if req.name in file_meta.xattrs:
+                del file_meta.xattrs[req.name]
+                # Update ctime after xattr change
+                file_meta.ctime = self.machine.get_current_time(self.env.now)
+
+                logger.info(f"{log_prefix}: Removed xattr '{req.name}' from {req.path}")
+                response = RemovexattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=True
+                )
+            else:
+                logger.info(f"{log_prefix}: Xattr '{req.name}' not found on {req.path}")
+                response = RemovexattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=False,
+                    message="Attribute not found"
+                )
+        else:
+            logger.info(f"{log_prefix}: File {req.path} not found for removexattr")
+            response = RemovexattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                name=req.name,
+                success=False,
+                message="File not found"
+            )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    # Additional Operations Handlers
+
+    def _handle_flush(self, msg: NetworkMessage):
+        """Handle flush request (error reporting mechanism)."""
+        req = cast(FlushRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Flush in Lustre is mainly for error reporting, not actual sync
+        # For simplicity, just acknowledge the flush
+        logger.info(f"{log_prefix}: Flush for {req.path}")
+        response = FlushResponse(
+            client_id=req.client_id,
+            request_id=req.request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=req.path,
+            fid=req.fid,
+            success=True
+        )
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=msg.sender_id,
+                payload=response,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=msg.request_context
+            )
+        )
+
+    def _handle_statfs(self, msg: NetworkMessage):
+        """Handle filesystem statistics request."""
+        req = cast(StatfsRequest, msg.payload)
+        log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Calculate MDT statistics
+        total_files = len(self.files)
+        # Simple calculation - in reality this would query actual storage capacity
+        total_capacity = 10_000  # Max inodes
+        used_files = total_files
+        available_files = total_capacity - used_files
+
+        logger.info(f"{log_prefix}: Statfs - {used_files}/{total_capacity} inodes")
+        response = StatfsResponse(
+            client_id=req.client_id,
+            request_id=req.request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            total_files=total_capacity,
+            used_files=used_files,
+            available_files=available_files,
+            # OSS will fill in capacity stats
+            total_capacity_bytes=0,
+            used_bytes=0,
+            available_bytes=0,
+            success=True
+        )
 
         self.network.send_message(
             NetworkMessage(

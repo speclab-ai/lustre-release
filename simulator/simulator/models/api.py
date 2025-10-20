@@ -283,3 +283,84 @@ class ReadlinkResponse(Response):
     """Response with symlink target."""
     link_path: str
     target_path: Optional[str] = None
+
+
+# EXTENDED ATTRIBUTES APIs
+
+class SetxattrRequest(Request):
+    """Client request to set an extended attribute."""
+    path: str
+    name: str  # Attribute name (e.g., "user.comment", "trusted.fid")
+    value: str  # Attribute value
+    flags: int = 0  # XATTR_CREATE or XATTR_REPLACE
+
+
+class SetxattrResponse(Response):
+    """Response to setxattr request."""
+    path: str
+    name: str
+
+
+class GetxattrRequest(Request):
+    """Client request to get an extended attribute."""
+    path: str
+    name: str  # Attribute name to retrieve
+
+
+class GetxattrResponse(Response):
+    """Response with extended attribute value."""
+    path: str
+    name: str
+    value: Optional[str] = None  # Attribute value, None if not found
+
+
+class ListxattrRequest(Request):
+    """Client request to list extended attributes."""
+    path: str
+
+
+class ListxattrResponse(Response):
+    """Response with list of extended attribute names."""
+    path: str
+    names: List[str] = []  # List of attribute names
+
+
+class RemovexattrRequest(Request):
+    """Client request to remove an extended attribute."""
+    path: str
+    name: str  # Attribute name to remove
+
+
+class RemovexattrResponse(Response):
+    """Response to removexattr request."""
+    path: str
+    name: str
+
+
+# ADDITIONAL FILE OPERATIONS
+
+class FlushRequest(Request):
+    """Client request to flush file buffers."""
+    path: str
+    fid: Optional[str] = None
+
+
+class FlushResponse(Response):
+    """Response to flush request."""
+    path: str
+    fid: Optional[str] = None
+
+
+class StatfsRequest(Request):
+    """Client request for filesystem statistics."""
+    pass  # No additional parameters needed
+
+
+class StatfsResponse(Response):
+    """Response with filesystem statistics."""
+    total_capacity_bytes: int = 0
+    used_bytes: int = 0
+    available_bytes: int = 0
+    total_files: int = 0
+    used_files: int = 0
+    available_files: int = 0

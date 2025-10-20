@@ -24,6 +24,14 @@ from simulator.models.api import (
     LinkRequest, LinkResponse,
     SymlinkRequest, SymlinkResponse,
     ReadlinkRequest, ReadlinkResponse,
+    # Extended attributes
+    SetxattrRequest, SetxattrResponse,
+    GetxattrRequest, GetxattrResponse,
+    ListxattrRequest, ListxattrResponse,
+    RemovexattrRequest, RemovexattrResponse,
+    # Additional operations
+    FlushRequest, FlushResponse,
+    StatfsRequest, StatfsResponse,
 )
 from simulator.models.internal import NetworkMessage, RequestContext
 from simulator.infra.network import Network
@@ -771,6 +779,225 @@ class LustreClient(BaseModel):
 
         logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
                    f"Sent Readlink request for {link_path}")
+
+    # Extended Attributes Operations
+
+    def setxattr(self, path: str, name: str, value: str, flags: int = 0):
+        """Set extended attribute on a file."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot setxattr - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Setxattr"
+            return
+
+        req = SetxattrRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path,
+            name=name,
+            value=value,
+            flags=flags
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Setxattr"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Setxattr request for {path} ('{name}'='{value}')")
+
+    def getxattr(self, path: str, name: str):
+        """Get extended attribute from a file."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot getxattr - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Getxattr"
+            return
+
+        req = GetxattrRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path,
+            name=name
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Getxattr"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Getxattr request for {path} ('{name}')")
+
+    def listxattr(self, path: str):
+        """List extended attributes on a file."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot listxattr - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Listxattr"
+            return
+
+        req = ListxattrRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Listxattr"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Listxattr request for {path}")
+
+    def removexattr(self, path: str, name: str):
+        """Remove extended attribute from a file."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot removexattr - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Removexattr"
+            return
+
+        req = RemovexattrRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path,
+            name=name
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Removexattr"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Removexattr request for {path} ('{name}')")
+
+    # Additional Operations
+
+    def flush_file(self, path: str, fid: Optional[str] = None):
+        """Flush file (error reporting mechanism)."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot flush - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Flush"
+            return
+
+        req = FlushRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now),
+            path=path,
+            fid=fid
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Flush"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Flush request for {path}")
+
+    def statfs(self):
+        """Get filesystem statistics."""
+        request_id = str(uuid.uuid4())
+
+        if self.is_crashed:
+            logger.warning(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                          "Cannot statfs - client crashed")
+            self.request_results[request_id] = False
+            self.request_failures[request_id] = "Client crashed"
+            self.request_types[request_id] = "Statfs"
+            return
+
+        req = StatfsRequest(
+            client_id=self.id,
+            request_id=request_id,
+            timestamp=self.machine.get_current_time(self.env.now)
+        )
+
+        self._pending_requests[request_id] = self.env.now
+        self.request_types[request_id] = "Statfs"
+
+        self.network.send_message(
+            NetworkMessage(
+                sender_id=self.id,
+                receiver_id=self.mds_id,
+                payload=req,
+                timestamp=self.machine.get_current_time(self.env.now),
+                request_context=ReqCtx(request_id=request_id)
+            )
+        )
+
+        logger.info(f"[{self.machine.get_current_time(self.env.now):.4f}] LustreClient {self.id}: "
+                   f"Sent Statfs request")
 
     def crash(self):
         """Simulate client crash."""

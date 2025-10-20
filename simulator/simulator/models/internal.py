@@ -47,7 +47,7 @@ class FileMetadata(BaseModel):
     ost_indices: List[int] = []  # OST indices for striping
     size_bytes: int = 0
 
-    # Extended attributes
+    # POSIX attributes
     mode: int = 0o644  # File permissions (default: rw-r--r--)
     uid: int = 0  # User ID
     gid: int = 0  # Group ID
@@ -57,6 +57,11 @@ class FileMetadata(BaseModel):
     atime: float = 0.0  # Access time
     mtime: float = 0.0  # Modification time
     ctime: float = 0.0  # Change time (metadata)
+
+    # Extended attributes (xattr)
+    # Stored as name -> value mapping
+    # Namespaces: user.*, trusted.*, security.*, system.*
+    xattrs: Dict[str, str] = {}
 
     parent_fid: Optional[str] = None  # Parent directory FID
 
