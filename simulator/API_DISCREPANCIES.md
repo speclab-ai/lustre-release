@@ -295,6 +295,17 @@ This document analyzes discrepancies between the simulator implementation and re
 11. ✅ **Mkdir proper initialization** - Set proper attributes like CreateFile [FIXED: mds.py:436-517]
 12. ✅ **Symlink proper initialization** - Validate parent, set complete attributes [FIXED: mds.py:1191-1293]
 13. ✅ **Getattr response completeness** - Include nlink field [FIXED: api.py:258-269, mds.py:1015-1030]
+14. ✅ **Parent timestamp updates** - Update parent mtime/ctime on content changes [FIXED: mds.py:1853-1863, applied to CreateFile, Mkdir, Symlink, Delete, Rmdir, Rename]
+15. ✅ **Delete ctime update** - Update ctime when nlink decrements [FIXED: mds.py:408-409]
+16. ✅ **Rename ctime update** - Update ctime when replacing file [FIXED: mds.py:934-935]
+17. ✅ **Mkdir error messages** - Distinguish "Directory exists" vs "File exists" [FIXED: mds.py:469-487]
+18. ✅ **ListDir validation** - Check path is directory before listing [FIXED: mds.py:555-610]
+19. ✅ **Xattr flags handling** - Implement XATTR_CREATE/XATTR_REPLACE [FIXED: api.py:6-8, mds.py:35, mds.py:1628-1669]
+20. ✅ **Link ctime update** - Update ctime when nlink changes (previous session)
+21. ✅ **Xattr value size validation** - 64KB limit (previous session)
+22. ✅ **Mode bits validation** - Validate 0-0o7777 range in setattr (previous session)
+23. ✅ **Root directory initialization** - Proper attributes for root (previous session)
+24. ✅ **Symlink/Link duplicate checks** - Prevent duplicate paths (previous session)
 
 ### Low Priority (Nice to Have)
 11. ⏸️ **Layout calculation** - Proper stripe to OST mapping
