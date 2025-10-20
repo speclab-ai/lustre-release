@@ -32,6 +32,7 @@ from simulator.models.api import (
     GetxattrRequest, GetxattrResponse,
     ListxattrRequest, ListxattrResponse,
     RemovexattrRequest, RemovexattrResponse,
+    XATTR_CREATE, XATTR_REPLACE,
     # Additional operations
     FlushRequest, FlushResponse,
     StatfsRequest, StatfsResponse,
@@ -1624,20 +1625,48 @@ class MDS(BaseService):
 
             file_meta = self.files[fid]
 
-            # Set the extended attribute
-            file_meta.xattrs[req.name] = req.value
-            # Update ctime after xattr change (like real Lustre)
-            file_meta.ctime = self.machine.get_current_time(self.env.now)
+            # Check flags for create/replace semantics (like real Lustre)
+            xattr_exists = req.name in file_meta.xattrs
 
-            logger.info(f"{log_prefix}: Set xattr '{req.name}' on {req.path}")
-            response = SetxattrResponse(
-                client_id=req.client_id,
-                request_id=req.request_id,
-                timestamp=self.machine.get_current_time(self.env.now),
-                path=req.path,
-                name=req.name,
-                success=True
-            )
+            if req.flags == XATTR_CREATE and xattr_exists:
+                # XATTR_CREATE: fail if attribute already exists
+                logger.info(f"{log_prefix}: Xattr '{req.name}' already exists on {req.path} (XATTR_CREATE)")
+                response = SetxattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=False,
+                    message="Attribute already exists"
+                )
+            elif req.flags == XATTR_REPLACE and not xattr_exists:
+                # XATTR_REPLACE: fail if attribute doesn't exist
+                logger.info(f"{log_prefix}: Xattr '{req.name}' not found on {req.path} (XATTR_REPLACE)")
+                response = SetxattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=False,
+                    message="Attribute not found"
+                )
+            else:
+                # Set the extended attribute
+                file_meta.xattrs[req.name] = req.value
+                # Update ctime after xattr change (like real Lustre)
+                file_meta.ctime = self.machine.get_current_time(self.env.now)
+
+                logger.info(f"{log_prefix}: Set xattr '{req.name}' on {req.path}")
+                response = SetxattrResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    name=req.name,
+                    success=True
+                )
         else:
             logger.info(f"{log_prefix}: File {req.path} not found for setxattr")
             response = SetxattrResponse(

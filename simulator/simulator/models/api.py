@@ -3,6 +3,11 @@ from pydantic import BaseModel
 from .base import Request, Response
 
 
+# Extended attribute flags (from Linux xattr.h)
+XATTR_CREATE = 1  # Create new attribute, fail if exists
+XATTR_REPLACE = 2  # Replace existing attribute, fail if doesn't exist
+
+
 class CreateFileRequest(Request):
     """Client request to create a file in Lustre."""
     path: str
