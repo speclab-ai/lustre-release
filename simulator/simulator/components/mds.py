@@ -82,13 +82,23 @@ class MDS(BaseService):
 
         self._context_logger = ContextLogger(f"MDS {self.id}", self.machine, self.env)
 
-        # Create root directory
+        # Create root directory with proper attributes
         root_fid = "0x200000001:0x1:0x0"  # Lustre-style FID
+        current_time = self.machine.get_current_time(self.env.now)
         self.files[root_fid] = FileMetadata(
             fid=root_fid,
             path="/",
             is_directory=True,
-            mtime=self.env.now
+            # Initialize root with proper POSIX attributes
+            mode=0o755,  # Root directory permissions
+            uid=0,  # Root owned by root
+            gid=0,
+            nlink=2,  # Root has . and ..
+            # Initialize all timestamps
+            atime=current_time,
+            mtime=current_time,
+            ctime=current_time,
+            parent_fid=None  # Root has no parent
         )
         self.path_to_fid["/"] = root_fid
 
@@ -1006,8 +1016,29 @@ class MDS(BaseService):
 
             file_meta = self.files[fid]
 
-            # Update attributes
+            # Update attributes with validation
             if req.mode is not None:
+                # Validate mode bits (must be in range 0-0o7777)
+                if req.mode < 0 or req.mode > 0o7777:
+                    logger.info(f"{log_prefix}: Invalid mode bits: {oct(req.mode)}")
+                    response = SetattrResponse(
+                        client_id=req.client_id,
+                        request_id=req.request_id,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        path=req.path,
+                        success=False,
+                        message=f"Invalid mode bits: {oct(req.mode)}"
+                    )
+                    self.network.send_message(
+                        NetworkMessage(
+                            sender_id=self.id,
+                            receiver_id=msg.sender_id,
+                            payload=response,
+                            timestamp=self.machine.get_current_time(self.env.now),
+                            request_context=msg.request_context
+                        )
+                    )
+                    return
                 file_meta.mode = req.mode
             if req.uid is not None:
                 file_meta.uid = req.uid
@@ -1214,6 +1245,8 @@ class MDS(BaseService):
             # Create hard link by adding new path pointing to same FID
             self.path_to_fid[req.link_path] = fid
             file_meta.nlink += 1
+            # Update ctime when nlink changes (like real Lustre)
+            file_meta.ctime = self.machine.get_current_time(self.env.now)
 
             logger.info(f"{log_prefix}: Created hard link from {req.existing_path} to {req.link_path} (nlink now {file_meta.nlink})")
             response = LinkResponse(
@@ -1255,6 +1288,29 @@ class MDS(BaseService):
         """
         req = cast(SymlinkRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
+
+        # Check if link path already exists
+        if req.link_path in self.path_to_fid:
+            logger.info(f"{log_prefix}: Symlink path {req.link_path} already exists")
+            response = SymlinkResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                target_path=req.target_path,
+                link_path=req.link_path,
+                success=False,
+                message="File already exists"
+            )
+            self.network.send_message(
+                NetworkMessage(
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    payload=response,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    request_context=msg.request_context
+                )
+            )
+            return
 
         # Validate parent directory exists (like CreateFile and Mkdir)
         parent_path = req.link_path.rsplit("/", 1)[0] or "/"
@@ -1440,6 +1496,30 @@ class MDS(BaseService):
 
         # Validate xattr namespace (like real Lustre)
         is_valid, error_msg = self._validate_xattr_name(req.name)
+        if not is_valid:
+            logger.info(f"{log_prefix}: {error_msg}")
+            response = SetxattrResponse(
+                client_id=req.client_id,
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                name=req.name,
+                success=False,
+                message=error_msg
+            )
+            self.network.send_message(
+                NetworkMessage(
+                    sender_id=self.id,
+                    receiver_id=msg.sender_id,
+                    payload=response,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    request_context=msg.request_context
+                )
+            )
+            return
+
+        # Validate xattr value size (like real Lustre)
+        is_valid, error_msg = self._validate_xattr_value(req.value)
         if not is_valid:
             logger.info(f"{log_prefix}: {error_msg}")
             response = SetxattrResponse(
@@ -1909,6 +1989,20 @@ class MDS(BaseService):
         if name in reserved_names:
             return False, f"Reserved xattr name: {name}"
 
+        return True, ""
+
+    def _validate_xattr_value(self, value: str) -> tuple[bool, str]:
+        """Validate extended attribute value size.
+
+        Real Lustre enforces size limits on xattr values (typically 64KB).
+
+        Returns: (is_valid, error_message)
+        """
+        # Real Lustre typically limits xattr values to 64KB
+        MAX_XATTR_SIZE = 65536
+        value_size = len(value.encode('utf-8'))
+        if value_size > MAX_XATTR_SIZE:
+            return False, f"Xattr value too large: {value_size} bytes (max {MAX_XATTR_SIZE})"
         return True, ""
 
     def _update_parent_timestamps(self, parent_fid: str) -> None:
