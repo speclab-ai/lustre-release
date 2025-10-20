@@ -1092,19 +1092,110 @@ class MDS(BaseService):
                         )
                     )
                     return
+
+                # Validate special mode bits (like real Lustre/Linux)
+                setuid_bit = 0o4000
+                setgid_bit = 0o2000
+                sticky_bit = 0o1000
+
+                if req.mode & setuid_bit:
+                    # Setuid only valid on regular files
+                    if file_meta.is_directory or file_meta.is_symlink:
+                        logger.info(f"{log_prefix}: Setuid bit not allowed on {('directory' if file_meta.is_directory else 'symlink')}")
+                        response = SetattrResponse(
+                            client_id=req.client_id,
+                            request_id=req.request_id,
+                            timestamp=self.machine.get_current_time(self.env.now),
+                            path=req.path,
+                            success=False,
+                            message="Setuid bit only valid on regular files"
+                        )
+                        self.network.send_message(
+                            NetworkMessage(
+                                sender_id=self.id,
+                                receiver_id=msg.sender_id,
+                                payload=response,
+                                timestamp=self.machine.get_current_time(self.env.now),
+                                request_context=msg.request_context
+                            )
+                        )
+                        return
+
+                if req.mode & sticky_bit:
+                    # Sticky bit only valid on directories
+                    if not file_meta.is_directory:
+                        logger.info(f"{log_prefix}: Sticky bit not allowed on non-directory")
+                        response = SetattrResponse(
+                            client_id=req.client_id,
+                            request_id=req.request_id,
+                            timestamp=self.machine.get_current_time(self.env.now),
+                            path=req.path,
+                            success=False,
+                            message="Sticky bit only valid on directories"
+                        )
+                        self.network.send_message(
+                            NetworkMessage(
+                                sender_id=self.id,
+                                receiver_id=msg.sender_id,
+                                payload=response,
+                                timestamp=self.machine.get_current_time(self.env.now),
+                                request_context=msg.request_context
+                            )
+                        )
+                        return
+
                 file_meta.mode = req.mode
+
             if req.uid is not None:
                 file_meta.uid = req.uid
             if req.gid is not None:
                 file_meta.gid = req.gid
+
+            # Handle size changes (truncate operation)
             if req.size is not None:
+                # Size can only be changed on regular files
+                if file_meta.is_directory:
+                    logger.info(f"{log_prefix}: Cannot set size on directory")
+                    response = SetattrResponse(
+                        client_id=req.client_id,
+                        request_id=req.request_id,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        path=req.path,
+                        success=False,
+                        message="Cannot set size on directory"
+                    )
+                    self.network.send_message(
+                        NetworkMessage(
+                            sender_id=self.id,
+                            receiver_id=msg.sender_id,
+                            payload=response,
+                            timestamp=self.machine.get_current_time(self.env.now),
+                            request_context=msg.request_context
+                        )
+                    )
+                    return
+
+                old_size = file_meta.size_bytes
                 file_meta.size_bytes = req.size
+
+                # Update mtime when size changes (standard POSIX behavior)
+                current_time = self.machine.get_current_time(self.env.now)
+                file_meta.mtime = current_time
+
+                # Log truncate operation (in real Lustre, would notify OST)
+                if req.size < old_size:
+                    logger.info(f"{log_prefix}: Truncate {req.path} from {old_size} to {req.size} bytes (would notify OST in real Lustre)")
+                elif req.size > old_size:
+                    logger.info(f"{log_prefix}: Extend {req.path} from {old_size} to {req.size} bytes")
+
             if req.atime is not None:
                 file_meta.atime = req.atime
             if req.mtime is not None:
+                # Only override mtime if explicitly requested
+                # (size changes already set mtime above)
                 file_meta.mtime = req.mtime
 
-            # Update ctime
+            # Update ctime (always updated on metadata change)
             file_meta.ctime = self.machine.get_current_time(self.env.now)
 
             logger.info(f"{log_prefix}: Set attributes for {req.path}")
