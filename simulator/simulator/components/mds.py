@@ -405,6 +405,8 @@ class MDS(BaseService):
 
                 # Decrement nlink counter
                 file_meta.nlink -= 1
+                # Update ctime when nlink changes (like real Lustre)
+                file_meta.ctime = self.machine.get_current_time(self.env.now)
 
                 # Only delete inode if nlink reaches 0
                 if file_meta.nlink <= 0:
@@ -465,12 +467,23 @@ class MDS(BaseService):
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
 
         if req.path in self.path_to_fid:
+            # Check if it's actually a file or directory
+            fid = self.path_to_fid[req.path]
+            if fid in self.files:
+                existing = self.files[fid]
+                if existing.is_directory:
+                    error_msg = "Directory already exists"
+                else:
+                    error_msg = "File exists"
+            else:
+                error_msg = "Path already exists"
+
             response = MkdirResponse(
                 request_id=req.request_id,
                 timestamp=self.machine.get_current_time(self.env.now),
                 path=req.path,
                 success=False,
-                message="Directory already exists"
+                message=error_msg
             )
         else:
             # Validate parent directory exists (like real Lustre)
@@ -540,24 +553,61 @@ class MDS(BaseService):
         )
 
     def _handle_list_dir(self, msg: NetworkMessage):
-        """Handle directory listing request."""
+        """Handle directory listing request.
+
+        Validates that the path is actually a directory before listing.
+        """
         req = cast(ListDirRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
 
-        # Find all files in this directory
-        entries = []
-        for path in self.path_to_fid.keys():
-            if path.startswith(req.path + "/") and "/" not in path[len(req.path)+1:]:
-                entries.append(path.split("/")[-1])
+        # Check if path exists and is a directory
+        if req.path not in self.path_to_fid:
+            logger.info(f"{log_prefix}: Path {req.path} not found for listdir")
+            response = ListDirResponse(
+                request_id=req.request_id,
+                timestamp=self.machine.get_current_time(self.env.now),
+                path=req.path,
+                entries=[],
+                success=False,
+                message="Directory not found"
+            )
+        else:
+            fid = self.path_to_fid[req.path]
+            if fid not in self.files:
+                logger.info(f"{log_prefix}: Path {req.path} has stale FID mapping")
+                response = ListDirResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    entries=[],
+                    success=False,
+                    message="Directory not found"
+                )
+            elif not self.files[fid].is_directory:
+                logger.info(f"{log_prefix}: Path {req.path} is not a directory")
+                response = ListDirResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    entries=[],
+                    success=False,
+                    message="Not a directory"
+                )
+            else:
+                # Find all files in this directory
+                entries = []
+                for path in self.path_to_fid.keys():
+                    if path.startswith(req.path + "/") and "/" not in path[len(req.path)+1:]:
+                        entries.append(path.split("/")[-1])
 
-        logger.info(f"{log_prefix}: List directory {req.path} -> {len(entries)} entries")
-        response = ListDirResponse(
-            request_id=req.request_id,
-            timestamp=self.machine.get_current_time(self.env.now),
-            path=req.path,
-            entries=entries,
-            success=True
-        )
+                logger.info(f"{log_prefix}: List directory {req.path} -> {len(entries)} entries")
+                response = ListDirResponse(
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    entries=entries,
+                    success=True
+                )
 
         self.network.send_message(
             NetworkMessage(
@@ -929,6 +979,8 @@ class MDS(BaseService):
                     target_meta = self.files[target_fid]
                     # Atomically unlink the target
                     target_meta.nlink -= 1
+                    # Update ctime when nlink changes (like real Lustre)
+                    target_meta.ctime = self.machine.get_current_time(self.env.now)
                     if target_meta.nlink <= 0:
                         del self.files[target_fid]
                         logger.info(f"{log_prefix}: Atomically replaced {req.new_path} during rename")
