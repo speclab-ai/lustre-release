@@ -750,24 +750,60 @@ class MDS(BaseService):
     # HIGH PRIORITY API Handlers
 
     def _handle_open(self, msg: NetworkMessage):
-        """Handle file open request."""
+        """Handle file open request.
+
+        Validates file exists and updates atime for read access.
+        """
         req = cast(OpenRequest, msg.payload)
         log_prefix = f"[{self.machine.get_current_time(self.env.now):.4f}] MDS {self.id}"
 
         # Check if file exists
         if req.path in self.path_to_fid:
             fid = self.path_to_fid[req.path]
-            # For simulation, we don't track actual file descriptors, just acknowledge
-            logger.info(f"{log_prefix}: Opened file {req.path} (FID: {fid})")
-            response = OpenResponse(
-                client_id=req.client_id,
-                request_id=req.request_id,
-                timestamp=self.machine.get_current_time(self.env.now),
-                path=req.path,
-                fid=fid,
-                fd=hash(req.path) % 10000,  # Simulated FD
-                success=True
-            )
+
+            # Defensive check - ensure file actually exists
+            if fid not in self.files:
+                del self.path_to_fid[req.path]
+                logger.info(f"{log_prefix}: File {req.path} has stale FID mapping")
+                response = OpenResponse(
+                    client_id=req.client_id,
+                    request_id=req.request_id,
+                    timestamp=self.machine.get_current_time(self.env.now),
+                    path=req.path,
+                    success=False,
+                    message="File not found"
+                )
+            else:
+                file_meta = self.files[fid]
+
+                # Don't allow opening directories with regular open
+                # (should use opendir/listdir instead)
+                if file_meta.is_directory:
+                    logger.info(f"{log_prefix}: Cannot open directory {req.path} with open()")
+                    response = OpenResponse(
+                        client_id=req.client_id,
+                        request_id=req.request_id,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        path=req.path,
+                        success=False,
+                        message="Is a directory"
+                    )
+                else:
+                    # Update atime on open for read (like real Lustre/POSIX)
+                    current_time = self.machine.get_current_time(self.env.now)
+                    file_meta.atime = current_time
+
+                    # For simulation, we don't track actual file descriptors, just acknowledge
+                    logger.info(f"{log_prefix}: Opened file {req.path} (FID: {fid})")
+                    response = OpenResponse(
+                        client_id=req.client_id,
+                        request_id=req.request_id,
+                        timestamp=self.machine.get_current_time(self.env.now),
+                        path=req.path,
+                        fid=fid,
+                        fd=hash(req.path) % 10000,  # Simulated FD
+                        success=True
+                    )
         else:
             logger.info(f"{log_prefix}: File {req.path} not found for open")
             response = OpenResponse(
